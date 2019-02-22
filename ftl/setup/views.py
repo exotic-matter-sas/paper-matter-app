@@ -1,5 +1,5 @@
 from django.shortcuts import render
 
 
-def index(request):
+def landing_page(request):
     return render(request, 'setup/landing_page.html')

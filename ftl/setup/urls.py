@@ -3,6 +3,6 @@ from . import views
 
 app_name = 'setup'
 urlpatterns = [
-    path('', views.index, name='index')
+    path('', views.landing_page, name='landing_page')
 ]
 

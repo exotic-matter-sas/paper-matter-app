@@ -11,11 +11,11 @@ class LandingPageTest(unittest.TestCase):
 
     def setUp(self):
         if platform.system().startswith('Linux'):
-            executable_path = 'tests/geckodriver/geckodriver64_linux'
+            executable_path = 'functional_tests/geckodriver/geckodriver64_linux'
         elif platform.system().startswith('Windows'):
-            executable_path = 'tests/geckodriver/geckodriver64.exe'
+            executable_path = 'functional_tests/geckodriver/geckodriver64.exe'
         elif platform.system().startswith('Darwin'):
-            executable_path = 'tests/geckodriver/geckodriver64_linux'
+            executable_path = 'functional_tests/geckodriver/geckodriver64_linux'
         else:
             raise EnvironmentError(f'Platform "{platform.system()}" not supported')
 

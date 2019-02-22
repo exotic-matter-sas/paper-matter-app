@@ -7,7 +7,7 @@ def index(request):
     try:
         u = User.objects.get(username='admin')
     except ObjectDoesNotExist:
-        return redirect('setup:index')
+        return redirect('setup:landing_page')
     else:
         pass
         # TODO redirect to user login page
