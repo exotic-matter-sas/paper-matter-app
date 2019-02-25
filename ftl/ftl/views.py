@@ -9,5 +9,5 @@ def index(request):
     except ObjectDoesNotExist:
         return redirect('setup:landing_page')
     else:
-        pass
-        # TODO redirect to user login page
+        return redirect('app:login')
+
