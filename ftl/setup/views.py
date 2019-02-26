@@ -8,13 +8,12 @@ from django.http import HttpResponseRedirect
 
 class LandingPageView(CreateView):
     model = User
-    fields = ('first_name', 'last_name', 'email', 'password')
+    fields = ('username', 'first_name', 'last_name', 'email', 'password')
     template_name = 'setup/admin_and_first_organization_creation_form.html'
 
     def form_valid(self, form):
         """Force User fields values to create an admin user"""
         self.object = form.save(commit=False)
-        self.object.username = 'admin'
         self.object.is_staff = True
         self.object.save()
 
