@@ -5,7 +5,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 def index(request):
     try:
-        u = User.objects.get(username='admin')
+        u = User.objects.get(is_staff=True)
     except ObjectDoesNotExist:
         return redirect('setup:landing_page')
     else:
