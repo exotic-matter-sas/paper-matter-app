@@ -1,22 +1,22 @@
 import platform
 import os
-import unittest
 
 from selenium import webdriver
+from django.test import LiveServerTestCase
 
-from ftl.ftl.settings import BASE_DIR
-from ftl.functional_tests import test_values as TV
+from ftl.settings import BASE_DIR
+from ftests import _test_values as TV
 
 
-class LandingPageTest(unittest.TestCase):
+class LandingPageTest(LiveServerTestCase):
 
     def setUp(self):
         if platform.system().startswith('Linux'):
-            executable_path = 'functional_tests/geckodriver/geckodriver64_linux'
+            executable_path = 'ftests/geckodriver/geckodriver64_linux'
         elif platform.system().startswith('Windows'):
-            executable_path = 'functional_tests/geckodriver/geckodriver64.exe'
+            executable_path = 'ftests/geckodriver/geckodriver64.exe'
         elif platform.system().startswith('Darwin'):
-            executable_path = 'functional_tests/geckodriver/geckodriver64_linux'
+            executable_path = 'ftests/geckodriver/geckodriver64_linux'
         else:
             raise EnvironmentError(f'Platform "{platform.system()}" not supported')
 
@@ -27,7 +27,7 @@ class LandingPageTest(unittest.TestCase):
 
     def test_a_landing_page_display_properly_on_first_visit(self):
         # Admin user have just install ftl-app and display it for the first time
-        self.browser.get('http://localhost:8000')
+        self.browser.get(self.live_server_url)
 
         # A landing page welcome the user and ask him to set admin first organisation information
         self.assertIn('Ftl-app', self.browser.title)
@@ -36,13 +36,15 @@ class LandingPageTest(unittest.TestCase):
 
     def test_b_landing_page_admin_and_first_organization_creation(self):
         # Admin user have just install ftl-app and display it for the first time
-        self.browser.get('http://localhost:8000')
+        self.browser.get(self.live_server_url)
         # He fulfill the admin creation form and first organization
         admin_form = self.browser.find_element_by_id('admin-form')
+        username_input = admin_form.find_element_by_id('id_username')
         email_address_input = admin_form.find_element_by_id('id_email')
         password_input = admin_form.find_element_by_id('id_password')
         submit_input = admin_form.find_element_by_css_selector('[type="submit"]')
 
+        username_input.send_keys(TV.USERNAME)
         email_address_input.send_keys(TV.ADMIN_EMAIL)
         password_input.send_keys(TV.ADMIN_PASS)
         submit_input.click()
@@ -58,11 +60,7 @@ class LandingPageTest(unittest.TestCase):
         self.assertIn('/signup', user_signup_link.get_attribute('href'))
 
         # Display ftl-app again now redirect to user login page
-        self.browser.get('http://localhost:8000')
+        self.browser.get(self.live_server_url)
         self.assertIn('Login', self.browser.title)
 
         self.fail('Finish the test!')
-
-
-if __name__ == '__main__':
-    unittest.main()
