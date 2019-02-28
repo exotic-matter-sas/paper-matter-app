@@ -5,7 +5,7 @@ from selenium import webdriver
 from django.test import LiveServerTestCase
 
 from ftl.settings import BASE_DIR
-from ftests import _test_values as TV
+from ftests import _test_values as tv
 
 
 class LandingPageTest(LiveServerTestCase):
@@ -32,9 +32,9 @@ class LandingPageTest(LiveServerTestCase):
         password_input = admin_form.find_element_by_id('id_password')
         submit_input = admin_form.find_element_by_css_selector('[type="submit"]')
 
-        username_input.send_keys(TV.ADMIN_USERNAME)
-        email_address_input.send_keys(TV.ADMIN_EMAIL)
-        password_input.send_keys(TV.ADMIN_PASS)
+        username_input.send_keys(tv.ADMIN_USERNAME)
+        email_address_input.send_keys(tv.ADMIN_EMAIL)
+        password_input.send_keys(tv.ADMIN_PASS)
         submit_input.click()
 
     def create_first_organization(self):
@@ -42,7 +42,7 @@ class LandingPageTest(LiveServerTestCase):
         name_input = organization_form.find_element_by_id('id_name')
         submit_input = organization_form.find_element_by_css_selector('[type="submit"]')
 
-        name_input.send_keys(TV.ORG_NAME)
+        name_input.send_keys(tv.ORG_NAME)
         submit_input.click()
 
     def test_landing_page_display_properly_on_first_visit(self):
@@ -93,4 +93,25 @@ class LandingPageTest(LiveServerTestCase):
         self.assertIn('Login', self.browser.title)
 
     def test_admin_user_can_login_in_django_admin(self):
-        pass  # TODO
+        # Admin user have just install ftl-app and display it for the first time
+        self.browser.get(self.live_server_url)
+        # He fulfill the admin creation form
+        self.create_admin()
+        # And then the first organisation form
+        self.create_first_organization()
+
+        # He click on link to login to admin portal
+        admin_login_link = self.browser.find_element_by_id('admin-login')
+        admin_login_link.click()
+
+        admin_login_form = self.browser.find_element_by_id('login-form')
+        username_input = admin_login_form.find_element_by_id('id_username')
+        password_input = admin_login_form.find_element_by_id('id_password')
+        submit_input = admin_login_form.find_element_by_css_selector('[type="submit"]')
+
+        username_input.send_keys(tv.ADMIN_USERNAME)
+        password_input.send_keys(tv.ADMIN_PASS)
+        submit_input.click()
+
+        # Django admin display properly
+        self.assertIn(f'welcome, {tv.ADMIN_USERNAME}', self.browser.find_element_by_id('user-tools').text.lower())
