@@ -6,13 +6,11 @@
 </head>
 <body>
     <h1>Welcome on ftl-app !</h1>
-    <h2>Admin creation</h2>
+    <h2>Step 1/2: Admin creation</h2>
     <form method="post" id="admin-form">
         {% csrf_token %}
         {{ form.as_p }}
         <input type="submit" value="Create">
     </form>
-    <h2>First organization creation</h2>
-
 </body>
 </html>
