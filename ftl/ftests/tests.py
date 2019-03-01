@@ -29,12 +29,14 @@ class LandingPageTest(LiveServerTestCase):
         admin_form = self.browser.find_element_by_id('admin-form')
         username_input = admin_form.find_element_by_id('id_username')
         email_address_input = admin_form.find_element_by_id('id_email')
-        password_input = admin_form.find_element_by_id('id_password')
+        password_input = admin_form.find_element_by_id('id_password1')
+        password_confirmation_input = admin_form.find_element_by_id('id_password2')
         submit_input = admin_form.find_element_by_css_selector('[type="submit"]')
 
         username_input.send_keys(tv.ADMIN_USERNAME)
         email_address_input.send_keys(tv.ADMIN_EMAIL)
         password_input.send_keys(tv.ADMIN_PASS)
+        password_confirmation_input.send_keys(tv.ADMIN_PASS)
         submit_input.click()
 
     def create_first_organization(self):

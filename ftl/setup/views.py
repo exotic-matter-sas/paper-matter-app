@@ -1,36 +1,23 @@
 from django.views.generic import CreateView
-from django.shortcuts import render
-from django.contrib.auth.models import User
+from django.shortcuts import render, redirect
 from django.urls import reverse
-from django import forms
 from django.http import HttpResponseRedirect
 from django.utils.text import slugify
 
+from setup.forms import AdminCreationFrom
 from core.models import FTLOrg
 
 
-class LandingPageStep1View(CreateView):
-    model = User
-    fields = ('username', 'first_name', 'last_name', 'email', 'password')
-    template_name = 'setup/admin_creation_form.html'
+def landing_page_step1_view(request):
+    if request.method == 'POST':
+        form = AdminCreationFrom(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('setup:landing_page_step2')
+    else:
+        form = AdminCreationFrom()
 
-    def form_valid(self, form):
-        """Set is_staff value to create an admin user"""
-        self.object = form.save(commit=False)
-        self.object.is_staff = True
-        self.object.save()
-
-        return HttpResponseRedirect(self.get_success_url())
-
-    def get_form(self, form_class=None):
-        """Update form html fields types"""
-        form = super(LandingPageStep1View, self).get_form(form_class)
-        form.fields['email'].required = True
-        form.fields['password'].widget = forms.PasswordInput()
-        return form
-
-    def get_success_url(self):
-        return reverse('setup:landing_page_step2')
+    return render(request, 'setup/admin_creation_form.html', {'form': form})
 
 
 class LandingPageStep2View(CreateView):
