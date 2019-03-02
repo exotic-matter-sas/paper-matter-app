@@ -5,7 +5,11 @@
     <title>Ftl-app - Login</title>
 </head>
 <body>
-    <h1>Please login to your account</h1>
-    <p>Type your organization to login</p>
+    <h1>Type your organization name to login</h1>
+    <form method="post" id="organization-selection-form">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Create">
+    </form>
 </body>
 </html>

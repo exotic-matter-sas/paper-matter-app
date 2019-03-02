@@ -1,9 +1,11 @@
-from django.contrib.auth.forms import UserCreationForm, UsernameField
+from django.contrib.auth.forms import UserCreationForm, UsernameField, forms
 from django.contrib.auth.models import User
+from django.forms.models import fields_for_model
+
 from .models import FTLUser, FTLOrg
 
 
-class FTLUserCreationFrom(UserCreationForm):
+class FTLUserCreationForm(UserCreationForm):
 
     class Meta:
         model = User
@@ -19,3 +21,9 @@ class FTLUserCreationFrom(UserCreationForm):
         ftl_user.save()
 
         return user
+
+
+class SelectOrganizationToLoginForm(forms.Form):
+
+    organization_name = fields_for_model(FTLOrg)['name']
+

@@ -140,3 +140,25 @@ class LandingPageTests(LiveServerTestCase):
 
         # Success message appears when account creation is complete
         self.assertIn('Congratulations', self.browser.find_element_by_css_selector('h1').text)
+
+    def test_user_can_access_login_page_of_first_organization(self):
+        """User access login page of first organization"""
+        # Admin user create admin user and first org and send link to first user
+        self.browser.get(self.live_server_url)
+        self.create_user('admin')
+        self.create_first_organization()
+        user_signup_link = self.browser.find_element_by_id('user-signup')
+
+        # First user click on the link and signup to first organization
+        user_signup_link.click()
+        self.create_user('user')
+
+        # He click on link to login
+        user_login_link = self.browser.find_element_by_id('user-login')
+        user_login_link.click()
+
+        # The name of the first organization is displayed on login page
+        login_header = self.browser.find_element_by_css_selector('h1').text
+        self.assertIn('login', login_header.lower())
+        self.assertIn(tv.ORG_NAME, login_header)
+
