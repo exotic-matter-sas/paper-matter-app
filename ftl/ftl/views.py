@@ -10,6 +10,6 @@ def index(request):
             return redirect('app:login')
         else:
             return redirect('setup:landing_page_step2')
-        else:
-            return redirect('app:login_hub')
+    else:
+        return redirect('app:login_hub')
 
