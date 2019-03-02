@@ -9,7 +9,7 @@ class AdminCreationFrom(UserCreationForm):
         fields = ("email", "username",)
         field_classes = {'username': UsernameField}
 
-    def save(self):
+    def save(self, commit=True):
         """Set extra attributes to create an admin user"""
         user = super().save(commit=False)
         user.is_superuser = True

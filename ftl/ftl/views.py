@@ -1,6 +1,5 @@
-from django.contrib.auth.models import User
 from django.shortcuts import redirect
-
+from django.contrib.auth.models import User
 from core.models import FTLOrg
 
 
@@ -11,5 +10,6 @@ def index(request):
             return redirect('app:login')
         else:
             return redirect('setup:landing_page_step2')
-    else:
-        return redirect('setup:landing_page_step1')
+        else:
+            return redirect('app:login_hub')
+

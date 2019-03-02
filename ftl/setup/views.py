@@ -8,7 +8,7 @@ from setup.forms import AdminCreationFrom
 from core.models import FTLOrg
 
 
-def landing_page_step1_view(request):
+def landing_page_step1(request):
     if request.method == 'POST':
         form = AdminCreationFrom(request.POST)
         if form.is_valid():
@@ -20,7 +20,7 @@ def landing_page_step1_view(request):
     return render(request, 'setup/admin_creation_form.html', {'form': form})
 
 
-class LandingPageStep2View(CreateView):
+class LandingPageStep2(CreateView):
     model = FTLOrg
     fields = ('name',)
     template_name = 'setup/first_organization_creation_form.html'
@@ -34,8 +34,8 @@ class LandingPageStep2View(CreateView):
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
-        return reverse('setup:success')
+        return reverse('setup:success', args=(self.object.slug,))
 
 
-def success(request):
-    return render(request, 'setup/success.html')
+def success(request, org_slug):
+    return render(request, 'setup/success.html', {'org_slug': org_slug})

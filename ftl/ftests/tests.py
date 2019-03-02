@@ -8,7 +8,7 @@ from ftl.settings import BASE_DIR
 from ftests import _test_values as tv
 
 
-class LandingPageTest(LiveServerTestCase):
+class LandingPageTests(LiveServerTestCase):
 
     def setUp(self):
         if platform.system().startswith('Linux'):
@@ -25,18 +25,18 @@ class LandingPageTest(LiveServerTestCase):
     def tearDown(self):
         self.browser.quit()
 
-    def create_admin(self):
-        admin_form = self.browser.find_element_by_id('admin-form')
+    def create_user(self, user_type):
+        admin_form = self.browser.find_element_by_id(f'{user_type}-form')
         username_input = admin_form.find_element_by_id('id_username')
         email_address_input = admin_form.find_element_by_id('id_email')
         password_input = admin_form.find_element_by_id('id_password1')
         password_confirmation_input = admin_form.find_element_by_id('id_password2')
         submit_input = admin_form.find_element_by_css_selector('[type="submit"]')
 
-        username_input.send_keys(tv.ADMIN_USERNAME)
-        email_address_input.send_keys(tv.ADMIN_EMAIL)
-        password_input.send_keys(tv.ADMIN_PASS)
-        password_confirmation_input.send_keys(tv.ADMIN_PASS)
+        username_input.send_keys(getattr(tv, f'{user_type.upper()}_USERNAME'))
+        email_address_input.send_keys(getattr(tv, f'{user_type.upper()}_EMAIL'))
+        password_input.send_keys(getattr(tv, f'{user_type.upper()}_PASS'))
+        password_confirmation_input.send_keys(getattr(tv, f'{user_type.upper()}_PASS'))
         submit_input.click()
 
     def create_first_organization(self):
@@ -62,7 +62,7 @@ class LandingPageTest(LiveServerTestCase):
         self.browser.get(self.live_server_url)
 
         # He fulfill the admin creation form and close his browser
-        self.create_admin()
+        self.create_user('admin')
         self.browser.quit()
 
         # He come back later and display ftl-app again
@@ -73,12 +73,13 @@ class LandingPageTest(LiveServerTestCase):
         self.assertIn('Ftl-app', self.browser.title)
         self.assertIn('First organization creation', self.browser.find_elements_by_css_selector('h2')[0].text)
 
-    def test_landing_page_admin_and_first_organization_creation(self):
+    def test_landing_page_redirect_to_user_login_when_setup_complete(self):
+        """Landing page redirect to user login page when setup complete"""
         # Admin user have just install ftl-app and display it for the first time
         self.browser.get(self.live_server_url)
 
         # He fulfill the admin creation form
-        self.create_admin()
+        self.create_user('admin')
         # And then the first organisation form
         self.create_first_organization()
 
@@ -87,7 +88,7 @@ class LandingPageTest(LiveServerTestCase):
         admin_login_link = self.browser.find_element_by_id('admin-login')
         self.assertIn('/admin', admin_login_link.get_attribute('href'))
 
-        user_signup_link = self.browser.find_element_by_id('user-login')
+        user_signup_link = self.browser.find_element_by_id('user-signup')
         self.assertIn('/signup', user_signup_link.get_attribute('href'))
 
         # Display ftl-app again now redirect to user login page
@@ -95,10 +96,11 @@ class LandingPageTest(LiveServerTestCase):
         self.assertIn('Login', self.browser.title)
 
     def test_admin_user_can_login_in_django_admin(self):
+        """Admin user can login in Django admin"""
         # Admin user have just install ftl-app and display it for the first time
         self.browser.get(self.live_server_url)
         # He fulfill the admin creation form
-        self.create_admin()
+        self.create_user('admin')
         # And then the first organisation form
         self.create_first_organization()
 
@@ -117,3 +119,24 @@ class LandingPageTest(LiveServerTestCase):
 
         # Django admin display properly
         self.assertIn(f'welcome, {tv.ADMIN_USERNAME}', self.browser.find_element_by_id('user-tools').text.lower())
+
+    def test_user_can_signup_to_first_organization(self):
+        """User can signup to first organization"""
+        # Admin user have just install ftl-app and display it for the first time
+        self.browser.get(self.live_server_url)
+        # He fulfill the admin creation form
+        self.create_user('admin')
+        # And then the first organisation form
+        self.create_first_organization()
+        # He copy the link for signup to user and send it to the first user
+        user_signup_link = self.browser.find_element_by_id('user-signup')
+
+        # First user click on the link to signup to first organization
+        user_signup_link.click()
+
+        # The name of the first organization is displayed and user can create his account
+        self.assertIn(tv.ORG_NAME, self.browser.find_element_by_css_selector('h1').text)
+        self.create_user('user')
+
+        # Success message appears when account creation is complete
+        self.assertIn('Congratulations', self.browser.find_element_by_css_selector('h1').text)
