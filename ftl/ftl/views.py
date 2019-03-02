@@ -7,9 +7,8 @@ def index(request):
     admin_users = User.objects.filter(is_staff=True).count()
     if admin_users:
         if FTLOrg.objects.count():
-            return redirect('app:login')
+            return redirect('app:login_hub')
         else:
             return redirect('setup:landing_page_step2')
     else:
-        return redirect('app:login_hub')
-
+        return redirect('setup:landing_page_step1')
