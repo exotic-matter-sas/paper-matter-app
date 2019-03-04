@@ -7,21 +7,21 @@ from mptt.models import MPTTModel
 # FTP orgs
 class FTLOrg(models.Model):
     name = models.CharField(max_length=128)
-    slug = models.SlugField(max_length=128)  # URL of the org
+    slug = models.SlugField(max_length=128, unique=True)  # URL of the org
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
 
 
-# FTL user (linked to Django user)
+# FTL user
 class FTLUser(models.Model):
-    ftl_user = models.OneToOneField(User, on_delete=models.CASCADE)  # Link to Django user system
+    user = models.OneToOneField(User, on_delete=models.CASCADE)  # Link to Django user system
     org = models.ForeignKey('FTLOrg', on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.ftl_user.__str__()
+        return self.user.__str__()
 
 
 # FTL Documents
