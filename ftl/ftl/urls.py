@@ -13,21 +13,42 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path, include
 from django.conf import settings
+from django.contrib import admin
+from django.contrib.auth import views as auth_views
+from django.urls import path, include
 
+from ftl.views_auth import PasswordResetViewFTL, PasswordChangeViewFTL, PasswordResetConfirmViewFTL
 from . import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('', views.index),
     path('setup/', include('setup.urls')),
+
+    path('login/', views.login_hub, name='login_hub'),
+    path('<slug:org_slug>/', include([
+        path('signup/', views.signup, name='signup'),
+        path('signup/success', views.signup_success, name='signup_success'),
+
+        path('login/', auth_views.LoginView.as_view(), name='login'),
+        path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+
+        path('password_change/', PasswordChangeViewFTL.as_view(), name='password_change'),
+        path('password_change/done/', auth_views.PasswordChangeDoneView.as_view(), name='password_change_done'),
+
+        path('password_reset/', PasswordResetViewFTL.as_view(), name='password_reset'),
+        path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
+        path('reset/<uidb64>/<token>/', PasswordResetConfirmViewFTL.as_view(), name='password_reset_confirm'),
+        path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
+    ])),
+
     path('app/', include('core.urls')),
+    path('admin/', admin.site.urls),
 ]
 
 if settings.DEBUG:
     import debug_toolbar
+
     urlpatterns += [
         path('__debug__/', include(debug_toolbar.urls)),
     ]
