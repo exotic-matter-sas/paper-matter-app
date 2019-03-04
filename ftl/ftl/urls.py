@@ -18,10 +18,12 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path, include
 
-from ftl.views_auth import PasswordResetViewFTL, PasswordChangeViewFTL, PasswordResetConfirmViewFTL
+from ftl.views_auth import LoginViewFTL, PasswordResetViewFTL, PasswordChangeViewFTL, PasswordResetConfirmViewFTL
 from . import views
 
 urlpatterns = [
+    path('admin/', admin.site.urls),  # Need to be at the top, otherwise admin url resolve conflict with other urls
+
     path('', views.index),
     path('setup/', include('setup.urls')),
 
@@ -30,7 +32,7 @@ urlpatterns = [
         path('signup/', views.signup, name='signup'),
         path('signup/success', views.signup_success, name='signup_success'),
 
-        path('login/', auth_views.LoginView.as_view(), name='login'),
+        path('login/', LoginViewFTL.as_view(), name='login'),
         path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 
         path('password_change/', PasswordChangeViewFTL.as_view(), name='password_change'),
@@ -40,10 +42,9 @@ urlpatterns = [
         path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
         path('reset/<uidb64>/<token>/', PasswordResetConfirmViewFTL.as_view(), name='password_reset_confirm'),
         path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
-    ])),
 
-    path('app/', include('core.urls')),
-    path('admin/', admin.site.urls),
+        path('app/', include('core.urls')),
+    ])),
 ]
 
 if settings.DEBUG:

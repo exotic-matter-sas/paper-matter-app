@@ -132,3 +132,6 @@ STATIC_URL = '/static/'
 
 # IPs allowed to see the debug toolbar app
 INTERNAL_IPS = ['127.0.0.1']
+
+# Login url used by @login_required decorator
+LOGIN_URL = 'login_hub'

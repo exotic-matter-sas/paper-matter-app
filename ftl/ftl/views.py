@@ -26,11 +26,11 @@ def signup(request, org_slug):
     else:
         form = FTLUserCreationForm()
 
-    return render(request, 'core/signup.html', {'form': form, 'org_name': org.name})
+    return render(request, 'ftl/signup.html', {'form': form, 'org_name': org.name})
 
 
 def signup_success(request, org_slug):
-    return render(request, 'core/signup_success.html', {'org_slug': org_slug})
+    return render(request, 'ftl/signup_success.html', {'org_slug': org_slug})
 
 
 def login_hub(request):
@@ -42,4 +42,4 @@ def login_hub(request):
     else:
         form = SelectOrganizationToLoginForm()
 
-    return render(request, 'core/login_hub.html', {'form': form})
+    return render(request, 'ftl/login_hub.html', {'form': form})

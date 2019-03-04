@@ -1,52 +1,10 @@
-import platform
-import os
-
-from selenium import webdriver
-from django.test import LiveServerTestCase
 from unittest import skip
 
-from ftl.settings import BASE_DIR
+from .base_test import BaseTestCase
 from ftests import _test_values as tv
 
 
-class LandingPageTests(LiveServerTestCase):
-
-    def setUp(self):
-        if platform.system().startswith('Linux'):
-            executable_path = 'ftests/geckodriver/geckodriver64_linux'
-        elif platform.system().startswith('Windows'):
-            executable_path = 'ftests/geckodriver/geckodriver64.exe'
-        elif platform.system().startswith('Darwin'):
-            executable_path = 'ftests/geckodriver/geckodriver64_linux'
-        else:
-            raise EnvironmentError(f'Platform "{platform.system()}" not supported')
-
-        self.browser = webdriver.Firefox(executable_path=os.path.join(BASE_DIR, executable_path))
-
-    def tearDown(self):
-        self.browser.quit()
-
-    def create_user(self, user_type):
-        admin_form = self.browser.find_element_by_id(f'{user_type}-form')
-        username_input = admin_form.find_element_by_id('id_username')
-        email_address_input = admin_form.find_element_by_id('id_email')
-        password_input = admin_form.find_element_by_id('id_password1')
-        password_confirmation_input = admin_form.find_element_by_id('id_password2')
-        submit_input = admin_form.find_element_by_css_selector('[type="submit"]')
-
-        username_input.send_keys(getattr(tv, f'{user_type.upper()}_USERNAME'))
-        email_address_input.send_keys(getattr(tv, f'{user_type.upper()}_EMAIL'))
-        password_input.send_keys(getattr(tv, f'{user_type.upper()}_PASS'))
-        password_confirmation_input.send_keys(getattr(tv, f'{user_type.upper()}_PASS'))
-        submit_input.click()
-
-    def create_first_organization(self):
-        organization_form = self.browser.find_element_by_id('organization-form')
-        name_input = organization_form.find_element_by_id('id_name')
-        submit_input = organization_form.find_element_by_css_selector('[type="submit"]')
-
-        name_input.send_keys(tv.ORG_NAME)
-        submit_input.click()
+class LandingPageTests(BaseTestCase):
 
     def test_landing_page_display_properly_on_first_visit(self):
         """Landing page display properly on first visit"""
@@ -163,3 +121,25 @@ class LandingPageTests(LiveServerTestCase):
         login_header = self.browser.find_element_by_css_selector('h1').text
         self.assertIn('login', login_header.lower())
         self.assertIn(tv.ORG_NAME, login_header)  # TODO check for slug instead of organization name
+
+
+class LoginPageTests(BaseTestCase):
+
+    def test_user_can_login(self):
+        """User can login and access a logged page"""
+        # Admin, organization and user setup
+        self.browser.get(self.live_server_url)
+        self.create_user('admin')
+        self.create_first_organization()
+
+        user_signup_link = self.browser.find_element_by_id('user-signup')
+        user_signup_link.click()
+
+        self.create_user('user')
+        user_login_link = self.browser.find_element_by_id('user-login')
+        user_login_link.click()
+
+        # User login and is redirect to the logged home page, he can see it's username on it
+        self.log_user('user')
+        login_header = self.browser.find_element_by_css_selector('h2').text
+        self.assertIn(tv.USER_USERNAME, login_header.lower())
