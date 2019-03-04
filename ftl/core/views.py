@@ -26,7 +26,7 @@ def login_hub(request):
         form = SelectOrganizationToLoginForm(request.POST)
         if form.is_valid():
             org = get_object_or_404(FTLOrg, name=form.cleaned_data['organization_name'])
-            return redirect('app:login', org.slug)
+            return redirect('login', org.slug)
     else:
         form = SelectOrganizationToLoginForm()
 
