@@ -22,8 +22,14 @@ from ftl.views_auth import PasswordResetViewFTL, PasswordChangeViewFTL, Password
 from . import views
 
 urlpatterns = [
-    path('app/', include('core.urls')),
-    path('app/<slug:org_slug>/', include([
+    path('', views.index),
+    path('setup/', include('setup.urls')),
+
+    path('login/', views.login_hub, name='login_hub'),
+    path('<slug:org_slug>/', include([
+        path('signup/', views.signup, name='signup'),
+        path('signup/success', views.signup_success, name='signup_success'),
+
         path('login/', auth_views.LoginView.as_view(), name='login'),
         path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 
@@ -35,9 +41,9 @@ urlpatterns = [
         path('reset/<uidb64>/<token>/', PasswordResetConfirmViewFTL.as_view(), name='password_reset_confirm'),
         path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
     ])),
-    path('setup/', include('setup.urls')),
+
+    path('app/', include('core.urls')),
     path('admin/', admin.site.urls),
-    path('', views.index),
 ]
 
 if settings.DEBUG:
