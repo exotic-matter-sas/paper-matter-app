@@ -22,7 +22,7 @@ from ftl.views_auth import PasswordResetViewFTL, PasswordChangeViewFTL, Password
 from . import views
 
 urlpatterns = [
-    path('app/', include('core.urls'), name='app'),
+    path('app/', include('core.urls')),
     path('app/<slug:org_slug>/', include([
         path('login/', auth_views.LoginView.as_view(), name='login'),
         path('logout/', auth_views.LogoutView.as_view(), name='logout'),
