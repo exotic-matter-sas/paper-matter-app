@@ -1,8 +1,6 @@
 from django.views.generic import CreateView
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.http import HttpResponseRedirect
-from django.utils.text import slugify
 
 from setup.forms import AdminCreationFrom
 from core.models import FTLOrg

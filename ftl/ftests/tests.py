@@ -95,12 +95,11 @@ class LandingPageTests(BaseTestCase):
 
         # The name of the first organization is displayed and user can create his account
         self.assertIn(tv.ORG_NAME, self.browser.find_element_by_css_selector('h1').text)
-        self.create_user('user')
+        self.create_user('user1')
 
         # Success message appears when account creation is complete
         self.assertIn('Congratulations', self.browser.find_element_by_css_selector('h1').text)
 
-    @skip('Need to be fixed: login view display org slug instead of org name')
     def test_user_can_access_login_page_of_first_organization(self):
         """User access login page of first organization"""
         # Admin user create admin user and first org and send link to first user
@@ -111,7 +110,7 @@ class LandingPageTests(BaseTestCase):
 
         # First user click on the link and signup to first organization
         user_signup_link.click()
-        self.create_user('user')
+        self.create_user('user1')
 
         # He click on link to login
         user_login_link = self.browser.find_element_by_id('user-login')
@@ -135,12 +134,12 @@ class LoginPageTests(BaseTestCase):
         user_signup_link = self.browser.find_element_by_id('user-signup')
         user_signup_link.click()
 
-        self.create_user('user')
+        self.create_user('user1')
         user_login_link = self.browser.find_element_by_id('user-login')
         user_login_link.click()
 
         # User login and is redirect to the logged home page, he can see it's username on it
-        self.log_user('user')
+        self.log_user('user1')
         login_header = self.browser.find_element_by_css_selector('h2').text
         self.assertIn(tv.USER1_USERNAME, login_header.lower())
 
@@ -163,6 +162,7 @@ class LoginPageTests(BaseTestCase):
         self.select_org(tv.ORG_SLUG)
         login_header = self.browser.find_element_by_css_selector('h1').text
         self.assertIn('login', login_header.lower())
+        self.assertIn(tv.ORG_NAME, login_header)
 
         # User login and is redirect to the logged home page, he can see it's username on it
         self.log_user('user2')
