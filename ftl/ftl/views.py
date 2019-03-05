@@ -1,15 +1,15 @@
-from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
+from django.shortcuts import render, redirect, get_object_or_404
 
-from core.models import FTLOrg
 from core.forms import FTLUserCreationForm, SelectOrganizationToLoginForm
+from core.models import FTLOrg, FTLUser
 
 
 def index(request):
     admin_users = User.objects.filter(is_staff=True).count()
     if admin_users:
         if FTLOrg.objects.count():
-            return redirect('login_hub')
+            return redirect('login')
         else:
             return redirect('setup:landing_page_step2')
     else:
@@ -21,7 +21,11 @@ def signup(request, org_slug):
     if request.method == 'POST':
         form = FTLUserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
+            save = form.save()
+            org = FTLOrg.objects.get(slug=org_slug)
+            ftl_user = FTLUser(user=save, org=org)
+            ftl_user.save()
+
             return redirect('signup_success', org_slug)
     else:
         form = FTLUserCreationForm()

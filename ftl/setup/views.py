@@ -1,9 +1,9 @@
-from django.views.generic import CreateView
 from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.views.generic import CreateView
 
-from setup.forms import AdminCreationFrom
 from core.models import FTLOrg
+from setup.forms import AdminCreationFrom
 
 
 def landing_page_step1(request):
