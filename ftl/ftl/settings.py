@@ -54,8 +54,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-if MIDDLEWARE:
-    INSTALLED_APPS += [
+if DEBUG:
+    MIDDLEWARE += [
         'debug_toolbar.middleware.DebugToolbarMiddleware',
     ]
 
