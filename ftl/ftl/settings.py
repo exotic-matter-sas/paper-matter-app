@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.postgres',
     'mptt',
+    'rest_framework',
+    'debug_toolbar',
     'setup',
     'core',
 ]
