@@ -22,16 +22,8 @@ def landing_page_step1(request):
 
 class LandingPageStep2(CreateView):
     model = FTLOrg
-    fields = ('name',)
+    fields = ('name', 'slug')
     template_name = 'setup/first_organization_creation_form.html'
-
-    def form_valid(self, form):
-        """Set slug value"""
-        self.object = form.save(commit=False)
-        self.object.slug = slugify(self.object.name)
-        self.object.save()
-
-        return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
         return reverse('setup:success', args=(self.object.slug,))

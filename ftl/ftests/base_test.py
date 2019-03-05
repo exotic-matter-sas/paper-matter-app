@@ -42,9 +42,11 @@ class BaseTestCase(LiveServerTestCase):
     def create_first_organization(self):
         organization_form = self.browser.find_element_by_id('organization-form')
         name_input = organization_form.find_element_by_id('id_name')
+        slug_input = organization_form.find_element_by_id('id_slug')
         submit_input = organization_form.find_element_by_css_selector('[type="submit"]')
 
         name_input.send_keys(tv.ORG_NAME)
+        slug_input.send_keys(tv.ORG_SLUG)
         submit_input.click()
 
     def log_user(self, user_type):
