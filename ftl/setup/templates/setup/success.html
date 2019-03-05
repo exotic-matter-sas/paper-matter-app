@@ -1,15 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Ftl-app - Setup completed</title>
-</head>
-<body>
-    <h1>Congratulations: Admin and first organization properly created!</h1>
-    <p>You can now:</p>
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+
+    <h1>{% trans "Welcome on ftl-app!" %}</h1>
+    <h2>{% trans "Step 2/2: First organization creation" %}</h2>
+    <form method="post" id="organization-form">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="{% trans "Create" %}">
+    </form>
+
+    <h1>{% trans "Congratulations: Admin and first organization properly created!" %}</h1>
+    <p>{% trans "You can now:" %}</p>
     <ul>
-        <li>Send this link to users for them to create an account in the first organization:<br/> <a href="{% url 'signup' org_slug %}" id="user-signup">User signup page</a></li>
-        <li>Connect to admin pannel here: <a href="{% url 'admin:index' %}" id="admin-login">Admin login page</a></li>
+        <li>{% trans "Send this link to first organization users for them to create an account:" %}<br/> <a href="{% url 'signup' org_slug %}" id="user-signup">{% trans "User signup page" %}</a></li>
+        <li>{% trans "Connect to admin pannel here:" %} <a href="{% url 'admin:index' %}" id="admin-login">{% trans "Admin login page" %}</a></li>
     </ul>
-</body>
-</html>
+
+{% endblock %}

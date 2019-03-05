@@ -1,6 +1,7 @@
 from django.contrib.auth.forms import UserCreationForm, UsernameField, forms
 from django.contrib.auth.models import User
 from django.forms.models import fields_for_model
+from django.shortcuts import get_object_or_404
 
 from .models import FTLUser, FTLOrg
 
@@ -12,11 +13,11 @@ class FTLUserCreationForm(UserCreationForm):
         fields = ("email", "username",)
         field_classes = {'username': UsernameField}
 
-    def save(self, commit=True):
+    def save(self, org_slug, commit=True):
         """Create FTLUser after django user creation"""
         user = super().save()
-        org = FTLOrg.objects.get(slug='exotic-matter')
-        ftl_user = FTLUser(ftl_user=user,
+        org = get_object_or_404(FTLOrg, slug=org_slug)
+        ftl_user = FTLUser(user=user,
                            org=org)
         ftl_user.save()
 

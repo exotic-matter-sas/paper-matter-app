@@ -168,3 +168,16 @@ class LoginPageTests(BaseTestCase):
         self.log_user('user2')
         login_header = self.browser.find_element_by_css_selector('h2').text
         self.assertIn(tv.USER2_USERNAME, login_header.lower())
+
+
+class I18nTests(BaseTestCase):
+
+    def setUp(self, browser_locale='fr'):
+        super().setUp(browser_locale)
+
+    def test_i18n_are_working(self):
+        """First user can login and access a logged page"""
+        # Admin, organization and user setup
+        self.browser.get(self.live_server_url)
+
+        self.assertIn('administrateur', self.browser.find_elements_by_css_selector('h2')[0].text)
