@@ -1,5 +1,6 @@
 import platform
 import os
+from string import digits
 
 from selenium import webdriver
 from django.test import LiveServerTestCase
@@ -26,7 +27,10 @@ class BaseTestCase(LiveServerTestCase):
         self.browser.quit()
 
     def create_user(self, user_type):
-        admin_form = self.browser.find_element_by_id(f'{user_type}-form')
+        # Remove counter at the end of user-type if needed
+        user_selector = user_type[0:-1] if user_type[-1] in digits else user_type
+
+        admin_form = self.browser.find_element_by_id(f'{user_selector}-form')
         username_input = admin_form.find_element_by_id('id_username')
         email_address_input = admin_form.find_element_by_id('id_email')
         password_input = admin_form.find_element_by_id('id_password1')
@@ -47,6 +51,14 @@ class BaseTestCase(LiveServerTestCase):
 
         name_input.send_keys(tv.ORG_NAME)
         slug_input.send_keys(tv.ORG_SLUG)
+        submit_input.click()
+
+    def select_org(self, org_slug):
+        org_select_form = self.browser.find_element_by_id('organization-selection-form')
+        org_slug_input = org_select_form.find_element_by_id('id_organization_slug')
+        submit_input = org_select_form.find_element_by_css_selector('[type="submit"]')
+
+        org_slug_input.send_keys(org_slug)
         submit_input.click()
 
     def log_user(self, user_type):

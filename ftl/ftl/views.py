@@ -37,7 +37,7 @@ def login_hub(request):
     if request.method == 'POST':
         form = SelectOrganizationToLoginForm(request.POST)
         if form.is_valid():
-            org = get_object_or_404(FTLOrg, name=form.cleaned_data['organization_name'])
+            org = get_object_or_404(FTLOrg, slug=form.cleaned_data['organization_slug'])
             return redirect('login', org.slug)
     else:
         form = SelectOrganizationToLoginForm()

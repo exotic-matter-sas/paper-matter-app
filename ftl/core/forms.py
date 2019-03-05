@@ -25,5 +25,4 @@ class FTLUserCreationForm(UserCreationForm):
 
 class SelectOrganizationToLoginForm(forms.Form):
 
-    organization_name = fields_for_model(FTLOrg)['name']
-
+    organization_slug = fields_for_model(FTLOrg)['slug']

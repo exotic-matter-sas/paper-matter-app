@@ -100,7 +100,7 @@ class LandingPageTests(BaseTestCase):
         # Success message appears when account creation is complete
         self.assertIn('Congratulations', self.browser.find_element_by_css_selector('h1').text)
 
-    @skip('Need to be fixed')
+    @skip('Need to be fixed: login view display org slug instead of org name')
     def test_user_can_access_login_page_of_first_organization(self):
         """User access login page of first organization"""
         # Admin user create admin user and first org and send link to first user
@@ -120,13 +120,13 @@ class LandingPageTests(BaseTestCase):
         # The name of the first organization is displayed on login page
         login_header = self.browser.find_element_by_css_selector('h1').text
         self.assertIn('login', login_header.lower())
-        self.assertIn(tv.ORG_NAME, login_header)  # TODO check for slug instead of organization name
+        self.assertIn(tv.ORG_NAME, login_header)
 
 
 class LoginPageTests(BaseTestCase):
 
-    def test_user_can_login(self):
-        """User can login and access a logged page"""
+    def test_first_user_can_login(self):
+        """First user can login and access a logged page"""
         # Admin, organization and user setup
         self.browser.get(self.live_server_url)
         self.create_user('admin')
@@ -142,4 +142,29 @@ class LoginPageTests(BaseTestCase):
         # User login and is redirect to the logged home page, he can see it's username on it
         self.log_user('user')
         login_header = self.browser.find_element_by_css_selector('h2').text
-        self.assertIn(tv.USER_USERNAME, login_header.lower())
+        self.assertIn(tv.USER1_USERNAME, login_header.lower())
+
+    def test_second_user_can_login(self):
+        """Second user can login and access a logged page"""
+        # Admin, organization and user setup
+        self.browser.get(self.live_server_url)
+        self.create_user('admin')
+        self.create_first_organization()
+
+        user_signup_link = self.browser.find_element_by_id('user-signup')
+        user_signup_link.click()
+
+        self.create_user('user2')
+
+        # Second user display ftl-app and is redirected to login hub
+        self.browser.get(self.live_server_url)
+
+        # He type and submit his org slug and is redirected to his org login page
+        self.select_org(tv.ORG_SLUG)
+        login_header = self.browser.find_element_by_css_selector('h1').text
+        self.assertIn('login', login_header.lower())
+
+        # User login and is redirect to the logged home page, he can see it's username on it
+        self.log_user('user2')
+        login_header = self.browser.find_element_by_css_selector('h2').text
+        self.assertIn(tv.USER2_USERNAME, login_header.lower())
