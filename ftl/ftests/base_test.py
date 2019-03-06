@@ -11,7 +11,10 @@ from ftests import _test_values as tv
 
 class BaseTestCase(LiveServerTestCase):
 
-    def setUp(self):
+    def setUp(self, browser_locale='en'):
+        profile = webdriver.FirefoxProfile()
+        profile.set_preference('intl.accept_languages', browser_locale)
+
         if platform.system().startswith('Linux'):
             executable_path = 'ftests/geckodriver/geckodriver64_linux'
         elif platform.system().startswith('Windows'):
@@ -21,7 +24,8 @@ class BaseTestCase(LiveServerTestCase):
         else:
             raise EnvironmentError(f'Platform "{platform.system()}" not supported')
 
-        self.browser = webdriver.Firefox(executable_path=os.path.join(BASE_DIR, executable_path))
+        self.browser = webdriver.Firefox(executable_path=os.path.join(BASE_DIR, executable_path),
+                                         firefox_profile=profile)
 
     def tearDown(self):
         self.browser.quit()
