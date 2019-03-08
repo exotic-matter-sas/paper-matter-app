@@ -13,30 +13,32 @@ from ftl.settings import BASE_DIR
 class BaseTestCase(LiveServerTestCase):
 
     def setUp(self, browser='firefox', browser_locale='en'):
+        platform_system = platform.system()
+
         if browser == 'firefox':
             profile = webdriver.FirefoxProfile()
             profile.set_preference('intl.accept_languages', browser_locale)
 
-            if platform.system().startswith('Linux'):
+            if platform_system.startswith('Linux'):
                 executable_path = 'ftests/geckodriver/geckodriver64_linux'
-            elif platform.system().startswith('Windows'):
+            elif platform_system.startswith('Windows'):
                 executable_path = 'ftests/geckodriver/geckodriver64.exe'
-            elif platform.system().startswith('Darwin'):
+            elif platform_system.startswith('Darwin'):
                 executable_path = 'ftests/geckodriver/geckodriver64_linux'
             else:
-                raise EnvironmentError(f'Platform "{platform.system()}" not supported')
+                raise EnvironmentError(f'Platform "{platform_system}" not supported')
 
             self.browser = webdriver.Firefox(executable_path=os.path.join(BASE_DIR, executable_path),
                                              firefox_profile=profile)
         elif browser == 'chrome':
-            if platform.system().startswith('Linux'):
+            if platform_system.startswith('Linux'):
                 chrome_driver_path = 'ftests/chromedriver/chromedriver_linux64'
-            elif platform.system().startswith('Windows'):
+            elif platform_system.startswith('Windows'):
                 chrome_driver_path = 'ftests/chromedriver/chromedriver_win32.exe'
-            elif platform.system().startswith('Darwin'):
+            elif platform_system.startswith('Darwin'):
                 chrome_driver_path = 'ftests/chromedriver/chromedriver_mac64'
             else:
-                raise EnvironmentError(f'Platform "{platform.system()}" not supported')
+                raise EnvironmentError(f'Platform "{platform_system}" not supported')
 
             options = Options()
             options.add_argument("--lang={}".format(browser_locale))
