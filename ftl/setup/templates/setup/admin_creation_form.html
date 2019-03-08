@@ -1,16 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Ftl-app - Landing page</title>
-</head>
-<body>
-    <h1>Welcome on ftl-app!</h1>
-    <h2>Step 1/2: Admin creation</h2>
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+
+    <h1>{% trans "Welcome on ftl-app!" %}</h1>
+    <h2>{% trans "Step 1/2: Admin creation" %}</h2>
     <form method="post" id="admin-form">
         {% csrf_token %}
         {{ form.as_p }}
-        <input type="submit" value="Create">
+        <input type="submit" value="{% trans "Create" %}">
     </form>
-</body>
-</html>
+
+{% endblock %}

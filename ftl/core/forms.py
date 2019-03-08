@@ -6,6 +6,7 @@ from .models import FTLOrg
 
 
 class FTLUserCreationForm(UserCreationForm):
+
     class Meta:
         model = User
         fields = ("email", "username",)
@@ -13,4 +14,5 @@ class FTLUserCreationForm(UserCreationForm):
 
 
 class SelectOrganizationToLoginForm(forms.Form):
+
     organization_slug = fields_for_model(FTLOrg)['slug']

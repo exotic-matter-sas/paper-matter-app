@@ -1,15 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Ftl-app - Signup</title>
-</head>
-<body>
-    <h1>Create your account</h1>
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+    <h1>{% blocktrans %}Create your account in {{org_name}} organization{% endblocktrans %}</h1>
     <form method="post" id="user-form">
         {% csrf_token %}
         {{ form.as_p }}
-        <input type="submit" value="Create">
+        <input type="submit" value="{% trans "Create" %}">
     </form>
-</body>
-</html>
+{% endblock %}

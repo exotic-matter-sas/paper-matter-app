@@ -1,15 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Ftl-app - Login</title>
-</head>
-<body>
-    <h1>Type your organization slug to login</h1>
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+    <h1>{% trans "Type your organization slug to login" %}</h1>
     <form method="post" id="organization-selection-form">
         {% csrf_token %}
         {{ form.as_p }}
-        <input type="submit" value="Login">
+        <input type="submit" value="{% trans "Login" %}">
     </form>
-</body>
-</html>
+{% endblock %}

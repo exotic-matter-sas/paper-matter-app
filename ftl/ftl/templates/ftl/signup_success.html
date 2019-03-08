@@ -1,15 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Ftl-app - Account created</title>
-</head>
-<body>
-    <h1>Congratulations: Your account have been created</h1>
-    <p>You can now:</p>
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+    <h1>{% trans "Congratulations: Your account have been created" %}</h1>
+    <p>{% trans "You can now:" %}</p>
     <ul>
-        <li>TODO: Verify your email to activate your account</li>
-        <li>Login to your account here: <a href="{% url 'login' %}" id="user-login">User login page</a></li>
+        <li>{% trans "TODO: Verify your email to activate your account" %}</li>
+        <li>{% trans "Login to your account here:" %} <a href="{% url 'login' %}" id="user-login">{% trans "User login page" %}</a></li>
     </ul>
-</body>
-</html>
+{% endblock %}

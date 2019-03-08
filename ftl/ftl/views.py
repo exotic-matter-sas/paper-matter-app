@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.utils.translation import gettext as _
 from django.shortcuts import render, redirect, get_object_or_404
 
 from core.forms import FTLUserCreationForm, SelectOrganizationToLoginForm
@@ -30,11 +31,22 @@ def signup(request, org_slug):
     else:
         form = FTLUserCreationForm()
 
-    return render(request, 'ftl/signup.html', {'form': form, 'org_name': org.name})
+    context = {
+        'title': _('Signup'),
+        'form': form,
+        'org_name': org.name,
+    }
+
+    return render(request, 'ftl/signup.html', context)
 
 
 def signup_success(request, org_slug):
-    return render(request, 'ftl/signup_success.html', {'org_slug': org_slug})
+    context = {
+        'title': _('Signup succeed'),
+        'org_slug': org_slug,
+    }
+
+    return render(request, 'ftl/signup_success.html', context)
 
 
 def login_hub(request):
@@ -46,4 +58,9 @@ def login_hub(request):
     else:
         form = SelectOrganizationToLoginForm()
 
-    return render(request, 'ftl/login_hub.html', {'form': form})
+    context = {
+        'title': _('Login'),
+        'form': form,
+    }
+
+    return render(request, 'ftl/login_hub.html', context)
