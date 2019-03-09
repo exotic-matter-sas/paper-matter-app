@@ -38,10 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.postgres',
     'mptt',
     'rest_framework',
-    'debug_toolbar',
     'setup',
     'core',
 ]
+
 if DEBUG:
     INSTALLED_APPS += [
         'debug_toolbar',
@@ -141,6 +141,15 @@ LOGIN_URL = 'login'
 
 # Redirect user to this url after login by default
 LOGIN_REDIRECT_URL = '/app'
+
+# Django Rest Framework settings
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'PAGE_SIZE': 10
+}
 
 # Auto import local `settings_local.py` if available
 try:
