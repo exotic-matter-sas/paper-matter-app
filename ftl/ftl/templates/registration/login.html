@@ -4,7 +4,7 @@
 {% block title %}{% trans 'Login' %}{% endblock %}
 
 {% block content %}
-    <h1>{% blocktrans %}Login to {{ org_name }}{% endblocktrans %}</h1>
+    <h1>{% trans 'Login' %}</h1>
     <div id="content-main">
         {% if user.is_authenticated %}
             <p class="errornote">
