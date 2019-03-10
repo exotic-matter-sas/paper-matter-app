@@ -1,31 +1,52 @@
-import platform
 import os
+import platform
 from string import digits
 
-from selenium import webdriver
 from django.test import LiveServerTestCase
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 
-from ftl.settings import BASE_DIR
 from ftests import _test_values as tv
+from ftl.settings import BASE_DIR
 
 
 class BaseTestCase(LiveServerTestCase):
 
-    def setUp(self, browser_locale='en'):
-        profile = webdriver.FirefoxProfile()
-        profile.set_preference('intl.accept_languages', browser_locale)
+    def setUp(self, browser='firefox', browser_locale='en'):
+        platform_system = platform.system()
 
-        if platform.system().startswith('Linux'):
-            executable_path = 'ftests/geckodriver/geckodriver64_linux'
-        elif platform.system().startswith('Windows'):
-            executable_path = 'ftests/geckodriver/geckodriver64.exe'
-        elif platform.system().startswith('Darwin'):
-            executable_path = 'ftests/geckodriver/geckodriver64_linux'
+        if browser == 'firefox':
+            profile = webdriver.FirefoxProfile()
+            profile.set_preference('intl.accept_languages', browser_locale)
+
+            if platform_system.startswith('Linux'):
+                executable_path = 'ftests/geckodriver/geckodriver64_linux'
+            elif platform_system.startswith('Windows'):
+                executable_path = 'ftests/geckodriver/geckodriver64.exe'
+            elif platform_system.startswith('Darwin'):
+                executable_path = 'ftests/geckodriver/geckodriver64_linux'
+            else:
+                raise EnvironmentError(f'Platform "{platform_system}" not supported')
+
+            self.browser = webdriver.Firefox(executable_path=os.path.join(BASE_DIR, executable_path),
+                                             firefox_profile=profile)
+        elif browser == 'chrome':
+            if platform_system.startswith('Linux'):
+                chrome_driver_path = 'ftests/chromedriver/chromedriver_linux64'
+            elif platform_system.startswith('Windows'):
+                chrome_driver_path = 'ftests/chromedriver/chromedriver_win32.exe'
+            elif platform_system.startswith('Darwin'):
+                chrome_driver_path = 'ftests/chromedriver/chromedriver_mac64'
+            else:
+                raise EnvironmentError(f'Platform "{platform_system}" not supported')
+
+            options = Options()
+            options.add_argument("--lang={}".format(browser_locale))
+
+            self.browser = webdriver.Chrome(executable_path=os.path.join(BASE_DIR, chrome_driver_path),
+                                            chrome_options=options)
         else:
-            raise EnvironmentError(f'Platform "{platform.system()}" not supported')
-
-        self.browser = webdriver.Firefox(executable_path=os.path.join(BASE_DIR, executable_path),
-                                         firefox_profile=profile)
+            raise ValueError('Unsupported browser, allowed: firefox, chrome')
 
     def tearDown(self):
         self.browser.quit()
