@@ -6,7 +6,7 @@ from selenium import webdriver
 from django.test import LiveServerTestCase
 
 from ftl.settings import BASE_DIR
-from ftests import _test_values as tv
+from ftests.tools import test_values as tv
 
 
 class BaseTestCase(LiveServerTestCase):

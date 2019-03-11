@@ -1,7 +1,5 @@
-from unittest import skip
-
 from .base_test import BaseTestCase
-from ftests import _test_values as tv
+from ftests.tools import test_values as tv
 
 
 class LandingPageTests(BaseTestCase):
