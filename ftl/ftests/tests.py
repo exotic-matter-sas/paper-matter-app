@@ -28,7 +28,7 @@ class LandingPageTests(BaseTestCase):
         self.setUp()
         self.browser.get(self.live_server_url)
 
-        # The landing page welcome the user and ask him to complete 2nd step : organization creation
+        # The landing page welcome the user and ask him to complete 2nd step : first organization creation
         self.assertIn('Ftl-app', self.browser.title)
         self.assertIn('First organization creation', self.browser.find_elements_by_css_selector('h2')[0].text)
 
@@ -42,7 +42,7 @@ class LandingPageTests(BaseTestCase):
         # And then the first organisation form
         self.create_first_organization()
 
-        # A success page appears mentioning the urls for admin and user signup page
+        # A success page appears mentioning the urls for admin login page and user signup page
         self.assertIn('Setup completed', self.browser.title)
         admin_login_link = self.browser.find_element_by_id('admin-login')
         self.assertIn('/admin', admin_login_link.get_attribute('href'))
@@ -116,10 +116,9 @@ class LandingPageTests(BaseTestCase):
         user_login_link = self.browser.find_element_by_id('user-login')
         user_login_link.click()
 
-        # The name of the first organization is displayed on login page
+        # The login page is displayed
         login_header = self.browser.find_element_by_css_selector('h1').text
         self.assertIn('login', login_header.lower())
-        self.assertIn(tv.ORG_NAME, login_header)
 
 
 class LoginPageTests(BaseTestCase):
@@ -142,32 +141,6 @@ class LoginPageTests(BaseTestCase):
         self.log_user('user1')
         login_header = self.browser.find_element_by_css_selector('h2').text
         self.assertIn(tv.USER1_USERNAME, login_header.lower())
-
-    def test_second_user_can_login(self):
-        """Second user can login and access a logged page"""
-        # Admin, organization and user setup
-        self.browser.get(self.live_server_url)
-        self.create_user('admin')
-        self.create_first_organization()
-
-        user_signup_link = self.browser.find_element_by_id('user-signup')
-        user_signup_link.click()
-
-        self.create_user('user2')
-
-        # Second user display ftl-app and is redirected to login hub
-        self.browser.get(self.live_server_url)
-
-        # He type and submit his org slug and is redirected to his org login page
-        self.select_org(tv.ORG_SLUG)
-        login_header = self.browser.find_element_by_css_selector('h1').text
-        self.assertIn('login', login_header.lower())
-        self.assertIn(tv.ORG_NAME, login_header)
-
-        # User login and is redirect to the logged home page, he can see it's username on it
-        self.log_user('user2')
-        login_header = self.browser.find_element_by_css_selector('h2').text
-        self.assertIn(tv.USER2_USERNAME, login_header.lower())
 
 
 class I18nTests(BaseTestCase):

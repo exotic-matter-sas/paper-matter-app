@@ -57,14 +57,6 @@ class BaseTestCase(LiveServerTestCase):
         slug_input.send_keys(tv.ORG_SLUG)
         submit_input.click()
 
-    def select_org(self, org_slug):
-        org_select_form = self.browser.find_element_by_id('organization-selection-form')
-        org_slug_input = org_select_form.find_element_by_id('id_organization_slug')
-        submit_input = org_select_form.find_element_by_css_selector('[type="submit"]')
-
-        org_slug_input.send_keys(org_slug)
-        submit_input.click()
-
     def log_user(self, user_type):
         login_form = self.browser.find_element_by_id('login-form')
         username_input = login_form.find_element_by_id('id_username')
