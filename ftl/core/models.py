@@ -41,7 +41,9 @@ class FTLDocument(models.Model):
 # FTL Folders
 class FTLFolder(MPTTModel):
     name = models.CharField(max_length=128)
+    org = models.ForeignKey('FTLOrg', on_delete=models.CASCADE)
     parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
+    created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
