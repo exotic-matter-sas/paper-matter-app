@@ -3,18 +3,18 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
-from setup.forms import AdminCreationFrom
+from setup.forms import AdminCreationForm
 from core.models import FTLOrg
 
 
 def landing_page_step1(request):
     if request.method == 'POST':
-        form = AdminCreationFrom(request.POST)
+        form = AdminCreationForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('setup:landing_page_step2')
     else:
-        form = AdminCreationFrom()
+        form = AdminCreationForm()
 
     context = {
         'title': _('Landing page (1/2)'),

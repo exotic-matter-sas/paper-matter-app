@@ -2,7 +2,7 @@ from django.contrib.auth.forms import UserCreationForm, UsernameField
 from django.contrib.auth.models import User
 
 
-class AdminCreationFrom(UserCreationForm):
+class AdminCreationForm(UserCreationForm):
 
     class Meta:
         model = User

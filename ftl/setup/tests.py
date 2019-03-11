@@ -18,6 +18,7 @@ class SetupPagesTests(TestCase):
 
     def test_success_page_returns_correct_html(self):
         setup_org()
+
         response = self.client.get(f'/setup/{tv.ORG_SLUG}/success/')
         self.assertContains(response, 'Congratulations')
         self.assertTemplateUsed(response, 'setup/success.html')
