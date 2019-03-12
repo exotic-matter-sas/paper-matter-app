@@ -4,13 +4,11 @@ from core.models import FTLOrg
 from ftests.tools import test_values as tv
 
 
-def setup_admin(email=tv.ADMIN_EMAIL, username=tv.ADMIN_USERNAME):
-    # TODO find a programatic way of properly create admin
-    User.objects.create(
+def setup_admin(email=tv.ADMIN_EMAIL, username=tv.ADMIN_USERNAME, password=tv.ADMIN_PASS):
+    User.objects.create_superuser(
         email=email,
         username=username,
-        is_superuser=True,
-        is_staff=True,
+        password=password,
     )
 
 
