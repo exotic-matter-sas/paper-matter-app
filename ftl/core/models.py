@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractUser
 from django.db import models
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
@@ -14,14 +14,9 @@ class FTLOrg(models.Model):
         return self.name
 
 
-# FTL user
-class FTLUser(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)  # Link to Django user system
+# FTL users
+class FTLUser(AbstractUser):
     org = models.ForeignKey('FTLOrg', on_delete=models.CASCADE)
-    created = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.user.__str__()
 
 
 # FTL Documents

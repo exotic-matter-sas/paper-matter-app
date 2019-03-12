@@ -1,13 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.models import User
 from django.utils.translation import gettext as _
 
-from core.models import FTLOrg
 from core.forms import FTLUserCreationForm, SelectOrganizationToLoginForm
+from core.models import FTLOrg, FTLUser
 
 
 def index(request):
-    admin_users = User.objects.filter(is_staff=True).count()
+    admin_users = FTLUser.objects.filter(is_staff=True).count()
     if admin_users:
         if FTLOrg.objects.count():
             return redirect('login_hub')

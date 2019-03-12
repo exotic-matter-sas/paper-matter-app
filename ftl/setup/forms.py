@@ -1,11 +1,13 @@
 from django.contrib.auth.forms import UserCreationForm, UsernameField
 from django.contrib.auth.models import User
 
+from core.models import FTLUser
+
 
 class AdminCreationFrom(UserCreationForm):
 
     class Meta:
-        model = User
+        model = FTLUser
         fields = ("email", "username",)
         field_classes = {'username': UsernameField}
 
