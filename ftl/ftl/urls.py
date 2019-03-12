@@ -28,20 +28,20 @@ urlpatterns = [
     path('', views.index),
     path('setup/', include('setup.urls')),
     path('app/', include('core.urls')),
-    path('accounts/signup/<slug:org_slug>', views.signup, name='signup'),
-    path('accounts/signup/<slug:org_slug>/success', views.signup_success, name='signup_success'),
 
-    path('accounts/', include([
-        path('login/', LoginViewFTL.as_view(), name='login'),
-        path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('signup/<slug:org_slug>', views.signup, name='signup'),
+    path('signup/<slug:org_slug>/success', views.signup_success, name='signup_success'),
 
-        path('password_change/', auth_views.PasswordChangeView.as_view(), name='password_change'),
-        path('password_change/done/', auth_views.PasswordChangeDoneView.as_view(), name='password_change_done'),
+    path('login/', LoginViewFTL.as_view(), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 
-        path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
-        path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
-        path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
-        path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete')]))
+    path('password_change/', auth_views.PasswordChangeView.as_view(), name='password_change'),
+    path('password_change/done/', auth_views.PasswordChangeDoneView.as_view(), name='password_change_done'),
+
+    path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
+    path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
+    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete')
 ]
 
 if settings.DEBUG:

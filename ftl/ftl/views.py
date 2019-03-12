@@ -22,7 +22,6 @@ def signup(request, org_slug):
         form = FTLUserCreationForm(request.POST)
         if form.is_valid():
             save = form.save()
-            org = FTLOrg.objects.get(slug=org_slug)
             ftl_user = FTLUser(user=save, org=org)
             ftl_user.save()
 
