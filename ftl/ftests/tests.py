@@ -105,7 +105,7 @@ class LandingPageTests(BaseTestCase):
         setup_org()
 
         # First user display signup page and signup to first organization
-        self.browser.get(f'{self.live_server_url}/{tv.ORG_SLUG}/signup')
+        self.browser.get(f'{self.live_server_url}/signup/{tv.ORG_SLUG}')
         self.create_user('user1')
 
         # He click on link to login
@@ -126,7 +126,7 @@ class LoginPageTests(BaseTestCase):
         setup_user(org)
 
         # User login and is redirect to the logged home page, he can see it's username on it
-        self.browser.get(f'{self.live_server_url}/{org.slug}/login')
+        self.browser.get(f'{self.live_server_url}/login')
         self.log_user('user1')
         login_header = self.browser.find_element_by_css_selector('h2').text
         self.assertIn(tv.USER1_USERNAME, login_header.lower())
@@ -134,8 +134,8 @@ class LoginPageTests(BaseTestCase):
 
 class I18nTests(BaseTestCase):
 
-    def setUp(self, browser_locale='fr'):
-        super().setUp(browser_locale)
+    def setUp(self, browser='firefox', browser_locale='en'):
+        super().setUp(browser=browser, browser_locale='fr')
 
     def test_i18n_are_working(self):
         """First user can login and access a logged page"""
