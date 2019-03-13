@@ -1,6 +1,6 @@
 from .base_test import BaseTestCase
 from ftests.tools import test_values as tv
-from ftests.tools.setup_helpers import setup_org, setup_admin
+from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user
 
 
 class LandingPageTests(BaseTestCase):
@@ -108,50 +108,15 @@ class LoginPageTests(BaseTestCase):
 
     def test_first_user_can_login(self):
         """First user can login and access a logged page"""
-        # TODO implement ftests.tools.setup_user
-        # Admin, organization and user setup
-        self.browser.get(self.live_server_url)
-        self.create_user('admin')
-        self.create_first_organization()
-
-        user_signup_link = self.browser.find_element_by_id('user-signup')
-        user_signup_link.click()
-
-        self.create_user('user1')
-        user_login_link = self.browser.find_element_by_id('user-login')
-        user_login_link.click()
+        setup_admin()
+        org = setup_org()
+        setup_user(org)
 
         # User login and is redirect to the logged home page, he can see it's username on it
+        self.browser.get(f'{self.live_server_url}/{org.slug}/login')
         self.log_user('user1')
         login_header = self.browser.find_element_by_css_selector('h2').text
         self.assertIn(tv.USER1_USERNAME, login_header.lower())
-
-    def test_second_user_can_login(self):
-        """Second user can login and access a logged page"""
-        # TODO implement ftests.tools.setup_user
-        # Admin, organization and user setup
-        self.browser.get(self.live_server_url)
-        self.create_user('admin')
-        self.create_first_organization()
-
-        user_signup_link = self.browser.find_element_by_id('user-signup')
-        user_signup_link.click()
-
-        self.create_user('user2')
-
-        # Second user display ftl-app and is redirected to login hub
-        self.browser.get(self.live_server_url)
-
-        # He type and submit his org slug and is redirected to his org login page
-        self.select_org(tv.ORG_SLUG)
-        login_header = self.browser.find_element_by_css_selector('h1').text
-        self.assertIn('login', login_header.lower())
-        self.assertIn(tv.ORG_NAME, login_header)
-
-        # User login and is redirect to the logged home page, he can see it's username on it
-        self.log_user('user2')
-        login_header = self.browser.find_element_by_css_selector('h2').text
-        self.assertIn(tv.USER2_USERNAME, login_header.lower())
 
 
 class I18nTests(BaseTestCase):
