@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% load i18n %}
 
+{% block title %}{% trans 'Signup' %}{% endblock %}
+
 {% block content %}
     <h1>{% blocktrans %}Create your account in {{org_name}} organization{% endblocktrans %}</h1>
     <form method="post" id="user-form">
