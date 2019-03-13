@@ -1,7 +1,6 @@
-from django.views.generic import CreateView
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
-from django.utils.translation import gettext as _
+from django.views.generic import CreateView
 
 from setup.forms import AdminCreationForm
 from core.models import FTLOrg
@@ -17,7 +16,6 @@ def landing_page_step1(request):
         form = AdminCreationForm()
 
     context = {
-        'title': _('Landing page (1/2)'),
         'form': form,
     }
 
@@ -29,11 +27,6 @@ class LandingPageStep2(CreateView):
     fields = ('name', 'slug')
     template_name = 'setup/first_organization_creation_form.html'
 
-    def get_context_data(self, **kwargs):
-        # Add data to view context
-        kwargs['title'] = _('Landing page (2/2)')
-        return super().get_context_data(**kwargs)
-
     def get_success_url(self):
         return reverse('setup:success', args=(self.object.slug,))
 
@@ -41,7 +34,6 @@ class LandingPageStep2(CreateView):
 def success(request, org_slug):
     get_object_or_404(FTLOrg, slug=org_slug)  # To check if org is valid
     context = {
-        'title': _('Setup completed'),
         'org_slug': org_slug,
     }
     return render(request, 'setup/success.html', context)

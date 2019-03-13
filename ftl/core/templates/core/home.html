@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% load i18n %}
 
+{% block title %}{% trans 'Home' %}{% endblock %}
+
 {% block content %}
     <h1>{% blocktrans %}FTL APP: Organization {{org_name}}{% endblocktrans %}</h1>
     <h2>{% blocktrans %}Welcome back {{username}}!{% endblocktrans %}</h2>

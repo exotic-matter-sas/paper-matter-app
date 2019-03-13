@@ -27,16 +27,30 @@ class LandingPageTests(BaseTestCase):
         self.setUp()
         self.browser.get(self.live_server_url)
 
-        # The landing page welcome the user and ask him to complete 2nd step : organization creation
+        # The landing page welcome the user and ask him to complete 2nd step : first organization creation
         self.assertIn('Ftl-app', self.browser.title)
         self.assertIn('First organization creation', self.browser.find_elements_by_css_selector('h2')[0].text)
 
     def test_landing_page_redirect_to_user_login_when_setup_complete(self):
         """Landing page redirect to user login page when setup complete"""
         setup_admin()
-        setup_org()
 
         # Display ftl-app now redirect to user login page
+        # Admin user have just install ftl-app and display it for the first time
+        self.browser.get(self.live_server_url)
+
+        # And then the first organisation form
+        self.create_first_organization()
+
+        # A success page appears mentioning the urls for admin login page and user signup page
+        self.assertIn('Setup completed', self.browser.title)
+        admin_login_link = self.browser.find_element_by_id('admin-login')
+        self.assertIn('/admin', admin_login_link.get_attribute('href'))
+
+        user_signup_link = self.browser.find_element_by_id('user-signup')
+        self.assertIn('/signup', user_signup_link.get_attribute('href'))
+
+        # Display ftl-app again now redirect to user login page
         self.browser.get(self.live_server_url)
         self.assertIn('Login', self.browser.title)
 
@@ -98,10 +112,9 @@ class LandingPageTests(BaseTestCase):
         user_login_link = self.browser.find_element_by_id('user-login')
         user_login_link.click()
 
-        # The name of the first organization is displayed on login page
+        # The login page is displayed
         login_header = self.browser.find_element_by_css_selector('h1').text
         self.assertIn('login', login_header.lower())
-        self.assertIn(tv.ORG_NAME, login_header)
 
 
 class LoginPageTests(BaseTestCase):

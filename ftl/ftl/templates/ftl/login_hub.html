@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% load i18n %}
 
+{% block title %}{% trans 'Login' %}{% endblock %}
+
 {% block content %}
     <h1>{% trans "Type your organization slug to login" %}</h1>
     <form method="post" id="organization-selection-form">
