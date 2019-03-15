@@ -1,19 +1,19 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.views.generic import CreateView
 
+from setup.forms import AdminCreationForm
 from core.models import FTLOrg
-from setup.forms import AdminCreationFrom
 
 
 def landing_page_step1(request):
     if request.method == 'POST':
-        form = AdminCreationFrom(request.POST)
+        form = AdminCreationForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('setup:landing_page_step2')
     else:
-        form = AdminCreationFrom()
+        form = AdminCreationForm()
 
     context = {
         'form': form,
@@ -32,6 +32,7 @@ class LandingPageStep2(CreateView):
 
 
 def success(request, org_slug):
+    get_object_or_404(FTLOrg, slug=org_slug)  # To check if org is valid
     context = {
         'org_slug': org_slug,
     }
