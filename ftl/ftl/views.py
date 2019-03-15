@@ -1,5 +1,4 @@
 from django.contrib.auth.models import User
-from django.utils.translation import gettext as _
 from django.shortcuts import render, redirect, get_object_or_404
 
 from core.forms import FTLUserCreationForm, SelectOrganizationToLoginForm
@@ -23,7 +22,6 @@ def signup(request, org_slug):
         form = FTLUserCreationForm(request.POST)
         if form.is_valid():
             save = form.save()
-            org = FTLOrg.objects.get(slug=org_slug)
             ftl_user = FTLUser(user=save, org=org)
             ftl_user.save()
 
@@ -32,7 +30,6 @@ def signup(request, org_slug):
         form = FTLUserCreationForm()
 
     context = {
-        'title': _('Signup'),
         'form': form,
         'org_name': org.name,
     }
@@ -42,7 +39,6 @@ def signup(request, org_slug):
 
 def signup_success(request, org_slug):
     context = {
-        'title': _('Signup succeed'),
         'org_slug': org_slug,
     }
 
@@ -59,7 +55,6 @@ def login_hub(request):
         form = SelectOrganizationToLoginForm()
 
     context = {
-        'title': _('Login'),
         'form': form,
     }
 

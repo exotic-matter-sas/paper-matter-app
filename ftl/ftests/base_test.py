@@ -6,8 +6,8 @@ from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-from ftests import _test_values as tv
 from ftl.settings import BASE_DIR
+from ftests.tools import test_values as tv
 
 
 class BaseTestCase(LiveServerTestCase):
@@ -76,14 +76,6 @@ class BaseTestCase(LiveServerTestCase):
 
         name_input.send_keys(tv.ORG_NAME)
         slug_input.send_keys(tv.ORG_SLUG)
-        submit_input.click()
-
-    def select_org(self, org_slug):
-        org_select_form = self.browser.find_element_by_id('organization-selection-form')
-        org_slug_input = org_select_form.find_element_by_id('id_organization_slug')
-        submit_input = org_select_form.find_element_by_css_selector('[type="submit"]')
-
-        org_slug_input.send_keys(org_slug)
         submit_input.click()
 
     def log_user(self, user_type):
