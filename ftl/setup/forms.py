@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from core.models import FTLUser
 
 
-class AdminCreationFrom(UserCreationForm):
+class AdminCreationForm(UserCreationForm):
 
     class Meta:
         model = FTLUser

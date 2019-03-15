@@ -1,19 +1,14 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import gettext as _
 
-from core.models import FTLOrg
+from django.shortcuts import render
 
 
 @login_required
-def home(request, org_slug):
-    org = get_object_or_404(FTLOrg, slug=org_slug)
+def home(request):
     context = {
-        'title': _('Home'),
-        'org_name': org.name,
+        'org_name': request.session['org_name'],
         'username': request.user.get_username(),
     }
     return render(request, 'core/home.html', context)
-
-
-

@@ -1,10 +1,10 @@
 {% load i18n %}
 
 <!DOCTYPE html>
-<html lang="{{request.LANGUAGE_CODE}}">
+<html lang="{{ request.LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
-    <title>Ftl-app - {{ title }}</title>
+    <title>Ftl-app - {% block title %}{% endblock %}</title>
 </head>
 <body>
 <div id="content">
