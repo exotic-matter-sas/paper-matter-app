@@ -5,11 +5,13 @@
 
 {% block content %}
 
-    <h1>{% trans "Congratulations: Admin and first organization properly created!" %}</h1>
+    <h1>{% blocktrans %}Congratulations: {{ org_slug }} was created with your first admin!{% endblocktrans %}</h1>
     <p>{% trans "You can now:" %}</p>
     <ul>
-        <li>{% trans "Send this link to first organization users for them to create an account:" %}<br/> <a href="{% url 'signup' org_slug %}" id="user-signup">{% trans "User signup page" %}</a></li>
-        <li>{% trans "Connect to admin pannel here:" %} <a href="{% url 'admin:index' %}" id="admin-login">{% trans "Admin login page" %}</a></li>
+        <li>{% trans "Send this link to first organization users for them to create an account:" %}<br/> <a
+                href="{% url 'signup' org_slug %}" id="user-signup">{% trans "User signup page" %}</a></li>
+        <li>{% trans "Connect to admin pannel here:" %} <a href="{% url 'admin:index' %}"
+                                                           id="admin-login">{% trans "Admin login page" %}</a></li>
     </ul>
 
 {% endblock %}
