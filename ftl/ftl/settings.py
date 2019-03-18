@@ -40,8 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.postgres',
     'mptt',
+    'ftl',
     'setup',
-    'core',
+    'core'
 ]
 if DEBUG:
     INSTALLED_APPS += [
