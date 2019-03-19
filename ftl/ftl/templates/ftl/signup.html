@@ -4,7 +4,7 @@
 {% block title %}{% trans 'Signup' %}{% endblock %}
 
 {% block content %}
-    <h1>{% blocktrans with org_name=view.kwargs.org_slug %}Create your account in {{ org_name }}
+    <h1>{% blocktrans with org_name=org_name %}Create your account in {{ org_name }}
         organization{% endblocktrans %}</h1>
     <form method="post" id="user-form">
         {% csrf_token %}

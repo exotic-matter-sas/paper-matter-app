@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.views.generic import FormView
 
@@ -24,6 +24,12 @@ class CreateFTLUserFormView(FormView):
     def get_success_url(self):
         # We redefine the method instead of the field because the success url is dynamic (org slug)
         return reverse('signup_success', kwargs=self.kwargs)
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        org = get_object_or_404(FTLOrg.objects.filter(slug=self.kwargs['org_slug']))
+        data['org_name'] = org.name
+        return data
 
     def form_valid(self, form):
         form.save_user(self.kwargs['org_slug'])

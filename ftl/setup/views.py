@@ -27,5 +27,6 @@ def success(request):
     org = get_object_or_404(FTLOrg)
     context = {
         'org_slug': org.slug,
+        'org_name': org.name,
     }
     return render(request, 'setup/success.html', context)

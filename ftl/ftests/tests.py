@@ -1,26 +1,28 @@
-from .base_test import BaseTestCase
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user
+from .base_test import BaseTestCase
 
 
 class LandingPageTests(BaseTestCase):
+    def setUp(self, browser='chrome', browser_locale='en'):
+        super().setUp(browser, browser_locale)
 
     def test_landing_page_display_properly_on_first_visit(self):
         """Landing page display properly on first visit"""
         # Admin user have just install ftl-app and display it for the first time
         self.browser.get(self.live_server_url)
 
-        # The landing page welcome the user and ask him to complete 1st step : admin creation
+        # The landing page welcome the user and ask him to complete 1st step : org creation
         self.assertIn('Ftl-app', self.browser.title)
-        self.assertIn('Admin creation', self.browser.find_elements_by_css_selector('h2')[0].text)
+        self.assertIn('organization', self.browser.find_elements_by_css_selector('h2')[0].text)
 
     def test_landing_page_display_properly_after_admin_creation(self):
         """Landing page display properly after admin creation"""
         # Admin user have just install ftl-app and display it for the first time
         self.browser.get(self.live_server_url)
 
-        # He fulfill the admin creation form and close his browser
-        self.create_user('admin')
+        # He fulfill the org creation form and close his browser
+        self.create_first_organization()
         self.browser.quit()
 
         # He come back later and display ftl-app again
@@ -29,18 +31,19 @@ class LandingPageTests(BaseTestCase):
 
         # The landing page welcome the user and ask him to complete 2nd step : first organization creation
         self.assertIn('Ftl-app', self.browser.title)
-        self.assertIn('First organization creation', self.browser.find_elements_by_css_selector('h2')[0].text)
+        self.assertIn('administrator', self.browser.find_elements_by_css_selector('h2')[0].text)
 
     def test_landing_page_redirect_to_user_login_when_setup_complete(self):
         """Landing page redirect to user login page when setup complete"""
-        setup_admin()
-
         # Display ftl-app now redirect to user login page
         # Admin user have just install ftl-app and display it for the first time
         self.browser.get(self.live_server_url)
 
         # And then the first organisation form
         self.create_first_organization()
+
+        # Create admin user
+        self.create_user('admin')
 
         # A success page appears mentioning the urls for admin login page and user signup page
         self.assertIn('Setup completed', self.browser.title)
@@ -56,15 +59,15 @@ class LandingPageTests(BaseTestCase):
 
     def test_admin_user_can_login_in_django_admin(self):
         """Admin user can login in Django admin"""
-        setup_admin()
+        setup_admin(setup_org())
 
         # Admin create first organization
-        self.browser.get(self.live_server_url)
-        self.create_first_organization()
+        self.browser.get(self.live_server_url + "/admin")
+        # self.create_first_organization()
 
         # He click on link to login to admin portal
-        admin_login_link = self.browser.find_element_by_id('admin-login')
-        admin_login_link.click()
+        # admin_login_link = self.browser.find_element_by_id('admin-login')
+        # admin_login_link.click()
 
         admin_login_form = self.browser.find_element_by_id('login-form')
         username_input = admin_login_form.find_element_by_id('id_username')
@@ -80,11 +83,14 @@ class LandingPageTests(BaseTestCase):
 
     def test_user_can_signup_to_first_organization(self):
         """User can signup to first organization"""
-        setup_admin()
-
         # Admin create first organization
         self.browser.get(self.live_server_url)
+
+        # And then the first organisation form
         self.create_first_organization()
+
+        # Create admin user
+        self.create_user('admin')
 
         # Admin copy the link for user signup and send it to the first user
         user_signup_link = self.browser.find_element_by_id('user-signup')
@@ -101,8 +107,7 @@ class LandingPageTests(BaseTestCase):
 
     def test_user_can_access_signup_page_of_first_organization(self):
         """User access signup page of first organization"""
-        setup_admin()
-        setup_org()
+        setup_admin(setup_org())
 
         # First user display signup page and signup to first organization
         self.browser.get(f'{self.live_server_url}/signup/{tv.ORG_SLUG}')
@@ -118,12 +123,14 @@ class LandingPageTests(BaseTestCase):
 
 
 class LoginPageTests(BaseTestCase):
+    def setUp(self, browser='chrome', browser_locale='en'):
+        super().setUp(browser, browser_locale)
 
     def test_first_user_can_login(self):
         """First user can login and access a logged page"""
-        setup_admin()
         org = setup_org()
-        setup_user(org)
+        setup_admin(org=org)
+        setup_user(org=org)
 
         # User login and is redirect to the logged home page, he can see it's username on it
         self.browser.get(f'{self.live_server_url}/login')
@@ -133,13 +140,12 @@ class LoginPageTests(BaseTestCase):
 
 
 class I18nTests(BaseTestCase):
-
-    def setUp(self, browser='firefox', browser_locale='en'):
-        super().setUp(browser=browser, browser_locale='fr')
+    def setUp(self, browser='chrome', browser_locale='fr'):
+        super().setUp(browser, browser_locale)
 
     def test_i18n_are_working(self):
         """First user can login and access a logged page"""
         # Admin, organization and user setup
         self.browser.get(self.live_server_url)
 
-        self.assertIn('administrateur', self.browser.find_elements_by_css_selector('h2')[0].text)
+        self.assertIn('organisation', self.browser.find_elements_by_css_selector('h2')[0].text)

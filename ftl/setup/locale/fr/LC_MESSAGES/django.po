@@ -47,9 +47,9 @@ msgstr "Configuration terminée"
 
 #: .\setup\templates\setup\success.html:8
 #, python-format
-msgid "Congratulations: %(org_slug)s was created with your first admin!"
+msgid "Congratulations: %(org_name)s was created with your first admin!"
 msgstr ""
-"Félicitations ! %(org_slug)s et son administrateur ont été créés avec succès."
+"Félicitations ! %(org_name)s et son administrateur ont été créés avec succès."
 
 #: .\setup\templates\setup\success.html:9
 msgid "You can now:"
