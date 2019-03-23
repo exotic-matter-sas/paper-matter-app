@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block title %}{% trans "Step 1/2: Create organization" %}{% endblock %}
+{% block title %}{% trans "Step 1/2: create first organization" %}{% endblock %}
 
 {% block content %}
 
     <h1>{% trans "Welcome to ftl-app!" %}</h1>
-    <h2>{% trans "Step 1/2: Create organization" %}</h2>
+    <h2>{% trans "Step 1/2: create first organization" %}</h2>
     <form method="post" id="organization-form">
         {% csrf_token %}
         {{ form.as_p }}

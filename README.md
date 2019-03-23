@@ -13,14 +13,16 @@ Archiving documents solution
  
  ## i18n
  
- Add a new language or key:
+ :warning: _Try to avoid raw editing of .po files, use poedit or equivalent instead_
+ 
+ Add a new language or create new key to translate:
  
     python manage.py makemessages -l fr --ignore=requirements*.txt,__init__.py,ftest/*
     
- Update i18n values:
+ Update values for existing i18n key:
  
     python manage.py makemessages --all
     
- Compile .po and .mo files:
+ Compile .mo files:
  
     python manage.py compilemessages
