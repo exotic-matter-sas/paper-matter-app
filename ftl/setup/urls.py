@@ -4,7 +4,7 @@ from . import views
 
 app_name = 'setup'
 urlpatterns = [
-    path('1/', views.landing_page_step1, name='landing_page_step1'),
-    path('2/', views.LandingPageStep2.as_view(), name='landing_page_step2'),
-    path('<slug:org_slug>/success/', views.success, name='success'),
+    path('createorg/', views.CreateOrg.as_view(), name='create_org'),
+    path('createadmin/', views.CreateAdmin.as_view(), name='create_admin'),
+    path('success/', views.success, name='success'),
 ]

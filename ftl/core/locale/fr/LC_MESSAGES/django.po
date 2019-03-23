@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-05 16:20+0000\n"
+"POT-Creation-Date: 2019-03-23 22:05+0000\n"
 "PO-Revision-Date: 2019-03-05 16:56+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,16 +18,16 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.0.6\n"
 
-#: core/templates/core/home.html:5
+#: core/templates/core/home.html:4
+msgid "Home"
+msgstr "Accueil"
+
+#: core/templates/core/home.html:7
 #, python-format
 msgid "FTL APP: Organization %(org_name)s"
 msgstr "FTL APP : Organisation %(org_name)s"
 
-#: core/templates/core/home.html:6
+#: core/templates/core/home.html:8
 #, python-format
 msgid "Welcome back %(username)s!"
 msgstr "Content de vous revoir %(username)s :) !"
-
-#: core/views.py:12
-msgid "Home"
-msgstr "Accueil"
