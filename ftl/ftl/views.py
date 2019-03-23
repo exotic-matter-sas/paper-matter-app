@@ -32,7 +32,9 @@ class CreateFTLUserFormView(FormView):
         return data
 
     def form_valid(self, form):
-        form.save_user(self.kwargs['org_slug'])
+        instance = form.save(commit=False)
+        instance.org = get_object_or_404(FTLOrg, slug=self.kwargs['org_slug'])
+        instance.save()
         return super().form_valid(form)
 
 
