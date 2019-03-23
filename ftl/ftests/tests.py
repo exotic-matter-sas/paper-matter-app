@@ -4,9 +4,6 @@ from .base_test import BaseTestCase
 
 
 class LandingPageTests(BaseTestCase):
-    def setUp(self, browser='chrome', browser_locale='en'):
-        super().setUp(browser, browser_locale)
-
     def test_landing_page_display_properly_on_first_visit(self):
         """Landing page display properly on first visit"""
         # Admin user have just install ftl-app and display it for the first time
@@ -123,9 +120,6 @@ class LandingPageTests(BaseTestCase):
 
 
 class LoginPageTests(BaseTestCase):
-    def setUp(self, browser='chrome', browser_locale='en'):
-        super().setUp(browser, browser_locale)
-
     def test_first_user_can_login(self):
         """First user can login and access a logged page"""
         org = setup_org()
@@ -140,8 +134,8 @@ class LoginPageTests(BaseTestCase):
 
 
 class I18nTests(BaseTestCase):
-    def setUp(self, browser='chrome', browser_locale='fr'):
-        super().setUp(browser, browser_locale)
+    def setUp(self, browser=None, browser_locale='fr'):
+        super().setUp(browser_locale='fr')
 
     def test_i18n_are_working(self):
         """First user can login and access a logged page"""

@@ -152,3 +152,6 @@ try:
     from .settings_local import *
 except ImportError:
     pass
+
+# Default browser used for functional tests
+DEFAULT_TEST_BROWSER = 'firefox'
