@@ -26,6 +26,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Custom user auth model
+AUTH_USER_MODEL = 'core.FTLUser'
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -37,8 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.postgres',
     'mptt',
+    'ftl',
     'setup',
-    'core',
+    'core'
 ]
 if DEBUG:
     INSTALLED_APPS += [
@@ -81,6 +85,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ftl.wsgi.application'
 
+
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
@@ -94,6 +99,7 @@ DATABASES = {
         'PORT': '5432'
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -112,6 +118,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
@@ -140,6 +147,12 @@ LOGIN_URL = 'login'
 # Redirect user to this url after login by default
 LOGIN_REDIRECT_URL = '/app'
 
+# Default browser used for functional tests
+DEFAULT_TEST_BROWSER = 'firefox'
+
+
+# ==================================================
+# No settings under this line
 # Auto import local `settings_local.py` if available
 try:
     from .settings_local import *

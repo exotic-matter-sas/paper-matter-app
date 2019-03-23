@@ -6,27 +6,27 @@ from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-from ftl.settings import BASE_DIR
+from ftl.settings import BASE_DIR, DEFAULT_TEST_BROWSER
 from ftests.tools import test_values as tv
 
 
 class BaseTestCase(LiveServerTestCase):
 
-    def setUp(self, browser='firefox', browser_locale='en'):
+    def setUp(self, browser=DEFAULT_TEST_BROWSER, browser_locale='en'):
         platform_system = platform.system()
 
         if browser == 'firefox':
-            profile = webdriver.FirefoxProfile()
-            profile.set_preference('intl.accept_languages', browser_locale)
-
             if platform_system.startswith('Linux'):
                 executable_path = 'ftests/geckodriver/geckodriver64_linux'
             elif platform_system.startswith('Windows'):
                 executable_path = 'ftests/geckodriver/geckodriver64.exe'
             elif platform_system.startswith('Darwin'):
-                executable_path = 'ftests/geckodriver/geckodriver64_linux'
+                executable_path = 'ftests/geckodriver/geckodriver64_macosx'
             else:
                 raise EnvironmentError(f'Platform "{platform_system}" not supported')
+
+            profile = webdriver.FirefoxProfile()
+            profile.set_preference('intl.accept_languages', browser_locale)
 
             self.browser = webdriver.Firefox(executable_path=os.path.join(BASE_DIR, executable_path),
                                              firefox_profile=profile)

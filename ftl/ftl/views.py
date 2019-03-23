@@ -1,40 +1,41 @@
-from django.contrib.auth.models import User
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
+from django.views.generic import FormView
 
-from core.forms import FTLUserCreationForm, SelectOrganizationToLoginForm
 from core.models import FTLOrg, FTLUser
+from ftl.forms import FTLUserCreationForm
 
 
 def index(request):
-    admin_users = User.objects.filter(is_staff=True).count()
-    if admin_users:
-        if FTLOrg.objects.count():
-            return redirect('login')
+    admin_users = FTLUser.objects.filter(is_staff=True).count()
+    if admin_users > 0:
+        return redirect('login')
+    else:
+        if FTLOrg.objects.count() > 0:
+            return redirect('setup:create_admin')
         else:
-            return redirect('setup:landing_page_step2')
-    else:
-        return redirect('setup:landing_page_step1')
+            return redirect('setup:create_org')
 
 
-def signup(request, org_slug):
-    org = get_object_or_404(FTLOrg, slug=org_slug)
-    if request.method == 'POST':
-        form = FTLUserCreationForm(request.POST)
-        if form.is_valid():
-            save = form.save()
-            ftl_user = FTLUser(user=save, org=org)
-            ftl_user.save()
+class CreateFTLUserFormView(FormView):
+    template_name = 'ftl/signup.html'
+    form_class = FTLUserCreationForm
 
-            return redirect('signup_success', org_slug)
-    else:
-        form = FTLUserCreationForm()
+    def get_success_url(self):
+        # We redefine the method instead of the field because the success url is dynamic (org slug)
+        return reverse('signup_success', kwargs=self.kwargs)
 
-    context = {
-        'form': form,
-        'org_name': org.name,
-    }
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        org = get_object_or_404(FTLOrg.objects.filter(slug=self.kwargs['org_slug']))
+        data['org_name'] = org.name
+        return data
 
-    return render(request, 'ftl/signup.html', context)
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        instance.org = get_object_or_404(FTLOrg, slug=self.kwargs['org_slug'])
+        instance.save()
+        return super().form_valid(form)
 
 
 def signup_success(request, org_slug):
@@ -43,19 +44,3 @@ def signup_success(request, org_slug):
     }
 
     return render(request, 'ftl/signup_success.html', context)
-
-
-def login_hub(request):
-    if request.method == 'POST':
-        form = SelectOrganizationToLoginForm(request.POST)
-        if form.is_valid():
-            org = get_object_or_404(FTLOrg, slug=form.cleaned_data['organization_slug'])
-            return redirect('login', org.slug)
-    else:
-        form = SelectOrganizationToLoginForm()
-
-    context = {
-        'form': form,
-    }
-
-    return render(request, 'ftl/login_hub.html', context)

@@ -29,7 +29,7 @@ urlpatterns = [
     path('setup/', include('setup.urls')),
     path('app/', include('core.urls')),
 
-    path('signup/<slug:org_slug>', views.signup, name='signup'),
+    path('signup/<slug:org_slug>', views.CreateFTLUserFormView.as_view(), name='signup'),
     path('signup/<slug:org_slug>/success', views.signup_success, name='signup_success'),
 
     path('login/', LoginViewFTL.as_view(), name='login'),
