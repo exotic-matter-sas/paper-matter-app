@@ -18,6 +18,9 @@ class FTLOrg(models.Model):
 class FTLUser(AbstractUser):
     org = models.ForeignKey('FTLOrg', on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.username
+
 
 # FTL Documents
 class FTLDocument(models.Model):
@@ -25,7 +28,7 @@ class FTLDocument(models.Model):
     ftl_user = models.ForeignKey('FTLUser', on_delete=models.CASCADE)
     ftl_folder = TreeForeignKey('FTLFolder', on_delete=models.CASCADE, null=True, blank=True)
     title = models.TextField()
-    note = models.TextField()
+    note = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     edited = models.DateTimeField(auto_now=True)
 

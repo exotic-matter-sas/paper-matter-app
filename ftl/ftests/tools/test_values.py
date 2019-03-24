@@ -12,3 +12,7 @@ USER1_PASS = 'a123456!'
 USER2_USERNAME = 'user2'
 USER2_EMAIL = 'user2@ftl-exemple.com'
 USER2_PASS = 'a123456!'
+
+DOCUMENT1_TITLE = 'Document 1'
+
+FOLDER1_NAME = 'Folder 1'
