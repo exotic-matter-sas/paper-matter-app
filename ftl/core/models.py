@@ -1,5 +1,7 @@
 from django.contrib.auth.models import User, AbstractUser
 from django.db import models
+from django.utils.translation import gettext_lazy as _
+
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 
@@ -17,6 +19,8 @@ class FTLOrg(models.Model):
 # FTL users
 class FTLUser(AbstractUser):
     org = models.ForeignKey('FTLOrg', on_delete=models.CASCADE)
+    # override email field to set blank and unique constrains
+    email = models.EmailField(_('email address'), blank=False, unique=True)
 
     def __str__(self):
         return self.username

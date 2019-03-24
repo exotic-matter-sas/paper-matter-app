@@ -46,7 +46,7 @@ class FtlPagesTests(TestCase):
                                         'email': tv.USER1_EMAIL,
                                         'password1': tv.USER1_PASS,
                                         'password2': tv.USER1_PASS,
-                                    }, follow=True)
+                                    })
 
         self.assertRedirects(response, reverse_lazy('signup_success', kwargs={'org_slug': org.slug}))
 
