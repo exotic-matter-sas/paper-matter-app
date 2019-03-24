@@ -1,3 +1,6 @@
+from django.contrib.sessions.backends.db import SessionStore
+from django.conf import settings as django_settings
+
 from core.models import FTLOrg, FTLUser
 from ftests.tools import test_values as tv
 
@@ -25,3 +28,13 @@ def setup_user(org, email=tv.USER1_EMAIL, username=tv.USER1_USERNAME, password=t
         password=password,
         org=org,
     )
+
+
+def setup_authenticated_session(test_client, org, user):
+    session = test_client.session
+    session.update({
+        'org_name': org.name,
+        'org_id': org.id,
+    })
+    session.save()
+    test_client._login(user)

@@ -1,3 +1,17 @@
 from django.test import TestCase
 
-# Create your tests here.
+from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_authenticated_session
+
+
+class CorePagesTests(TestCase):
+
+    def setUp(self):
+        self.org = setup_org()
+        setup_admin(self.org)
+        self.user = setup_user(self.org)
+        setup_authenticated_session(self.client, self.org, self.user)
+
+    def test_home_page_returns_correct_html(self):
+        response = self.client.get('/app/')
+        self.assertContains(response, self.user.username)
+        self.assertTemplateUsed(response, 'core/home.html')
