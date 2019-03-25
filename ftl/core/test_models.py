@@ -25,11 +25,10 @@ class FTLUserModelTest(TestCase):
                 self.assertIn('org', str(e))
                 raise
 
-    def test_ftl_documents_must_have_user_and_org(self):
+    def test_ftl_folder_must_have_an_org(self):
         with self.assertRaises(ValidationError):
             try:
                 FTLFolder(name=tv.FOLDER1_NAME).full_clean()
             except ValidationError as e:
-                self.assertIn('user', str(e))
                 self.assertIn('org', str(e))
                 raise

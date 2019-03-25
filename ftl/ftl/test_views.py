@@ -11,7 +11,7 @@ class FtlPagesTests(TestCase):
     def test_index_redirects(self):
         """Index redirect to correct page according to setup state"""
         response = self.client.get('')
-        self.assertRedirects(response, reverse_lazy('setup:create_org'))
+        self.assertRedirects(response, reverse_lazy('setup:create_first_org'))
 
         org = setup_org()
         response = self.client.get('')
