@@ -36,7 +36,6 @@ class SetupPagesTests(TestCase):
 
     def test_create_admin_page_get_proper_context(self):
         """create-admin page get proper context"""
-        """create_first_org page get proper context"""
         response = self.client.get('/setup/createadmin/')
 
         self.assertIsInstance(response.context['form'], CreateAdmin.form_class)

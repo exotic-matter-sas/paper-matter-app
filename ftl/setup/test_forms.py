@@ -26,7 +26,7 @@ class FtlAdminCreationFormTests(TestCase):
         self.assertFalse(form.is_valid())
         self.assertIn('email', form.errors)
 
-    def test_form_refused_non_unique_email(self):
+    def test_form_refuse_non_unique_email(self):
         """Form refuse non unique email"""
         setup_user(self.org, username=tv.USER1_USERNAME, email=tv.USER1_EMAIL)
 
@@ -39,7 +39,7 @@ class FtlAdminCreationFormTests(TestCase):
         self.assertFalse(form.is_valid())
         self.assertIn('email', form.errors)
 
-    def test_form_refused_non_unique_username(self):
+    def test_form_refuse_non_unique_username(self):
         """Form refuse non unique username"""
         setup_user(self.org, username=tv.USER1_USERNAME, email=tv.USER1_EMAIL)
 

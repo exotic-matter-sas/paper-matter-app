@@ -15,7 +15,8 @@ class FtlUserCreationFormTests(TestCase):
         form = FTLUserCreationForm()
         self.assertIn('Email address', form.as_p())
 
-    def test_form_refused_blank_email(self):
+    def test_form_refuse_blank_email(self):
+        """Form refuse blank email"""
         form = FTLUserCreationForm(data={
             'username': tv.USER1_USERNAME,
             'email': '',
@@ -38,7 +39,7 @@ class FtlUserCreationFormTests(TestCase):
         self.assertFalse(form.is_valid())
         self.assertIn('email', form.errors)
 
-    def test_form_refused_non_unique_username(self):
+    def test_form_refuse_non_unique_username(self):
         """Form refuse non unique username"""
         setup_user(self.org, username=tv.USER1_USERNAME, email=tv.USER1_EMAIL)
 
