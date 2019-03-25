@@ -37,4 +37,4 @@ def setup_authenticated_session(test_client, org, user):
         'org_id': org.id,
     })
     session.save()
-    test_client._login(user)
+    test_client.force_login(user)
