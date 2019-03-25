@@ -11,6 +11,7 @@ class FtlUserCreationFormTests(TestCase):
         self.org = setup_org()
 
     def test_form_render_email_input(self):
+        """Form render email input"""
         form = FTLUserCreationForm()
         self.assertIn('Email address', form.as_p())
 
@@ -24,7 +25,8 @@ class FtlUserCreationFormTests(TestCase):
         self.assertFalse(form.is_valid())
         self.assertIn('email', form.errors)
 
-    def test_form_refused_duplicate_email(self):
+    def test_form_refuse_non_unique_email(self):
+        """Form refuse non unique email"""
         setup_user(self.org, username=tv.USER1_USERNAME, email=tv.USER1_EMAIL)
 
         form = FTLUserCreationForm(data={
@@ -36,7 +38,8 @@ class FtlUserCreationFormTests(TestCase):
         self.assertFalse(form.is_valid())
         self.assertIn('email', form.errors)
 
-    def test_form_refused_duplicate_username(self):
+    def test_form_refused_non_unique_username(self):
+        """Form refuse non unique username"""
         setup_user(self.org, username=tv.USER1_USERNAME, email=tv.USER1_EMAIL)
 
         form = FTLUserCreationForm(data={
