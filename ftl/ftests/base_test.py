@@ -4,9 +4,10 @@ from string import digits
 
 from django.test import LiveServerTestCase
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.firefox.options import Options as FirefoxOptions
+from selenium.webdriver.chrome.options import Options as ChromeOptions
 
-from ftl.settings import BASE_DIR, DEFAULT_TEST_BROWSER
+from ftl.settings import BASE_DIR, DEFAULT_TEST_BROWSER, TEST_BROWSER_HEADLESS
 from ftests.tools import test_values as tv
 
 
@@ -28,8 +29,13 @@ class BaseTestCase(LiveServerTestCase):
             profile = webdriver.FirefoxProfile()
             profile.set_preference('intl.accept_languages', browser_locale)
 
+            options = FirefoxOptions()
+
+            if TEST_BROWSER_HEADLESS:
+                options.headless = True
+
             self.browser = webdriver.Firefox(executable_path=os.path.join(BASE_DIR, executable_path),
-                                             firefox_profile=profile)
+                                             firefox_profile=profile, firefox_options=options)
         elif browser == 'chrome':
             if platform_system.startswith('Linux'):
                 chrome_driver_path = 'ftests/chromedriver/chromedriver_linux64'
@@ -40,8 +46,13 @@ class BaseTestCase(LiveServerTestCase):
             else:
                 raise EnvironmentError(f'Platform "{platform_system}" not supported')
 
-            options = Options()
-            options.add_argument("--lang={}".format(browser_locale))
+            options = ChromeOptions()
+            options.add_argument(f'--lang={browser_locale}')
+
+            if TEST_BROWSER_HEADLESS:
+                options.add_argument('--headless')
+                if platform.system() == 'Windows':  # Needed due to Chrome bug
+                    options.add_argument('--disable-gpu')
 
             self.browser = webdriver.Chrome(executable_path=os.path.join(BASE_DIR, chrome_driver_path),
                                             chrome_options=options)
