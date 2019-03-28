@@ -1,5 +1,7 @@
 from django.contrib.auth.models import User, AbstractUser
 from django.db import models
+from django.utils.translation import gettext_lazy as _
+
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 
@@ -17,6 +19,11 @@ class FTLOrg(models.Model):
 # FTL users
 class FTLUser(AbstractUser):
     org = models.ForeignKey('FTLOrg', on_delete=models.CASCADE)
+    # override email field to set blank and unique constrains
+    email = models.EmailField(_('email address'), blank=False, unique=True)
+
+    def __str__(self):
+        return self.username
 
 
 # FTL Documents
@@ -25,7 +32,7 @@ class FTLDocument(models.Model):
     ftl_user = models.ForeignKey('FTLUser', on_delete=models.CASCADE)
     ftl_folder = TreeForeignKey('FTLFolder', on_delete=models.CASCADE, null=True, blank=True)
     title = models.TextField()
-    note = models.TextField()
+    note = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     edited = models.DateTimeField(auto_now=True)
 
@@ -35,6 +42,7 @@ class FTLDocument(models.Model):
 
 # FTL Folders
 class FTLFolder(MPTTModel):
+    org = models.ForeignKey('FTLOrg', on_delete=models.CASCADE)
     name = models.CharField(max_length=128)
     parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
 

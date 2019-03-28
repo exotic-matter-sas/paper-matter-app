@@ -14,7 +14,7 @@ def index(request):
         if FTLOrg.objects.count() > 0:
             return redirect('setup:create_admin')
         else:
-            return redirect('setup:create_org')
+            return redirect('setup:create_first_org')
 
 
 class CreateFTLUserFormView(FormView):
