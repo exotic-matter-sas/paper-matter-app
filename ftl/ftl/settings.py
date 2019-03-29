@@ -87,7 +87,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ftl.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
@@ -101,7 +100,6 @@ DATABASES = {
         'PORT': '5432'
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -120,7 +118,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
@@ -149,8 +146,9 @@ LOGIN_URL = 'login'
 # Redirect user to this url after login by default
 LOGIN_REDIRECT_URL = '/app'
 
-# Default browser used for functional tests
+# Default settings for browser used for functional tests
 DEFAULT_TEST_BROWSER = 'firefox'
+TEST_BROWSER_HEADLESS = True
 
 # Django Rest Framework settings
 REST_FRAMEWORK = {
