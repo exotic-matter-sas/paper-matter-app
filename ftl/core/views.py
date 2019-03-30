@@ -21,7 +21,7 @@ class FTLDocumentList(generics.ListCreateAPIView):
     serializer_class = FTLDocumentSerializer
 
     def get_queryset(self):
-        return FTLDocument.objects.filter(ftl_user__user=self.request.user)
+        return FTLDocument.objects.filter(ftl_user=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save()  # TODO
