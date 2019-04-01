@@ -16,8 +16,9 @@ def _redirect_to_setup_step_to_complete(first_org_state, admin_state):
 
 def setup_state_required(**excepted_setup_state):
     """
-    Decorator for views that check that expected setup state is meet,
-    if excepted setup not meet it call _redirect_to_setup_step_to_complete
+    Decorator for views that check that expected setup state is meet:
+    - if excepted setup meet it returns decorated view
+    - else it call _redirect_to_setup_step_to_complete
     """
 
     def decorator(view_func):
