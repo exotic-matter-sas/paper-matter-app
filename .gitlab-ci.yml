@@ -1,0 +1,49 @@
+image: docker:stable
+
+variables:
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_DRIVER: overlay2
+  POSTGRES_DB: reset
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: bleubleu
+
+services:
+  - docker:dind
+
+stages:
+  - build
+  - test
+  - deploy
+
+compile:
+  stage: build
+  image: registry.gitlab.com/exotic-matter/ftl-base-image-ci:latest
+  artifacts:
+    paths:
+      - ftl
+      - venv
+    expire_in: 1 hour
+  script:
+    - export DJANGO_SETTINGS_MODULE=ftl.settings_tests
+    - virtualenv venv && source venv/bin/activate
+    - cd ftl && pip3 install -r requirements_dev.txt
+    - python3 -m compileall ./
+    - python3 manage.py compilemessages
+  except:
+    changes:
+      - README.md
+
+tests:
+  stage: test
+  image: registry.gitlab.com/exotic-matter/ftl-base-image-ci:latest
+  services:
+    - postgres:10.7-alpine
+  dependencies:
+    - compile
+  script:
+    - export DJANGO_SETTINGS_MODULE=ftl.settings_tests
+    - source venv/bin/activate && cd ftl
+    - python3 manage.py test
+  except:
+    changes:
+      - README.md
