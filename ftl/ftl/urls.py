@@ -20,6 +20,7 @@ from django.urls import path, include
 
 from ftl import views
 from ftl.views_auth import LoginViewFTL
+from ftl.custom_view_decorators import setup_state_required
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -32,7 +33,7 @@ urlpatterns = [
     path('signup/<slug:org_slug>/', views.CreateFTLUserFormView.as_view(), name='signup'),
     path('signup/<slug:org_slug>/success/', views.signup_success, name='signup_success'),
 
-    path('login/', LoginViewFTL.as_view(), name='login'),
+    path('login/', setup_state_required(complete=True)(LoginViewFTL.as_view()), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 
     path('password_change/', auth_views.PasswordChangeView.as_view(), name='password_change'),
