@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.postgres',
     'mptt',
     'rest_framework',
+    'webpack_loader',
     'ftl',
     'setup',
     'core'
@@ -135,7 +136,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = '/assets/'  # public path
+STATIC_ROOT = os.path.join(BASE_DIR, 'assets')  # internal path
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'frontend', 'dist'),  # Webpack final bundle
+)
 
 # IPs allowed to see the debug toolbar app
 INTERNAL_IPS = ['127.0.0.1']
@@ -157,6 +162,14 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
     'PAGE_SIZE': 10
+}
+
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'CACHE': not DEBUG,
+        'BUNDLE_DIR_NAME': '/bundles/',
+        'STATS_FILE': os.path.join(BASE_DIR, 'frontend', 'webpack-stats.json'),
+    }
 }
 
 # ==================================================
