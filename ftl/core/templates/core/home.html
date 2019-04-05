@@ -1,20 +1,18 @@
 {% load render_bundle from webpack_loader %}
+{% load i18n %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ request.LANGUAGE_CODE }}">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
-    <title>Django Vue Integration</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Material+Icons">
+    <title>ftl-app - Home</title>
 </head>
 <body>
 <noscript>
-    <strong>We're sorry but frontend doesn't work properly without JavaScript enabled. Please enable it to
-        continue.</strong>
+    <strong>{% blocktrans %}We're sorry but ftl-app will not work without JavaScript enabled. Please enable it
+        to continue.{% endblocktrans %}</strong>
 </noscript>
 
 <div id="app">

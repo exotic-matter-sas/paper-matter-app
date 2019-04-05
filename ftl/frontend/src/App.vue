@@ -1,38 +1,63 @@
 <template>
-  <v-app>
-    <v-toolbar app>
-      <v-toolbar-title class="headline text-uppercase">
-        <span>Vuetify</span>
-        <span class="font-weight-light">MATERIAL DESIGN</span>
-      </v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-btn
-        flat
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-      >
-        <span class="mr-2">Latest Release</span>
-      </v-btn>
-    </v-toolbar>
+    <div id="app">
+        <h1>Hello here!</h1>
 
-    <v-content>
-      <HelloWorld/>
-    </v-content>
-  </v-app>
+        <div>
+            <button v-on:click="updateDocument">Refresh</button>
+            <p>Last refresh {{ lastRefresh }}</p>
+        </div>
+
+        <div v-if="docs.length">
+            <FTLDocument v-for="doc in docs" v-bind:key="doc.id" v-bind:doc="doc"/>
+        </div>
+        <p v-else>
+            Aucun document
+        </p>
+
+
+    </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld'
+    import FTLDocument from './components/FTLDocument'
+    import axios from 'axios'
 
-export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  },
-  data () {
-    return {
-      //
+    export default {
+        name: 'app',
+        components: {
+            FTLDocument
+        },
+
+        data() {
+            return {
+                docs: [], // No doc at start
+                lastRefresh: Date.now()
+            }
+        },
+
+        mounted() {
+            this.updateDocument()
+        },
+
+        methods: {
+            updateDocument: function () {
+                axios
+                    .get('/app/api/v1/documents/')
+                    .then(response => (this.docs = response.data['results']));
+                this.lastRefresh = Date.now()
+            }
+
+        }
     }
-  }
-}
 </script>
+
+<style>
+    #app {
+        font-family: 'Avenir', Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-align: center;
+        color: #2c3e50;
+        margin-top: 60px;
+    }
+</style>
