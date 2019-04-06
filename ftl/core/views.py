@@ -8,8 +8,8 @@ from rest_framework import generics, views
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 
-from core.models import FTLDocument
-from core.serializers import FTLDocumentSerializer
+from core.models import FTLDocument, FTLFolder
+from core.serializers import FTLDocumentSerializer, FTLFolderSerializer
 
 
 @login_required
@@ -35,7 +35,14 @@ class FTLDocumentList(generics.ListCreateAPIView):
     serializer_class = FTLDocumentSerializer
 
     def get_queryset(self):
-        return FTLDocument.objects.filter(ftl_user=self.request.user)
+        current_folder = self.request.query_params.get('level', None)
+
+        queryset = FTLDocument.objects.filter(ftl_user=self.request.user)
+
+        if current_folder is not None:
+            queryset = queryset.filter(ftl_folder__id=current_folder)
+
+        return queryset
 
     def perform_create(self, serializer):
         serializer.save()  # TODO Do we need this?
@@ -69,7 +76,10 @@ class FileUploadView(views.APIView):
         file_obj = request.data['file']
         json = request.data['json']  # Nothing for now
 
+        # TODO check for empty form
+
         ftl_doc = FTLDocument()
+        # ftl_doc.ftl_folder = json['ftl_folder'] or None
         ftl_doc.ftl_user = self.request.user
         ftl_doc.binary = file_obj
         ftl_doc.org = self.request.user.org
@@ -77,3 +87,20 @@ class FileUploadView(views.APIView):
         ftl_doc.save()
 
         return Response(self.serializer_class(ftl_doc).data, status=200)
+
+
+class FTLFolderList(generics.ListCreateAPIView):
+    serializer_class = FTLFolderSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+        current_folder = self.request.query_params.get('level', None)
+
+        queryset = FTLFolder.objects.filter(org=self.request.user.org)
+        if current_folder is not None:
+            queryset = queryset.filter(parent__id=current_folder)
+
+        return queryset
+
+    def perform_create(self, serializer):
+        serializer.save(org=self.request.user.org)

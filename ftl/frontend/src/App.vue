@@ -3,6 +3,7 @@
         <b-container fluid class="p-0">
             <FTLNavbar/>
         </b-container>
+
         <b-container>
             <b-row>
                 <b-col>
@@ -18,6 +19,13 @@
         </b-container>
 
         <b-container>
+            <ul>
+                <FTLFolder v-for="folder in folders" :key="folder.id" :folder="folder"
+                           @event-change-folder="changeFolder"/>
+            </ul>
+        </b-container>
+
+        <b-container>
             <b-row align-h="around" v-if="docs.length">
                 <FTLDocument v-for="doc in docs" :key="doc.pid" :doc="doc" @event-delete-doc="updateDocument"/>
             </b-row>
@@ -30,6 +38,7 @@
 
 <script>
     import FTLNavbar from './components/FTLNavbar'
+    import FTLFolder from './components/FTLFolder'
     import FTLDocument from './components/FTLDocument'
     import FTLUpload from './components/FTLUpload'
     import axios from 'axios'
@@ -38,6 +47,7 @@
         name: 'app',
         components: {
             FTLNavbar,
+            FTLFolder,
             FTLDocument,
             FTLUpload
         },
@@ -45,12 +55,13 @@
         data() {
             return {
                 docs: [],
+                folders: [],
                 lastRefresh: Date.now()
             }
         },
 
         mounted() {
-            this.updateDocument()
+            this.changeFolder(0);
         },
 
         computed: {
@@ -60,12 +71,39 @@
         },
 
         methods: {
-            updateDocument: function () {
+            changeFolder: function (level) {
+                this.updateDocument(level);
+                this.updateFolder(level);
+            },
+
+            updateDocument: function (level = 0) {
+                const vi = this;
+                let qs = '';
+
+                if (level > 0) {
+                    qs = '?level=' + level;
+                }
+
                 axios
-                    .get('/app/api/v1/documents/')
+                    .get('/app/api/v1/documents/' + qs)
                     .then(response => {
-                        this.docs = response.data['results'];
-                        this.lastRefresh = Date.now();
+                        vi.docs = response.data['results'];
+                        vi.lastRefresh = Date.now();
+                    });
+            },
+
+            updateFolder: function (level = 0) {
+                const vi = this;
+                let qs = '';
+
+                if (level > 0) {
+                    qs = '?level=' + level;
+                }
+
+                axios
+                    .get("/app/api/v1/folders/" + qs)
+                    .then(response => {
+                        vi.folders = response.data;
                     });
             }
         }
