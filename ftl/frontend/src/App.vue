@@ -1,20 +1,30 @@
 <template>
     <div id="app">
-        <h1>Hello here!</h1>
 
-        <FTLUpload @newupload="updateDocument"/>
-
-        <div>
-            <button @click="updateDocument">Refresh documents list</button>
-            Last refresh {{ new Date(lastRefresh) }}
-        </div>
-
-        <div id="documents" v-if="docs.length">
-            <FTLDocument v-for="doc in docs" :key="doc.pid" :doc="doc" @event-delete-doc="updateDocument"/>
-        </div>
-        <p v-else>
-            Aucun document
-        </p>
+        <b-container>
+            <b-row>
+                <b-col><h1>Hello here!</h1></b-col>
+            </b-row>
+            <b-row>
+                <b-col>
+                    <FTLUpload @newupload="updateDocument"/>
+                </b-col>
+            </b-row>
+            <b-row>
+                <b-col>
+                    <b-button variant="primary" @click="updateDocument">Refresh documents list</b-button>
+                    Last refresh {{ new Date(lastRefresh) }}
+                </b-col>
+            </b-row>
+        </b-container>
+        <b-container>
+            <b-row align-h="around" v-if="docs.length">
+                <FTLDocument v-for="doc in docs" :key="doc.pid" :doc="doc" @event-delete-doc="updateDocument"/>
+            </b-row>
+            <b-row v-else>
+                <b-col>Aucun document</b-col>
+            </b-row>
+        </b-container>
     </div>
 </template>
 
@@ -64,7 +74,8 @@
         margin-top: 60px;
     }
 
+    /* Temp for viewing layout */
     div {
-        border: 1px solid;
+        border: 1px dotted;
     }
 </style>

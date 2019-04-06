@@ -1,9 +1,17 @@
 <template>
     <div class="upload">Upload document
-        <label>
-            <input type="file" id="file" ref="file" @change="handleFileUpload"/>
-        </label>
-        <button @click="uploadDocument">Submit</button>
+
+        <b-form-file
+                v-model="file"
+                :state="Boolean(file)"
+                placeholder="Choose a file..."
+                drop-placeholder="Drop file here..."
+                @change="handleFileUpload"
+        ></b-form-file>
+        <div class="mt-3">Selected file: {{ file ? file.name : '' }}</div>
+
+        <b-button variant="primary" @click="uploadDocument">Submit</b-button>
+
         <p>Response: {{ response }}</p>
         <p>Progress: {{ uploadProgress }}%</p>
     </div>
@@ -17,7 +25,7 @@
 
         data() {
             return {
-                file: '',
+                file: null,
                 response: '',
                 uploadProgress: null
             }

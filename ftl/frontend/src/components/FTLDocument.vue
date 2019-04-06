@@ -1,11 +1,11 @@
 <template>
-    <div :id="doc.pid" class="ftl-document">
-        <h1>{{ doc.title}}</h1>
+    <b-col sm="3" :id="doc.pid">
+        <p>{{ doc.title}}</p>
         <small>{{ new Date(doc.created) }}</small>
         <p>Note: {{ doc.note }}</p>
-        <a :href="'uploads/' + doc.pid">Download here</a>&nbsp;<a :href="'#' + doc.pid" @click="deleteDocument">!!
-        Delete doc (no warn) !!</a>
-    </div>
+        <b-button variant="secondary" size="sm" :href="'uploads/' + doc.pid">Download here</b-button>
+        <b-button variant="danger" size="sm" @click="deleteDocument">!! Delete doc (no warn) !!</b-button>
+    </b-col>
 </template>
 
 <script>
