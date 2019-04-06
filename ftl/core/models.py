@@ -1,7 +1,8 @@
+import uuid
+
 from django.contrib.auth.models import User, AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 
@@ -28,11 +29,14 @@ class FTLUser(AbstractUser):
 
 # FTL Documents
 class FTLDocument(models.Model):
+    pid = models.UUIDField(default=uuid.uuid4, editable=False)
+
     org = models.ForeignKey('FTLOrg', on_delete=models.CASCADE)
     ftl_user = models.ForeignKey('FTLUser', on_delete=models.CASCADE)
     ftl_folder = TreeForeignKey('FTLFolder', on_delete=models.CASCADE, null=True, blank=True)
     title = models.TextField()
     note = models.TextField(blank=True)
+    binary = models.FileField(upload_to='uploads', max_length=256, null=True)
     created = models.DateTimeField(auto_now_add=True)
     edited = models.DateTimeField(auto_now=True)
 
