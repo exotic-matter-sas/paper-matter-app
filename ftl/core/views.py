@@ -55,9 +55,10 @@ class FTLDocumentDetail(generics.RetrieveUpdateDestroyAPIView):
         serializer.save(ftl_user=self.request.user)
 
     def perform_destroy(self, instance):
-        path = instance.binary.file.name
+        binary = instance.binary
         super().perform_destroy(instance)
-        # os.remove(path)
+        binary.file.close()
+        os.remove(binary.file.name)
 
 
 class FileUploadView(views.APIView):

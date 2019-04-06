@@ -1,3 +1,4 @@
+import pathlib
 import uuid
 
 from django.contrib.auth.models import User, AbstractUser
@@ -5,6 +6,10 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
+
+
+def _get_name_binary(instance, filename):
+    return 'uploads/' + str(uuid.uuid4()) + pathlib.Path(filename).suffix
 
 
 # FTP orgs
@@ -36,7 +41,7 @@ class FTLDocument(models.Model):
     ftl_folder = TreeForeignKey('FTLFolder', on_delete=models.CASCADE, null=True, blank=True)
     title = models.TextField()
     note = models.TextField(blank=True)
-    binary = models.FileField(upload_to='uploads', max_length=256, null=True)
+    binary = models.FileField(upload_to=_get_name_binary, max_length=256, null=True)
     created = models.DateTimeField(auto_now_add=True)
     edited = models.DateTimeField(auto_now=True)
 

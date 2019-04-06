@@ -1,6 +1,5 @@
 <template>
     <div id="app">
-
         <b-container>
             <b-row>
                 <b-col><h1>Hello here!</h1></b-col>
@@ -13,10 +12,11 @@
             <b-row>
                 <b-col>
                     <b-button variant="primary" @click="updateDocument">Refresh documents list</b-button>
-                    Last refresh {{ new Date(lastRefresh) }}
+                    Last refresh {{ lastRefreshFormatted }}
                 </b-col>
             </b-row>
         </b-container>
+
         <b-container>
             <b-row align-h="around" v-if="docs.length">
                 <FTLDocument v-for="doc in docs" :key="doc.pid" :doc="doc" @event-delete-doc="updateDocument"/>
@@ -49,6 +49,12 @@
 
         mounted() {
             this.updateDocument()
+        },
+
+        computed: {
+            lastRefreshFormatted: function () {
+                return new Date(this.lastRefresh);
+            }
         },
 
         methods: {

@@ -1,20 +1,32 @@
 <template>
-    <div class="upload">Upload document
+    <b-container>
+        <b-row>
+            <b-col>
+                Upload document
+            </b-col>
+            <b-col md="8">
+                <b-form-file
+                        v-model="file"
+                        :state="Boolean(file)"
+                        placeholder="Choose a file..."
+                        drop-placeholder="Drop file here..."
+                ></b-form-file>
+            </b-col>
+            <b-col md="auto">
+                <b-button variant="primary" :disabled="isUploading" @click="uploadDocument">Submit</b-button>
+            </b-col>
+        </b-row>
+        <b-row align-h="center">
+            <p>Response: {{ response }}</p>
+        </b-row>
+        <b-row align-h="center">
+            <b-col cols="12">
+                <b-progress :class="{ 'd-none': !isUploading }" max="100" :value="uploadProgress" variant="success"
+                            show-progress/>
+            </b-col>
+        </b-row>
 
-        <b-form-file
-                v-model="file"
-                :state="Boolean(file)"
-                placeholder="Choose a file..."
-                drop-placeholder="Drop file here..."
-                @change="handleFileUpload"
-        ></b-form-file>
-        <div class="mt-3">Selected file: {{ file ? file.name : '' }}</div>
-
-        <b-button variant="primary" @click="uploadDocument">Submit</b-button>
-
-        <p>Response: {{ response }}</p>
-        <p>Progress: {{ uploadProgress }}%</p>
-    </div>
+    </b-container>
 </template>
 
 <script>
@@ -27,13 +39,21 @@
             return {
                 file: null,
                 response: '',
-                uploadProgress: null
+                uploading: false,
+                uploadProgress: 0
+            }
+        },
+
+        computed: {
+            isUploading: function () {
+                return this.uploading;
             }
         },
 
         methods: {
             uploadDocument: function () {
                 let vi = this;
+                vi.uploading = true;
 
                 let formData = new FormData();
                 formData.append('file', this.file);
@@ -47,7 +67,7 @@
                         if (progressEvent.lengthComputable) {
                             vi.uploadProgress = progressEvent.loaded * 100 / progressEvent.total;
                         } else {
-                            vi.uploadProgress = '';
+                            vi.uploadProgress = 100;
                         }
                     }
                 };
@@ -58,11 +78,11 @@
                         vi.$emit('newupload'); // Event for refresh documents list
                         vi.response = response.data;
                     })
-                    .catch(error => vi.response = error);
-            },
-
-            handleFileUpload: function () {
-                this.file = this.$refs.file.files[0];
+                    .catch(error => vi.response = error)
+                    .then(function () {
+                        vi.uploadProgress = 0;
+                        vi.uploading = false;
+                    });
             }
         }
     }
