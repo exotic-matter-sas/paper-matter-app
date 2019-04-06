@@ -1,9 +1,9 @@
 <template>
-    <div id="app">
+    <div id="app" class="m-0">
+        <b-container fluid class="p-0">
+            <FTLNavbar/>
+        </b-container>
         <b-container>
-            <b-row>
-                <b-col><h1>Hello here!</h1></b-col>
-            </b-row>
             <b-row>
                 <b-col>
                     <FTLUpload @newupload="updateDocument"/>
@@ -29,6 +29,7 @@
 </template>
 
 <script>
+    import FTLNavbar from './components/FTLNavbar'
     import FTLDocument from './components/FTLDocument'
     import FTLUpload from './components/FTLUpload'
     import axios from 'axios'
@@ -36,6 +37,7 @@
     export default {
         name: 'app',
         components: {
+            FTLNavbar,
             FTLDocument,
             FTLUpload
         },

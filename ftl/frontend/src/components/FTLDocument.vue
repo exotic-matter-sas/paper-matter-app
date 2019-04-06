@@ -16,8 +16,9 @@
                 <b-button variant="secondary" size="sm" :href="'uploads/' + doc.pid">Download here</b-button>
             </b-col>
             <b-col>
-                <b-button variant="danger" size="sm" :disabled="deleting" @click.once="deleteDocument">!! Delete doc (no
-                    warn) !!
+                <b-button variant="danger" size="sm" :disabled="deleting" @click.once="deleteDocument">
+                    <b-spinner :hidden="!deleting" small></b-spinner>
+                    <span :class="{'sr-only': deleting}">!! Delete doc (no warn) !!</span>
                 </b-button>
             </b-col>
         </b-row>

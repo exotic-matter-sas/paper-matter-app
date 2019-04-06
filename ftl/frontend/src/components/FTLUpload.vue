@@ -6,6 +6,7 @@
             </b-col>
             <b-col md="8">
                 <b-form-file
+                        ref="fileUploadField"
                         v-model="file"
                         :state="Boolean(file)"
                         placeholder="Choose a file..."
@@ -13,7 +14,7 @@
                 ></b-form-file>
             </b-col>
             <b-col md="auto">
-                <b-button variant="primary" :disabled="isUploading" @click="uploadDocument">Submit</b-button>
+                <b-button variant="primary" :disabled="isUploading || !file" @click="uploadDocument">Submit</b-button>
             </b-col>
         </b-row>
         <b-row align-h="center">
@@ -21,7 +22,7 @@
         </b-row>
         <b-row align-h="center">
             <b-col cols="12">
-                <b-progress :class="{ 'd-none': !isUploading }" max="100" :value="uploadProgress" variant="success"
+                <b-progress :class="{ 'd-none': !isUploading }" :max="100" :value="uploadProgress" variant="success"
                             show-progress/>
             </b-col>
         </b-row>
@@ -77,6 +78,7 @@
                     .then(response => {
                         vi.$emit('newupload'); // Event for refresh documents list
                         vi.response = response.data;
+                        vi.file = "";
                     })
                     .catch(error => vi.response = error)
                     .then(function () {
