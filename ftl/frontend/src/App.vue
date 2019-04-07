@@ -7,7 +7,7 @@
         <b-container>
             <b-row>
                 <b-col>
-                    <FTLUpload @newupload="updateDocument"/>
+                    <FTLUpload :currentFolder="getCurrentFolder" @newupload="updateDocument"/>
                 </b-col>
             </b-row>
             <b-row>
@@ -65,35 +65,43 @@
         },
 
         mounted() {
-            this.changeFolder(0);
+            this.changeFolder();
         },
 
         computed: {
             lastRefreshFormatted: function () {
                 return new Date(this.lastRefresh);
+            },
+
+            getCurrentFolder: function () {
+                if (this.previousLevels.length) {
+                    return this.previousLevels[this.previousLevels.length - 1];
+                } else {
+                    return {};
+                }
             }
         },
 
         methods: {
             changeFolder: function (level) {
-                if (level > 0) this.previousLevels.push(level);
-                this.updateDocument(level);
+                if (level) this.previousLevels.push(level);
                 this.updateFolder(level);
+                this.updateDocument();
             },
 
             changeToPreviousFolder: function () {
                 this.previousLevels.pop(); // Remove current level
-                let level = this.previousLevels[this.previousLevels - 1]; // Get last
-                this.updateDocument(level);
+                let level = this.previousLevels[this.previousLevels.length - 1]; // Get last
                 this.updateFolder(level);
+                this.updateDocument();
             },
 
-            updateDocument: function (level = 0) {
+            updateDocument: function () {
                 const vi = this;
                 let qs = '';
 
-                if (level > 0) {
-                    qs = '?level=' + level;
+                if (vi.previousLevels.length > 0) {
+                    qs = '?level=' + vi.previousLevels[vi.previousLevels.length - 1].id;
                 }
 
                 axios
@@ -104,15 +112,15 @@
                     });
             },
 
-            updateFolder: function (level = 0) {
+            updateFolder: function (level = null) {
                 const vi = this;
                 let qs = '';
 
                 // While loading folders, clear folders to avoid showing current sets of folders intermittently
                 vi.folders = [];
 
-                if (level > 0) {
-                    qs = '?level=' + level;
+                if (level) {
+                    qs = '?level=' + level.id;
                 }
 
                 axios

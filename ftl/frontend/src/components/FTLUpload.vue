@@ -36,6 +36,13 @@
     export default {
         name: "FTLUpload",
 
+        props: {
+            currentFolder: {
+                type: Object,
+                required: true
+            }
+        },
+
         data() {
             return {
                 file: null,
@@ -58,7 +65,7 @@
 
                 let formData = new FormData();
                 formData.append('file', this.file);
-                formData.append('json', '{}');  // No meta data to send for now
+                formData.append('json', JSON.stringify({'ftl_folder': vi.currentFolder.id}));
 
                 // Pass CSRF token from cookie to XHR call header (handled by Axios)
                 let axiosConfig = {

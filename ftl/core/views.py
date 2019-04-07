@@ -1,3 +1,4 @@
+import json
 import os
 
 from django.contrib.auth.decorators import login_required
@@ -37,10 +38,12 @@ class FTLDocumentList(generics.ListCreateAPIView):
     def get_queryset(self):
         current_folder = self.request.query_params.get('level', None)
 
-        queryset = FTLDocument.objects.filter(ftl_user=self.request.user)
+        queryset = FTLDocument.objects.filter(ftl_user=self.request.user).order_by('-created')
 
         if current_folder is not None:
             queryset = queryset.filter(ftl_folder__id=current_folder)
+        else:
+            queryset = queryset.filter(ftl_folder__isnull=True)
 
         return queryset
 
@@ -74,12 +77,18 @@ class FileUploadView(views.APIView):
 
     def post(self, request):
         file_obj = request.data['file']
-        json = request.data['json']  # Nothing for now
+        payload = json.loads(request.data['json'])  # Nothing for now
 
         # TODO check for empty form
 
+        if 'ftl_folder' in payload:
+            ftl_folder = get_object_or_404(FTLFolder.objects.filter(org=self.request.user.org),
+                                           id=payload['ftl_folder'])
+        else:
+            ftl_folder = None
+
         ftl_doc = FTLDocument()
-        # ftl_doc.ftl_folder = json['ftl_folder'] or None
+        ftl_doc.ftl_folder = ftl_folder
         ftl_doc.ftl_user = self.request.user
         ftl_doc.binary = file_obj
         ftl_doc.org = self.request.user.org
@@ -94,11 +103,13 @@ class FTLFolderList(generics.ListCreateAPIView):
     pagination_class = None
 
     def get_queryset(self):
-        current_folder = self.request.query_params.get('level', None)
+        current_folder = self.request.query_params.get('level')
 
         queryset = FTLFolder.objects.filter(org=self.request.user.org)
         if current_folder is not None:
             queryset = queryset.filter(parent__id=current_folder)
+        else:
+            queryset = queryset.filter(parent__isnull=True)
 
         return queryset
 

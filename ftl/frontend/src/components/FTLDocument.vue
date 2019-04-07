@@ -3,7 +3,7 @@
         <b-row class="text-truncate">{{ doc.title }}</b-row>
         <b-row align-h="center">
             <b-img :src="'https://loremflickr.com/150/200/cats?' + doc.pid" class="img-thumbnail" slot="aside"
-                   width="128"
+                   width="128" height="200"
                    blank-color="#abc"/>
         </b-row>
         <b-row>
@@ -17,8 +17,8 @@
             </b-col>
             <b-col>
                 <b-button variant="danger" size="sm" :disabled="deleting" @click.once="deleteDocument">
-                    <b-spinner :hidden="!deleting" small></b-spinner>
-                    <span :class="{'sr-only': deleting}">!! Delete doc (no warn) !!</span>
+                    <b-spinner :class="{'d-none': !deleting}" small></b-spinner>
+                    <span :class="{'d-none': deleting}">!! Delete doc (no warn) !!</span>
                 </b-button>
             </b-col>
         </b-row>
@@ -61,9 +61,7 @@
 
                 axios
                     .delete('/app/api/v1/documents/' + this.doc.pid, axiosConfig)
-                    .then(response => {
-                        vi.$emit('event-delete-doc', response)
-                    })
+                    .then(() => vi.$emit('event-delete-doc'))
                     .catch(error => alert(error));
             }
         }
