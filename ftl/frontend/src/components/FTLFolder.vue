@@ -1,7 +1,5 @@
 <template>
-    <li>
-        <b-button @click="$emit('event-change-folder', folder.id)">{{ folder.name }}</b-button>
-    </li>
+    <b-button class="m-1" @click="$emit('event-change-folder', folder.id)">{{ folder.name }}</b-button>
 </template>
 
 <script>

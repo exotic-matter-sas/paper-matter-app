@@ -19,10 +19,13 @@
         </b-container>
 
         <b-container>
-            <ul>
+            <b-row>
+                <b-button variant="primary" class="m-1" v-if="previousLevels.length" @click="changeToPreviousFolder">
+                    Up
+                </b-button>
                 <FTLFolder v-for="folder in folders" :key="folder.id" :folder="folder"
                            @event-change-folder="changeFolder"/>
-            </ul>
+            </b-row>
         </b-container>
 
         <b-container>
@@ -56,6 +59,7 @@
             return {
                 docs: [],
                 folders: [],
+                previousLevels: [],
                 lastRefresh: Date.now()
             }
         },
@@ -72,6 +76,14 @@
 
         methods: {
             changeFolder: function (level) {
+                if (level > 0) this.previousLevels.push(level);
+                this.updateDocument(level);
+                this.updateFolder(level);
+            },
+
+            changeToPreviousFolder: function () {
+                this.previousLevels.pop(); // Remove current level
+                let level = this.previousLevels[this.previousLevels - 1]; // Get last
                 this.updateDocument(level);
                 this.updateFolder(level);
             },
@@ -95,6 +107,9 @@
             updateFolder: function (level = 0) {
                 const vi = this;
                 let qs = '';
+
+                // While loading folders, clear folders to avoid showing current sets of folders intermittently
+                vi.folders = [];
 
                 if (level > 0) {
                     qs = '?level=' + level;
