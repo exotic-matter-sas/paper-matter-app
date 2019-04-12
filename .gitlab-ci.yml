@@ -27,7 +27,7 @@ compile-frontend:
   script:
     - cd ftl/frontend
     - npm install
-    - npm build
+    - npm run build
 
 compile-backend:
   stage: build-backend
@@ -55,7 +55,7 @@ tests:
   services:
     - postgres:10.7-alpine
   dependencies:
-    - compile-frontend
+    - compile-backend
   script:
     - export DJANGO_SETTINGS_MODULE=ftl.settings_tests
     - source venv/bin/activate && cd ftl
