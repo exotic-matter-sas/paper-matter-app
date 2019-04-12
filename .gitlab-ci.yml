@@ -11,13 +11,29 @@ services:
   - docker:dind
 
 stages:
-  - build
+  - build-frontend
+  - build-backend
   - test
   - deploy
 
-compile:
-  stage: build
+compile-frontend:
+  stage: build-frontend
+  image: node:10.15.3-alpine
+  artifacts:
+    paths:
+      - ftl/frontend/dist
+      - ftl/frontend/webpack-stats.json
+    expire_in: 1 hour
+  script:
+    - cd ftl/frontend
+    - npm install
+    - npm build
+
+compile-backend:
+  stage: build-backend
   image: registry.gitlab.com/exotic-matter/ftl-base-image-ci:latest
+  dependencies:
+    - compile-frontend
   artifacts:
     paths:
       - ftl
