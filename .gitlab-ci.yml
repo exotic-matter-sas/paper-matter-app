@@ -28,6 +28,9 @@ compile-frontend:
     - cd ftl/frontend
     - npm install
     - npm run build
+  except:
+    changes:
+      - README.md
 
 compile-backend:
   stage: build-backend
@@ -45,6 +48,7 @@ compile-backend:
     - cd ftl && pip3 install -r requirements.txt && pip3 install -r requirements_dev.txt
     - python3 -m compileall ./
     - python3 manage.py compilemessages
+    - python3 manage.py collectstatic
   except:
     changes:
       - README.md
