@@ -55,7 +55,7 @@ tests:
   services:
     - postgres:10.7-alpine
   dependencies:
-    - compile
+    - compile-frontend
   script:
     - export DJANGO_SETTINGS_MODULE=ftl.settings_tests
     - source venv/bin/activate && cd ftl
