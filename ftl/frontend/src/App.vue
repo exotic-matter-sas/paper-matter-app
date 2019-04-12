@@ -23,6 +23,7 @@
                 <b-button variant="primary" class="m-1" v-if="previousLevels.length" @click="changeToPreviousFolder">
                     Up
                 </b-button>
+                <b-button v-else variant="primary" class="m-1" disabled>Up</b-button>
                 <FTLFolder v-for="folder in folders" :key="folder.id" :folder="folder"
                            @event-change-folder="changeFolder"/>
             </b-row>
@@ -30,11 +31,16 @@
 
         <b-container>
             <b-row align-h="around" v-if="docs.length">
-                <FTLDocument v-for="doc in docs" :key="doc.pid" :doc="doc" @event-delete-doc="updateDocument"/>
+                <FTLDocument v-for="doc in docs" :key="doc.pid" :doc="doc" @event-delete-doc="updateDocument"
+                             @event-open-doc="openDocument"/>
             </b-row>
             <b-row v-else>
                 <b-col>Aucun document</b-col>
             </b-row>
+        </b-container>
+
+        <b-container>
+            <FTLViewDocumentPanel v-if="docModal" :pid="docPid" @event-close-doc="docModal = false"/>
         </b-container>
     </div>
 </template>
@@ -44,11 +50,13 @@
     import FTLFolder from './components/FTLFolder'
     import FTLDocument from './components/FTLDocument'
     import FTLUpload from './components/FTLUpload'
+    import FTLViewDocumentPanel from "./components/FTLViewDocumentPanel"
     import axios from 'axios'
 
     export default {
         name: 'app',
         components: {
+            FTLViewDocumentPanel,
             FTLNavbar,
             FTLFolder,
             FTLDocument,
@@ -58,9 +66,11 @@
         data() {
             return {
                 docs: [],
+                docPid: null,
                 folders: [],
                 previousLevels: [],
-                lastRefresh: Date.now()
+                lastRefresh: Date.now(),
+                docModal: false
             }
         },
 
@@ -94,6 +104,11 @@
                 let level = this.previousLevels[this.previousLevels.length - 1]; // Get last
                 this.updateFolder(level);
                 this.updateDocument();
+            },
+
+            openDocument: function (pid) {
+                this.docPid = pid;
+                this.docModal = true;
             },
 
             updateDocument: function () {

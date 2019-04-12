@@ -1,6 +1,6 @@
 <template>
     <b-col sm="3" :id="doc.pid">
-        <b-row class="text-truncate">{{ doc.title }}</b-row>
+        <b-row class="text-truncate"><span @click="$emit('event-open-doc', doc.pid)">{{ doc.title }}</span></b-row>
         <b-row align-h="center">
             <b-img :src="'https://loremflickr.com/150/200/cats?' + doc.pid" class="img-thumbnail" slot="aside"
                    width="128" height="200"
