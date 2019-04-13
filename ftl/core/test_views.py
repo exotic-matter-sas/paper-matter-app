@@ -14,7 +14,7 @@ class CorePagesTests(TestCase):
     def test_home_page_returns_correct_html(self):
         """Home page returns correct html"""
         response = self.client.get('/app/')
-        self.assertContains(response, self.user.username)
+        self.assertContains(response, '<div id="app"></div>')
         self.assertTemplateUsed(response, 'core/home.html')
 
     def test_home_get_proper_context(self):
@@ -22,4 +22,3 @@ class CorePagesTests(TestCase):
         response = self.client.get('/app/')
         self.assertEqual(response.context['org_name'], self.org.name)
         self.assertEqual(response.context['username'], self.user.username)
-
