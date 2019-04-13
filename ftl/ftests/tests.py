@@ -1,3 +1,7 @@
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.wait import WebDriverWait
+
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user
 from .base_test import BaseTestCase
@@ -129,8 +133,12 @@ class LoginPageTests(BaseTestCase):
         # User login and is redirect to the logged home page, he can see it's username on it
         self.browser.get(f'{self.live_server_url}/login')
         self.log_user('user1')
-        login_header = self.browser.find_element_by_css_selector('h2').text
-        self.assertIn(tv.USER1_USERNAME, login_header.lower())
+
+        element = WebDriverWait(self.browser, 10).until(
+            EC.text_to_be_present_in_element((By.CSS_SELECTOR, 'nav div em'), tv.USER1_USERNAME)
+        )
+
+        self.assertTrue(element)
 
 
 class I18nTests(BaseTestCase):
@@ -141,5 +149,5 @@ class I18nTests(BaseTestCase):
         """First user can login and access a logged page"""
         # Admin, organization and user setup
         self.browser.get(self.live_server_url)
-
+        self.browser.implicitly_wait(5)
         self.assertIn('organisation', self.browser.find_elements_by_css_selector('h2')[0].text)

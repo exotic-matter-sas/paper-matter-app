@@ -13,3 +13,5 @@ DATABASES = {
         'PORT': '5432'
     }
 }
+
+DEV_MODE = True
