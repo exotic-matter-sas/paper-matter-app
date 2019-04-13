@@ -18,15 +18,15 @@ module.exports = {
             .set('__STATIC__', 'static');
 
         config.devServer
-            .public('http://0.0.0.0:8080')
-            .host('0.0.0.0')
+            .public('http://127.0.0.1:8080')
+            .host('127.0.0.1')
             .port(8080)
             .hotOnly(true)
-            .watchOptions({poll: 1000})
+            .watchOptions({poll: 2500})
             .https(false)
             .headers({
                 "Access-Control-Allow-Credentials": "true",
-                "Access-Control-Allow-Origin": ["http://127.0.0.1:8000"]
+                "Access-Control-Allow-Origin": ["*"]
             });
     }
 };
