@@ -49,5 +49,9 @@ if settings.DEBUG:
 
     urlpatterns += [
         path('__debug__/', include(debug_toolbar.urls)),
+    ]
+
+if settings.DEV_MODE:
+    urlpatterns += [
         re_path(r'^local/(?P<url>.*)$', view_local_proxy.LocalProxy.as_view())
     ]
