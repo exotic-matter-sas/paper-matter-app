@@ -1,7 +1,7 @@
 <template>
     <div id="app" class="m-0">
         <b-container fluid class="p-0">
-            <FTLNavbar/>
+            <FTLNavbar :account="account"/>
         </b-container>
 
         <b-container>
@@ -70,7 +70,8 @@
                 folders: [],
                 previousLevels: [],
                 lastRefresh: Date.now(),
-                docModal: false
+                docModal: false,
+                account: window.ftlAccounts
             }
         },
 

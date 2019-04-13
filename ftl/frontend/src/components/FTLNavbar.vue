@@ -26,7 +26,7 @@
 
                 <b-nav-item-dropdown right>
                     <!-- Using 'button-content' slot -->
-                    <template slot="button-content"><em>User</em></template>
+                    <template slot="button-content"><em>{{ account.name }}</em></template>
                     <b-dropdown-item href="/account">Profile</b-dropdown-item>
                     <b-dropdown-item href="/logout">Sign Out</b-dropdown-item>
                 </b-nav-item-dropdown>
@@ -37,7 +37,14 @@
 
 <script>
     export default {
-        name: "FTLNavbar"
+        name: "FTLNavbar",
+
+        props: {
+            account: {
+                type: Object,
+                required: true
+            }
+        }
     }
 </script>
 
