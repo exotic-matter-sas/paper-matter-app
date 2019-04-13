@@ -24,6 +24,9 @@ module.exports = {
             .hotOnly(true)
             .watchOptions({poll: 1000})
             .https(false)
-            .headers({"Access-Control-Allow-Origin": ["*"]});
+            .headers({
+                "Access-Control-Allow-Credentials": "true",
+                "Access-Control-Allow-Origin": ["http://127.0.0.1:8000"]
+            });
     }
 };
