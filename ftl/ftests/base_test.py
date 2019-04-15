@@ -59,6 +59,9 @@ class BaseTestCase(LiveServerTestCase):
         else:
             raise ValueError('Unsupported browser, allowed: firefox, chrome')
 
+        # Set a default window size
+        self.browser.set_window_size(1024, 768)
+
     def tearDown(self):
         self.browser.quit()
 

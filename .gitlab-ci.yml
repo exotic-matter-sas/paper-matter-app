@@ -11,13 +11,32 @@ services:
   - docker:dind
 
 stages:
-  - build
+  - build-frontend
+  - build-backend
   - test
   - deploy
 
-compile:
-  stage: build
+compile-frontend:
+  stage: build-frontend
+  image: node:10.15.3-alpine
+  artifacts:
+    paths:
+      - ftl/frontend/dist
+      - ftl/frontend/webpack-stats.json
+    expire_in: 1 hour
+  script:
+    - cd ftl/frontend
+    - npm install
+    - npm run build
+  except:
+    changes:
+      - README.md
+
+compile-backend:
+  stage: build-backend
   image: registry.gitlab.com/exotic-matter/ftl-base-image-ci:latest
+  dependencies:
+    - compile-frontend
   artifacts:
     paths:
       - ftl
@@ -26,9 +45,10 @@ compile:
   script:
     - export DJANGO_SETTINGS_MODULE=ftl.settings_tests
     - virtualenv venv && source venv/bin/activate
-    - cd ftl && pip3 install -r requirements_dev.txt
+    - cd ftl && pip3 install -r requirements.txt && pip3 install -r requirements_dev.txt
     - python3 -m compileall ./
     - python3 manage.py compilemessages
+    - python3 manage.py collectstatic
   except:
     changes:
       - README.md
@@ -39,7 +59,7 @@ tests:
   services:
     - postgres:10.7-alpine
   dependencies:
-    - compile
+    - compile-backend
   script:
     - export DJANGO_SETTINGS_MODULE=ftl.settings_tests
     - source venv/bin/activate && cd ftl
