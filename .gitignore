@@ -106,4 +106,3 @@ Pipfile.lock
 geckodriver.log
 settings_local.py
 ftl/uploads/
-package-lock.json
