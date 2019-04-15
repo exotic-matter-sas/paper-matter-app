@@ -1,16 +1,29 @@
-{% extends "base.html" %}
+{% load render_bundle from webpack_loader %}
 {% load i18n %}
 
-{% block title %}{% trans 'Home' %}{% endblock %}
+<!DOCTYPE html>
+<html lang="{{ request.LANGUAGE_CODE }}">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>ftl-app - Home</title>
 
-{% block content %}
-    <h1>{% blocktrans %}FTL APP: Organization {{org_name}}{% endblocktrans %}</h1>
-    <h2>{% blocktrans %}Welcome back {{username}}!{% endblocktrans %}</h2>
-    <ul>
-        <li>Doc 1</li>
-        <li>Doc 2</li>
-        <li>Doc 3</li>
-        <li>Doc 4</li>
-        <li>Doc 5</li>
-    </ul>
-{% endblock %}
+    <script>
+        window.ftlAccounts = {
+            name: "{{username}}",
+        }
+    </script>
+</head>
+<body>
+<noscript>
+    <strong>{% blocktrans %}We're sorry but ftl-app will not work without JavaScript enabled. Please enable it
+        to continue.{% endblocktrans %}</strong>
+</noscript>
+
+<div id="app"></div>
+
+{% render_bundle 'app' %}
+
+</body>
+</html>

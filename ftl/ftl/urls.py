@@ -16,9 +16,9 @@ Including another URLconf
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
-from django.urls import path, include
+from django.urls import path, include, re_path
 
-from ftl import views
+from ftl import views, view_local_proxy
 from ftl.views_auth import LoginViewFTL
 from ftl.custom_view_decorators import setup_state_required, SetupState
 
@@ -50,4 +50,9 @@ if settings.DEBUG:
 
     urlpatterns += [
         path('__debug__/', include(debug_toolbar.urls)),
+    ]
+
+if settings.DEV_MODE:
+    urlpatterns += [
+        re_path(r'^local/(?P<url>.*)$', view_local_proxy.LocalProxy.as_view())
     ]

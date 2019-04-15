@@ -40,10 +40,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.postgres',
     'mptt',
+    'rest_framework',
+    'webpack_loader',
     'ftl',
     'setup',
     'core'
 ]
+
 if DEBUG:
     INSTALLED_APPS += [
         'debug_toolbar',
@@ -85,7 +88,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ftl.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
@@ -99,7 +101,6 @@ DATABASES = {
         'PORT': '5432'
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -119,7 +120,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
@@ -136,7 +136,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = '/assets/'  # public path
+STATIC_ROOT = os.path.join(BASE_DIR, 'assets')  # internal path
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'frontend', 'dist'),  # Webpack final bundle
+)
 
 # IPs allowed to see the debug toolbar app
 INTERNAL_IPS = ['127.0.0.1']
@@ -150,6 +154,24 @@ LOGIN_REDIRECT_URL = '/app'
 # Default settings for browser used for functional tests
 DEFAULT_TEST_BROWSER = 'firefox'
 TEST_BROWSER_HEADLESS = True
+DEV_MODE = False
+
+# Django Rest Framework settings
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'PAGE_SIZE': 10
+}
+
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'CACHE': not DEBUG,
+        'BUNDLE_DIR_NAME': '/bundles/',
+        'STATS_FILE': os.path.join(BASE_DIR, 'frontend', 'webpack-stats.json'),
+    }
+}
 
 # ==================================================
 # No settings under this line

@@ -12,7 +12,7 @@ Archiving documents solution
 ### Install Python modules
  
     python -m pip install requirements.txt
-        
+
 ## For developers
 
 ### Requirements
@@ -24,8 +24,24 @@ Archiving documents solution
  
 ### Install Python modules
  
+    python -m pip install requirements.txt
     python -m pip install requirements_dev.txt
+
+### Install Node modules
  
+    cd ftl/vuejs-app
+    npm install
+    
+### Run local server
+
+First terminal
+
+    npm run serve
+
+Second terminal
+    
+    python manage.py runserver
+
 ### Tests
 
 Run all tests
