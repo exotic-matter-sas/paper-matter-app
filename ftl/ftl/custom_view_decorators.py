@@ -3,6 +3,12 @@ from django.shortcuts import redirect
 from core.models import FTLUser, FTLOrg
 
 
+class SetupState:
+    none = 0
+    first_org_created = 1
+    admin_created = 2
+
+
 def _redirect_to_setup_step_to_complete(first_org_state, admin_state):
     """Logic to redirect user to appropriate view if required setup state isn't meet"""
     if admin_state:
@@ -14,7 +20,7 @@ def _redirect_to_setup_step_to_complete(first_org_state, admin_state):
             return redirect('setup:create_first_org')
 
 
-def setup_state_required(**excepted_setup_state):
+def setup_state_required(excepted_setup_state):
     """
     Decorator for views that check that expected setup state is meet:
     - if excepted setup meet it returns decorated view
@@ -23,21 +29,24 @@ def setup_state_required(**excepted_setup_state):
 
     def decorator(view_func):
         def _wrapped_view(*args, **kwargs):
-            state_error = False
+            state_error = True
             first_org_state = FTLOrg.objects.count() > 0
             admin_state = FTLUser.objects.filter(is_staff=True).count() > 0
-            complete_state = first_org_state and admin_state
 
-            if 'complete' in excepted_setup_state:
-                if complete_state != excepted_setup_state['complete']:
-                    state_error = True
+            none_state = not (first_org_state or admin_state)
+
+            if excepted_setup_state == SetupState.none:
+                if none_state:
+                    state_error = False
+            elif excepted_setup_state == SetupState.first_org_created:
+                if first_org_state and not admin_state:
+                    state_error = False
+            elif excepted_setup_state == SetupState.admin_created:
+                if first_org_state and admin_state:
+                    state_error = False
             else:
-                if 'first_org' in excepted_setup_state:
-                    if first_org_state != excepted_setup_state['first_org']:
-                        state_error = True
-                if 'admin' in excepted_setup_state:
-                    if admin_state != excepted_setup_state['admin']:
-                        state_error = True
+                raise ValueError(f'excepted_setup_state is not valid, accepted value are:'
+                                 f'{[attr for attr in dir(SetupState) if not attr.startswith("_")]}')
 
             if state_error:
                 return _redirect_to_setup_step_to_complete(first_org_state, admin_state)
