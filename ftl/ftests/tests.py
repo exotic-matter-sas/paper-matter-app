@@ -1,3 +1,5 @@
+from unittest import skip
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
@@ -124,6 +126,7 @@ class LandingPageTests(BaseTestCase):
 
 
 class LoginPageTests(BaseTestCase):
+    @skip('TODO Need a local node js server to be running, see https://gitlab.com/exotic-matter/ftl-app/issues/20')
     def test_first_user_can_login(self):
         """First user can login and access a logged page"""
         org = setup_org()
