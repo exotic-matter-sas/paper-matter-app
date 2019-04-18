@@ -1,11 +1,12 @@
 import json
 import os
 
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.views import View
 from rest_framework import generics, views
+from rest_framework.authentication import SessionAuthentication
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 
@@ -13,16 +14,17 @@ from core.models import FTLDocument, FTLFolder
 from core.serializers import FTLDocumentSerializer, FTLFolderSerializer
 
 
-@login_required
-def home(request):
-    context = {
-        'org_name': request.session['org_name'],
-        'username': request.user.get_username(),
-    }
-    return render(request, 'core/home.html', context)
+class HomeView(LoginRequiredMixin, View):
+
+    def get(self, request, *args, **kwargs):
+        context = {
+            'org_name': request.session['org_name'],
+            'username': request.user.get_username(),
+        }
+        return render(request, 'core/home.html', context)
 
 
-class DownloadView(View):
+class DownloadView(LoginRequiredMixin, View):
     http_method_names = ['get']
 
     def get(self, request, *args, **kwargs):
@@ -33,6 +35,7 @@ class DownloadView(View):
 
 
 class FTLDocumentList(generics.ListCreateAPIView):
+    authentication_classes = (SessionAuthentication,)
     serializer_class = FTLDocumentSerializer
 
     def get_queryset(self):
@@ -52,6 +55,7 @@ class FTLDocumentList(generics.ListCreateAPIView):
 
 
 class FTLDocumentDetail(generics.RetrieveUpdateDestroyAPIView):
+    authentication_classes = (SessionAuthentication,)
     serializer_class = FTLDocumentSerializer
     lookup_field = 'pid'
 
@@ -71,11 +75,12 @@ class FTLDocumentDetail(generics.RetrieveUpdateDestroyAPIView):
         os.remove(binary.file.name)
 
 
-class FileUploadView(views.APIView):
+class FileUploadView(LoginRequiredMixin, views.APIView):
+    authentication_classes = (SessionAuthentication,)
     parser_classes = (MultiPartParser,)
     serializer_class = FTLDocumentSerializer
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         file_obj = request.data['file']
         payload = json.loads(request.data['json'])  # Nothing for now
 
@@ -99,6 +104,7 @@ class FileUploadView(views.APIView):
 
 
 class FTLFolderList(generics.ListCreateAPIView):
+    authentication_classes = (SessionAuthentication,)
     serializer_class = FTLFolderSerializer
     pagination_class = None
 
