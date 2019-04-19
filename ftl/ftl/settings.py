@@ -140,6 +140,7 @@ STATIC_URL = '/assets/'  # public path
 STATIC_ROOT = os.path.join(BASE_DIR, 'assets')  # internal path
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'frontend', 'dist'),  # Webpack final bundle
+    os.path.join(BASE_DIR, 'public'),
 )
 
 # IPs allowed to see the debug toolbar app

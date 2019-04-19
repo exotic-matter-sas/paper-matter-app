@@ -39,9 +39,26 @@
             </b-row>
         </b-container>
 
-        <b-container>
-            <FTLViewDocumentPanel v-if="docModal" :pid="docPid" @event-close-doc="docModal = false"/>
-        </b-container>
+
+        <b-modal dialog-class="modal-full" lazy v-model="docModal" size="xl" @event-close-doc="docModal = false">
+            <div slot="modal-title">Titre {{ currentOpenDoc.title }}</div>
+            <b-container fluid>
+                <b-row scr>
+                    <b-col md="8">
+                        <b-embed v-if="currentOpenDoc.pid" type="iframe" aspect="4by3"
+                                 :src="`/assets/pdfjs/web/viewer.html?file=/app/uploads/` + currentOpenDoc.pid">
+                        </b-embed>
+                    </b-col>
+                    <b-col>
+                        <b-row>AAA</b-row>
+                        <b-row>BBB</b-row>
+                        <b-row>CCC</b-row>
+                    </b-col>
+                </b-row>
+            </b-container>
+            <div slot="modal-footer">Footer stuff here</div>
+        </b-modal>
+
     </div>
 </template>
 
@@ -50,13 +67,11 @@
     import FTLFolder from './components/FTLFolder'
     import FTLDocument from './components/FTLDocument'
     import FTLUpload from './components/FTLUpload'
-    import FTLViewDocumentPanel from "./components/FTLViewDocumentPanel"
     import axios from 'axios'
 
     export default {
         name: 'app',
         components: {
-            FTLViewDocumentPanel,
             FTLNavbar,
             FTLFolder,
             FTLDocument,
@@ -71,7 +86,9 @@
                 previousLevels: [],
                 lastRefresh: Date.now(),
                 docModal: false,
-                account: window.ftlAccounts
+                account: window.ftlAccounts,
+                currentOpenDoc: {title: 'loading'},
+                publicPath: process.env.BASE_URL,
             }
         },
 
@@ -110,6 +127,13 @@
             openDocument: function (pid) {
                 this.docPid = pid;
                 this.docModal = true;
+
+                const vi = this;
+                axios
+                    .get('/app/api/v1/documents/' + pid)
+                    .then(response => {
+                        vi.currentOpenDoc = response.data;
+                    });
             },
 
             updateDocument: function () {
@@ -157,6 +181,11 @@
         text-align: center;
         color: #2c3e50;
         margin-top: 60px;
+    }
+
+    .modal-full {
+        min-width: 100%;
+        margin: 0;
     }
 
     /* Temp for viewing layout */
