@@ -1,53 +1,78 @@
 <template>
     <div id="app" class="m-0">
-        <b-container fluid class="p-0">
-            <FTLNavbar :account="account"/>
-        </b-container>
+        <header>
+            <b-container fluid class="p-0">
+                <FTLNavbar :account="account"/>
+            </b-container>
+        </header>
 
-        <b-container>
-            <b-row>
-                <b-col>
-                    <FTLUpload :currentFolder="getCurrentFolder" @newupload="updateDocument"/>
-                </b-col>
-            </b-row>
-            <b-row>
-                <b-col>
-                    <b-button variant="primary" @click="updateDocument">Refresh documents list</b-button>
-                    Last refresh {{ lastRefreshFormatted }}
-                </b-col>
-            </b-row>
-        </b-container>
+        <section>
+            <b-container>
+                <b-row>
+                    <b-col>
+                        <FTLUpload :currentFolder="getCurrentFolder" @newupload="updateDocument"/>
+                    </b-col>
+                </b-row>
+                <b-row>
+                    <b-col>
+                        <b-button variant="primary" @click="updateDocument">Refresh documents list</b-button>
+                        Last refresh {{ lastRefreshFormatted }}
+                    </b-col>
+                </b-row>
+            </b-container>
+        </section>
 
-        <b-container>
-            <b-row>
-                <b-button variant="primary" class="m-1" v-if="previousLevels.length" @click="changeToPreviousFolder">
-                    Up
-                </b-button>
-                <b-button v-else variant="primary" class="m-1" disabled>Up</b-button>
-                <FTLFolder v-for="folder in folders" :key="folder.id" :folder="folder"
-                           @event-change-folder="changeFolder"/>
-            </b-row>
-        </b-container>
+        <section>
+            <b-container>
+                <b-row>
+                    <b-button variant="primary" class="m-1" v-if="previousLevels.length"
+                              @click="changeToPreviousFolder">
+                        Up
+                    </b-button>
+                    <b-button v-else variant="primary" class="m-1" disabled>Up</b-button>
+                    <FTLFolder v-for="folder in folders" :key="folder.id" :folder="folder"
+                               @event-change-folder="changeFolder"/>
+                </b-row>
+            </b-container>
+        </section>
 
-        <b-container>
-            <b-row align-h="around" v-if="docs.length">
-                <FTLDocument v-for="doc in docs" :key="doc.pid" :doc="doc" @event-delete-doc="updateDocument"
-                             @event-open-doc="openDocument"/>
-            </b-row>
-            <b-row v-else>
-                <b-col>Aucun document</b-col>
-            </b-row>
-        </b-container>
+        <section>
+            <b-container>
+                <b-row align-h="around" v-if="docs.length">
+                    <FTLDocument v-for="doc in docs" :key="doc.pid" :doc="doc" @event-delete-doc="updateDocument"
+                                 @event-open-doc="openDocument"/>
+                </b-row>
+                <b-row v-else>
+                    <b-col>Aucun document</b-col>
+                </b-row>
+            </b-container>
+        </section>
 
+        <footer>
+            <b-container>
+                <b-row>
+                    <b-col>
+                        ftl-app, open source software. Made with ❤ by <a href="https://www.exotic-matter.fr">Exotic
+                        Matter</a>.
+                    </b-col>
+                </b-row>
+            </b-container>
+        </footer>
 
-        <b-modal dialog-class="modal-full" lazy v-model="docModal" size="xl" @event-close-doc="docModal = false">
-            <div slot="modal-title">Titre {{ currentOpenDoc.title }}</div>
-            <b-container fluid>
+        <!-- Pdf viewer popup -->
+        <div v-if="docModal" class="doc-view-modal" :class="{open: docModal}">
+            <b-container>
+                Titre {{ currentOpenDoc.title }}
+            </b-container>
+            <b-container>
                 <b-row scr>
                     <b-col md="8">
-                        <b-embed v-if="currentOpenDoc.pid" type="iframe" aspect="4by3"
-                                 :src="`/assets/pdfjs/web/viewer.html?file=/app/uploads/` + currentOpenDoc.pid">
-                        </b-embed>
+                        <div class="embed-responsive embed-responsive-1by1 doc-pdf ">
+                            <iframe v-if="currentOpenDoc.pid" class="embed-responsive-item"
+                                    :src="`/assets/pdfjs/web/viewer.html?file=/app/uploads/` + currentOpenDoc.pid">
+                            </iframe>
+                        </div>
+
                     </b-col>
                     <b-col>
                         <b-row>AAA</b-row>
@@ -56,9 +81,14 @@
                     </b-col>
                 </b-row>
             </b-container>
-            <div slot="modal-footer">Footer stuff here</div>
-        </b-modal>
-
+            <b-container>
+                <b-row align-h="end">
+                    <b-col cols="2">
+                        <b-button variant="secondary" @click="docModal = false">Close</b-button>
+                    </b-col>
+                </b-row>
+            </b-container>
+        </div>
     </div>
 </template>
 
@@ -183,9 +213,26 @@
         margin-top: 60px;
     }
 
-    .modal-full {
-        min-width: 100%;
-        margin: 0;
+    /* PDF.js viewer custom css */
+    .doc-view-modal {
+        display: none;
+        height: 100%;
+        left: 0;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        background: white;
+        z-index: 1000;
+        padding: 20px;
+    }
+
+    .doc-view-modal.open {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .doc-pdf {
+        padding-top: 100%;
     }
 
     /* Temp for viewing layout */
