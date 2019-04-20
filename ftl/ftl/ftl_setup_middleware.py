@@ -43,8 +43,6 @@ class FTLSetupMiddleware:
         return response
 
     def process_view(self, request, view_func, view_args, view_kwargs):
-        print(view_kwargs)
-
         if 'ftl_setup_state' in view_kwargs:
             state_error = True
             none_state = not (self.first_org_state or self.admin_state)
