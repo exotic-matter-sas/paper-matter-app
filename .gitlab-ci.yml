@@ -26,7 +26,7 @@ compile-frontend:
     expire_in: 1 hour
   script:
     - cd ftl/frontend
-    - npm install
+    - npm ci
     - npm run build
 
 compile-backend:
