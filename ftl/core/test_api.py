@@ -59,14 +59,12 @@ class DocumentsTests(APITestCase):
         self.assertEqual(client_doc['title'], ftl_document_second.title)
         self.assertEqual(client_doc['note'], ftl_document_second.note)
         self.assertEqual(client_doc['ftl_folder'], ftl_document_second.ftl_folder)
-        self.assertEqual(client_doc['binary'], ftl_document_second.binary)
 
         client_doc = client_get.data['results'][1]
         self.assertEqual(client_doc['pid'], str(ftl_document_first.pid))
         self.assertEqual(client_doc['title'], ftl_document_first.title)
         self.assertEqual(client_doc['note'], ftl_document_first.note)
         self.assertEqual(client_doc['ftl_folder'], ftl_document_first.ftl_folder)
-        self.assertEqual(client_doc['binary'], ftl_document_first.binary)
 
     def test_get_document(self):
         pass
