@@ -44,6 +44,8 @@ Second terminal
 
 ### Tests
 
+## Python
+
 Run all tests
 
     python manage.py test
@@ -52,7 +54,15 @@ Run test for a specific module
 
     python manage.py test ftests # run only functional tests
     python manage.py test core # run unit tests of core module
- 
+
+## VueJS
+
+Run all tests
+
+    vue-cli-service test:unit
+    
+_Or alternatively `npx vue-cli-service test:unit`_
+
 ### i18n
  
  :warning: _Avoid raw editing of .po files, use poedit or equivalent instead_
