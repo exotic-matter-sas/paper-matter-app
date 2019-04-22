@@ -19,7 +19,7 @@ from django.contrib.auth import views as auth_views
 from django.urls import path, include, re_path
 
 from ftl import views, view_local_proxy
-from ftl.custom_view_decorators import SetupState
+from ftl.ftl_setup_middleware import SetupState
 from ftl.views_auth import LoginViewFTL
 
 urlpatterns = [
@@ -28,7 +28,7 @@ urlpatterns = [
 
     path('', views.index),
     path('setup/', include('setup.urls')),
-    path('app/', include('core.urls'), kwargs={"ftl_setup_state": SetupState.admin_created}),
+    path('app/', include('core.urls')),
 
     path('signup/<slug:org_slug>/', views.CreateFTLUserFormView.as_view(), name='signup'),
     path('signup/<slug:org_slug>/success/', views.signup_success, name='signup_success'),

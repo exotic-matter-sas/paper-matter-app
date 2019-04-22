@@ -2,7 +2,12 @@ from django.core.exceptions import MiddlewareNotUsed
 from django.shortcuts import redirect
 
 from core.models import FTLOrg, FTLUser
-from ftl.custom_view_decorators import SetupState
+
+
+class SetupState:
+    none = 0
+    first_org_created = 1
+    admin_created = 2
 
 
 def _redirect_to_setup_step_to_complete(first_org_state, admin_state):
@@ -34,6 +39,12 @@ class FTLSetupMiddleware:
     def __call__(self, request):
         # Code to be executed for each request before
         # the view (and later middleware) are called.
+
+        # Put a session flag to indicate that the ftp_setup_middleware is enabled on the current django instance.
+        # The setup views will only allow setup if the following flag is present.
+        # As such, when the setup is completed, the middleware will not load and the setup views will not have the flag
+        # and will denied access to setup views.
+        request.session['ftl_setup_middleware'] = True
 
         response = self.get_response(request)
 
