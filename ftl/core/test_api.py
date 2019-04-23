@@ -8,7 +8,7 @@ from rest_framework.test import APITestCase
 import core
 from core.models import FTLDocument, FTLFolder
 from ftests.tools import test_values as tv
-from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user
+from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_document, setup_folder
 from ftl.settings import BASE_DIR
 
 
@@ -18,32 +18,13 @@ class DocumentsTests(APITestCase):
         setup_admin(self.org)
         self.user = setup_user(self.org)
 
-        self.doc = FTLDocument.objects.create(
-            org=self.org,
-            ftl_user=self.user,
-            title="Test document",
-            binary='uploads/test.pdf',
-        )
+        self.doc = setup_document(self.org, self.user)
+        self.doc_bis = setup_document(self.org, self.user, title=tv.DOCUMENT2_TITLE)
 
-        self.doc_bis = FTLDocument.objects.create(
-            org=self.org,
-            ftl_user=self.user,
-            title="Test document 2",
-            binary='uploads/test.pdf',
-        )
+        self.folder_root = setup_folder(self.org, name='First level folder')
 
-        self.folder_root = FTLFolder.objects.create(
-            org=self.org,
-            name="Folder root",
-        )
-
-        self.doc_in_folder = FTLDocument.objects.create(
-            org=self.org,
-            ftl_user=self.user,
-            title="Test document in folder",
-            binary='uploads/test.pdf',
-            ftl_folder=self.folder_root
-        )
+        self.doc_in_folder = setup_document(self.org, self.user, title='Document in folder',
+                                            ftl_folder=self.folder_root)
 
         self.client.login(username=tv.USER1_USERNAME, password=tv.USER1_PASS)
 
@@ -179,32 +160,9 @@ class FoldersTests(APITestCase):
         setup_admin(self.org)
         self.user = setup_user(self.org)
 
-        self.folder_root = FTLFolder.objects.create(
-            org=self.org,
-            name="Folder root",
-        )
+        self.folder_root = setup_folder(self.org, name='First level folder')
 
-        self.folder_root_subfolder = FTLFolder.objects.create(
-            org=self.org,
-            name="Folder root > subfolder",
-            parent=self.folder_root
-        )
-
-        self.doc = FTLDocument.objects.create(
-            org=self.org,
-            ftl_user=self.user,
-            title="Test document",
-            binary='uploads/test.pdf',
-            ftl_folder=self.folder_root
-        )
-
-        self.doc_bis = FTLDocument.objects.create(
-            org=self.org,
-            ftl_user=self.user,
-            title="Test document 2",
-            binary='uploads/test.pdf',
-            ftl_folder=self.folder_root_subfolder
-        )
+        self.folder_root_subfolder = setup_folder(self.org, name='Second level folder', parent=self.folder_root)
 
         self.client.login(username=tv.USER1_USERNAME, password=tv.USER1_PASS)
 
