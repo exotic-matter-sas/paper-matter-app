@@ -4,6 +4,10 @@ export const ACCOUNT_PROPS = {
   account: {name: 'John Doe'}
 };
 
+export const FOLDER_PROPS = {
+  name: 'Folder title'
+};
+
 export const DOCUMENT_PROPS = {
   pid: '1234',
   title: 'Document title',

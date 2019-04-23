@@ -21,6 +21,7 @@ Archiving documents solution
  * PostgreSQL 11
  * Firefox or Chrome (to run functional tests)
  * Poedit or equivalent (to add/update i18n)
+ * Node.js
  
 ### Install Python modules
  
@@ -82,3 +83,7 @@ _Or alternatively `npx vue-cli-service test:unit`_
 ### Django settings
 
 To use specific Django settings without modifying main `ftl/ftl/settings.py` file, create a `ftl/ftl/settings_local.py` file and override desired setting in it.
+
+### Build
+
+TODO
