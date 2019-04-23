@@ -36,7 +36,7 @@ class DocumentsTests(APITestCase):
         ftl_document_bis = FTLDocument.objects.get(pid=self.doc_bis.pid)
         self.assertIsNotNone(ftl_document_bis.pid)
 
-        client_get = self.client.get('/app/api/v1/documents', format='json', follow=True)
+        client_get = self.client.get('/app/api/v1/documents/', format='json')
 
         self.assertEqual(client_get.status_code, status.HTTP_200_OK)
         self.assertEqual(client_get['Content-Type'], 'application/json')
@@ -51,7 +51,7 @@ class DocumentsTests(APITestCase):
         ftl_document_second = FTLDocument.objects.get(pid=self.doc_bis.pid)
         self.assertIsNotNone(ftl_document_second.pid)
 
-        client_get = self.client.get('/app/api/v1/documents', format='json', follow=True)
+        client_get = self.client.get('/app/api/v1/documents/', format='json')
 
         # First document should be the last one uploaded.
         client_doc = client_get.data['results'][0]
@@ -67,4 +67,16 @@ class DocumentsTests(APITestCase):
         self.assertEqual(client_doc['ftl_folder'], ftl_document_first.ftl_folder)
 
     def test_get_document(self):
-        pass
+        self.client.login(username=tv.USER1_USERNAME, password=tv.USER1_PASS)
+
+        ftl_document_first = FTLDocument.objects.get(pid=self.doc.pid)
+        self.assertIsNotNone(ftl_document_first.pid)
+
+        client_get = self.client.get('/app/api/v1/documents/' + str(self.doc.pid), format='json')
+
+        # First document should be the last one uploaded.
+        client_doc = client_get.data
+        self.assertEqual(client_doc['pid'], str(ftl_document_first.pid))
+        self.assertEqual(client_doc['title'], ftl_document_first.title)
+        self.assertEqual(client_doc['note'], ftl_document_first.note)
+        self.assertEqual(client_doc['ftl_folder'], ftl_document_first.ftl_folder)
