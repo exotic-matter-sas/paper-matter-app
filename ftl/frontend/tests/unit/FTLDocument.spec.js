@@ -1,17 +1,23 @@
-import { shallowMount } from '@vue/test-utils';
+import { createLocalVue, mount } from '@vue/test-utils';
 
 import axios from 'axios';
+import BootstrapVue from "bootstrap-vue";
 
-import FTLDocument from '@/components/FTLDocument.vue';
 import * as tv from './../tools/testValues.js'
+import FTLDocument from "../../src/components/FTLDocument";
+
+const localVue = createLocalVue();
+localVue.use(BootstrapVue); // to avoid warning on tests execution
 
 jest.mock('axios', () => ({
   delete: jest.fn()
 }));
 
+
 describe('FTLDocument template', () => {
   it('renders properly document data', () => {
-    const wrapper = shallowMount(FTLDocument, {
+    const wrapper = mount(FTLDocument, {
+      localVue,
       propsData: { doc: tv.DOCUMENT_PROPS }
     });
     Object.values(tv.DOCUMENT_PROPS).forEach(function(documentData){
@@ -32,7 +38,8 @@ describe('FTLDocument script', () => {
   beforeEach(() => {
     // given
     axios.delete.mockReturnValue(Promise.resolve(mockedDeleteResponse));
-    wrapper = shallowMount(FTLDocument, {
+    wrapper = mount(FTLDocument, {
+      localVue,
       propsData: { doc: tv.DOCUMENT_PROPS }
     });
     delete_button = wrapper.find('.deleteDocument');
