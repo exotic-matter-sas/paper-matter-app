@@ -1,9 +1,14 @@
+import os
+import tempfile
+
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+import core
 from core.models import FTLDocument
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user
+from ftl.settings import BASE_DIR
 
 
 class DocumentsTests(APITestCase):
@@ -11,7 +16,6 @@ class DocumentsTests(APITestCase):
         self.org = setup_org()
         setup_admin(self.org)
         self.user = setup_user(self.org)
-        # setup_authenticated_session(self.client, self.org, self.user)
 
         self.doc = FTLDocument.objects.create(
             org=self.org,
@@ -27,9 +31,9 @@ class DocumentsTests(APITestCase):
             binary='uploads/test.pdf',
         )
 
-    def test_list_documents(self):
         self.client.login(username=tv.USER1_USERNAME, password=tv.USER1_PASS)
 
+    def test_list_documents(self):
         ftl_document = FTLDocument.objects.get(pid=self.doc.pid)
         self.assertIsNotNone(ftl_document.pid)
 
@@ -43,8 +47,6 @@ class DocumentsTests(APITestCase):
         self.assertEqual(client_get.data['count'], 2)
 
     def test_list_documents_order(self):
-        self.client.login(username=tv.USER1_USERNAME, password=tv.USER1_PASS)
-
         ftl_document_first = FTLDocument.objects.get(pid=self.doc.pid)
         self.assertIsNotNone(ftl_document_first.pid)
 
@@ -67,8 +69,6 @@ class DocumentsTests(APITestCase):
         self.assertEqual(client_doc['ftl_folder'], ftl_document_first.ftl_folder)
 
     def test_get_document(self):
-        self.client.login(username=tv.USER1_USERNAME, password=tv.USER1_PASS)
-
         ftl_document_first = FTLDocument.objects.get(pid=self.doc.pid)
         self.assertIsNotNone(ftl_document_first.pid)
 
@@ -80,3 +80,42 @@ class DocumentsTests(APITestCase):
         self.assertEqual(client_doc['title'], ftl_document_first.title)
         self.assertEqual(client_doc['note'], ftl_document_first.note)
         self.assertEqual(client_doc['ftl_folder'], ftl_document_first.ftl_folder)
+
+    def test_delete_document(self):
+        # Create a custom document specific to this test because we don't want to delete the test pdf file.
+        binary_f = tempfile.NamedTemporaryFile(dir=os.path.join(BASE_DIR, 'uploads'), delete=False)
+        binary_f.write(b'Hello world!')  # Actual content doesn't matter
+        binary_f.close()
+
+        document_to_be_deleted = FTLDocument.objects.create(
+            org=self.org,
+            ftl_user=self.user,
+            title="Test document to be deleted",
+            binary=binary_f.name,
+        )
+
+        client_delete = self.client.delete('/app/api/v1/documents/' + str(document_to_be_deleted.pid))
+        self.assertEqual(client_delete.status_code, status.HTTP_204_NO_CONTENT)
+
+        with self.assertRaises(core.models.FTLDocument.DoesNotExist):
+            FTLDocument.objects.get(pid=document_to_be_deleted.pid)
+
+        # File has been deleted.
+        self.assertTrue(not os.path.exists(binary_f.name))
+
+    def test_upload_document(self):
+        # Create a custom document specific to this test because we don't want to delete the test pdf file.
+        binary_f = tempfile.NamedTemporaryFile(dir=os.path.join(BASE_DIR, 'uploads'), delete=False)
+        binary_f.write(b'Hello world!')
+        binary_f.close()
+
+        with open(binary_f.name) as fp:
+            client_post = self.client.post('/app/api/v1/documents/upload', {'json': '{}', 'file': fp})
+
+        self.assertEqual(client_post.status_code, status.HTTP_200_OK)
+
+        client_doc = client_post.data
+        self.assertIsNotNone(client_doc['pid'])
+        self.assertIsNotNone(client_doc['title'])
+        self.assertEqual(client_doc['note'], '')
+        self.assertEqual(client_doc['ftl_folder'], None)

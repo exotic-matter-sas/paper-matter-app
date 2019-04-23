@@ -32,7 +32,7 @@ class DownloadView(View):
         return response
 
 
-class FTLDocumentList(generics.ListCreateAPIView):
+class FTLDocumentList(generics.ListAPIView):
     serializer_class = FTLDocumentSerializer
 
     def get_queryset(self):
@@ -46,9 +46,6 @@ class FTLDocumentList(generics.ListCreateAPIView):
             queryset = queryset.filter(ftl_folder__isnull=True)
 
         return queryset
-
-    def perform_create(self, serializer):
-        serializer.save()  # TODO Do we need this?
 
 
 class FTLDocumentDetail(generics.RetrieveUpdateDestroyAPIView):
