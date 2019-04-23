@@ -92,7 +92,7 @@ class FileUploadView(views.APIView):
         ftl_doc.title = file_obj.name
         ftl_doc.save()
 
-        return Response(self.serializer_class(ftl_doc).data, status=200)
+        return Response(self.serializer_class(ftl_doc).data, status=201)
 
 
 class FTLFolderList(generics.ListCreateAPIView):

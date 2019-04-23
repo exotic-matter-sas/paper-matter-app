@@ -1,3 +1,4 @@
+import json
 import os
 import tempfile
 
@@ -119,20 +120,17 @@ class DocumentsTests(APITestCase):
         self.assertTrue(not os.path.exists(binary_f.name))
 
     def test_upload_document(self):
-        # Create a custom document specific to this test because we don't want to delete the test pdf file.
-        binary_f = tempfile.NamedTemporaryFile(dir=os.path.join(BASE_DIR, 'uploads'), delete=False)
-        binary_f.write(b'Hello world!')
-        binary_f.close()
-
-        with open(binary_f.name) as fp:
+        with open(os.path.join(BASE_DIR, 'uploads', 'test.pdf'), mode='rb') as fp:
             client_post = self.client.post('/app/api/v1/documents/upload', {'json': '{}', 'file': fp})
-        self.assertEqual(client_post.status_code, status.HTTP_200_OK)
+        self.assertEqual(client_post.status_code, status.HTTP_201_CREATED)
 
         client_doc = client_post.data
-        self.assertIsNotNone(client_doc['pid'])
-        self.assertIsNotNone(client_doc['title'])
-        self.assertEqual(client_doc['note'], '')
-        self.assertEqual(client_doc['ftl_folder'], None)
+        objects_get = FTLDocument.objects.get(pid=client_doc['pid'])
+
+        self.assertEqual(str(objects_get.pid), client_doc['pid'])
+        self.assertEqual(objects_get.title, client_doc['title'])
+        self.assertEqual(objects_get.note, client_doc['note'])
+        self.assertIsNone(objects_get.ftl_folder)
 
     def test_document_in_folder(self):
         client_get = self.client.get('/app/api/v1/documents/?level=%s' % self.folder_root.id, format='json')
@@ -145,6 +143,34 @@ class DocumentsTests(APITestCase):
         self.assertEqual(client_doc['title'], self.doc_in_folder.title)
         self.assertEqual(client_doc['note'], self.doc_in_folder.note)
         self.assertEqual(client_doc['ftl_folder'], self.folder_root.id)
+
+    def test_upload_document_in_folder(self):
+        post_body = {'ftl_folder': self.folder_root.id}
+
+        with open(os.path.join(BASE_DIR, 'uploads', 'test.pdf'), mode='rb') as fp:
+            client_post = self.client.post('/app/api/v1/documents/upload', {'json': json.dumps(post_body), 'file': fp})
+        self.assertEqual(client_post.status_code, status.HTTP_201_CREATED)
+
+        client_doc = client_post.data
+        self.assertEqual(client_doc['ftl_folder'], self.folder_root.id)
+
+        objects_get = FTLDocument.objects.get(pid=client_doc['pid'])
+        self.assertEqual(str(objects_get.pid), client_doc['pid'])
+        self.assertEqual(objects_get.title, client_doc['title'])
+        self.assertEqual(objects_get.note, client_doc['note'])
+        self.assertEqual(objects_get.ftl_folder, self.folder_root)
+
+        client_get = self.client.get('/app/api/v1/documents/?level=%s' % self.folder_root.id, format='json')
+        self.assertEqual(client_get.status_code, status.HTTP_200_OK)
+        # There should be 2 documents (one from setUp and the new uploaded one)
+        self.assertEqual(client_get.data['count'], 2)
+        self.assertEqual(len(client_get.data['results']), 2)
+
+        client_second_get = client_get.data['results'][0]
+        self.assertEqual(client_second_get['pid'], client_doc['pid'])
+        self.assertEqual(client_second_get['title'], client_doc['title'])
+        self.assertEqual(client_second_get['note'], client_doc['note'])
+        self.assertEqual(client_second_get['ftl_folder'], client_doc['ftl_folder'])
 
 
 class FoldersTests(APITestCase):
@@ -201,3 +227,25 @@ class FoldersTests(APITestCase):
         self.assertEqual(client_data['id'], self.folder_root_subfolder.id)
         self.assertEqual(client_data['name'], self.folder_root_subfolder.name)
         self.assertEqual(client_data['parent'], self.folder_root.id)
+
+    def test_create_folder(self):
+        client_post = self.client.post('/app/api/v1/folders/', {'name': 'Folder created'}, format='json')
+        self.assertEqual(client_post.status_code, status.HTTP_201_CREATED)
+
+        objects_get = FTLFolder.objects.get(id=client_post.data['id'])
+        self.assertIsNotNone(objects_get)
+        self.assertEqual(objects_get.id, client_post.data['id'])
+        self.assertEqual(objects_get.name, client_post.data['name'])
+        self.assertIsNone(client_post.data['parent'])
+
+    def test_create_folder_in_folder(self):
+        client_post = self.client.post('/app/api/v1/folders/',
+                                       {'name': 'Folder created', 'parent': self.folder_root.id}, format='json')
+        self.assertEqual(client_post.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(client_post.data['parent'], self.folder_root.id)
+
+        objects_get = FTLFolder.objects.get(id=client_post.data['id'])
+        self.assertIsNotNone(objects_get)
+        self.assertEqual(objects_get.id, client_post.data['id'])
+        self.assertEqual(objects_get.name, client_post.data['name'])
+        self.assertEqual(objects_get.parent, self.folder_root)
