@@ -49,17 +49,17 @@ class DocumentsTests(APITestCase):
         self.assertEqual(client_get.status_code, status.HTTP_200_OK)
 
         # First document should be the last one uploaded. (default sort: recent to old)
-        client_doc = client_get.data['results'][0]
-        self.assertEqual(client_doc['pid'], str(ftl_document_second.pid))
-        self.assertEqual(client_doc['title'], ftl_document_second.title)
-        self.assertEqual(client_doc['note'], ftl_document_second.note)
-        self.assertEqual(client_doc['ftl_folder'], ftl_document_second.ftl_folder)
+        client_doc_1 = client_get.data['results'][0]
+        self.assertEqual(client_doc_1['pid'], str(ftl_document_second.pid))
+        self.assertEqual(client_doc_1['title'], ftl_document_second.title)
+        self.assertEqual(client_doc_1['note'], ftl_document_second.note)
+        self.assertEqual(client_doc_1['ftl_folder'], ftl_document_second.ftl_folder)
 
-        client_doc = client_get.data['results'][1]
-        self.assertEqual(client_doc['pid'], str(ftl_document_first.pid))
-        self.assertEqual(client_doc['title'], ftl_document_first.title)
-        self.assertEqual(client_doc['note'], ftl_document_first.note)
-        self.assertEqual(client_doc['ftl_folder'], ftl_document_first.ftl_folder)
+        client_doc_2 = client_get.data['results'][1]
+        self.assertEqual(client_doc_2['pid'], str(ftl_document_first.pid))
+        self.assertEqual(client_doc_2['title'], ftl_document_first.title)
+        self.assertEqual(client_doc_2['note'], ftl_document_first.note)
+        self.assertEqual(client_doc_2['ftl_folder'], ftl_document_first.ftl_folder)
 
     def test_get_document(self):
         ftl_document_first = FTLDocument.objects.get(pid=self.doc.pid)
@@ -132,23 +132,24 @@ class DocumentsTests(APITestCase):
         client_doc = client_post.data
         self.assertEqual(client_doc['ftl_folder'], self.first_level_folder.id)
 
-        objects_get = FTLDocument.objects.get(pid=client_doc['pid'])
-        self.assertEqual(str(objects_get.pid), client_doc['pid'])
-        self.assertEqual(objects_get.title, client_doc['title'])
-        self.assertEqual(objects_get.note, client_doc['note'])
-        self.assertEqual(objects_get.ftl_folder, self.first_level_folder)
+        ftl_doc_from_db = FTLDocument.objects.get(pid=client_doc['pid'])
+        self.assertEqual(str(ftl_doc_from_db.pid), client_doc['pid'])
+        self.assertEqual(ftl_doc_from_db.title, client_doc['title'])
+        self.assertEqual(ftl_doc_from_db.note, client_doc['note'])
+        self.assertEqual(ftl_doc_from_db.ftl_folder, self.first_level_folder)
 
-        client_get = self.client.get(f'/app/api/v1/documents/?level={self.first_level_folder.id}', format='json')
-        self.assertEqual(client_get.status_code, status.HTTP_200_OK)
+        client_get_level = self.client.get(f'/app/api/v1/documents/?level={self.first_level_folder.id}', format='json')
+        self.assertEqual(client_get_level.status_code, status.HTTP_200_OK)
         # There should be 2 documents (one from setUp and the new uploaded one)
-        self.assertEqual(client_get.data['count'], 2)
-        self.assertEqual(len(client_get.data['results']), 2)
+        self.assertEqual(client_get_level.data['count'], 2)
+        self.assertEqual(len(client_get_level.data['results']), 2)
 
-        client_second_get = client_get.data['results'][0]
-        self.assertEqual(client_second_get['pid'], client_doc['pid'])
-        self.assertEqual(client_second_get['title'], client_doc['title'])
-        self.assertEqual(client_second_get['note'], client_doc['note'])
-        self.assertEqual(client_second_get['ftl_folder'], client_doc['ftl_folder'])
+        # The latest document should be the one we just uploaded.
+        client_doc_level = client_get_level.data['results'][0]
+        self.assertEqual(client_doc_level['pid'], client_doc['pid'])
+        self.assertEqual(client_doc_level['title'], client_doc['title'])
+        self.assertEqual(client_doc_level['note'], client_doc['note'])
+        self.assertEqual(client_doc_level['ftl_folder'], client_doc['ftl_folder'])
 
 
 class FoldersTests(APITestCase):
