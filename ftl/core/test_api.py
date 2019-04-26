@@ -65,7 +65,7 @@ class DocumentsTests(APITestCase):
         ftl_document_first = FTLDocument.objects.get(pid=self.doc.pid)
         self.assertIsNotNone(ftl_document_first.pid)
 
-        client_get = self.client.get('/app/api/v1/documents/' + str(self.doc.pid), format='json')
+        client_get = self.client.get(f'/app/api/v1/documents/{str(self.doc.pid)}', format='json')
         self.assertEqual(client_get.status_code, status.HTTP_200_OK)
 
         # First document should be the last one uploaded. (default sort: recent to old)
@@ -88,7 +88,7 @@ class DocumentsTests(APITestCase):
             binary=binary_f.name,
         )
 
-        client_delete = self.client.delete('/app/api/v1/documents/' + str(document_to_be_deleted.pid))
+        client_delete = self.client.delete(f'/app/api/v1/documents/{str(document_to_be_deleted.pid)}')
         self.assertEqual(client_delete.status_code, status.HTTP_204_NO_CONTENT)
 
         with self.assertRaises(core.models.FTLDocument.DoesNotExist):
@@ -111,7 +111,7 @@ class DocumentsTests(APITestCase):
         self.assertIsNone(objects_get.ftl_folder)
 
     def test_document_in_folder(self):
-        client_get = self.client.get('/app/api/v1/documents/?level=%s' % self.first_level_folder.id, format='json')
+        client_get = self.client.get(f'/app/api/v1/documents/?level={self.first_level_folder.id}', format='json')
         self.assertEqual(client_get.status_code, status.HTTP_200_OK)
         self.assertEqual(client_get.data['count'], 1)
         self.assertEqual(len(client_get.data['results']), 1)
@@ -138,7 +138,7 @@ class DocumentsTests(APITestCase):
         self.assertEqual(objects_get.note, client_doc['note'])
         self.assertEqual(objects_get.ftl_folder, self.first_level_folder)
 
-        client_get = self.client.get('/app/api/v1/documents/?level=%s' % self.first_level_folder.id, format='json')
+        client_get = self.client.get(f'/app/api/v1/documents/?level={self.first_level_folder.id}', format='json')
         self.assertEqual(client_get.status_code, status.HTTP_200_OK)
         # There should be 2 documents (one from setUp and the new uploaded one)
         self.assertEqual(client_get.data['count'], 2)
@@ -174,7 +174,7 @@ class FoldersTests(APITestCase):
         self.assertIsNone(client_data['parent'])
 
     def test_folder_tree_root_subfolder(self):
-        client_get = self.client.get('/app/api/v1/folders/?level=%s' % self.folder_root.id, format='json')
+        client_get = self.client.get(f'/app/api/v1/folders/?level={self.folder_root.id}', format='json')
         self.assertEqual(client_get.status_code, status.HTTP_200_OK)
         self.assertEqual(len(client_get.data), 1)
 
