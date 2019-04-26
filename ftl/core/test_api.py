@@ -48,7 +48,7 @@ class DocumentsTests(APITestCase):
         client_get = self.client.get('/app/api/v1/documents/', format='json')
         self.assertEqual(client_get.status_code, status.HTTP_200_OK)
 
-        # First document should be the last one uploaded.
+        # First document should be the last one uploaded. (default sort: recent to old)
         client_doc = client_get.data['results'][0]
         self.assertEqual(client_doc['pid'], str(ftl_document_second.pid))
         self.assertEqual(client_doc['title'], ftl_document_second.title)
@@ -68,7 +68,7 @@ class DocumentsTests(APITestCase):
         client_get = self.client.get('/app/api/v1/documents/' + str(self.doc.pid), format='json')
         self.assertEqual(client_get.status_code, status.HTTP_200_OK)
 
-        # First document should be the last one uploaded.
+        # First document should be the last one uploaded. (default sort: recent to old)
         client_doc = client_get.data
         self.assertEqual(client_doc['pid'], str(ftl_document_first.pid))
         self.assertEqual(client_doc['title'], ftl_document_first.title)
