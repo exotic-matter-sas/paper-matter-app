@@ -1,11 +1,12 @@
 import pathlib
 import uuid
 
-from django.contrib.auth.models import User, AbstractUser
+from django.contrib.auth.models import User, AbstractUser, Permission
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
+from rest_framework.permissions import DjangoModelPermissions
 
 
 def _get_name_binary(instance, filename):
@@ -36,9 +37,9 @@ class FTLUser(AbstractUser):
 class FTLDocument(models.Model):
     pid = models.UUIDField(default=uuid.uuid4, editable=False)
 
-    org = models.ForeignKey('FTLOrg', on_delete=models.CASCADE)
-    ftl_user = models.ForeignKey('FTLUser', on_delete=models.CASCADE)
-    ftl_folder = TreeForeignKey('FTLFolder', on_delete=models.CASCADE, null=True, blank=True)
+    org = models.ForeignKey('FTLOrg', on_delete=models.PROTECT)
+    ftl_user = models.ForeignKey('FTLUser', on_delete=models.PROTECT)
+    ftl_folder = TreeForeignKey('FTLFolder', on_delete=models.PROTECT, null=True, blank=True)
     title = models.TextField()
     note = models.TextField(blank=True)
     binary = models.FileField(upload_to=_get_name_binary, max_length=256, null=True)
@@ -61,3 +62,32 @@ class FTLFolder(MPTTModel):
 
     class MPTTMeta:
         order_insertion_by = ['name']
+
+
+# Slightly customized DjangoModelPermissions for FTL. The permissions are very basic and used at instance level.
+# It checks for adding or listing document, not to check ownership of a single document.
+class FTLModelPermissions(DjangoModelPermissions):
+    # Base permissions only cover POST, PUT, DELETE. We add a permission check for GET. Special syntax for merging the
+    # two dicts (the second dict will overwrite the first one).
+    perms_map = {**DjangoModelPermissions.perms_map, **{
+        'GET': ['%(app_label)s.view_%(model_name)s'],
+    }}
+
+
+def permission_names_to_objects(names):
+    """
+    Given an iterable of permission names (e.g. 'app_label.add_model'),
+    return an iterable of Permission objects for them.  The permission
+    must already exist, because a permission name is not enough information
+    to create a new permission.
+    """
+    result = []
+    for name in names:
+        app_label, codename = name.split(".", 1)
+        # Is that enough to be unique? Hope so
+        try:
+            result.append(Permission.objects.get(content_type__app_label=app_label,
+                                                 codename=codename))
+        except Permission.DoesNotExist:
+            raise
+    return result
