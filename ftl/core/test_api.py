@@ -43,10 +43,7 @@ class DocumentsTests(APITestCase):
 
     def test_list_documents_order(self):
         ftl_document_first = FTLDocument.objects.get(pid=self.doc.pid)
-        self.assertIsNotNone(ftl_document_first.pid)
-
         ftl_document_second = FTLDocument.objects.get(pid=self.doc_bis.pid)
-        self.assertIsNotNone(ftl_document_second.pid)
 
         client_get = self.client.get('/app/api/v1/documents/', format='json')
         self.assertEqual(client_get.status_code, status.HTTP_200_OK)
