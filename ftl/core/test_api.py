@@ -21,10 +21,10 @@ class DocumentsTests(APITestCase):
         self.doc = setup_document(self.org, self.user)
         self.doc_bis = setup_document(self.org, self.user, title=tv.DOCUMENT2_TITLE)
 
-        self.folder_root = setup_folder(self.org, name='First level folder')
+        self.first_level_folder = setup_folder(self.org, name='First level folder')
 
         self.doc_in_folder = setup_document(self.org, self.user, title='Document in folder',
-                                            ftl_folder=self.folder_root)
+                                            ftl_folder=self.first_level_folder)
 
         self.client.login(username=tv.USER1_USERNAME, password=tv.USER1_PASS)
 
@@ -114,7 +114,7 @@ class DocumentsTests(APITestCase):
         self.assertIsNone(objects_get.ftl_folder)
 
     def test_document_in_folder(self):
-        client_get = self.client.get('/app/api/v1/documents/?level=%s' % self.folder_root.id, format='json')
+        client_get = self.client.get('/app/api/v1/documents/?level=%s' % self.first_level_folder.id, format='json')
         self.assertEqual(client_get.status_code, status.HTTP_200_OK)
         self.assertEqual(client_get.data['count'], 1)
         self.assertEqual(len(client_get.data['results']), 1)
@@ -123,25 +123,25 @@ class DocumentsTests(APITestCase):
         self.assertEqual(client_doc['pid'], str(self.doc_in_folder.pid))
         self.assertEqual(client_doc['title'], self.doc_in_folder.title)
         self.assertEqual(client_doc['note'], self.doc_in_folder.note)
-        self.assertEqual(client_doc['ftl_folder'], self.folder_root.id)
+        self.assertEqual(client_doc['ftl_folder'], self.first_level_folder.id)
 
     def test_upload_document_in_folder(self):
-        post_body = {'ftl_folder': self.folder_root.id}
+        post_body = {'ftl_folder': self.first_level_folder.id}
 
         with open(os.path.join(BASE_DIR, 'uploads', 'test.pdf'), mode='rb') as fp:
             client_post = self.client.post('/app/api/v1/documents/upload', {'json': json.dumps(post_body), 'file': fp})
         self.assertEqual(client_post.status_code, status.HTTP_201_CREATED)
 
         client_doc = client_post.data
-        self.assertEqual(client_doc['ftl_folder'], self.folder_root.id)
+        self.assertEqual(client_doc['ftl_folder'], self.first_level_folder.id)
 
         objects_get = FTLDocument.objects.get(pid=client_doc['pid'])
         self.assertEqual(str(objects_get.pid), client_doc['pid'])
         self.assertEqual(objects_get.title, client_doc['title'])
         self.assertEqual(objects_get.note, client_doc['note'])
-        self.assertEqual(objects_get.ftl_folder, self.folder_root)
+        self.assertEqual(objects_get.ftl_folder, self.first_level_folder)
 
-        client_get = self.client.get('/app/api/v1/documents/?level=%s' % self.folder_root.id, format='json')
+        client_get = self.client.get('/app/api/v1/documents/?level=%s' % self.first_level_folder.id, format='json')
         self.assertEqual(client_get.status_code, status.HTTP_200_OK)
         # There should be 2 documents (one from setUp and the new uploaded one)
         self.assertEqual(client_get.data['count'], 2)
