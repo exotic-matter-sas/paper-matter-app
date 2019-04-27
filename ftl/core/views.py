@@ -34,7 +34,7 @@ class DownloadView(LoginRequiredMixin, View):
         return response
 
 
-class FTLDocumentList(generics.ListCreateAPIView):
+class FTLDocumentList(generics.ListAPIView):
     authentication_classes = (SessionAuthentication,)
     serializer_class = FTLDocumentSerializer
 
@@ -49,9 +49,6 @@ class FTLDocumentList(generics.ListCreateAPIView):
             queryset = queryset.filter(ftl_folder__isnull=True)
 
         return queryset
-
-    def perform_create(self, serializer):
-        serializer.save()  # TODO Do we need this?
 
 
 class FTLDocumentDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -100,7 +97,7 @@ class FileUploadView(LoginRequiredMixin, views.APIView):
         ftl_doc.title = file_obj.name
         ftl_doc.save()
 
-        return Response(self.serializer_class(ftl_doc).data, status=200)
+        return Response(self.serializer_class(ftl_doc).data, status=201)
 
 
 class FTLFolderList(generics.ListCreateAPIView):
