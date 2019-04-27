@@ -26,11 +26,8 @@ compile-frontend:
     expire_in: 1 hour
   script:
     - cd ftl/frontend
-    - npm install
+    - npm ci
     - npm run build
-  except:
-    changes:
-      - README.md
 
 compile-backend:
   stage: build-backend
@@ -49,9 +46,6 @@ compile-backend:
     - python3 -m compileall ./
     - python3 manage.py compilemessages
     - python3 manage.py collectstatic
-  except:
-    changes:
-      - README.md
 
 tests:
   stage: test
@@ -64,6 +58,3 @@ tests:
     - export DJANGO_SETTINGS_MODULE=ftl.settings_tests
     - source venv/bin/activate && cd ftl
     - python3 manage.py test
-  except:
-    changes:
-      - README.md

@@ -40,7 +40,7 @@ __pycache__/
 *$py.class
 *.so
 .Python
-build/
+#build/
 develop-eggs/
 dist/*
 downloads/
@@ -105,4 +105,6 @@ Pipfile
 Pipfile.lock
 geckodriver.log
 settings_local.py
-ftl/uploads/
+ftl/uploads/*
+!ftl/uploads/test.pdf
+ftl/assets/

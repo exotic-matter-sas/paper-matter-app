@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, FormView
 
@@ -12,11 +12,23 @@ class CreateOrg(CreateView):
     template_name = 'setup/first_organization_creation_form.html'
     success_url = reverse_lazy('setup:create_admin')
 
+    def get(self, request, *args, **kwargs):
+        if 'ftl_setup_middleware' in request.session:
+            return super().get(request, *args, **kwargs)
+        else:
+            return redirect('login')
+
 
 class CreateAdmin(FormView):
     template_name = 'setup/admin_creation_form.html'
     form_class = AdminCreationForm  # Custom form for enabling admin flag
     success_url = reverse_lazy('setup:success')
+
+    def get(self, request, *args, **kwargs):
+        if 'ftl_setup_middleware' in request.session:
+            return super().get(request, *args, **kwargs)
+        else:
+            return redirect('login')
 
     def form_valid(self, form):
         form.save()  # save admin user

@@ -19,6 +19,7 @@ from django.contrib.auth import views as auth_views
 from django.urls import path, include, re_path
 
 from ftl import views, view_local_proxy
+from ftl.ftl_setup_middleware import SetupState
 from ftl.views_auth import LoginViewFTL
 
 urlpatterns = [
@@ -32,7 +33,7 @@ urlpatterns = [
     path('signup/<slug:org_slug>/', views.CreateFTLUserFormView.as_view(), name='signup'),
     path('signup/<slug:org_slug>/success/', views.signup_success, name='signup_success'),
 
-    path('login/', LoginViewFTL.as_view(), name='login'),
+    path('login/', LoginViewFTL.as_view(), kwargs={"ftl_setup_state": SetupState.admin_created}, name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 
     path('password_change/', auth_views.PasswordChangeView.as_view(), name='password_change'),

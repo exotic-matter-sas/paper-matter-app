@@ -10,12 +10,12 @@ from .base_test import BaseTestCase
 
 
 class LandingPageTests(BaseTestCase):
-    def test_landing_page_display_properly_on_first_visit(self):
-        """Landing page display properly on first visit"""
+    def test_index_redirect_to_first_org_creation_on_first_visit(self):
+        """Index page redirect to first organization creation page on first visit"""
         # Admin user have just install ftl-app and display it for the first time
         self.browser.get(self.live_server_url)
 
-        # The landing page welcome the user and ask him to complete 1st step : org creation
+        # The user is welcomed and asked to complete 1st setup step: org creation
         self.assertIn('Ftl-app', self.browser.title)
         self.assertIn('organization', self.browser.find_elements_by_css_selector('h2')[0].text)
 
@@ -32,7 +32,7 @@ class LandingPageTests(BaseTestCase):
         self.setUp()
         self.browser.get(self.live_server_url)
 
-        # The landing page welcome the user and ask him to complete 2nd step : first organization creation
+        # The landing page welcome the user and ask him to complete 2nd step: admin creation
         self.assertIn('Ftl-app', self.browser.title)
         self.assertIn('administrator', self.browser.find_elements_by_css_selector('h2')[0].text)
 
