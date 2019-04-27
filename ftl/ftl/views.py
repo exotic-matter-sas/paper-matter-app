@@ -2,19 +2,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.views.generic import FormView
 
-from core.models import FTLOrg, FTLUser
+from core.models import FTLOrg
 from ftl.forms import FTLUserCreationForm
 
 
 def index(request):
-    admin_users = FTLUser.objects.filter(is_staff=True).count()
-    if admin_users > 0:
-        return redirect('login')
-    else:
-        if FTLOrg.objects.count() > 0:
-            return redirect('setup:create_admin')
-        else:
-            return redirect('setup:create_first_org')
+    return redirect('login')
 
 
 class CreateFTLUserFormView(FormView):
