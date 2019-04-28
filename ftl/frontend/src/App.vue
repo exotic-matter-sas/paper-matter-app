@@ -1,60 +1,107 @@
 <template>
     <div id="app" class="m-0">
-        <b-alert
-                :variant="alertType"
-                dismissible
-                fade
-                :show="showAlert"
-                @dismissed="showAlert=false">
-            {{ alertMessage }}
-        </b-alert>
+        <header>
+            <b-container fluid class="p-0">
+                <FTLNavbar :account="account"/>
+            </b-container>
 
+            <b-alert
+                    :variant="alertType"
+                    dismissible
+                    fade
+                    :show="showAlert"
+                    @dismissed="showAlert=false">
+                {{ alertMessage }}
+            </b-alert>
+        </header>
 
-        <b-container fluid class="p-0">
-            <FTLNavbar :account="account"/>
-        </b-container>
+        <section>
+            <b-container>
+                <b-row>
+                    <b-col>
+                        <FTLUpload :currentFolder="getCurrentFolder" @newupload="updateDocument"/>
+                    </b-col>
+                </b-row>
+                <b-row>
+                    <b-col>
+                        <b-button variant="primary" @click="updateDocument">Refresh documents list</b-button>
+                        Last refresh {{ lastRefreshFormatted }}
+                    </b-col>
+                </b-row>
+            </b-container>
+        </section>
 
-        <b-container>
-            <b-row>
-                <b-col>
-                    <FTLUpload :currentFolder="getCurrentFolder" @newupload="updateDocument"/>
-                </b-col>
-            </b-row>
-            <b-row>
-                <b-col>
-                    <b-button variant="primary" @click="updateDocument">Refresh documents list</b-button>
-                    Last refresh {{ lastRefreshFormatted }}
-                </b-col>
-            </b-row>
-        </b-container>
+        <section>
+            <b-container>
+                <b-row>
+                    <b-button variant="primary" class="m-1" v-if="previousLevels.length"
+                              @click="changeToPreviousFolder">
+                        Up
+                    </b-button>
+                    <b-button v-else variant="primary" class="m-1" disabled>Up</b-button>
+                    <FTLFolder v-for="folder in folders" :key="folder.id" :folder="folder"
+                               @event-change-folder="changeFolder"/>
+                    <b-button class="m-1" variant="outline-primary" size="sm" @click.prevent="newFolderModal = true">
+                        Create
+                        new folder
+                    </b-button>
+                </b-row>
+            </b-container>
+        </section>
 
-        <b-container>
-            <b-row align-v="center">
-                <b-button variant="primary" class="m-1" v-if="previousLevels.length" @click="changeToPreviousFolder">
-                    Up
-                </b-button>
-                <b-button v-else variant="primary" class="m-1" disabled>Up</b-button>
-                <FTLFolder v-for="folder in folders" :key="folder.id" :folder="folder"
-                           @event-change-folder="changeFolder"/>
-                <b-button class="m-1" variant="outline-primary" size="sm" @click.prevent="newFolderModal = true">Create
-                    new folder
-                </b-button>
-            </b-row>
-        </b-container>
+        <section>
+            <b-container>
+                <b-row align-h="around" v-if="docs.length">
+                    <FTLDocument v-for="doc in docs" :key="doc.pid" :doc="doc" @event-delete-doc="updateDocument"
+                                 @event-open-doc="openDocument"/>
+                </b-row>
+                <b-row v-else>
+                    <b-col>Aucun document</b-col>
+                </b-row>
+            </b-container>
+        </section>
 
-        <b-container>
-            <b-row align-h="around" v-if="docs.length">
-                <FTLDocument v-for="doc in docs" :key="doc.pid" :doc="doc" @event-delete-doc="updateDocument"
-                             @event-open-doc="openDocument"/>
-            </b-row>
-            <b-row v-else>
-                <b-col>Aucun document</b-col>
-            </b-row>
-        </b-container>
+        <footer>
+            <b-container>
+                <b-row>
+                    <b-col>
+                        ftl-app, open source software. Made with ❤ by <a href="https://www.exotic-matter.fr">Exotic
+                        Matter</a>.
+                    </b-col>
+                </b-row>
+            </b-container>
+        </footer>
 
-        <b-container>
-            <FTLViewDocumentPanel v-if="docModal" :pid="docPid" @event-close-doc="docModal = false"/>
-        </b-container>
+        <!-- Pdf viewer popup -->
+        <div v-if="docModal" class="doc-view-modal" :class="{open: docModal}">
+            <b-container>
+                Titre {{ currentOpenDoc.title }}
+            </b-container>
+            <b-container>
+                <b-row scr>
+                    <b-col md="8">
+                        <div class="embed-responsive embed-responsive-1by1 doc-pdf ">
+                            <iframe v-if="currentOpenDoc.pid" class="embed-responsive-item"
+                                    :src="`/assets/pdfjs/web/viewer.html?file=/app/uploads/` + currentOpenDoc.pid">
+                            </iframe>
+                        </div>
+
+                    </b-col>
+                    <b-col>
+                        <b-row>AAA</b-row>
+                        <b-row>BBB</b-row>
+                        <b-row>CCC</b-row>
+                    </b-col>
+                </b-row>
+            </b-container>
+            <b-container>
+                <b-row align-h="end">
+                    <b-col cols="2">
+                        <b-button variant="secondary" @click="docModal = false">Close</b-button>
+                    </b-col>
+                </b-row>
+            </b-container>
+        </div>
 
         <b-modal v-if="newFolderModal" v-model="newFolderModal" @ok="createNewFolder"
                  :ok-disabled="newFolderName === ''">
@@ -78,13 +125,11 @@
     import FTLFolder from './components/FTLFolder'
     import FTLDocument from './components/FTLDocument'
     import FTLUpload from './components/FTLUpload'
-    import FTLViewDocumentPanel from "./components/FTLViewDocumentPanel"
     import axios from 'axios'
 
     export default {
         name: 'app',
         components: {
-            FTLViewDocumentPanel,
             FTLNavbar,
             FTLFolder,
             FTLDocument,
@@ -114,6 +159,10 @@
                 // Create folder data
                 newFolderName: '',
                 newFolderModal: false
+
+                // PDF viewer
+                currentOpenDoc: {title: 'loading'},
+                publicPath: process.env.BASE_URL,
             }
         },
 
@@ -162,6 +211,13 @@
             openDocument: function (pid) {
                 this.docPid = pid;
                 this.docModal = true;
+
+                const vi = this;
+                axios
+                    .get('/app/api/v1/documents/' + pid)
+                    .then(response => {
+                        vi.currentOpenDoc = response.data;
+                    }).catch(error => vi.alert(error));
             },
 
             updateDocument: function () {
@@ -235,6 +291,28 @@
         text-align: center;
         color: #2c3e50;
         margin-top: 60px;
+    }
+
+    /* PDF.js viewer custom css */
+    .doc-view-modal {
+        display: none;
+        height: 100%;
+        left: 0;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        background: white;
+        z-index: 1000;
+        padding: 20px;
+    }
+
+    .doc-view-modal.open {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .doc-pdf {
+        padding-top: 100%;
     }
 
     /* Temp for viewing layout */

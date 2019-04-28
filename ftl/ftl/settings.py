@@ -61,6 +61,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'ftl.ftl_setup_middleware.FTLSetupMiddleware'
 ]
 if DEBUG:
     MIDDLEWARE += [
@@ -140,6 +141,7 @@ STATIC_URL = '/assets/'  # public path
 STATIC_ROOT = os.path.join(BASE_DIR, 'assets')  # internal path
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'frontend', 'dist'),  # Webpack final bundle
+    os.path.join(BASE_DIR, 'frontend', 'pdfjs'),
 )
 
 # IPs allowed to see the debug toolbar app
