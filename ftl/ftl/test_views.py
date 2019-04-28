@@ -10,15 +10,15 @@ class FtlPagesTests(TestCase):
 
     def test_index_redirects(self):
         """Index redirect to correct page according to setup state"""
-        response = self.client.get('')
+        response = self.client.get('', follow=True)
         self.assertRedirects(response, reverse_lazy('setup:create_first_org'))
 
         org = setup_org()
-        response = self.client.get('')
+        response = self.client.get('', follow=True)
         self.assertRedirects(response, reverse_lazy('setup:create_admin'))
 
         setup_admin(org)
-        response = self.client.get('')
+        response = self.client.get('', follow=True)
         self.assertRedirects(response, reverse_lazy('login'))
 
     def test_signup_returns_correct_html(self):

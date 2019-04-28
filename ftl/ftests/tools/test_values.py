@@ -14,5 +14,10 @@ USER2_EMAIL = 'user2@ftl-exemple.com'
 USER2_PASS = 'a123456!'
 
 DOCUMENT1_TITLE = 'Document 1'
+DOCUMENT1_NOTE = 'Document 1 note'
+DOCUMENT1_BINARY_PATH = 'uploads/test.pdf'
+
+DOCUMENT2_TITLE = 'Document 2'
+DOCUMENT2_NOTE = 'Document 2 note'
 
 FOLDER1_NAME = 'Folder 1'

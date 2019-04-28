@@ -3,7 +3,7 @@ from django.urls import path, include
 from . import views
 
 urlpatterns = [
-    path('', views.home, name='home'),
+    path('', views.HomeView.as_view(), name='home'),
     # path('api/v1/', include(router.urls)),
     path('uploads/<str:uuid>', views.DownloadView.as_view()),
     path('api/v1/folders/', views.FTLFolderList.as_view()),
