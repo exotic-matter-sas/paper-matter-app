@@ -158,11 +158,11 @@
 
                 // Create folder data
                 newFolderName: '',
-                newFolderModal: false
+                newFolderModal: false,
 
                 // PDF viewer
                 currentOpenDoc: {title: 'loading'},
-                publicPath: process.env.BASE_URL,
+                publicPath: process.env.BASE_URL
             }
         },
 
@@ -191,8 +191,7 @@
             },
 
             refreshFolders: function () {
-                let currentFolder = this.getCurrentFolder;
-                this.updateFolder(currentFolder);
+                this.updateFolder(this.getCurrentFolder);
             },
 
             changeFolder: function (level) {
@@ -205,6 +204,7 @@
                 this.previousLevels.pop(); // Remove current level
                 let level = this.previousLevels[this.previousLevels.length - 1]; // Get last
                 this.updateFolder(level);
+                this.docs = []; // Clear docs when changing folder to avoid display artefact
                 this.updateDocument();
             },
 
@@ -242,7 +242,6 @@
 
                 // While loading folders, clear folders to avoid showing current sets of folders intermittently
                 vi.folders = [];
-                vi.docs = [];
 
                 if (level) {
                     qs = '?level=' + level.id;
