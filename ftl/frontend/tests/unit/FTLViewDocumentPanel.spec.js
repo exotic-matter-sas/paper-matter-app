@@ -23,6 +23,3 @@ describe('FTLViewDocumentPanel template', () => {
     expect(wrapper.html()).toContain(tv.DOCUMENT_PROPS.pid)
   });
 });
-
-// TODO once https://gitlab.com/exotic-matter/ftl-app/merge_requests/23 is merge
-// merge master in this branche and retest test above
