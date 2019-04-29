@@ -1,8 +1,8 @@
 from django.test import TestCase
 
+from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import setup_org, setup_user
 from .forms import AdminCreationForm
-from ftests.tools import test_values as tv
 
 
 class FtlAdminCreationFormTests(TestCase):
@@ -51,3 +51,15 @@ class FtlAdminCreationFormTests(TestCase):
         })
         self.assertFalse(form.is_valid())
         self.assertIn('username', form.errors)
+
+    def test_admin_creation_permissions(self):
+        form = AdminCreationForm(data={
+            'username': tv.ADMIN_USERNAME,
+            'email': tv.ADMIN_EMAIL,
+            'password1': tv.ADMIN_PASS,
+            'password2': tv.ADMIN_PASS,
+        })
+
+        user = form.save()
+        self.assertIsNotNone(user)
+        self.assertTrue(user.is_superuser)

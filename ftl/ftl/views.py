@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.views.generic import FormView
 
-from core.models import FTLOrg, permission_names_to_objects
+from core.models import FTLOrg, permission_names_to_objects, FTL_PERMISSIONS_USER
 from ftl.forms import FTLUserCreationForm
 
 
@@ -30,16 +30,7 @@ class CreateFTLUserFormView(FormView):
         instance.org = org
         instance.save()
 
-        instance.user_permissions.set(permission_names_to_objects([
-            'core.add_ftldocument',
-            'core.change_ftldocument',
-            'core.delete_ftldocument',
-            'core.view_ftldocument',
-            'core.add_ftlfolder',
-            'core.change_ftlfolder',
-            'core.delete_ftlfolder',
-            'core.view_ftlfolder',
-        ]))
+        instance.user_permissions.set(permission_names_to_objects(FTL_PERMISSIONS_USER))
 
         instance.save()
 

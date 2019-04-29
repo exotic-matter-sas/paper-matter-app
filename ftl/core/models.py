@@ -8,6 +8,17 @@ from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 from rest_framework.permissions import DjangoModelPermissions
 
+FTL_PERMISSIONS_USER = [
+    'core.add_ftldocument',
+    'core.change_ftldocument',
+    'core.delete_ftldocument',
+    'core.view_ftldocument',
+    'core.add_ftlfolder',
+    'core.change_ftlfolder',
+    'core.delete_ftlfolder',
+    'core.view_ftlfolder',
+]
+
 
 def _get_name_binary(instance, filename):
     return 'uploads/' + str(uuid.uuid4()) + pathlib.Path(filename).suffix
