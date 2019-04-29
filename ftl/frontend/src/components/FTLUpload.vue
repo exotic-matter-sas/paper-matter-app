@@ -14,7 +14,7 @@
                 ></b-form-file>
             </b-col>
             <b-col md="auto">
-                <b-button variant="primary" :disabled="isUploading || !file" @click="uploadDocument">Submit</b-button>
+                <b-button id="uploadButton" variant="primary" :disabled="uploading || !file" @click="uploadDocument">Submit</b-button>
             </b-col>
         </b-row>
         <b-row align-h="center">
@@ -22,7 +22,7 @@
         </b-row>
         <b-row align-h="center">
             <b-col cols="12">
-                <b-progress :class="{ 'd-none': !isUploading }" :max="100" :value="uploadProgress" variant="success"
+                <b-progress :class="{ 'd-none': !uploading }" :max="100" :value="uploadProgress" variant="success"
                             show-progress/>
             </b-col>
         </b-row>
@@ -49,12 +49,6 @@
                 response: '',
                 uploading: false,
                 uploadProgress: 0
-            }
-        },
-
-        computed: {
-            isUploading: function () {
-                return this.uploading;
             }
         },
 
