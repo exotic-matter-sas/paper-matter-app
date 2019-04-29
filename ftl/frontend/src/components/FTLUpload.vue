@@ -77,7 +77,7 @@
                 axios
                     .post('/app/api/v1/documents/upload', formData, axiosConfig)
                     .then(response => {
-                        vi.$emit('newupload'); // Event for refresh documents list
+                        vi.$emit('event-new-upload'); // Event for refresh documents list
                         vi.response = response.data;
                         vi.file = "";
                     })

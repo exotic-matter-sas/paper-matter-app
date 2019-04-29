@@ -10,7 +10,7 @@
             <b-container>
                 <b-row>
                     <b-col>
-                        <FTLUpload :currentFolder="getCurrentFolder" @newupload="updateDocument"/>
+                        <FTLUpload :currentFolder="getCurrentFolder" @event-new-upload="updateDocument"/>
                     </b-col>
                 </b-row>
                 <b-row>
