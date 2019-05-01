@@ -17,10 +17,10 @@
     "webpack-bundle-tracker": "^0.4.2-beta"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.6.0",
-    "@vue/cli-plugin-eslint": "^3.6.0",
+    "@vue/cli-plugin-babel": "^3.7.0",
+    "@vue/cli-plugin-eslint": "^3.7.0",
     "@vue/cli-plugin-unit-jest": "^3.7.0",
-    "@vue/cli-service": "^3.6.0",
+    "@vue/cli-service": "^3.7.0",
     "@vue/test-utils": "1.0.0-beta.29",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "^10.0.1",
@@ -82,8 +82,8 @@
     ],
     "testURL": "http://localhost/",
     "watchPlugins": [
-      "/home/fdaveine/Programmation/ftl-app/ftl/frontend/node_modules/jest-watch-typeahead/filename.js",
-      "/home/fdaveine/Programmation/ftl-app/ftl/frontend/node_modules/jest-watch-typeahead/testname.js"
+      "jest-watch-typeahead/filename",
+      "jest-watch-typeahead/testname"
     ]
   }
 }
