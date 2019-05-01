@@ -4,6 +4,7 @@ module.exports = {
     publicPath: process.env.NODE_ENV === 'production' ? "/assets/" : "/local/",
     // publicPath: process.env.NODE_ENV === 'production' ? "/assets/" : "http://127.0.0.1:8080/",
     outputDir: './dist/',
+    lintOnSave: 'error',
 
     chainWebpack: config => {
 
@@ -27,6 +28,14 @@ module.exports = {
             .headers({
                 "Access-Control-Allow-Credentials": "true",
                 "Access-Control-Allow-Origin": ["*"]
+            });
+
+        config.module
+            .rule('eslint')
+            .use('eslint-loader')
+            .tap(options => {
+                options.failOnWarning = true;
+                return options
             });
     }
 };
