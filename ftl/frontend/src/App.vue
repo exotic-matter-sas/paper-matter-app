@@ -2,7 +2,7 @@
     <div id="app" class="m-0">
         <header>
             <b-container fluid class="p-0">
-                <FTLNavbar :account="getAccount"/>
+                <FTLNavbar :account="account"/>
             </b-container>
         </header>
 
@@ -116,22 +116,22 @@
                 previousLevels: [],
                 lastRefresh: Date.now(),
                 docModal: false,
-                account: null,
+                account: {},
                 currentOpenDoc: {title: 'loading'},
                 publicPath: process.env.BASE_URL,
             }
         },
 
         mounted() {
+            // get account value from Django core/home.html template
+            let ftlAccountElem = document.getElementById('ftlAccount');
+            if(ftlAccountElem){
+                this.account = JSON.parse(ftlAccountElem.textContent);
+            }
             this.changeFolder();
         },
 
         computed: {
-            getAccount: function () {
-                this.account = window.ftlAccounts ? window.ftlAccounts : {account: {name: 'Unkwown'}};
-                return this.account;
-            },
-
             lastRefreshFormatted: function () {
                 return new Date(this.lastRefresh);
             },

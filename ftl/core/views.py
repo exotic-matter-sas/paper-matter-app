@@ -19,7 +19,7 @@ class HomeView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         context = {
             'org_name': request.session['org_name'],
-            'username': request.user.get_username(),
+            'ftl_account': {'name': request.user.get_username()},
         }
         return render(request, 'core/home.html', context)
 

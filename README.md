@@ -45,7 +45,7 @@ Second terminal
 
 ### Tests
 
-## Python
+#### Python
 
 Run all tests
 
@@ -56,7 +56,7 @@ Run test for a specific module
     python manage.py test ftests # run only functional tests
     python manage.py test core # run unit tests of core module
 
-## VueJS
+#### VueJS
 
 Run all tests
 
@@ -84,6 +84,12 @@ _Or alternatively `npx vue-cli-service test:unit`_
 
 To use specific Django settings without modifying main `ftl/ftl/settings.py` file, create a `ftl/ftl/settings_local.py` file and override desired setting in it.
 
-### Build
+### Build app
 
-TODO
+#### 1. compile Vuejs files
+
+    npm run build
+
+#### 2. collect static files to an unique dir using Django
+
+    python3 manage.py collectstatic

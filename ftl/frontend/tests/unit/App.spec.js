@@ -59,16 +59,6 @@ describe('App script computed', () => {
     });
   });
 
-  it('getAccount return proper format', () => {
-    // when
-    let getAccountValue = wrapper.vm.getAccount;
-
-    // then
-    expect('account' in getAccountValue).toBeTruthy();
-    expect('name' in getAccountValue.account).toBeTruthy();
-    expect(typeof(getAccountValue.account.name)).toBe('string');
-  });
-
   it('lastRefreshFormatted return proper format', () => {
     // when
     let lastRefreshFormattedValue = wrapper.vm.lastRefreshFormatted;

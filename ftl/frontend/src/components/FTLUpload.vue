@@ -54,6 +54,7 @@
 
         methods: {
             refreshUploadProgression: function (progressEvent) {
+                let vi = this;
                 if (progressEvent.lengthComputable) {
                     vi.uploadProgress = progressEvent.loaded * 100 / progressEvent.total;
                 } else {
