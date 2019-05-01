@@ -2,7 +2,7 @@
     <div id="app" class="m-0">
         <header>
             <b-container fluid class="p-0">
-                <FTLNavbar :account="account"/>
+                <FTLNavbar :account="getAccount"/>
             </b-container>
         </header>
 
@@ -116,7 +116,7 @@
                 previousLevels: [],
                 lastRefresh: Date.now(),
                 docModal: false,
-                account: window.ftlAccounts,
+                account: null,
                 currentOpenDoc: {title: 'loading'},
                 publicPath: process.env.BASE_URL,
             }
@@ -127,6 +127,11 @@
         },
 
         computed: {
+            getAccount: function () {
+                this.account = window.ftlAccounts ? window.ftlAccounts : {account: {name: 'Unkwown'}};
+                return this.account;
+            },
+
             lastRefreshFormatted: function () {
                 return new Date(this.lastRefresh);
             },
@@ -141,15 +146,15 @@
         },
 
         methods: {
-            changeFolder: function (level) {
-                if (level) this.previousLevels.push(level);
-                this.updateFolder(level);
+            changeFolder: function (folder = null) {
+                if (folder) this.previousLevels.push(folder);
+                this.updateFolder(folder);
                 this.updateDocument();
             },
 
             changeToPreviousFolder: function () {
                 this.previousLevels.pop(); // Remove current level
-                let level = this.previousLevels[this.previousLevels.length - 1]; // Get last
+                let level = this.getCurrentFolder;
                 this.updateFolder(level);
                 this.updateDocument();
             },
@@ -171,7 +176,7 @@
                 let qs = '';
 
                 if (vi.previousLevels.length > 0) {
-                    qs = '?level=' + vi.previousLevels[vi.previousLevels.length - 1].id;
+                    qs = '?level=' + this.getCurrentFolder.id;
                 }
 
                 axios
@@ -226,7 +231,7 @@
         padding: 20px;
     }
 
-    .doc-view-modal.open {
+    .doc-view-modal {
         display: flex;
         flex-direction: column;
     }

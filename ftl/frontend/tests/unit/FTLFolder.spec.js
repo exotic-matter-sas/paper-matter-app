@@ -1,4 +1,4 @@
-import { createLocalVue, mount } from '@vue/test-utils';
+import { createLocalVue, shallowMount } from '@vue/test-utils';
 
 import BootstrapVue from "bootstrap-vue";
 
@@ -10,11 +10,12 @@ localVue.use(BootstrapVue); // to avoid warning on tests execution
 
 
 describe('FTLFolder template', () => {
+  const wrapper = shallowMount(FTLFolder, {
+    localVue,
+    propsData: { folder: tv.FOLDER_PROPS }
+  });
+
   it('renders properly folder data', () => {
-    const wrapper = mount(FTLFolder, {
-      localVue,
-      propsData: { folder: tv.FOLDER_PROPS }
-    });
     expect(wrapper.html()).toContain(tv.FOLDER_PROPS.name)
   });
 });

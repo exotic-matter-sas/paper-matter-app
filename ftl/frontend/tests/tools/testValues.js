@@ -5,7 +5,13 @@ export const ACCOUNT_PROPS = {
 };
 
 export const FOLDER_PROPS = {
-  name: 'Folder title'
+  id: '1234',
+  name: 'Folder title',
+};
+
+export const FOLDER_PROPS_VARIANT = {
+  id: '5678',
+  name: 'Folder title 2',
 };
 
 export const DOCUMENT_PROPS = {
@@ -15,9 +21,9 @@ export const DOCUMENT_PROPS = {
   created: new Date('2019-04-18T10:59:00').toString()
 };
 
-// Mocked AXIOS data
+// Mocked AXIOS generic conf
 
-export const AXIOS_CONF = {
+export const AXIOS_CRSF_CONF = {
     xsrfCookieName: 'csrftoken',
     xsrfHeaderName: 'X-CSRFToken'
 };

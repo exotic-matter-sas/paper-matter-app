@@ -1,4 +1,4 @@
-import { createLocalVue, mount } from '@vue/test-utils';
+import { createLocalVue, shallowMount } from '@vue/test-utils';
 
 import axios from 'axios';
 import BootstrapVue from "bootstrap-vue";
@@ -13,13 +13,20 @@ jest.mock('axios', () => ({
   delete: jest.fn()
 }));
 
+const mockedDeleteResponse  = {
+  data: {},
+  status: 204,
+  config: tv.AXIOS_CRSF_CONF
+};
+
 
 describe('FTLDocument template', () => {
+  const wrapper = shallowMount(FTLDocument, {
+    localVue,
+    propsData: { doc: tv.DOCUMENT_PROPS }
+  });
+
   it('renders properly document data', () => {
-    const wrapper = mount(FTLDocument, {
-      localVue,
-      propsData: { doc: tv.DOCUMENT_PROPS }
-    });
     Object.values(tv.DOCUMENT_PROPS).forEach(function(documentData){
       expect(wrapper.html()).toContain(documentData)
     })
@@ -27,37 +34,30 @@ describe('FTLDocument template', () => {
 });
 
 describe('FTLDocument script', () => {
-  const mockedDeleteResponse  = {
-    data: {},
-    status: 204,
-    config: tv.AXIOS_CONF
-  };
   let wrapper;
-  let delete_button;
 
   beforeEach(() => {
     // given
     axios.delete.mockReturnValue(Promise.resolve(mockedDeleteResponse));
-    wrapper = mount(FTLDocument, {
+    wrapper = shallowMount(FTLDocument, {
       localVue,
       propsData: { doc: tv.DOCUMENT_PROPS }
     });
-    delete_button = wrapper.find('.deleteDocument');
   });
 
   it('deleteDocument call api', () => {
     // when
-    delete_button.trigger('click');
+    wrapper.vm.deleteDocument();
 
     // then
     expect(axios.delete).toHaveBeenCalledWith(
         '/app/api/v1/documents/' + tv.DOCUMENT_PROPS.pid,
-        tv.AXIOS_CONF
+        tv.AXIOS_CRSF_CONF
     );
   });
   it('deleteDocument emit event-delete-doc', done => {
     // when
-    delete_button.trigger('click');
+    wrapper.vm.deleteDocument();
 
     // then
     wrapper.vm.$nextTick(() => {

@@ -53,6 +53,14 @@
         },
 
         methods: {
+            refreshUploadProgression: function (progressEvent) {
+                if (progressEvent.lengthComputable) {
+                    vi.uploadProgress = progressEvent.loaded * 100 / progressEvent.total;
+                } else {
+                    vi.uploadProgress = 100;
+                }
+            },
+
             uploadDocument: function () {
                 let vi = this;
                 vi.uploading = true;
@@ -65,13 +73,7 @@
                 let axiosConfig = {
                     xsrfCookieName: 'csrftoken',
                     xsrfHeaderName: 'X-CSRFToken',
-                    onUploadProgress: progressEvent => {
-                        if (progressEvent.lengthComputable) {
-                            vi.uploadProgress = progressEvent.loaded * 100 / progressEvent.total;
-                        } else {
-                            vi.uploadProgress = 100;
-                        }
-                    }
+                    onUploadProgress: this.refreshUploadProgression
                 };
 
                 axios
