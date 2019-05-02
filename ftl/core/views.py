@@ -132,6 +132,7 @@ class FTLFolderList(generics.ListCreateAPIView):
 
 
 class FTLFolderDetail(generics.RetrieveUpdateDestroyAPIView):
+    authentication_classes = (SessionAuthentication,)
     serializer_class = FTLFolderSerializer
     lookup_field = 'id'
     permission_classes = (FTLModelPermissions,)
