@@ -96,9 +96,6 @@ def permissions_names_to_objects(names):
     for name in names:
         app_label, codename = name.split(".", 1)
         # Is that enough to be unique? Hope so
-        try:
-            result.append(Permission.objects.get(content_type__app_label=app_label,
-                                                 codename=codename))
-        except Permission.DoesNotExist:
-            raise
+        result.append(Permission.objects.get(content_type__app_label=app_label, codename=codename))
+
     return result
