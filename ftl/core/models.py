@@ -82,7 +82,7 @@ class FTLModelPermissions(DjangoModelPermissions):
     """
     # DjangoModelPermissions permissions only cover POST, PUT, DELETE. We set a permission check for GET.
     perms_map = {}
-    perms_map.update(super().perms_map)
+    perms_map.update(DjangoModelPermissions.perms_map)
     perms_map['GET'] = ['%(app_label)s.view_%(model_name)s']
 
 
