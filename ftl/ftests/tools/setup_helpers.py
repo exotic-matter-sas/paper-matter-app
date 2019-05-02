@@ -1,4 +1,4 @@
-from core.models import FTLOrg, FTLUser, FTLDocument, FTLFolder, permission_names_to_objects, FTL_PERMISSIONS_USER
+from core.models import FTLOrg, FTLUser, FTLDocument, FTLFolder, permissions_names_to_objects, FTL_PERMISSIONS_USER
 from ftests.tools import test_values as tv
 
 
@@ -20,7 +20,7 @@ def setup_admin(org, email=tv.ADMIN_EMAIL, username=tv.ADMIN_USERNAME, password=
 
 def setup_user(org, email=tv.USER1_EMAIL, username=tv.USER1_USERNAME, password=tv.USER1_PASS):
     user = FTLUser.objects.create_user(org=org, email=email, username=username, password=password, )
-    user.user_permissions.set(permission_names_to_objects(FTL_PERMISSIONS_USER))
+    user.user_permissions.set(permissions_names_to_objects(FTL_PERMISSIONS_USER))
     return user
 
 

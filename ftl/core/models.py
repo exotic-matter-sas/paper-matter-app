@@ -85,9 +85,9 @@ class FTLModelPermissions(DjangoModelPermissions):
     }}
 
 
-def permission_names_to_objects(names):
+def permissions_names_to_objects(names):
     """
-    Given an iterable of permission names (e.g. 'app_label.add_model'),
+    Given an iterable of permissions names (e.g. 'app_label.add_model'),
     return an iterable of Permission objects for them.  The permission
     must already exist, because a permission name is not enough information
     to create a new permission.
