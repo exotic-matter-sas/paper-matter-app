@@ -1,8 +1,8 @@
 import json
 import os
 
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse, HttpResponseForbidden
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.views import View
 from rest_framework import generics, views
@@ -25,14 +25,11 @@ class HomeView(LoginRequiredMixin, View):
         return render(request, 'core/home.html', context)
 
 
-class DownloadView(LoginRequiredMixin, View):
+class DownloadView(LoginRequiredMixin, PermissionRequiredMixin, View):
     http_method_names = ['get']
+    permission_required = ('core.view_ftldocument',)
 
     def get(self, request, *args, **kwargs):
-        # We don't use FTLModelPermissions because it only works with APIView
-        if not self.request.user.has_perm('core.view_ftldocument'):
-            raise HttpResponseForbidden
-
         doc = get_object_or_404(FTLDocument.objects.filter(ftl_user=self.request.user, pid=kwargs['uuid']))
         response = HttpResponse(doc.binary, 'application/octet')
         response['Content-Disposition'] = 'attachment; filename="%s"' % doc.binary.name
