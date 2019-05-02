@@ -75,14 +75,15 @@ class FTLFolder(MPTTModel):
         order_insertion_by = ['name']
 
 
-# Slightly customized DjangoModelPermissions for FTL. The permissions are very basic and used at instance level.
-# It checks for adding or listing document, not to check ownership of a single document.
 class FTLModelPermissions(DjangoModelPermissions):
-    # Base permissions only cover POST, PUT, DELETE. We add a permission check for GET. Special syntax for merging the
-    # two dicts (the second dict will overwrite the first one).
-    perms_map = {**DjangoModelPermissions.perms_map, **{
-        'GET': ['%(app_label)s.view_%(model_name)s'],
-    }}
+    """
+    Slightly customized DjangoModelPermissions for FTL. The permissions are very basic and used at instance level.
+    It checks for adding or listing document, not to check ownership of a single document.
+    """
+    # DjangoModelPermissions permissions only cover POST, PUT, DELETE. We set a permission check for GET.
+    perms_map = {}
+    perms_map.update(super().perms_map)
+    perms_map['GET'] = ['%(app_label)s.view_%(model_name)s']
 
 
 def permissions_names_to_objects(names):
