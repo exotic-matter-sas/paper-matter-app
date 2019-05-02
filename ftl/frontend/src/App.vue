@@ -4,6 +4,15 @@
             <b-container fluid class="p-0">
                 <FTLNavbar :account="account"/>
             </b-container>
+
+            <b-alert
+                    :variant="alertType"
+                    dismissible
+                    fade
+                    :show="showAlert"
+                    @dismissed="showAlert=false">
+                {{ alertMessage }}
+            </b-alert>
         </header>
 
         <section>
@@ -32,6 +41,10 @@
                     <b-button v-else variant="primary" class="m-1" disabled>Up</b-button>
                     <FTLFolder v-for="folder in folders" :key="folder.id" :folder="folder"
                                @event-change-folder="changeFolder"/>
+                    <b-button class="m-1" variant="outline-primary" size="sm" @click.prevent="newFolderModal = true">
+                        Create
+                        new folder
+                    </b-button>
                 </b-row>
             </b-container>
         </section>
@@ -89,6 +102,21 @@
                 </b-row>
             </b-container>
         </div>
+
+        <b-modal v-if="newFolderModal" v-model="newFolderModal" @ok="createNewFolder"
+                 :ok-disabled="newFolderName === ''">
+            <span slot="modal-title">Create a new folder</span>
+            <b-container>
+                <!-- TODO add current folder name to title -->
+                <b-form-group
+                        id="fieldset-new-folder"
+                        description="The name of the folder"
+                        label="The folder will be created in the current folder."
+                        label-for="new-folder">
+                    <b-form-input id="new-folder" v-model="newFolderName" trim></b-form-input>
+                </b-form-group>
+            </b-container>
+        </b-modal>
     </div>
 </template>
 
@@ -110,20 +138,36 @@
 
         data() {
             return {
+                // Misc account stuff
+                account: window.ftlAccounts,
+
+                // Alerts
+                showAlert: false,
+                alertType: "danger",
+                alertMessage: "",
+
+                // Documents list
                 docs: [],
                 docPid: null,
+                docModal: false,
+                lastRefresh: Date.now(),
+
+                // Folders list and breadcrumb
                 folders: [],
                 previousLevels: [],
-                lastRefresh: Date.now(),
-                docModal: false,
-                account: window.ftlAccounts,
+
+                // Create folder data
+                newFolderName: '',
+                newFolderModal: false,
+
+                // PDF viewer
                 currentOpenDoc: {title: 'loading'},
-                publicPath: process.env.BASE_URL,
+                publicPath: process.env.BASE_URL
             }
         },
 
         mounted() {
-            this.changeFolder();
+            this.changeFolder(null);
         },
 
         computed: {
@@ -135,12 +179,21 @@
                 if (this.previousLevels.length) {
                     return this.previousLevels[this.previousLevels.length - 1];
                 } else {
-                    return {};
+                    return null;
                 }
             }
         },
 
         methods: {
+            alert: function (message) {
+                this.alertMessage = message;
+                this.showAlert = true;
+            },
+
+            refreshFolders: function () {
+                this.updateFolder(this.getCurrentFolder);
+            },
+
             changeFolder: function (level) {
                 if (level) this.previousLevels.push(level);
                 this.updateFolder(level);
@@ -151,6 +204,7 @@
                 this.previousLevels.pop(); // Remove current level
                 let level = this.previousLevels[this.previousLevels.length - 1]; // Get last
                 this.updateFolder(level);
+                this.docs = []; // Clear docs when changing folder to avoid display artefact
                 this.updateDocument();
             },
 
@@ -163,7 +217,7 @@
                     .get('/app/api/v1/documents/' + pid)
                     .then(response => {
                         vi.currentOpenDoc = response.data;
-                    });
+                    }).catch(error => vi.alert(error));
             },
 
             updateDocument: function () {
@@ -179,7 +233,7 @@
                     .then(response => {
                         vi.docs = response.data['results'];
                         vi.lastRefresh = Date.now();
-                    });
+                    }).catch(error => vi.alert(error));
             },
 
             updateFolder: function (level = null) {
@@ -197,7 +251,32 @@
                     .get("/app/api/v1/folders/" + qs)
                     .then(response => {
                         vi.folders = response.data;
-                    });
+                    }).catch(error => vi.alert(error));
+            },
+
+            createNewFolder: function () {
+                const vi = this;
+                let parent = null;
+
+                // Pass CSRF token from cookie to XHR call header (handled by Axios)
+                let axiosConfig = {
+                    xsrfCookieName: 'csrftoken',
+                    xsrfHeaderName: 'X-CSRFToken'
+                };
+
+                if (vi.previousLevels.length > 0) {
+                    parent = vi.previousLevels[vi.previousLevels.length - 1].id;
+                }
+
+                let postBody = {name: vi.newFolderName, parent: parent};
+
+                axios
+                    .post("/app/api/v1/folders/", postBody, axiosConfig)
+                    .then(() => {
+                        // TODO flash the new folder when just created
+                        vi.newFolderName = '';
+                        vi.refreshFolders();
+                    }).catch(error => vi.alert(error));
             }
         }
     }

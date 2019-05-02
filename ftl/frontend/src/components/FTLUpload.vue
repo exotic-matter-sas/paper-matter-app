@@ -39,7 +39,7 @@
         props: {
             currentFolder: {
                 type: Object,
-                required: true
+                required: false
             }
         },
 
@@ -63,9 +63,15 @@
                 let vi = this;
                 vi.uploading = true;
 
+                let jsonData = {};
+
+                if (vi.currentFolder != null) {
+                    jsonData = {'ftl_folder': vi.currentFolder.id};
+                }
+
                 let formData = new FormData();
                 formData.append('file', this.file);
-                formData.append('json', JSON.stringify({'ftl_folder': vi.currentFolder.id}));
+                formData.append('json', JSON.stringify(jsonData));
 
                 // Pass CSRF token from cookie to XHR call header (handled by Axios)
                 let axiosConfig = {
