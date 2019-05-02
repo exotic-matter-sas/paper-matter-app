@@ -65,7 +65,6 @@ test-app:
   dependencies:
     - compile-backend
   script:
-    - export TESTS_RUNNING_ON_CI
     - export DJANGO_SETTINGS_MODULE=ftl.settings_tests
     - source venv/bin/activate && cd ftl
     - python3 manage.py test

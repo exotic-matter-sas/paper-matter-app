@@ -11,12 +11,15 @@ from selenium.webdriver.chrome.options import Options as ChromeOptions
 from ftl.settings import BASE_DIR, DEFAULT_TEST_BROWSER, TEST_BROWSER_HEADLESS
 from ftests.tools import test_values as tv
 
-# Use StaticLiveServerTestCase when test running locally to not depend on collectstatic
-LiveServer = LiveServerTestCase if os.getenv('TESTS_RUNNING_ON_CI') else StaticLiveServerTestCase
-print(LiveServer)
+if 'CI' in os.environ:
+    LIVE_SERVER = LiveServerTestCase
+else:
+    # Use StaticLiveServerTestCase when test running locally to not depend on collectstatic run
+    LIVE_SERVER = StaticLiveServerTestCase
+print(LIVE_SERVER)
 
 
-class BaseTestCase(LiveServer):
+class BaseTestCase(LIVE_SERVER):
 
     def setUp(self, browser=DEFAULT_TEST_BROWSER, browser_locale='en'):
         platform_system = platform.system()
