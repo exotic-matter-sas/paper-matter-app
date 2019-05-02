@@ -3,6 +3,7 @@ import platform
 from string import digits
 
 from django.test import LiveServerTestCase
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.chrome.options import Options as ChromeOptions
@@ -10,8 +11,12 @@ from selenium.webdriver.chrome.options import Options as ChromeOptions
 from ftl.settings import BASE_DIR, DEFAULT_TEST_BROWSER, TEST_BROWSER_HEADLESS
 from ftests.tools import test_values as tv
 
+# Use StaticLiveServerTestCase when test running locally to not depend on collectstatic
+LiveServer = LiveServerTestCase if os.getenv('TESTS_RUNNING_ON_CI') else StaticLiveServerTestCase
+print(LiveServer)
 
-class BaseTestCase(LiveServerTestCase):
+
+class BaseTestCase(LiveServer):
 
     def setUp(self, browser=DEFAULT_TEST_BROWSER, browser_locale='en'):
         platform_system = platform.system()
@@ -101,3 +106,11 @@ class BaseTestCase(LiveServerTestCase):
         username_input.send_keys(getattr(tv, f'{user_type.upper()}_USERNAME'))
         password_input.send_keys(getattr(tv, f'{user_type.upper()}_PASS'))
         submit_input.click()
+
+    def refresh_document_list(self):
+        refresh_button = self.browser.find_element_by_id('refresh-documents')
+        refresh_button.click()
+
+    def open_first_document(self):
+        first_document_title = self.browser.find_element_by_css_selector('.document-title span')
+        first_document_title.click()

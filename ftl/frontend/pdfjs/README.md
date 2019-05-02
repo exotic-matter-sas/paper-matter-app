@@ -1,0 +1,1 @@
+An extra level of pdfjs folder is needed to in order Django collectstatic command copy the pdfjs folder and not its content.

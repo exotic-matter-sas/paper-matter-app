@@ -24,7 +24,7 @@
                 </b-row>
                 <b-row>
                     <b-col>
-                        <b-button variant="primary" @click="updateDocument">Refresh documents list</b-button>
+                        <b-button id="refresh-documents" variant="primary" @click="updateDocument">Refresh documents list</b-button>
                         Last refresh {{ lastRefreshFormatted }}
                     </b-col>
                 </b-row>
