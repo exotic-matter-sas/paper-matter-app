@@ -16,7 +16,6 @@ if 'CI' in os.environ:
 else:
     # Use StaticLiveServerTestCase when test running locally to not depend on collectstatic run
     LIVE_SERVER = StaticLiveServerTestCase
-print(LIVE_SERVER)
 
 
 class BaseTestCase(LIVE_SERVER):
