@@ -1,11 +1,23 @@
 import pathlib
 import uuid
 
-from django.contrib.auth.models import User, AbstractUser
+from django.contrib.auth.models import User, AbstractUser, Permission
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
+from rest_framework.permissions import DjangoModelPermissions
+
+FTL_PERMISSIONS_USER = [
+    'core.add_ftldocument',
+    'core.change_ftldocument',
+    'core.delete_ftldocument',
+    'core.view_ftldocument',
+    'core.add_ftlfolder',
+    'core.change_ftlfolder',
+    'core.delete_ftlfolder',
+    'core.view_ftlfolder',
+]
 
 
 def _get_name_binary(instance, filename):
@@ -36,9 +48,9 @@ class FTLUser(AbstractUser):
 class FTLDocument(models.Model):
     pid = models.UUIDField(default=uuid.uuid4, editable=False)
 
-    org = models.ForeignKey('FTLOrg', on_delete=models.CASCADE)
-    ftl_user = models.ForeignKey('FTLUser', on_delete=models.CASCADE)
-    ftl_folder = TreeForeignKey('FTLFolder', on_delete=models.CASCADE, null=True, blank=True)
+    org = models.ForeignKey('FTLOrg', on_delete=models.PROTECT)
+    ftl_user = models.ForeignKey('FTLUser', on_delete=models.PROTECT)
+    ftl_folder = TreeForeignKey('FTLFolder', on_delete=models.PROTECT, null=True, blank=True)
     title = models.TextField()
     note = models.TextField(blank=True)
     binary = models.FileField(upload_to=_get_name_binary, max_length=256, null=True)
@@ -61,3 +73,30 @@ class FTLFolder(MPTTModel):
 
     class MPTTMeta:
         order_insertion_by = ['name']
+
+
+class FTLModelPermissions(DjangoModelPermissions):
+    """
+    Slightly customized DjangoModelPermissions for FTL. The permissions are very basic and used at instance level.
+    It checks for adding or listing document, not to check ownership of a single document.
+    """
+    # DjangoModelPermissions permissions only cover POST, PUT, DELETE. We set a permission check for GET.
+    perms_map = {}
+    perms_map.update(DjangoModelPermissions.perms_map)
+    perms_map['GET'] = ['%(app_label)s.view_%(model_name)s']
+
+
+def permissions_names_to_objects(names):
+    """
+    Given an iterable of permissions names (e.g. 'app_label.add_model'),
+    return an iterable of Permission objects for them.  The permission
+    must already exist, because a permission name is not enough information
+    to create a new permission.
+    """
+    result = []
+    for name in names:
+        app_label, codename = name.split(".", 1)
+        # Is that enough to be unique? Hope so
+        result.append(Permission.objects.get(content_type__app_label=app_label, codename=codename))
+
+    return result

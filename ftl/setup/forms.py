@@ -14,5 +14,6 @@ class AdminCreationForm(UserCreationForm):
         user.org = FTLOrg.objects.all().first()  # Just pick the first org because there is only one
         user.is_superuser = True
         user.is_staff = True
-        user.save()
+        user.save(commit)
+
         return user

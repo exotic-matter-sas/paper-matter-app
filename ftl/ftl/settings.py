@@ -175,6 +175,8 @@ WEBPACK_LOADER = {
     }
 }
 
+ATOMIC_REQUESTS = True
+
 # ==================================================
 # No settings under this line
 # Auto import local `settings_local.py` if available

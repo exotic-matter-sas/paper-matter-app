@@ -1,8 +1,9 @@
 from django.test import TestCase
 from django.urls import reverse_lazy
 
-from ftests.tools.setup_helpers import setup_org, setup_admin
+from core.models import FTLUser, FTL_PERMISSIONS_USER
 from ftests.tools import test_values as tv
+from ftests.tools.setup_helpers import setup_org, setup_admin
 from .forms import FTLUserCreationForm
 
 
@@ -65,3 +66,18 @@ class FtlPagesTests(TestCase):
 
         response = self.client.get(f'/signup/{org.slug}/success/')
         self.assertEqual(response.context['org_slug'], org.slug)
+
+    def test_user_permissions_signup(self):
+        org = setup_org()
+
+        self.client.post(f'/signup/{org.slug}/',
+                         {
+                             'username': tv.USER1_USERNAME,
+                             'email': tv.USER1_EMAIL,
+                             'password1': tv.USER1_PASS,
+                             'password2': tv.USER1_PASS,
+                         })
+
+        user = FTLUser.objects.get(username=tv.USER1_USERNAME)
+        self.assertIsNotNone(user)
+        self.assertTrue(user.has_perms(FTL_PERMISSIONS_USER))

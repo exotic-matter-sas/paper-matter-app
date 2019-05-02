@@ -1,4 +1,4 @@
-from core.models import FTLOrg, FTLUser, FTLDocument, FTLFolder
+from core.models import FTLOrg, FTLUser, FTLDocument, FTLFolder, permissions_names_to_objects, FTL_PERMISSIONS_USER
 from ftests.tools import test_values as tv
 
 
@@ -19,12 +19,9 @@ def setup_admin(org, email=tv.ADMIN_EMAIL, username=tv.ADMIN_USERNAME, password=
 
 
 def setup_user(org, email=tv.USER1_EMAIL, username=tv.USER1_USERNAME, password=tv.USER1_PASS):
-    return FTLUser.objects.create_user(
-        org=org,
-        email=email,
-        username=username,
-        password=password,
-    )
+    user = FTLUser.objects.create_user(org=org, email=email, username=username, password=password, )
+    user.user_permissions.set(permissions_names_to_objects(FTL_PERMISSIONS_USER))
+    return user
 
 
 def setup_authenticated_session(test_client, org, user):
@@ -51,7 +48,7 @@ def setup_document(org, ftl_user, ftl_folder=None, title=tv.DOCUMENT1_TITLE, not
 
 def setup_folder(org, name=tv.FOLDER1_NAME, parent=None):
     return FTLFolder.objects.create(
-            org=org,
-            name=name,
-            parent=parent,
-        )
+        org=org,
+        name=name,
+        parent=parent,
+    )

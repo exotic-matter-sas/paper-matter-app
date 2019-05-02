@@ -7,6 +7,7 @@ urlpatterns = [
     # path('api/v1/', include(router.urls)),
     path('uploads/<str:uuid>', views.DownloadView.as_view()),
     path('api/v1/folders/', views.FTLFolderList.as_view()),
+    path('api/v1/folders/<int:id>', views.FTLFolderDetail.as_view()),
     path('api/v1/documents/', views.FTLDocumentList.as_view()),
     path('api/v1/documents/<uuid:pid>', views.FTLDocumentDetail.as_view()),
     path('api/v1/documents/upload', views.FileUploadView.as_view()),
