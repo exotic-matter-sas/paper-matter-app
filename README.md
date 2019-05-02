@@ -21,6 +21,7 @@ Archiving documents solution
  * PostgreSQL 11
  * Firefox or Chrome (to run functional tests)
  * Poedit or equivalent (to add/update i18n)
+ * Node.js
  
 ### Install Python modules
  
@@ -44,6 +45,8 @@ Second terminal
 
 ### Tests
 
+#### Python
+
 Run all tests
 
     python manage.py test
@@ -52,7 +55,15 @@ Run test for a specific module
 
     python manage.py test ftests # run only functional tests
     python manage.py test core # run unit tests of core module
- 
+
+#### VueJS
+
+Run all tests
+
+    vue-cli-service test:unit
+    
+_Or alternatively `npx vue-cli-service test:unit`_
+
 ### i18n
  
  :warning: _Avoid raw editing of .po files, use poedit or equivalent instead_
@@ -72,3 +83,13 @@ Run test for a specific module
 ### Django settings
 
 To use specific Django settings without modifying main `ftl/ftl/settings.py` file, create a `ftl/ftl/settings_local.py` file and override desired setting in it.
+
+### Build app
+
+#### 1. compile Vuejs files
+
+    npm run build
+
+#### 2. collect static files to an unique dir using Django
+
+    python3 manage.py collectstatic

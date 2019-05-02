@@ -23,11 +23,21 @@ compile-frontend:
     paths:
       - ftl/frontend/dist
       - ftl/frontend/webpack-stats.json
+      - ftl/frontend/node_modules
     expire_in: 1 hour
   script:
     - cd ftl/frontend
     - npm ci
     - npm run build
+
+test-frontend:
+  stage: test
+  image: node:10.15.3-alpine
+  dependencies:
+    - compile-frontend
+  script:
+    - cd ftl/frontend
+    - npm run test:unit
 
 compile-backend:
   stage: build-backend
@@ -47,7 +57,7 @@ compile-backend:
     - python3 manage.py compilemessages
     - python3 manage.py collectstatic
 
-tests:
+test-app:
   stage: test
   image: registry.gitlab.com/exotic-matter/ftl-base-image-ci:latest
   services:

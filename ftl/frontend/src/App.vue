@@ -19,7 +19,7 @@
             <b-container>
                 <b-row>
                     <b-col>
-                        <FTLUpload :currentFolder="getCurrentFolder" @newupload="updateDocument"/>
+                        <FTLUpload :currentFolder="getCurrentFolder" @event-new-upload="updateDocument"/>
                     </b-col>
                 </b-row>
                 <b-row>
@@ -139,7 +139,7 @@
         data() {
             return {
                 // Misc account stuff
-                account: window.ftlAccounts,
+                account: {},
 
                 // Alerts
                 showAlert: false,
@@ -167,7 +167,12 @@
         },
 
         mounted() {
-            this.changeFolder(null);
+            // get account value from Django core/home.html template
+            let ftlAccountElem = document.getElementById('ftlAccount');
+            if(ftlAccountElem){
+                this.account = JSON.parse(ftlAccountElem.textContent);
+            }
+            this.changeFolder();
         },
 
         computed: {
@@ -194,15 +199,15 @@
                 this.updateFolder(this.getCurrentFolder);
             },
 
-            changeFolder: function (level) {
-                if (level) this.previousLevels.push(level);
-                this.updateFolder(level);
+            changeFolder: function (folder=null) {
+                if (folder) this.previousLevels.push(folder);
+                this.updateFolder(folder);
                 this.updateDocument();
             },
 
             changeToPreviousFolder: function () {
                 this.previousLevels.pop(); // Remove current level
-                let level = this.previousLevels[this.previousLevels.length - 1]; // Get last
+                let level = this.getCurrentFolder;
                 this.updateFolder(level);
                 this.docs = []; // Clear docs when changing folder to avoid display artefact
                 this.updateDocument();
@@ -225,7 +230,7 @@
                 let qs = '';
 
                 if (vi.previousLevels.length > 0) {
-                    qs = '?level=' + vi.previousLevels[vi.previousLevels.length - 1].id;
+                    qs = '?level=' + this.getCurrentFolder.id;
                 }
 
                 axios
@@ -305,7 +310,7 @@
         padding: 20px;
     }
 
-    .doc-view-modal.open {
+    .doc-view-modal {
         display: flex;
         flex-direction: column;
     }

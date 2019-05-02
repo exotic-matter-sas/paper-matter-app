@@ -14,7 +14,7 @@
                 ></b-form-file>
             </b-col>
             <b-col md="auto">
-                <b-button variant="primary" :disabled="isUploading || !file" @click="uploadDocument">Submit</b-button>
+                <b-button id="uploadButton" variant="primary" :disabled="uploading || !file" @click="uploadDocument">Submit</b-button>
             </b-col>
         </b-row>
         <b-row align-h="center">
@@ -22,7 +22,7 @@
         </b-row>
         <b-row align-h="center">
             <b-col cols="12">
-                <b-progress :class="{ 'd-none': !isUploading }" :max="100" :value="uploadProgress" variant="success"
+                <b-progress :class="{ 'd-none': !uploading }" :max="100" :value="uploadProgress" variant="success"
                             show-progress/>
             </b-col>
         </b-row>
@@ -52,13 +52,16 @@
             }
         },
 
-        computed: {
-            isUploading: function () {
-                return this.uploading;
-            }
-        },
-
         methods: {
+            refreshUploadProgression: function (progressEvent) {
+                let vi = this;
+                if (progressEvent.lengthComputable) {
+                    vi.uploadProgress = progressEvent.loaded * 100 / progressEvent.total;
+                } else {
+                    vi.uploadProgress = 100;
+                }
+            },
+
             uploadDocument: function () {
                 let vi = this;
                 vi.uploading = true;
@@ -77,19 +80,13 @@
                 let axiosConfig = {
                     xsrfCookieName: 'csrftoken',
                     xsrfHeaderName: 'X-CSRFToken',
-                    onUploadProgress: progressEvent => {
-                        if (progressEvent.lengthComputable) {
-                            vi.uploadProgress = progressEvent.loaded * 100 / progressEvent.total;
-                        } else {
-                            vi.uploadProgress = 100;
-                        }
-                    }
+                    onUploadProgress: this.refreshUploadProgression
                 };
 
                 axios
                     .post('/app/api/v1/documents/upload', formData, axiosConfig)
                     .then(response => {
-                        vi.$emit('newupload'); // Event for refresh documents list
+                        vi.$emit('event-new-upload'); // Event for refresh documents list
                         vi.response = response.data;
                         vi.file = "";
                     })
