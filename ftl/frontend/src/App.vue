@@ -54,12 +54,17 @@
 
         <section>
             <b-container>
-                <b-row align-h="around" v-if="docs.length">
+                <b-row v-if="docLoading">
+                    <b-col>
+                        <b-spinner style="width: 3rem; height: 3rem;" class="m-5" label="Loading..."></b-spinner>
+                    </b-col>
+                </b-row>
+                <b-row align-h="around" v-else-if="docs.length">
                     <FTLDocument v-for="doc in docs" :key="doc.pid" :doc="doc" @event-delete-doc="updateDocument"
                                  @event-open-doc="openDocument"/>
                 </b-row>
                 <b-row v-else>
-                    <b-col>Aucun document</b-col>
+                    <b-col>No document</b-col>
                 </b-row>
             </b-container>
         </section>
@@ -155,6 +160,7 @@
                 docModal: false,
                 lastRefresh: Date.now(),
                 currentSearch: "",
+                docLoading: false,
 
                 // Folders list and breadcrumb
                 folders: [],
@@ -257,12 +263,18 @@
                     }
                 }
 
+                this.docLoading = true;
+
                 axios
                     .get('/app/api/v1/documents/' + qs)
                     .then(response => {
+                        this.docLoading = false;
                         vi.docs = response.data['results'];
                         vi.lastRefresh = Date.now();
-                    }).catch(error => vi.alert(error));
+                    }).catch(error => {
+                    this.docLoading = false;
+                    vi.alert(error);
+                });
             },
 
             updateFolder: function (level = null) {
