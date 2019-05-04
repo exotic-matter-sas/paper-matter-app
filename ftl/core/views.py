@@ -139,6 +139,7 @@ class FileUploadView(LoginRequiredMixin, views.APIView):
         # TODO extract only from PDF
         parsed = parser.from_file(ftl_doc_instance.binary.name)
         ftl_doc_instance.content_text = parsed["content"].strip()
+        ftl_doc_instance.save()  # Need to save in actual DB before computing the tsvector
         ftl_doc_instance.tsvector = self.vector
         ftl_doc_instance.save()
 

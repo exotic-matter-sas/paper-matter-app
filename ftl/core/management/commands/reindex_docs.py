@@ -21,6 +21,7 @@ class Command(BaseCommand):
         for doc in docs:
             parsed = parser.from_file(doc.binary.name)
             doc.content_text = parsed["content"].strip()
+            doc.save()
             doc.tsvector = self.vector
             doc.save()
 
