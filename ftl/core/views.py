@@ -1,7 +1,11 @@
+import asyncio
 import json
 import os
 
+import tika
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
+from django.db.models import F
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.views import View
@@ -10,6 +14,7 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.exceptions import ValidationError
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
+from tika import parser
 
 from core.models import FTLDocument, FTLFolder, FTLModelPermissions
 from core.serializers import FTLDocumentSerializer, FTLFolderSerializer
@@ -40,6 +45,9 @@ class FTLDocumentList(generics.ListAPIView):
     authentication_classes = (SessionAuthentication,)
     serializer_class = FTLDocumentSerializer
     permission_classes = (FTLModelPermissions,)
+    vector = SearchVector('content_text', weight='C', config='french') \
+             + SearchVector('note', weight='B', config='french') \
+             + SearchVector('title', weight='A', config='french')
 
     def get_queryset(self):
         current_folder = self.request.query_params.get('level', None)
@@ -50,6 +58,14 @@ class FTLDocumentList(generics.ListAPIView):
             queryset = queryset.filter(ftl_folder__id=current_folder)
         else:
             queryset = queryset.filter(ftl_folder__isnull=True)
+
+        text_search = self.request.query_params.get('search', "").strip()
+
+        if text_search is not None and text_search:
+            search_query = SearchQuery(text_search)
+            queryset = queryset.annotate(rank=SearchRank(F('tsvector'), search_query)) \
+                .filter(rank__gte=0.1) \
+                .order_by('-rank')
 
         return queryset
 
@@ -86,6 +102,14 @@ class FileUploadView(LoginRequiredMixin, views.APIView):
     permission_classes = (FTLModelPermissions,)
     # Needed for applying permission checking on view that don't have any queryset
     queryset = FTLDocument.objects.none()
+    loop = asyncio.get_event_loop()
+    vector = SearchVector('content_text', weight='C', config='french') \
+             + SearchVector('note', weight='B', config='french') \
+             + SearchVector('title', weight='A', config='french')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        tika.initVM()
 
     def post(self, request, *args, **kwargs):
         file_obj = request.data['file']
@@ -107,7 +131,16 @@ class FileUploadView(LoginRequiredMixin, views.APIView):
         ftl_doc.title = file_obj.name
         ftl_doc.save()
 
+        self.loop.run_in_executor(None, self._extract_text_from_pdf, ftl_doc)
+
         return Response(self.serializer_class(ftl_doc).data, status=201)
+
+    def _extract_text_from_pdf(self, ftl_doc_instance):
+        # TODO extract only from PDF
+        parsed = parser.from_file(ftl_doc_instance.binary.name)
+        ftl_doc_instance.content_text = parsed["content"].strip()
+        ftl_doc_instance.tsvector = self.vector
+        ftl_doc_instance.save()
 
 
 class FTLFolderList(generics.ListCreateAPIView):

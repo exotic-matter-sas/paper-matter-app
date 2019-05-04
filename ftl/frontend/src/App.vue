@@ -2,15 +2,16 @@
     <div id="app" class="m-0">
         <header>
             <b-container fluid class="p-0">
-                <FTLNavbar :account="account"/>
+                <FTLNavbar :account="account" @event-search="refreshDocumentWithSearch"
+                           @event-clear-search="clearSearch"/>
             </b-container>
 
             <b-alert
-                    :variant="alertType"
-                    dismissible
-                    fade
-                    :show="showAlert"
-                    @dismissed="showAlert=false">
+                :variant="alertType"
+                dismissible
+                fade
+                :show="showAlert"
+                @dismissed="showAlert=false">
                 {{ alertMessage }}
             </b-alert>
         </header>
@@ -24,7 +25,9 @@
                 </b-row>
                 <b-row>
                     <b-col>
-                        <b-button id="refresh-documents" variant="primary" @click="updateDocument">Refresh documents list</b-button>
+                        <b-button id="refresh-documents" variant="primary" @click="updateDocument">Refresh documents
+                            list
+                        </b-button>
                         Last refresh {{ lastRefreshFormatted }}
                     </b-col>
                 </b-row>
@@ -109,10 +112,10 @@
             <b-container>
                 <!-- TODO add current folder name to title -->
                 <b-form-group
-                        id="fieldset-new-folder"
-                        description="The name of the folder"
-                        label="The folder will be created in the current folder."
-                        label-for="new-folder">
+                    id="fieldset-new-folder"
+                    description="The name of the folder"
+                    label="The folder will be created in the current folder."
+                    label-for="new-folder">
                     <b-form-input id="new-folder" v-model="newFolderName" trim></b-form-input>
                 </b-form-group>
             </b-container>
@@ -151,6 +154,7 @@
                 docPid: null,
                 docModal: false,
                 lastRefresh: Date.now(),
+                currentSearch: "",
 
                 // Folders list and breadcrumb
                 folders: [],
@@ -169,7 +173,7 @@
         mounted() {
             // get account value from Django core/home.html template
             let ftlAccountElem = document.getElementById('ftlAccount');
-            if(ftlAccountElem){
+            if (ftlAccountElem) {
                 this.account = JSON.parse(ftlAccountElem.textContent);
             }
             this.changeFolder();
@@ -199,8 +203,9 @@
                 this.updateFolder(this.getCurrentFolder);
             },
 
-            changeFolder: function (folder=null) {
+            changeFolder: function (folder = null) {
                 if (folder) this.previousLevels.push(folder);
+                this.currentSearch = "";
                 this.updateFolder(folder);
                 this.updateDocument();
             },
@@ -208,6 +213,7 @@
             changeToPreviousFolder: function () {
                 this.previousLevels.pop(); // Remove current level
                 let level = this.getCurrentFolder;
+                this.currentSearch = "";
                 this.updateFolder(level);
                 this.docs = []; // Clear docs when changing folder to avoid display artefact
                 this.updateDocument();
@@ -225,12 +231,30 @@
                     }).catch(error => vi.alert(error));
             },
 
+            refreshDocumentWithSearch: function (text) {
+                this.currentSearch = text;
+                this.updateDocument();
+            },
+
+            clearSearch: function () {
+                this.refreshDocumentWithSearch("");
+            },
+
             updateDocument: function () {
                 const vi = this;
                 let qs = '';
 
                 if (vi.previousLevels.length > 0) {
                     qs = '?level=' + this.getCurrentFolder.id;
+                }
+
+                // FIXME ugly
+                if (vi.currentSearch !== null && vi.currentSearch !== "") {
+                    if (qs === '') {
+                        qs = '?search=' + vi.currentSearch;
+                    } else {
+                        qs = qs + '&search=' + vi.currentSearch;
+                    }
                 }
 
                 axios

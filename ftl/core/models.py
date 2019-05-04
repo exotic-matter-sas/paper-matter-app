@@ -2,6 +2,7 @@ import pathlib
 import uuid
 
 from django.contrib.auth.models import User, AbstractUser, Permission
+from django.contrib.postgres.search import SearchVectorField
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from mptt.fields import TreeForeignKey
@@ -53,9 +54,16 @@ class FTLDocument(models.Model):
     ftl_folder = TreeForeignKey('FTLFolder', on_delete=models.PROTECT, null=True, blank=True)
     title = models.TextField()
     note = models.TextField(blank=True)
+    content_text = models.TextField(blank=True)
     binary = models.FileField(upload_to=_get_name_binary, max_length=256, null=True)
     created = models.DateTimeField(auto_now_add=True)
     edited = models.DateTimeField(auto_now=True)
+    tsvector = SearchVectorField(blank=True)
+
+    # class Meta:
+    #     indexes = [
+    #         GinIndex(fields=['tsvector'])
+    #     ]
 
     def __str__(self):
         return self.title
