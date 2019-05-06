@@ -1,15 +1,15 @@
 import os
 import platform
-from string import digits
+import time
 
 from django.test import LiveServerTestCase
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 
 from ftl.settings import BASE_DIR, DEFAULT_TEST_BROWSER, TEST_BROWSER_HEADLESS
-from ftests.tools import test_values as tv
 
 if 'CI' in os.environ:
     LIVE_SERVER = LiveServerTestCase
@@ -18,7 +18,10 @@ else:
     LIVE_SERVER = StaticLiveServerTestCase
 
 
-class BaseTestCase(LIVE_SERVER):
+class BasePage(LIVE_SERVER):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.root_url = ''
 
     def setUp(self, browser=DEFAULT_TEST_BROWSER, browser_locale='en'):
         platform_system = platform.system()
@@ -72,47 +75,47 @@ class BaseTestCase(LIVE_SERVER):
     def tearDown(self):
         self.browser.quit()
 
-    def create_user(self, user_type):
-        # Remove counter at the end of user-type if needed
-        user_selector = user_type[0:-1] if user_type[-1] in digits else user_type
+    @property
+    def head_title(self):
+        return self.browser.title.lower()
 
-        admin_form = self.browser.find_element_by_id(f'{user_selector}-form')
-        username_input = admin_form.find_element_by_id('id_username')
-        email_address_input = admin_form.find_element_by_id('id_email')
-        password_input = admin_form.find_element_by_id('id_password1')
-        password_confirmation_input = admin_form.find_element_by_id('id_password2')
-        submit_input = admin_form.find_element_by_css_selector('[type="submit"]')
+    def visit(self, url, absolute_url=False):
+        if absolute_url:
+            complete_url = url
+        else:
+            complete_url = self.live_server_url + url
+        self.browser.get(complete_url)
 
-        username_input.send_keys(getattr(tv, f'{user_type.upper()}_USERNAME'))
-        email_address_input.send_keys(getattr(tv, f'{user_type.upper()}_EMAIL'))
-        password_input.send_keys(getattr(tv, f'{user_type.upper()}_PASS'))
-        password_confirmation_input.send_keys(getattr(tv, f'{user_type.upper()}_PASS'))
-        submit_input.click()
+    def get_elem(self, css_selector):
+        return self.browser.find_element_by_css_selector(css_selector)
 
-    def create_first_organization(self):
-        organization_form = self.browser.find_element_by_id('organization-form')
-        name_input = organization_form.find_element_by_id('id_name')
-        slug_input = organization_form.find_element_by_id('id_slug')
-        submit_input = organization_form.find_element_by_css_selector('[type="submit"]')
+    def get_elems(self, css_selector):
+        return self.browser.find_elements_by_css_selector(css_selector)
 
-        name_input.send_keys(tv.ORG_NAME)
-        slug_input.send_keys(tv.ORG_SLUG)
-        submit_input.click()
+    @staticmethod
+    def _wait_for_method_to_return(method, timeout=5, inverse_return=False, *args, **kwargs):
+        end_time = time.time() + timeout
+        polling_interval = 0.5
 
-    def log_user(self, user_type):
-        login_form = self.browser.find_element_by_id('login-form')
-        username_input = login_form.find_element_by_id('id_username')
-        password_input = login_form.find_element_by_id('id_password')
-        submit_input = login_form.find_element_by_css_selector('[type="submit"]')
+        while True:
+            try:
+                value = method(*args, **kwargs)
+                if value:
+                    return value
+            except NoSuchElementException:
+                pass
+            time.sleep(polling_interval)
+            if time.time() > end_time:
+                raise TimeoutException()
 
-        username_input.send_keys(getattr(tv, f'{user_type.upper()}_USERNAME'))
-        password_input.send_keys(getattr(tv, f'{user_type.upper()}_PASS'))
-        submit_input.click()
+    def wait_for_element_to_show(self, css_selector, timeout=5):
+        try:
+            self._wait_for_method_to_return(self.get_elem, timeout, css_selector)
+        except TimeoutException:
+            raise TimeoutException(f'The element "{css_selector}" couldn\'t be found after {timeout}s')
 
-    def refresh_document_list(self):
-        refresh_button = self.browser.find_element_by_id('refresh-documents')
-        refresh_button.click()
-
-    def open_first_document(self):
-        first_document_title = self.browser.find_element_by_css_selector('.document-title span')
-        first_document_title.click()
+    def wait_for_element_to_disappear(self, css_selector, timeout=5):
+        try:
+            self._wait_for_method_to_return(self.get_elem, timeout, True, css_selector)
+        except TimeoutException:
+            raise TimeoutException(f'The element "{css_selector}" couldn\'t be found after {timeout}s')
