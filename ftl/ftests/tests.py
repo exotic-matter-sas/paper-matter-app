@@ -7,24 +7,6 @@ from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup
 from ftests.pages.base_page import BasePage
 
 
-class LoginPageTests(BasePage):
-    def test_first_user_can_login(self):
-        """First user can login and access a logged page"""
-        org = setup_org()
-        setup_admin(org=org)
-        setup_user(org=org)
-
-        # User login and is redirect to the logged home page, he can see it's username on it
-        self.browser.get(f'{self.live_server_url}/login')
-        self.log_user('user1')
-
-        element = WebDriverWait(self.browser, 10).until(
-            EC.text_to_be_present_in_element((By.CSS_SELECTOR, 'nav div em'), tv.USER1_USERNAME)
-        )
-
-        self.assertTrue(element)
-
-
 class HomePageTests(BasePage):
     def setUp(self, **kwargs):
         super().setUp()
