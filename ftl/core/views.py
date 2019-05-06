@@ -1,6 +1,6 @@
-import asyncio
 import json
 import os
+from concurrent.futures.thread import ThreadPoolExecutor
 
 import tika
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
@@ -102,7 +102,7 @@ class FileUploadView(LoginRequiredMixin, views.APIView):
     permission_classes = (FTLModelPermissions,)
     # Needed for applying permission checking on view that don't have any queryset
     queryset = FTLDocument.objects.none()
-    loop = asyncio.get_event_loop()
+    executor = ThreadPoolExecutor(max_workers=1)
     vector = SearchVector('content_text', weight='C', config='french') \
              + SearchVector('note', weight='B', config='french') \
              + SearchVector('title', weight='A', config='french')
@@ -131,7 +131,7 @@ class FileUploadView(LoginRequiredMixin, views.APIView):
         ftl_doc.title = file_obj.name
         ftl_doc.save()
 
-        self.loop.run_in_executor(None, self._extract_text_from_pdf, ftl_doc)
+        self.executor.submit(self._extract_text_from_pdf, ftl_doc)
 
         return Response(self.serializer_class(ftl_doc).data, status=201)
 
