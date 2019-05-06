@@ -3,18 +3,16 @@ from ftests.tools import test_values as tv
 
 
 class SignupPages(BasePage):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.page_title = 'h1'
+    page_title = 'h1'
 
-        # Signup form
-        self.username_input = '#user-form #id_username'
-        self.email_address_input = '#user-form #id_email'
-        self.password_input = '#user-form #id_password1'
-        self.password_confirmation_input = '#user-form #id_password2'
-        self.submit_input = '#user-form [type="submit"]'
-        # Signup success
-        self.user_login_link = '#user-login'
+    # Signup form
+    username_input = '#user-form #id_username'
+    email_address_input = '#user-form #id_email'
+    password_input = '#user-form #id_password1'
+    password_confirmation_input = '#user-form #id_password2'
+    submit_input = '#user-form [type="submit"]'
+    # Signup success
+    user_login_link = '#user-login'
 
     def visit_signup_page(self, org_slug):
         self.visit(f'/signup/{org_slug}/')

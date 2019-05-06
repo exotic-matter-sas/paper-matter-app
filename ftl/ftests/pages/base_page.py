@@ -71,6 +71,8 @@ class BasePage(LIVE_SERVER):
 
         # Set a default window size
         self.browser.set_window_size(1024, 768)
+        # Set default timeout
+        self.browser.implicitly_wait(5)
 
     def tearDown(self):
         self.browser.quit()
