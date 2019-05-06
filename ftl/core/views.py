@@ -19,6 +19,8 @@ from tika import parser
 from core.models import FTLDocument, FTLFolder, FTLModelPermissions
 from core.serializers import FTLDocumentSerializer, FTLFolderSerializer
 
+EXECUTOR = ThreadPoolExecutor(max_workers=1, thread_name_prefix="ftl_indexation_worker")
+
 
 class HomeView(LoginRequiredMixin, View):
 
@@ -131,7 +133,7 @@ class FileUploadView(LoginRequiredMixin, views.APIView):
         ftl_doc.title = file_obj.name
         ftl_doc.save()
 
-        self.executor.submit(self._extract_text_from_pdf, ftl_doc)
+        EXECUTOR.submit(self._extract_text_from_pdf, ftl_doc)
 
         return Response(self.serializer_class(ftl_doc).data, status=201)
 
