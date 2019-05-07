@@ -23,3 +23,5 @@ DOCUMENT2_TITLE = 'Document 2'
 DOCUMENT2_NOTE = 'Document 2 note'
 
 FOLDER1_NAME = 'Folder 1'
+FOLDER2_NAME = 'Folder 2'
+FOLDER3_NAME = 'Folder 3'
