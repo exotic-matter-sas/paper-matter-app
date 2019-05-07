@@ -140,6 +140,22 @@ class LoginPageTests(BaseTestCase):
 
         self.assertTrue(element)
 
+    def test_login_page_redirect_logged_user(self):
+        """First user can login and access a logged page"""
+        # First org, admin, user are created
+        org = setup_org()
+        setup_admin(org=org)
+        setup_user(org=org)
+        # User is logged
+        self.browser.get(f'{self.live_server_url}/login')
+        self.log_user('user1')
+
+        # User access login page again
+        self.browser.get(f'{self.live_server_url}/login')
+
+        # User is redirect to home page as he is already logged
+        self.assertIn('Home', self.browser.title)
+
 
 class HomePageTests(BaseTestCase):
     def setUp(self, **kwargs):

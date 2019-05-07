@@ -33,7 +33,8 @@ urlpatterns = [
     path('signup/<slug:org_slug>/', views.CreateFTLUserFormView.as_view(), name='signup'),
     path('signup/<slug:org_slug>/success/', views.signup_success, name='signup_success'),
 
-    path('login/', LoginViewFTL.as_view(), kwargs={"ftl_setup_state": SetupState.admin_created}, name='login'),
+    path('login/', LoginViewFTL.as_view(redirect_authenticated_user=True),
+         kwargs={"ftl_setup_state": SetupState.admin_created}, name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 
     path('password_change/', auth_views.PasswordChangeView.as_view(), name='password_change'),
