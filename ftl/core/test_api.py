@@ -77,7 +77,7 @@ class DocumentsTests(APITestCase):
 
     def test_delete_document(self):
         # Create a custom document specific to this test because we don't want to delete the test pdf file.
-        binary_f = tempfile.NamedTemporaryFile(dir=os.path.join(BASE_DIR, 'uploads'), delete=False)
+        binary_f = tempfile.NamedTemporaryFile(dir=os.path.join(BASE_DIR, 'ftests', 'tools'), delete=False)
         binary_f.write(b'Hello world!')  # Actual content doesn't matter
         binary_f.close()
 
