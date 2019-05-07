@@ -79,7 +79,7 @@ class FirstUserSignupTest(SignupPages):
         self.visit_signup_page(org.slug)
 
         # The name of the first organization is displayed and user can create his account
-        self.assertIn(tv.ORG_NAME, self.get_elem(self.page_title).text)
+        self.assertIn(tv.ORG_NAME_1, self.get_elem(self.page_title).text)
         self.create_user()
 
         # Success message appears when account creation is complete

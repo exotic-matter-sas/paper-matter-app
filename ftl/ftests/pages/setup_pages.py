@@ -28,8 +28,8 @@ class SetupPages(BasePage):
         slug_input = self.get_elem(self.org_slug_input)
         submit_input = self.get_elem(self.org_submit_input)
 
-        name_input.send_keys(tv.ORG_NAME)
-        slug_input.send_keys(tv.ORG_SLUG)
+        name_input.send_keys(tv.ORG_NAME_1)
+        slug_input.send_keys(tv.ORG_SLUG_1)
         submit_input.click()
 
     def create_admin(self):

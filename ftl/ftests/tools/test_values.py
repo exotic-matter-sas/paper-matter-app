@@ -4,8 +4,10 @@ ADMIN_USERNAME = 'admin'
 ADMIN_EMAIL = 'admin@ftl-exemple.com'
 ADMIN_PASS = 'a123456!'
 
-ORG_NAME = 'Exotic Matter'
-ORG_SLUG = 'exotic-matter'
+ORG_NAME_1 = 'Exotic Matter'
+ORG_SLUG_1 = 'exotic-matter'
+ORG_NAME_2 = 'Mozilla'
+ORG_SLUG_2 = 'mozilla'
 
 USER1_USERNAME = 'user1'
 USER1_EMAIL = 'user1@ftl-exemple.com'

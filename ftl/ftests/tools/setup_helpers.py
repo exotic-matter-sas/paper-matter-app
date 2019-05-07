@@ -2,7 +2,7 @@ from core.models import FTLOrg, FTLUser, FTLDocument, FTLFolder, permissions_nam
 from ftests.tools import test_values as tv
 
 
-def setup_org(name=tv.ORG_NAME, slug=tv.ORG_SLUG):
+def setup_org(name=tv.ORG_NAME_1, slug=tv.ORG_SLUG_1):
     return FTLOrg.objects.create(
         name=name,
         slug=slug,
