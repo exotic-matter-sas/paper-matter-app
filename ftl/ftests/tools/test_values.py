@@ -15,7 +15,7 @@ USER2_USERNAME = 'user2'
 USER2_EMAIL = 'user2@ftl-exemple.com'
 USER2_PASS = 'a123456!'
 
-DOCUMENT1_TITLE = 'Document 1'
+DOCUMENT1_TITLE = 'test.pdf'
 DOCUMENT1_NOTE = 'Document 1 note'
 DOCUMENT1_BINARY_PATH = 'ftests/tools/test.pdf'
 
