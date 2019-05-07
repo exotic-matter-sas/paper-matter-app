@@ -98,7 +98,7 @@ class DocumentsTests(APITestCase):
         self.assertTrue(not os.path.exists(binary_f.name))
 
     def test_upload_document(self):
-        with open(os.path.join(BASE_DIR, 'uploads', 'test.pdf'), mode='rb') as fp:
+        with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test.pdf'), mode='rb') as fp:
             client_post = self.client.post('/app/api/v1/documents/upload', {'json': '{}', 'file': fp})
         self.assertEqual(client_post.status_code, status.HTTP_201_CREATED)
 
@@ -125,7 +125,7 @@ class DocumentsTests(APITestCase):
     def test_upload_document_in_folder(self):
         post_body = {'ftl_folder': self.first_level_folder.id}
 
-        with open(os.path.join(BASE_DIR, 'uploads', 'test.pdf'), mode='rb') as fp:
+        with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test.pdf'), mode='rb') as fp:
             client_post = self.client.post('/app/api/v1/documents/upload', {'json': json.dumps(post_body), 'file': fp})
         self.assertEqual(client_post.status_code, status.HTTP_201_CREATED)
 

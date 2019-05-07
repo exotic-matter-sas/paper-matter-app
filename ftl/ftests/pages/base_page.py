@@ -28,11 +28,11 @@ class BasePage(LIVE_SERVER):
 
         if browser == 'firefox':
             if platform_system.startswith('Linux'):
-                executable_path = 'ftests/geckodriver/geckodriver64_linux'
+                executable_path = 'ftests/drivers/geckodriver/geckodriver64_linux'
             elif platform_system.startswith('Windows'):
-                executable_path = 'ftests/geckodriver/geckodriver64.exe'
+                executable_path = 'ftests/drivers/geckodriver/geckodriver64.exe'
             elif platform_system.startswith('Darwin'):
-                executable_path = 'ftests/geckodriver/geckodriver64_macosx'
+                executable_path = 'ftests/drivers/geckodriver/geckodriver64_macosx'
             else:
                 raise EnvironmentError(f'Platform "{platform_system}" not supported')
 
@@ -48,11 +48,11 @@ class BasePage(LIVE_SERVER):
                                              firefox_profile=profile, firefox_options=options)
         elif browser == 'chrome':
             if platform_system.startswith('Linux'):
-                chrome_driver_path = 'ftests/chromedriver/chromedriver_linux64'
+                chrome_driver_path = 'ftests/drivers/chromedriver/chromedriver_linux64'
             elif platform_system.startswith('Windows'):
-                chrome_driver_path = 'ftests/chromedriver/chromedriver_win32.exe'
+                chrome_driver_path = 'ftests/drivers/chromedriver/chromedriver_win32.exe'
             elif platform_system.startswith('Darwin'):
-                chrome_driver_path = 'ftests/chromedriver/chromedriver_mac64'
+                chrome_driver_path = 'ftests/drivers/chromedriver/chromedriver_mac64'
             else:
                 raise EnvironmentError(f'Platform "{platform_system}" not supported')
 
