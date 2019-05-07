@@ -20,10 +20,10 @@ class HomePage(BasePage):
 
     first_document_title = '.document-title span'
 
-    def upload_document(self, path=None):
-        if not path:
-            path = os.path.join(BASE_DIR, 'ftests', 'tools', 'test.pdf')
-        self.get_elem(self.document_upload_input).send_keys(path)
+    def upload_document(self, absolute_path=None):
+        if not absolute_path:
+            absolute_path = os.path.join(BASE_DIR, 'ftests', 'tools', 'test.pdf')
+        self.get_elem(self.document_upload_input).send_keys(absolute_path)
         self.get_elem(self.submit_document_upload_button).click()
 
     def create_folder(self, folder_name=tv.FOLDER1_NAME):

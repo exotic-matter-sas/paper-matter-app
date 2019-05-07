@@ -1,4 +1,4 @@
-from ftests.pages.admin_login_page import AdminLoginPage
+from ftests.pages.django_admin_login_page import AdminLoginPage
 from ftests.pages.signup_pages import SignupPages
 from ftests.pages.user_login_page import LoginPage
 from ftests.tools import test_values as tv
