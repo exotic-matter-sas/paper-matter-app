@@ -19,7 +19,17 @@ from tika import parser
 from core.models import FTLDocument, FTLFolder, FTLModelPermissions
 from core.serializers import FTLDocumentSerializer, FTLFolderSerializer
 
+tika.initVM()
 EXECUTOR = ThreadPoolExecutor(max_workers=1, thread_name_prefix="ftl_indexation_worker")
+
+
+def _extract_text_from_pdf(vector, ftl_doc_instance):
+    # TODO extract only from PDF
+    parsed = parser.from_file(ftl_doc_instance.binary.name)
+    ftl_doc_instance.content_text = parsed["content"].strip()
+    ftl_doc_instance.save()  # Need to save in actual DB before computing the tsvector
+    ftl_doc_instance.tsvector = vector
+    ftl_doc_instance.save()
 
 
 class HomeView(LoginRequiredMixin, View):
@@ -104,14 +114,9 @@ class FileUploadView(LoginRequiredMixin, views.APIView):
     permission_classes = (FTLModelPermissions,)
     # Needed for applying permission checking on view that don't have any queryset
     queryset = FTLDocument.objects.none()
-    executor = ThreadPoolExecutor(max_workers=1)
     vector = SearchVector('content_text', weight='C', config='french') \
              + SearchVector('note', weight='B', config='french') \
              + SearchVector('title', weight='A', config='french')
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        tika.initVM()
 
     def post(self, request, *args, **kwargs):
         file_obj = request.data['file']
@@ -133,17 +138,9 @@ class FileUploadView(LoginRequiredMixin, views.APIView):
         ftl_doc.title = file_obj.name
         ftl_doc.save()
 
-        EXECUTOR.submit(self._extract_text_from_pdf, ftl_doc)
+        EXECUTOR.submit(_extract_text_from_pdf, self.vector, ftl_doc)
 
         return Response(self.serializer_class(ftl_doc).data, status=201)
-
-    def _extract_text_from_pdf(self, ftl_doc_instance):
-        # TODO extract only from PDF
-        parsed = parser.from_file(ftl_doc_instance.binary.name)
-        ftl_doc_instance.content_text = parsed["content"].strip()
-        ftl_doc_instance.save()  # Need to save in actual DB before computing the tsvector
-        ftl_doc_instance.tsvector = self.vector
-        ftl_doc_instance.save()
 
 
 class FTLFolderList(generics.ListCreateAPIView):
