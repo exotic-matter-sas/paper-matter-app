@@ -2,8 +2,8 @@ from selenium.common.exceptions import NoSuchElementException
 
 from ftests.pages.home_page import HomePage
 from ftests.pages.user_login_page import LoginPage
-from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_document, setup_folder
 from ftests.tools import test_values as tv
+from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_document, setup_folder
 
 
 class HomePageTests(LoginPage, HomePage):
