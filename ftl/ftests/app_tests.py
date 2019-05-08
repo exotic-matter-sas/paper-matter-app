@@ -36,7 +36,8 @@ class HomePageTests(LoginPage, HomePage):
         self.assertEqual(tv.DOCUMENT1_TITLE, self.get_elem(self.first_document_title).text)
         # Document doesn't appears in root folder
         self.visit(HomePage.url)
-        self.assertRaises(NoSuchElementException)
+        with self.assertRaises(NoSuchElementException):
+            self.get_elem(self.first_document_title)
 
     def test_display_document(self):
         # User has already added a document
