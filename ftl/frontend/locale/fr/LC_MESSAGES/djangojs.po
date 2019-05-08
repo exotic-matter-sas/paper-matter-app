@@ -1,0 +1,51 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-05-08 10:26+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: frontend/dist/js/app.5141d019.js:8
+msgid "aria-rowcount"
+msgstr ""
+
+#: frontend/dist/js/app.5141d019.js:14
+msgid "Refresh documents list"
+msgstr "Rafraichir la liste des documents"
+
+#: frontend/dist/js/app.5141d019.js:14
+msgid "Last refresh"
+msgstr "Dernier rafraichissement"
+
+#: frontend/dist/js/app.5141d019.js:14
+msgid "Create new folder"
+msgstr "Créer un nouveau dossier"
+
+#: frontend/dist/js/app.5141d019.js:14
+msgid "No document yet"
+msgstr "Aucun document"
+
+#: frontend/dist/js/app.5141d019.js:14
+msgid "ftl-app, open source software. Made with ❤ by "
+msgstr "ftl-app, logiciel open source. Fait avec ❤ par "
+
+#: frontend/dist/js/app.5141d019.js:14
+msgid "Title"
+msgstr "Titre"
+
+#: frontend/dist/js/app.5141d019.js:14
+msgid "Create a new folder"
+msgstr "Créer un nouveau dossier"

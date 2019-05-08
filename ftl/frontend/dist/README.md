@@ -1,1 +1,0 @@
-This directory is needed for Django views to display, it is used by Django settings.STATICFILES_DIRS.

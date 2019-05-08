@@ -15201,7 +15201,7 @@ document.webL10n = function (window, document, undefined) {
     getData: function getData() {
       return gL10nData;
     },
-    getText: function getText() {
+    _: function getText() {
       return gTextData;
     },
     getLanguage: function getLanguage() {
