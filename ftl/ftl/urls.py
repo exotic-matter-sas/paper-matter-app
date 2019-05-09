@@ -16,7 +16,8 @@ Including another URLconf
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
-from django.urls import path, include, re_path
+from django.urls import path, include, re_path, reverse_lazy
+from django.views.generic import RedirectView
 
 from ftl import views, view_local_proxy
 from ftl.ftl_setup_middleware import SetupState
@@ -26,7 +27,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # Need to be at the top, otherwise admin url resolve conflict with other urls
 
-    path('', views.index),
+    path('', RedirectView.as_view(url=reverse_lazy('home')), name='root'),
     path('setup/', include('setup.urls')),
     path('app/', include('core.urls')),
 
