@@ -119,7 +119,7 @@ class DocumentsTests(APITestCase):
         """Test that the async call to extract text is made"""
         mock_executor.submit = MagicMock("submit")
 
-        with open('uploads/test.pdf', 'rb') as f:
+        with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test.pdf'), 'rb') as f:
             body_post = {'json': '{}', 'file': f}
             self.client.post('/app/api/v1/documents/upload', body_post)
 
