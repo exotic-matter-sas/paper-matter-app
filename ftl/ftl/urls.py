@@ -16,7 +16,8 @@ Including another URLconf
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
-from django.urls import path, include, re_path
+from django.urls import path, include, re_path, reverse_lazy
+from django.views.generic import RedirectView
 
 from ftl import views, view_local_proxy
 from ftl.ftl_setup_middleware import SetupState
@@ -26,14 +27,15 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # Need to be at the top, otherwise admin url resolve conflict with other urls
 
-    path('', views.index),
+    path('', RedirectView.as_view(url=reverse_lazy('home')), name='root'),
     path('setup/', include('setup.urls')),
     path('app/', include('core.urls')),
 
     path('signup/<slug:org_slug>/', views.CreateFTLUserFormView.as_view(), name='signup'),
     path('signup/<slug:org_slug>/success/', views.signup_success, name='signup_success'),
 
-    path('login/', LoginViewFTL.as_view(), kwargs={"ftl_setup_state": SetupState.admin_created}, name='login'),
+    path('login/', LoginViewFTL.as_view(redirect_authenticated_user=True),
+         kwargs={"ftl_setup_state": SetupState.admin_created}, name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 
     path('password_change/', auth_views.PasswordChangeView.as_view(), name='password_change'),

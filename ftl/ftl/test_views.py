@@ -20,7 +20,7 @@ class FtlPagesTests(TestCase):
 
         setup_admin(org)
         response = self.client.get('', follow=True)
-        self.assertRedirects(response, reverse_lazy('login'))
+        self.assertRedirects(response, f"{reverse_lazy('login')}?next={reverse_lazy('home')}")
 
     def test_signup_returns_correct_html(self):
         """Signup page returns correct html"""

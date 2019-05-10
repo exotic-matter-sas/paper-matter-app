@@ -1,13 +1,9 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views.generic import FormView
 
 from core.models import FTLOrg, permissions_names_to_objects, FTL_PERMISSIONS_USER
 from ftl.forms import FTLUserCreationForm
-
-
-def index(request):
-    return redirect('login')
 
 
 class CreateFTLUserFormView(FormView):

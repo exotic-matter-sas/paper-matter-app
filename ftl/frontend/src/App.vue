@@ -44,7 +44,7 @@
                     <b-button v-else variant="primary" class="m-1" disabled>Up</b-button>
                     <FTLFolder v-for="folder in folders" :key="folder.id" :folder="folder"
                                @event-change-folder="changeFolder"/>
-                    <b-button class="m-1" variant="outline-primary" size="sm" @click.prevent="newFolderModal = true">
+                    <b-button id="create-folder" class="m-1" variant="outline-primary" size="sm" @click.prevent="newFolderModal = true">
                         Create
                         new folder
                     </b-button>
