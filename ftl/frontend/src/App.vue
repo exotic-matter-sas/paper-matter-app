@@ -4,15 +4,6 @@
             <b-container fluid class="p-0">
                 <FTLNavbar :account="account"/>
             </b-container>
-
-            <b-alert
-                    :variant="alertType"
-                    dismissible
-                    fade
-                    :show="showAlert"
-                    @dismissed="showAlert=false">
-                {{ alertMessage }}
-            </b-alert>
         </header>
 
         <section>
@@ -141,11 +132,6 @@
                 // Misc account stuff
                 account: {},
 
-                // Alerts
-                showAlert: false,
-                alertType: "danger",
-                alertMessage: "",
-
                 // Documents list
                 docs: [],
                 docPid: null,
@@ -169,7 +155,7 @@
         mounted() {
             // get account value from Django core/home.html template
             let ftlAccountElem = document.getElementById('ftlAccount');
-            if(ftlAccountElem){
+            if (ftlAccountElem) {
                 this.account = JSON.parse(ftlAccountElem.textContent);
             }
             this.changeFolder();
@@ -190,16 +176,19 @@
         },
 
         methods: {
-            alert: function (message) {
-                this.alertMessage = message;
-                this.showAlert = true;
+            alert: function (message, error = false, title = "Notification") {
+                this.$bvToast.toast(message, {
+                    title: title,
+                    variant: error ? 'danger' : 'success',
+                    solid: true
+                });
             },
 
             refreshFolders: function () {
                 this.updateFolder(this.getCurrentFolder);
             },
 
-            changeFolder: function (folder=null) {
+            changeFolder: function (folder = null) {
                 if (folder) this.previousLevels.push(folder);
                 this.updateFolder(folder);
                 this.updateDocument();
@@ -222,7 +211,7 @@
                     .get('/app/api/v1/documents/' + pid)
                     .then(response => {
                         vi.currentOpenDoc = response.data;
-                    }).catch(error => vi.alert(error));
+                    }).catch(error => vi.alert("Unable to show document.", true));
             },
 
             updateDocument: function () {
@@ -238,7 +227,7 @@
                     .then(response => {
                         vi.docs = response.data['results'];
                         vi.lastRefresh = Date.now();
-                    }).catch(error => vi.alert(error));
+                    }).catch(error => vi.alert("Unable to refresh documents list.", true));
             },
 
             updateFolder: function (level = null) {
@@ -256,7 +245,7 @@
                     .get("/app/api/v1/folders/" + qs)
                     .then(response => {
                         vi.folders = response.data;
-                    }).catch(error => vi.alert(error));
+                    }).catch(error => vi.alert("Unable to refresh folders list", true));
             },
 
             createNewFolder: function () {
@@ -281,7 +270,7 @@
                         // TODO flash the new folder when just created
                         vi.newFolderName = '';
                         vi.refreshFolders();
-                    }).catch(error => vi.alert(error));
+                    }).catch(error => vi.alert("Unable to create new folder.", true));
             }
         }
     }
