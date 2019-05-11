@@ -71,7 +71,7 @@ _Or alternatively `npx vue-cli-service test:unit`_
  Add a new language or create new key to translate in .po files:
  
     python manage.py makemessages -l fr --ignore=requirements*.txt,__init__.py,ftest/*
-    # Following lines needed for frontend js i18n
+    # Following lines needed for frontend i18n
     npm run build
     python manage.py makemessages -l fr --ignore=node_modules -d djangojs
 
