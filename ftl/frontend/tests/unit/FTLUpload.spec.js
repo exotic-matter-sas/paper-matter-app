@@ -48,7 +48,7 @@ describe('FTLUpload script', () => {
       onUploadProgress: wrapper.vm.refreshUploadProgression
     };
     Object.assign(axios_upload_conf, tv.AXIOS_CRSF_CONF); // merge upload specific conf with generic crsf conf
-    upload_button = wrapper.find('#uploadButton');
+    upload_button = wrapper.find('#upload-button');
   });
 
   it('uploadDocument call api', () => {

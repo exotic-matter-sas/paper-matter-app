@@ -15,7 +15,7 @@
                 ></b-form-file>
             </b-col>
             <b-col md="auto">
-                <b-button id="uploadButton" variant="primary" :disabled="uploading || !file" @click="uploadDocument">{{this.$parent._('Upload')}}</b-button>
+                <b-button id="upload-button" variant="primary" :disabled="uploading || !file" @click="uploadDocument">{{this.$parent._('Upload')}}</b-button>
             </b-col>
         </b-row>
         <b-row align-h="center">

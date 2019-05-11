@@ -1,5 +1,5 @@
 <template>
-    <b-col sm="3" :id="doc.pid" class="documentThumbnail">
+    <b-col sm="3" :id="doc.pid" class="document-thumbnail">
         <b-row class="text-truncate document-title"><span @click="$emit('event-open-doc', doc.pid)">{{ doc.title }}</span></b-row>
         <b-row align-h="center">
             <b-img :src="'https://loremflickr.com/150/200/cats?' + doc.pid" class="img-thumbnail" slot="aside"
@@ -16,7 +16,7 @@
                 <b-button variant="secondary" size="sm" :href="'uploads/' + doc.pid">{{this.$parent._('Download')}}</b-button>
             </b-col>
             <b-col>
-                <b-button class="deleteDocument" variant="danger" size="sm" :disabled="deleting" @click.once="deleteDocument">
+                <b-button class="delete-document" variant="danger" size="sm" :disabled="deleting" @click.once="deleteDocument">
                     <b-spinner :class="{'d-none': !deleting}" small></b-spinner>
                     <span :class="{'d-none': deleting}">{{this.$parent._('!! Delete doc (no warn) !!')}}</span>
                 </b-button>
