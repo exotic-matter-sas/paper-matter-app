@@ -2,24 +2,24 @@
     <b-container>
         <b-row>
             <b-col>
-                {{this.$parent._('Upload document')}}
+                {{this.$_('Upload document')}}
             </b-col>
             <b-col md="8">
                 <b-form-file
                         ref="fileUploadField"
                         v-model="file"
                         :state="Boolean(file)"
-                        :placeholder="this.$parent._('Choose a file...')"
-                        :drop-placeholder="this.$parent._('Drop file here...')"
-                        :browse-text="this.$parent._('Browse')"
+                        :placeholder="this.$_('Choose a file...')"
+                        :drop-placeholder="this.$_('Drop file here...')"
+                        :browse-text="this.$_('Browse')"
                 ></b-form-file>
             </b-col>
             <b-col md="auto">
-                <b-button id="upload-button" variant="primary" :disabled="uploading || !file" @click="uploadDocument">{{this.$parent._('Upload')}}</b-button>
+                <b-button id="upload-button" variant="primary" :disabled="uploading || !file" @click="uploadDocument">{{this.$_('Upload')}}</b-button>
             </b-col>
         </b-row>
         <b-row align-h="center">
-            <p>{{this.$parent._('Response: ')}}{{ response }}</p>
+            <p>{{this.$_('Response: ')}}{{ response }}</p>
         </b-row>
         <b-row align-h="center">
             <b-col cols="12">

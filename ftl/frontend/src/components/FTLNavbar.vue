@@ -14,10 +14,10 @@
             <b-navbar-nav class="ml-auto">
                 <b-nav-form>
                     <b-form-input size="sm" class="mr-sm-2"></b-form-input>
-                    <b-button size="sm" class="my-2 my-sm-0" type="submit">{{this.$parent._('Search')}}</b-button>
+                    <b-button size="sm" class="my-2 my-sm-0" type="submit">{{this.$_('Search')}}</b-button>
                 </b-nav-form>
 
-                <b-nav-item-dropdown :text="this.$parent._('Lang')" right>
+                <b-nav-item-dropdown :text="this.$_('Lang')" right>
                     <b-dropdown-item href="#">EN</b-dropdown-item>
                     <b-dropdown-item href="#">ES</b-dropdown-item>
                     <b-dropdown-item href="#">RU</b-dropdown-item>
@@ -27,8 +27,8 @@
                 <b-nav-item-dropdown right>
                     <!-- Using 'button-content' slot -->
                     <template slot="button-content"><em id="username">{{ account.name }}</em></template>
-                    <b-dropdown-item href="/account">{{this.$parent._('Profile')}}</b-dropdown-item>
-                    <b-dropdown-item href="/logout">{{this.$parent._('Sign Out')}}</b-dropdown-item>
+                    <b-dropdown-item href="/account">{{this.$_('Profile')}}</b-dropdown-item>
+                    <b-dropdown-item href="/logout">{{this.$_('Sign Out')}}</b-dropdown-item>
                 </b-nav-item-dropdown>
             </b-navbar-nav>
         </b-collapse>
