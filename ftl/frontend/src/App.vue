@@ -104,14 +104,16 @@
         </div>
 
         <b-modal v-if="newFolderModal" v-model="newFolderModal" @ok="createNewFolder"
-                 :ok-disabled="newFolderName === ''">
+                 :ok-disabled="newFolderName === ''"
+                 :cancel-title="_('Cancel')"
+                 :ok-title="_('Create')">
             <span slot="modal-title">{{ _('Create a new folder') }}</span>
             <b-container>
                 <!-- TODO add current folder name to title -->
                 <b-form-group
                         id="fieldset-new-folder"
-                        description="The name of the folder"
-                        label="The folder will be created in the current folder."
+                        :description="_('The name of the folder')"
+                        :label="_('The folder will be created in the current folder.')"
                         label-for="new-folder">
                     <b-form-input id="new-folder" v-model="newFolderName" trim></b-form-input>
                 </b-form-group>

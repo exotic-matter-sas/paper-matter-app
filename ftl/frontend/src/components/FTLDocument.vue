@@ -9,16 +9,16 @@
         <b-row>
             <small>{{ getDate }}</small>
         </b-row>
-        <b-row align-h="center">Note: {{ doc.note }}</b-row>
+        <b-row align-h="center">{{this.$parent._('Note: ')}}{{ doc.note }}</b-row>
 
         <b-row>
             <b-col>
-                <b-button variant="secondary" size="sm" :href="'uploads/' + doc.pid">Download here</b-button>
+                <b-button variant="secondary" size="sm" :href="'uploads/' + doc.pid">{{this.$parent._('Download')}}</b-button>
             </b-col>
             <b-col>
                 <b-button class="deleteDocument" variant="danger" size="sm" :disabled="deleting" @click.once="deleteDocument">
                     <b-spinner :class="{'d-none': !deleting}" small></b-spinner>
-                    <span :class="{'d-none': deleting}">!! Delete doc (no warn) !!</span>
+                    <span :class="{'d-none': deleting}">{{this.$parent._('!! Delete doc (no warn) !!')}}</span>
                 </b-button>
             </b-col>
         </b-row>
