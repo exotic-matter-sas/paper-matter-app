@@ -20,7 +20,7 @@ msgstr ""
 
 #: core/models.py:41
 msgid "email address"
-msgstr ""
+msgstr "addresse email"
 
 #: core/templates/core/home.html:16
 msgid ""
@@ -28,6 +28,7 @@ msgid ""
 "enable it\n"
 "        to continue."
 msgstr ""
+"Désolé mais ftl-app ne fonctionne pas sans Javascript, veuillez l'activer dans votre navigateur."
 
 #~ msgid "Home"
 #~ msgstr "Accueil"
