@@ -1,3 +1,5 @@
+import time
+
 import tika
 from django.contrib.postgres.search import SearchVector
 from django.core.management import BaseCommand
@@ -16,7 +18,10 @@ class Command(BaseCommand):
         docs = FTLDocument.objects.all()
         tika.initVM()
 
-        self.stdout.write(self.style.MIGRATE_HEADING(f'Starting to reindex {len(docs)} documents'))
+        start_time = time.time()
+        documents_count = len(docs)
+        s = "s" if documents_count > 1 else ""
+        self.stdout.write(self.style.MIGRATE_HEADING(f'Starting to reindex {documents_count} document{s}'))
 
         for doc in docs:
             parsed = parser.from_file(doc.binary.name)
@@ -26,3 +31,6 @@ class Command(BaseCommand):
             doc.save()
 
             self.stdout.write(self.style.SUCCESS(f'Reindexed {doc.title}'))
+        end_time = time.time()
+        self.stdout.write(self.style.SUCCESS(f'{documents_count } document{s} successfully reindexed in'
+                                             f' {round(end_time-start_time, 2)}s'))

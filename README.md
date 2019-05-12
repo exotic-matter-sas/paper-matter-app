@@ -8,6 +8,7 @@ Archiving documents solution
 
  * Python 3.7
  * PostgreSQL 11
+ * Java 8+
  
 ### Install Python modules
  
@@ -22,7 +23,8 @@ Archiving documents solution
  * Firefox or Chrome (to run functional tests)
  * Poedit or equivalent (to add/update i18n)
  * Node.js
- 
+ * Java 8+ (for document indexing)
+
 ### Install Python modules
  
     python -m pip install requirements.txt
@@ -92,4 +94,8 @@ To use specific Django settings without modifying main `ftl/ftl/settings.py` fil
 
 #### 2. collect static files to an unique dir using Django
 
-    python3 manage.py collectstatic
+    python manage.py collectstatic
+    
+### Reindex all documents
+
+    python manage.py reindex_docs
