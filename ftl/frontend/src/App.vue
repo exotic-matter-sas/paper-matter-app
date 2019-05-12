@@ -24,8 +24,10 @@
                 </b-row>
                 <b-row>
                     <b-col>
-                        <b-button id="refresh-documents" variant="primary" @click="updateDocument">Refresh documents list</b-button>
-                        Last refresh {{ lastRefreshFormatted }}
+                        <b-button id="refresh-documents" variant="primary" @click="updateDocument">
+                            {{this.$_('Refresh documents list')}}
+                        </b-button>
+                        {{ this.$_('Last refresh') }} {{ lastRefreshFormatted }}
                     </b-col>
                 </b-row>
             </b-container>
@@ -42,8 +44,7 @@
                     <FTLFolder v-for="folder in folders" :key="folder.id" :folder="folder"
                                @event-change-folder="changeFolder"/>
                     <b-button id="create-folder" class="m-1" variant="outline-primary" size="sm" @click.prevent="newFolderModal = true">
-                        Create
-                        new folder
+                        {{ this.$_('Create new folder') }}
                     </b-button>
                 </b-row>
             </b-container>
@@ -56,7 +57,7 @@
                                  @event-open-doc="openDocument"/>
                 </b-row>
                 <b-row v-else>
-                    <b-col>Aucun document</b-col>
+                    <b-col>{{ this.$_('No document yet') }}</b-col>
                 </b-row>
             </b-container>
         </section>
@@ -65,8 +66,7 @@
             <b-container>
                 <b-row>
                     <b-col>
-                        ftl-app, open source software. Made with ❤ by <a href="https://www.exotic-matter.fr">Exotic
-                        Matter</a>.
+                        {{ this.$_('ftl-app, open source software. Made with ❤ by ') }} <a href="https://www.exotic-matter.fr">Exotic Matter</a>.
                     </b-col>
                 </b-row>
             </b-container>
@@ -75,7 +75,7 @@
         <!-- Pdf viewer popup -->
         <div v-if="docModal" class="doc-view-modal" :class="{open: docModal}">
             <b-container>
-                Titre {{ currentOpenDoc.title }}
+                {{ this.$_('Title') }} {{ currentOpenDoc.title }}
             </b-container>
             <b-container>
                 <b-row scr>
@@ -97,21 +97,23 @@
             <b-container>
                 <b-row align-h="end">
                     <b-col cols="2">
-                        <b-button variant="secondary" @click="docModal = false">Close</b-button>
+                        <b-button variant="secondary" @click="docModal = false">{{this.$_('Close')}}</b-button>
                     </b-col>
                 </b-row>
             </b-container>
         </div>
 
         <b-modal v-if="newFolderModal" v-model="newFolderModal" @ok="createNewFolder"
-                 :ok-disabled="newFolderName === ''">
-            <span slot="modal-title">Create a new folder</span>
+                 :ok-disabled="newFolderName === ''"
+                 :cancel-title="this.$_('Cancel')"
+                 :ok-title="this.$_('Create')">
+            <span slot="modal-title">{{ this.$_('Create a new folder') }}</span>
             <b-container>
                 <!-- TODO add current folder name to title -->
                 <b-form-group
                         id="fieldset-new-folder"
-                        description="The name of the folder"
-                        label="The folder will be created in the current folder."
+                        :description="this.$_('The name of the folder')"
+                        :label="this.$_('The folder will be created in the current folder.')"
                         label-for="new-folder">
                     <b-form-input id="new-folder" v-model="newFolderName" trim></b-form-input>
                 </b-form-group>
@@ -186,7 +188,7 @@
                 } else {
                     return null;
                 }
-            }
+            },
         },
 
         methods: {

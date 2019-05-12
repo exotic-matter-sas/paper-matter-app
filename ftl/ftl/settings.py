@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'webpack_loader',
     'ftl',
     'setup',
-    'core'
+    'core',
+    'frontend'
 ]
 
 if DEBUG:
