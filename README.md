@@ -23,7 +23,7 @@ Archiving documents solution
  * Firefox or Chrome (to run functional tests)
  * Poedit or equivalent (to add/update i18n)
  * Node.js
- * Java 8+ (for document indexing)
+ * Java 8+ (for documents indexing)
 
 ### Install Python modules
  
