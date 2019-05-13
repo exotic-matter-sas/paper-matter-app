@@ -81,3 +81,12 @@ class HomePageTests(LoginPage, HomePage):
 
     def test_delete_folder(self):
         pass  # TODO
+
+    def test_search_document_by_its_title(self):
+        pass  # TODO when https://gitlab.com/exotic-matter/ftl-app/issues/35 done
+
+    def test_search_document_by_its_note(self):
+        pass  # TODO when https://gitlab.com/exotic-matter/ftl-app/issues/35 done
+
+    def test_search_document_by_its_content(self):
+        pass  # TODO when https://gitlab.com/exotic-matter/ftl-app/issues/35 done
