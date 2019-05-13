@@ -59,6 +59,7 @@ class FTLDocument(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     edited = models.DateTimeField(auto_now=True)
     tsvector = SearchVectorField(blank=True)
+    language = models.CharField(max_length=64, blank=True)
 
     # class Meta:
     #     indexes = [

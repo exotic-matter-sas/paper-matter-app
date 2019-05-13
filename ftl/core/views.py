@@ -2,6 +2,7 @@ import json
 import os
 from concurrent.futures.thread import ThreadPoolExecutor
 
+import langid
 import tika
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
@@ -19,13 +20,21 @@ from tika import parser
 from core.models import FTLDocument, FTLFolder, FTLModelPermissions
 from core.serializers import FTLDocumentSerializer, FTLFolderSerializer
 
+SEARCH_VECTOR = SearchVector('content_text', weight='C', config=F('language')) \
+                + SearchVector('note', weight='B', config=F('language')) \
+                + SearchVector('title', weight='A', config=F('language'))
+COUNTRY_CODE_INDEX = {
+    'fr': 'french',
+    'en': 'english',
+}
 tika.initVM()
 EXECUTOR = ThreadPoolExecutor(max_workers=1, thread_name_prefix="ftl_indexation_worker")
 
 
 def _extract_text_from_pdf(vector, ftl_doc_instance):
-    parsed = parser.from_file(ftl_doc_instance.binary.name)
-    ftl_doc_instance.content_text = parsed["content"].strip()
+    parsed_txt = parser.from_file(ftl_doc_instance.binary.name)
+    ftl_doc_instance.content_text = parsed_txt["content"].strip()
+    ftl_doc_instance.language = COUNTRY_CODE_INDEX.get(langid.classify(ftl_doc_instance.content_text)[0], 'en')
     ftl_doc_instance.save()  # Need to save in actual DB before computing the tsvector
     ftl_doc_instance.tsvector = vector
     ftl_doc_instance.save()
@@ -56,9 +65,6 @@ class FTLDocumentList(generics.ListAPIView):
     authentication_classes = (SessionAuthentication,)
     serializer_class = FTLDocumentSerializer
     permission_classes = (FTLModelPermissions,)
-    vector = SearchVector('content_text', weight='C', config='french') \
-             + SearchVector('note', weight='B', config='french') \
-             + SearchVector('title', weight='A', config='french')
 
     def get_queryset(self):
         current_folder = self.request.query_params.get('level', None)
@@ -113,9 +119,6 @@ class FileUploadView(LoginRequiredMixin, views.APIView):
     permission_classes = (FTLModelPermissions,)
     # Needed for applying permission checking on view that don't have any queryset
     queryset = FTLDocument.objects.none()
-    vector = SearchVector('content_text', weight='C', config='french') \
-             + SearchVector('note', weight='B', config='french') \
-             + SearchVector('title', weight='A', config='french')
 
     def post(self, request, *args, **kwargs):
         file_obj = request.data['file']
@@ -137,7 +140,7 @@ class FileUploadView(LoginRequiredMixin, views.APIView):
         ftl_doc.title = file_obj.name
         ftl_doc.save()
 
-        EXECUTOR.submit(_extract_text_from_pdf, self.vector, ftl_doc)
+        EXECUTOR.submit(_extract_text_from_pdf, SEARCH_VECTOR, ftl_doc)
 
         return Response(self.serializer_class(ftl_doc).data, status=201)
 
