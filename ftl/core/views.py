@@ -71,10 +71,10 @@ class FTLDocumentList(generics.ListAPIView):
         else:
             queryset = queryset.filter(ftl_folder__isnull=True)
 
-        text_search = self.request.query_params.get('search', "").strip()
+        text_search = self.request.query_params.get('search')
 
-        if text_search is not None and text_search:
-            search_query = SearchQuery(text_search)
+        if text_search:
+            search_query = SearchQuery(text_search.strip())
             queryset = queryset.annotate(rank=SearchRank(F('tsvector'), search_query)) \
                 .filter(rank__gte=0.1) \
                 .order_by('-rank')
