@@ -5,11 +5,9 @@ from unittest.mock import MagicMock, ANY, patch
 
 from rest_framework import status
 from rest_framework.test import APITestCase
-from tika import parser
 
 import core
 from core.models import FTLDocument, FTLFolder
-from core.views import _extract_text_from_pdf
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_document, setup_folder
 from ftl.settings import BASE_DIR
