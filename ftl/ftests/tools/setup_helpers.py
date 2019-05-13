@@ -1,5 +1,5 @@
 from core.models import FTLOrg, FTLUser, FTLDocument, FTLFolder, permissions_names_to_objects, FTL_PERMISSIONS_USER
-from core.views import FileUploadView
+from core.views import SEARCH_VECTOR
 from ftests.tools import test_values as tv
 
 
@@ -36,7 +36,7 @@ def setup_authenticated_session(test_client, org, user):
 
 
 def setup_document(org, ftl_user, ftl_folder=None, title=tv.DOCUMENT1_TITLE, note=tv.DOCUMENT1_NOTE,
-                   binary=tv.DOCUMENT1_BINARY_PATH, content_text=tv.DOCUMENT1_CONTENT):
+                   binary=tv.DOCUMENT1_BINARY_PATH, content_text=tv.DOCUMENT1_CONTENT, language=tv.DOCUMENT1_LANGUAGE):
     document = FTLDocument.objects.create(
         org=org,
         ftl_user=ftl_user,
@@ -45,9 +45,10 @@ def setup_document(org, ftl_user, ftl_folder=None, title=tv.DOCUMENT1_TITLE, not
         note=note,
         binary=binary,
         content_text=content_text,
+        language=language,
     )
     # Update document to allow PGSQL to process search vector
-    document.tsvector = FileUploadView.vector
+    document.tsvector = SEARCH_VECTOR
     document.save()
 
     return document
