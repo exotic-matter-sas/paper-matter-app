@@ -24,7 +24,6 @@ EXECUTOR = ThreadPoolExecutor(max_workers=1, thread_name_prefix="ftl_indexation_
 
 
 def _extract_text_from_pdf(vector, ftl_doc_instance):
-    # TODO extract only from PDF
     parsed = parser.from_file(ftl_doc_instance.binary.name)
     ftl_doc_instance.content_text = parsed["content"].strip()
     ftl_doc_instance.save()  # Need to save in actual DB before computing the tsvector
