@@ -20,9 +20,11 @@ USER2_PASS = 'a123456!'
 DOCUMENT1_TITLE = 'test.pdf'
 DOCUMENT1_NOTE = 'Document 1 note'
 DOCUMENT1_BINARY_PATH = 'ftests/tools/test.pdf'
+DOCUMENT1_CONTENT = 'Document 1 content'
 
 DOCUMENT2_TITLE = 'Document 2'
 DOCUMENT2_NOTE = 'Document 2 note'
+DOCUMENT2_CONTENT = 'Document 2 content'
 
 FOLDER1_NAME = 'Folder 1'
 FOLDER2_NAME = 'Folder 2'

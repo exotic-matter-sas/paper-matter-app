@@ -165,6 +165,45 @@ class DocumentsTests(APITestCase):
         self.assertEqual(client_doc_level['ftl_folder'], client_doc['ftl_folder'])
 
 
+class DocumentsSearchTests(APITestCase):
+    def setUp(self):
+        self.org = setup_org()
+        setup_admin(self.org)
+        self.user = setup_user(self.org)
+
+        self.client.login(username=tv.USER1_USERNAME, password=tv.USER1_PASS)
+
+    def test_list_documents_search_title(self):
+        doc_to_search = setup_document(self.org, self.user, note='bingo!')
+
+        search_result = self.client.get(f'/app/api/v1/documents/?search={doc_to_search.title}', format='json')
+        self.assertEqual(search_result.status_code, status.HTTP_200_OK)
+        self.assertEqual(search_result['Content-Type'], 'application/json')
+        self.assertEqual(search_result.data['count'], 1)
+        self.assertEqual(len(search_result.data['results']), 1)
+        self.assertEqual(search_result.data['results'][0]['note'], 'bingo!')
+
+    def test_list_documents_search_note(self):
+        doc_to_search = setup_document(self.org, self.user, title='bingo!')
+
+        search_result = self.client.get(f'/app/api/v1/documents/?search={doc_to_search.note}', format='json')
+        self.assertEqual(search_result.status_code, status.HTTP_200_OK)
+        self.assertEqual(search_result['Content-Type'], 'application/json')
+        self.assertEqual(search_result.data['count'], 1)
+        self.assertEqual(len(search_result.data['results']), 1)
+        self.assertEqual(search_result.data['results'][0]['title'], 'bingo!')
+
+    def test_list_documents_search_content_text(self):
+        doc_to_search = setup_document(self.org, self.user, title='bingo!')
+
+        search_result = self.client.get(f'/app/api/v1/documents/?search={doc_to_search.content_text}', format='json')
+        self.assertEqual(search_result.status_code, status.HTTP_200_OK)
+        self.assertEqual(search_result['Content-Type'], 'application/json')
+        self.assertEqual(search_result.data['count'], 1)
+        self.assertEqual(len(search_result.data['results']), 1)
+        self.assertEqual(search_result.data['results'][0]['title'], 'bingo!')
+
+
 class FoldersTests(APITestCase):
     def setUp(self):
         self.org = setup_org()

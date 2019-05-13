@@ -1,4 +1,5 @@
 from core.models import FTLOrg, FTLUser, FTLDocument, FTLFolder, permissions_names_to_objects, FTL_PERMISSIONS_USER
+from core.views import FileUploadView
 from ftests.tools import test_values as tv
 
 
@@ -35,15 +36,21 @@ def setup_authenticated_session(test_client, org, user):
 
 
 def setup_document(org, ftl_user, ftl_folder=None, title=tv.DOCUMENT1_TITLE, note=tv.DOCUMENT1_NOTE,
-                   binary=tv.DOCUMENT1_BINARY_PATH):
-    return FTLDocument.objects.create(
+                   binary=tv.DOCUMENT1_BINARY_PATH, content_text=tv.DOCUMENT1_CONTENT):
+    document = FTLDocument.objects.create(
         org=org,
         ftl_user=ftl_user,
         ftl_folder=ftl_folder,
         title=title,
         note=note,
         binary=binary,
+        content_text=content_text,
     )
+    # Update document to allow PGSQL to process search vector
+    document.tsvector = FileUploadView.vector
+    document.save()
+
+    return document
 
 
 def setup_folder(org, name=tv.FOLDER1_NAME, parent=None):
