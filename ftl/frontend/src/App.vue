@@ -134,6 +134,7 @@
     import FTLDocument from './components/FTLDocument'
     import FTLUpload from './components/FTLUpload'
     import axios from 'axios'
+    import qs from 'qs'
 
     export default {
         name: 'app',
@@ -248,25 +249,22 @@
 
             updateDocument: function () {
                 const vi = this;
-                let qs = '';
+                let queryString = {};
 
                 if (vi.previousLevels.length > 0) {
-                    qs = '?level=' + this.getCurrentFolder.id;
+                    queryString['level'] = this.getCurrentFolder.id;
                 }
 
-                // FIXME ugly
                 if (vi.currentSearch !== null && vi.currentSearch !== "") {
-                    if (qs === '') {
-                        qs = '?search=' + vi.currentSearch;
-                    } else {
-                        qs = qs + '&search=' + vi.currentSearch;
-                    }
+                    queryString['search'] = vi.currentSearch;
                 }
+
+                let strQueryString = '?' + qs.stringify(queryString);
 
                 this.docLoading = true;
 
                 axios
-                    .get('/app/api/v1/documents/' + qs)
+                    .get('/app/api/v1/documents/' + strQueryString)
                     .then(response => {
                         this.docLoading = false;
                         vi.docs = response.data['results'];
