@@ -7,6 +7,7 @@ import FTLFolder from "../../src/components/FTLFolder";
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue); // to avoid warning on tests execution
+localVue.prototype.$_ = (text) => { return text; }; // i18n mock
 
 
 describe('FTLFolder template', () => {

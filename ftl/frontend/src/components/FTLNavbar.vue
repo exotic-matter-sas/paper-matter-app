@@ -5,10 +5,10 @@
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
         <b-collapse id="nav-collapse" is-nav>
-            <b-navbar-nav>
+            <!-- <b-navbar-nav>
                 <b-nav-item href="#">Link</b-nav-item>
                 <b-nav-item href="#" disabled>Disabled</b-nav-item>
-            </b-navbar-nav>
+            </b-navbar-nav> -->
 
             <!-- Right aligned nav items -->
             <b-navbar-nav class="ml-auto">
@@ -16,27 +16,27 @@
                     <b-form-input size="sm" class="m-1" variant="secondary" placeholder="Search" v-model="search"
                                   @keydown.enter.prevent="$emit('event-search', $event.target.value)"></b-form-input>
                     <b-button size="sm" class="m-1" variant="secondary" type="button" @click="$emit('event-search', search)">
-                        Search
+                        {{this.$_('Search')}}
                     </b-button>
                     <b-button size="sm" class="m-1" type="button" variant="secondary"
                               @click="clear">
-                        Clear
+                        {{this.$_('Clear')}}
                     </b-button>
 
                 </b-nav-form>
 
-                <b-nav-item-dropdown text="Lang" right>
+                <b-nav-item-dropdown :text="this.$_('Lang')" right>
                     <b-dropdown-item href="#">EN</b-dropdown-item>
                     <b-dropdown-item href="#">ES</b-dropdown-item>
                     <b-dropdown-item href="#">RU</b-dropdown-item>
-                    <b-dropdown-item href="#">FA</b-dropdown-item>
+                    <b-dropdown-item href="#">FR</b-dropdown-item>
                 </b-nav-item-dropdown>
 
                 <b-nav-item-dropdown right>
                     <!-- Using 'button-content' slot -->
                     <template slot="button-content"><em id="username">{{ account.name }}</em></template>
-                    <b-dropdown-item href="/account">Profile</b-dropdown-item>
-                    <b-dropdown-item href="/logout">Sign Out</b-dropdown-item>
+                    <b-dropdown-item href="/account">{{this.$_('Profile')}}</b-dropdown-item>
+                    <b-dropdown-item href="/logout">{{this.$_('Sign Out')}}</b-dropdown-item>
                 </b-nav-item-dropdown>
             </b-navbar-nav>
         </b-collapse>

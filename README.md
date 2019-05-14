@@ -70,11 +70,14 @@ _Or alternatively `npx vue-cli-service test:unit`_
  
  :warning: _Avoid raw editing of .po files, use poedit or equivalent instead_
  
- Add a new language or create new key to translate:
+ Add a new language or create new key to translate in .po files:
  
     python manage.py makemessages -l fr --ignore=requirements*.txt,__init__.py,ftest/*
-    
- Update values for existing i18n key:
+    # Following lines needed for frontend i18n
+    npm run build
+    python manage.py makemessages -l fr --ignore=node_modules -d djangojs
+
+ Update existing i18n key in .po files:
  
     python manage.py makemessages --all
     
@@ -94,7 +97,7 @@ To use specific Django settings without modifying main `ftl/ftl/settings.py` fil
 
 #### 2. collect static files to an unique dir using Django
 
-    python manage.py collectstatic
+    python3 manage.py collectstatic
     
 ### Reindex all documents
 

@@ -11,6 +11,7 @@ class HomePage(BasePage):
     profile_name = '#username'
 
     document_upload_input = 'input[type="file"]'
+    document_upload_label = '.custom-file-label'
     submit_document_upload_button = '#upload-button'
 
     refresh_documents_button = '#refresh-documents'
