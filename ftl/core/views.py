@@ -67,7 +67,7 @@ class FTLDocumentList(generics.ListAPIView):
     def get_queryset(self):
         current_folder = self.request.query_params.get('level', None)
 
-        queryset = FTLDocument.objects.filter(ftl_user=self.request.user).order_by('-created')
+        queryset = FTLDocument.objects.filter(org_id=self.request.user.org).order_by('-created')
 
         if current_folder is not None:
             queryset = queryset.filter(ftl_folder__id=current_folder)
@@ -136,7 +136,6 @@ class FileUploadView(LoginRequiredMixin, views.APIView):
         ftl_doc.binary = file_obj
         ftl_doc.org = self.request.user.org
         ftl_doc.title = file_obj.name
-        ftl_doc.language = 'english'  # english by default while waiting for indexing
         ftl_doc.save()
 
         EXECUTOR.submit(_extract_text_from_pdf, SEARCH_VECTOR, ftl_doc)
