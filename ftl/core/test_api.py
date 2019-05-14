@@ -27,7 +27,7 @@ class DocumentsTests(APITestCase):
         self.doc_in_folder = setup_document(self.org, self.user, title='Document in folder',
                                             ftl_folder=self.first_level_folder)
 
-        self.client.login(username=tv.USER1_USERNAME, password=tv.USER1_PASS)
+        self.client.login(username=self.user.username, password=self.user.password)
 
     def test_list_documents(self):
         ftl_document = FTLDocument.objects.get(pid=self.doc.pid)
@@ -61,6 +61,31 @@ class DocumentsTests(APITestCase):
         self.assertEqual(client_doc_2['title'], ftl_document_first.title)
         self.assertEqual(client_doc_2['note'], ftl_document_first.note)
         self.assertEqual(client_doc_2['ftl_folder'], ftl_document_first.ftl_folder)
+
+    def test_list_documents_added_by_another_user_of_same_org(self):
+        # First user logout and a second user of the same org login
+        self.client.logout()
+        setup_user(self.org, tv.USER2_EMAIL, tv.USER2_USERNAME, tv.USER2_PASS)
+        self.client.login(username=tv.USER2_USERNAME, password=tv.USER2_PASS)
+
+        client_get = self.client.get('/app/api/v1/documents/', format='json')
+        self.assertEqual(client_get.status_code, status.HTTP_200_OK)
+        self.assertEqual(client_get['Content-Type'], 'application/json')
+        self.assertEqual(client_get.data['count'], 2)
+        self.assertEqual(len(client_get.data['results']), 2)
+
+    def test_cant_list_documents_from_another_org(self):
+        # First user logout and a second user of the another org login
+        self.client.logout()
+        org2 = setup_org(tv.ORG_NAME_2, tv.ORG_SLUG_2)
+        setup_user(org2, tv.USER2_EMAIL, tv.USER2_USERNAME, tv.USER2_PASS)
+        self.client.login(username=tv.USER2_USERNAME, password=tv.USER2_PASS)
+
+        client_get = self.client.get('/app/api/v1/documents/', format='json')
+        self.assertEqual(client_get.status_code, status.HTTP_200_OK)
+        self.assertEqual(client_get['Content-Type'], 'application/json')
+        self.assertEqual(client_get.data['count'], 0)
+        self.assertEqual(len(client_get.data['results']), 0)
 
     def test_get_document(self):
         ftl_document_first = FTLDocument.objects.get(pid=self.doc.pid)
