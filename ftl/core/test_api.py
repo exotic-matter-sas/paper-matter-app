@@ -27,7 +27,7 @@ class DocumentsTests(APITestCase):
         self.doc_in_folder = setup_document(self.org, self.user, title='Document in folder',
                                             ftl_folder=self.first_level_folder)
 
-        self.client.login(username=self.user.username, password=self.user.password)
+        self.client.login(username=tv.USER1_USERNAME, password=tv.USER2_PASS)
 
     def test_list_documents(self):
         ftl_document = FTLDocument.objects.get(pid=self.doc.pid)
