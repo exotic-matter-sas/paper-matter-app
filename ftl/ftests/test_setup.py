@@ -44,14 +44,14 @@ class LandingPageTests(SetupPages):
         self.create_admin()
 
         # A success page appears mentioning the urls for admin login page and user signup page
-        self.assertIn('Setup completed', self.head_title)
+        self.assertIn('setup completed', self.head_title)
         self.assertIn('/admin', self.get_elem(self.admin_login_link).get_attribute('href'))
 
         self.assertIn('/signup', self.get_elem(self.user_signup_link).get_attribute('href'))
 
         # Display ftl-app again now redirect to user login page
         self.visit(self.root_url)
-        self.assertIn('Login', self.head_title)
+        self.assertIn('login', self.head_title)
 
 
 class AdminLoginTests(AdminLoginPage):

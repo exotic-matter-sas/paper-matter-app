@@ -1,4 +1,4 @@
-APP_NAME = 'Ftl-app'
+APP_NAME = 'ftl-app'
 
 ADMIN_USERNAME = 'admin'
 ADMIN_EMAIL = 'admin@ftl-exemple.com'
