@@ -77,7 +77,7 @@ class FTLDocumentList(generics.ListAPIView):
         text_search = self.request.query_params.get('search')
 
         if text_search:
-            search_query = SearchQuery(text_search.strip())
+            search_query = SearchQuery(text_search.strip(), config=F('language'))
             queryset = queryset.annotate(rank=SearchRank(F('tsvector'), search_query)) \
                 .filter(rank__gte=0.1) \
                 .order_by('-rank')
@@ -136,6 +136,7 @@ class FileUploadView(LoginRequiredMixin, views.APIView):
         ftl_doc.binary = file_obj
         ftl_doc.org = self.request.user.org
         ftl_doc.title = file_obj.name
+        ftl_doc.language = 'english'  # english by default while waiting for indexing
         ftl_doc.save()
 
         EXECUTOR.submit(_extract_text_from_pdf, SEARCH_VECTOR, ftl_doc)
