@@ -20,7 +20,7 @@
                     </b-button>
                     <b-button size="sm" class="m-1" type="button" variant="secondary"
                               @click="clear">
-                        {{this.$_('Clear')}}
+                        {{this.$_('X')}}
                     </b-button>
 
                 </b-nav-form>
