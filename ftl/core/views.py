@@ -3,7 +3,6 @@ import os
 from concurrent.futures.thread import ThreadPoolExecutor
 
 import langid
-import tika
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 from django.db.models import F
@@ -27,7 +26,6 @@ COUNTRY_CODE_INDEX = {
     'fr': 'french',
     'en': 'english',
 }
-tika.initVM()
 EXECUTOR = ThreadPoolExecutor(max_workers=1, thread_name_prefix="ftl_indexation_worker")
 
 
