@@ -61,6 +61,7 @@ class FTLDocument(models.Model):
     tsvector = SearchVectorField(blank=True)
     language = models.CharField(max_length=64, blank=True)
 
+    # // TODO tsvector index missing
     # class Meta:
     #     indexes = [
     #         GinIndex(fields=['tsvector'])
