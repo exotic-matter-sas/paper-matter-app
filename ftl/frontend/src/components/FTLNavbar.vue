@@ -13,8 +13,16 @@
             <!-- Right aligned nav items -->
             <b-navbar-nav class="ml-auto">
                 <b-nav-form>
-                    <b-form-input size="sm" class="mr-sm-2"></b-form-input>
-                    <b-button size="sm" class="my-2 my-sm-0" type="submit">{{this.$_('Search')}}</b-button>
+                    <b-form-input size="sm" class="m-1" variant="secondary" placeholder="Search" v-model="search"
+                                  @keydown.enter.prevent="$emit('event-search', $event.target.value)"></b-form-input>
+                    <b-button size="sm" class="m-1" variant="secondary" type="button" @click="$emit('event-search', search)">
+                        {{this.$_('Search')}}
+                    </b-button>
+                    <b-button size="sm" class="m-1" type="button" variant="secondary"
+                              @click="clear">
+                        {{this.$_('X')}}
+                    </b-button>
+
                 </b-nav-form>
 
                 <b-nav-item-dropdown :text="this.$_('Lang')" right>
@@ -43,6 +51,19 @@
             account: {
                 type: Object,
                 required: true
+            },
+        },
+
+        data() {
+            return {
+                search: ""
+            }
+        },
+
+        methods: {
+            clear: function () {
+                this.search = "";
+                this.$emit('event-clear-search');
             }
         }
     }

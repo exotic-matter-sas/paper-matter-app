@@ -2,15 +2,16 @@
     <div id="app" class="m-0">
         <header>
             <b-container fluid class="p-0">
-                <FTLNavbar :account="account"/>
+                <FTLNavbar :account="account" @event-search="refreshDocumentWithSearch"
+                           @event-clear-search="clearSearch"/>
             </b-container>
 
             <b-alert
-                    :variant="alertType"
-                    dismissible
-                    fade
-                    :show="showAlert"
-                    @dismissed="showAlert=false">
+                :variant="alertType"
+                dismissible
+                fade
+                :show="showAlert"
+                @dismissed="showAlert=false">
                 {{ alertMessage }}
             </b-alert>
         </header>
@@ -52,7 +53,12 @@
 
         <section>
             <b-container>
-                <b-row align-h="around" v-if="docs.length">
+                <b-row v-if="docLoading">
+                    <b-col>
+                        <b-spinner style="width: 3rem; height: 3rem;" class="m-5" label="Loading..."></b-spinner>
+                    </b-col>
+                </b-row>
+                <b-row align-h="around" v-else-if="docs.length">
                     <FTLDocument v-for="doc in docs" :key="doc.pid" :doc="doc" @event-delete-doc="updateDocument"
                                  @event-open-doc="openDocument"/>
                 </b-row>
@@ -128,6 +134,7 @@
     import FTLDocument from './components/FTLDocument'
     import FTLUpload from './components/FTLUpload'
     import axios from 'axios'
+    import qs from 'qs'
 
     export default {
         name: 'app',
@@ -153,6 +160,8 @@
                 docPid: null,
                 docModal: false,
                 lastRefresh: Date.now(),
+                currentSearch: "",
+                docLoading: false,
 
                 // Folders list and breadcrumb
                 folders: [],
@@ -171,7 +180,7 @@
         mounted() {
             // get account value from Django core/home.html template
             let ftlAccountElem = document.getElementById('ftlAccount');
-            if(ftlAccountElem){
+            if (ftlAccountElem) {
                 this.account = JSON.parse(ftlAccountElem.textContent);
             }
             this.changeFolder();
@@ -201,8 +210,9 @@
                 this.updateFolder(this.getCurrentFolder);
             },
 
-            changeFolder: function (folder=null) {
+            changeFolder: function (folder = null) {
                 if (folder) this.previousLevels.push(folder);
+                this.currentSearch = "";
                 this.updateFolder(folder);
                 this.updateDocument();
             },
@@ -210,6 +220,7 @@
             changeToPreviousFolder: function () {
                 this.previousLevels.pop(); // Remove current level
                 let level = this.getCurrentFolder;
+                this.currentSearch = "";
                 this.updateFolder(level);
                 this.docs = []; // Clear docs when changing folder to avoid display artefact
                 this.updateDocument();
@@ -227,20 +238,41 @@
                     }).catch(error => vi.alert(error));
             },
 
+            refreshDocumentWithSearch: function (text) {
+                this.currentSearch = text;
+                this.updateDocument();
+            },
+
+            clearSearch: function () {
+                this.refreshDocumentWithSearch("");
+            },
+
             updateDocument: function () {
                 const vi = this;
-                let qs = '';
+                let queryString = {};
 
                 if (vi.previousLevels.length > 0) {
-                    qs = '?level=' + this.getCurrentFolder.id;
+                    queryString['level'] = this.getCurrentFolder.id;
                 }
 
+                if (vi.currentSearch !== null && vi.currentSearch !== "") {
+                    queryString['search'] = vi.currentSearch;
+                }
+
+                let strQueryString = '?' + qs.stringify(queryString);
+
+                this.docLoading = true;
+
                 axios
-                    .get('/app/api/v1/documents/' + qs)
+                    .get('/app/api/v1/documents/' + strQueryString)
                     .then(response => {
+                        this.docLoading = false;
                         vi.docs = response.data['results'];
                         vi.lastRefresh = Date.now();
-                    }).catch(error => vi.alert(error));
+                    }).catch(error => {
+                    this.docLoading = false;
+                    vi.alert(error);
+                });
             },
 
             updateFolder: function (level = null) {

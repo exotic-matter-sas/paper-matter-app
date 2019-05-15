@@ -1,9 +1,11 @@
 import json
 import os
 import tempfile
+from unittest.mock import MagicMock, ANY, patch
 
 from rest_framework import status
 from rest_framework.test import APITestCase
+from tika import parser
 
 import core
 from core.models import FTLDocument, FTLFolder
@@ -26,7 +28,7 @@ class DocumentsTests(APITestCase):
         self.doc_in_folder = setup_document(self.org, self.user, title='Document in folder',
                                             ftl_folder=self.first_level_folder)
 
-        self.client.login(username=tv.USER1_USERNAME, password=tv.USER1_PASS)
+        self.client.login(username=tv.USER1_USERNAME, password=tv.USER2_PASS)
 
     def test_list_documents(self):
         ftl_document = FTLDocument.objects.get(pid=self.doc.pid)
@@ -60,6 +62,31 @@ class DocumentsTests(APITestCase):
         self.assertEqual(client_doc_2['title'], ftl_document_first.title)
         self.assertEqual(client_doc_2['note'], ftl_document_first.note)
         self.assertEqual(client_doc_2['ftl_folder'], ftl_document_first.ftl_folder)
+
+    def test_list_documents_added_by_another_user_of_same_org(self):
+        # First user logout and a second user of the same org login
+        self.client.logout()
+        setup_user(self.org, tv.USER2_EMAIL, tv.USER2_USERNAME, tv.USER2_PASS)
+        self.client.login(username=tv.USER2_USERNAME, password=tv.USER2_PASS)
+
+        client_get = self.client.get('/app/api/v1/documents/', format='json')
+        self.assertEqual(client_get.status_code, status.HTTP_200_OK)
+        self.assertEqual(client_get['Content-Type'], 'application/json')
+        self.assertEqual(client_get.data['count'], 2)
+        self.assertEqual(len(client_get.data['results']), 2)
+
+    def test_cant_list_documents_from_another_org(self):
+        # First user logout and a second user of the another org login
+        self.client.logout()
+        org2 = setup_org(tv.ORG_NAME_2, tv.ORG_SLUG_2)
+        setup_user(org2, tv.USER2_EMAIL, tv.USER2_USERNAME, tv.USER2_PASS)
+        self.client.login(username=tv.USER2_USERNAME, password=tv.USER2_PASS)
+
+        client_get = self.client.get('/app/api/v1/documents/', format='json')
+        self.assertEqual(client_get.status_code, status.HTTP_200_OK)
+        self.assertEqual(client_get['Content-Type'], 'application/json')
+        self.assertEqual(client_get.data['count'], 0)
+        self.assertEqual(len(client_get.data['results']), 0)
 
     def test_get_document(self):
         ftl_document_first = FTLDocument.objects.get(pid=self.doc.pid)
@@ -97,7 +124,10 @@ class DocumentsTests(APITestCase):
         # File has been deleted.
         self.assertTrue(not os.path.exists(binary_f.name))
 
-    def test_upload_document(self):
+    @patch.object(parser, 'from_file')
+    def test_upload_document(self, mock_tika_parser):
+        mock_tika_parser.return_value = ""
+
         with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test.pdf'), mode='rb') as fp:
             client_post = self.client.post('/app/api/v1/documents/upload', {'json': '{}', 'file': fp})
         self.assertEqual(client_post.status_code, status.HTTP_201_CREATED)
@@ -109,6 +139,18 @@ class DocumentsTests(APITestCase):
         self.assertEqual(objects_get.title, client_doc['title'])
         self.assertEqual(objects_get.note, client_doc['note'])
         self.assertIsNone(objects_get.ftl_folder)
+
+    @patch('core.views._extract_text_from_pdf')
+    @patch('core.views.EXECUTOR')
+    def test_upload_doc_pdf_extract_async_call(self, mock_executor, mock_extract_func):
+        """Test that the async call to extract text is made"""
+        mock_executor.submit = MagicMock("submit")
+
+        with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test.pdf'), 'rb') as f:
+            body_post = {'json': '{}', 'file': f}
+            self.client.post('/app/api/v1/documents/upload', body_post)
+
+        mock_executor.submit.assert_called_once_with(mock_extract_func, ANY, ANY)
 
     def test_document_in_folder(self):
         client_get = self.client.get(f'/app/api/v1/documents/?level={self.first_level_folder.id}', format='json')
@@ -122,7 +164,10 @@ class DocumentsTests(APITestCase):
         self.assertEqual(client_doc['note'], self.doc_in_folder.note)
         self.assertEqual(client_doc['ftl_folder'], self.first_level_folder.id)
 
-    def test_upload_document_in_folder(self):
+    @patch.object(parser, 'from_file')
+    def test_upload_document_in_folder(self, mock_tika_parser):
+        mock_tika_parser.return_value = ""
+
         post_body = {'ftl_folder': self.first_level_folder.id}
 
         with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test.pdf'), mode='rb') as fp:
@@ -150,6 +195,45 @@ class DocumentsTests(APITestCase):
         self.assertEqual(client_doc_level['title'], client_doc['title'])
         self.assertEqual(client_doc_level['note'], client_doc['note'])
         self.assertEqual(client_doc_level['ftl_folder'], client_doc['ftl_folder'])
+
+
+class DocumentsSearchTests(APITestCase):
+    def setUp(self):
+        self.org = setup_org()
+        setup_admin(self.org)
+        self.user = setup_user(self.org)
+
+        self.client.login(username=tv.USER1_USERNAME, password=tv.USER1_PASS)
+
+    def test_list_documents_search_title(self):
+        doc_to_search = setup_document(self.org, self.user, note='bingo!')
+
+        search_result = self.client.get(f'/app/api/v1/documents/?search={doc_to_search.title}', format='json')
+        self.assertEqual(search_result.status_code, status.HTTP_200_OK)
+        self.assertEqual(search_result['Content-Type'], 'application/json')
+        self.assertEqual(search_result.data['count'], 1)
+        self.assertEqual(len(search_result.data['results']), 1)
+        self.assertEqual(search_result.data['results'][0]['note'], 'bingo!')
+
+    def test_list_documents_search_note(self):
+        doc_to_search = setup_document(self.org, self.user, title='bingo!')
+
+        search_result = self.client.get(f'/app/api/v1/documents/?search={doc_to_search.note}', format='json')
+        self.assertEqual(search_result.status_code, status.HTTP_200_OK)
+        self.assertEqual(search_result['Content-Type'], 'application/json')
+        self.assertEqual(search_result.data['count'], 1)
+        self.assertEqual(len(search_result.data['results']), 1)
+        self.assertEqual(search_result.data['results'][0]['title'], 'bingo!')
+
+    def test_list_documents_search_content_text(self):
+        doc_to_search = setup_document(self.org, self.user, title='bingo!')
+
+        search_result = self.client.get(f'/app/api/v1/documents/?search={doc_to_search.content_text}', format='json')
+        self.assertEqual(search_result.status_code, status.HTTP_200_OK)
+        self.assertEqual(search_result['Content-Type'], 'application/json')
+        self.assertEqual(search_result.data['count'], 1)
+        self.assertEqual(len(search_result.data['results']), 1)
+        self.assertEqual(search_result.data['results'][0]['title'], 'bingo!')
 
 
 class FoldersTests(APITestCase):

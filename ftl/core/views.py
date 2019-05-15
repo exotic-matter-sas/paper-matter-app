@@ -1,7 +1,11 @@
 import json
 import os
+from concurrent.futures.thread import ThreadPoolExecutor
 
+import langid
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
+from django.db.models import F
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.views import View
@@ -10,9 +14,28 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.exceptions import ValidationError
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
+from tika import parser
 
 from core.models import FTLDocument, FTLFolder, FTLModelPermissions
 from core.serializers import FTLDocumentSerializer, FTLFolderSerializer
+
+SEARCH_VECTOR = SearchVector('content_text', weight='C', config=F('language')) \
+                + SearchVector('note', weight='B', config=F('language')) \
+                + SearchVector('title', weight='A', config=F('language'))
+COUNTRY_CODE_INDEX = {
+    'fr': 'french',
+    'en': 'english',
+}
+EXECUTOR = ThreadPoolExecutor(max_workers=1, thread_name_prefix="ftl_indexation_worker")
+
+
+def _extract_text_from_pdf(vector, ftl_doc_instance):
+    parsed_txt = parser.from_file(ftl_doc_instance.binary.name)
+    ftl_doc_instance.content_text = parsed_txt["content"].strip()
+    ftl_doc_instance.language = COUNTRY_CODE_INDEX.get(langid.classify(ftl_doc_instance.content_text)[0], 'en')
+    ftl_doc_instance.save()  # Need to save in actual DB before computing the tsvector
+    ftl_doc_instance.tsvector = vector
+    ftl_doc_instance.save()
 
 
 class HomeView(LoginRequiredMixin, View):
@@ -44,12 +67,20 @@ class FTLDocumentList(generics.ListAPIView):
     def get_queryset(self):
         current_folder = self.request.query_params.get('level', None)
 
-        queryset = FTLDocument.objects.filter(ftl_user=self.request.user).order_by('-created')
+        queryset = FTLDocument.objects.filter(org_id=self.request.user.org).order_by('-created')
 
         if current_folder is not None:
             queryset = queryset.filter(ftl_folder__id=current_folder)
         else:
             queryset = queryset.filter(ftl_folder__isnull=True)
+
+        text_search = self.request.query_params.get('search')
+
+        if text_search:
+            search_query = SearchQuery(text_search.strip(), config=F('language'))
+            queryset = queryset.annotate(rank=SearchRank(F('tsvector'), search_query)) \
+                .filter(rank__gte=0.1) \
+                .order_by('-rank')
 
         return queryset
 
@@ -106,6 +137,8 @@ class FileUploadView(LoginRequiredMixin, views.APIView):
         ftl_doc.org = self.request.user.org
         ftl_doc.title = file_obj.name
         ftl_doc.save()
+
+        EXECUTOR.submit(_extract_text_from_pdf, SEARCH_VECTOR, ftl_doc)
 
         return Response(self.serializer_class(ftl_doc).data, status=201)
 
