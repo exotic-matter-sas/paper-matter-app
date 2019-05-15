@@ -39,7 +39,7 @@ describe('FTLUpload script', () => {
   let upload_button;
 
   beforeEach(() => {
-    axios.post.mockReturnValue(Promise.resolve(mockedPostResponse));
+    axios.post.mockResolvedValue(mockedPostResponse);
     wrapper = shallowMount(FTLUpload, {
       localVue,
       propsData: { currentFolder: tv.FOLDER_PROPS }

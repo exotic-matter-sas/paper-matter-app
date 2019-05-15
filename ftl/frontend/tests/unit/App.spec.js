@@ -167,13 +167,13 @@ describe('App script methods call proper api', () => {
   let wrapper;
 
   beforeEach(() => {
-    axios.get.mockReturnValueOnce(Promise.resolve(mockedGetFoldersResponse));
-    axios.get.mockReturnValueOnce(Promise.resolve(mockedGetDocumentsResponse));
+    axios.get.mockResolvedValueOnce(mockedGetFoldersResponse);
+    axios.get.mockResolvedValueOnce(mockedGetDocumentsResponse);
     wrapper = shallowMount(App, {localVue});
   });
 
   it('openDocument call api', () => {
-    axios.get.mockReturnValue(Promise.resolve(mockedGetDocumentResponse));
+    axios.get.mockResolvedValue(mockedGetDocumentResponse);
     let opened_document_pid = tv.DOCUMENT_PROPS.pid;
 
     // when
@@ -186,7 +186,7 @@ describe('App script methods call proper api', () => {
   });
 
   it('updateDocument call api', () => {
-    axios.get.mockReturnValue(Promise.resolve(mockedGetDocumentsResponse));
+    axios.get.mockResolvedValue(mockedGetDocumentsResponse);
     let currentFolder = tv.FOLDER_PROPS_VARIANT;
     wrapper.setData({previousLevels: [tv.FOLDER_PROPS, currentFolder]});
 
@@ -200,7 +200,7 @@ describe('App script methods call proper api', () => {
   });
 
   it('updateFolder call api', () => {
-    axios.get.mockReturnValue(Promise.resolve(mockedGetFoldersResponse));
+    axios.get.mockResolvedValue(mockedGetFoldersResponse);
     let currentFolder = tv.FOLDER_PROPS_VARIANT;
 
     // when

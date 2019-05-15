@@ -38,7 +38,7 @@ describe('FTLDocument script', () => {
 
   beforeEach(() => {
     // given
-    axios.delete.mockReturnValue(Promise.resolve(mockedDeleteResponse));
+    axios.delete.mockResolvedValue(mockedDeleteResponse);
     wrapper = shallowMount(FTLDocument, {
       localVue,
       propsData: { doc: tv.DOCUMENT_PROPS }
