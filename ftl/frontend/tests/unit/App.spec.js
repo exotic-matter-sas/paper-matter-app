@@ -36,6 +36,7 @@ const mockedUpdateFolder = jest.fn();
 const mockedUpdateDocument = jest.fn();
 const mockedChangeFolder = jest.fn();
 const mockedOpenDocument = jest.fn();
+const mockedAlert = jest.fn();
 
 
 describe('App template', () => {
@@ -128,6 +129,37 @@ describe('App script methods call proper methods', () => {
     // then
     expect(mockedUpdateFolder).toHaveBeenCalledWith(previousFolder);
     expect(mockedUpdateDocument).toHaveBeenCalled();
+  });
+});
+
+describe('App script methods error handling', () => {
+  let wrapper;
+
+  beforeEach(() => {
+    wrapper = shallowMount(App, {
+      localVue,
+      methods: {
+        changeFolder: mockedChangeFolder,
+        alert: mockedAlert,
+      }
+    });
+  });
+
+  it('updateDocument call alert method in case of api error', done => {
+      axios.get.mockRejectedValue('error');
+      let currentFolder = tv.FOLDER_PROPS_VARIANT;
+      wrapper.setData({previousLevels: [tv.FOLDER_PROPS, currentFolder]});
+
+      // when
+      wrapper.vm.updateDocument();
+
+      // then
+      wrapper.vm.$nextTick(() => {
+          axios.get().catch(() => {
+              expect(mockedAlert).toHaveBeenCalled();
+              done();
+          });
+      });
   });
 });
 
