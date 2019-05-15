@@ -6,8 +6,8 @@ from django.test import TestCase
 from django.urls import reverse_lazy
 from tika import parser
 
-from ftests.tools import test_values as tv
 from core.views import _extract_text_from_pdf
+from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_authenticated_session, setup_document
 
 
@@ -58,7 +58,7 @@ class DownloadDocumentTests(TestCase):
         # Trying to download the document when not logged redirect to login page
         download_url = f'/app/uploads/{doc.pid}'
         response = self.client.get(download_url)
-        self.assertRedirects(response,  f'{reverse_lazy("login")}?next={quote_plus(download_url)}')
+        self.assertRedirects(response, f'{reverse_lazy("login")}?next={quote_plus(download_url)}')
 
     def test_document_download_only_work_for_users_in_the_doc_org(self):
         # Add a document in first org with first user
@@ -72,6 +72,7 @@ class DownloadDocumentTests(TestCase):
         # Trying to download the document of first org with a user of second org returns a 404
         response = self.client.get(f'/app/uploads/{doc.pid}')
         self.assertEqual(response.status_code, 404)
+
 
 class PDFViewerTests(TestCase):
     def test_pdf_viewer_accessible(self):

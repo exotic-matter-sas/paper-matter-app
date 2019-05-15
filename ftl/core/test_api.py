@@ -5,6 +5,7 @@ from unittest.mock import MagicMock, ANY, patch
 
 from rest_framework import status
 from rest_framework.test import APITestCase
+from tika import parser
 
 import core
 from core.models import FTLDocument, FTLFolder
@@ -123,7 +124,10 @@ class DocumentsTests(APITestCase):
         # File has been deleted.
         self.assertTrue(not os.path.exists(binary_f.name))
 
-    def test_upload_document(self):
+    @patch.object(parser, 'from_file')
+    def test_upload_document(self, mock_tika_parser):
+        mock_tika_parser.return_value = ""
+
         with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test.pdf'), mode='rb') as fp:
             client_post = self.client.post('/app/api/v1/documents/upload', {'json': '{}', 'file': fp})
         self.assertEqual(client_post.status_code, status.HTTP_201_CREATED)
@@ -160,7 +164,10 @@ class DocumentsTests(APITestCase):
         self.assertEqual(client_doc['note'], self.doc_in_folder.note)
         self.assertEqual(client_doc['ftl_folder'], self.first_level_folder.id)
 
-    def test_upload_document_in_folder(self):
+    @patch.object(parser, 'from_file')
+    def test_upload_document_in_folder(self, mock_tika_parser):
+        mock_tika_parser.return_value = ""
+
         post_body = {'ftl_folder': self.first_level_folder.id}
 
         with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test.pdf'), mode='rb') as fp:

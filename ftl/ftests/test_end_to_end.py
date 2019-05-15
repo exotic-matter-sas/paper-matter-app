@@ -1,10 +1,14 @@
-from ftests.tools import test_values as tv
+from unittest.mock import patch
+
+from tika import parser
+
 from ftests.pages.django_admin_home_page import AdminHomePage
 from ftests.pages.django_admin_login_page import AdminLoginPage
 from ftests.pages.home_page import HomePage
 from ftests.pages.setup_pages import SetupPages
 from ftests.pages.signup_pages import SignupPages
 from ftests.pages.user_login_page import LoginPage
+from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user
 
 
@@ -74,7 +78,10 @@ class SecondOrgSetup(AdminLoginPage, AdminHomePage, SignupPages, LoginPage, Home
 
 
 class NewUserAddDocumentInsideFolder(SignupPages, LoginPage, HomePage):
-    def test_new_user_add_document_inside_folder(self):
+    @patch.object(parser, 'from_file')
+    def test_new_user_add_document_inside_folder(self, mock_tika_parser):
+        mock_tika_parser.return_value = ""
+
         # first org, admin, are already created
         org = setup_org()
         setup_admin(org=org)

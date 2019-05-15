@@ -1,4 +1,7 @@
+from unittest.mock import patch
+
 from selenium.common.exceptions import NoSuchElementException
+from tika import parser
 
 from ftests.pages.home_page import HomePage
 from ftests.pages.user_login_page import LoginPage
@@ -16,14 +19,20 @@ class HomePageTests(LoginPage, HomePage):
         self.visit(LoginPage.url)
         self.log_user()
 
-    def test_upload_document_to_root(self):
+    @patch.object(parser, 'from_file')
+    def test_upload_document_to_root(self, mock_tika_parser):
+        mock_tika_parser.return_value = ""
+
         # User upload a document
         self.upload_document()
 
         # Document appears as the first document of the list
         self.assertEqual(tv.DOCUMENT1_TITLE, self.get_elem(self.first_document_title).text)
 
-    def test_upload_document_to_subfolder(self):
+    @patch.object(parser, 'from_file')
+    def test_upload_document_to_subfolder(self, mock_tika_parser):
+        mock_tika_parser.return_value = ""
+
         # User has already created a folder
         setup_folder(self.org)
         self.visit(HomePage.url)
