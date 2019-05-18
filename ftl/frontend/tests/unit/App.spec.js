@@ -141,7 +141,7 @@ describe('App script methods error handling', () => {
       localVue,
       methods: {
         changeFolder: mockedChangeFolder,
-        alert: mockedAlert,
+        mixinAlert: mockedAlert,
       }
     });
   });
