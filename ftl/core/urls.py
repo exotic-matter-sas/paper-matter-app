@@ -1,10 +1,11 @@
 from django.urls import path, include
+from django.views.i18n import JavaScriptCatalog
 
 from . import views
 
 urlpatterns = [
     path('', views.HomeView.as_view(), name='home'),
-    # path('api/v1/', include(router.urls)),
+    path('jsi18n/', JavaScriptCatalog.as_view(), name='javascript-catalog'),
     path('uploads/<str:uuid>', views.DownloadView.as_view()),
     path('api/v1/folders/', views.FTLFolderList.as_view()),
     path('api/v1/folders/<int:id>', views.FTLFolderDetail.as_view()),

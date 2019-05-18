@@ -8,6 +8,7 @@ Archiving documents solution
 
  * Python 3.7
  * PostgreSQL 11
+ * Java 8+
  
 ### Install Python modules
  
@@ -22,7 +23,8 @@ Archiving documents solution
  * Firefox or Chrome (to run functional tests)
  * Poedit or equivalent (to add/update i18n)
  * Node.js
- 
+ * Java 8+ (for documents indexing)
+
 ### Install Python modules
  
     python -m pip install requirements.txt
@@ -68,11 +70,14 @@ _Or alternatively `npx vue-cli-service test:unit`_
  
  :warning: _Avoid raw editing of .po files, use poedit or equivalent instead_
  
- Add a new language or create new key to translate:
+ Add a new language or create new key to translate in .po files:
  
     python manage.py makemessages -l fr --ignore=requirements*.txt,__init__.py,ftest/*
-    
- Update values for existing i18n key:
+    # Following lines needed for frontend i18n
+    npm run build
+    python manage.py makemessages -l fr --ignore=node_modules -d djangojs
+
+ Update existing i18n key in .po files:
  
     python manage.py makemessages --all
     
@@ -93,3 +98,7 @@ To use specific Django settings without modifying main `ftl/ftl/settings.py` fil
 #### 2. collect static files to an unique dir using Django
 
     python3 manage.py collectstatic
+    
+### Reindex all documents
+
+    python manage.py reindex_docs

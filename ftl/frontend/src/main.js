@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import Vue, {VNode} from 'vue'
 import BootstrapVue from 'bootstrap-vue'
 import App from './App.vue'
 
@@ -8,6 +8,14 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 Vue.config.productionTip = false;
 
 Vue.use(BootstrapVue);
+
+Vue.prototype.$_ = function (text) {
+  var translated_text;
+  if (typeof gettext === 'function'){
+    translated_text = gettext(text);
+  }
+  return translated_text || text;
+};
 
 // Usage of global mixin https://vuejs.org/v2/guide/mixins.html#Global-Mixin
 // Each method should be prefixed with mixin to warn the developer that this method is coming from a mixin

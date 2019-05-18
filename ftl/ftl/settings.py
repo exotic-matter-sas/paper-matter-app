@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+import pathlib
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
@@ -44,7 +46,8 @@ INSTALLED_APPS = [
     'webpack_loader',
     'ftl',
     'setup',
-    'core'
+    'core',
+    'frontend'
 ]
 
 if DEBUG:
@@ -176,6 +179,9 @@ WEBPACK_LOADER = {
 }
 
 ATOMIC_REQUESTS = True
+
+# Workaround for configuring a preloaded Tika
+os.environ['TIKA_SERVER_JAR'] = pathlib.Path(os.path.join(BASE_DIR, 'vendors', 'tika-server-1.20.jar')).as_uri()
 
 # ==================================================
 # No settings under this line

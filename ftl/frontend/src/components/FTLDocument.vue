@@ -2,23 +2,22 @@
     <b-col sm="3" :id="doc.pid" class="document-thumbnail">
         <b-row class="text-truncate document-title"><span @click="$emit('event-open-doc', doc.pid)">{{ doc.title }}</span></b-row>
         <b-row align-h="center">
-            <b-img :src="'https://loremflickr.com/150/200/cats?' + doc.pid" class="img-thumbnail" slot="aside"
-                   width="128" height="200"
-                   blank-color="#abc"/>
+            <b-img :src="'https://placeimg.com/150/200/arch?' + doc.pid" class="img-thumbnail" slot="aside"
+                   width="128" height="200" blank-color="#abc" @click="$emit('event-open-doc', doc.pid)"/>
         </b-row>
         <b-row>
             <small>{{ getDate }}</small>
         </b-row>
-        <b-row align-h="center">Note: {{ doc.note }}</b-row>
+        <b-row align-h="center">{{this.$_('Note: ')}}{{ doc.note }}</b-row>
 
         <b-row>
             <b-col>
-                <b-button variant="secondary" size="sm" :href="'uploads/' + doc.pid">Download here</b-button>
+                <b-button variant="secondary" size="sm" :href="'uploads/' + doc.pid">{{this.$_('Download')}}</b-button>
             </b-col>
             <b-col>
                 <b-button class="delete-document" variant="danger" size="sm" :disabled="deleting" @click.once="deleteDocument">
                     <b-spinner :class="{'d-none': !deleting}" small></b-spinner>
-                    <span :class="{'d-none': deleting}">!! Delete doc (no warn) !!</span>
+                    <span :class="{'d-none': deleting}">{{this.$_('!! Delete doc (no warn) !!')}}</span>
                 </b-button>
             </b-col>
         </b-row>

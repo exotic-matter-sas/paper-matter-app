@@ -8,6 +8,7 @@ import FTLDocument from "../../src/components/FTLDocument";
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue); // to avoid warning on tests execution
+localVue.prototype.$_ = (text) => { return text; }; // i18n mock
 
 jest.mock('axios', () => ({
   delete: jest.fn()

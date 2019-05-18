@@ -92,5 +92,7 @@ Pipfile
 Pipfile.lock
 geckodriver.log
 settings_local.py
-ftl/uploads/*
+ftl/uploads/
+!ftl/uploads/test.pdf
 ftl/assets/
+!ftl/assets/README.md

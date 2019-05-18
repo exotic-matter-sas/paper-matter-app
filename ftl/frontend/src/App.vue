@@ -2,7 +2,8 @@
     <div id="app" class="m-0">
         <header>
             <b-container fluid class="p-0">
-                <FTLNavbar :account="account"/>
+                <FTLNavbar :account="account" @event-search="refreshDocumentWithSearch"
+                           @event-clear-search="clearSearch"/>
             </b-container>
         </header>
 
@@ -15,8 +16,10 @@
                 </b-row>
                 <b-row>
                     <b-col>
-                        <b-button id="refresh-documents" variant="primary" @click="updateDocument">Refresh documents list</b-button>
-                        Last refresh {{ lastRefreshFormatted }}
+                        <b-button id="refresh-documents" variant="primary" @click="updateDocument">
+                            {{this.$_('Refresh documents list')}}
+                        </b-button>
+                        {{ this.$_('Last refresh') }} {{ lastRefreshFormatted }}
                     </b-col>
                 </b-row>
             </b-container>
@@ -33,8 +36,7 @@
                     <FTLFolder v-for="folder in folders" :key="folder.id" :folder="folder"
                                @event-change-folder="changeFolder"/>
                     <b-button id="create-folder" class="m-1" variant="outline-primary" size="sm" @click.prevent="newFolderModal = true">
-                        Create
-                        new folder
+                        {{ this.$_('Create new folder') }}
                     </b-button>
                 </b-row>
             </b-container>
@@ -42,12 +44,17 @@
 
         <section>
             <b-container>
-                <b-row align-h="around" v-if="docs.length">
+                <b-row v-if="docLoading">
+                    <b-col>
+                        <b-spinner style="width: 3rem; height: 3rem;" class="m-5" label="Loading..."></b-spinner>
+                    </b-col>
+                </b-row>
+                <b-row align-h="around" v-else-if="docs.length">
                     <FTLDocument v-for="doc in docs" :key="doc.pid" :doc="doc" @event-delete-doc="updateDocument"
                                  @event-open-doc="openDocument"/>
                 </b-row>
                 <b-row v-else>
-                    <b-col>Aucun document</b-col>
+                    <b-col>{{ this.$_('No document yet') }}</b-col>
                 </b-row>
             </b-container>
         </section>
@@ -56,8 +63,7 @@
             <b-container>
                 <b-row>
                     <b-col>
-                        ftl-app, open source software. Made with ❤ by <a href="https://www.exotic-matter.fr">Exotic
-                        Matter</a>.
+                        {{ this.$_('ftl-app, open source software. Made with ❤ by ') }} <a href="https://www.exotic-matter.fr">Exotic Matter</a>.
                     </b-col>
                 </b-row>
             </b-container>
@@ -66,7 +72,7 @@
         <!-- Pdf viewer popup -->
         <div v-if="docModal" class="doc-view-modal" :class="{open: docModal}">
             <b-container>
-                Titre {{ currentOpenDoc.title }}
+                {{ this.$_('Title') }} {{ currentOpenDoc.title }}
             </b-container>
             <b-container>
                 <b-row scr>
@@ -88,21 +94,23 @@
             <b-container>
                 <b-row align-h="end">
                     <b-col cols="2">
-                        <b-button variant="secondary" @click="docModal = false">Close</b-button>
+                        <b-button variant="secondary" @click="docModal = false">{{this.$_('Close')}}</b-button>
                     </b-col>
                 </b-row>
             </b-container>
         </div>
 
         <b-modal v-if="newFolderModal" v-model="newFolderModal" @ok="createNewFolder"
-                 :ok-disabled="newFolderName === ''">
-            <span slot="modal-title">Create a new folder</span>
+                 :ok-disabled="newFolderName === ''"
+                 :cancel-title="this.$_('Cancel')"
+                 :ok-title="this.$_('Create')">
+            <span slot="modal-title">{{ this.$_('Create a new folder') }}</span>
             <b-container>
                 <!-- TODO add current folder name to title -->
                 <b-form-group
                         id="fieldset-new-folder"
-                        description="The name of the folder"
-                        label="The folder will be created in the current folder."
+                        :description="this.$_('The name of the folder')"
+                        :label="this.$_('The folder will be created in the current folder.')"
                         label-for="new-folder">
                     <b-form-input id="new-folder" v-model="newFolderName" trim></b-form-input>
                 </b-form-group>
@@ -117,6 +125,7 @@
     import FTLDocument from './components/FTLDocument'
     import FTLUpload from './components/FTLUpload'
     import axios from 'axios'
+    import qs from 'qs'
 
     export default {
         name: 'app',
@@ -137,6 +146,8 @@
                 docPid: null,
                 docModal: false,
                 lastRefresh: Date.now(),
+                currentSearch: "",
+                docLoading: false,
 
                 // Folders list and breadcrumb
                 folders: [],
@@ -172,7 +183,7 @@
                 } else {
                     return null;
                 }
-            }
+            },
         },
 
         methods: {
@@ -182,6 +193,7 @@
 
             changeFolder: function (folder = null) {
                 if (folder) this.previousLevels.push(folder);
+                this.currentSearch = "";
                 this.updateFolder(folder);
                 this.updateDocument();
             },
@@ -189,6 +201,7 @@
             changeToPreviousFolder: function () {
                 this.previousLevels.pop(); // Remove current level
                 let level = this.getCurrentFolder;
+                this.currentSearch = "";
                 this.updateFolder(level);
                 this.docs = []; // Clear docs when changing folder to avoid display artefact
                 this.updateDocument();
@@ -206,20 +219,41 @@
                     }).catch(error => vi.mixinAlert("Unable to show document.", true));
             },
 
+            refreshDocumentWithSearch: function (text) {
+                this.currentSearch = text;
+                this.updateDocument();
+            },
+
+            clearSearch: function () {
+                this.refreshDocumentWithSearch("");
+            },
+
             updateDocument: function () {
                 const vi = this;
-                let qs = '';
+                let queryString = {};
 
                 if (vi.previousLevels.length > 0) {
-                    qs = '?level=' + this.getCurrentFolder.id;
+                    queryString['level'] = this.getCurrentFolder.id;
                 }
 
+                if (vi.currentSearch !== null && vi.currentSearch !== "") {
+                    queryString['search'] = vi.currentSearch;
+                }
+
+                let strQueryString = '?' + qs.stringify(queryString);
+
+                this.docLoading = true;
+
                 axios
-                    .get('/app/api/v1/documents/' + qs)
+                    .get('/app/api/v1/documents/' + strQueryString)
                     .then(response => {
+                        this.docLoading = false;
                         vi.docs = response.data['results'];
                         vi.lastRefresh = Date.now();
-                    }).catch(error => vi.mixinAlert("Unable to refresh documents list.", true));
+                    }).catch(error => {
+                    this.docLoading = false;
+                    vi.mixinAlert("Unable to refresh documents list.", true);
+                });
             },
 
             updateFolder: function (level = null) {
