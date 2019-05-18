@@ -176,14 +176,6 @@
         },
 
         methods: {
-            alert: function (message, error = false, title = "Notification") {
-                this.$bvToast.toast(message, {
-                    title: title,
-                    variant: error ? 'danger' : 'success',
-                    solid: true
-                });
-            },
-
             refreshFolders: function () {
                 this.updateFolder(this.getCurrentFolder);
             },
@@ -211,7 +203,7 @@
                     .get('/app/api/v1/documents/' + pid)
                     .then(response => {
                         vi.currentOpenDoc = response.data;
-                    }).catch(error => vi.alert("Unable to show document.", true));
+                    }).catch(error => vi.mixinAlert("Unable to show document.", true));
             },
 
             updateDocument: function () {
@@ -227,7 +219,7 @@
                     .then(response => {
                         vi.docs = response.data['results'];
                         vi.lastRefresh = Date.now();
-                    }).catch(error => vi.alert("Unable to refresh documents list.", true));
+                    }).catch(error => vi.mixinAlert("Unable to refresh documents list.", true));
             },
 
             updateFolder: function (level = null) {
@@ -245,7 +237,7 @@
                     .get("/app/api/v1/folders/" + qs)
                     .then(response => {
                         vi.folders = response.data;
-                    }).catch(error => vi.alert("Unable to refresh folders list", true));
+                    }).catch(error => vi.mixinAlert("Unable to refresh folders list", true));
             },
 
             createNewFolder: function () {
@@ -270,7 +262,7 @@
                         // TODO flash the new folder when just created
                         vi.newFolderName = '';
                         vi.refreshFolders();
-                    }).catch(error => vi.alert("Unable to create new folder.", true));
+                    }).catch(error => vi.mixinAlert("Unable to create new folder.", true));
             }
         }
     }
