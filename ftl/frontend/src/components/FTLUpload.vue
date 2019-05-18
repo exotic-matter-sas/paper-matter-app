@@ -34,10 +34,10 @@
 </template>
 
 <script>
-    import pdfjsLib from 'pdfjs-dist'
+    import pdfjsLib from 'pdfjs-dist/webpack'
     import axios from 'axios'
 
-    pdfjsLib.disableWorker = true;
+    // pdfjsLib.disableWorker = true;
     window.URL = window.URL || window.webkitURL;
 
     export default {
