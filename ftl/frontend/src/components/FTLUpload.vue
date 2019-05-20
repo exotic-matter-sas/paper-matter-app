@@ -111,8 +111,8 @@
                 try {
                     thumb64 = await vi.createThumb(vi.file);
                 } catch (e) {
-                    // TODO error
-                    return;
+                    // TODO
+                    thumb64 = null;
                 }
 
                 vi.uploadProgress = 20;
