@@ -1,14 +1,17 @@
-import { createLocalVue, shallowMount } from '@vue/test-utils';
-
+import {createLocalVue, shallowMount} from '@vue/test-utils';
 import axios from 'axios';
 import BootstrapVue from "bootstrap-vue";
-
 import * as tv from './../tools/testValues.js'
 import FTLUpload from "../../src/components/FTLUpload";
+import flushPromises from 'flush-promises';
+
+jest.mock('pdfjs-dist/webpack');
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue); // to avoid warning on tests execution
-localVue.prototype.$_ = (text) => { return text; }; // i18n mock
+localVue.prototype.$_ = (text) => {
+  return text;
+}; // i18n mock
 
 jest.mock('axios', () => ({
   post: jest.fn()
@@ -18,7 +21,7 @@ jest.mock('axios', () => ({
 describe('FTLUpload template', () => {
   const wrapper = shallowMount(FTLUpload, {
     localVue,
-    propsData: { currentFolder: tv.FOLDER_PROPS }
+    propsData: {currentFolder: tv.FOLDER_PROPS}
   });
 
   it('renders properly upload UI', () => {
@@ -28,12 +31,13 @@ describe('FTLUpload template', () => {
 
 describe('FTLUpload script', () => {
   let axios_upload_conf;
-  const mockedPostResponse  = {
+  const mockedPostResponse = {
     data: {},
     status: 201,
     config: tv.AXIOS_CRSF_CONF
   };
   let formData = new FormData();
+  formData.append('thumbnail', 'base64str');
   formData.append('file', null);
   formData.append('json', JSON.stringify({'ftl_folder': tv.FOLDER_PROPS.id}));
   let wrapper;
@@ -41,9 +45,14 @@ describe('FTLUpload script', () => {
 
   beforeEach(() => {
     axios.post.mockReturnValue(Promise.resolve(mockedPostResponse));
+
+    const createThumbMock = jest.fn();
+    createThumbMock.mockReturnValue(Promise.resolve("base64str"));
+
     wrapper = shallowMount(FTLUpload, {
       localVue,
-      propsData: { currentFolder: tv.FOLDER_PROPS }
+      propsData: {currentFolder: tv.FOLDER_PROPS},
+      methods: {createThumb: createThumbMock}
     });
     axios_upload_conf = {
       onUploadProgress: wrapper.vm.refreshUploadProgression
@@ -52,25 +61,24 @@ describe('FTLUpload script', () => {
     upload_button = wrapper.find('#upload-button');
   });
 
-  it('uploadDocument call api', () => {
+  it('uploadDocument call api', async () => {
     // when
     wrapper.vm.uploadDocument();
 
+    await flushPromises();
     // then
     expect(axios.post).toHaveBeenCalledWith(
-        '/app/api/v1/documents/upload',
-        formData,
-        axios_upload_conf
+      '/app/api/v1/documents/upload',
+      formData,
+      axios_upload_conf
     );
   });
-  it('uploadDocument emit event-delete-doc', done => {
+  it('uploadDocument emit event-new-upload', async () => {
     // when
     wrapper.vm.uploadDocument();
 
+    await flushPromises();
     // then
-    wrapper.vm.$nextTick(() => {
-      expect(wrapper.emitted('event-new-upload')).toBeTruthy();
-      done();
-    });
+    expect(wrapper.emitted('event-new-upload')).toBeTruthy();
   });
 });
