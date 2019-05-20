@@ -289,3 +289,13 @@ class FoldersTests(APITestCase):
         self.assertEqual(objects_get.id, client_post.data['id'])
         self.assertEqual(objects_get.name, client_post.data['name'])
         self.assertEqual(objects_get.parent, self.folder_root)
+
+    def test_delete_folder(self):
+        folder_to_be_delete = setup_folder(self.org, name='Folder to delete')
+
+        client_delete = self.client.delete(f'/app/api/v1/folders/1{str(folder_to_be_delete.id)}')
+
+        self.assertEqual(client_delete.status_code, status.HTTP_204_NO_CONTENT)
+
+        with self.assertRaises(core.models.FTLFolder.DoesNotExist):
+            FTLFolder.objects.get(id=folder_to_be_delete.id)
