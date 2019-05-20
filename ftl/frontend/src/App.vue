@@ -5,15 +5,6 @@
                 <FTLNavbar :account="account" @event-search="refreshDocumentWithSearch"
                            @event-clear-search="clearSearch"/>
             </b-container>
-
-            <b-alert
-                :variant="alertType"
-                dismissible
-                fade
-                :show="showAlert"
-                @dismissed="showAlert=false">
-                {{ alertMessage }}
-            </b-alert>
         </header>
 
         <section>
@@ -150,11 +141,6 @@
                 // Misc account stuff
                 account: {},
 
-                // Alerts
-                showAlert: false,
-                alertType: "danger",
-                alertMessage: "",
-
                 // Documents list
                 docs: [],
                 docPid: null,
@@ -201,11 +187,6 @@
         },
 
         methods: {
-            alert: function (message) {
-                this.alertMessage = message;
-                this.showAlert = true;
-            },
-
             refreshFolders: function () {
                 this.updateFolder(this.getCurrentFolder);
             },
@@ -235,7 +216,7 @@
                     .get('/app/api/v1/documents/' + pid)
                     .then(response => {
                         vi.currentOpenDoc = response.data;
-                    }).catch(error => vi.alert(error));
+                    }).catch(error => vi.mixinAlert("Unable to show document.", true));
             },
 
             refreshDocumentWithSearch: function (text) {
@@ -271,7 +252,7 @@
                         vi.lastRefresh = Date.now();
                     }).catch(error => {
                     this.docLoading = false;
-                    vi.alert(error);
+                    vi.mixinAlert("Unable to refresh documents list.", true);
                 });
             },
 
@@ -290,7 +271,7 @@
                     .get("/app/api/v1/folders/" + qs)
                     .then(response => {
                         vi.folders = response.data;
-                    }).catch(error => vi.alert(error));
+                    }).catch(error => vi.mixinAlert("Unable to refresh folders list", true));
             },
 
             createNewFolder: function () {
@@ -315,7 +296,7 @@
                         // TODO flash the new folder when just created
                         vi.newFolderName = '';
                         vi.refreshFolders();
-                    }).catch(error => vi.alert(error));
+                    }).catch(error => vi.mixinAlert("Unable to create new folder.", true));
             }
         }
     }

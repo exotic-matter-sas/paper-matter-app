@@ -37,6 +37,7 @@ const mockedUpdateFolder = jest.fn();
 const mockedUpdateDocument = jest.fn();
 const mockedChangeFolder = jest.fn();
 const mockedOpenDocument = jest.fn();
+const mockedAlert = jest.fn();
 
 
 describe('App template', () => {
@@ -132,17 +133,48 @@ describe('App script methods call proper methods', () => {
   });
 });
 
+describe('App script methods error handling', () => {
+  let wrapper;
+
+  beforeEach(() => {
+    wrapper = shallowMount(App, {
+      localVue,
+      methods: {
+        changeFolder: mockedChangeFolder,
+        mixinAlert: mockedAlert,
+      }
+    });
+  });
+
+  it('updateDocument call alert method in case of api error', done => {
+      axios.get.mockRejectedValue('error');
+      let currentFolder = tv.FOLDER_PROPS_VARIANT;
+      wrapper.setData({previousLevels: [tv.FOLDER_PROPS, currentFolder]});
+
+      // when
+      wrapper.vm.updateDocument();
+
+      // then
+      wrapper.vm.$nextTick(() => {
+          axios.get().catch(() => {
+              expect(mockedAlert).toHaveBeenCalled();
+              done();
+          });
+      });
+  });
+});
+
 describe('App script methods call proper api', () => {
   let wrapper;
 
   beforeEach(() => {
-    axios.get.mockReturnValueOnce(Promise.resolve(mockedGetFoldersResponse));
-    axios.get.mockReturnValueOnce(Promise.resolve(mockedGetDocumentsResponse));
+    axios.get.mockResolvedValueOnce(mockedGetFoldersResponse);
+    axios.get.mockResolvedValueOnce(mockedGetDocumentsResponse);
     wrapper = shallowMount(App, {localVue});
   });
 
   it('openDocument call api', () => {
-    axios.get.mockReturnValue(Promise.resolve(mockedGetDocumentResponse));
+    axios.get.mockResolvedValue(mockedGetDocumentResponse);
     let opened_document_pid = tv.DOCUMENT_PROPS.pid;
 
     // when
@@ -155,7 +187,7 @@ describe('App script methods call proper api', () => {
   });
 
   it('updateDocument call api', () => {
-    axios.get.mockReturnValue(Promise.resolve(mockedGetDocumentsResponse));
+    axios.get.mockResolvedValue(mockedGetDocumentsResponse);
     let currentFolder = tv.FOLDER_PROPS_VARIANT;
     wrapper.setData({previousLevels: [tv.FOLDER_PROPS, currentFolder]});
 
@@ -169,7 +201,7 @@ describe('App script methods call proper api', () => {
   });
 
   it('updateFolder call api', () => {
-    axios.get.mockReturnValue(Promise.resolve(mockedGetFoldersResponse));
+    axios.get.mockResolvedValue(mockedGetFoldersResponse);
     let currentFolder = tv.FOLDER_PROPS_VARIANT;
 
     // when

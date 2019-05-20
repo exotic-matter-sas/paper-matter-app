@@ -90,8 +90,9 @@
                         vi.$emit('event-new-upload'); // Event for refresh documents list
                         vi.response = response.data;
                         vi.file = "";
+                        vi.mixinAlert("Document uploaded");
                     })
-                    .catch(error => vi.response = error)
+                    .catch(error => vi.mixinAlert("Could not upload document", true))
                     .then(function () {
                         vi.uploadProgress = 0;
                         vi.uploading = false;
