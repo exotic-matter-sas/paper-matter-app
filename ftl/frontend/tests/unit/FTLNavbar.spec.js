@@ -17,6 +17,6 @@ describe('FTLNavbar template', () => {
   });
 
   it('renders properly account name', () => {
-    expect(wrapper.text()).toMatch('John Doe')
+    expect(wrapper.text()).toMatch('Jon Snow')
   })
 });

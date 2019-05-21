@@ -14,7 +14,8 @@ localVue.use(BootstrapVue); // to avoid warning on tests execution
 localVue.prototype.$_ = (text) => { return text; }; // i18n mock
 
 jest.mock('axios', () => ({
-    get: jest.fn()
+    get: jest.fn(),
+    post: jest.fn(),
 }));
 
 const mockedGetFoldersResponse  = {
@@ -32,12 +33,18 @@ const mockedGetDocumentResponse  = {
   status: 200,
   config: tv.AXIOS_CRSF_CONF
 };
+const mockedPostFolderResponse  = {
+  data: tv.FOLDER_PROPS,
+  status: 200,
+  config: tv.AXIOS_CRSF_CONF
+};
 
 const mockedUpdateFolder = jest.fn();
 const mockedUpdateDocument = jest.fn();
 const mockedChangeFolder = jest.fn();
 const mockedOpenDocument = jest.fn();
 const mockedAlert = jest.fn();
+const mockedRefreshFolder = jest.fn();
 
 
 describe('App template', () => {
@@ -80,6 +87,7 @@ describe('App script computed', () => {
 });
 
 describe('App script methods call proper methods', () => {
+  const currentFolder = tv.FOLDER_PROPS;
   let wrapper;
 
   beforeEach(() => {
@@ -94,9 +102,7 @@ describe('App script methods call proper methods', () => {
   });
 
   it('mounted call proper methods', () => {
-    // when
-    // view is mounted
-
+    // view mounted in beforeEach
     // then
     expect(mockedChangeFolder).toHaveBeenCalled();
   });
@@ -110,7 +116,6 @@ describe('App script methods call proper methods', () => {
         updateFolder: mockedUpdateFolder,
       }
     });
-    let currentFolder = tv.FOLDER_PROPS;
 
     // when
     wrapper.vm.changeFolder(currentFolder);
@@ -130,6 +135,16 @@ describe('App script methods call proper methods', () => {
     // then
     expect(mockedUpdateFolder).toHaveBeenCalledWith(previousFolder);
     expect(mockedUpdateDocument).toHaveBeenCalled();
+  });
+
+  it('refreshFolders call proper methods', () => {
+    wrapper.setData({previousLevels: [tv.FOLDER_PROPS, currentFolder]});
+
+    // when
+    wrapper.vm.refreshFolders();
+
+    // then
+    expect(mockedUpdateFolder).toHaveBeenCalledWith(currentFolder);
   });
 });
 
@@ -170,7 +185,13 @@ describe('App script methods call proper api', () => {
   beforeEach(() => {
     axios.get.mockResolvedValueOnce(mockedGetFoldersResponse);
     axios.get.mockResolvedValueOnce(mockedGetDocumentsResponse);
-    wrapper = shallowMount(App, {localVue});
+    wrapper = shallowMount(App, {
+        localVue,
+        methods: {
+            refreshFolders: mockedRefreshFolder
+          }
+        }
+    );
   });
 
   it('openDocument call api', () => {
@@ -211,6 +232,25 @@ describe('App script methods call proper api', () => {
     expect(axios.get).toHaveBeenCalledWith(
         '/app/api/v1/folders/?level=' + currentFolder.id
     );
+  });
+
+  it('createNewFolder call api', done => {
+    axios.post.mockResolvedValue(mockedPostFolderResponse);
+    wrapper.setData({newFolderName: tv.FOLDER_PROPS.name});
+
+    // when
+    wrapper.vm.createNewFolder();
+
+    // then
+    expect(axios.post).toHaveBeenCalledWith(
+        '/app/api/v1/folders/',
+        {name: wrapper.vm.newFolderName, parent: null},
+        tv.AXIOS_CRSF_CONF
+    );
+    wrapper.vm.$nextTick(() => {
+      expect(mockedRefreshFolder).toHaveBeenCalled();
+      done();
+    });
   });
 });
 

@@ -1,12 +1,13 @@
 // Mocked Vue props
 
 export const ACCOUNT_PROPS = {
-  account: {name: 'John Doe'}
+  account: {name: 'Jon Snow'}
 };
 
 export const FOLDER_PROPS = {
   id: '1234',
   name: 'Folder title',
+  created: new Date('2019-04-18T10:59:00').toString()
 };
 
 export const FOLDER_PROPS_VARIANT = {
