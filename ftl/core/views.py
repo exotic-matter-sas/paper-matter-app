@@ -137,7 +137,7 @@ class FTLDocumentThumbnail(LoginRequiredMixin, views.APIView):
     def get(self, request, *args, **kwargs):
         doc = get_object_or_404(self.get_queryset(), pid=kwargs['pid'])
 
-        if not doc.thumbnail_binary or not doc.thumbnail_binary.readable:
+        if bool(doc.thumbnail_binary):
             return HttpResponseNotFound()
 
         response = HttpResponse(doc.thumbnail_binary, 'image/png')
