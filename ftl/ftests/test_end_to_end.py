@@ -1,3 +1,4 @@
+from unittest import skip
 from unittest.mock import patch
 
 from tika import parser
@@ -104,3 +105,9 @@ class NewUserAddDocumentInsideFolder(SignupPages, LoginPage, HomePage):
         pdf_viewer_iframe_title = self.browser.find_element_by_css_selector('title').get_attribute("innerHTML")
 
         self.assertEqual(pdf_viewer_iframe_title, 'PDF.js viewer')
+
+
+class TikaDocumentIndexationAndSearch(HomePage):
+    @skip('TODO')  # TODO
+    def test_upload_doc_wait_tika_indexation_and_search_for_doc(self):
+        pass

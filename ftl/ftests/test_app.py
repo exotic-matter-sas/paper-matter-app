@@ -1,5 +1,6 @@
 import os
 import time
+from unittest import skip
 from unittest.mock import patch
 
 from selenium.common.exceptions import NoSuchElementException
@@ -91,38 +92,37 @@ class HomePageTests(LoginPage, HomePage):
         self.assertEqual(tv.FOLDER3_NAME, self.get_elem(self.first_folder_button).text)
         self.get_elem(self.first_folder_button).click()
 
+    @skip('TODO when implemented in UI')  # TODO
     def test_delete_folder(self):
-        pass  # TODO when implemented in UI
+        pass
 
     def test_search_document_by_its_title(self):
-        # User add 2 documents
-        self.upload_document(os.path.join(BASE_DIR, 'ftests', 'tools', 'test.pdf'))
-        second_document_name = 'green.pdf'
-        self.upload_document(os.path.join(BASE_DIR, 'ftests', 'tools', second_document_name))
-        # User wait document indexation
-        time.sleep(5)  # TODO replace by a wait_for type of call when a indexation indicator will be available
+        # User have already added 2 documents
+        setup_document(self.org, self.user)
+        second_document_title = 'bingo!'
+        setup_document(self.org, self.user, title=second_document_title)
 
         # User search last uploaded document
-        self.search_document(second_document_name)
+        self.search_document(second_document_title)
 
         # Only the second document appears in search results
         self.assertEqual(len(self.get_elems('.document-thumbnail')), 1)
-        self.assertEqual(second_document_name, self.get_elem(self.first_document_title).text)
+        self.assertEqual(second_document_title, self.get_elem(self.first_document_title).text)
 
+    @skip('TODO when document note implemented in UI')  # TODO
     def test_search_document_by_its_note(self):
-        pass  # TODO when note implemented in UI
+        pass
 
     def test_search_document_by_its_content(self):
-        # User add 2 documents
-        self.upload_document(os.path.join(BASE_DIR, 'ftests', 'tools', 'test.pdf'))
-        second_document_name = 'green.pdf'
-        self.upload_document(os.path.join(BASE_DIR, 'ftests', 'tools', second_document_name))
-        # User wait document indexation
-        time.sleep(5)  # TODO replace by a wait_for type of call when a indexation indicator will be available
+        # User have already added 2 documents
+        setup_document(self.org, self.user)
+        second_document_title = 'bingo!'
+        second_document_text_content = 'Yellow Blue'
+        setup_document(self.org, self.user, title=second_document_title, text_content=second_document_text_content)
 
-        # User search a word contain in the second document
-        self.search_document('Yellow Blue')
+        # User search last uploaded document
+        self.search_document(second_document_text_content)
 
         # Only the second document appears in search results
         self.assertEqual(len(self.get_elems('.document-thumbnail')), 1)
-        self.assertEqual(second_document_name, self.get_elem(self.first_document_title).text)
+        self.assertEqual(second_document_title, self.get_elem(self.first_document_title).text)

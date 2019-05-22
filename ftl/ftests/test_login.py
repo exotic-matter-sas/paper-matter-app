@@ -1,3 +1,5 @@
+from unittest import skip
+
 from ftests.pages.home_page import HomePage
 from ftests.pages.user_login_page import LoginPage
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user
@@ -43,5 +45,6 @@ class LoginPageTests(LoginPage, HomePage):
         # User is redirected to home page as he is already logged
         self.assertIn('Home', self.browser.title)
 
+    @skip('TODO when implemented in UI')  # TODO
     def test_password_forgotten(self):
-        pass  # TODO
+        pass
