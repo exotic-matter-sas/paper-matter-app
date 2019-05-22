@@ -293,7 +293,7 @@ class FoldersTests(APITestCase):
     def test_delete_folder(self):
         folder_to_be_delete = setup_folder(self.org, name='Folder to delete')
 
-        client_delete = self.client.delete(f'/app/api/v1/folders/1{str(folder_to_be_delete.id)}')
+        client_delete = self.client.delete(f'/app/api/v1/folders/{folder_to_be_delete.id}')
 
         self.assertEqual(client_delete.status_code, status.HTTP_204_NO_CONTENT)
 
