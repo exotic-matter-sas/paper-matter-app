@@ -4,9 +4,6 @@
             <b-col>
                 {{this.$_('Upload document')}}
             </b-col>
-            <!--            <b-col v-show="this.thumbnail">-->
-            <!--                <img :src="this.thumbnail"/>-->
-            <!--            </b-col>-->
             <b-col md="8">
                 <b-form-file
                     ref="fileUploadField"
@@ -34,15 +31,15 @@
 </template>
 
 <script>
-    import pdfjsLib from 'pdfjs-dist/webpack'
     import axios from 'axios'
+    import thumbnailGenerator from "../thumbnailGenerator";
 
     // pdfjsLib.disableWorker = true;
     window.URL = window.URL || window.webkitURL;
 
     export default {
         name: "FTLUpload",
-
+        mixins: [thumbnailGenerator],
         props: {
             currentFolder: {
                 type: Object,
@@ -56,42 +53,10 @@
                 response: '',
                 uploading: false,
                 uploadProgress: 0,
-                thumbnail: null
             }
         },
 
         methods: {
-            createThumb: function (file) {
-                const vi = this;
-                return new Promise((resolve, reject) => {
-                    let objectURL = window.URL.createObjectURL(file);
-
-                    pdfjsLib.getDocument(objectURL).then(function (pdf) {
-                        pdf.getPage(1).then(function (page) {
-                            const canvas = document.createElement("canvas");
-                            const context = canvas.getContext('2d');
-
-                            let viewport = page.getViewport(0.5);
-
-                            canvas.height = viewport.height;
-                            canvas.width = viewport.width;
-
-                            page.render({
-                                canvasContext: context,
-                                viewport: viewport
-                            }).then(function () {
-                                vi.thumbnail = canvas.toDataURL();
-                                resolve(vi.thumbnail);
-                            });
-                        }).catch(function () {
-                            reject("pdf thumb error: could not open page 1 of document " + filePath + ". Not a pdf ?");
-                        });
-                    }).catch(function () {
-                        reject("pdf thumb error: could not find or open document " + filePath + ". Not a pdf ?");
-                    });
-                });
-            },
-
             refreshUploadProgression: function (progressEvent) {
                 let vi = this;
                 if (progressEvent.lengthComputable) {

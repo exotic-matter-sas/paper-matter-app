@@ -126,6 +126,7 @@
     import FTLUpload from './components/FTLUpload'
     import axios from 'axios'
     import qs from 'qs'
+    import thumbnailGenerator from "./thumbnailGenerator";
 
     export default {
         name: 'app',
@@ -135,6 +136,7 @@
             FTLDocument,
             FTLUpload
         },
+        mixins: [thumbnailGenerator],
 
         data() {
             return {
