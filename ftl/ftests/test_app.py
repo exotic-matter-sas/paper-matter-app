@@ -110,7 +110,19 @@ class HomePageTests(LoginPage, HomePage):
         self.assertEqual(second_document_name, self.get_elem(self.first_document_title).text)
 
     def test_search_document_by_its_note(self):
-        pass
+        pass  # TODO when note implemented in UI
 
     def test_search_document_by_its_content(self):
-        pass
+        # User add 2 documents
+        self.upload_document(os.path.join(BASE_DIR, 'ftests', 'tools', 'test.pdf'))
+        second_document_name = 'green.pdf'
+        self.upload_document(os.path.join(BASE_DIR, 'ftests', 'tools', second_document_name))
+        # User wait document indexation
+        time.sleep(5)  # TODO replace by a wait_for type of call when a indexation indicator will be available
+
+        # User search a word contain in the second document
+        self.search_document('Yellow Blue')
+
+        # Only the second document appears in search results
+        self.assertEqual(len(self.get_elems('.document-thumbnail')), 1)
+        self.assertEqual(second_document_name, self.get_elem(self.first_document_title).text)
