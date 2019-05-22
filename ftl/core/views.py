@@ -8,7 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 from django.core.files.base import ContentFile
 from django.db.models import F
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404
 from django.utils.http import http_date
 from django.views import View
@@ -135,6 +135,10 @@ class FTLDocumentThumbnail(LoginRequiredMixin, views.APIView):
 
     def get(self, request, *args, **kwargs):
         doc = get_object_or_404(self.get_queryset(), pid=kwargs['pid'])
+
+        if not doc.thumbnail_binary or doc.thumbnail_binary.readable:
+            return HttpResponseNotFound()
+
         response = HttpResponse(doc.thumbnail_binary, 'image/png')
         response['Last-Modified'] = http_date(doc.edited.timestamp())
         # TODO add ETAG and last modified for caching
