@@ -5,13 +5,12 @@ import * as tv from './../tools/testValues.js'
 import FTLUpload from "../../src/components/FTLUpload";
 import flushPromises from 'flush-promises';
 
-jest.mock('pdfjs-dist/webpack');
-
 const localVue = createLocalVue();
 localVue.use(BootstrapVue); // to avoid warning on tests execution
 localVue.prototype.$_ = (text) => {
   return text;
 }; // i18n mock
+localVue.mixin({methods: {mixinAlert: jest.fn()}}); // mixin alert
 
 jest.mock('axios', () => ({
   post: jest.fn()
