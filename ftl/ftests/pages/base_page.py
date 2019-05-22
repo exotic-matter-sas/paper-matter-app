@@ -92,27 +92,48 @@ class BasePage(LIVE_SERVER):
             complete_url = self.live_server_url + url
         self.browser.get(complete_url)
 
-    def get_elem(self, css_selector):
-        return self.browser.find_element_by_css_selector(css_selector)
+    def get_elem(self, css_selector, is_visible=True):
+        elem = self.browser.find_element_by_css_selector(css_selector)
+        if elem.is_displayed() == is_visible:
+            return elem
+        else:
+            raise NoSuchElementException()
 
-    def get_elems(self, css_selector):
-        return self.browser.find_elements_by_css_selector(css_selector)
+    def get_elems(self, css_selector, is_visible=True):
+        elems = self.browser.find_elements_by_css_selector(css_selector)
+        if elems and elems[0].is_displayed() == is_visible:
+            return elems
+        else:
+            raise NoSuchElementException()
 
     @staticmethod
-    def _wait_for_method_to_return(method, timeout=5, inverse_return=False, *args, **kwargs):
+    def _wait_for_method_to_return(method, timeout, *method_args, custom_return_validator=None,
+                                   expected_exception_type=None, **method_kwargs):
+        """
+        Wait for the given method to return a truthy value and return it
+        If custom_return_validator is provided return value will be tested against the validator
+        If expected_exception is provided and an exception of the provided type occurred return None
+        """
         end_time = time.time() + timeout
         polling_interval = 0.5
 
         while True:
             try:
-                value = method(*args, **kwargs)
-                if value:
+                value = method(*method_args, **method_kwargs)
+                if custom_return_validator and custom_return_validator(value) or value:
                     return value
-            except NoSuchElementException:
-                pass
+            except expected_exception_type:
+                return None
+
             time.sleep(polling_interval)
             if time.time() > end_time:
                 raise TimeoutException()
+
+    def _wait_for_method_to_raise_exception(self, method, timeout, exception_type, *method_args, **method_kwargs):
+        # Use always False validator to only return if expected condition is raised
+        self._wait_for_method_to_return(method, timeout, *method_args, **method_kwargs,
+                                        custom_return_validator=lambda: False,
+                                        expected_exception_type=exception_type)
 
     def wait_for_element_to_show(self, css_selector, timeout=5):
         try:
@@ -122,6 +143,6 @@ class BasePage(LIVE_SERVER):
 
     def wait_for_element_to_disappear(self, css_selector, timeout=5):
         try:
-            self._wait_for_method_to_return(self.get_elem, timeout, True, css_selector)
+            self._wait_for_method_to_raise_exception(self.get_elem, timeout, NoSuchElementException, css_selector)
         except TimeoutException:
-            raise TimeoutException(f'The element "{css_selector}" couldn\'t be found after {timeout}s')
+            raise TimeoutException(f'The element "{css_selector}" doesn\'t disapear after {timeout}s')

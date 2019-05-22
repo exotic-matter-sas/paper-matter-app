@@ -55,7 +55,7 @@
             <b-container>
                 <b-row v-if="docLoading">
                     <b-col>
-                        <b-spinner style="width: 3rem; height: 3rem;" class="m-5" label="Loading..."></b-spinner>
+                        <b-spinner id="document-list-loader" style="width: 3rem; height: 3rem;" class="m-5" label="Loading..."></b-spinner>
                     </b-col>
                 </b-row>
                 <b-row align-h="around" v-else-if="docs.length">

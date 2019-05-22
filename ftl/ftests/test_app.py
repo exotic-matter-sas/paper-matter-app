@@ -1,3 +1,5 @@
+import os
+import time
 from unittest.mock import patch
 
 from selenium.common.exceptions import NoSuchElementException
@@ -7,6 +9,7 @@ from ftests.pages.home_page import HomePage
 from ftests.pages.user_login_page import LoginPage
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_document, setup_folder
+from ftl.settings import BASE_DIR
 
 
 class HomePageTests(LoginPage, HomePage):
@@ -66,7 +69,7 @@ class HomePageTests(LoginPage, HomePage):
         # User create a folder
         self.create_folder()
 
-        # The folder properly appears inn the folder list
+        # The folder properly appears in the folder list
         self.assertEqual(tv.FOLDER1_NAME, self.get_elem(self.first_folder_button).text)
 
     def test_create_folder_tree(self):
@@ -89,13 +92,25 @@ class HomePageTests(LoginPage, HomePage):
         self.get_elem(self.first_folder_button).click()
 
     def test_delete_folder(self):
-        pass  # TODO
+        pass  # TODO when implemented in UI
 
     def test_search_document_by_its_title(self):
-        pass  # TODO when https://gitlab.com/exotic-matter/ftl-app/issues/35 done
+        # User add 2 documents
+        self.upload_document(os.path.join(BASE_DIR, 'ftests', 'tools', 'test.pdf'))
+        second_document_name = 'green.pdf'
+        self.upload_document(os.path.join(BASE_DIR, 'ftests', 'tools', second_document_name))
+        # User wait document indexation
+        time.sleep(5)  # TODO replace by a wait_for type of call when a indexation indicator will be available
+
+        # User search last uploaded document
+        self.search_document(second_document_name)
+
+        # Only the second document appears in search results
+        self.assertEqual(len(self.get_elems('.document-thumbnail')), 1)
+        self.assertEqual(second_document_name, self.get_elem(self.first_document_title).text)
 
     def test_search_document_by_its_note(self):
-        pass  # TODO when https://gitlab.com/exotic-matter/ftl-app/issues/35 done
+        pass
 
     def test_search_document_by_its_content(self):
-        pass  # TODO when https://gitlab.com/exotic-matter/ftl-app/issues/35 done
+        pass
