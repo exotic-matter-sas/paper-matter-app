@@ -63,6 +63,7 @@ class DownloadView(LoginRequiredMixin, PermissionRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         doc = get_object_or_404(FTLDocument.objects.filter(org=self.request.user.org, pid=kwargs['uuid']))
         response = HttpResponse(doc.binary, 'application/octet')
+        response['Last-Modified'] = http_date(doc.edited.timestamp())
         response['Content-Disposition'] = 'attachment; filename="%s"' % doc.binary.name
         return response
 
@@ -136,7 +137,7 @@ class FTLDocumentThumbnail(LoginRequiredMixin, views.APIView):
     def get(self, request, *args, **kwargs):
         doc = get_object_or_404(self.get_queryset(), pid=kwargs['pid'])
 
-        if not doc.thumbnail_binary or doc.thumbnail_binary.readable:
+        if not doc.thumbnail_binary or not doc.thumbnail_binary.readable:
             return HttpResponseNotFound()
 
         response = HttpResponse(doc.thumbnail_binary, 'image/png')
