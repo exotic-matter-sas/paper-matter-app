@@ -65,7 +65,7 @@
                 axios
                     .delete('/app/api/v1/documents/' + this.doc.pid, axiosConfig)
                     .then(() => vi.$emit('event-delete-doc'))
-                    .catch(error => alert(error));
+                    .catch(error => vi.mixinAlert('Could not delete document', true));
             }
         }
     }

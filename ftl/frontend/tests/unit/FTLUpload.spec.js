@@ -44,7 +44,7 @@ describe('FTLUpload script', () => {
   let upload_button;
 
   beforeEach(() => {
-    axios.post.mockReturnValue(Promise.resolve(mockedPostResponse));
+    axios.post.mockResolvedValue(mockedPostResponse);
 
     const createThumbMock = jest.fn();
     createThumbMock.mockReturnValue(Promise.resolve("base64str"));

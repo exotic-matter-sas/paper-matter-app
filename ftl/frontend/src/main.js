@@ -1,9 +1,10 @@
-import Vue, {VNode} from 'vue'
-import BootstrapVue from 'bootstrap-vue'
-import App from './App.vue'
+import Vue from 'vue';
+import BootstrapVue from 'bootstrap-vue';
+import App from './App.vue';
 
-import 'bootstrap/dist/css/bootstrap.css'
-import 'bootstrap-vue/dist/bootstrap-vue.css'
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-vue/dist/bootstrap-vue.css';
+import {mixinAlert} from "./vueMixins";
 
 Vue.config.productionTip = false;
 
@@ -16,6 +17,13 @@ Vue.prototype.$_ = function (text) {
   }
   return translated_text || text;
 };
+
+// Defined mixins
+Vue.mixin({
+    methods: {
+        mixinAlert
+    }
+});
 
 new Vue({
     render: h => h(App),
