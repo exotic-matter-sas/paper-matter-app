@@ -23,7 +23,7 @@
         </b-row>
         <b-row align-h="center">
             <b-col cols="12">
-                <b-progress :class="{ 'd-none': !uploading }" :max="100" :value="uploadProgress" variant="success"
+                <b-progress id="document-upload-loader" :class="{ 'd-none': !uploading }" :max="100" :value="uploadProgress" variant="success"
                             show-progress/>
             </b-col>
         </b-row>

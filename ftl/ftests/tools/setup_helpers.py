@@ -36,7 +36,7 @@ def setup_authenticated_session(test_client, org, user):
 
 
 def setup_document(org, ftl_user, ftl_folder=None, title=tv.DOCUMENT1_TITLE, note=tv.DOCUMENT1_NOTE,
-                   binary=tv.DOCUMENT1_BINARY_PATH, content_text=tv.DOCUMENT1_CONTENT, language=tv.DOCUMENT1_LANGUAGE):
+                   binary=tv.DOCUMENT1_BINARY_PATH, text_content=tv.DOCUMENT1_CONTENT, language=tv.DOCUMENT1_LANGUAGE):
     document = FTLDocument.objects.create(
         org=org,
         ftl_user=ftl_user,
@@ -44,7 +44,7 @@ def setup_document(org, ftl_user, ftl_folder=None, title=tv.DOCUMENT1_TITLE, not
         title=title,
         note=note,
         binary=binary,
-        content_text=content_text,
+        content_text=text_content,
         language=language,
     )
     # Update document to allow PGSQL to process search vector
