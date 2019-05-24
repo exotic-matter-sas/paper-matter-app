@@ -13,9 +13,9 @@
             <!-- Right aligned nav items -->
             <b-navbar-nav class="ml-auto">
                 <b-nav-form>
-                    <b-form-input size="sm" class="m-1" variant="secondary" placeholder="Search" v-model="search"
+                    <b-form-input id="search-input" size="sm" class="m-1" variant="secondary" placeholder="Search" v-model="search"
                                   @keydown.enter.prevent="$emit('event-search', $event.target.value)"></b-form-input>
-                    <b-button size="sm" class="m-1" variant="secondary" type="button" @click="$emit('event-search', search)">
+                    <b-button id="search-button" size="sm" class="m-1" variant="secondary" type="button" @click="$emit('event-search', search)">
                         {{this.$_('Search')}}
                     </b-button>
                     <b-button size="sm" class="m-1" type="button" variant="secondary"

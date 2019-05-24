@@ -1,3 +1,6 @@
+import os
+import time
+from unittest import skip
 from unittest.mock import patch
 
 from selenium.common.exceptions import NoSuchElementException
@@ -7,6 +10,7 @@ from ftests.pages.home_page import HomePage
 from ftests.pages.user_login_page import LoginPage
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_document, setup_folder
+from ftl.settings import BASE_DIR
 
 
 class HomePageTests(LoginPage, HomePage):
@@ -66,7 +70,7 @@ class HomePageTests(LoginPage, HomePage):
         # User create a folder
         self.create_folder()
 
-        # The folder properly appears inn the folder list
+        # The folder properly appears in the folder list
         self.assertEqual(tv.FOLDER1_NAME, self.get_elem(self.first_folder_button).text)
 
     def test_create_folder_tree(self):
@@ -88,14 +92,37 @@ class HomePageTests(LoginPage, HomePage):
         self.assertEqual(tv.FOLDER3_NAME, self.get_elem(self.first_folder_button).text)
         self.get_elem(self.first_folder_button).click()
 
+    @skip('TODO when implemented in UI')  # TODO
     def test_delete_folder(self):
-        pass  # TODO
+        pass
 
     def test_search_document_by_its_title(self):
-        pass  # TODO when https://gitlab.com/exotic-matter/ftl-app/issues/35 done
+        # User have already added 2 documents
+        setup_document(self.org, self.user)
+        second_document_title = 'bingo!'
+        setup_document(self.org, self.user, title=second_document_title)
 
+        # User search last uploaded document
+        self.search_document(second_document_title)
+
+        # Only the second document appears in search results
+        self.assertEqual(len(self.get_elems('.document-thumbnail')), 1)
+        self.assertEqual(second_document_title, self.get_elem(self.first_document_title).text)
+
+    @skip('TODO when document note implemented in UI')  # TODO
     def test_search_document_by_its_note(self):
-        pass  # TODO when https://gitlab.com/exotic-matter/ftl-app/issues/35 done
+        pass
 
     def test_search_document_by_its_content(self):
-        pass  # TODO when https://gitlab.com/exotic-matter/ftl-app/issues/35 done
+        # User have already added 2 documents
+        setup_document(self.org, self.user)
+        second_document_title = 'bingo!'
+        second_document_text_content = 'Yellow Blue'
+        setup_document(self.org, self.user, title=second_document_title, text_content=second_document_text_content)
+
+        # User search last uploaded document
+        self.search_document(second_document_text_content)
+
+        # Only the second document appears in search results
+        self.assertEqual(len(self.get_elems('.document-thumbnail')), 1)
+        self.assertEqual(second_document_title, self.get_elem(self.first_document_title).text)
