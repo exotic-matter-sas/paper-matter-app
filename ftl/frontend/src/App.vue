@@ -47,7 +47,8 @@
             <b-container>
                 <b-row v-if="docLoading">
                     <b-col>
-                        <b-spinner id="document-list-loader" style="width: 3rem; height: 3rem;" class="m-5" label="Loading..."></b-spinner>
+                        <b-spinner id="document-list-loader" style="width: 3rem; height: 3rem;" class="m-5"
+                                   label="Loading..."></b-spinner>
                     </b-col>
                 </b-row>
                 <b-row align-h="around" v-else-if="docs.length">
@@ -81,7 +82,7 @@
                     <b-col md="8">
                         <div class="embed-responsive embed-responsive-1by1 doc-pdf ">
                             <iframe v-if="currentOpenDoc.pid" class="embed-responsive-item"
-                                    :src="`/assets/pdfjs/web/viewer.html?file=/app/uploads/` + currentOpenDoc.pid">
+                                    :src="`/assets/pdfjs/web/viewer.html?file=/app/uploads/` + currentOpenDoc.pid + `#search=` + currentSearch">
                             </iframe>
                         </div>
 
@@ -246,6 +247,7 @@
                 axios.patch('/app/api/v1/documents/' + doc.pid, jsonData, axiosConfig)
                     .then(response => {
                         vi.mixinAlert("Thumbnail updated!");
+                        vi.updateDocument();
                     }).catch(error => vi.mixinAlert("Unable to update thumbnail", true));
             },
 
