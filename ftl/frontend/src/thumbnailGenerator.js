@@ -5,11 +5,14 @@ window.URL = window.URL || window.webkitURL;
 
 export default {
   methods: {
-    createThumb: function (file) {
-      return new Promise((resolve, reject) => {
-        let objectURL = window.URL.createObjectURL(file);
+    createThumbFromFile: function (file) {
+      let objectURL = window.URL.createObjectURL(file);
+      return this.createThumbFromUrl(objectURL);
+    },
 
-        pdfjsLib.getDocument(objectURL).then(function (pdf) {
+    createThumbFromUrl: function (url) {
+      return new Promise((resolve, reject) => {
+        pdfjsLib.getDocument(url).then(function (pdf) {
           pdf.getPage(1).then(function (page) {
             const canvas = document.createElement("canvas");
             const context = canvas.getContext('2d');
@@ -33,5 +36,6 @@ export default {
         });
       });
     }
-  }
+  },
+
 }

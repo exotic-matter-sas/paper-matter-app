@@ -35,7 +35,8 @@
                     <b-button v-else variant="primary" class="m-1" disabled>Up</b-button>
                     <FTLFolder v-for="folder in folders" :key="folder.id" :folder="folder"
                                @event-change-folder="changeFolder"/>
-                    <b-button id="create-folder" class="m-1" variant="outline-primary" size="sm" @click.prevent="newFolderModal = true">
+                    <b-button id="create-folder" class="m-1" variant="outline-primary" size="sm"
+                              @click.prevent="newFolderModal = true">
                         {{ this.$_('Create new folder') }}
                     </b-button>
                 </b-row>
@@ -63,7 +64,8 @@
             <b-container>
                 <b-row>
                     <b-col>
-                        {{ this.$_('ftl-app, open source software. Made with ❤ by ') }} <a href="https://www.exotic-matter.fr">Exotic Matter</a>.
+                        {{ this.$_('ftl-app, open source software. Made with ❤ by ') }} <a
+                        href="https://www.exotic-matter.fr">Exotic Matter</a>.
                     </b-col>
                 </b-row>
             </b-container>
@@ -108,10 +110,10 @@
             <b-container>
                 <!-- TODO add current folder name to title -->
                 <b-form-group
-                        id="fieldset-new-folder"
-                        :description="this.$_('The name of the folder')"
-                        :label="this.$_('The folder will be created in the current folder.')"
-                        label-for="new-folder">
+                    id="fieldset-new-folder"
+                    :description="this.$_('The name of the folder')"
+                    :label="this.$_('The folder will be created in the current folder.')"
+                    label-for="new-folder">
                     <b-form-input id="new-folder" v-model="newFolderName" trim></b-form-input>
                 </b-form-group>
             </b-container>
@@ -127,6 +129,7 @@
     import axios from 'axios'
     import qs from 'qs'
     import thumbnailGenerator from "./thumbnailGenerator";
+    import {axiosConfig} from "./constants";
 
     export default {
         name: 'app',
@@ -218,7 +221,32 @@
                     .get('/app/api/v1/documents/' + pid)
                     .then(response => {
                         vi.currentOpenDoc = response.data;
+
+                        if (!response.data.thumbnail_available) {
+                            vi.createThumbnailForDocument(response.data);
+                        }
+
                     }).catch(error => vi.mixinAlert("Unable to show document.", true));
+            },
+
+            createThumbnailForDocument: async function (doc) {
+                const vi = this;
+                let thumb64;
+
+                try {
+                    thumb64 = await vi.createThumbFromUrl('/app/uploads/' + doc.pid);
+                } catch (e) {
+                    vi.mixinAlert("Unable to update thumbnail", true);
+                    return;
+                }
+
+                let jsonData = {'thumbnail_binary': thumb64};
+
+
+                axios.patch('/app/api/v1/documents/' + doc.pid, jsonData, axiosConfig)
+                    .then(response => {
+                        vi.mixinAlert("Thumbnail updated!");
+                    }).catch(error => vi.mixinAlert("Unable to update thumbnail", true));
             },
 
             refreshDocumentWithSearch: function (text) {
@@ -279,12 +307,6 @@
             createNewFolder: function () {
                 const vi = this;
                 let parent = null;
-
-                // Pass CSRF token from cookie to XHR call header (handled by Axios)
-                let axiosConfig = {
-                    xsrfCookieName: 'csrftoken',
-                    xsrfHeaderName: 'X-CSRFToken'
-                };
 
                 if (vi.previousLevels.length > 0) {
                     parent = vi.previousLevels[vi.previousLevels.length - 1].id;

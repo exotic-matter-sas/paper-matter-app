@@ -29,7 +29,8 @@
 </template>
 
 <script>
-    import axios from 'axios'
+    import axios from 'axios';
+    import {axiosConfig} from "../constants";
 
     export default {
         props: {
@@ -55,12 +56,6 @@
             deleteDocument: function () {
                 let vi = this;
                 vi.deleting = true;
-
-                // Pass CSRF token from cookie to XHR call header (handled by Axios)
-                let axiosConfig = {
-                    xsrfCookieName: 'csrftoken',
-                    xsrfHeaderName: 'X-CSRFToken'
-                };
 
                 axios
                     .delete('/app/api/v1/documents/' + this.doc.pid, axiosConfig)

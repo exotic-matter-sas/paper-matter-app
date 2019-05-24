@@ -51,7 +51,7 @@ describe('FTLUpload script', () => {
     wrapper = shallowMount(FTLUpload, {
       localVue,
       propsData: {currentFolder: tv.FOLDER_PROPS},
-      methods: {createThumb: createThumbMock}
+      methods: {createThumbFromFile: createThumbMock}
     });
     axios_upload_conf = {
       onUploadProgress: wrapper.vm.refreshUploadProgression

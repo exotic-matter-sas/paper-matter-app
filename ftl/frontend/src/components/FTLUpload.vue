@@ -31,11 +31,9 @@
 </template>
 
 <script>
-    import axios from 'axios'
+    import axios from 'axios';
     import thumbnailGenerator from "../thumbnailGenerator";
-
-    // pdfjsLib.disableWorker = true;
-    window.URL = window.URL || window.webkitURL;
+    import {axiosConfig} from "../constants";
 
     export default {
         name: "FTLUpload",
@@ -74,9 +72,9 @@
                 // start thumbnail generation
                 vi.uploadProgress = 10;
                 try {
-                    thumb64 = await vi.createThumb(vi.file);
+                    thumb64 = await vi.createThumbFromFile(vi.file);
                 } catch (e) {
-                    // TODO
+                    vi.mixinAlert("Error creating thumbnail", true);
                     thumb64 = null;
                 }
 
@@ -95,15 +93,10 @@
                 formData.append('file', this.file);
                 formData.append('json', JSON.stringify(jsonData));
 
-                // Pass CSRF token from cookie to XHR call header (handled by Axios)
-                let axiosConfig = {
-                    xsrfCookieName: 'csrftoken',
-                    xsrfHeaderName: 'X-CSRFToken',
-                    onUploadProgress: this.refreshUploadProgression
-                };
+                const updatedAxiosConfig = Object.assign({}, axiosConfig, {onUploadProgress: this.refreshUploadProgression});
 
                 axios
-                    .post('/app/api/v1/documents/upload', formData, axiosConfig)
+                    .post('/app/api/v1/documents/upload', formData, updatedAxiosConfig)
                     .then(response => {
                         vi.$emit('event-new-upload'); // Event for refresh documents list
                         vi.response = response.data;
