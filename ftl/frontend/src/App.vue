@@ -16,7 +16,10 @@
                 </b-row>
                 <b-row>
                     <b-col>
-                        <b-button id="refresh-documents" variant="primary" @click="updateDocument">
+                        <b-button id="generate-thumb" variant="primary" class="m-1" @click="generateMissingThumbnail">
+                            {{this.$_('Generate missing thumb')}}
+                        </b-button>
+                        <b-button id="refresh-documents" variant="primary" class="m-1" @click="updateDocument">
                             {{this.$_('Refresh documents list')}}
                         </b-button>
                         {{ this.$_('Last refresh') }} {{ lastRefreshFormatted }}
@@ -323,6 +326,51 @@
                         vi.newFolderName = '';
                         vi.refreshFolders();
                     }).catch(error => vi.mixinAlert("Unable to create new folder.", true));
+            },
+
+            generateMissingThumbnail: function () {
+                const vi = this;
+                vi.mixinAlert("Updating thumbnail");
+
+                axios.get("/app/api/v1/documents?flat=true")
+                    .then(async response => {
+                        let documents = response.data;
+
+                        while (documents !== null && documents.results.length > 0) {
+                            for (const doc of documents.results) {
+                                if (doc['thumbnail_available'] === false) {
+                                    let thumb64;
+
+                                    try {
+                                        thumb64 = await vi.createThumbFromUrl('/app/uploads/' + doc.pid);
+                                    } catch (e) {
+                                        vi.mixinAlert("Unable to update thumbnail", true);
+                                        continue;
+                                    }
+
+                                    let jsonData = {'thumbnail_binary': thumb64};
+
+                                    axios.patch('/app/api/v1/documents/' + doc.pid, jsonData, axiosConfig)
+                                        .then(response => {
+                                            vi.mixinAlert("Thumbnail updated! " + doc.pid);
+                                        }).catch(error => vi.mixinAlert("Unable to update thumbnail " + doc.pid, true));
+                                }
+                            }
+
+                            if (documents.next == null) {
+                                documents = null;
+                            } else {
+                                let resp = await axios.get(documents.next);
+                                documents = await resp.data;
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        vi.mixingAlert("An error occurred while updating thumbnail", true)
+                    })
+                    .then(() => {
+                        vi.mixinAlert("Finished updating thumbnail");
+                    });
             }
         }
     }

@@ -75,13 +75,15 @@ class FTLDocumentList(generics.ListAPIView):
 
     def get_queryset(self):
         current_folder = self.request.query_params.get('level', None)
+        flat_mode = self.request.query_params.get('flat', False)
 
         queryset = FTLDocument.objects.filter(org=self.request.user.org).order_by('-created')
 
-        if current_folder is not None:
-            queryset = queryset.filter(ftl_folder__id=current_folder)
-        else:
-            queryset = queryset.filter(ftl_folder__isnull=True)
+        if not flat_mode:
+            if current_folder is not None:
+                queryset = queryset.filter(ftl_folder__id=current_folder)
+            else:
+                queryset = queryset.filter(ftl_folder__isnull=True)
 
         text_search = self.request.query_params.get('search')
 
