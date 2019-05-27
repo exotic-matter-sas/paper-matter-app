@@ -1,8 +1,11 @@
+import os
+import time
 from unittest import skip
 from unittest.mock import patch
 
 from tika import parser
 
+from core.views import EXECUTOR
 from ftests.pages.django_admin_home_page import AdminHomePage
 from ftests.pages.django_admin_login_page import AdminLoginPage
 from ftests.pages.home_page import HomePage
@@ -11,6 +14,7 @@ from ftests.pages.signup_pages import SignupPages
 from ftests.pages.user_login_page import LoginPage
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user
+from ftl.settings import BASE_DIR
 
 
 class InitialSetupTest(SetupPages, SignupPages, LoginPage, HomePage):
@@ -107,7 +111,34 @@ class NewUserAddDocumentInsideFolder(SignupPages, LoginPage, HomePage):
         self.assertEqual(pdf_viewer_iframe_title, 'PDF.js viewer')
 
 
-class TikaDocumentIndexationAndSearch(HomePage):
-    @skip('TODO')  # TODO
+class TikaDocumentIndexationAndSearch(LoginPage, HomePage):
+    def setUp(self, **kwargs):
+        # first org, admin, user are already created, user is already logged on home page
+        super().setUp()
+        self.org = setup_org()
+        setup_admin(self.org)
+        self.user = setup_user(self.org)
+        self.visit(LoginPage.url)
+        self.log_user()
+
+    def tearDown(self):
+        """ Additional teardown required to shutdown indexation thread"""
+        super().tearDown()
+        EXECUTOR.shutdown()
+
     def test_upload_doc_wait_tika_indexation_and_search_for_doc(self):
-        pass
+        # User upload 2 documents
+        self.upload_document()
+        second_document_title = 'green.pdf'
+        self.upload_document(os.path.join(BASE_DIR, 'ftests', 'tools', second_document_title))
+
+        # User wait for document to be indexed
+        time.sleep(5)  # TODO replace by a wait_for when a indexing indicator is implemented
+
+        # User search last uploaded document
+        self.search_document(second_document_title)
+
+        # Only the second document appears in search results
+        self.assertEqual(len(self.get_elems('.document-thumbnail')), 1)
+        self.assertEqual(second_document_title, self.get_elem(self.first_document_title).text)
+

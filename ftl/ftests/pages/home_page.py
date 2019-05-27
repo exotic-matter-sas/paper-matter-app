@@ -38,6 +38,7 @@ class HomePage(BasePage):
         self.get_elem(self.document_upload_input, is_visible=False).send_keys(absolute_path)
         self.get_elem(self.submit_document_upload_button).click()
         self.wait_for_element_to_disappear(self.document_upload_loader)
+        self.get_elem(self.close_notification).click()
 
     def create_folder(self, folder_name=tv.FOLDER1_NAME):
         self.get_elem(self.create_folder_button).click()

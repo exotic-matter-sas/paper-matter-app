@@ -23,6 +23,10 @@ class BasePage(LIVE_SERVER):
     modal_accept_button = '.modal-dialog .modal-footer .btn-primary'
     modal_reject_button = '.modal-dialog .modal-footer .btn-secondary'
 
+    success_notification = '.b-toaster-slot .b-toast-success'
+    error_notification = '.b-toaster-slot .b-toast-danger'
+    close_notification = '.b-toaster-slot .b-toast .close'
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.root_url = ''
