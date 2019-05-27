@@ -21,11 +21,3 @@ export const DOCUMENT_PROPS = {
   note: 'Document note',
   created: new Date('2019-04-18T10:59:00').toString()
 };
-
-// Mocked AXIOS generic conf
-
-export const AXIOS_CRSF_CONF = {
-    xsrfCookieName: 'csrftoken',
-    xsrfHeaderName: 'X-CSRFToken'
-};
-

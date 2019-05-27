@@ -8,6 +8,7 @@ import App from "../../src/App";
 import FTLUpload from "../../src/components/FTLUpload";
 import FTLFolder from "../../src/components/FTLFolder";
 import FTLDocument from "../../src/components/FTLDocument";
+import {axiosConfig} from "../../src/constants";
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue); // to avoid warning on tests execution
@@ -21,22 +22,22 @@ jest.mock('axios', () => ({
 const mockedGetFoldersResponse  = {
   data: [],
   status: 200,
-  config: tv.AXIOS_CRSF_CONF
+  config: axiosConfig
 };
 const mockedGetDocumentsResponse  = {
   data: {results: []},
   status: 200,
-  config: tv.AXIOS_CRSF_CONF
+  config: axiosConfig
 };
 const mockedGetDocumentResponse  = {
   data: tv.DOCUMENT_PROPS,
   status: 200,
-  config: tv.AXIOS_CRSF_CONF
+  config: axiosConfig
 };
 const mockedPostFolderResponse  = {
   data: tv.FOLDER_PROPS,
   status: 200,
-  config: tv.AXIOS_CRSF_CONF
+  config: axiosConfig
 };
 
 const mockedUpdateFolder = jest.fn();
@@ -245,7 +246,7 @@ describe('App script methods call proper api', () => {
     expect(axios.post).toHaveBeenCalledWith(
         '/app/api/v1/folders/',
         {name: wrapper.vm.newFolderName, parent: null},
-        tv.AXIOS_CRSF_CONF
+        axiosConfig
     );
     wrapper.vm.$nextTick(() => {
       expect(mockedRefreshFolder).toHaveBeenCalled();

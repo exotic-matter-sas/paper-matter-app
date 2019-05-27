@@ -5,6 +5,7 @@ import BootstrapVue from "bootstrap-vue";
 
 import * as tv from './../tools/testValues.js'
 import FTLDocument from "../../src/components/FTLDocument";
+import {axiosConfig} from "../../src/constants";
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue); // to avoid warning on tests execution
@@ -17,7 +18,7 @@ jest.mock('axios', () => ({
 const mockedDeleteResponse  = {
   data: {},
   status: 204,
-  config: tv.AXIOS_CRSF_CONF
+  config: axiosConfig
 };
 
 
@@ -53,7 +54,7 @@ describe('FTLDocument script', () => {
     // then
     expect(axios.delete).toHaveBeenCalledWith(
         '/app/api/v1/documents/' + tv.DOCUMENT_PROPS.pid,
-        tv.AXIOS_CRSF_CONF
+        axiosConfig
     );
   });
   it('deleteDocument emit event-delete-doc', done => {

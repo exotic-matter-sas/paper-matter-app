@@ -4,6 +4,7 @@ import BootstrapVue from "bootstrap-vue";
 import * as tv from './../tools/testValues.js'
 import FTLUpload from "../../src/components/FTLUpload";
 import flushPromises from 'flush-promises';
+import {axiosConfig} from "../../src/constants";
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue); // to avoid warning on tests execution
@@ -33,7 +34,7 @@ describe('FTLUpload script', () => {
   const mockedPostResponse = {
     data: {},
     status: 201,
-    config: tv.AXIOS_CRSF_CONF
+    config: axiosConfig
   };
   let formData = new FormData();
   formData.append('thumbnail', 'base64str');
@@ -56,7 +57,7 @@ describe('FTLUpload script', () => {
     axios_upload_conf = {
       onUploadProgress: wrapper.vm.refreshUploadProgression
     };
-    Object.assign(axios_upload_conf, tv.AXIOS_CRSF_CONF); // merge upload specific conf with generic crsf conf
+    Object.assign(axios_upload_conf, axiosConfig); // merge upload specific conf with generic crsf conf
     upload_button = wrapper.find('#upload-button');
   });
 
