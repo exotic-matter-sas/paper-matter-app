@@ -32,12 +32,11 @@
 
 <script>
     import axios from 'axios';
-    import thumbnailGenerator from "../thumbnailGenerator";
+    import {createThumbFromFile} from "../thumbnailGenerator";
     import {axiosConfig} from "../constants";
 
     export default {
         name: "FTLUpload",
-        mixins: [thumbnailGenerator],
         props: {
             currentFolder: {
                 type: Object,
@@ -73,7 +72,7 @@
                 vi.uploadProgress = 10;
                 // TODO disable thumbnail generation on mobile
                 try {
-                    thumb64 = await vi.createThumbFromFile(vi.file);
+                    thumb64 = await createThumbFromFile(vi.file);
                 } catch (e) {
                     vi.mixinAlert("Error creating thumbnail", true);
                     thumb64 = null;

@@ -132,7 +132,7 @@
     import FTLUpload from './components/FTLUpload'
     import axios from 'axios'
     import qs from 'qs'
-    import thumbnailGenerator from "./thumbnailGenerator";
+    import {createThumbFromUrl} from "./thumbnailGenerator";
     import {axiosConfig} from "./constants";
 
     export default {
@@ -143,7 +143,6 @@
             FTLDocument,
             FTLUpload
         },
-        mixins: [thumbnailGenerator],
 
         data() {
             return {
@@ -238,7 +237,7 @@
                 let thumb64;
 
                 try {
-                    thumb64 = await vi.createThumbFromUrl('/app/uploads/' + doc.pid);
+                    thumb64 = await createThumbFromUrl('/app/uploads/' + doc.pid);
                 } catch (e) {
                     vi.mixinAlert("Unable to update thumbnail", true);
                     return;
@@ -342,7 +341,7 @@
                                     let thumb64;
 
                                     try {
-                                        thumb64 = await vi.createThumbFromUrl('/app/uploads/' + doc.pid);
+                                        thumb64 = await createThumbFromUrl('/app/uploads/' + doc.pid);
                                     } catch (e) {
                                         vi.mixinAlert("Unable to update thumbnail", true);
                                         continue;

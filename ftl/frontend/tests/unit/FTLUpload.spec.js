@@ -5,6 +5,7 @@ import * as tv from './../tools/testValues.js'
 import FTLUpload from "../../src/components/FTLUpload";
 import flushPromises from 'flush-promises';
 import {axiosConfig} from "../../src/constants";
+import {createThumbFromFile} from '../../src/thumbnailGenerator'
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue); // to avoid warning on tests execution
@@ -17,6 +18,9 @@ jest.mock('axios', () => ({
   post: jest.fn()
 }));
 
+jest.mock('../../src/thumbnailGenerator', () => ({
+  createThumbFromFile: jest.fn()
+}));
 
 describe('FTLUpload template', () => {
   const wrapper = shallowMount(FTLUpload, {
@@ -45,14 +49,11 @@ describe('FTLUpload script', () => {
 
   beforeEach(() => {
     axios.post.mockResolvedValue(mockedPostResponse);
-
-    const createThumbMock = jest.fn();
-    createThumbMock.mockResolvedValue("base64str");
+    createThumbFromFile.mockResolvedValue("base64str");
 
     wrapper = shallowMount(FTLUpload, {
       localVue,
       propsData: {currentFolder: tv.FOLDER_PROPS},
-      methods: {createThumbFromFile: createThumbMock}
     });
     axios_upload_conf = {
       onUploadProgress: wrapper.vm.refreshUploadProgression
