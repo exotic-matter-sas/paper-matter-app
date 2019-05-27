@@ -71,6 +71,7 @@
 
                 // start thumbnail generation
                 vi.uploadProgress = 10;
+                // TODO disable thumbnail generation on mobile
                 try {
                     thumb64 = await vi.createThumbFromFile(vi.file);
                 } catch (e) {
