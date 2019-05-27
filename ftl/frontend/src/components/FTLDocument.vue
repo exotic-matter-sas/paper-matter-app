@@ -3,7 +3,7 @@
         <b-row class="text-truncate document-title"><span
             @click="$emit('event-open-doc', doc.pid)">{{ doc.title }}</span></b-row>
         <b-row align-h="center">
-            <b-img :src="'/app/api/v1/documents/' + doc.pid + '/th.png'" class="img-thumbnail" slot="aside"
+            <b-img :src="'/app/api/v1/documents/' + doc.pid + '/thumbnail.png'" class="img-thumbnail" slot="aside"
                    blank-color="#abc"
                    @click="$emit('event-open-doc', doc.pid)"
                    onerror="this.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAADICAQAAACgjNDuAAABIElEQVR42u3QAQEAAAgCIP0/ui44ACbQXBhVlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVr9/mzyAFGRN6/AAAAAElFTkSuQmCC\n'"/>
