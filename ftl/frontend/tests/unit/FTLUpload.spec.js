@@ -46,7 +46,7 @@ describe('FTLUpload script', () => {
     axios.post.mockResolvedValue(mockedPostResponse);
 
     const createThumbMock = jest.fn();
-    createThumbMock.mockReturnValue(Promise.resolve("base64str"));
+    createThumbMock.mockResolvedValue("base64str");
 
     wrapper = shallowMount(FTLUpload, {
       localVue,
