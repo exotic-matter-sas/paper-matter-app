@@ -365,7 +365,7 @@
                         }
                     })
                     .catch(error => {
-                        vi.mixingAlert("An error occurred while updating thumbnail", true)
+                        vi.mixinAlert("An error occurred while updating thumbnail", true)
                     })
                     .then(() => {
                         vi.mixinAlert("Finished updating thumbnail");

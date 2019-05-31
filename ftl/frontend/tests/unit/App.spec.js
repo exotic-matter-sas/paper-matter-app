@@ -1,4 +1,4 @@
-import { createLocalVue, shallowMount } from '@vue/test-utils';
+import {createLocalVue, shallowMount} from '@vue/test-utils';
 
 import axios from 'axios';
 import BootstrapVue from "bootstrap-vue";
@@ -9,32 +9,43 @@ import FTLUpload from "../../src/components/FTLUpload";
 import FTLFolder from "../../src/components/FTLFolder";
 import FTLDocument from "../../src/components/FTLDocument";
 import {axiosConfig} from "../../src/constants";
+import flushPromises from "flush-promises";
+import {createThumbFromUrl} from '../../src/thumbnailGenerator';
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue); // to avoid warning on tests execution
-localVue.prototype.$_ = (text) => { return text; }; // i18n mock
+localVue.prototype.$_ = (text) => {
+  return text;
+}; // i18n mock
+localVue.mixin({methods: {mixinAlert: jest.fn()}}); // mixin alert
 
 jest.mock('axios', () => ({
-    get: jest.fn(),
-    post: jest.fn(),
+  get: jest.fn(),
+  post: jest.fn(),
+  patch: jest.fn()
 }));
 
-const mockedGetFoldersResponse  = {
+jest.mock('../../src/thumbnailGenerator', () => ({
+  __esModule: true,
+  createThumbFromUrl: jest.fn()
+}));
+
+const mockedGetFoldersResponse = {
   data: [],
   status: 200,
   config: axiosConfig
 };
-const mockedGetDocumentsResponse  = {
+const mockedGetDocumentsResponse = {
   data: {results: []},
   status: 200,
   config: axiosConfig
 };
-const mockedGetDocumentResponse  = {
+const mockedGetDocumentResponse = {
   data: tv.DOCUMENT_PROPS,
   status: 200,
   config: axiosConfig
 };
-const mockedPostFolderResponse  = {
+const mockedPostFolderResponse = {
   data: tv.FOLDER_PROPS,
   status: 200,
   config: axiosConfig
@@ -50,8 +61,8 @@ const mockedRefreshFolder = jest.fn();
 
 describe('App template', () => {
   const wrapper = shallowMount(App, {
-      localVue,
-      methods: {changeFolder: mockedChangeFolder} // mock changeFolder as it is called by mounted
+    localVue,
+    methods: {changeFolder: mockedChangeFolder} // mock changeFolder as it is called by mounted
   });
 
   it('renders properly app template', () => {
@@ -163,20 +174,20 @@ describe('App script methods error handling', () => {
   });
 
   it('updateDocument call alert method in case of api error', done => {
-      axios.get.mockRejectedValue('error');
-      let currentFolder = tv.FOLDER_PROPS_VARIANT;
-      wrapper.setData({previousLevels: [tv.FOLDER_PROPS, currentFolder]});
+    axios.get.mockRejectedValue('error');
+    let currentFolder = tv.FOLDER_PROPS_VARIANT;
+    wrapper.setData({previousLevels: [tv.FOLDER_PROPS, currentFolder]});
 
-      // when
-      wrapper.vm.updateDocument();
+    // when
+    wrapper.vm.updateDocument();
 
-      // then
-      wrapper.vm.$nextTick(() => {
-          axios.get().catch(() => {
-              expect(mockedAlert).toHaveBeenCalled();
-              done();
-          });
+    // then
+    wrapper.vm.$nextTick(() => {
+      axios.get().catch(() => {
+        expect(mockedAlert).toHaveBeenCalled();
+        done();
       });
+    });
   });
 });
 
@@ -189,9 +200,9 @@ describe('App script methods call proper api', () => {
     wrapper = shallowMount(App, {
         localVue,
         methods: {
-            refreshFolders: mockedRefreshFolder
-          }
+          refreshFolders: mockedRefreshFolder
         }
+      }
     );
   });
 
@@ -204,7 +215,7 @@ describe('App script methods call proper api', () => {
 
     // then
     expect(axios.get).toHaveBeenCalledWith(
-        '/app/api/v1/documents/' + opened_document_pid
+      '/app/api/v1/documents/' + opened_document_pid
     );
   });
 
@@ -218,7 +229,7 @@ describe('App script methods call proper api', () => {
 
     // then
     expect(axios.get).toHaveBeenCalledWith(
-        '/app/api/v1/documents/?level=' + currentFolder.id
+      '/app/api/v1/documents/?level=' + currentFolder.id
     );
   });
 
@@ -231,7 +242,7 @@ describe('App script methods call proper api', () => {
 
     // then
     expect(axios.get).toHaveBeenCalledWith(
-        '/app/api/v1/folders/?level=' + currentFolder.id
+      '/app/api/v1/folders/?level=' + currentFolder.id
     );
   });
 
@@ -244,15 +255,78 @@ describe('App script methods call proper api', () => {
 
     // then
     expect(axios.post).toHaveBeenCalledWith(
-        '/app/api/v1/folders/',
-        {name: wrapper.vm.newFolderName, parent: null},
-        axiosConfig
+      '/app/api/v1/folders/',
+      {name: wrapper.vm.newFolderName, parent: null},
+      axiosConfig
     );
     wrapper.vm.$nextTick(() => {
       expect(mockedRefreshFolder).toHaveBeenCalled();
       done();
     });
   });
+
+  it('generateMissingThumbnail', async () => {
+    const mockedGetDocumentFlat1 = {
+      data: {
+        count: 3,
+        next: "http://localhost/next",
+        previous: null,
+        results: [{
+          "pid": "gen-doc-1",
+          "title": "abc.pdf",
+          "note": "",
+          "created": "2019-05-28T10:06:38.776392Z",
+          "edited": "2019-05-28T10:07:02.316422Z",
+          "ftl_folder": null,
+          "thumbnail_available": true
+        }, {
+          "pid": "gen-doc-2",
+          "title": "def.pdf",
+          "note": "",
+          "created": "2019-05-25T23:23:40.877590Z",
+          "edited": "2019-05-28T10:06:22.003025Z",
+          "ftl_folder": null,
+          "thumbnail_available": true
+        }]
+      },
+      status: 200,
+    };
+
+    const mockedGetDocumentFlat2 = {
+      data: Promise.resolve({
+        count: 3,
+        next: null,
+        previous: "http://localhost/previous",
+        results: [{
+          "pid": "gen-doc-3",
+          "title": "ghi.pdf",
+          "note": "",
+          "created": "2019-05-28T10:06:38.776392Z",
+          "edited": "2019-05-28T10:07:02.316422Z",
+          "ftl_folder": null,
+          "thumbnail_available": false
+        }]
+      }),
+      status: 200,
+    };
+
+    axios.get.mockResolvedValueOnce(mockedGetDocumentFlat1);
+    axios.get.mockResolvedValueOnce(mockedGetDocumentFlat2);
+    axios.patch.mockResolvedValue({});
+
+    createThumbFromUrl.mockResolvedValue("base64str");
+
+    wrapper.vm.generateMissingThumbnail();
+    await flushPromises();
+
+    expect(axios.get).toHaveBeenCalledWith("/app/api/v1/documents?flat=true");
+    expect(axios.get).toHaveBeenCalledWith("http://localhost/next");
+    expect(axios.patch).toHaveBeenCalledWith(
+      '/app/api/v1/documents/gen-doc-3',
+      {'thumbnail_binary': 'base64str'},
+      axiosConfig
+    );
+  })
 });
 
 describe('App event handling', () => {
