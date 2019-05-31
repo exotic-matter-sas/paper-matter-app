@@ -134,8 +134,11 @@ class BasePage(LIVE_SERVER):
 
     def _wait_for_method_to_raise_exception(self, method, timeout, exception_type, *method_args, **method_kwargs):
         # Use always False validator to only return if expected condition is raised
+        def function(val):
+            return False
+
         self._wait_for_method_to_return(method, timeout, *method_args, **method_kwargs,
-                                        custom_return_validator=lambda: False,
+                                        custom_return_validator=function,
                                         expected_exception_type=exception_type)
 
     def wait_for_element_to_show(self, css_selector, timeout=5):
