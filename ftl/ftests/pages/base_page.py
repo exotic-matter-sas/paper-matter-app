@@ -2,12 +2,15 @@ import os
 import platform
 import time
 
-from django.test import LiveServerTestCase
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
-from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.chrome.options import Options as ChromeOptions
+from selenium.webdriver.common.by import By
+from selenium.webdriver.firefox.options import Options as FirefoxOptions
+from selenium.webdriver.support import expected_conditions as Ec
+from selenium.webdriver.support.wait import WebDriverWait
 
 from ftl.settings import BASE_DIR, DEFAULT_TEST_BROWSER, TEST_BROWSER_HEADLESS
 
@@ -136,10 +139,9 @@ class BasePage(LIVE_SERVER):
                                         expected_exception_type=exception_type)
 
     def wait_for_element_to_show(self, css_selector, timeout=5):
-        try:
-            self._wait_for_method_to_return(self.get_elem, timeout, css_selector)
-        except TimeoutException:
-            raise TimeoutException(f'The element "{css_selector}" couldn\'t be found after {timeout}s')
+        WebDriverWait(self.browser, timeout).until(
+            Ec.visibility_of_element_located((By.CSS_SELECTOR, css_selector))
+        )
 
     def wait_for_element_to_disappear(self, css_selector, timeout=5):
         try:
