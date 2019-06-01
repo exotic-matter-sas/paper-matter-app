@@ -21,3 +21,11 @@ export const DOCUMENT_PROPS = {
   note: 'Document note',
   created: new Date('2019-04-18T10:59:00').toString()
 };
+
+export const DOCUMENT_NO_THUMB_PROPS = {
+  pid: '1234',
+  title: 'Document title',
+  note: 'Document note',
+  created: new Date('2019-04-18T10:59:00').toString(),
+  thumbnail_available: false
+};

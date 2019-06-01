@@ -245,7 +245,6 @@
 
                 let jsonData = {'thumbnail_binary': thumb64};
 
-
                 axios.patch('/app/api/v1/documents/' + doc.pid, jsonData, axiosConfig)
                     .then(response => {
                         vi.mixinAlert("Thumbnail updated!");

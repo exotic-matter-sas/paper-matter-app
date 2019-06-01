@@ -57,7 +57,7 @@ const mockedChangeFolder = jest.fn();
 const mockedOpenDocument = jest.fn();
 const mockedAlert = jest.fn();
 const mockedRefreshFolder = jest.fn();
-
+const mockedCreateThumbnailForDocument = jest.fn();
 
 describe('App template', () => {
   const wrapper = shallowMount(App, {
@@ -200,15 +200,20 @@ describe('App script methods call proper api', () => {
     wrapper = shallowMount(App, {
         localVue,
         methods: {
-          refreshFolders: mockedRefreshFolder
+          refreshFolders: mockedRefreshFolder,
+          createThumbnailForDocument: mockedCreateThumbnailForDocument
         }
       }
     );
   });
 
-  it('openDocument call api', () => {
-    axios.get.mockResolvedValue(mockedGetDocumentResponse);
-    let opened_document_pid = tv.DOCUMENT_PROPS.pid;
+  it('openDocument call api', async () => {
+    axios.get.mockResolvedValue({
+      data: tv.DOCUMENT_NO_THUMB_PROPS,
+      status: 200,
+      config: axiosConfig
+    });
+    let opened_document_pid = tv.DOCUMENT_NO_THUMB_PROPS.pid;
 
     // when
     wrapper.vm.openDocument(opened_document_pid);
@@ -217,6 +222,8 @@ describe('App script methods call proper api', () => {
     expect(axios.get).toHaveBeenCalledWith(
       '/app/api/v1/documents/' + opened_document_pid
     );
+    await flushPromises();
+    expect(mockedCreateThumbnailForDocument).toHaveBeenCalledWith(tv.DOCUMENT_NO_THUMB_PROPS);
   });
 
   it('updateDocument call api', () => {
