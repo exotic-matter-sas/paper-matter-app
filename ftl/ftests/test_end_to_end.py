@@ -3,8 +3,10 @@ import time
 from unittest.mock import patch
 
 from django import db
+from django.db.models import Func, F
 from tika import parser
 
+from core.models import FTLDocument
 from core.views import EXECUTOR
 from ftests.pages.django_admin_home_page import AdminHomePage
 from ftests.pages.django_admin_login_page import AdminLoginPage
@@ -134,7 +136,16 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage):
         self.upload_document(os.path.join(BASE_DIR, 'ftests', 'tools', second_document_title))
 
         # User wait for document to be indexed
-        time.sleep(10)  # TODO replace by a wait_for when a indexing indicator is implemented
+        # TODO replace by a wait_for_element_to_disappear when a indexing indicator is implemented
+        queryset = FTLDocument.objects.annotate(tsvector_length=Func(F('tsvector'), function='length'))
+
+        def query_set_validator(query_set):
+            if len(query_set) == 2:
+                return True
+            else:
+                return False
+        self._wait_for_method_to_return(queryset.filter, 60, custom_return_validator=query_set_validator,
+                                        tsvector_length__gt=0)
 
         # User search last uploaded document
         self.search_document(second_document_title)

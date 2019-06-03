@@ -128,8 +128,12 @@ class BasePage(LIVE_SERVER):
         while True:
             try:
                 value = method(*method_args, **method_kwargs)
-                if custom_return_validator and custom_return_validator(value) or value:
+                if custom_return_validator:
+                    if custom_return_validator(value):
+                        return value
+                elif value:
                     return value
+
             except expected_exception_type:
                 return None
 
