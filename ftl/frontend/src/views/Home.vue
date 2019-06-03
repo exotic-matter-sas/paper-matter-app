@@ -84,7 +84,7 @@
       <b-container>
         <b-row align-h="end">
           <b-col cols="2">
-            <b-button variant="secondary" @click="docModal = false">{{this.$_('Close')}}</b-button>
+            <b-button variant="secondary" @click="closeDocument">{{this.$_('Close')}}</b-button>
           </b-col>
         </b-row>
       </b-container>
@@ -127,12 +127,7 @@
       FTLUpload
     },
 
-    props: {
-      query: {
-        type: String,
-        required: false
-      }
-    },
+    props: ['query', 'doc'],
 
     data() {
       return {
@@ -165,6 +160,13 @@
     watch: {
       query: function (newVal, oldVal) {
         this.refreshDocumentWithSearch(newVal);
+      },
+      doc: function (newVal, oldVal) {
+        if (newVal === undefined) {
+          this.docModal = false;
+        } else {
+          this.openDocument(newVal);
+        }
       }
     },
 
@@ -216,7 +218,14 @@
             if (!response.data.thumbnail_available) {
               vi.createThumbnailForDocument(response.data);
             }
+
+            this.$router.push({name: 'home', params: {doc: pid}});
           }).catch(error => vi.mixinAlert("Unable to show document.", true));
+      },
+
+      closeDocument: function () {
+        this.docPid = false;
+        this.docPid = null;
       },
 
       createThumbnailForDocument: async function (doc, updateDocuments = true) {

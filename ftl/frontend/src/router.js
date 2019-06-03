@@ -1,16 +1,22 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import Home from './views/Home.vue'
+import Vue from 'vue';
+import Router from 'vue-router';
+import Home from './views/Home.vue';
 
-Vue.use(Router)
+Vue.use(Router);
 
 export default new Router({
   routes: [
     {
-      path: '/',
+      path: '/', redirect: '/home'
+    },
+    {
+      path: '/home/:doc?',
       name: 'home',
       component: Home,
-      props: (route) => ({query: route.query.q})
+      props: (route) => ({
+        query: route.query.q,
+        doc: route.params.doc
+      })
     },
     {
       path: '/about',
