@@ -40,15 +40,28 @@ const mockedGetDocumentsResponse = {
   status: 200,
   config: axiosConfig
 };
-const mockedGetDocumentResponse = {
-  data: tv.DOCUMENT_PROPS,
-  status: 200,
-  config: axiosConfig
-};
 const mockedPostFolderResponse = {
   data: tv.FOLDER_PROPS,
   status: 200,
   config: axiosConfig
+};
+const mockedGetDocumentFlat1Response = {
+  data: {
+    count: 2,
+    next: "http://localhost/next",
+    previous: null,
+    results: [JSON.stringify(tv.DOCUMENT_PROPS), JSON.stringify(tv.DOCUMENT_PROPS_2)]
+  },
+  status: 200,
+};
+const mockedGetDocumentFlat2Response = {
+  data: Promise.resolve({
+    count: 1,
+    next: null,
+    previous: "http://localhost/previous",
+    results: [JSON.stringify(tv.DOCUMENT_PROPS_3)]
+  }),
+  status: 200,
 };
 
 const mockedUpdateFolder = jest.fn();
@@ -107,8 +120,9 @@ describe('App script methods call proper methods', () => {
       localVue,
       methods: {
         changeFolder: mockedChangeFolder,
-        updateDocument: mockedUpdateDocument,
-        updateFolder: mockedUpdateFolder,
+        updateDocuments: mockedUpdateDocument,
+        updateFolders: mockedUpdateFolder,
+        createThumbnailForDocument: mockedCreateThumbnailForDocument
       }
     });
   });
@@ -124,8 +138,8 @@ describe('App script methods call proper methods', () => {
     wrapper = shallowMount(App, {
       localVue,
       methods: {
-        updateDocument: mockedUpdateDocument,
-        updateFolder: mockedUpdateFolder,
+        updateDocuments: mockedUpdateDocument,
+        updateFolders: mockedUpdateFolder,
       }
     });
 
@@ -158,6 +172,17 @@ describe('App script methods call proper methods', () => {
     // then
     expect(mockedUpdateFolder).toHaveBeenCalledWith(currentFolder);
   });
+
+  it('generateMissingThumbnail call proper methods', async () => {
+    axios.get.mockResolvedValueOnce(mockedGetDocumentFlat1Response);
+    axios.get.mockResolvedValueOnce(mockedGetDocumentFlat2Response);
+
+    wrapper.vm.generateMissingThumbnail();
+    await flushPromises();
+
+    // Only 2 thumbnail are not available in the 3 documents listed
+    expect(mockedCreateThumbnailForDocument).toHaveBeenCalledTimes(2)
+  });
 });
 
 describe('App script methods error handling', () => {
@@ -173,13 +198,13 @@ describe('App script methods error handling', () => {
     });
   });
 
-  it('updateDocument call alert method in case of api error', done => {
+  it('updateDocuments call alert method in case of api error', done => {
     axios.get.mockRejectedValue('error');
     let currentFolder = tv.FOLDER_PROPS_VARIANT;
     wrapper.setData({previousLevels: [tv.FOLDER_PROPS, currentFolder]});
 
     // when
-    wrapper.vm.updateDocument();
+    wrapper.vm.updateDocuments();
 
     // then
     wrapper.vm.$nextTick(() => {
@@ -226,13 +251,13 @@ describe('App script methods call proper api', () => {
     expect(mockedCreateThumbnailForDocument).toHaveBeenCalledWith(tv.DOCUMENT_NO_THUMB_PROPS);
   });
 
-  it('updateDocument call api', () => {
+  it('updateDocuments call api', () => {
     axios.get.mockResolvedValue(mockedGetDocumentsResponse);
     let currentFolder = tv.FOLDER_PROPS_VARIANT;
     wrapper.setData({previousLevels: [tv.FOLDER_PROPS, currentFolder]});
 
     // when
-    wrapper.vm.updateDocument();
+    wrapper.vm.updateDocuments();
 
     // then
     expect(axios.get).toHaveBeenCalledWith(
@@ -240,12 +265,12 @@ describe('App script methods call proper api', () => {
     );
   });
 
-  it('updateFolder call api', () => {
+  it('updateFolders call api', () => {
     axios.get.mockResolvedValue(mockedGetFoldersResponse);
     let currentFolder = tv.FOLDER_PROPS_VARIANT;
 
     // when
-    wrapper.vm.updateFolder(currentFolder);
+    wrapper.vm.updateFolders(currentFolder);
 
     // then
     expect(axios.get).toHaveBeenCalledWith(
@@ -272,68 +297,36 @@ describe('App script methods call proper api', () => {
     });
   });
 
-  it('generateMissingThumbnail', async () => {
-    const mockedGetDocumentFlat1 = {
-      data: {
-        count: 3,
-        next: "http://localhost/next",
-        previous: null,
-        results: [{
-          "pid": "gen-doc-1",
-          "title": "abc.pdf",
-          "note": "",
-          "created": "2019-05-28T10:06:38.776392Z",
-          "edited": "2019-05-28T10:07:02.316422Z",
-          "ftl_folder": null,
-          "thumbnail_available": true
-        }, {
-          "pid": "gen-doc-2",
-          "title": "def.pdf",
-          "note": "",
-          "created": "2019-05-25T23:23:40.877590Z",
-          "edited": "2019-05-28T10:06:22.003025Z",
-          "ftl_folder": null,
-          "thumbnail_available": true
-        }]
-      },
-      status: 200,
-    };
-
-    const mockedGetDocumentFlat2 = {
-      data: Promise.resolve({
-        count: 3,
-        next: null,
-        previous: "http://localhost/previous",
-        results: [{
-          "pid": "gen-doc-3",
-          "title": "ghi.pdf",
-          "note": "",
-          "created": "2019-05-28T10:06:38.776392Z",
-          "edited": "2019-05-28T10:07:02.316422Z",
-          "ftl_folder": null,
-          "thumbnail_available": false
-        }]
-      }),
-      status: 200,
-    };
-
-    axios.get.mockResolvedValueOnce(mockedGetDocumentFlat1);
-    axios.get.mockResolvedValueOnce(mockedGetDocumentFlat2);
-    axios.patch.mockResolvedValue({});
-
-    createThumbFromUrl.mockResolvedValue("base64str");
+  it('generateMissingThumbnail call api', async () => {
+    axios.get.mockResolvedValueOnce(mockedGetDocumentFlat1Response);
+    axios.get.mockResolvedValueOnce(mockedGetDocumentFlat2Response);
 
     wrapper.vm.generateMissingThumbnail();
     await flushPromises();
 
     expect(axios.get).toHaveBeenCalledWith("/app/api/v1/documents?flat=true");
     expect(axios.get).toHaveBeenCalledWith("http://localhost/next");
+  });
+
+  it('createThumbnailForDocument call api', async () => {
+    // override wrapper set in beforeEach as original createThumbnailForDocument need to be tested here
+    axios.get.mockResolvedValueOnce(mockedGetFoldersResponse);
+    axios.get.mockResolvedValueOnce(mockedGetDocumentsResponse);
+    wrapper = shallowMount(App, {localVue});
+    axios.patch.mockResolvedValue({});
+
+    createThumbFromUrl.mockResolvedValue("base64str");
+
+    wrapper.vm.createThumbnailForDocument(tv.DOCUMENT_PROPS);
+    await flushPromises();
+
     expect(axios.patch).toHaveBeenCalledWith(
-      '/app/api/v1/documents/gen-doc-3',
+      '/app/api/v1/documents/' + tv.DOCUMENT_PROPS.pid,
       {'thumbnail_binary': 'base64str'},
       axiosConfig
     );
-  })
+  });
+
 });
 
 describe('App event handling', () => {
@@ -344,13 +337,13 @@ describe('App event handling', () => {
       localVue,
       methods: {
         changeFolder: mockedChangeFolder,
-        updateDocument: mockedUpdateDocument,
+        updateDocuments: mockedUpdateDocument,
         openDocument: mockedOpenDocument,
       }
     });
   });
 
-  it('event-new-upload call updateDocument', done => {
+  it('event-new-upload call updateDocuments', done => {
     // when
     wrapper.find(FTLUpload).vm.$emit('event-new-upload');
 
@@ -391,7 +384,7 @@ describe('App event handling', () => {
     });
   });
 
-  it('event-delete-doc call updateDocument', done => {
+  it('event-delete-doc call updateDocuments', done => {
     // Need to define at least one document in order FTLDocument component is instantiated
     wrapper.setData({docs: [tv.DOCUMENT_PROPS]});
 

@@ -11,7 +11,7 @@
             <b-container>
                 <b-row>
                     <b-col>
-                        <FTLUpload :currentFolder="getCurrentFolder" @event-new-upload="updateDocument"/>
+                        <FTLUpload :currentFolder="getCurrentFolder" @event-new-upload="updateDocuments"/>
                     </b-col>
                 </b-row>
                 <b-row>
@@ -19,7 +19,7 @@
                         <b-button id="generate-thumb" variant="primary" class="m-1" @click="generateMissingThumbnail">
                             {{this.$_('Generate missing thumb')}}
                         </b-button>
-                        <b-button id="refresh-documents" variant="primary" class="m-1" @click="updateDocument">
+                        <b-button id="refresh-documents" variant="primary" class="m-1" @click="updateDocuments">
                             {{this.$_('Refresh documents list')}}
                         </b-button>
                         {{ this.$_('Last refresh') }} {{ lastRefreshFormatted }}
@@ -55,7 +55,7 @@
                     </b-col>
                 </b-row>
                 <b-row align-h="around" v-else-if="docs.length">
-                    <FTLDocument v-for="doc in docs" :key="doc.pid" :doc="doc" @event-delete-doc="updateDocument"
+                    <FTLDocument v-for="doc in docs" :key="doc.pid" :doc="doc" @event-delete-doc="updateDocuments"
                                  @event-open-doc="openDocument"/>
                 </b-row>
                 <b-row v-else>
@@ -196,23 +196,23 @@
 
         methods: {
             refreshFolders: function () {
-                this.updateFolder(this.getCurrentFolder);
+                this.updateFolders(this.getCurrentFolder);
             },
 
             changeFolder: function (folder = null) {
                 if (folder) this.previousLevels.push(folder);
                 this.currentSearch = "";
-                this.updateFolder(folder);
-                this.updateDocument();
+                this.updateFolders(folder);
+                this.updateDocuments();
             },
 
             changeToPreviousFolder: function () {
                 this.previousLevels.pop(); // Remove current level
                 let level = this.getCurrentFolder;
                 this.currentSearch = "";
-                this.updateFolder(level);
+                this.updateFolders(level);
                 this.docs = []; // Clear docs when changing folder to avoid display artefact
-                this.updateDocument();
+                this.updateDocuments();
             },
 
             openDocument: function (pid) {
@@ -232,7 +232,7 @@
                     }).catch(error => vi.mixinAlert("Unable to show document.", true));
             },
 
-            createThumbnailForDocument: async function (doc) {
+            createThumbnailForDocument: async function (doc, updateDocuments=true) {
                 const vi = this;
                 let thumb64;
 
@@ -248,20 +248,22 @@
                 axios.patch('/app/api/v1/documents/' + doc.pid, jsonData, axiosConfig)
                     .then(response => {
                         vi.mixinAlert("Thumbnail updated!");
-                        vi.updateDocument();
+                        if (updateDocuments){
+                            vi.updateDocuments();
+                        }
                     }).catch(error => vi.mixinAlert("Unable to update thumbnail", true));
             },
 
             refreshDocumentWithSearch: function (text) {
                 this.currentSearch = text;
-                this.updateDocument();
+                this.updateDocuments();
             },
 
             clearSearch: function () {
                 this.refreshDocumentWithSearch("");
             },
 
-            updateDocument: function () {
+            updateDocuments: function () {
                 const vi = this;
                 let queryString = {};
 
@@ -289,7 +291,7 @@
                 });
             },
 
-            updateFolder: function (level = null) {
+            updateFolders: function (level = null) {
                 const vi = this;
                 let qs = '';
 
@@ -337,21 +339,7 @@
                         while (documents !== null && documents.results.length > 0) {
                             for (const doc of documents.results) {
                                 if (doc['thumbnail_available'] === false) {
-                                    let thumb64;
-
-                                    try {
-                                        thumb64 = await createThumbFromUrl('/app/uploads/' + doc.pid);
-                                    } catch (e) {
-                                        vi.mixinAlert("Unable to update thumbnail", true);
-                                        continue;
-                                    }
-
-                                    let jsonData = {'thumbnail_binary': thumb64};
-
-                                    axios.patch('/app/api/v1/documents/' + doc.pid, jsonData, axiosConfig)
-                                        .then(response => {
-                                            vi.mixinAlert("Thumbnail updated! " + doc.pid);
-                                        }).catch(error => vi.mixinAlert("Unable to update thumbnail " + doc.pid, true));
+                                    await vi.createThumbnailForDocument(doc, false);
                                 }
                             }
 
