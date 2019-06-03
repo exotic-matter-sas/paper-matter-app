@@ -133,7 +133,7 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage):
         self.upload_document(os.path.join(BASE_DIR, 'ftests', 'tools', second_document_title))
 
         # User wait for document to be indexed
-        time.sleep(5)  # TODO replace by a wait_for when a indexing indicator is implemented
+        time.sleep(10)  # TODO replace by a wait_for when a indexing indicator is implemented
 
         # User search last uploaded document
         self.search_document(second_document_title)
