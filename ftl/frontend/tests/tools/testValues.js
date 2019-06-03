@@ -27,14 +27,16 @@ export const DOCUMENT_PROPS_2 = {
   pid: '5678',
   title: 'Document title 2',
   note: 'Document note 2',
-  created: new Date('2019-04-19T11:00:00').toString()
+  created: new Date('2019-04-19T11:00:00').toString(),
+  thumbnail_available: false
 };
 
 export const DOCUMENT_PROPS_3 = {
   pid: '9101',
   title: 'Document title 3',
   note: 'Document note 3',
-  created: new Date('2019-04-20T11:01:00').toString()
+  created: new Date('2019-04-20T11:01:00').toString(),
+  thumbnail_available: false
 };
 
 export const DOCUMENT_NO_THUMB_PROPS = {

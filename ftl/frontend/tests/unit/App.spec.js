@@ -50,7 +50,7 @@ const mockedGetDocumentFlat1Response = {
     count: 2,
     next: "http://localhost/next",
     previous: null,
-    results: [JSON.stringify(tv.DOCUMENT_PROPS), JSON.stringify(tv.DOCUMENT_PROPS_2)]
+    results: [tv.DOCUMENT_PROPS, tv.DOCUMENT_PROPS_2]
   },
   status: 200,
 };
@@ -59,7 +59,7 @@ const mockedGetDocumentFlat2Response = {
     count: 1,
     next: null,
     previous: "http://localhost/previous",
-    results: [JSON.stringify(tv.DOCUMENT_PROPS_3)]
+    results: [tv.DOCUMENT_PROPS_3]
   }),
   status: 200,
 };
@@ -180,7 +180,7 @@ describe('App script methods call proper methods', () => {
     wrapper.vm.generateMissingThumbnail();
     await flushPromises();
 
-    // Only 2 thumbnail are not available in the 3 documents listed
+    // Only 2 thumbnails are not available in the 3 documents listed
     expect(mockedCreateThumbnailForDocument).toHaveBeenCalledTimes(2)
   });
 });
