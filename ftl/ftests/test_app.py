@@ -106,7 +106,7 @@ class HomePageTests(LoginPage, HomePage):
         self.search_document(second_document_title)
 
         # Only the second document appears in search results
-        self.assertEqual(len(self.get_elems('.document-thumbnail')), 1)
+        self.assertEqual(len(self.get_elems(self.documents_list)), 1)
         self.assertEqual(second_document_title, self.get_elem(self.first_document_title).text)
 
     @skip('TODO when document note implemented in UI')  # TODO
@@ -124,5 +124,5 @@ class HomePageTests(LoginPage, HomePage):
         self.search_document(second_document_text_content)
 
         # Only the second document appears in search results
-        self.assertEqual(len(self.get_elems('.document-thumbnail')), 1)
+        self.assertEqual(len(self.get_elems(self.documents_list)), 1)
         self.assertEqual(second_document_title, self.get_elem(self.first_document_title).text)
