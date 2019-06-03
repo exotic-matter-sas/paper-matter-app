@@ -38,9 +38,8 @@ class HomePage(BasePage):
         self.get_elem(self.document_upload_input, is_visible=False).send_keys(absolute_path)
         self.get_elem(self.submit_document_upload_button).click()
         self.wait_for_element_to_disappear(self.document_upload_loader)
-        self.wait_for_element_to_show(self.close_notification)
-        self.get_elem(self.close_notification).click()
-        self.wait_for_element_to_disappear(self.close_notification)
+        # Needed in case of several upload in a row as upload success trigger a notification that hide upload button
+        self.close_last_notification()
 
     def create_folder(self, folder_name=tv.FOLDER1_NAME):
         self.get_elem(self.create_folder_button).click()

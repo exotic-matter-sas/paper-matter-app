@@ -26,6 +26,7 @@ class BasePage(LIVE_SERVER):
     modal_accept_button = '.modal-dialog .modal-footer .btn-primary'
     modal_reject_button = '.modal-dialog .modal-footer .btn-secondary'
 
+    notification = '.b-toaster-slot .b-toast'
     success_notification = '.b-toaster-slot .b-toast-success'
     error_notification = '.b-toaster-slot .b-toast-danger'
     close_notification = '.b-toaster-slot .b-toast .close'
@@ -155,3 +156,8 @@ class BasePage(LIVE_SERVER):
             self._wait_for_method_to_raise_exception(self.get_elem, timeout, NoSuchElementException, css_selector)
         except TimeoutException:
             raise TimeoutException(f'The element "{css_selector}" doesn\'t disapear after {timeout}s')
+
+    def close_last_notification(self):
+        self.wait_for_element_to_show(self.notification)
+        self.get_elem(self.close_notification).click()
+        self.wait_for_element_to_disappear(self.notification)

@@ -1,8 +1,8 @@
 import os
 import time
-from unittest import skip
 from unittest.mock import patch
 
+from django import db
 from tika import parser
 
 from core.views import EXECUTOR
@@ -122,9 +122,10 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage):
         self.log_user()
 
     def tearDown(self):
-        """ Additional teardown required to shutdown indexation thread"""
-        super().tearDown()
+        """ Additional teardown required to shutdown indexation thread and associated DB connection"""
+        EXECUTOR.submit(db.connections.close_all)
         EXECUTOR.shutdown()
+        super().tearDown()
 
     def test_upload_doc_wait_tika_indexation_and_search_for_doc(self):
         # User upload 2 documents
