@@ -69,7 +69,7 @@
           <b-col md="8">
             <div class="embed-responsive embed-responsive-1by1 doc-pdf ">
               <iframe v-if="currentOpenDoc.pid" class="embed-responsive-item"
-                      :src="`/assets/pdfjs/web/viewer.html?file=/app/uploads/` + currentOpenDoc.pid">
+                      :src="`/assets/pdfjs/web/viewer.html?file=/app/uploads/` + currentOpenDoc.pid + `#search=` + currentSearch">
               </iframe>
             </div>
 
