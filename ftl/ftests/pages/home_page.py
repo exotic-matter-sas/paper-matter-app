@@ -40,6 +40,7 @@ class HomePage(BasePage):
         self.wait_for_element_to_disappear(self.document_upload_loader)
         self.wait_for_element_to_show(self.close_notification)
         self.get_elem(self.close_notification).click()
+        self.wait_for_element_to_disappear(self.close_notification)
 
     def create_folder(self, folder_name=tv.FOLDER1_NAME):
         self.get_elem(self.create_folder_button).click()
