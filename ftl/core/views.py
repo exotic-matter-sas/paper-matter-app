@@ -1,13 +1,16 @@
 import json
 import os
+from base64 import b64decode
 from concurrent.futures.thread import ThreadPoolExecutor
 
 import langid
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
+from django.core.files.base import ContentFile
 from django.db.models import F
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404
+from django.utils.http import http_date
 from django.views import View
 from rest_framework import generics, views
 from rest_framework.authentication import SessionAuthentication
@@ -38,6 +41,11 @@ def _extract_text_from_pdf(vector, ftl_doc_instance):
     ftl_doc_instance.save()
 
 
+def _extract_binary_from_data_uri(data_uri):
+    header, encoded = data_uri.split(",", 1)
+    return b64decode(encoded)
+
+
 class HomeView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
@@ -53,8 +61,9 @@ class DownloadView(LoginRequiredMixin, PermissionRequiredMixin, View):
     permission_required = ('core.view_ftldocument',)
 
     def get(self, request, *args, **kwargs):
-        doc = get_object_or_404(FTLDocument.objects.filter(ftl_user=self.request.user, pid=kwargs['uuid']))
+        doc = get_object_or_404(FTLDocument.objects.filter(org=self.request.user.org, pid=kwargs['uuid']))
         response = HttpResponse(doc.binary, 'application/octet')
+        response['Last-Modified'] = http_date(doc.edited.timestamp())
         response['Content-Disposition'] = 'attachment; filename="%s"' % doc.binary.name
         return response
 
@@ -66,13 +75,15 @@ class FTLDocumentList(generics.ListAPIView):
 
     def get_queryset(self):
         current_folder = self.request.query_params.get('level', None)
+        flat_mode = self.request.query_params.get('flat', False)
 
-        queryset = FTLDocument.objects.filter(org_id=self.request.user.org).order_by('-created')
+        queryset = FTLDocument.objects.filter(org=self.request.user.org).order_by('-created')
 
-        if current_folder is not None:
-            queryset = queryset.filter(ftl_folder__id=current_folder)
-        else:
-            queryset = queryset.filter(ftl_folder__isnull=True)
+        if not flat_mode:
+            if current_folder is not None:
+                queryset = queryset.filter(ftl_folder__id=current_folder)
+            else:
+                queryset = queryset.filter(ftl_folder__isnull=True)
 
         text_search = self.request.query_params.get('search')
 
@@ -92,7 +103,7 @@ class FTLDocumentDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (FTLModelPermissions,)
 
     def get_queryset(self):
-        return FTLDocument.objects.filter(ftl_user=self.request.user)
+        return FTLDocument.objects.filter(org=self.request.user.org)
 
     def get_object(self):
         return get_object_or_404(self.get_queryset(), pid=self.kwargs['pid'])
@@ -103,11 +114,38 @@ class FTLDocumentDetail(generics.RetrieveUpdateDestroyAPIView):
     def perform_destroy(self, instance):
         if instance.org == self.request.user.org:
             binary = instance.binary
+            thumbnail_binary = instance.thumbnail_binary
             super().perform_destroy(instance)
+
             binary.file.close()
             os.remove(binary.file.name)
+
+            if thumbnail_binary:
+                thumbnail_binary.file.close()
+                os.remove(thumbnail_binary.file.name)
         else:
             raise ValidationError("Trying to delete document from wrong user!")
+
+
+class FTLDocumentThumbnail(LoginRequiredMixin, views.APIView):
+    authentication_classes = (SessionAuthentication,)
+    serializer_class = FTLDocumentSerializer
+    lookup_field = 'pid'
+    permission_classes = (FTLModelPermissions,)
+
+    def get_queryset(self):
+        return FTLDocument.objects.filter(org=self.request.user.org)
+
+    def get(self, request, *args, **kwargs):
+        doc = get_object_or_404(self.get_queryset(), pid=kwargs['pid'])
+
+        if not bool(doc.thumbnail_binary):
+            return HttpResponseNotFound()
+
+        response = HttpResponse(doc.thumbnail_binary, 'image/png')
+        response['Last-Modified'] = http_date(doc.edited.timestamp())
+        # TODO add ETAG and last modified for caching
+        return response
 
 
 class FileUploadView(LoginRequiredMixin, views.APIView):
@@ -119,10 +157,11 @@ class FileUploadView(LoginRequiredMixin, views.APIView):
     queryset = FTLDocument.objects.none()
 
     def post(self, request, *args, **kwargs):
-        file_obj = request.data['file']
-        payload = json.loads(request.data['json'])
+        if 'file' not in request.FILES or 'json' not in request.POST:
+            return HttpResponseBadRequest()
 
-        # TODO check for empty form
+        file_obj = request.FILES['file']
+        payload = json.loads(request.POST['json'])
 
         if 'ftl_folder' in payload:
             ftl_folder = get_object_or_404(FTLFolder.objects.filter(org=self.request.user.org),
@@ -136,6 +175,11 @@ class FileUploadView(LoginRequiredMixin, views.APIView):
         ftl_doc.binary = file_obj
         ftl_doc.org = self.request.user.org
         ftl_doc.title = file_obj.name
+
+        if 'thumbnail' in request.POST:
+            ftl_doc.thumbnail_binary = ContentFile(_extract_binary_from_data_uri(request.POST['thumbnail']),
+                                                   'thumb.png')
+
         ftl_doc.save()
 
         EXECUTOR.submit(_extract_text_from_pdf, SEARCH_VECTOR, ftl_doc)

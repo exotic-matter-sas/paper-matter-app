@@ -21,8 +21,8 @@ describe('vue mixins call proper methods', () => {
       localVue,
       methods: {
         changeFolder: mockedChangeFolder,
-        updateDocument: mockedUpdateDocument,
-        updateFolder: mockedUpdateFolder,
+        updateDocuments: mockedUpdateDocument,
+        updateFolders: mockedUpdateFolder,
       }
     });
   });

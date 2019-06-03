@@ -11,6 +11,7 @@ urlpatterns = [
     path('api/v1/folders/<int:id>', views.FTLFolderDetail.as_view()),
     path('api/v1/documents/', views.FTLDocumentList.as_view()),
     path('api/v1/documents/<uuid:pid>', views.FTLDocumentDetail.as_view()),
+    path('api/v1/documents/<uuid:pid>/thumbnail.png', views.FTLDocumentThumbnail.as_view()),
     path('api/v1/documents/upload', views.FileUploadView.as_view()),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
