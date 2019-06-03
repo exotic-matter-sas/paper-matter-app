@@ -74,18 +74,13 @@ describe('FTLUpload script', () => {
       axios_upload_conf
     );
   });
-  it('uploadDocument call thumb generation', async () => {
+  it('uploadDocument call createThumbFromFile', async () => {
     // when
     wrapper.vm.uploadDocument();
 
-    // TODO
     await flushPromises();
     // then
-    expect(axios.post).toHaveBeenCalledWith(
-      '/app/api/v1/documents/upload',
-      formData,
-      axios_upload_conf
-    );
+    expect(createThumbFromFile).toHaveBeenCalled()
   });
   it('uploadDocument emit event-new-upload', async () => {
     // when
