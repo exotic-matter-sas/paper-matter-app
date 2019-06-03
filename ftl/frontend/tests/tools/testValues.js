@@ -19,13 +19,22 @@ export const DOCUMENT_PROPS = {
   pid: '1234',
   title: 'Document title',
   note: 'Document note',
-  created: new Date('2019-04-18T10:59:00').toString()
+  created: new Date('2019-04-18T10:59:00').toString(),
+  thumbnail_available: true
 };
 
-// Mocked AXIOS generic conf
-
-export const AXIOS_CRSF_CONF = {
-    xsrfCookieName: 'csrftoken',
-    xsrfHeaderName: 'X-CSRFToken'
+export const DOCUMENT_NO_THUMB_PROPS = {
+  pid: '4321',
+  title: 'Document title',
+  note: 'Document note',
+  created: new Date('2019-04-18T10:59:00').toString(),
+  thumbnail_available: false
 };
 
+export const DOCUMENT_NO_THUMB_PROPS_2 = {
+  pid: '8765',
+  title: 'Document title 2',
+  note: 'Document note 2',
+  created: new Date('2019-04-18T10:59:00').toString(),
+  thumbnail_available: false
+};

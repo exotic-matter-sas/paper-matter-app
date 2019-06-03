@@ -13,6 +13,7 @@
     "axios": "^0.18.0",
     "bootstrap-vue": "^2.0.0-rc.20",
     "core-js": "^2.6.5",
+    "pdfjs-dist": "^2.0.943",
     "qs": "^6.7.0",
     "vue": "^2.6.6",
     "webpack-bundle-tracker": "^0.4.2-beta"
@@ -28,6 +29,7 @@
     "babel-jest": "^23.6.0",
     "eslint": "^5.8.0",
     "eslint-plugin-vue": "^5.0.0",
+    "flush-promises": "^1.0.2",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^24.7.1",
     "vue-jest": "^3.0.4",
@@ -75,7 +77,8 @@
     ],
     "moduleNameMapper": {
       "^@/(.*)$": "<rootDir>/src/$1",
-      "\\.(css|less)$": "identity-obj-proxy"
+      "\\.(css|less)$": "identity-obj-proxy",
+      "\\.worker.js": "<rootDir>/__mocks__/workerMock.js"
     },
     "snapshotSerializers": [
       "jest-serializer-vue"

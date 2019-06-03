@@ -6,20 +6,19 @@
             </b-col>
             <b-col md="8">
                 <b-form-file
-                        ref="fileUploadField"
-                        v-model="file"
-                        :state="Boolean(file)"
-                        :placeholder="this.$_('Choose a file...')"
-                        :drop-placeholder="this.$_('Drop file here...')"
-                        :browse-text="this.$_('Browse')"
+                    ref="fileUploadField"
+                    v-model="file"
+                    :state="Boolean(file)"
+                    :placeholder="this.$_('Choose a file...')"
+                    :drop-placeholder="this.$_('Drop file here...')"
+                    :browse-text="this.$_('Browse')"
                 ></b-form-file>
             </b-col>
             <b-col md="auto">
-                <b-button id="upload-button" variant="primary" :disabled="uploading || !file" @click="uploadDocument">{{this.$_('Upload')}}</b-button>
+                <b-button id="upload-button" variant="primary" :disabled="uploading || !file" @click="uploadDocument">
+                    {{this.$_('Upload')}}
+                </b-button>
             </b-col>
-        </b-row>
-        <b-row align-h="center">
-            <p>{{this.$_('Response: ')}}{{ response }}</p>
         </b-row>
         <b-row align-h="center">
             <b-col cols="12">
@@ -32,11 +31,12 @@
 </template>
 
 <script>
-    import axios from 'axios'
+    import axios from 'axios';
+    import {createThumbFromFile} from "../thumbnailGenerator";
+    import {axiosConfig} from "../constants";
 
     export default {
         name: "FTLUpload",
-
         props: {
             currentFolder: {
                 type: Object,
@@ -49,7 +49,7 @@
                 file: null,
                 response: '',
                 uploading: false,
-                uploadProgress: 0
+                uploadProgress: 0,
             }
         },
 
@@ -63,10 +63,22 @@
                 }
             },
 
-            uploadDocument: function () {
+            uploadDocument: async function () {
                 let vi = this;
+                let thumb64 = null;
                 vi.uploading = true;
 
+                // start thumbnail generation
+                vi.uploadProgress = 10;
+                // TODO disable thumbnail generation on mobile
+                try {
+                    thumb64 = await createThumbFromFile(vi.file);
+                } catch (e) {
+                    vi.mixinAlert("Error creating thumbnail", true);
+                    thumb64 = null;
+                }
+
+                vi.uploadProgress = 20;
                 let jsonData = {};
 
                 if (vi.currentFolder != null) {
@@ -74,18 +86,17 @@
                 }
 
                 let formData = new FormData();
+
+                if (thumb64 !== null) {
+                    formData.append('thumbnail', thumb64);
+                }
                 formData.append('file', this.file);
                 formData.append('json', JSON.stringify(jsonData));
 
-                // Pass CSRF token from cookie to XHR call header (handled by Axios)
-                let axiosConfig = {
-                    xsrfCookieName: 'csrftoken',
-                    xsrfHeaderName: 'X-CSRFToken',
-                    onUploadProgress: this.refreshUploadProgression
-                };
+                const updatedAxiosConfig = Object.assign({}, axiosConfig, {onUploadProgress: this.refreshUploadProgression});
 
                 axios
-                    .post('/app/api/v1/documents/upload', formData, axiosConfig)
+                    .post('/app/api/v1/documents/upload', formData, updatedAxiosConfig)
                     .then(response => {
                         vi.$emit('event-new-upload'); // Event for refresh documents list
                         vi.response = response.data;
