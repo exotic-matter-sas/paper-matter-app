@@ -35,6 +35,16 @@ const mockedGetFoldersResponse = {
   status: 200,
   config: axiosConfig
 };
+const mockedGetDocumentDetailWithThumbResponse = {
+    data: tv.DOCUMENT_PROPS,
+    status: 200,
+    config: axiosConfig
+};
+const mockedGetDocumentDetailWithoutThumbResponse = {
+    data: tv.DOCUMENT_NO_THUMB_PROPS,
+    status: 200,
+    config: axiosConfig
+};
 const mockedGetDocumentsResponse = {
   data: {results: []},
   status: 200,
@@ -50,7 +60,7 @@ const mockedGetDocumentFlat1Response = {
     count: 2,
     next: "http://localhost/next",
     previous: null,
-    results: [tv.DOCUMENT_PROPS, tv.DOCUMENT_PROPS_2]
+    results: [tv.DOCUMENT_PROPS, tv.DOCUMENT_NO_THUMB_PROPS]
   },
   status: 200,
 };
@@ -59,7 +69,7 @@ const mockedGetDocumentFlat2Response = {
     count: 1,
     next: null,
     previous: "http://localhost/previous",
-    results: [tv.DOCUMENT_PROPS_3]
+    results: [tv.DOCUMENT_NO_THUMB_PROPS_2]
   }),
   status: 200,
 };
@@ -116,6 +126,7 @@ describe('App script methods call proper methods', () => {
   let wrapper;
 
   beforeEach(() => {
+    mockedCreateThumbnailForDocument.mockClear();
     wrapper = shallowMount(App, {
       localVue,
       methods: {
@@ -183,6 +194,25 @@ describe('App script methods call proper methods', () => {
     // Only 2 thumbnails are not available in the 3 documents listed
     expect(mockedCreateThumbnailForDocument).toHaveBeenCalledTimes(2)
   });
+
+  it('openDocument call createThumbnailForDocument if needed', async () => {
+    axios.get.mockResolvedValueOnce(mockedGetDocumentDetailWithThumbResponse);
+    axios.get.mockResolvedValueOnce(mockedGetDocumentDetailWithoutThumbResponse);
+
+    // when open document is called for a document with thumbnail
+    wrapper.vm.openDocument(tv.DOCUMENT_PROPS.pid);
+    await flushPromises();
+
+    // then thumbnail generation isn't needed
+    expect(mockedCreateThumbnailForDocument).not.toHaveBeenCalled();
+
+    // when open document is called for a document without thumbnail
+    wrapper.vm.openDocument(tv.DOCUMENT_NO_THUMB_PROPS.pid);
+    await flushPromises();
+
+    // then thumbnail generation is needed
+    expect(mockedCreateThumbnailForDocument).toHaveBeenCalledWith(tv.DOCUMENT_NO_THUMB_PROPS);
+  });
 });
 
 describe('App script methods error handling', () => {
@@ -220,24 +250,20 @@ describe('App script methods call proper api', () => {
   let wrapper;
 
   beforeEach(() => {
-    axios.get.mockResolvedValueOnce(mockedGetFoldersResponse);
-    axios.get.mockResolvedValueOnce(mockedGetDocumentsResponse);
     wrapper = shallowMount(App, {
         localVue,
         methods: {
+          changeFolder: mockedChangeFolder,
           refreshFolders: mockedRefreshFolder,
-          createThumbnailForDocument: mockedCreateThumbnailForDocument
+          createThumbnailForDocument: mockedCreateThumbnailForDocument,
+          mixinAlert: mockedAlert,
         }
       }
     );
   });
 
   it('openDocument call api', async () => {
-    axios.get.mockResolvedValue({
-      data: tv.DOCUMENT_NO_THUMB_PROPS,
-      status: 200,
-      config: axiosConfig
-    });
+    axios.get.mockResolvedValue(mockedGetDocumentDetailWithoutThumbResponse);
     let opened_document_pid = tv.DOCUMENT_NO_THUMB_PROPS.pid;
 
     // when
@@ -247,8 +273,6 @@ describe('App script methods call proper api', () => {
     expect(axios.get).toHaveBeenCalledWith(
       '/app/api/v1/documents/' + opened_document_pid
     );
-    await flushPromises();
-    expect(mockedCreateThumbnailForDocument).toHaveBeenCalledWith(tv.DOCUMENT_NO_THUMB_PROPS);
   });
 
   it('updateDocuments call api', () => {
@@ -310,9 +334,14 @@ describe('App script methods call proper api', () => {
 
   it('createThumbnailForDocument call api', async () => {
     // override wrapper set in beforeEach as original createThumbnailForDocument need to be tested here
-    axios.get.mockResolvedValueOnce(mockedGetFoldersResponse);
-    axios.get.mockResolvedValueOnce(mockedGetDocumentsResponse);
-    wrapper = shallowMount(App, {localVue});
+    wrapper = shallowMount(App, {
+      localVue,
+      methods: {
+        changeFolder: mockedChangeFolder,
+        mixinAlert: mockedAlert,
+        updateDocuments: mockedUpdateDocument
+      }
+    });
     axios.patch.mockResolvedValue({});
 
     createThumbFromUrl.mockResolvedValue("base64str");
