@@ -60,6 +60,7 @@ class FTLDocument(models.Model):
     edited = models.DateTimeField(auto_now=True)
     tsvector = SearchVectorField(blank=True)
     language = models.CharField(max_length=64, default="english")
+    thumbnail_binary = models.FileField(upload_to=_get_name_binary, max_length=256, null=True)
 
     # // TODO tsvector index missing
     # class Meta:

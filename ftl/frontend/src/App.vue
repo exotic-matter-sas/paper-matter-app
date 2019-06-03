@@ -32,7 +32,7 @@
 </template>
 
 <script>
-  import FTLNavbar from "./components/FTLNavbar";
+  import FTLNavbar from "@/components/FTLNavbar";
 
   export default {
     name: "app",

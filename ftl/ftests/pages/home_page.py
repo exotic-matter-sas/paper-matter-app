@@ -1,8 +1,8 @@
 import os
 
-from ftl.settings import BASE_DIR
 from ftests.pages.base_page import BasePage
 from ftests.tools import test_values as tv
+from ftl.settings import BASE_DIR
 
 
 class HomePage(BasePage):
@@ -41,6 +41,7 @@ class HomePage(BasePage):
 
     def create_folder(self, folder_name=tv.FOLDER1_NAME):
         self.get_elem(self.create_folder_button).click()
+        self.wait_for_element_to_show(self.modal_input)
         self.get_elem(self.modal_input).send_keys(folder_name)
         self.get_elem(self.modal_accept_button).click()
 

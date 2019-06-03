@@ -4,18 +4,22 @@
       <b-container>
         <b-row>
           <b-col>
-            <FTLUpload :currentFolder="getCurrentFolder" @event-new-upload="updateDocument"/>
+            <FTLUpload :currentFolder="getCurrentFolder" @event-new-upload="updateDocuments"/>
           </b-col>
         </b-row>
         <b-row>
           <b-col>
-            <b-button id="refresh-documents" variant="primary" @click="updateDocument">
+            <b-button id="generate-thumb" variant="primary" class="m-1" @click="generateMissingThumbnail">
+              {{this.$_('Generate missing thumb')}}
+            </b-button>
+            <b-button id="refresh-documents" variant="primary" class="m-1" @click="updateDocuments">
               {{this.$_('Refresh documents list')}}
             </b-button>
             {{ this.$_('Last refresh') }} {{ lastRefreshFormatted }}
           </b-col>
         </b-row>
       </b-container>
+      ø
     </section>
 
     <section>
@@ -45,7 +49,7 @@
           </b-col>
         </b-row>
         <b-row align-h="around" v-else-if="docs.length">
-          <FTLDocument v-for="doc in docs" :key="doc.pid" :doc="doc" @event-delete-doc="updateDocument"
+          <FTLDocument v-for="doc in docs" :key="doc.pid" :doc="doc" @event-delete-doc="updateDocuments"
                        @event-open-doc="openDocument"/>
         </b-row>
         <b-row v-else>
@@ -107,12 +111,13 @@
 
 <script>
   // @ is an alias to /src
-  // import HelloWorld from '@/components/HelloWorld.vue'
-  import FTLFolder from '@/components/FTLFolder'
-  import FTLDocument from '@/components/FTLDocument'
-  import FTLUpload from '@/components/FTLUpload'
-  import axios from 'axios'
-  import qs from 'qs'
+  import FTLFolder from '@/components/FTLFolder.vue';
+  import FTLDocument from '@/components/FTLDocument';
+  import FTLUpload from '@/components/FTLUpload';
+  import axios from 'axios';
+  import qs from 'qs';
+  import {createThumbFromUrl} from "@/thumbnailGenerator";
+  import {axiosConfig} from "@/constants";
 
   export default {
     name: 'home',
@@ -179,23 +184,23 @@
 
     methods: {
       refreshFolders: function () {
-        this.updateFolder(this.getCurrentFolder);
+        this.updateFolders(this.getCurrentFolder);
       },
 
       changeFolder: function (folder = null) {
         if (folder) this.previousLevels.push(folder);
         this.currentSearch = "";
-        this.updateFolder(folder);
-        this.updateDocument();
+        this.updateFolders(folder);
+        this.updateDocuments();
       },
 
       changeToPreviousFolder: function () {
         this.previousLevels.pop(); // Remove current level
         let level = this.getCurrentFolder;
         this.currentSearch = "";
-        this.updateFolder(level);
+        this.updateFolders(level);
         this.docs = []; // Clear docs when changing folder to avoid display artefact
-        this.updateDocument();
+        this.updateDocuments();
       },
 
       openDocument: function (pid) {
@@ -207,19 +212,45 @@
           .get('/app/api/v1/documents/' + pid)
           .then(response => {
             vi.currentOpenDoc = response.data;
+
+            if (!response.data.thumbnail_available) {
+              vi.createThumbnailForDocument(response.data);
+            }
           }).catch(error => vi.mixinAlert("Unable to show document.", true));
+      },
+
+      createThumbnailForDocument: async function (doc, updateDocuments = true) {
+        const vi = this;
+        let thumb64;
+
+        try {
+          thumb64 = await createThumbFromUrl('/app/uploads/' + doc.pid);
+        } catch (e) {
+          vi.mixinAlert("Unable to update thumbnail", true);
+          return;
+        }
+
+        let jsonData = {'thumbnail_binary': thumb64};
+
+        axios.patch('/app/api/v1/documents/' + doc.pid, jsonData, axiosConfig)
+          .then(response => {
+            vi.mixinAlert("Thumbnail updated!");
+            if (updateDocuments) {
+              vi.updateDocuments();
+            }
+          }).catch(error => vi.mixinAlert("Unable to update thumbnail", true));
       },
 
       refreshDocumentWithSearch: function (text) {
         this.currentSearch = text;
-        this.updateDocument();
+        this.updateDocuments();
       },
 
       clearSearch: function () {
         this.refreshDocumentWithSearch("");
       },
 
-      updateDocument: function () {
+      updateDocuments: function () {
         const vi = this;
         let queryString = {};
 
@@ -247,7 +278,7 @@
         });
       },
 
-      updateFolder: function (level = null) {
+      updateFolders: function (level = null) {
         const vi = this;
         let qs = '';
 
@@ -269,12 +300,6 @@
         const vi = this;
         let parent = null;
 
-        // Pass CSRF token from cookie to XHR call header (handled by Axios)
-        let axiosConfig = {
-          xsrfCookieName: 'csrftoken',
-          xsrfHeaderName: 'X-CSRFToken'
-        };
-
         if (vi.previousLevels.length > 0) {
           parent = vi.previousLevels[vi.previousLevels.length - 1].id;
         }
@@ -288,6 +313,37 @@
             vi.newFolderName = '';
             vi.refreshFolders();
           }).catch(error => vi.mixinAlert("Unable to create new folder.", true));
+      },
+
+      generateMissingThumbnail: function () {
+        const vi = this;
+        vi.mixinAlert("Updating thumbnail");
+
+        axios.get("/app/api/v1/documents?flat=true")
+          .then(async response => {
+            let documents = response.data;
+
+            while (documents !== null && documents.results.length > 0) {
+              for (const doc of documents.results) {
+                if (doc['thumbnail_available'] === false) {
+                  await vi.createThumbnailForDocument(doc, false);
+                }
+              }
+
+              if (documents.next == null) {
+                documents = null;
+              } else {
+                let resp = await axios.get(documents.next);
+                documents = await resp.data;
+              }
+            }
+          })
+          .catch(error => {
+            vi.mixinAlert("An error occurred while updating thumbnail", true)
+          })
+          .then(() => {
+            vi.mixinAlert("Finished updating thumbnail");
+          });
       }
     }
   }
