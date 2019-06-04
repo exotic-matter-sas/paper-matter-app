@@ -5,6 +5,7 @@ import App from './App.vue';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 import {mixinAlert} from "./vueMixins";
+import router from './router'
 
 Vue.config.productionTip = false;
 
@@ -12,19 +13,20 @@ Vue.use(BootstrapVue);
 
 Vue.prototype.$_ = function (text) {
   var translated_text;
-  if (typeof gettext === 'function'){
+  if (typeof gettext === 'function') {
     translated_text = gettext(text);
   }
-  return translated_text || text;
+  return translated_text || text;
 };
 
 // Defined mixins
 Vue.mixin({
-    methods: {
-        mixinAlert
-    }
+  methods: {
+    mixinAlert
+  }
 });
 
 new Vue({
-    render: h => h(App),
+  router,
+  render: h => h(App)
 }).$mount('#app');
