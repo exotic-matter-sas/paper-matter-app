@@ -1,0 +1,11 @@
+$em-purple: #313851;
+$em-orange: #f99947;
+
+$theme-colors: (
+  "primary": lighten($em-purple, 28%),
+  "secondary": #ced4da,
+  "dark": $em-purple,
+);
+
+@import '../../node_modules/bootstrap/scss/bootstrap';
+@import '../../node_modules/bootstrap-vue/src/index';

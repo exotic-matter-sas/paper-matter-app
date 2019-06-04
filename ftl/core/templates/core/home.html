@@ -1,25 +1,19 @@
+{% extends "base.html" %}
 {% load render_bundle from webpack_loader %}
 {% load i18n %}
 
-<!DOCTYPE html>
-<html lang="{{ request.LANGUAGE_CODE }}">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>ftl-app - Home</title>
+{% block title %}{% trans 'Home' %}{% endblock %}
+{% block head %}
     {{ ftl_account|json_script:"ftlAccount" }}
     <script type="text/javascript" src="{% url 'javascript-catalog' %}"></script>
-</head>
-<body>
-<noscript>
-    <strong>{% blocktrans %}We're sorry but ftl-app will not work without JavaScript enabled. Please enable it
-        to continue.{% endblocktrans %}</strong>
-</noscript>
+{% endblock %}
 
-<div id="app"></div>
+{% block content %}
+    <noscript>
+        <strong>{% blocktrans %}We're sorry but ftl-app will not work without JavaScript enabled. Please enable it
+            to continue.{% endblocktrans %}</strong>
+    </noscript>
 
-{% render_bundle 'app' %}
-
-</body>
-</html>
+    <div id="app"></div>
+    {% render_bundle 'app' 'js' %}
+{% endblock %}
