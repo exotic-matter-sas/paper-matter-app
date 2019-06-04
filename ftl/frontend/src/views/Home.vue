@@ -19,7 +19,6 @@
           </b-col>
         </b-row>
       </b-container>
-      ø
     </section>
 
     <section>

@@ -1,17 +1,7 @@
 <template>
-  <!--  <div id="app">-->
-  <!--    <div id="nav">-->
-  <!--      <router-link to="/">Home</router-link> |-->
-  <!--      <router-link to="/about">About</router-link>-->
-  <!--    </div>-->
-  <!--    <router-view/>-->
-  <!--  </div>-->
-
   <div id="app" class="m-0">
     <header>
       <b-container fluid class="p-0">
-        <!--        <FTLNavbar :account="account" @event-search="refreshDocumentWithSearch"-->
-        <!--                   @event-clear-search="clearSearch"/>        -->
         <FTLNavbar :account="account"/>
       </b-container>
     </header>
