@@ -10,12 +10,14 @@ export default new Router({
       path: '/', redirect: '/home'
     },
     {
-      path: '/home/:doc?',
+      path: '/home/:folders*',
       name: 'home',
       component: Home,
       props: (route) => ({
         query: route.query.q,
-        doc: route.params.doc
+        doc: route.query.doc,
+        folder: route.query.f,
+        folderspath: route.params.folders
       })
     },
     {

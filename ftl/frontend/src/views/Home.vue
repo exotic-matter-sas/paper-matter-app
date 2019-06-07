@@ -126,7 +126,7 @@
       FTLUpload
     },
 
-    props: ['query', 'doc'],
+    props: ['query', 'doc', 'folderspath'],
 
     data() {
       return {
@@ -153,7 +153,22 @@
     },
 
     mounted() {
-      this.changeFolder();
+      if (this.doc) {
+        this.openDocument(this.doc);
+      }
+
+      if (this.folderspath) {
+        this.previousLevels = this.folderspath.split("/").map(e => {
+          let s = e.split(",");
+          return {id: s[0], name: s[1]}
+        });
+
+        let last = this.previousLevels.pop();
+
+        this.changeFolder(last);
+      } else {
+        this.changeFolder();
+      }
     },
 
     watch: {
@@ -184,6 +199,10 @@
     },
 
     methods: {
+      computeFolderUrlPath: function () {
+        return this.previousLevels.map(e => e.id + "," + e.name).join("/");
+      },
+
       refreshFolders: function () {
         this.updateFolders(this.getCurrentFolder);
       },
@@ -193,6 +212,12 @@
         this.currentSearch = "";
         this.updateFolders(folder);
         this.updateDocuments();
+
+        // this.$router.push({name: 'home', params: {folders: this.computeFolderUrlPath()}});
+        // Can't use named route because it makes the url ugly with encoding
+        if (folder != null) {
+          this.$router.push({path: '/home/' + this.computeFolderUrlPath()});
+        }
       },
 
       changeToPreviousFolder: function () {
@@ -202,6 +227,12 @@
         this.updateFolders(level);
         this.docs = []; // Clear docs when changing folder to avoid display artefact
         this.updateDocuments();
+
+        if (level === null) {
+          this.$router.push({name: 'home'});
+        } else {
+          this.$router.push({path: '/home/' + this.computeFolderUrlPath()})
+        }
       },
 
       openDocument: function (pid) {
@@ -218,7 +249,7 @@
               vi.createThumbnailForDocument(response.data);
             }
 
-            this.$router.push({name: 'home', params: {doc: pid}});
+            this.$router.push({name: 'home', query: {doc: pid}});
           }).catch(error => vi.mixinAlert("Unable to show document.", true));
       },
 
