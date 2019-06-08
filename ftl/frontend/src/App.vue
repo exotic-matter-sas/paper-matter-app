@@ -6,7 +6,7 @@
       </b-container>
     </header>
 
-    <router-view/>
+    <router-view class="content"/>
 
     <footer>
       <b-container>
@@ -55,6 +55,20 @@
     text-align: center;
     color: #2c3e50;
     margin-top: 60px;
+
+    /* Sticky footer */
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+  }
+
+  /* Sticky footer */
+  .content {
+    flex: 1;
+  }
+
+  footer {
+    background: lightgray;
   }
 
   /* Temp for viewing layout */

@@ -5,14 +5,14 @@ import App from './App.vue';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 import {mixinAlert} from "./vueMixins";
-import router from './router'
+import router from './router';
 
 Vue.config.productionTip = false;
 
 Vue.use(BootstrapVue);
 
 Vue.prototype.$_ = function (text) {
-  var translated_text;
+  let translated_text;
   if (typeof gettext === 'function') {
     translated_text = gettext(text);
   }
