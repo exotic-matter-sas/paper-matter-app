@@ -67,7 +67,7 @@
     flex: 1;
   }
 
-  footer {
+  #app > footer {
     background: lightgray;
   }
 
