@@ -1,5 +1,5 @@
 import os
-import time
+from unittest import skipIf
 from unittest.mock import patch
 
 from django import db
@@ -8,6 +8,7 @@ from tika import parser
 
 from core.models import FTLDocument
 from core.views import EXECUTOR
+from ftests.pages.base_page import NODE_SERVER_RUNNING
 from ftests.pages.django_admin_home_page import AdminHomePage
 from ftests.pages.django_admin_login_page import AdminLoginPage
 from ftests.pages.home_page import HomePage
@@ -16,10 +17,11 @@ from ftests.pages.signup_pages import SignupPages
 from ftests.pages.user_login_page import LoginPage
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user
-from ftl.settings import BASE_DIR
+from ftl.settings import BASE_DIR, DEV_MODE
 
 
 class InitialSetupTest(SetupPages, SignupPages, LoginPage, HomePage):
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_end_to_end_setup(self):
         # Admin have just install ftl-app and display it for the first time
         self.visit(self.root_url)
@@ -53,6 +55,7 @@ class InitialSetupTest(SetupPages, SignupPages, LoginPage, HomePage):
 
 
 class SecondOrgSetup(AdminLoginPage, AdminHomePage, SignupPages, LoginPage, HomePage):
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_second_org_setup(self):
         # first org, admin, first user are already created
         org1 = setup_org()
@@ -85,6 +88,7 @@ class SecondOrgSetup(AdminLoginPage, AdminHomePage, SignupPages, LoginPage, Home
 
 
 class NewUserAddDocumentInsideFolder(SignupPages, LoginPage, HomePage):
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     @patch.object(parser, 'from_file')
     def test_new_user_add_document_inside_folder(self, mock_tika_parser):
         mock_tika_parser.return_value = ""
@@ -129,6 +133,7 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage):
         EXECUTOR.shutdown()
         super().tearDown()
 
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_upload_doc_wait_tika_indexation_and_search_for_doc(self):
         # User upload 2 documents
         self.upload_document()
