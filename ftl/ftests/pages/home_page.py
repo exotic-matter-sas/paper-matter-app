@@ -46,6 +46,7 @@ class HomePage(BasePage):
         self.wait_for_element_to_show(self.modal_input)
         self.get_elem(self.modal_input).send_keys(folder_name)
         self.get_elem(self.modal_accept_button).click()
+        self.close_last_notification()
 
     def refresh_document_list(self):
         refresh_button = self.get_elem(self.refresh_documents_button)
