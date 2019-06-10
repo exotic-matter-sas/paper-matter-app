@@ -12,23 +12,23 @@ Vue.config.productionTip = false;
 Vue.use(BootstrapVue);
 
 Vue.prototype.$_ = function (text, vars = null) {
-  var translated_text;
+  let translated_text = text;
 
-  if (vars === null) {
-    if (typeof gettext === 'function') {
-      translated_text = gettext(text);
-    }
-  } else {
+  if (typeof gettext === 'function') {
+    translated_text = gettext(translated_text);
+  }
+
+  if (vars !== null) {
     if (typeof interpolate === 'function') {
       if (Array.isArray(vars)) {
-        translated_text = interpolate(text, vars);
+        translated_text = interpolate(translated_text, vars);
       } else {
-        translated_text = interpolate(text, vars, true);
+        translated_text = interpolate(translated_text, vars, true);
       }
     }
   }
 
-  return translated_text || text;
+  return translated_text;
 };
 
 // Defined mixins
