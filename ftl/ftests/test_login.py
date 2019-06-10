@@ -1,8 +1,10 @@
-from unittest import skip
+from unittest import skip, skipIf
 
+from ftests.pages.base_page import NODE_SERVER_RUNNING
 from ftests.pages.home_page import HomePage
 from ftests.pages.user_login_page import LoginPage
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user
+from ftl.settings import DEV_MODE
 
 
 class LoginPageTests(LoginPage, HomePage):
@@ -14,6 +16,7 @@ class LoginPageTests(LoginPage, HomePage):
         # User have already created its account
         self.user = setup_user(org=org)
 
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_first_user_can_login(self):
         """First user can login and access a logged page"""
         # User login and is redirected to the home page
