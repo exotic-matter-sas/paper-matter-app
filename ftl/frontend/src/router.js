@@ -10,14 +10,24 @@ export default new Router({
       path: '/', redirect: '/home'
     },
     {
-      path: '/home/:folders*',
+      path: '/home',
       name: 'home',
       component: Home,
       props: (route) => ({
         query: route.query.q,
         doc: route.query.doc,
-        folder: route.query.f,
-        folderspath: route.params.folders
+      })
+    },
+    // Separated the path because /home/:path*/:folder* doesn't work FIXME
+    {
+      path: '/home/*/:folder',
+      name: 'home-folder',
+      component: Home,
+      props: (route) => ({
+        query: route.query.q,
+        doc: route.query.doc,
+        paths: route.params.paths,
+        folder: route.params.folder
       })
     },
     {

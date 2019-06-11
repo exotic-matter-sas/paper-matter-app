@@ -30,7 +30,7 @@
           </b-button>
           <b-button v-else variant="primary" class="m-1" disabled>Up</b-button>
           <FTLFolder v-for="folder in folders" :key="folder.id" :folder="folder"
-                     @event-change-folder="changeFolder"/>
+                     @event-change-folder="navigateToFolder"/>
           <b-button id="create-folder" class="m-1" variant="outline-primary" size="sm"
                     @click.prevent="newFolderModal = true">
             {{ this.$_('Create new folder') }}
@@ -126,7 +126,7 @@
       FTLUpload
     },
 
-    props: ['query', 'doc', 'folderspath'],
+    props: ['query', 'doc', 'paths', 'folder'],
 
     data() {
       return {
@@ -154,19 +154,15 @@
 
     mounted() {
       if (this.doc) {
-        this.openDocument(this.doc);
+        // Open document directly from loading an URL with document
+        this.openDocument(this.doc, !Boolean(this.folder));
       }
 
-      if (this.folderspath) {
-        this.previousLevels = this.folderspath.split("/").map(e => {
-          let s = e.split(",");
-          return {id: s[0], name: s[1]}
-        });
-
-        let last = this.previousLevels.pop();
-
-        this.changeFolder(last);
+      if (this.folder) {
+        // Open folder directly from loading an URL with folder (don't reset URL if opening a document)
+        this.updateFoldersPath(this.folder, !Boolean(this.doc));
       } else {
+        // Default Home with root folder
         this.changeFolder();
       }
     },
@@ -179,7 +175,18 @@
         if (newVal === undefined) {
           this.docModal = false;
         } else {
-          this.openDocument(newVal);
+          this.openDocument(newVal, false);
+        }
+      },
+      folder: function (newVal, oldVal) {
+        // Detect navigation in folders
+        if (newVal === undefined) {
+          // Root folder
+          this.changeFolder()
+        } else {
+          if (newVal !== oldVal) {
+            this.updateFoldersPath(newVal, true);
+          }
         }
       }
     },
@@ -199,8 +206,20 @@
     },
 
     methods: {
-      computeFolderUrlPath: function () {
-        return this.previousLevels.map(e => e.id + "," + e.name).join("/");
+      computeFolderUrlPath: function (id = null) {
+        if (this.previousLevels.length > 0) {
+          let s = this.previousLevels.map(e => e.name);
+
+          if (id) {
+            s.push(id);
+          } else {
+            s.push(this.previousLevels[this.previousLevels.length - 1].id);
+          }
+
+          return s.join('/');
+        } else {
+          return '';
+        }
       },
 
       refreshFolders: function () {
@@ -208,34 +227,44 @@
       },
 
       changeFolder: function (folder = null) {
-        if (folder) this.previousLevels.push(folder);
         this.currentSearch = "";
         this.updateFolders(folder);
         this.updateDocuments();
+      },
 
-        // this.$router.push({name: 'home', params: {folders: this.computeFolderUrlPath()}});
-        // Can't use named route because it makes the url ugly with encoding
-        if (folder != null) {
-          this.$router.push({path: '/home/' + this.computeFolderUrlPath()});
-        }
+      navigateToFolder: function (folder) {
+        if (folder) this.previousLevels.push(folder);
+        this.$router.push({path: '/home/' + this.computeFolderUrlPath(folder.id)})
       },
 
       changeToPreviousFolder: function () {
         this.previousLevels.pop(); // Remove current level
         let level = this.getCurrentFolder;
-        this.currentSearch = "";
-        this.updateFolders(level);
-        this.docs = []; // Clear docs when changing folder to avoid display artefact
-        this.updateDocuments();
 
         if (level === null) {
           this.$router.push({name: 'home'});
         } else {
-          this.$router.push({path: '/home/' + this.computeFolderUrlPath()})
+          this.$router.push({path: '/home/' + this.computeFolderUrlPath(level.parent)})
         }
       },
 
-      openDocument: function (pid) {
+      updateFoldersPath: function (folderId, updatePath = true) {
+        axios
+          .get('/app/api/v1/folders/' + folderId)
+          .then(response => {
+            this.previousLevels = response.data.paths;
+            this.changeFolder(response.data);
+            if (updatePath) {
+              // Allow refresh of the current URL in address bar to take into account folders paths changes
+              this.$router.push({path: '/home/' + this.computeFolderUrlPath(folderId)})
+            }
+          })
+          .catch(() => {
+            this.mixinAlert("Could not open this folder", true);
+          });
+      },
+
+      openDocument: function (pid, updatePath = true) {
         this.docPid = pid;
         this.docModal = true;
 
@@ -248,9 +277,14 @@
             if (!response.data.thumbnail_available) {
               vi.createThumbnailForDocument(response.data);
             }
-
-            this.$router.push({name: 'home', query: {doc: pid}});
-          }).catch(error => vi.mixinAlert("Unable to show document.", true));
+            if (updatePath) {
+              vi.$router.push({path: '/home/' + vi.computeFolderUrlPath(), query: {doc: pid}});
+            }
+          })
+          .catch(error => {
+            console.log(error);
+            vi.mixinAlert("Unable to show document.", true)
+          });
       },
 
       closeDocument: function () {
