@@ -2,7 +2,6 @@ import Vue from 'vue';
 import BootstrapVue from 'bootstrap-vue';
 import App from './App.vue';
 
-import './styles/customBootstrap.scss';
 import {mixinAlert} from "./vueMixins";
 
 Vue.config.productionTip = false;
