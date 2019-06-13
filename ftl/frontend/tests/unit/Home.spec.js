@@ -17,6 +17,7 @@ localVue.use(BootstrapVue); // to avoid warning on tests execution
 localVue.prototype.$_ = (text) => {
   return text;
 }; // i18n mock
+localVue.prototype.$router = {push: jest.fn()};
 localVue.mixin({methods: {mixinAlert: jest.fn()}}); // mixin alert
 
 jest.mock('axios', () => ({
@@ -81,6 +82,7 @@ const mockedOpenDocument = jest.fn();
 const mockedAlert = jest.fn();
 const mockedRefreshFolder = jest.fn();
 const mockedCreateThumbnailForDocument = jest.fn();
+const mockedNavigateToFolder = jest.fn();
 
 describe('Home script computed', () => {
   let wrapper;
@@ -152,15 +154,13 @@ describe('Home script methods call proper methods', () => {
   });
 
   it('changeToPreviousFolder call proper methods', () => {
-    let previousFolder = tv.FOLDER_PROPS;
-    wrapper.setData({previousLevels: [previousFolder, tv.FOLDER_PROPS_VARIANT]});
-
+    wrapper.setData({previousLevels: [tv.FOLDER_PROPS, tv.FOLDER_PROPS_VARIANT]});
+    let paths = '/home/' + tv.FOLDER_PROPS.name + '/' + tv.FOLDER_PROPS.id;
     // when
     wrapper.vm.changeToPreviousFolder();
 
     // then
-    expect(mockedUpdateFolder).toHaveBeenCalledWith(previousFolder);
-    expect(mockedUpdateDocument).toHaveBeenCalled();
+    expect(wrapper.vm.$router.push).toHaveBeenCalledWith({path: paths});
   });
 
   it('refreshFolders call proper methods', () => {
@@ -357,6 +357,7 @@ describe('Home event handling', () => {
         changeFolder: mockedChangeFolder,
         updateDocuments: mockedUpdateDocument,
         openDocument: mockedOpenDocument,
+        navigateToFolder: mockedNavigateToFolder
       }
     });
   });
@@ -382,7 +383,7 @@ describe('Home event handling', () => {
 
     // then
     wrapper.vm.$nextTick(() => {
-      expect(mockedChangeFolder).toHaveBeenCalledWith(next_folder);
+      expect(mockedNavigateToFolder).toHaveBeenCalledWith(next_folder);
       done();
     });
   });
