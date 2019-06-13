@@ -282,7 +282,6 @@
             }
           })
           .catch(error => {
-            console.log(error);
             vi.mixinAlert("Unable to show document.", true)
           });
       },
