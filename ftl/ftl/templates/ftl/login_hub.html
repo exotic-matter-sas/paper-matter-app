@@ -3,7 +3,7 @@
 
 {% block title %}{% trans 'Login' %}{% endblock %}
 
-{% block content %}
+{% block main %}
     <h1>{% trans "Type your organization slug to login" %}</h1>
     <form method="post" id="organization-selection-form">
         {% csrf_token %}
