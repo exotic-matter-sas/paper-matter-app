@@ -202,6 +202,13 @@ describe('Home script methods call proper methods', () => {
     // then thumbnail generation is needed
     expect(mockedCreateThumbnailForDocument).toHaveBeenCalledWith(tv.DOCUMENT_NO_THUMB_PROPS);
   });
+
+  it('navigateToFolder push new route', () => {
+    wrapper.vm.navigateToFolder(tv.FOLDER_PROPS);
+    const paths = '/home/' + tv.FOLDER_PROPS.name + '/' + tv.FOLDER_PROPS.id;
+
+    expect(wrapper.vm.$router.push).toHaveBeenCalledWith({path: paths});
+  });
 });
 
 describe('Home script methods error handling', () => {
