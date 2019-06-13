@@ -1,5 +1,3 @@
-import os
-import time
 from unittest import skip
 from unittest.mock import patch
 
@@ -10,7 +8,6 @@ from ftests.pages.home_page import HomePage
 from ftests.pages.user_login_page import LoginPage
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_document, setup_folder
-from ftl.settings import BASE_DIR
 
 
 class HomePageTests(LoginPage, HomePage):
@@ -85,10 +82,13 @@ class HomePageTests(LoginPage, HomePage):
 
         # Check if each folder have been created at proper level
         self.visit(HomePage.url)
+        self.wait_for_element_to_show(self.first_folder_button)
         self.assertEqual(tv.FOLDER1_NAME, self.get_elem(self.first_folder_button).text)
         self.get_elem(self.first_folder_button).click()
+        self.wait_for_element_to_show(self.first_folder_button)
         self.assertEqual(tv.FOLDER2_NAME, self.get_elem(self.first_folder_button).text)
         self.get_elem(self.first_folder_button).click()
+        self.wait_for_element_to_show(self.first_folder_button)
         self.assertEqual(tv.FOLDER3_NAME, self.get_elem(self.first_folder_button).text)
         self.get_elem(self.first_folder_button).click()
 

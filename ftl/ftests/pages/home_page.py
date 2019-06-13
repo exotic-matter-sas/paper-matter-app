@@ -22,7 +22,7 @@ class HomePage(BasePage):
     refresh_documents_button = '#refresh-documents'
 
     create_folder_button = '#create-folder'
-    first_folder_button = '.folder'
+    first_folder_button = 'button.folder > span:not(.spinner-border):not(.d-none)'
 
     documents_list = '.document-thumbnail'
     first_document_title = '.document-title span'
