@@ -47,12 +47,16 @@
                        label="Loading..."></b-spinner>
           </b-col>
         </b-row>
-        <b-row align-h="around" v-else-if="docs.length">
+        <b-row align-h="left" v-else-if="docs.length">
           <FTLDocument v-for="doc in docs" :key="doc.pid" :doc="doc" @event-delete-doc="updateDocuments"
                        @event-open-doc="openDocument"/>
         </b-row>
         <b-row v-else>
           <b-col>{{ this.$_('No document yet') }}</b-col>
+        </b-row>
+
+        <b-row v-if="moreDocs" align-h="center" class="my-3">
+          <b-button block variant="secondary" @click.prevent="loadMoreDocuments">{{ this.$_('Load more') }}</b-button>
         </b-row>
       </b-container>
     </section>
@@ -137,6 +141,7 @@
         lastRefresh: Date.now(),
         currentSearch: "",
         docLoading: false,
+        moreDocs: null,
 
         // Folders list and breadcrumb
         folders: [],
@@ -200,7 +205,7 @@
         let level = this.getCurrentFolder;
         this.currentSearch = "";
         this.updateFolders(level);
-        this.docs = []; // Clear docs when changing folder to avoid display artefact
+        this.docs = []; // Clear docs when changing folder to avoid display artifact
         this.updateDocuments();
       },
 
@@ -258,6 +263,19 @@
         this.refreshDocumentWithSearch("");
       },
 
+      loadMoreDocuments: function () {
+        const vi = this;
+        axios
+          .get(this.moreDocs)
+          .then(response => {
+            vi.docs = vi.docs.concat(response.data['results']);
+            vi.moreDocs = response.data['next'];
+            vi.lastRefresh = Date.now();
+          }).catch(error => {
+          vi.mixinAlert("Unable to refresh documents list.", true);
+        });
+      },
+
       updateDocuments: function () {
         const vi = this;
         let queryString = {};
@@ -279,6 +297,7 @@
           .then(response => {
             this.docLoading = false;
             vi.docs = response.data['results'];
+            vi.moreDocs = response.data['next'];
             vi.lastRefresh = Date.now();
           }).catch(error => {
           this.docLoading = false;
