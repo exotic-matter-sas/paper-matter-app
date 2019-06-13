@@ -356,7 +356,7 @@
         let qs = '';
 
         // While loading folders, clear folders to avoid showing current sets of folders intermittently
-        vi.folders = [];
+        // vi.folders = [];
 
         if (level) {
           qs = '?level=' + level.id;
