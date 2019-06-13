@@ -393,9 +393,4 @@
     .doc-pdf {
         padding-top: 100%;
     }
-
-    /* Temp for viewing layout */
-    div {
-        border: 1px dotted;
-    }
 </style>

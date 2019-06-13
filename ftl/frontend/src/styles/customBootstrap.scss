@@ -5,6 +5,7 @@ $theme-colors: (
   "primary": lighten($em-purple, 28%),
   "secondary": #ced4da,
   "dark": $em-purple,
+  "light": $em-orange,
 );
 
 @import '../../node_modules/bootstrap/scss/bootstrap';
