@@ -1,7 +1,11 @@
+from unittest import skipIf
+
+from ftests.pages.base_page import NODE_SERVER_RUNNING
 from ftests.pages.home_page import HomePage
 from ftests.pages.setup_pages import SetupPages
 from ftests.pages.user_login_page import LoginPage
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user
+from ftl.settings import DEV_MODE
 
 
 class I18nTests(SetupPages, LoginPage, HomePage):
@@ -12,6 +16,7 @@ class I18nTests(SetupPages, LoginPage, HomePage):
         self.visit(self.root_url)
         self.assertIn('organisation', self.get_elem(self.page_title).text)
 
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_js_i18n_are_working(self):
         # first org, admin, user are already created, user is already logged on home page
         self.org = setup_org()

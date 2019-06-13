@@ -382,6 +382,7 @@
           .post("/app/api/v1/folders/", postBody, axiosConfig)
           .then(() => {
             // TODO flash the new folder when just created
+            vi.mixinAlert(vi.$_("Folder %s created", [vi.newFolderName]));
             vi.newFolderName = '';
             vi.refreshFolders();
           }).catch(error => vi.mixinAlert("Unable to create new folder.", true));
