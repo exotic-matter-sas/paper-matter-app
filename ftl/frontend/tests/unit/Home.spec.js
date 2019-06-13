@@ -36,6 +36,16 @@ const mockedGetFoldersResponse = {
   status: 200,
   config: axiosConfig
 };
+const mockedGetFolderResponse = {
+  data: {
+    id: tv.FOLDER_PROPS_VARIANT.id,
+    name: tv.FOLDER_PROPS_VARIANT.name,
+    paths: [
+      tv.FOLDER_PROPS,
+    ]
+  },
+  status: 200
+};
 const mockedGetDocumentDetailWithThumbResponse = {
   data: tv.DOCUMENT_PROPS,
   status: 200,
@@ -83,6 +93,7 @@ const mockedAlert = jest.fn();
 const mockedRefreshFolder = jest.fn();
 const mockedCreateThumbnailForDocument = jest.fn();
 const mockedNavigateToFolder = jest.fn();
+const mockedComputeFolderUrlPath = jest.fn();
 
 describe('Home script computed', () => {
   let wrapper;
@@ -209,6 +220,19 @@ describe('Home script methods call proper methods', () => {
 
     expect(wrapper.vm.$router.push).toHaveBeenCalledWith({path: paths});
   });
+
+  it('computeFolderUrlPath', () => {
+    wrapper.setData({previousLevels: [tv.FOLDER_PROPS, tv.FOLDER_PROPS_VARIANT]});
+
+    let computeFolderUrlPath = wrapper.vm.computeFolderUrlPath(tv.FOLDER_PROPS_VARIANT.id);
+
+    expect(computeFolderUrlPath).toBe(
+      tv.FOLDER_PROPS.name
+      + '/'
+      + tv.FOLDER_PROPS_VARIANT.name
+      + '/'
+      + tv.FOLDER_PROPS_VARIANT.id);
+  });
 });
 
 describe('Home script methods error handling', () => {
@@ -253,6 +277,7 @@ describe('Home script methods call proper api', () => {
           refreshFolders: mockedRefreshFolder,
           createThumbnailForDocument: mockedCreateThumbnailForDocument,
           mixinAlert: mockedAlert,
+          computeFolderUrlPath: mockedComputeFolderUrlPath
         }
       }
     );
@@ -352,6 +377,15 @@ describe('Home script methods call proper api', () => {
     );
   });
 
+  it('updateFoldersPath call api', async () => {
+    axios.get.mockResolvedValueOnce(mockedGetFolderResponse);
+    wrapper.vm.updateFoldersPath(tv.FOLDER_PROPS.id);
+    await flushPromises();
+
+    expect(axios.get).toHaveBeenCalledWith('/app/api/v1/folders/' + tv.FOLDER_PROPS.id);
+    expect(mockedChangeFolder).toHaveBeenCalledWith(mockedGetFolderResponse.data);
+    expect(mockedComputeFolderUrlPath).toHaveBeenCalledWith(tv.FOLDER_PROPS.id);
+  });
 });
 
 describe('Home event handling', () => {
