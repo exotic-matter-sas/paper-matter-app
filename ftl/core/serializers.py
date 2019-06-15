@@ -40,4 +40,4 @@ class FTLFolderSerializer(serializers.ModelSerializer):
     class Meta:
         model = FTLFolder
         fields = ('id', 'name', 'created', 'parent', 'has_descendant')
-        read_only_fields = ('created',)
+        read_only_fields = ('created', 'has_descendant')

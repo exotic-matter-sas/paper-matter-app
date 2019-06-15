@@ -1,12 +1,16 @@
 <template>
-  <ul id="moving-folders">
-    <FTLTreeItem
-      class="item"
-      v-for="folder in folders"
-      :key="folder.id"
-      :item="folder">
-    </FTLTreeItem>
-  </ul>
+  <b-row>
+    <b-col>
+      <ul id="moving-folders">
+        <FTLTreeItem
+          class="item"
+          v-for="folder in folders"
+          :key="folder.id"
+          :item="folder">
+        </FTLTreeItem>
+      </ul>
+    </b-col>
+  </b-row>
 </template>
 
 <script>
@@ -40,6 +44,8 @@
             vi.folders = response.data.map(function (e) {
               return {id: e.id, name: e.name, has_descendant: e.has_descendant, children: []}
             });
+            // Add a static root
+            vi.folders.push({id: null, name: 'root'});
           }
         )
         .catch(error => vi.mixinAlert("Unable to refresh folders list", true));
@@ -50,5 +56,9 @@
 <style scoped>
   .item {
     cursor: pointer;
+  }
+
+  .selected {
+    background: dodgerblue;
   }
 </style>

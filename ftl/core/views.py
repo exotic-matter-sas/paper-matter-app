@@ -104,7 +104,7 @@ class FTLDocumentDetail(generics.RetrieveUpdateDestroyAPIView):
         return FTLDocument.objects.filter(org=self.request.user.org)
 
     def perform_update(self, serializer):
-        serializer.save(ftl_user=self.request.user)  # FIXME only owner can update
+        serializer.save(org=self.request.user.org)
 
 
 class FTLDocumentThumbnail(LoginRequiredMixin, views.APIView):
@@ -198,4 +198,17 @@ class FTLFolderDetail(generics.RetrieveUpdateDestroyAPIView):
         return FTLFolder.objects.filter(org=self.request.user.org)
 
     def perform_update(self, serializer):
-        serializer.save(org=self.request.user.org)
+        # When detecting `parent` change, call the move_to to handle moving folder in the tree (mptt)
+        if serializer.initial_data and 'parent' in serializer.initial_data:
+            if serializer.instance.parent != serializer.initial_data['parent']:
+
+                if serializer.initial_data['parent'] is None:
+                    # Root
+                    serializer.instance.move_to(None)
+                else:
+                    target_folder = get_object_or_404(self.get_queryset(), id=serializer.initial_data['parent'])
+                    serializer.instance.move_to(target_folder)
+            else:
+                serializer.save(org=self.request.user.org)
+        else:
+            serializer.save(org=self.request.user.org)

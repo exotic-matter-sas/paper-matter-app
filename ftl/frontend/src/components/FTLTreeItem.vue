@@ -1,11 +1,11 @@
 <template>
   <li>
-    <div
+    <span
       :class="{bold: isFolder, selected: selected}">
       <span @click="selectFolder">{{ item.name }}&nbsp;</span>
       <span v-if="isFolder && !loading" @click="toggle">[{{ isOpen ? '-' : '+' }}]</span>
       <b-spinner :class="{'d-none': !loading}" small></b-spinner>
-    </div>
+    </span>
 
     <ul v-show="isOpen" v-if="isFolder">
       <FTLTreeItem
@@ -41,20 +41,17 @@
       },
 
       selected: function () {
-        if (this.$store.state.selectedFolder
-          && this.$store.state.selectedFolder.id === this.item.id) {
-          return true;
-        }
-
-        return false;
+        return !!(this.$store.state.selectedFolder
+          && this.$store.state.selectedFolder.id === this.item.id);
       }
     },
 
     methods: {
       toggle: function () {
-        if (this.isFolder) {
+        this.isOpen = !this.isOpen;
+
+        if (this.isFolder && this.isOpen) {
           this.updateMovingFolder(this.item.id);
-          this.isOpen = !this.isOpen
         }
       },
 
