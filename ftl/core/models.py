@@ -86,7 +86,7 @@ class FTLDocument(models.Model):
             thumbnail_binary.file.close()
             os.remove(thumbnail_binary.file.name)
 
-        super().delete(*args, **kwargs)  # Call the "real" save() method.
+        super().delete(*args, **kwargs)
 
 
 # FTL Folders
@@ -98,6 +98,19 @@ class FTLFolder(MPTTModel):
 
     def __str__(self):
         return self.name
+
+    def delete(self, *args, **kwargs):
+        # Delete documents in this folder
+        documents = FTLDocument.objects.filter(ftl_folder=self)
+        for document in documents:
+            document.delete()
+
+        # Delete descendants folders recursively
+        descendants = self.get_descendants()
+        for descendant in descendants:
+            descendant.delete()
+
+        super().delete(*args, **kwargs)
 
     class MPTTMeta:
         order_insertion_by = ['name']

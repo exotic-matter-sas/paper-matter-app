@@ -1,6 +1,10 @@
+import os
+import tempfile
+
 from core.models import FTLOrg, FTLUser, FTLDocument, FTLFolder, permissions_names_to_objects, FTL_PERMISSIONS_USER
 from core.views import SEARCH_VECTOR
 from ftests.tools import test_values as tv
+from ftl.settings import BASE_DIR
 
 
 def setup_org(name=tv.ORG_NAME_1, slug=tv.ORG_SLUG_1):
@@ -60,3 +64,10 @@ def setup_folder(org, name=tv.FOLDER1_NAME, parent=None):
         name=name,
         parent=parent,
     )
+
+
+def setup_random_file():
+    f = tempfile.NamedTemporaryFile(dir=os.path.join(BASE_DIR, 'ftests', 'tools'), delete=False)
+    f.write(b'Hello world!')  # Actual content doesn't matter
+    f.close()
+    return f

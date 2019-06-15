@@ -24,6 +24,7 @@
 <script>
   import FTLOrganizeFolder from "@/components/FTLOrganizeFolder";
   import axios from 'axios';
+  import {axiosConfig} from "@/constants";
 
   export default {
     name: 'folders',
@@ -56,6 +57,8 @@
 
     methods: {
       deleteFolder: function (folder) {
+        const vi = this;
+
         this.$bvModal.msgBoxConfirm(this.$_('Please confirm that you want to delete the folder and everything inside. This action is not reversible.'), {
           title: this.$_('Deletion of folders and its contents'),
           size: 'md',
@@ -69,8 +72,10 @@
         })
           .then(value => {
             if (value === true) {
-              // TODO AXIOS DELETE
-              this.$bvToast.toast("TODO DELETED FOLDERS");
+              axios.delete('/app/api/v1/folders/' + folder.id, axiosConfig)
+                .then(response => {
+                  this.$router.go(-1);
+                }).catch(error => vi.mixinAlert("Unable to delete folder", true));
             }
           })
           .catch(err => {
