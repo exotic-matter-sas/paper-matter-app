@@ -18,17 +18,24 @@
         <b-col>{{ this.$_('No folder. Why not create some?') }}</b-col>
       </b-row>
     </b-container>
+
+    <b-container>
+      Selected folder {{selectedFolder}}
+      <FTLTreeFolders/>
+    </b-container>
   </section>
 </template>
 
 <script>
   import FTLOrganizeFolder from "@/components/FTLOrganizeFolder";
+  import FTLTreeFolders from "@/components/FTLTreeFolders";
   import axios from 'axios';
   import {axiosConfig} from "@/constants";
 
   export default {
-    name: 'folders',
+    name: 'Folders',
     components: {
+      FTLTreeFolders,
       FTLOrganizeFolder,
     },
     props: ['folder'],
@@ -37,7 +44,7 @@
       return {
         // Folders list
         foldersLoading: false,
-        folders: []
+        folders: [],
       }
     },
 
@@ -48,6 +55,12 @@
         } else {
           this.updateFolders({id: newVal});
         }
+      }
+    },
+
+    computed: {
+      selectedFolder: function () {
+        return this.$store.state.selectedFolder
       }
     },
 
@@ -105,7 +118,7 @@
             }
           }).catch(error => vi.mixinAlert("Unable to refresh folders list", true))
           .finally(() => vi.foldersLoading = false);
-      },
+      }
     }
   }
 </script>

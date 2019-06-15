@@ -7,8 +7,8 @@
       {{ folder.created }}
     </b-row>
     <b-row align-h="center">
-      <b-button class="m-1" @click="$emit('event-move-folder', folder)">Move</b-button>
-      <b-button class="m-1" @click="$emit('event-delete-folder', folder)">Delete</b-button>
+      <b-button class="m-1" variant="secondary" @click="$emit('event-move-folder', folder)">Move</b-button>
+      <b-button class="m-1" variant="danger" @click="$emit('event-delete-folder', folder)">Delete</b-button>
     </b-row>
   </b-col>
 </template>
