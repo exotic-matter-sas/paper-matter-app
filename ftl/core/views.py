@@ -1,5 +1,4 @@
 import json
-import os
 from base64 import b64decode
 from concurrent.futures.thread import ThreadPoolExecutor
 
@@ -14,7 +13,6 @@ from django.utils.http import http_date
 from django.views import View
 from rest_framework import generics, views
 from rest_framework.authentication import SessionAuthentication
-from rest_framework.exceptions import ValidationError
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from tika import parser
@@ -105,26 +103,8 @@ class FTLDocumentDetail(generics.RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         return FTLDocument.objects.filter(org=self.request.user.org)
 
-    def get_object(self):
-        return get_object_or_404(self.get_queryset(), pid=self.kwargs['pid'])
-
     def perform_update(self, serializer):
-        serializer.save(ftl_user=self.request.user)
-
-    def perform_destroy(self, instance):
-        if instance.org == self.request.user.org:
-            binary = instance.binary
-            thumbnail_binary = instance.thumbnail_binary
-            super().perform_destroy(instance)
-
-            binary.file.close()
-            os.remove(binary.file.name)
-
-            if thumbnail_binary:
-                thumbnail_binary.file.close()
-                os.remove(thumbnail_binary.file.name)
-        else:
-            raise ValidationError("Trying to delete document from wrong user!")
+        serializer.save(ftl_user=self.request.user)  # FIXME only owner can update
 
 
 class FTLDocumentThumbnail(LoginRequiredMixin, views.APIView):
@@ -219,9 +199,3 @@ class FTLFolderDetail(generics.RetrieveUpdateDestroyAPIView):
 
     def perform_update(self, serializer):
         serializer.save(org=self.request.user.org)
-
-    def perform_destroy(self, instance):
-        if instance.org == self.request.user.org:
-            instance.delete()
-        else:
-            raise ValidationError('Trying to delete a folder from wrong user!')
