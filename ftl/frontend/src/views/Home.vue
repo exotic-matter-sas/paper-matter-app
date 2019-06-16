@@ -61,7 +61,15 @@
     <!-- Pdf viewer popup -->
     <div v-if="docModal" class="doc-view-modal" :class="{open: docModal}">
       <b-container>
-        {{ this.$_('Title') }} {{ currentOpenDoc.title }}
+        <b-row>
+          <b-col md="10">
+            {{ this.$_('Title') }} {{ currentOpenDoc.title }}
+          </b-col>
+          <b-col>
+            <b-button variant="secondary" @click="closeDocument">{{this.$_('Close')}}</b-button>
+          </b-col>
+        </b-row>
+
       </b-container>
       <b-container>
         <b-row scr>
@@ -71,7 +79,6 @@
                       :src="`/assets/pdfjs/web/viewer.html?file=/app/uploads/` + currentOpenDoc.pid + `#search=` + currentSearch">
               </iframe>
             </div>
-
           </b-col>
           <b-col>
             <b-row>AAA</b-row>
@@ -155,12 +162,12 @@
     mounted() {
       if (this.doc) {
         // Open document directly from loading an URL with document
-        this.openDocument(this.doc, !Boolean(this.folder));
+        this.openDocument(this.doc);
       }
 
       if (this.folder) {
         // Open folder directly from loading an URL with folder (don't reset URL if opening a document)
-        this.updateFoldersPath(this.folder, !Boolean(this.doc));
+        this.updateFoldersPath(this.folder);
       } else {
         // Default Home with root folder
         this.changeFolder();
@@ -248,15 +255,22 @@
         }
       },
 
-      updateFoldersPath: function (folderId, updatePath = true) {
+      updateFoldersPath: function (folderId) {
         axios
           .get('/app/api/v1/folders/' + folderId)
           .then(response => {
             this.previousLevels = response.data.paths;
             this.changeFolder(response.data);
-            if (updatePath) {
-              // Allow refresh of the current URL in address bar to take into account folders paths changes
-              this.$router.push({path: '/home/' + this.computeFolderUrlPath(folderId)})
+            // Allow refresh of the current URL in address bar to take into account folders paths changes
+            if (this.docPid) {
+              this.$router.push({
+                path: '/home/' + this.computeFolderUrlPath(folderId),
+                query: {
+                  doc: this.docPid
+                }
+              });
+            } else {
+              this.$router.push({path: '/home/' + this.computeFolderUrlPath(folderId)});
             }
           })
           .catch(() => {
@@ -264,11 +278,12 @@
           });
       },
 
-      openDocument: function (pid, updatePath = true) {
+      openDocument: function (pid) {
+        const vi = this;
+
         this.docPid = pid;
         this.docModal = true;
 
-        const vi = this;
         axios
           .get('/app/api/v1/documents/' + pid)
           .then(response => {
@@ -277,9 +292,7 @@
             if (!response.data.thumbnail_available) {
               vi.createThumbnailForDocument(response.data);
             }
-            if (updatePath) {
-              vi.$router.push({path: '/home/' + vi.computeFolderUrlPath(), query: {doc: pid}});
-            }
+            vi.$router.push({path: '/home/' + vi.computeFolderUrlPath(), query: {doc: pid}});
           })
           .catch(error => {
             vi.mixinAlert("Unable to show document.", true)
@@ -287,8 +300,9 @@
       },
 
       closeDocument: function () {
-        this.docPid = false;
+        this.docModal = false;
         this.docPid = null;
+        this.$router.push({path: '/home/' + this.computeFolderUrlPath()});
       },
 
       createThumbnailForDocument: async function (doc, updateDocuments = true) {
