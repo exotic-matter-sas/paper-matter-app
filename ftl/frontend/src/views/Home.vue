@@ -182,7 +182,7 @@
         if (newVal === undefined) {
           this.docModal = false;
         } else {
-          this.openDocument(newVal, false);
+          this.openDocument(newVal);
         }
       },
       folder: function (newVal, oldVal) {
