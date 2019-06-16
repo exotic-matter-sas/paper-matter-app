@@ -17,7 +17,7 @@ localVue.use(BootstrapVue); // to avoid warning on tests execution
 localVue.prototype.$_ = (text) => {
   return text;
 }; // i18n mock
-localVue.prototype.$router = {push: jest.fn()};
+localVue.prototype.$router = {push: jest.fn()}; // router mock
 localVue.mixin({methods: {mixinAlert: jest.fn()}}); // mixin alert
 
 jest.mock('axios', () => ({
@@ -214,14 +214,30 @@ describe('Home script methods call proper methods', () => {
     expect(mockedCreateThumbnailForDocument).toHaveBeenCalledWith(tv.DOCUMENT_NO_THUMB_PROPS);
   });
 
-  it('navigateToFolder push new route', () => {
+  it('navigateToFolder call router push', () => {
     wrapper.vm.navigateToFolder(tv.FOLDER_PROPS);
     const paths = '/home/' + tv.FOLDER_PROPS.name + '/' + tv.FOLDER_PROPS.id;
 
     expect(wrapper.vm.$router.push).toHaveBeenCalledWith({path: paths});
   });
 
-  it('computeFolderUrlPath', () => {
+});
+
+describe('Home script methods return proper value', () => {
+  let wrapper;
+
+  beforeEach(() => {
+    mockedCreateThumbnailForDocument.mockClear();
+    wrapper = shallowMount(Home, {
+      localVue,
+      methods: {
+        changeFolder: mockedChangeFolder,
+        updateFolders: mockedUpdateFolder,
+      }
+    });
+  });
+
+  it('computeFolderUrlPath return proper value', () => {
     wrapper.setData({previousLevels: [tv.FOLDER_PROPS, tv.FOLDER_PROPS_VARIANT]});
 
     let computeFolderUrlPath = wrapper.vm.computeFolderUrlPath(tv.FOLDER_PROPS_VARIANT.id);
@@ -414,7 +430,7 @@ describe('Home event handling', () => {
     });
   });
 
-  it('event-change-folder call changeFolder', done => {
+  it('event-change-folder call navigateToFolder', done => {
     // Need to define at least one folder in order FTLFolder component is instantiated
     wrapper.setData({folders: [tv.FOLDER_PROPS]});
     let next_folder = tv.FOLDER_PROPS_VARIANT;
