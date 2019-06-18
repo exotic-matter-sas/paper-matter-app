@@ -18,9 +18,9 @@ export default new Router({
         doc: route.query.doc,
       })
     },
-    // Separated the path because /home/:path*/:folder* doesn't work FIXME
+    // Two entries for Home component because /home/:path*/:folder* entry doesn't work for both cases FIXME
     {
-      path: '/home/*/:folder',
+      path: '/home/*/:folder(\\d+)',
       name: 'home-folder',
       component: Home,
       props: (route) => ({
