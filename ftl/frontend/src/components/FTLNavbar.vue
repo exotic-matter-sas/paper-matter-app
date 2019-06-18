@@ -6,8 +6,12 @@
 
     <b-collapse id="nav-collapse" is-nav>
       <b-navbar-nav>
-        <router-link :to="{name: 'home'}" tag="b-nav-item">{{ this.$_('Home') }}</router-link>
-        <router-link :to="{name: 'folders'}" tag="b-nav-item">{{ this.$_('Folders') }}</router-link>
+        <router-link :to="{name: 'home'}" tag="b-nav-item">
+          <font-awesome-icon icon="home"/>
+        </router-link>
+        <router-link :to="{name: 'folders'}" tag="b-nav-item">
+          <font-awesome-icon icon="folder"/>
+        </router-link>
         <router-link :to="{name: 'about'}" tag="b-nav-item">{{ this.$_('About') }}</router-link>
       </b-navbar-nav>
 
@@ -19,13 +23,12 @@
                         @keydown.enter.prevent="doSearch"></b-form-input>
           <b-button id="search-button" size="sm" class="m-1" variant="secondary" type="button"
                     @click="doSearch">
-            {{this.$_('Search')}}
+            <font-awesome-icon icon="search" :alt="this.$_('Search')"/>
           </b-button>
           <b-button size="sm" class="m-1" type="button" variant="secondary"
                     @click="clear">
-            {{this.$_('X')}}
+            <font-awesome-icon icon="window-close" :alt="this.$_('X')"/>
           </b-button>
-
         </b-nav-form>
 
         <b-nav-item-dropdown :text="this.$_('Lang')" right>
