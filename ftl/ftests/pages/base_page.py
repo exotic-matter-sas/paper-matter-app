@@ -124,6 +124,17 @@ class BasePage(LIVE_SERVER):
             complete_url = self.live_server_url + url
         self.browser.get(complete_url)
 
+    def previous_page(self, iteration=1):
+        for _ in range(iteration):
+            self.browser.back()
+
+    def next_page(self, iteration=1):
+        for _ in range(iteration):
+            self.browser.forward()
+
+    def refresh_page(self):
+        self.browser.refresh()
+
     def get_elem(self, css_selector, is_visible=True):
         elem = self.browser.find_element_by_css_selector(css_selector)
         if elem.is_displayed() == is_visible:

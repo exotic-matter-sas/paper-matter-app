@@ -23,12 +23,16 @@ class HomePage(BasePage):
 
     create_folder_button = '#create-folder'
     first_folder_button = 'button.folder > span:not(.spinner-border):not(.d-none)'
+    folder_list_loader = '#folder-list-loader'
 
     documents_list = '.document-thumbnail'
     first_document_title = '.document-title span'
 
     def wait_document_list_loaded(self):
         self.wait_for_elem_to_disappear(self.document_list_loader)
+
+    def wait_folder_list_loaded(self):
+        self.wait_for_elem_to_disappear(self.folder_list_loader)
 
     def search_document(self, search_text):
         self.get_elem(self.search_input).send_keys(search_text)

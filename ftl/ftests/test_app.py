@@ -174,6 +174,46 @@ class HomePageTests(LoginPage, HomePage):
         self.assertEqual(document.title, self.get_elem(self.first_document_title).text,
                          'Setup document title should appears in folder C')
 
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_folder_navigation_using_browser_previous_and_next(self):
+        # User already created a 3 levels folder three (a > b > c) and have added a document inside each of them
+        # plus one at root level
+        document_root = setup_document(self.org, self.user, title='document_root')
+        folder_a = setup_folder(self.org)
+        document_a = setup_document(self.org, self.user, folder_a, title='document_a')
+        folder_b = setup_folder(self.org, parent=folder_a)
+        document_b = setup_document(self.org, self.user, folder_b, title='document_b')
+        folder_c = setup_folder(self.org, parent=folder_b)
+        document_c = setup_document(self.org, self.user, folder_c, title='document_c')
+        self.visit(HomePage.url)
+
+        # User browse to folder c
+        self.wait_document_list_loaded()
+        self.get_elem(self.first_folder_button).click()
+        self.wait_folder_list_loaded()
+        self.get_elem(self.first_folder_button).click()
+        self.wait_folder_list_loaded()
+        self.get_elem(self.first_folder_button).click()
+        self.wait_folder_list_loaded()
+
+        # User use the browser previous button to come back to root
+        self.previous_page()
+        self.wait_document_list_loaded()
+        self.assertEqual(document_b.title, self.get_elem(self.first_document_title).text,
+                         'Setup document title should appears in folder b')
+        self.previous_page()
+        self.wait_document_list_loaded()
+        self.assertEqual(document_a.title, self.get_elem(self.first_document_title).text,
+                         'Setup document title should appears in folder a')
+        self.previous_page()
+        self.wait_document_list_loaded()
+        self.assertEqual(document_root.title, self.get_elem(self.first_document_title).text,
+                         'Setup document title should appears in root folder')
+        self.next_page(3)
+        self.wait_document_list_loaded()
+        self.assertEqual(document_c.title, self.get_elem(self.first_document_title).text,
+                         'Setup document title should appears in folder c')
+
 
 class DocumentViewPageTests(LoginPage, HomePage, DocumentViewPage):
     def setUp(self, **kwargs):
