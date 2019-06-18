@@ -139,6 +139,17 @@ class BasePage(LIVE_SERVER):
         else:
             raise NoSuchElementException()
 
+    def get_elem_text(self, css_selector, is_visible=True):
+        elem = self.get_elem(css_selector, is_visible)
+
+        if elem.tag_name == 'input':
+            return elem.get_attribute('value')
+        elif elem.tag_name == 'select':
+            return elem.find_element_by_css_selector('option:checked').text
+        else:
+            elem.text
+
+
     @staticmethod
     def _wait_for_method_to_return(method, timeout, *method_args, custom_return_validator=None,
                                    expected_exception_type=None, **method_kwargs):

@@ -135,3 +135,20 @@ class HomePageTests(LoginPage, HomePage):
         # Only the second document appears in search results
         self.assertEqual(len(self.get_elems(self.documents_list)), 1)
         self.assertEqual(second_document_title, self.get_elem(self.first_document_title).text)
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_visit_url_with_search_query(self):
+        # User have already added 2 documents
+        setup_document(self.org, self.user)
+        second_document_title = 'bingo!'
+        setup_document(self.org, self.user, title=second_document_title)
+
+        # User search last uploaded document
+        self.visit(f'/app/#/home?q={second_document_title}')
+        self.wait_for_element_to_disappear(self.document_list_loader)
+
+        # Only the second document appears in search results
+        self.assertEqual(len(self.get_elems(self.documents_list)), 1)
+        self.assertEqual(second_document_title, self.get_elem(self.first_document_title).text)
+        # Search input prefilled with search query
+        self.assertEqual(second_document_title, self.get_elem_text(self.search_input))
