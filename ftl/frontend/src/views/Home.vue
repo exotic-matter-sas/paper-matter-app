@@ -63,10 +63,10 @@
       <b-container>
         <b-row>
           <b-col md="10">
-            {{ this.$_('Title') }} {{ currentOpenDoc.title }}
+            <span id="document-title">{{ this.$_('Title:') }} {{ currentOpenDoc.title }}</span>
           </b-col>
           <b-col>
-            <b-button variant="secondary" @click="closeDocument">{{this.$_('Close')}}</b-button>
+            <b-button id="c" variant="secondary" @click="closeDocument">{{this.$_('Close')}}</b-button>
           </b-col>
         </b-row>
 

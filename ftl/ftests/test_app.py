@@ -5,6 +5,7 @@ from selenium.common.exceptions import NoSuchElementException
 from tika import parser
 
 from ftests.pages.base_page import NODE_SERVER_RUNNING
+from ftests.pages.document_viewer_page import DocumentViewPage
 from ftests.pages.home_page import HomePage
 from ftests.pages.user_login_page import LoginPage
 from ftests.tools import test_values as tv
@@ -89,13 +90,13 @@ class HomePageTests(LoginPage, HomePage):
 
         # Check if each folder have been created at proper level
         self.visit(HomePage.url)
-        self.wait_for_element_to_show(self.first_folder_button)
+        self.wait_for_elem_to_show(self.first_folder_button)
         self.assertEqual(tv.FOLDER1_NAME, self.get_elem(self.first_folder_button).text)
         self.get_elem(self.first_folder_button).click()
-        self.wait_for_element_to_show(self.first_folder_button)
+        self.wait_for_elem_to_show(self.first_folder_button)
         self.assertEqual(tv.FOLDER2_NAME, self.get_elem(self.first_folder_button).text)
         self.get_elem(self.first_folder_button).click()
-        self.wait_for_element_to_show(self.first_folder_button)
+        self.wait_for_elem_to_show(self.first_folder_button)
         self.assertEqual(tv.FOLDER3_NAME, self.get_elem(self.first_folder_button).text)
         self.get_elem(self.first_folder_button).click()
 
@@ -145,10 +146,41 @@ class HomePageTests(LoginPage, HomePage):
 
         # User search last uploaded document
         self.visit(f'/app/#/home?q={second_document_title}')
-        self.wait_for_element_to_disappear(self.document_list_loader)
+        self.wait_for_elem_to_disappear(self.document_list_loader)
 
-        # Only the second document appears in search results
-        self.assertEqual(len(self.get_elems(self.documents_list)), 1)
-        self.assertEqual(second_document_title, self.get_elem(self.first_document_title).text)
-        # Search input prefilled with search query
-        self.assertEqual(second_document_title, self.get_elem_text(self.search_input))
+        self.assertEqual(len(self.get_elems(self.documents_list)), 1,
+                         'Only second document should appears in the search result')
+        self.assertEqual(second_document_title, self.get_elem(self.first_document_title).text,
+                         'Second document title should appears in search result')
+
+        # TODO renable this test when https://gitlab.com/exotic-matter/ftl-app/issues/42 fixed
+        """
+        self.assertEqual(second_document_title, self.get_elem_text(self.search_input),
+                         'Search input should be prefilled with search query')
+        """
+
+
+class DocumentViewPageTests(LoginPage, HomePage, DocumentViewPage):
+    def setUp(self, **kwargs):
+        # first org, admin, user are already created, user is already logged on home page
+        super().setUp()
+        self.org = setup_org()
+        setup_admin(self.org)
+        self.user = setup_user(self.org)
+        self.visit(LoginPage.url)
+        self.log_user()
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_visit_url_with_document_pid(self):
+        # User have already added 2 documents
+        setup_document(self.org, self.user)
+        second_document_title = 'bingo!'
+        second_document = setup_document(self.org, self.user, title=second_document_title)
+
+        # User open second document through url
+        self.visit(DocumentViewPage.url.format(second_document.pid))
+        self.wait_for_elem_text_not_to_be(self.document_title, 'Title loading')
+
+        self.assertIn(second_document_title,
+                      self.get_elem_text(self.document_title),
+                      'Document title should match opened document')

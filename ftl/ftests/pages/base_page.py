@@ -46,7 +46,6 @@ if DEV_MODE and not is_node_server_running():
 
 
 class BasePage(LIVE_SERVER):
-
     modal_input = '.modal-dialog input'
     modal_accept_button = '.modal-dialog .modal-footer .btn-primary'
     modal_reject_button = '.modal-dialog .modal-footer .btn-secondary'
@@ -147,8 +146,7 @@ class BasePage(LIVE_SERVER):
         elif elem.tag_name == 'select':
             return elem.find_element_by_css_selector('option:checked').text
         else:
-            elem.text
-
+            return elem.text
 
     @staticmethod
     def _wait_for_method_to_return(method, timeout, *method_args, custom_return_validator=None,
@@ -186,18 +184,33 @@ class BasePage(LIVE_SERVER):
                                         custom_return_validator=function,
                                         expected_exception_type=exception_type)
 
-    def wait_for_element_to_show(self, css_selector, timeout=5):
+    def wait_for_elem_to_show(self, css_selector, timeout=5):
         WebDriverWait(self.browser, timeout).until(
             Ec.visibility_of_element_located((By.CSS_SELECTOR, css_selector))
         )
 
-    def wait_for_element_to_disappear(self, css_selector, timeout=5):
+    def wait_for_elem_to_disappear(self, css_selector, timeout=5):
         try:
             self._wait_for_method_to_raise_exception(self.get_elem, timeout, NoSuchElementException, css_selector)
         except TimeoutException:
             raise TimeoutException(f'The element "{css_selector}" doesn\'t disapear after {timeout}s')
 
+    def wait_for_elem_text_to_be_valid(self, css_selector, validator, timeout=5):
+        try:
+            self._wait_for_method_to_return(self.get_elem_text, timeout, css_selector, True,
+                                            custom_return_validator=validator)
+        except TimeoutException:
+            raise TimeoutException(f'The element text "{css_selector}" doesn\'t turn to be valid after {timeout}s')
+
+    def wait_for_elem_text_to_be(self, css_selector, elem_text, timeout=5):
+        validator = lambda text: True if text == elem_text else False
+        self.wait_for_elem_text_to_be_valid(css_selector, validator, timeout)
+
+    def wait_for_elem_text_not_to_be(self, css_selector, elem_text, timeout=5):
+        validator = lambda text: True if text != elem_text else False
+        self.wait_for_elem_text_to_be_valid(css_selector, validator, timeout)
+
     def close_last_notification(self):
-        self.wait_for_element_to_show(self.notification)
+        self.wait_for_elem_to_show(self.notification)
         self.get_elem(self.close_notification).click()
-        self.wait_for_element_to_disappear(self.notification)
+        self.wait_for_elem_to_disappear(self.notification)
