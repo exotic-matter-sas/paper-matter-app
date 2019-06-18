@@ -185,6 +185,7 @@ class HomePageTests(LoginPage, HomePage):
         document_b = setup_document(self.org, self.user, folder_b, title='document_b')
         folder_c = setup_folder(self.org, parent=folder_b)
         document_c = setup_document(self.org, self.user, folder_c, title='document_c')
+        self.wait_document_list_loaded()
         self.visit(HomePage.url)
 
         # User browse to folder c
