@@ -185,7 +185,6 @@ class HomePageTests(LoginPage, HomePage):
         document_b = setup_document(self.org, self.user, folder_b, title='document_b')
         folder_c = setup_folder(self.org, parent=folder_b)
         document_c = setup_document(self.org, self.user, folder_c, title='document_c')
-        self.wait_document_list_loaded()
         self.visit(HomePage.url)
 
         # User browse to folder c
@@ -210,7 +209,11 @@ class HomePageTests(LoginPage, HomePage):
         self.wait_document_list_loaded()
         self.assertEqual(document_root.title, self.get_elem(self.first_document_title).text,
                          'Setup document title should appears in root folder')
-        self.next_page(3)
+        self.next_page()
+        self.wait_document_list_loaded()
+        self.next_page()
+        self.wait_document_list_loaded()
+        self.next_page()
         self.wait_document_list_loaded()
         self.assertEqual(document_c.title, self.get_elem(self.first_document_title).text,
                          'Setup document title should appears in folder c')

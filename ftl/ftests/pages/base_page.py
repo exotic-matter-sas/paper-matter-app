@@ -7,7 +7,7 @@ import urllib.error
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.test import LiveServerTestCase
 from selenium import webdriver
-from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from selenium.common.exceptions import TimeoutException, NoSuchElementException, StaleElementReferenceException
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
@@ -161,7 +161,7 @@ class BasePage(LIVE_SERVER):
 
     @staticmethod
     def _wait_for_method_to_return(method, timeout, *method_args, custom_return_validator=None,
-                                   expected_exception_type=None, **method_kwargs):
+                                   expected_exception_types=None, **method_kwargs):
         """
         Wait for the given method to return a truthy value and return it
         If custom_return_validator is provided return value will be tested against the validator
@@ -179,21 +179,21 @@ class BasePage(LIVE_SERVER):
                 elif value:
                     return value
 
-            except expected_exception_type:
+            except expected_exception_types:
                 return None
 
             time.sleep(polling_interval)
             if time.time() > end_time:
                 raise TimeoutException()
 
-    def _wait_for_method_to_raise_exception(self, method, timeout, exception_type, *method_args, **method_kwargs):
+    def _wait_for_method_to_raise_exception(self, method, timeout, exception_types, *method_args, **method_kwargs):
         # Use always False validator to only return if expected condition is raised
         def function(val):
             return False
 
         self._wait_for_method_to_return(method, timeout, *method_args, **method_kwargs,
                                         custom_return_validator=function,
-                                        expected_exception_type=exception_type)
+                                        expected_exception_types=exception_types)
 
     def wait_for_elem_to_show(self, css_selector, timeout=5):
         WebDriverWait(self.browser, timeout).until(
@@ -202,7 +202,9 @@ class BasePage(LIVE_SERVER):
 
     def wait_for_elem_to_disappear(self, css_selector, timeout=5):
         try:
-            self._wait_for_method_to_raise_exception(self.get_elem, timeout, NoSuchElementException, css_selector)
+            self._wait_for_method_to_raise_exception(self.get_elem, timeout,
+                                                     (NoSuchElementException, StaleElementReferenceException),
+                                                     css_selector)
         except TimeoutException:
             raise TimeoutException(f'The element "{css_selector}" doesn\'t disapear after {timeout}s')
 
