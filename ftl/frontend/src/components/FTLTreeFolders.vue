@@ -24,7 +24,8 @@
     },
     props: {
       start: Number,
-      root: {type: Boolean, default: true}
+      root: {type: Boolean, default: true},
+      sourceFolder: Number
     },
 
     data() {
@@ -44,9 +45,13 @@
       axios
         .get("/app/api/v1/folders/" + qs)
         .then(response => {
-            vi.folders = response.data.map(function (e) {
-              return {id: e.id, name: e.name, has_descendant: e.has_descendant, children: []}
-            });
+            vi.folders = response.data
+              .filter(function (e) {
+                return e.id !== vi.sourceFolder;
+              })
+              .map(function (e) {
+                return {id: e.id, name: e.name, has_descendant: e.has_descendant, children: []}
+              });
 
             if (!vi.root) {
               // Add a static root

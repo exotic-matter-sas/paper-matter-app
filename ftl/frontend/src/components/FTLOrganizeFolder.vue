@@ -1,10 +1,17 @@
 <template>
-  <b-col sm="2" class="m-1 folder">
+  <b-col
+    sm="2"
+    class="m-1 folder"
+    @dblclick="$emit('event-navigate-folder', folder.id)"
+    @click="$emit('event-select-folder', folder.id)">
+    <!--    <b-row align-h="center">-->
+    <!--      {{ folder.created }}-->
+    <!--    </b-row>-->
     <b-row align-h="center">
-      <span @click="$emit('event-navigate-folder', folder.id)"><b>{{ folder.name }}</b></span>
+      <font-awesome-icon icon="folder" size="5x"/>
     </b-row>
     <b-row align-h="center">
-      {{ folder.created }}
+      <b>{{ folder.name }}</b>
     </b-row>
     <b-row align-h="center">
       <b-button class="m-1" variant="secondary" @click="showModalMoveFolder">Move</b-button>
@@ -22,7 +29,7 @@
       <b-container fluid>
         <span v-if="selectedFolder">{{this.$_('Selected folder: %s', [selectedFolder.name])}}</span>
         <span v-else>{{this.$_('No folder selected')}}</span>
-        <FTLTreeFolders :root="isRoot"/>
+        <FTLTreeFolders :root="isRoot" :sourceFolder="folder.id"/>
       </b-container>
     </b-modal>
   </b-col>
