@@ -4,12 +4,20 @@ import App from './App.vue';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
+
+import {library} from '@fortawesome/fontawesome-svg-core';
+import {faFileDownload, faFolder, faHome, faSearch, faTrash, faWindowClose} from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
+
 import {mixinAlert} from "./vueMixins";
 import router from './router';
 import store from './store'
 
 Vue.config.productionTip = false;
 
+// Font Awesome icons definition
+library.add(faHome, faFolder, faSearch, faWindowClose, faTrash, faFileDownload);
+Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.use(BootstrapVue);
 
 Vue.prototype.$_ = function (text, vars = null) {
