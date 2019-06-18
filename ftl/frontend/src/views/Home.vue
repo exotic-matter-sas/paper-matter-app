@@ -195,6 +195,11 @@
             this.updateFoldersPath(newVal, true);
           }
         }
+      },
+      $route: function (to, from) {
+        if (to.name === 'home') {
+          this.changeFolder();
+        }
       }
     },
 
@@ -235,6 +240,9 @@
 
       changeFolder: function (folder = null) {
         this.currentSearch = "";
+        if (folder === null) {
+          this.previousLevels = [];
+        }
         this.updateFolders(folder);
         this.updateDocuments();
       },
