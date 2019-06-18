@@ -27,10 +27,13 @@ class HomePage(BasePage):
     documents_list = '.document-thumbnail'
     first_document_title = '.document-title span'
 
+    def wait_document_list_loaded(self):
+        self.wait_for_elem_to_disappear(self.document_list_loader)
+
     def search_document(self, search_text):
         self.get_elem(self.search_input).send_keys(search_text)
         self.get_elem(self.search_button).click()
-        self.wait_for_elem_to_disappear(self.document_list_loader)
+        self.wait_document_list_loaded()
 
     def upload_document(self, absolute_path=None):
         if not absolute_path:

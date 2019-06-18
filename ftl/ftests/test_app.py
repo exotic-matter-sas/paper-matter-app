@@ -146,7 +146,7 @@ class HomePageTests(LoginPage, HomePage):
 
         # User search last uploaded document
         self.visit(f'/app/#/home?q={second_document_title}')
-        self.wait_for_elem_to_disappear(self.document_list_loader)
+        self.wait_document_list_loaded()
 
         self.assertEqual(len(self.get_elems(self.documents_list)), 1,
                          'Only second document should appears in the search result')
@@ -158,6 +158,21 @@ class HomePageTests(LoginPage, HomePage):
         self.assertEqual(second_document_title, self.get_elem_text(self.search_input),
                          'Search input should be prefilled with search query')
         """
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_visit_url_with_folder_id(self):
+        # User already created a 3 levels folder three (a > b > c) and have added a document inside c folder
+        folder_a = setup_folder(self.org)
+        folder_b = setup_folder(self.org, parent=folder_a)
+        folder_c = setup_folder(self.org, parent=folder_b)
+        document = setup_document(self.org, self.user, folder_c, title='bingo!')
+
+        # User open folder c through url
+        self.visit(f'/app/#/home/folderFakePath/{folder_c.id}')
+        self.wait_document_list_loaded()
+
+        self.assertEqual(document.title, self.get_elem(self.first_document_title).text,
+                         'Setup document title should appears in folder C')
 
 
 class DocumentViewPageTests(LoginPage, HomePage, DocumentViewPage):
@@ -171,7 +186,9 @@ class DocumentViewPageTests(LoginPage, HomePage, DocumentViewPage):
         self.log_user()
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
-    def test_visit_url_with_document_pid(self):
+    @patch.object(parser, 'from_file')
+    def test_visit_url_with_document_pid(self, mock_tika_parser):
+        mock_tika_parser.return_value = ""
         # User have already added 2 documents
         setup_document(self.org, self.user)
         second_document_title = 'bingo!'
@@ -179,8 +196,32 @@ class DocumentViewPageTests(LoginPage, HomePage, DocumentViewPage):
 
         # User open second document through url
         self.visit(DocumentViewPage.url.format(second_document.pid))
-        self.wait_for_elem_text_not_to_be(self.document_title, 'Title loading')
+        self.wait_for_elem_text_not_to_be(self.document_title, 'Title: loading')
 
         self.assertIn(second_document_title,
                       self.get_elem_text(self.document_title),
-                      'Document title should match opened document')
+                      'Setup document title should match opened document')
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @patch.object(parser, 'from_file')
+    def test_visit_url_with_folder_id_and_document_pid(self, mock_tika_parser):
+        mock_tika_parser.return_value = ""
+        # User already created a 3 levels folder three (a > b > c) and have added a document inside c folder
+        folder_a = setup_folder(self.org)
+        folder_b = setup_folder(self.org, parent=folder_a)
+        folder_c = setup_folder(self.org, parent=folder_b)
+        document_title = 'bingo!'
+        document = setup_document(self.org, self.user, folder_c, title=document_title)
+
+        # User open folder and document through url
+        self.visit(f'{HomePage.url}#/home/folderFakePath/{folder_c.id}?doc={document.pid}')
+        self.wait_for_elem_text_not_to_be(self.document_title, 'Title: loading')
+
+        self.assertIn(document_title,
+                      self.get_elem_text(self.document_title),
+                      'Setup document title should match opened document')
+
+        # User close document
+        self.close_document()
+        self.assertEqual(document.title, self.get_elem(self.first_document_title).text,
+                         'Setup document title should appears in folder C')

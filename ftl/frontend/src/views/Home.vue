@@ -66,7 +66,7 @@
             <span id="document-title">{{ this.$_('Title:') }} {{ currentOpenDoc.title }}</span>
           </b-col>
           <b-col>
-            <b-button id="c" variant="secondary" @click="closeDocument">{{this.$_('Close')}}</b-button>
+            <b-button id="close-document" variant="secondary" @click="closeDocument">{{this.$_('Close')}}</b-button>
           </b-col>
         </b-row>
 
