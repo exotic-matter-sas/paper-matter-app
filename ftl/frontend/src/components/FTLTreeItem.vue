@@ -80,7 +80,7 @@
               })
             }
           )
-          .catch(error => vi.mixinAlert("Unable to refresh folders list", true))
+          .catch(error => vi.mixinAlert(vi.$_('Unable to refresh folders list'), true))
           .finally(() => this.loading = false);
       }
     }

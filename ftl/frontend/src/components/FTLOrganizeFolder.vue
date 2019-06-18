@@ -80,7 +80,7 @@
             vi.$store.commit('selectFolder', null);
           })
           .catch(error => {
-            vi.mixinAlert("Could not move folder", true)
+            vi.mixinAlert(vi.$_('Could not move folder'), true)
           });
       },
 
@@ -103,7 +103,7 @@
             axios.delete('/app/api/v1/folders/' + vi.folder.id, axiosConfig)
               .then(response => {
                 vi.$emit("event-delete-folder", vi.folder.id);
-              }).catch(error => vi.mixinAlert("Unable to delete folder", true));
+              }).catch(error => vi.mixinAlert(vi.$_('Unable to delete folder'), true));
           }
         })
           .catch(err => {
@@ -115,7 +115,7 @@
 </script>
 
 <style scoped>
-.folder {
-  cursor: pointer;
-}
+  .folder {
+    cursor: pointer;
+  }
 </style>

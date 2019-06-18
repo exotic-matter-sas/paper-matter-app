@@ -80,7 +80,7 @@
             if (level) {
               vi.$router.push({name: 'folders', params: {folder: level}});
             }
-          }).catch(error => vi.mixinAlert("Unable to refresh folders list", true))
+          }).catch(error => vi.mixinAlert(vi.$_('Unable to refresh folders list'), true))
           .finally(() => vi.foldersLoading = false);
       }
     }
