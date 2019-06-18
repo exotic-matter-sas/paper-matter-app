@@ -89,7 +89,7 @@
       </b-container>
     </div>
 
-    <b-modal v-if="newFolderModal" v-model="newFolderModal" @ok="createNewFolder"
+    <b-modal v-model="newFolderModal" @ok="createNewFolder"
              :ok-disabled="newFolderName === ''"
              :cancel-title="this.$_('Cancel')"
              :ok-title="this.$_('Create')">

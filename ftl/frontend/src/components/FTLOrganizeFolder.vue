@@ -12,14 +12,17 @@
     </b-row>
 
     <b-modal id="move-folder"
-             v-if="modalMoveFolder"
              v-model="modalMoveFolder"
-             title="Move folder"
              :ok-disabled="!selectedFolder"
              @ok="moveFolder">
+      <template slot="modal-title">
+        <span v-if="selectedFolder">{{ this.$_('Move %s to %s', [folder.name, selectedFolder.name])}}</span>
+        <span v-else>{{ this.$_('Move %s to ...', [folder.name])}}</span>
+      </template>
       <b-container fluid>
-        <span v-if="selectedFolder">Selected folder <b>{{selectedFolder.name}}</b></span>
-        <FTLTreeFolders/>
+        <span v-if="selectedFolder">{{this.$_('Selected folder: %s', [selectedFolder.name])}}</span>
+        <span v-else>{{this.$_('No folder selected')}}</span>
+        <FTLTreeFolders :root="isRoot"/>
       </b-container>
     </b-modal>
   </b-col>
@@ -52,6 +55,10 @@
     computed: {
       selectedFolder: function () {
         return this.$store.state.selectedFolder
+      },
+
+      isRoot: function () {
+        return this.folder.parent === null;
       }
     },
 
@@ -73,37 +80,34 @@
             vi.$store.commit('selectFolder', null);
           })
           .catch(error => {
-
-          })
-          .finally(() => {
-
+            vi.mixinAlert("Could not move folder", true)
           });
       },
 
       showModalDeleteFolder: function () {
         const vi = this;
 
-        this.$bvModal.msgBoxConfirm(this.$_('Please confirm that you want to delete the folder and everything inside. This action is not reversible.'), {
-          title: this.$_('Deletion of folders and its contents'),
-          size: 'md',
-          buttonSize: 'md',
-          okVariant: 'danger',
-          okTitle: this.$_('Yes, I want to delete the folder and everything inside'),
-          cancelTitle: this.$_('No, cancel'),
-          footerClass: 'm-1',
-          hideHeaderClose: false,
-          centered: true
+        this.$bvModal.msgBoxConfirm(
+          this.$_('Please confirm that you want to delete the folder and everything inside. This action is not reversible.'), {
+            title: this.$_('Deletion of folders and its contents'),
+            size: 'md',
+            buttonSize: 'md',
+            okVariant: 'danger',
+            okTitle: this.$_('Yes, I want to delete the folder and everything inside'),
+            cancelTitle: this.$_('No, cancel'),
+            footerClass: 'm-1',
+            hideHeaderClose: false,
+            centered: true
+          }).then(value => {
+          if (value === true) {
+            axios.delete('/app/api/v1/folders/' + vi.folder.id, axiosConfig)
+              .then(response => {
+                vi.$emit("event-delete-folder", vi.folder.id);
+              }).catch(error => vi.mixinAlert("Unable to delete folder", true));
+          }
         })
-          .then(value => {
-            if (value === true) {
-              axios.delete('/app/api/v1/folders/' + vi.folder.id, axiosConfig)
-                .then(response => {
-                  vi.$emit("event-delete-folder", vi.folder.id);
-                }).catch(error => vi.mixinAlert("Unable to delete folder", true));
-            }
-          })
           .catch(err => {
-            // TODO
+            // TODO??
           });
       }
     }

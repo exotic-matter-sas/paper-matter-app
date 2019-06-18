@@ -22,7 +22,10 @@
     components: {
       FTLTreeItem
     },
-    props: ['start'],
+    props: {
+      start: Number,
+      root: {type: Boolean, default: true}
+    },
 
     data() {
       return {
@@ -44,8 +47,11 @@
             vi.folders = response.data.map(function (e) {
               return {id: e.id, name: e.name, has_descendant: e.has_descendant, children: []}
             });
-            // Add a static root
-            vi.folders.push({id: null, name: 'root'});
+
+            if (!vi.root) {
+              // Add a static root
+              vi.folders.push({id: null, name: vi.$_('Root')});
+            }
           }
         )
         .catch(error => vi.mixinAlert("Unable to refresh folders list", true));
