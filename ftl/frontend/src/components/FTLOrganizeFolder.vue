@@ -1,5 +1,5 @@
 <template>
-  <b-col sm="2" class="m-1">
+  <b-col sm="2" class="m-1 folder">
     <b-row align-h="center">
       <span @click="$emit('event-navigate-folder', folder.id)"><b>{{ folder.name }}</b></span>
     </b-row>
@@ -115,5 +115,7 @@
 </script>
 
 <style scoped>
-
+.folder {
+  cursor: pointer;
+}
 </style>
