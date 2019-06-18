@@ -12,6 +12,7 @@ import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
 import {mixinAlert} from "./vueMixins";
 import router from './router';
 import store from './store'
+import moment from 'moment'
 
 Vue.config.productionTip = false;
 
@@ -39,6 +40,9 @@ Vue.prototype.$_ = function (text, vars = null) {
 
   return translated_text;
 };
+
+// Moment JS for nice date
+Vue.prototype.$moment = moment;
 
 // Defined mixins
 Vue.mixin({
