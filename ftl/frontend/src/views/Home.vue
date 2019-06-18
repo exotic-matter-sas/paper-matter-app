@@ -133,7 +133,7 @@
       FTLUpload
     },
 
-    props: ['query', 'doc', 'paths', 'folder'],
+    props: ['searchQuery', 'doc', 'paths', 'folder'],
 
     data() {
       return {
@@ -175,7 +175,7 @@
     },
 
     watch: {
-      query: function (newVal, oldVal) {
+      searchQuery: function (newVal, oldVal) {
         this.refreshDocumentWithSearch(newVal);
       },
       doc: function (newVal, oldVal) {

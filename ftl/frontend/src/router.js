@@ -14,7 +14,7 @@ export default new Router({
       name: 'home',
       component: Home,
       props: (route) => ({
-        query: route.query.q,
+        searchQuery: route.query.q,
         doc: route.query.doc,
       })
     },
@@ -24,7 +24,7 @@ export default new Router({
       name: 'home-folder',
       component: Home,
       props: (route) => ({
-        query: route.query.q,
+        searchQuery: route.query.q,
         doc: route.query.doc,
         paths: route.params.paths,
         folder: route.params.folder
