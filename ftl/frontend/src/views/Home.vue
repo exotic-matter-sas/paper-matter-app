@@ -30,7 +30,7 @@
           </b-button>
           <b-button v-else variant="primary" class="m-1" disabled>Up</b-button>
           <FTLFolder v-for="folder in folders" :key="folder.id" :folder="folder"
-                     @event-change-folder="changeFolder"/>
+                     @event-change-folder="navigateToFolder"/>
           <b-button id="create-folder" class="m-1" variant="outline-primary" size="sm"
                     @click.prevent="newFolderModal = true">
             {{ this.$_('Create new folder') }}
@@ -39,11 +39,11 @@
       </b-container>
     </section>
 
-    <section>
+    <section id="documents-list">
       <b-container>
         <b-row v-if="docLoading">
           <b-col>
-            <b-spinner id="document-list-loader" style="width: 3rem; height: 3rem;" class="m-5"
+            <b-spinner id="documents-list-loader" style="width: 3rem; height: 3rem;" class="m-5"
                        label="Loading..."></b-spinner>
           </b-col>
         </b-row>
@@ -61,7 +61,15 @@
     <!-- Pdf viewer popup -->
     <div v-if="docModal" class="doc-view-modal" :class="{open: docModal}">
       <b-container>
-        {{ this.$_('Title') }} {{ currentOpenDoc.title }}
+        <b-row>
+          <b-col md="10">
+            <span id="document-title">{{ this.$_('Title:') }} {{ currentOpenDoc.title }}</span>
+          </b-col>
+          <b-col>
+            <b-button id="close-document" variant="secondary" @click="closeDocument">{{this.$_('Close')}}</b-button>
+          </b-col>
+        </b-row>
+
       </b-container>
       <b-container>
         <b-row scr>
@@ -71,7 +79,6 @@
                       :src="`/assets/pdfjs/web/viewer.html?file=/app/uploads/` + currentOpenDoc.pid + `#search=` + currentSearch">
               </iframe>
             </div>
-
           </b-col>
           <b-col>
             <b-row>AAA</b-row>
@@ -126,7 +133,7 @@
       FTLUpload
     },
 
-    props: ['query', 'doc'],
+    props: ['searchQuery', 'doc', 'paths', 'folder'],
 
     data() {
       return {
@@ -153,11 +160,30 @@
     },
 
     mounted() {
-      this.changeFolder();
+      if (this.doc) {
+        // Open document directly from loading an URL with document
+        this.openDocument(this.doc);
+      }
+
+      if (this.folder) {
+        // Open folder directly from loading an URL with folder (don't reset URL if opening a document)
+        this.updateFoldersPath(this.folder);
+      } else {
+        // Or just show the current folders
+        this.refreshFolders();
+      }
+
+      if (this.searchQuery) {
+        // search docs
+        this.refreshDocumentWithSearch(this.searchQuery);
+      } else {
+        // all docs
+        this.updateDocuments();
+      }
     },
 
     watch: {
-      query: function (newVal, oldVal) {
+      searchQuery: function (newVal, oldVal) {
         this.refreshDocumentWithSearch(newVal);
       },
       doc: function (newVal, oldVal) {
@@ -165,6 +191,17 @@
           this.docModal = false;
         } else {
           this.openDocument(newVal);
+        }
+      },
+      folder: function (newVal, oldVal) {
+        // Detect navigation in folders
+        if (newVal === undefined) {
+          // Root folder
+          this.changeFolder()
+        } else {
+          if (newVal !== oldVal) {
+            this.updateFoldersPath(newVal, true);
+          }
         }
       }
     },
@@ -184,31 +221,80 @@
     },
 
     methods: {
+      computeFolderUrlPath: function (id = null) {
+        if (this.previousLevels.length > 0) {
+          let s = this.previousLevels.map(e => e.name);
+
+          if (id) {
+            s.push(id);
+          } else {
+            s.push(this.previousLevels[this.previousLevels.length - 1].id);
+          }
+
+          return s.join('/');
+        } else {
+          return '';
+        }
+      },
+
       refreshFolders: function () {
         this.updateFolders(this.getCurrentFolder);
       },
 
       changeFolder: function (folder = null) {
-        if (folder) this.previousLevels.push(folder);
         this.currentSearch = "";
+        if (folder === null) {
+          this.previousLevels = [];
+        }
         this.updateFolders(folder);
         this.updateDocuments();
+      },
+
+      navigateToFolder: function (folder) {
+        if (folder) this.previousLevels.push(folder);
+        this.$router.push({path: '/home/' + this.computeFolderUrlPath(folder.id)})
       },
 
       changeToPreviousFolder: function () {
         this.previousLevels.pop(); // Remove current level
         let level = this.getCurrentFolder;
-        this.currentSearch = "";
-        this.updateFolders(level);
-        this.docs = []; // Clear docs when changing folder to avoid display artefact
-        this.updateDocuments();
+
+        if (level === null) {
+          this.$router.push({name: 'home'});
+        } else {
+          this.$router.push({path: '/home/' + this.computeFolderUrlPath(level.parent)})
+        }
+      },
+
+      updateFoldersPath: function (folderId) {
+        axios
+          .get('/app/api/v1/folders/' + folderId)
+          .then(response => {
+            this.previousLevels = response.data.paths;
+            this.changeFolder(response.data);
+            // Allow refresh of the current URL in address bar to take into account folders paths changes
+            if (this.docPid) {
+              this.$router.push({
+                path: '/home/' + this.computeFolderUrlPath(folderId),
+                query: {
+                  doc: this.docPid
+                }
+              });
+            } else {
+              this.$router.push({path: '/home/' + this.computeFolderUrlPath(folderId)});
+            }
+          })
+          .catch(() => {
+            this.mixinAlert("Could not open this folder", true);
+          });
       },
 
       openDocument: function (pid) {
+        const vi = this;
+
         this.docPid = pid;
         this.docModal = true;
 
-        const vi = this;
         axios
           .get('/app/api/v1/documents/' + pid)
           .then(response => {
@@ -217,14 +303,17 @@
             if (!response.data.thumbnail_available) {
               vi.createThumbnailForDocument(response.data);
             }
-
-            this.$router.push({name: 'home', params: {doc: pid}});
-          }).catch(error => vi.mixinAlert("Unable to show document.", true));
+            vi.$router.push({path: '/home/' + vi.computeFolderUrlPath(), query: {doc: pid}});
+          })
+          .catch(error => {
+            vi.mixinAlert("Unable to show document.", true)
+          });
       },
 
       closeDocument: function () {
-        this.docPid = false;
+        this.docModal = false;
         this.docPid = null;
+        this.$router.push({path: '/home/' + this.computeFolderUrlPath()});
       },
 
       createThumbnailForDocument: async function (doc, updateDocuments = true) {
@@ -291,7 +380,7 @@
         let qs = '';
 
         // While loading folders, clear folders to avoid showing current sets of folders intermittently
-        vi.folders = [];
+        // vi.folders = [];
 
         if (level) {
           qs = '?level=' + level.id;
