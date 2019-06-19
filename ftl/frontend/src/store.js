@@ -5,11 +5,16 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    selectedFolder: null
+    selectedMoveTargetFolder: null,
+    panelSelectedFolder: null
   },
   mutations: {
-    selectFolder: function (state, folder) {
-      state.selectedFolder = folder;
+    selectMoveTargetFolder: function (state, folder) {
+      state.selectedMoveTargetFolder = folder;
+    },
+
+    selectPanelFolder: function (state, folder) {
+      state.panelSelectedFolder = folder;
     }
   },
   actions: {}

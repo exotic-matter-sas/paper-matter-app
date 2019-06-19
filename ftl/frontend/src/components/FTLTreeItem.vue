@@ -41,8 +41,8 @@
       },
 
       selected: function () {
-        return !!(this.$store.state.selectedFolder
-          && this.$store.state.selectedFolder.id === this.item.id);
+        return !!(this.$store.state.selectedMoveTargetFolder
+          && this.$store.state.selectedMoveTargetFolder.id === this.item.id);
       }
     },
 
@@ -57,9 +57,9 @@
 
       selectFolder: function () {
         if (this.selected) {
-          this.$store.commit('selectFolder', null);
+          this.$store.commit('selectMoveTargetFolder', null);
         } else {
-          this.$store.commit('selectFolder', {id: this.item.id, name: this.item.name})
+          this.$store.commit('selectMoveTargetFolder', {id: this.item.id, name: this.item.name})
         }
       },
 
