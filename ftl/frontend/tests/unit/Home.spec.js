@@ -17,6 +17,7 @@ localVue.use(BootstrapVue); // to avoid warning on tests execution
 localVue.prototype.$_ = (text) => {
   return text;
 }; // i18n mock
+localVue.prototype.$router = {push: jest.fn()}; // router mock
 localVue.mixin({methods: {mixinAlert: jest.fn()}}); // mixin alert
 
 jest.mock('axios', () => ({
@@ -34,6 +35,16 @@ const mockedGetFoldersResponse = {
   data: [],
   status: 200,
   config: axiosConfig
+};
+const mockedGetFolderResponse = {
+  data: {
+    id: tv.FOLDER_PROPS_VARIANT.id,
+    name: tv.FOLDER_PROPS_VARIANT.name,
+    paths: [
+      tv.FOLDER_PROPS,
+    ]
+  },
+  status: 200
 };
 const mockedGetDocumentDetailWithThumbResponse = {
   data: tv.DOCUMENT_PROPS,
@@ -81,6 +92,10 @@ const mockedOpenDocument = jest.fn();
 const mockedAlert = jest.fn();
 const mockedRefreshFolder = jest.fn();
 const mockedCreateThumbnailForDocument = jest.fn();
+const mockedNavigateToFolder = jest.fn();
+const mockedComputeFolderUrlPath = jest.fn();
+const mockedRefreshDocumentWithSearch = jest.fn();
+const mockedUpdateDocuments = jest.fn();
 
 describe('Home script computed', () => {
   let wrapper;
@@ -88,7 +103,12 @@ describe('Home script computed', () => {
   beforeEach(() => {
     wrapper = shallowMount(Home, {
       localVue,
-      methods: {changeFolder: mockedChangeFolder} // mock changeFolder as it is called by mounted
+      methods: {
+        changeFolder: mockedChangeFolder,
+        refreshFolders: mockedRefreshFolder,
+        refreshDocumentWithSearch: mockedRefreshDocumentWithSearch,
+        updateDocuments: mockedUpdateDocuments
+      } // mock for methods in mount
     });
   });
 
@@ -130,7 +150,8 @@ describe('Home script methods call proper methods', () => {
   it('mounted call proper methods', () => {
     // view mounted in beforeEach
     // then
-    expect(mockedChangeFolder).toHaveBeenCalled();
+    expect(mockedRefreshFolder).toHaveBeenCalled();
+    expect(mockedUpdateDocuments).toHaveBeenCalled();
   });
 
   it('changeFolder call proper methods', () => {
@@ -152,15 +173,13 @@ describe('Home script methods call proper methods', () => {
   });
 
   it('changeToPreviousFolder call proper methods', () => {
-    let previousFolder = tv.FOLDER_PROPS;
-    wrapper.setData({previousLevels: [previousFolder, tv.FOLDER_PROPS_VARIANT]});
-
+    wrapper.setData({previousLevels: [tv.FOLDER_PROPS, tv.FOLDER_PROPS_VARIANT]});
+    let paths = '/home/' + tv.FOLDER_PROPS.name + '/' + tv.FOLDER_PROPS.id;
     // when
     wrapper.vm.changeToPreviousFolder();
 
     // then
-    expect(mockedUpdateFolder).toHaveBeenCalledWith(previousFolder);
-    expect(mockedUpdateDocument).toHaveBeenCalled();
+    expect(wrapper.vm.$router.push).toHaveBeenCalledWith({path: paths});
   });
 
   it('refreshFolders call proper methods', () => {
@@ -202,17 +221,60 @@ describe('Home script methods call proper methods', () => {
     // then thumbnail generation is needed
     expect(mockedCreateThumbnailForDocument).toHaveBeenCalledWith(tv.DOCUMENT_NO_THUMB_PROPS);
   });
+
+  it('navigateToFolder call router push', () => {
+    wrapper.vm.navigateToFolder(tv.FOLDER_PROPS);
+    const paths = '/home/' + tv.FOLDER_PROPS.name + '/' + tv.FOLDER_PROPS.id;
+
+    expect(wrapper.vm.$router.push).toHaveBeenCalledWith({path: paths});
+  });
+
+});
+
+describe('Home script methods return proper value', () => {
+  let wrapper;
+
+  beforeEach(() => {
+    mockedCreateThumbnailForDocument.mockClear();
+    wrapper = shallowMount(Home, {
+      localVue,
+      methods: {
+        changeFolder: mockedChangeFolder,
+        updateFolders: mockedUpdateFolder,
+        refreshFolders: mockedRefreshFolder,
+        refreshDocumentWithSearch: mockedRefreshDocumentWithSearch,
+        updateDocuments: mockedUpdateDocuments
+      }
+    });
+  });
+
+  it('computeFolderUrlPath return proper value', () => {
+    wrapper.setData({previousLevels: [tv.FOLDER_PROPS, tv.FOLDER_PROPS_VARIANT]});
+
+    let computeFolderUrlPath = wrapper.vm.computeFolderUrlPath(tv.FOLDER_PROPS_VARIANT.id);
+
+    expect(computeFolderUrlPath).toBe(
+      tv.FOLDER_PROPS.name
+      + '/'
+      + tv.FOLDER_PROPS_VARIANT.name
+      + '/'
+      + tv.FOLDER_PROPS_VARIANT.id);
+  });
 });
 
 describe('Home script methods error handling', () => {
   let wrapper;
 
   beforeEach(() => {
+    axios.get.mockResolvedValue(mockedGetDocumentsResponse);
+
     wrapper = shallowMount(Home, {
       localVue,
       methods: {
         changeFolder: mockedChangeFolder,
         mixinAlert: mockedAlert,
+        refreshFolders: mockedRefreshFolder,
+        refreshDocumentWithSearch: mockedRefreshDocumentWithSearch,
       }
     });
   });
@@ -246,6 +308,7 @@ describe('Home script methods call proper api', () => {
           refreshFolders: mockedRefreshFolder,
           createThumbnailForDocument: mockedCreateThumbnailForDocument,
           mixinAlert: mockedAlert,
+          computeFolderUrlPath: mockedComputeFolderUrlPath
         }
       }
     );
@@ -345,6 +408,15 @@ describe('Home script methods call proper api', () => {
     );
   });
 
+  it('updateFoldersPath call api', async () => {
+    axios.get.mockResolvedValueOnce(mockedGetFolderResponse);
+    wrapper.vm.updateFoldersPath(tv.FOLDER_PROPS.id);
+    await flushPromises();
+
+    expect(axios.get).toHaveBeenCalledWith('/app/api/v1/folders/' + tv.FOLDER_PROPS.id);
+    expect(mockedChangeFolder).toHaveBeenCalledWith(mockedGetFolderResponse.data);
+    expect(mockedComputeFolderUrlPath).toHaveBeenCalledWith(tv.FOLDER_PROPS.id);
+  });
 });
 
 describe('Home event handling', () => {
@@ -357,6 +429,7 @@ describe('Home event handling', () => {
         changeFolder: mockedChangeFolder,
         updateDocuments: mockedUpdateDocument,
         openDocument: mockedOpenDocument,
+        navigateToFolder: mockedNavigateToFolder
       }
     });
   });
@@ -372,7 +445,7 @@ describe('Home event handling', () => {
     });
   });
 
-  it('event-change-folder call changeFolder', done => {
+  it('event-change-folder call navigateToFolder', done => {
     // Need to define at least one folder in order FTLFolder component is instantiated
     wrapper.setData({folders: [tv.FOLDER_PROPS]});
     let next_folder = tv.FOLDER_PROPS_VARIANT;
@@ -382,7 +455,7 @@ describe('Home event handling', () => {
 
     // then
     wrapper.vm.$nextTick(() => {
-      expect(mockedChangeFolder).toHaveBeenCalledWith(next_folder);
+      expect(mockedNavigateToFolder).toHaveBeenCalledWith(next_folder);
       done();
     });
   });

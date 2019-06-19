@@ -10,27 +10,31 @@ export default new Router({
       path: '/', redirect: '/home'
     },
     {
-      path: '/home/:doc?',
+      path: '/home',
       name: 'home',
       component: Home,
       props: (route) => ({
-        query: route.query.q,
-        doc: route.params.doc
+        searchQuery: route.query.q,
+        doc: route.query.doc,
+      })
+    },
+    // Two entries for Home component because /home/:path*/:folder* entry doesn't work for both cases FIXME
+    {
+      path: '/home/*/:folder(\\d+)',
+      name: 'home-folder',
+      component: Home,
+      props: (route) => ({
+        searchQuery: route.query.q,
+        doc: route.query.doc,
+        paths: route.params.paths,
+        folder: route.params.folder
       })
     },
     {
       path: '/folders/:folder?',
       name: 'folders',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
       component: () => import(/* webpackChunkName: "folders" */ './views/Folders.vue'),
       props: true
-    },
-    {
-      path: '/about',
-      name: 'about',
-      component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
     }
   ]
 })

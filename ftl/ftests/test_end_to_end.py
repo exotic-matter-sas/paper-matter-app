@@ -156,6 +156,6 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage):
         self.search_document(second_document_title)
 
         # Only the second document appears in search results
-        self.assertEqual(len(self.get_elems(self.documents_list)), 1)
+        self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
         self.assertEqual(second_document_title, self.get_elem(self.first_document_title).text)
 

@@ -78,7 +78,7 @@ class FTLDocumentList(generics.ListAPIView):
         queryset = FTLDocument.objects.filter(org=self.request.user.org).order_by('-created')
 
         if not flat_mode:
-            if current_folder is not None:
+            if current_folder is not None and int(current_folder) > 0:
                 queryset = queryset.filter(ftl_folder__id=current_folder)
             else:
                 queryset = queryset.filter(ftl_folder__isnull=True)
@@ -177,7 +177,7 @@ class FTLFolderList(generics.ListCreateAPIView):
         current_folder = self.request.query_params.get('level')
 
         queryset = FTLFolder.objects.filter(org=self.request.user.org)
-        if current_folder is not None:
+        if current_folder is not None and int(current_folder) > 0:
             queryset = queryset.filter(parent__id=current_folder)
         else:
             queryset = queryset.filter(parent__isnull=True)
