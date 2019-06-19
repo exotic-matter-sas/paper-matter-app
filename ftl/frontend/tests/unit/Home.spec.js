@@ -94,6 +94,8 @@ const mockedRefreshFolder = jest.fn();
 const mockedCreateThumbnailForDocument = jest.fn();
 const mockedNavigateToFolder = jest.fn();
 const mockedComputeFolderUrlPath = jest.fn();
+const mockedRefreshDocumentWithSearch = jest.fn();
+const mockedUpdateDocuments = jest.fn();
 
 describe('Home script computed', () => {
   let wrapper;
@@ -101,7 +103,12 @@ describe('Home script computed', () => {
   beforeEach(() => {
     wrapper = shallowMount(Home, {
       localVue,
-      methods: {changeFolder: mockedChangeFolder} // mock changeFolder as it is called by mounted
+      methods: {
+        changeFolder: mockedChangeFolder,
+        refreshFolders: mockedRefreshFolder,
+        refreshDocumentWithSearch: mockedRefreshDocumentWithSearch,
+        updateDocuments: mockedUpdateDocuments
+      } // mock for methods in mount
     });
   });
 
@@ -143,7 +150,8 @@ describe('Home script methods call proper methods', () => {
   it('mounted call proper methods', () => {
     // view mounted in beforeEach
     // then
-    expect(mockedChangeFolder).toHaveBeenCalled();
+    expect(mockedRefreshFolder).toHaveBeenCalled();
+    expect(mockedUpdateDocuments).toHaveBeenCalled();
   });
 
   it('changeFolder call proper methods', () => {
@@ -233,6 +241,9 @@ describe('Home script methods return proper value', () => {
       methods: {
         changeFolder: mockedChangeFolder,
         updateFolders: mockedUpdateFolder,
+        refreshFolders: mockedRefreshFolder,
+        refreshDocumentWithSearch: mockedRefreshDocumentWithSearch,
+        updateDocuments: mockedUpdateDocuments
       }
     });
   });
@@ -260,6 +271,9 @@ describe('Home script methods error handling', () => {
       methods: {
         changeFolder: mockedChangeFolder,
         mixinAlert: mockedAlert,
+        refreshFolders: mockedRefreshFolder,
+        refreshDocumentWithSearch: mockedRefreshDocumentWithSearch,
+        updateDocuments: mockedUpdateDocuments
       }
     });
   });
