@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-08 09:16+0000\n"
+"POT-Creation-Date: 2019-06-19 16:14+0000\n"
 "PO-Revision-Date: 2019-03-05 16:56+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,23 +18,19 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.0.6\n"
 
-#: core/models.py:41
+#: core/models.py:42
 msgid "email address"
 msgstr "addresse email"
 
-#: core/templates/core/home.html:16
+#: core/templates/core/home.html:5
+msgid "Home"
+msgstr "Accueil"
+
+#: core/templates/core/home.html:13
 msgid ""
 "We're sorry but ftl-app will not work without JavaScript enabled. Please "
-"enable it\n"
-"        to continue."
+"enable it to continue."
 msgstr ""
-"Désolé mais ftl-app ne fonctionne pas sans Javascript, veuillez l'activer dans votre navigateur."
+"Désolé mais ftl-app ne fonctionne pas sans Javascript, veuillez l'activer "
+"dans votre navigateur."
 
-#~ msgid "Home"
-#~ msgstr "Accueil"
-
-#~ msgid "FTL APP: Organization %(org_name)s"
-#~ msgstr "FTL APP : Organisation %(org_name)s"
-
-#~ msgid "Welcome back %(username)s!"
-#~ msgstr "Content de vous revoir %(username)s :) !"

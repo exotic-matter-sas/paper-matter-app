@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-08 09:16+0000\n"
+"POT-Creation-Date: 2019-06-19 16:14+0000\n"
 "PO-Revision-Date: 2019-03-05 17:05+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,55 +18,76 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.0.6\n"
 
-#: setup/templates/setup/admin_creation_form.html:4
-#: setup/templates/setup/admin_creation_form.html:9
+#: setup/templates/setup/admin_creation_form.html:5
 msgid "Step 2/2: create the administrator"
 msgstr "Étape 2/2 : création de l'administrateur"
 
-#: setup/templates/setup/admin_creation_form.html:8
-#: setup/templates/setup/first_organization_creation_form.html:8
-msgid "Welcome to ftl-app!"
-msgstr "Bienvenue sur ftl-app !"
+#: setup/templates/setup/admin_creation_form.html:12
+msgid "One more thing..."
+msgstr "Une dernière chose..."
 
-#: setup/templates/setup/admin_creation_form.html:13
-#: setup/templates/setup/first_organization_creation_form.html:13
-msgid "Create"
-msgstr "Créer"
+#: setup/templates/setup/admin_creation_form.html:14
+#: setup/templates/setup/first_organization_creation_form.html:14
+msgid "Create first organization"
+msgstr "Créer la première organisation"
 
-#: setup/templates/setup/first_organization_creation_form.html:4
-#: setup/templates/setup/first_organization_creation_form.html:9
+#: setup/templates/setup/admin_creation_form.html:15
+#: setup/templates/setup/first_organization_creation_form.html:15
+msgid "Create administrator"
+msgstr "Créer l'administrateur"
+
+#: setup/templates/setup/admin_creation_form.html:19
+msgid "Finish"
+msgstr "Terminer"
+
+#: setup/templates/setup/first_organization_creation_form.html:5
 msgid "Step 1/2: create first organization"
 msgstr "Étape 1/2 : Création de la première organisation"
 
-#: setup/templates/setup/success.html:4
+#: setup/templates/setup/first_organization_creation_form.html:12
+msgid "Welcome!"
+msgstr "Bienvenue !"
+
+#: setup/templates/setup/first_organization_creation_form.html:19
+msgid "Next >"
+msgstr "Suivant >"
+
+#: setup/templates/setup/success.html:5
 msgid "Setup completed"
 msgstr "Configuration terminée"
 
-#: setup/templates/setup/success.html:8
-#, python-format
-msgid "Congratulations: %(org_name)s was created with your first admin!"
-msgstr ""
-"Félicitations ! %(org_name)s et son administrateur ont été créés avec succès."
+#: setup/templates/setup/success.html:12
+msgid "Congratulations!"
+msgstr "Félicitations !"
 
-#: setup/templates/setup/success.html:9
+#: setup/templates/setup/success.html:13
+#, python-format
+msgid ""
+"<span class=\"highlight\">%(org_name)s</span> organization was created along "
+"admin user."
+msgstr ""
+"L'organisation <span class=\"highlight\">%(org_name)s</span> ainsi que "
+"l'administrateur ont été créé."
+
+#: setup/templates/setup/success.html:14
 msgid "You can now:"
 msgstr "Vous pouvez maintenant :"
 
-#: setup/templates/setup/success.html:11
+#: setup/templates/setup/success.html:16
 msgid ""
 "Send this link to first organization users for them to create an account:"
 msgstr ""
 "Envoyez ce lien aux utilisateurs de la première organisation pour qu'ils "
 "créent leurs comptes :"
 
-#: setup/templates/setup/success.html:12
+#: setup/templates/setup/success.html:17
 msgid "User signup page"
 msgstr "Page de création des comptes utilisateurs"
 
-#: setup/templates/setup/success.html:13
+#: setup/templates/setup/success.html:18
 msgid "Connect to admin pannel here:"
-msgstr "Connectez-vous à l'interface d'administration ici :"
+msgstr "Vous connecter à l'interface d'administration ici :"
 
-#: setup/templates/setup/success.html:14
+#: setup/templates/setup/success.html:19
 msgid "Admin login page"
 msgstr "Page de connexion pour les administrateurs"

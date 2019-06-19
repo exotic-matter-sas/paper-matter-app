@@ -5,19 +5,50 @@ $theme-colors: (
   "primary": lighten($em-purple, 28%),
   "secondary": #ced4da,
   "dark": $em-purple,
+  "active": darken($em-orange, 10%)
 );
+
+$breadcrumb-divider: quote(">");
 
 @import '../../node_modules/bootstrap/scss/bootstrap';
 @import '../../node_modules/bootstrap-vue/src/index';
 
-// LOGIN PAGE
-
-#login-form{
+#main-with-aside{
     width: 100%;
     max-width: 420px;
     padding: 15px;
     margin: auto;
+}
 
+@include media-breakpoint-up(md) {
+  #main-with-aside {
+    min-height: 100vh;
+  }
+}
+
+.highlight {
+    color: map_get($theme-colors, 'active');
+    font-weight: bold;
+}
+
+.breadcrumb {
+    color: map_get($theme-colors, 'primary');
+    font-weight: bold;
+    font-size: 0.8em;
+
+    .active{
+        color: map_get($theme-colors, 'active');
+    }
+
+    .active + li{
+        color: $gray-700;
+        font-weight: normal;
+    }
+}
+
+// LOGIN PAGE
+
+#login-form{
     .form-label-group {
         position: relative;
         margin-bottom: 1rem;
@@ -83,4 +114,31 @@ $theme-colors: (
   #login-page-illustration {
     min-height: 100vh;
   }
+}
+
+// SETUP PAGES
+
+#organization-form, #admin-form {
+    label {
+        color:  map_get($theme-colors, 'primary');
+        display: block;
+    }
+    input {
+        display: block;
+        margin-bottom: 1em;
+        width: 100%;
+    }
+    br{
+        display: none;
+    }
+    .helptext{
+        font-size:0.9em;
+        display: block;
+        color: $gray-700;
+        font-style: italic;
+        margin-bottom: 1em;
+    }
+    .errorlist{
+        color:$danger
+    }
 }

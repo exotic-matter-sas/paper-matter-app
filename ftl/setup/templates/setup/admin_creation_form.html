@@ -1,16 +1,31 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load static %}
 
 {% block title %}{% trans "Step 2/2: create the administrator" %}{% endblock %}
 
 {% block main %}
-
-    <h1>{% trans "Welcome to ftl-app!" %}</h1>
-    <h2>{% trans "Step 2/2: create the administrator" %}</h2>
-    <form method="post" id="admin-form">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="{% trans "Create" %}">
-    </form>
-
+    <div class="row align-items-stretch min-vh-100 bg-light">
+        <main class="col pb-3 order-md-2 pb-md-0">
+            <div id="main-with-aside">
+                <form method="post" id="admin-form" class="generic-form">
+                    <h1 class="text-primary">{% trans "One more thing..." %}</h1>
+                    <div class="breadcrumb">
+                        <li class="breadcrumb-item">{% trans "Create first organization" %}</li>
+                        <li class="breadcrumb-item active">{% trans "Create administrator" %}</li>
+                    </div>
+                    {% csrf_token %}
+                    {{ form }}
+                    <input class="btn btn-lg btn-primary btn-block" type="submit" value="{% trans "Finish" %}">
+                </form>
+            </div>
+        </main>
+        <aside class="col-0 pt-3 bg-dark col-md-4 order-md-1 pt-md-0">
+            <div id="login-page-illustration" class="row align-items-center">
+                <div class="col">
+                    <img class="w-100 mx-auto d-block" src="{% static "instance_setup.svg" %}" alt="">
+                </div>
+            </div>
+        </aside>
+    </div>
 {% endblock %}
