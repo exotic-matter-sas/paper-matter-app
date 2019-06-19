@@ -145,6 +145,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'assets')  # internal path
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'frontend', 'dist'),  # Webpack final bundle
     os.path.join(BASE_DIR, 'frontend', 'pdfjs'),
+    os.path.join(BASE_DIR, 'ftl', 'static'),
 )
 
 # IPs allowed to see the debug toolbar app
