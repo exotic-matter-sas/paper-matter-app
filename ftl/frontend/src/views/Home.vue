@@ -169,8 +169,16 @@
         // Open folder directly from loading an URL with folder (don't reset URL if opening a document)
         this.updateFoldersPath(this.folder);
       } else {
-        // Default Home with root folder
-        this.changeFolder();
+        // Or just show the current folders
+        this.refreshFolders();
+      }
+
+      if (this.searchQuery) {
+        // search docs
+        this.refreshDocumentWithSearch(this.searchQuery);
+      } else {
+        // all docs
+        this.updateDocuments();
       }
     },
 
@@ -194,11 +202,6 @@
           if (newVal !== oldVal) {
             this.updateFoldersPath(newVal, true);
           }
-        }
-      },
-      $route: function (to, from) {
-        if (to.name === 'home') {
-          this.changeFolder();
         }
       }
     },

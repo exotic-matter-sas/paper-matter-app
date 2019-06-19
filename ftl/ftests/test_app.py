@@ -145,8 +145,9 @@ class HomePageTests(LoginPage, HomePage):
         # User search something that isn't present in his document
         self.search_document('this text doesn\'t exist')
 
-        self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 0,
-                         'No document should be found by this search query')
+        with self.assertRaises(NoSuchElementException, msg='No document should be found by this search query'):
+            self.get_elems(self.documents_thumbnails)
+
         self.assertIn('No document', self.get_elem_text(self.documents_list),
                       'A message should indicate no document where found')
 
