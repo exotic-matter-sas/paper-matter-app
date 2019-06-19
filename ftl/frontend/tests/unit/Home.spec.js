@@ -266,6 +266,8 @@ describe('Home script methods error handling', () => {
   let wrapper;
 
   beforeEach(() => {
+    axios.get.mockResolvedValue(mockedGetDocumentsResponse);
+
     wrapper = shallowMount(Home, {
       localVue,
       methods: {
@@ -273,7 +275,6 @@ describe('Home script methods error handling', () => {
         mixinAlert: mockedAlert,
         refreshFolders: mockedRefreshFolder,
         refreshDocumentWithSearch: mockedRefreshDocumentWithSearch,
-        updateDocuments: mockedUpdateDocuments
       }
     });
   });
