@@ -1,4 +1,4 @@
-import { shallowMount, createLocalVue } from '@vue/test-utils';
+import {createLocalVue, shallowMount} from '@vue/test-utils';
 
 import BootstrapVue from "bootstrap-vue";
 
@@ -7,8 +7,10 @@ import FTLNavbar from "../../src/components/FTLNavbar";
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue); // to avoid warning on tests execution
-localVue.prototype.$_ = (text) => { return text; }; // i18n mock
-
+localVue.prototype.$_ = (text) => {
+  return text;
+}; // i18n mock
+localVue.prototype.$moment = jest.fn();
 
 describe('FTLNavbar template', () => {
   const wrapper = shallowMount(FTLNavbar, {

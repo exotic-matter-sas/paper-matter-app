@@ -1,4 +1,4 @@
-import { createLocalVue, shallowMount } from '@vue/test-utils';
+import {createLocalVue, shallowMount} from '@vue/test-utils';
 
 import axios from 'axios';
 import BootstrapVue from "bootstrap-vue";
@@ -9,13 +9,18 @@ import {axiosConfig} from "../../src/constants";
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue); // to avoid warning on tests execution
-localVue.prototype.$_ = (text) => { return text; }; // i18n mock
+localVue.prototype.$_ = (text) => {
+  return text;
+}; // i18n mock
+localVue.prototype.$moment = {
+  fromNow: jest.fn()
+};
 
 jest.mock('axios', () => ({
   delete: jest.fn()
 }));
 
-const mockedDeleteResponse  = {
+const mockedDeleteResponse = {
   data: {},
   status: 204,
   config: axiosConfig
@@ -25,11 +30,11 @@ const mockedDeleteResponse  = {
 describe('FTLDocument template', () => {
   const wrapper = shallowMount(FTLDocument, {
     localVue,
-    propsData: { doc: tv.DOCUMENT_PROPS }
+    propsData: {doc: tv.DOCUMENT_PROPS}
   });
 
   it('renders properly document data', () => {
-    Object.values(tv.DOCUMENT_PROPS).forEach(function(documentData){
+    Object.values(tv.DOCUMENT_PROPS).forEach(function (documentData) {
       expect(wrapper.html()).toContain(documentData)
     })
   });
@@ -43,7 +48,7 @@ describe('FTLDocument script', () => {
     axios.delete.mockResolvedValue(mockedDeleteResponse);
     wrapper = shallowMount(FTLDocument, {
       localVue,
-      propsData: { doc: tv.DOCUMENT_PROPS }
+      propsData: {doc: tv.DOCUMENT_PROPS}
     });
   });
 
@@ -53,8 +58,8 @@ describe('FTLDocument script', () => {
 
     // then
     expect(axios.delete).toHaveBeenCalledWith(
-        '/app/api/v1/documents/' + tv.DOCUMENT_PROPS.pid,
-        axiosConfig
+      '/app/api/v1/documents/' + tv.DOCUMENT_PROPS.pid,
+      axiosConfig
     );
   });
   it('deleteDocument emit event-delete-doc', done => {

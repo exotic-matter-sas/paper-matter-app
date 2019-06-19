@@ -12,7 +12,6 @@
         <router-link :to="{name: 'folders'}" tag="b-nav-item">
           <font-awesome-icon icon="folder"/>
         </router-link>
-        <router-link :to="{name: 'about'}" tag="b-nav-item">{{ this.$_('About') }}</router-link>
       </b-navbar-nav>
 
       <!-- Right aligned nav items -->
