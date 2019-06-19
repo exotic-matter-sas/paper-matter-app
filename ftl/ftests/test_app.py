@@ -115,7 +115,7 @@ class HomePageTests(LoginPage, HomePage):
         self.search_document(second_document_title)
 
         # Only the second document appears in search results
-        self.assertEqual(len(self.get_elems(self.documents_list)), 1)
+        self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
         self.assertEqual(second_document_title, self.get_elem(self.first_document_title).text)
 
     @skip('TODO when document note implemented in UI')  # TODO
@@ -134,8 +134,21 @@ class HomePageTests(LoginPage, HomePage):
         self.search_document(second_document_text_content)
 
         # Only the second document appears in search results
-        self.assertEqual(len(self.get_elems(self.documents_list)), 1)
+        self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
         self.assertEqual(second_document_title, self.get_elem(self.first_document_title).text)
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_search_not_found(self):
+        # User have already added 1 document
+        setup_document(self.org, self.user)
+
+        # User search something that isn't present in his document
+        self.search_document('this text doesn\'t exist')
+
+        self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 0,
+                         'No document should be found by this search query')
+        self.assertIn('No document', self.get_elem_text(self.documents_list),
+                      'A message should indicate no document where found')
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_visit_url_with_search_query(self):
@@ -148,7 +161,7 @@ class HomePageTests(LoginPage, HomePage):
         self.visit(f'/app/#/home?q={second_document_title}')
         self.wait_document_list_loaded()
 
-        self.assertEqual(len(self.get_elems(self.documents_list)), 1,
+        self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1,
                          'Only second document should appears in the search result')
         self.assertEqual(second_document_title, self.get_elem(self.first_document_title).text,
                          'Second document title should appears in search result')

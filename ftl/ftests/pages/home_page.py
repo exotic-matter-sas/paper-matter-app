@@ -25,7 +25,8 @@ class HomePage(BasePage):
     first_folder_button = 'button.folder > span:not(.spinner-border):not(.d-none)'
     folder_list_loader = '#folder-list-loader'
 
-    documents_list = '.document-thumbnail'
+    documents_list = '#documents-list'
+    documents_thumbnails = '.document-thumbnail'
     first_document_title = '.document-title span'
 
     def wait_document_list_loaded(self):

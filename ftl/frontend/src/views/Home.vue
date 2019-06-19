@@ -39,11 +39,11 @@
       </b-container>
     </section>
 
-    <section>
+    <section id="documents-list">
       <b-container>
         <b-row v-if="docLoading">
           <b-col>
-            <b-spinner id="document-list-loader" style="width: 3rem; height: 3rem;" class="m-5"
+            <b-spinner id="documents-list-loader" style="width: 3rem; height: 3rem;" class="m-5"
                        label="Loading..."></b-spinner>
           </b-col>
         </b-row>
