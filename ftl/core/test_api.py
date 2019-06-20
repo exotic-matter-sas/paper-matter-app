@@ -6,6 +6,7 @@ from unittest.mock import MagicMock, ANY, patch
 from rest_framework import status
 from rest_framework.test import APITestCase
 from tika import parser
+from django.contrib import messages
 
 import core
 from core.models import FTLDocument, FTLFolder
@@ -63,7 +64,8 @@ class DocumentsTests(APITestCase):
         self.assertEqual(client_doc_2['note'], ftl_document_first.note)
         self.assertEqual(client_doc_2['ftl_folder'], ftl_document_first.ftl_folder)
 
-    def test_list_documents_added_by_another_user_of_same_org(self):
+    @patch.object(messages, 'success')
+    def test_list_documents_added_by_another_user_of_same_org(self, messages_mocked):
         # First user logout and a second user of the same org login
         self.client.logout()
         setup_user(self.org, tv.USER2_EMAIL, tv.USER2_USERNAME, tv.USER2_PASS)
@@ -75,7 +77,8 @@ class DocumentsTests(APITestCase):
         self.assertEqual(client_get.data['count'], 2)
         self.assertEqual(len(client_get.data['results']), 2)
 
-    def test_cant_list_documents_from_another_org(self):
+    @patch.object(messages, 'success')
+    def test_cant_list_documents_from_another_org(self, messages_mocked):
         # First user logout and a second user of the another org login
         self.client.logout()
         org2 = setup_org(tv.ORG_NAME_2, tv.ORG_SLUG_2)

@@ -15,7 +15,7 @@ class LandingPageTests(SetupPages):
 
         # The user is welcomed and asked to complete 1st setup step: org creation
         self.assertIn(tv.APP_NAME, self.head_title)
-        self.assertIn('organization', self.get_elem(self.page_title).text)
+        self.assertIn('organization', self.get_elem(self.active_breadcrumb_item).text)
 
     def test_landing_page_display_properly_after_admin_creation(self):
         """Landing page display properly after admin creation"""
@@ -32,7 +32,7 @@ class LandingPageTests(SetupPages):
 
         # The landing page welcome the user and ask him to complete 2nd step: admin creation
         self.assertIn(tv.APP_NAME, self.head_title)
-        self.assertIn('administrator', self.get_elem(self.page_title).text)
+        self.assertIn('administrator', self.get_elem(self.active_breadcrumb_item).text)
 
     def test_landing_page_redirect_to_user_login_when_setup_complete(self):
         """Landing page redirect to user login page when setup complete"""
@@ -83,7 +83,7 @@ class FirstUserSignupTest(SignupPages):
         self.create_user()
 
         # Success message appears when account creation is complete
-        self.assertIn('Congratulations', self.browser.find_element_by_css_selector('h1').text)
+        self.assertIn('account have been created', self.get_elem(self.main_panel).text)
 
 
 class FirstUserLoginTest(LoginPage):

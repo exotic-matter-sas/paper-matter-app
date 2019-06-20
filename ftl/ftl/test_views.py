@@ -57,7 +57,7 @@ class FtlPagesTests(TestCase):
         org = setup_org()
 
         response = self.client.get(f'/signup/{org.slug}/success/')
-        self.assertContains(response, 'Congratulations')
+        self.assertContains(response, 'verify your email')
         self.assertTemplateUsed(response, 'ftl/signup_success.html')
 
     def test_signup_success_get_proper_context(self):

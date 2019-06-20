@@ -10,7 +10,8 @@
             <div id="main-with-aside" class="row align-items-center">
                 <div class="col">
                     <h1 class="text-primary">{% trans "One more thing..." %}</h1>
-                    <p>{% trans "Your account have been created, verify your email to activate it." %}</p>  <!-- TODO -->
+                    <p>{% trans "Your account have been created, verify your email to activate it." %}</p>  <!-- TODO https://gitlab.com/exotic-matter/ftl-app/issues/43 -->
+                    <p>{% trans "Login to your account here:" %} <a href="{% url 'login' %}" id="user-login">{% trans "User login page" %}</a></p>
                 </div>
             </div>
         </main>
