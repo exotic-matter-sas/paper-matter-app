@@ -1,13 +1,25 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load static %}
 
 {% block title %}{% trans 'Signup succeed' %}{% endblock %}
 
 {% block main %}
-    <h1>{% trans "Congratulations: your account have been created" %}</h1>
-    <p>{% trans "You can now:" %}</p>
-    <ul>
-        <li>{% trans "TODO: Verify your email to activate your account" %}</li>
-        <li>{% trans "Login to your account here:" %} <a href="{% url 'login' %}" id="user-login">{% trans "User login page" %}</a></li>
-    </ul>
+    <div class="row align-items-stretch min-vh-100 bg-light align-items-md-center">
+        <main class="col pb-3 order-md-2 pb-md-0">
+            <div id="main-with-aside" class="row align-items-center">
+                <div class="col">
+                    <h1 class="text-primary">{% trans "One more thing..." %}</h1>
+                    <p>{% trans "Your account have been created, verify your email to activate it." %}</p>  <!-- TODO -->
+                </div>
+            </div>
+        </main>
+        <aside class="col-0 pt-3 bg-dark col-md-4 order-md-1 pt-md-0">
+            <div id="login-page-illustration" class="row align-items-center">
+                <div class="col">
+                    <img class="w-100 mx-auto d-block" src="{% static "activation_email.svg" %}" alt="">
+                </div>
+            </div>
+        </aside>
+    </div>
 {% endblock %}
