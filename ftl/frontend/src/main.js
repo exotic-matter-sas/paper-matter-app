@@ -3,26 +3,40 @@ import BootstrapVue from 'bootstrap-vue';
 import App from './App.vue';
 
 import {mixinAlert} from "./vueMixins";
+import router from './router'
 
 Vue.config.productionTip = false;
 
 Vue.use(BootstrapVue);
 
-Vue.prototype.$_ = function (text) {
-  var translated_text;
-  if (typeof gettext === 'function'){
-    translated_text = gettext(text);
+Vue.prototype.$_ = function (text, vars = null) {
+  let translated_text = text;
+
+  if (typeof gettext === 'function') {
+    translated_text = gettext(translated_text);
   }
-  return translated_text || text;
+
+  if (vars !== null) {
+    if (typeof interpolate === 'function') {
+      if (Array.isArray(vars)) {
+        translated_text = interpolate(translated_text, vars);
+      } else {
+        translated_text = interpolate(translated_text, vars, true);
+      }
+    }
+  }
+
+  return translated_text;
 };
 
 // Defined mixins
 Vue.mixin({
-    methods: {
-        mixinAlert
-    }
+  methods: {
+    mixinAlert
+  }
 });
 
 new Vue({
-    render: h => h(App),
+  router,
+  render: h => h(App)
 }).$mount('#app');

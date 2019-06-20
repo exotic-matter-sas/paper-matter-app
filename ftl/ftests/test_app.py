@@ -1,6 +1,4 @@
-import os
-import time
-from unittest import skip
+from unittest import skip, skipIf
 from unittest.mock import patch
 
 from selenium.common.exceptions import NoSuchElementException
@@ -10,7 +8,8 @@ from ftests.pages.home_page import HomePage
 from ftests.pages.user_login_page import LoginPage
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_document, setup_folder
-from ftl.settings import BASE_DIR
+from ftests.pages.base_page import NODE_SERVER_RUNNING
+from ftl.settings import DEV_MODE
 
 
 class HomePageTests(LoginPage, HomePage):
@@ -23,6 +22,7 @@ class HomePageTests(LoginPage, HomePage):
         self.visit(LoginPage.url)
         self.log_user()
 
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     @patch.object(parser, 'from_file')
     def test_upload_document_to_root(self, mock_tika_parser):
         mock_tika_parser.return_value = ""
@@ -33,6 +33,7 @@ class HomePageTests(LoginPage, HomePage):
         # Document appears as the first document of the list
         self.assertEqual(tv.DOCUMENT1_TITLE, self.get_elem(self.first_document_title).text)
 
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     @patch.object(parser, 'from_file')
     def test_upload_document_to_subfolder(self, mock_tika_parser):
         mock_tika_parser.return_value = ""
@@ -52,6 +53,7 @@ class HomePageTests(LoginPage, HomePage):
         with self.assertRaises(NoSuchElementException):
             self.get_elem(self.first_document_title)
 
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_display_document(self):
         # User has already added a document
         setup_document(self.org, self.user)
@@ -66,6 +68,7 @@ class HomePageTests(LoginPage, HomePage):
 
         self.assertEqual(pdf_viewer_iframe_title, 'PDF.js viewer')
 
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_create_folder(self):
         # User create a folder
         self.create_folder()
@@ -73,6 +76,7 @@ class HomePageTests(LoginPage, HomePage):
         # The folder properly appears in the folder list
         self.assertEqual(tv.FOLDER1_NAME, self.get_elem(self.first_folder_button).text)
 
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_create_folder_tree(self):
         # User create a folder at root level
         self.create_folder(tv.FOLDER1_NAME)
@@ -96,6 +100,7 @@ class HomePageTests(LoginPage, HomePage):
     def test_delete_folder(self):
         pass
 
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_search_document_by_its_title(self):
         # User have already added 2 documents
         setup_document(self.org, self.user)
@@ -106,13 +111,14 @@ class HomePageTests(LoginPage, HomePage):
         self.search_document(second_document_title)
 
         # Only the second document appears in search results
-        self.assertEqual(len(self.get_elems('.document-thumbnail')), 1)
+        self.assertEqual(len(self.get_elems(self.documents_list)), 1)
         self.assertEqual(second_document_title, self.get_elem(self.first_document_title).text)
 
     @skip('TODO when document note implemented in UI')  # TODO
     def test_search_document_by_its_note(self):
         pass
 
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_search_document_by_its_content(self):
         # User have already added 2 documents
         setup_document(self.org, self.user)
@@ -124,5 +130,5 @@ class HomePageTests(LoginPage, HomePage):
         self.search_document(second_document_text_content)
 
         # Only the second document appears in search results
-        self.assertEqual(len(self.get_elems('.document-thumbnail')), 1)
+        self.assertEqual(len(self.get_elems(self.documents_list)), 1)
         self.assertEqual(second_document_title, self.get_elem(self.first_document_title).text)

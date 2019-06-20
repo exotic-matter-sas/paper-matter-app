@@ -85,6 +85,8 @@ _Or alternatively `npx vue-cli-service test:unit`_
  
     python manage.py compilemessages
     
+ _note: generated .mo files aren't versioned and should be regenerated locally after each .po files update._
+    
 ### Django settings
 
 To use specific Django settings without modifying main `ftl/ftl/settings.py` file, create a `ftl/ftl/settings_local.py` file and override desired setting in it.

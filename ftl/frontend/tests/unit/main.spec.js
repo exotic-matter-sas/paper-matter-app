@@ -2,10 +2,14 @@ import App from "../../src/App";
 import {createLocalVue, shallowMount} from "@vue/test-utils";
 import BootstrapVue from "bootstrap-vue";
 import {mixinAlert} from "../../src/vueMixins";
+import VueRouter from 'vue-router';
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue); // to avoid warning on tests execution
-localVue.prototype.$_ = (text) => { return text; }; // i18n mock
+localVue.use(VueRouter);
+localVue.prototype.$_ = (text) => {
+  return text;
+}; // i18n mock
 localVue.mixin({methods: {mixinAlert}}); // set mixinAlert as set in main.js
 
 const mockedUpdateFolder = jest.fn();

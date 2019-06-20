@@ -1,6 +1,8 @@
 import os
 import platform
 import time
+import urllib.request
+import urllib.error
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.test import LiveServerTestCase
@@ -12,7 +14,7 @@ from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.support import expected_conditions as Ec
 from selenium.webdriver.support.wait import WebDriverWait
 
-from ftl.settings import BASE_DIR, DEFAULT_TEST_BROWSER, TEST_BROWSER_HEADLESS
+from ftl.settings import BASE_DIR, DEFAULT_TEST_BROWSER, TEST_BROWSER_HEADLESS, DEV_MODE
 
 if 'CI' in os.environ:
     LIVE_SERVER = LiveServerTestCase
@@ -21,10 +23,38 @@ else:
     LIVE_SERVER = StaticLiveServerTestCase
 
 
+def is_node_server_running():
+    """
+    Check if Node server is running when launching ftests in DEV mode to display a warning
+    """
+    if DEV_MODE:
+        try:
+            urllib.request.urlopen('http://localhost:8080/')
+            return True
+        except urllib.error.URLError:
+            return False
+
+
+NODE_SERVER_RUNNING = is_node_server_running()
+if DEV_MODE and not is_node_server_running():
+    red_message = '\x1b[1;31m{}\033[0m'
+    print(red_message.
+          format('WARNING: Node server NOT running: all tests relative to JS frontend will be skipped.'))
+    input("Run Node server now if you want all tests to be run, press Enter to continue...")
+    NODE_SERVER_RUNNING = is_node_server_running()  # refresh value in case user hae just run Node
+    print(f'Continue with NODE_SERVER_RUNNING: {NODE_SERVER_RUNNING}')
+
+
 class BasePage(LIVE_SERVER):
+
     modal_input = '.modal-dialog input'
     modal_accept_button = '.modal-dialog .modal-footer .btn-primary'
     modal_reject_button = '.modal-dialog .modal-footer .btn-secondary'
+
+    notification = '.b-toaster-slot .b-toast'
+    success_notification = '.b-toaster-slot .b-toast-success'
+    error_notification = '.b-toaster-slot .b-toast-danger'
+    close_notification = '.b-toaster-slot .b-toast .close'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -123,8 +153,12 @@ class BasePage(LIVE_SERVER):
         while True:
             try:
                 value = method(*method_args, **method_kwargs)
-                if custom_return_validator and custom_return_validator(value) or value:
+                if custom_return_validator:
+                    if custom_return_validator(value):
+                        return value
+                elif value:
                     return value
+
             except expected_exception_type:
                 return None
 
@@ -151,3 +185,8 @@ class BasePage(LIVE_SERVER):
             self._wait_for_method_to_raise_exception(self.get_elem, timeout, NoSuchElementException, css_selector)
         except TimeoutException:
             raise TimeoutException(f'The element "{css_selector}" doesn\'t disapear after {timeout}s')
+
+    def close_last_notification(self):
+        self.wait_for_element_to_show(self.notification)
+        self.get_elem(self.close_notification).click()
+        self.wait_for_element_to_disappear(self.notification)
