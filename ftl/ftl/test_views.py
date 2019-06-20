@@ -102,6 +102,6 @@ class FtlPagesTests(TestCase):
     def test_logout_signal_trigger_django_messages(self, messages_mocked):
         message_to_display_on_login_page = 'bingo!'
         messages_mocked.return_value = message_to_display_on_login_page
-        user_logged_out.send(sender=self.__class__, message_sender='fake', user='user', request='fake')
+        user_logged_out.send(self.__class__, request='fake_value')
 
         messages_mocked.assert_called_once()
