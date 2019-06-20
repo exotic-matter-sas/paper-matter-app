@@ -1,9 +1,13 @@
+from unittest.mock import patch
+
+from django.contrib import messages
 from django.test import TestCase
 from django.urls import reverse_lazy
+from django.contrib.auth.signals import user_logged_out
 
 from core.models import FTLUser, FTL_PERMISSIONS_USER
 from ftests.tools import test_values as tv
-from ftests.tools.setup_helpers import setup_org, setup_admin
+from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_authenticated_session
 from .forms import FTLUserCreationForm
 
 
@@ -81,3 +85,23 @@ class FtlPagesTests(TestCase):
         user = FTLUser.objects.get(username=tv.USER1_USERNAME)
         self.assertIsNotNone(user)
         self.assertTrue(user.has_perms(FTL_PERMISSIONS_USER))
+
+    @patch.object(user_logged_out, 'send')
+    def test_logout_call_proper_signal(self, mocked_signal):
+        # Setup org, admin, user and log the user
+        org = setup_org()
+        setup_admin(org)
+        user = setup_user(org)
+        setup_authenticated_session(self.client, org, user)
+
+        self.client.get('/logout/')
+
+        mocked_signal.assert_called_once()
+
+    @patch.object(messages, 'success')
+    def test_logout_signal_trigger_django_messages(self, messages_mocked):
+        message_to_display_on_login_page = 'bingo!'
+        messages_mocked.return_value = message_to_display_on_login_page
+        user_logged_out.send(sender=self.__class__, message_sender='fake', user='user', request='fake')
+
+        messages_mocked.assert_called_once()

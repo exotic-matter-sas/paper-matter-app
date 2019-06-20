@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.utils.translation import gettext as _
 
 
-def show_message(sender, user, request, **kwargs):
+def show_message(message_sender, user, request, **kwargs):
     # whatever...
     messages.success(request, _('You have been logged out. See you!'), extra_tags='alert alert-success text-center')
 
