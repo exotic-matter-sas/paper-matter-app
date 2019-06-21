@@ -53,6 +53,10 @@
         if (this.isFolder && this.isOpen) {
           this.updateMovingFolder(this.item.id);
         }
+
+        if (!this.isOpen) {
+          this.item.children = [];
+        }
       },
 
       selectFolder: function () {
