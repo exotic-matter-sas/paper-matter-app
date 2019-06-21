@@ -24,6 +24,16 @@
     <section>
       <b-container>
         <b-row>
+          <b-col class="p-0">
+            <b-breadcrumb class="m-0" :items="breadcrumb"/>
+          </b-col>
+        </b-row>
+      </b-container>
+    </section>
+
+    <section>
+      <b-container>
+        <b-row>
           <b-button variant="primary" class="m-1" v-if="previousLevels.length"
                     @click="changeToPreviousFolder">
             Up
@@ -218,6 +228,25 @@
           return null;
         }
       },
+
+      breadcrumb: function () {
+        const vi = this;
+        let paths = [];
+
+        paths.push({
+          text: 'Root',
+          to: {name: 'home'}
+        });
+
+        return paths.concat(this.previousLevels.map((e) => {
+          return {
+            text: e.name,
+            to: {
+              path: '/home/' + vi.computeFolderUrlPath(e.id)
+            }
+          }
+        }));
+      }
     },
 
     methods: {
