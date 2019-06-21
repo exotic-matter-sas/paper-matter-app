@@ -113,7 +113,9 @@
     },
 
     mounted() {
-      this.updateFolders();
+      if (this.folder) {
+        this.updateFolders(this.folder);
+      }
     },
 
     computed: {
