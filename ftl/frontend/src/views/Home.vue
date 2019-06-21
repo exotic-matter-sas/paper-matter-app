@@ -103,22 +103,11 @@
       </b-container>
     </div>
 
-    <b-modal v-model="newFolderModal" @ok="createNewFolder"
-             :ok-disabled="newFolderName === ''"
-             :cancel-title="this.$_('Cancel')"
-             :ok-title="this.$_('Create')">
-      <span slot="modal-title">{{ this.$_('Create a new folder') }}</span>
-      <b-container>
-        <!-- TODO add current folder name to title -->
-        <b-form-group
-          id="fieldset-new-folder"
-          :description="this.$_('The name of the folder')"
-          :label="this.$_('The folder will be created in the current folder.')"
-          label-for="new-folder">
-          <b-form-input id="new-folder" v-model="newFolderName" trim></b-form-input>
-        </b-form-group>
-      </b-container>
-    </b-modal>
+    <FTLNewFolder
+      :show="newFolderModal"
+      :parent="getCurrentFolder"
+      @event-folder-created="folderCreated"
+      @event-folder-cancel="newFolderModal = false"/>
   </div>
 </template>
 
@@ -127,6 +116,7 @@
   import FTLFolder from '@/components/FTLFolder.vue';
   import FTLDocument from '@/components/FTLDocument';
   import FTLUpload from '@/components/FTLUpload';
+  import FTLNewFolder from "@/components/FTLNewFolder";
   import axios from 'axios';
   import qs from 'qs';
   import {createThumbFromUrl} from "@/thumbnailGenerator";
@@ -135,6 +125,7 @@
   export default {
     name: 'home',
     components: {
+      FTLNewFolder,
       FTLFolder,
       FTLDocument,
       FTLUpload
@@ -157,7 +148,6 @@
         previousLevels: [],
 
         // Create folder data
-        newFolderName: '',
         newFolderModal: false,
 
         // PDF viewer
@@ -419,24 +409,9 @@
           }).catch(error => vi.mixinAlert("Unable to refresh folders list", true));
       },
 
-      createNewFolder: function () {
-        const vi = this;
-        let parent = null;
-
-        if (vi.previousLevels.length > 0) {
-          parent = vi.previousLevels[vi.previousLevels.length - 1].id;
-        }
-
-        let postBody = {name: vi.newFolderName, parent: parent};
-
-        axios
-          .post("/app/api/v1/folders/", postBody, axiosConfig)
-          .then(() => {
-            // TODO flash the new folder when just created
-            vi.mixinAlert(vi.$_("Folder %s created", [vi.newFolderName]));
-            vi.newFolderName = '';
-            vi.refreshFolders();
-          }).catch(error => vi.mixinAlert("Unable to create new folder.", true));
+      folderCreated: function (folder) {
+        this.newFolderModal = false;
+        this.refreshFolders();
       },
 
       generateMissingThumbnail: function () {

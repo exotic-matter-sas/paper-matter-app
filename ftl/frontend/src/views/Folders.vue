@@ -23,7 +23,12 @@
             />
           </b-row>
           <b-row v-else>
-            <b-col>{{ this.$_('No folder. Why not create some?') }}</b-col>
+            <b-col>{{ this.$_('No folder. Why not create some?') }}<br/>
+              <b-button id="create-folder" class="m-1" variant="outline-primary" size="sm"
+                        @click.prevent="modalNewFolder = true">
+                {{ this.$_('Create new folder') }}
+              </b-button>
+            </b-col>
           </b-row>
         </b-col>
         <b-col>
@@ -76,6 +81,12 @@
           <FTLTreeFolders :root="isRoot" :sourceFolder="folderDetail.id"/>
         </b-container>
       </b-modal>
+
+      <FTLNewFolder
+        :show="modalNewFolder"
+        :parent="getCurrentFolder"
+        @event-folder-created="refreshFolder"
+        @event-folder-cancel="modalNewFolder = false"/>
     </b-container>
   </section>
 </template>
@@ -83,13 +94,14 @@
 <script>
   import FTLOrganizeFolder from "@/components/FTLOrganizeFolder";
   import FTLTreeFolders from "@/components/FTLTreeFolders";
+  import FTLNewFolder from "@/components/FTLNewFolder";
   import axios from 'axios';
   import {axiosConfig} from "@/constants";
 
   export default {
     name: 'Folders',
     components: {
-      FTLOrganizeFolder, FTLTreeFolders
+      FTLOrganizeFolder, FTLTreeFolders, FTLNewFolder
     },
     props: ['folder'],
 
@@ -106,13 +118,17 @@
         folderDetail: null,
 
         // Move folder
-        modalMoveFolder: false
+        modalMoveFolder: false,
+
+        // New folder
+        modalNewFolder: false
       }
     },
 
     watch: {
       folder: function (newVal, oldVal) {
         if (newVal === undefined) {
+          this.previousLevels = [];
           this.updateFolders();
         } else {
           if (newVal !== oldVal) {

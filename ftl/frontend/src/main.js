@@ -6,7 +6,15 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 
 import {library} from '@fortawesome/fontawesome-svg-core';
-import {faFileDownload, faFolder, faHome, faSearch, faTrash, faWindowClose} from '@fortawesome/free-solid-svg-icons';
+import {
+  faFileDownload,
+  faFolder,
+  faFolderPlus,
+  faHome,
+  faSearch,
+  faTrash,
+  faWindowClose
+} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
 
 import {mixinAlert} from "./vueMixins";
@@ -17,7 +25,7 @@ import moment from 'moment'
 Vue.config.productionTip = false;
 
 // Font Awesome icons definition
-library.add(faHome, faFolder, faSearch, faWindowClose, faTrash, faFileDownload);
+library.add(faHome, faFolder, faSearch, faWindowClose, faTrash, faFileDownload, faFolderPlus);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.use(BootstrapVue);
 
