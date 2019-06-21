@@ -29,9 +29,6 @@
           </b-col>
         </b-row>
       </b-container>
-    </section>
-
-    <section>
       <b-container>
         <b-row>
           <b-button variant="primary" class="m-1" v-if="previousLevels.length"

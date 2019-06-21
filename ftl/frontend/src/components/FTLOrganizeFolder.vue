@@ -3,7 +3,7 @@
     sm="2"
     class="m-1 folder"
     :class="{selected: selected}"
-    @dblclick="$emit('event-navigate-folder', folder.id)"
+    @dblclick="$emit('event-navigate-folder', folder)"
     @click="clickFolder">
     <b-row align-h="center">
       <font-awesome-icon icon="folder" size="5x"/>
@@ -52,7 +52,7 @@
       clickFolder: function () {
         this.selected = !this.selected;
         if (this.selected) {
-          this.$emit('event-select-folder', this.folder.id);
+          this.$emit('event-select-folder', this.folder);
           // Store the selected panel folder for usage by Folders.vue for displaying the folder detail panel
           this.$store.commit('selectPanelFolder', this.folder);
         } else {
