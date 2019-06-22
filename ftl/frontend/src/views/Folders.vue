@@ -53,7 +53,7 @@
               <b-row>
                 <b-col>
                   <b-button class="m-1" variant="secondary" v-b-modal="'modal-rename-folder'">Rename</b-button>
-                  <b-button class="m-1" variant="secondary" @click="showModalMoveFolder">Move</b-button>
+                  <b-button class="m-1" variant="secondary" v-b-modal="'modal-move-folder'">Move</b-button>
                   <b-button class="m-1" variant="danger" v-b-modal="'modal-delete-folder'">Delete</b-button>
                 </b-col>
               </b-row>
@@ -64,24 +64,6 @@
           </b-row>
         </b-col>
       </b-row>
-
-      <b-modal id="modal-move-folder"
-               v-if="modalMoveFolder && folderDetail"
-               v-model="modalMoveFolder"
-               :ok-disabled="!selectedMoveTargetFolder"
-               @ok="moveFolder">
-        <template slot="modal-title">
-          <span v-if="selectedMoveTargetFolder">
-            {{ this.$_('Move %s to %s', [folderDetail.name, selectedMoveTargetFolder.name])}}
-          </span>
-          <span v-else>{{ this.$_('Move %s to ...', [folderDetail.name])}}</span>
-        </template>
-        <b-container fluid>
-          <span v-if="selectedMoveTargetFolder">{{this.$_('Selected folder: %s', [folderDetail.name])}}</span>
-          <span v-else>{{this.$_('No folder selected')}}</span>
-          <FTLTreeFolders :root="isRoot" :sourceFolder="folderDetail.id"/>
-        </b-container>
-      </b-modal>
 
       <FTLRenameFolder
         v-if="folderDetail"
@@ -96,25 +78,31 @@
         v-if="folderDetail"
         :folder="folderDetail"
         @event-folder-deleted="refreshFolder"/>
+
+      <FTLMoveFolder
+        v-if="folderDetail"
+        :folder="folderDetail"
+        @event-folder-moved="refreshFolder"/>
     </b-container>
   </section>
 </template>
 
 <script>
   import FTLOrganizeFolder from "@/components/FTLOrganizeFolder";
-  import FTLTreeFolders from "@/components/FTLTreeFolders";
   import FTLNewFolder from "@/components/FTLNewFolder";
   import FTLRenameFolder from "@/components/FTLRenameFolder";
   import FTLDeleteFolder from "@/components/FTLDeleteFolder";
   import axios from 'axios';
-  import {axiosConfig} from "@/constants";
+  import FTLMoveFolder from "@/components/FTLMoveFolder";
 
   export default {
     name: 'Folders',
     components: {
+      FTLMoveFolder,
       FTLDeleteFolder,
       FTLRenameFolder,
-      FTLOrganizeFolder, FTLTreeFolders, FTLNewFolder
+      FTLOrganizeFolder,
+      FTLNewFolder
     },
     props: ['folder'],
 
@@ -129,9 +117,6 @@
 
         // Folder panel
         folderDetail: null,
-
-        // Move folder
-        modalMoveFolder: false,
       }
     },
 
@@ -158,12 +143,6 @@
     },
 
     computed: {
-      selectedMoveTargetFolder: function () {
-        return this.$store.state.selectedMoveTargetFolder;
-      },
-      isRoot: function () {
-        return this.folderDetail.parent === null;
-      },
       getCurrentFolder: function () {
         if (this.previousLevels.length) {
           return this.previousLevels[this.previousLevels.length - 1];
@@ -264,28 +243,6 @@
               this.foldersLoading = false
             });
         }
-      },
-
-      showModalMoveFolder: function () {
-        this.modalMoveFolder = true;
-      },
-
-      moveFolder: function () {
-        const vi = this;
-        let body = {
-          parent: this.selectedMoveTargetFolder.id
-        };
-
-        axios
-          .patch('/app/api/v1/folders/' + this.folderDetail.id, body, axiosConfig)
-          .then(response => {
-            vi.$emit('event-move-folder', vi.selectedMoveTargetFolder.id);
-            vi.$store.commit('selectMoveTargetFolder', null);
-            vi.refreshFolder();
-          })
-          .catch(error => {
-            vi.mixinAlert(vi.$_('Could not move folder'), true)
-          });
       }
     }
   }
