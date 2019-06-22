@@ -25,7 +25,7 @@
           <b-row v-else>
             <b-col>{{ this.$_('No folder. Why not create some?') }}<br/>
               <b-button id="create-folder" class="m-1" variant="outline-primary" size="sm"
-                        @click.prevent="modalNewFolder = true">
+                        v-b-modal="'modal-new-folder'">
                 {{ this.$_('Create new folder') }}
               </b-button>
             </b-col>
@@ -52,6 +52,7 @@
               </b-row>
               <b-row>
                 <b-col>
+                  <b-button class="m-1" variant="secondary" v-b-modal="'modal-rename-folder'">Rename</b-button>
                   <b-button class="m-1" variant="secondary" @click="showModalMoveFolder">Move</b-button>
                   <b-button class="m-1" variant="danger" @click="showModalDeleteFolder">Delete</b-button>
                 </b-col>
@@ -64,7 +65,7 @@
         </b-col>
       </b-row>
 
-      <b-modal id="move-folder"
+      <b-modal id="modal-move-folder"
                v-if="modalMoveFolder && folderDetail"
                v-model="modalMoveFolder"
                :ok-disabled="!selectedMoveTargetFolder"
@@ -82,11 +83,14 @@
         </b-container>
       </b-modal>
 
+      <FTLRenameFolder
+        v-if="folderDetail"
+        :folder="folderDetail"
+        @event-folder-renamed="refreshFolder"/>
+
       <FTLNewFolder
-        :show="modalNewFolder"
         :parent="getCurrentFolder"
-        @event-folder-created="refreshFolder"
-        @event-folder-cancel="modalNewFolder = false"/>
+        @event-folder-created="refreshFolder"/>
     </b-container>
   </section>
 </template>
@@ -95,12 +99,14 @@
   import FTLOrganizeFolder from "@/components/FTLOrganizeFolder";
   import FTLTreeFolders from "@/components/FTLTreeFolders";
   import FTLNewFolder from "@/components/FTLNewFolder";
+  import FTLRenameFolder from "@/components/FTLRenameFolder";
   import axios from 'axios';
   import {axiosConfig} from "@/constants";
 
   export default {
     name: 'Folders',
     components: {
+      FTLRenameFolder,
       FTLOrganizeFolder, FTLTreeFolders, FTLNewFolder
     },
     props: ['folder'],
@@ -119,9 +125,6 @@
 
         // Move folder
         modalMoveFolder: false,
-
-        // New folder
-        modalNewFolder: false
       }
     },
 

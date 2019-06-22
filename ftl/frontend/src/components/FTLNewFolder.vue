@@ -1,7 +1,6 @@
 <template>
-  <b-modal v-model="showModal"
+  <b-modal id="modal-new-folder"
            @ok="createNewFolder"
-           @hide="$emit('event-folder-cancel')"
            :ok-disabled="newFolderName === ''"
            :cancel-title="this.$_('Cancel')"
            :ok-title="this.$_('Create')">
@@ -27,10 +26,6 @@
     name: 'FTLNewFolder',
 
     props: {
-      show: {
-        type: Boolean,
-        default: false
-      },
       parent: {
         type: Object,
         default: null
@@ -39,17 +34,7 @@
 
     data() {
       return {
-        showModal: false,
         newFolderName: '',
-      }
-    },
-
-    watch: {
-      show: function (newVal, oldVal) {
-        // hack for avoid parent prop to show the popup again
-        if (newVal === true) {
-          this.showModal = true;
-        }
       }
     },
 
