@@ -158,7 +158,7 @@
         let paths = [];
 
         paths.push({
-          text: 'Root',
+          text: this.$_('Root'),
           to: {name: 'folders'}
         });
 
