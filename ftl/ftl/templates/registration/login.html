@@ -1,31 +1,56 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load static %}
 
 {% block title %}{% trans 'Login' %}{% endblock %}
 
-{% block content %}
-    <h1>{% trans 'Login' %}</h1>
-    <div id="content-main">
-        {% if user.is_authenticated %}
-            <p class="errornote">
-                {% blocktrans trimmed %}
-                    You are authenticated as {{ username }}, but are not authorized to
-                    access this page. Would you like to login to a different account?
-                {% endblocktrans %}
-            </p>
-        {% endif %}
+{% block main %}
+    <div class="row align-items-stretch bg-light min-vh-100">
+        <main class="col pb-3 order-md-2 pb-md-0">
+            <div id="main-with-aside" class="row align-items-center">
+                <div class="col">
+                    <form id="login-form" action="{{ app_path }}" method="post" >
+                        <h1 class="text-primary">{% trans 'Login' %}</h1>
 
-        <form action="{{ app_path }}" method="post" id="login-form">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <input type="submit" value="{% trans 'Login' %}">
-        </form>
+                        {% csrf_token %}
 
-        {% url 'admin_password_reset' as password_reset_url %}
-        {% if password_reset_url %}
-            <div class="password-reset-link">
-                <a href="{{ password_reset_url }}">{% trans 'Forgotten your password or username?' %}</a>
+                        <div class="form-label-group">
+                          <input type="text" name="username" id="id_username" class="form-control" placeholder="{% trans 'Username' %}" required="" autofocus="">
+                          <label for="inputEmail">{% trans 'Username' %}</label>
+                        </div>
+                        {% if form.username.errors %}
+                            <div class="alert alert-danger">{{ form.username.errors }}</div>
+                        {% endif %}
+
+                        <div class="form-label-group">
+                          <input type="password" name="password" id="id_password" class="form-control" placeholder="{% trans 'Password' %}" required="">
+                          <label for="inputPassword">{% trans 'Password' %}</label>
+                        </div>
+                        {% if form.password.errors %}
+                            <div class="alert alert-danger">{{ form.password.errors }}</div>
+                        {% endif %}
+
+                        <input class="btn btn-lg btn-primary btn-block mb-3" type="submit" value="{% trans 'Login' %}">
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                        {% endif %}
+                        {% if messages %}
+                            <ul>
+                                {% for message in messages %}
+                                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </form>
+                </div>
             </div>
-        {% endif %}
+        </main>
+        <aside class="col-0 pt-3 bg-dark col-md-4 order-md-1 pt-md-0">
+            <div id="login-page-illustration" class="row align-items-center">
+                <div class="col">
+                    <img class="w-100 mx-auto d-block" src="{% static "documents_unboxed.svg" %}" alt="">
+                </div>
+            </div>
+        </aside>
     </div>
 {% endblock %}
