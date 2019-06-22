@@ -11,7 +11,9 @@ import {
   faFolder,
   faFolderPlus,
   faHome,
+  faLevelUpAlt,
   faSearch,
+  faSync,
   faTrash,
   faWindowClose
 } from '@fortawesome/free-solid-svg-icons';
@@ -25,7 +27,7 @@ import moment from 'moment'
 Vue.config.productionTip = false;
 
 // Font Awesome icons definition
-library.add(faHome, faFolder, faSearch, faWindowClose, faTrash, faFileDownload, faFolderPlus);
+library.add(faHome, faFolder, faSearch, faWindowClose, faTrash, faFileDownload, faFolderPlus, faSync, faLevelUpAlt);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.use(BootstrapVue);
 

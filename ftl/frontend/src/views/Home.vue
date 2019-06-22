@@ -12,9 +12,6 @@
             <b-button id="generate-thumb" variant="primary" class="m-1" @click="generateMissingThumbnail">
               {{this.$_('Generate missing thumb')}}
             </b-button>
-            <b-button id="refresh-documents" variant="primary" class="m-1" @click="updateDocuments">
-              {{this.$_('Refresh documents list')}}
-            </b-button>
             {{ this.$_('Last refresh') }} {{ lastRefreshFormatted }}
           </b-col>
         </b-row>
@@ -31,17 +28,19 @@
       </b-container>
       <b-container>
         <b-row>
-          <b-button variant="primary" class="m-1" v-if="previousLevels.length"
-                    @click="changeToPreviousFolder">
-            Up
+          <b-button id="refresh-documents" variant="outline-primary" class="m-1" @click="refreshAll">
+            <font-awesome-icon icon="sync" :spin="docLoading" :title="$_('Refresh documents list')"/>
           </b-button>
-          <b-button v-else variant="primary" class="m-1" disabled>Up</b-button>
-          <FTLFolder v-for="folder in folders" :key="folder.id" :folder="folder"
-                     @event-change-folder="navigateToFolder"/>
           <b-button id="create-folder" class="m-1" variant="outline-primary" size="sm"
                     v-b-modal="'modal-new-folder'">
-            {{ this.$_('Create new folder') }}
+            <font-awesome-icon icon="folder-plus" :title="$_('Create new folder')" size="2x"/>
           </b-button>
+          <b-button variant="primary" class="m-1" :disabled="!previousLevels.length"
+                    @click="changeToPreviousFolder">
+            <font-awesome-icon icon="level-up-alt"/>
+          </b-button>
+          <FTLFolder v-for="folder in folders" :key="folder.id" :folder="folder"
+                     @event-change-folder="navigateToFolder"/>
         </b-row>
       </b-container>
     </section>
@@ -144,9 +143,6 @@
         // Folders list and breadcrumb
         folders: [],
         previousLevels: [],
-
-        // Create folder data
-        newFolderModal: false,
 
         // PDF viewer
         currentOpenDoc: {title: 'loading'},
@@ -253,6 +249,11 @@
 
       refreshFolders: function () {
         this.updateFolders(this.getCurrentFolder);
+      },
+
+      refreshAll: function () {
+        this.refreshFolders();
+        this.updateDocuments();
       },
 
       changeFolder: function (folder = null) {
@@ -408,7 +409,6 @@
       },
 
       folderCreated: function (folder) {
-        this.newFolderModal = false;
         this.refreshFolders();
       },
 
