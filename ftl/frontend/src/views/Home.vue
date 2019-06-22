@@ -39,7 +39,7 @@
           <FTLFolder v-for="folder in folders" :key="folder.id" :folder="folder"
                      @event-change-folder="navigateToFolder"/>
           <b-button id="create-folder" class="m-1" variant="outline-primary" size="sm"
-                    @click.prevent="newFolderModal = true">
+                    v-b-modal="'modal-new-folder'">
             {{ this.$_('Create new folder') }}
           </b-button>
         </b-row>
@@ -104,10 +104,8 @@
     </div>
 
     <FTLNewFolder
-      :show="newFolderModal"
       :parent="getCurrentFolder"
-      @event-folder-created="folderCreated"
-      @event-folder-cancel="newFolderModal = false"/>
+      @event-folder-created="folderCreated"/>
   </div>
 </template>
 
