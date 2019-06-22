@@ -6,10 +6,10 @@
     @dblclick="$emit('event-navigate-folder', folder)"
     @click="clickFolder">
     <b-row align-h="center">
-      <font-awesome-icon icon="folder" size="5x"/>
+      <font-awesome-icon icon="folder" size="5x" class="text-secondary"/>
     </b-row>
     <b-row align-h="center">
-      <b>{{ folder.name }}</b>
+      {{ folder.name }}
     </b-row>
   </b-col>
 </template>
@@ -64,12 +64,15 @@
   }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+  @import '../styles/customBootstrap.scss';
+
   .folder {
     cursor: pointer;
+    border: 3px solid transparent;
   }
 
   .selected {
-    border: 3px solid dodgerblue;
+    border: 3px solid $em-orange;
   }
 </style>

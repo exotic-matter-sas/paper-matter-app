@@ -16,18 +16,22 @@
                          label="Loading..."></b-spinner>
             </b-col>
           </b-row>
-          <b-row align-h="center" v-else-if="folders.length">
+          <b-row align-h="center" v-else>
             <FTLOrganizeFolder v-for="folder in folders" :key="folder.id" :folder="folder"
                                @event-navigate-folder="navigateToFolder"
                                @event-select-folder="getFolderDetail"
             />
-          </b-row>
-          <b-row v-else>
-            <b-col>{{ this.$_('No folder. Why not create some?') }}<br/>
-              <b-button id="create-folder" class="m-1" variant="outline-primary" size="sm"
-                        v-b-modal="'modal-new-folder'">
-                {{ this.$_('Create new folder') }}
-              </b-button>
+            <b-col
+              id="create-folder"
+              sm="2"
+              class="m-1"
+              v-b-modal="'modal-new-folder'">
+              <b-row align-h="center">
+                <font-awesome-icon icon="folder-plus" size="5x" class="text-primary"/>
+              </b-row>
+              <b-row align-h="center">
+                <b>{{ this.$_('Create new folder') }}</b>
+              </b-row>
             </b-col>
           </b-row>
         </b-col>
@@ -249,5 +253,8 @@
 </script>
 
 <style scoped>
-
+  #create-folder {
+    cursor: pointer;
+    border: 3px solid transparent;
+  }
 </style>
