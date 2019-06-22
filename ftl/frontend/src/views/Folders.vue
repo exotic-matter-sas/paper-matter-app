@@ -54,7 +54,7 @@
                 <b-col>
                   <b-button class="m-1" variant="secondary" v-b-modal="'modal-rename-folder'">Rename</b-button>
                   <b-button class="m-1" variant="secondary" @click="showModalMoveFolder">Move</b-button>
-                  <b-button class="m-1" variant="danger" @click="showModalDeleteFolder">Delete</b-button>
+                  <b-button class="m-1" variant="danger" v-b-modal="'modal-delete-folder'">Delete</b-button>
                 </b-col>
               </b-row>
             </b-col>
@@ -91,6 +91,11 @@
       <FTLNewFolder
         :parent="getCurrentFolder"
         @event-folder-created="refreshFolder"/>
+
+      <FTLDeleteFolder
+        v-if="folderDetail"
+        :folder="folderDetail"
+        @event-folder-deleted="refreshFolder"/>
     </b-container>
   </section>
 </template>
@@ -100,12 +105,14 @@
   import FTLTreeFolders from "@/components/FTLTreeFolders";
   import FTLNewFolder from "@/components/FTLNewFolder";
   import FTLRenameFolder from "@/components/FTLRenameFolder";
+  import FTLDeleteFolder from "@/components/FTLDeleteFolder";
   import axios from 'axios';
   import {axiosConfig} from "@/constants";
 
   export default {
     name: 'Folders',
     components: {
+      FTLDeleteFolder,
       FTLRenameFolder,
       FTLOrganizeFolder, FTLTreeFolders, FTLNewFolder
     },
@@ -278,36 +285,6 @@
           })
           .catch(error => {
             vi.mixinAlert(vi.$_('Could not move folder'), true)
-          });
-      },
-
-      showModalDeleteFolder: function () {
-        const vi = this;
-
-        this.$bvModal.msgBoxConfirm(
-          this.$_('Please confirm that you want to delete the folder and everything inside. This action is not reversible.'), {
-            title: this.$_('Deletion of folders and its contents'),
-            size: 'md',
-            buttonSize: 'md',
-            okVariant: 'danger',
-            okTitle: this.$_('Yes, I want to delete the folder and everything inside'),
-            cancelTitle: this.$_('No, cancel'),
-            footerClass: 'm-1',
-            hideHeaderClose: false,
-            centered: true
-          }).then(value => {
-          if (value === true) {
-            axios
-              .delete('/app/api/v1/folders/' + vi.folderDetail.id, axiosConfig)
-              .then(response => {
-                vi.$emit("event-delete-folder", vi.folderDetail.id);
-                vi.refreshFolder();
-              })
-              .catch(error => vi.mixinAlert(vi.$_('Unable to delete folder'), true));
-          }
-        })
-          .catch(err => {
-            // TODO??
           });
       }
     }
