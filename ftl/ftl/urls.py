@@ -36,7 +36,7 @@ urlpatterns = [
 
     path('login/', LoginViewFTL.as_view(redirect_authenticated_user=True),
          kwargs={"ftl_setup_state": SetupState.admin_created}, name='login'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('logout/', auth_views.logout_then_login, name='logout'),
 
     path('password_change/', auth_views.PasswordChangeView.as_view(), name='password_change'),
     path('password_change/done/', auth_views.PasswordChangeDoneView.as_view(), name='password_change_done'),

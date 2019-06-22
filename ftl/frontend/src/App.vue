@@ -70,9 +70,4 @@
   #app > footer {
     background: lightgray;
   }
-
-  /* Temp for viewing layout */
-  div {
-    border: 1px dotted;
-  }
 </style>
