@@ -1,118 +1,106 @@
 <template>
-  <div>
-    <section>
-      <b-container>
-        <b-row>
-          <b-col>
-            <FTLUpload :currentFolder="getCurrentFolder" @event-new-upload="updateDocuments"/>
-          </b-col>
-        </b-row>
-        <b-row>
-          <b-col>
-            <b-button id="generate-thumb" variant="primary" class="m-1" @click="generateMissingThumbnail">
-              {{this.$_('Generate missing thumb')}}
-            </b-button>
-            <b-button id="refresh-documents" variant="primary" class="m-1" @click="updateDocuments">
-              {{this.$_('Refresh documents list')}}
-            </b-button>
-            {{ this.$_('Last refresh') }} {{ lastRefreshFormatted }}
-          </b-col>
-        </b-row>
-      </b-container>
-    </section>
+  <section>
+    <b-col>
+      <b-row class="my-3">
+        <FTLUpload class="col" :currentFolder="getCurrentFolder" @event-new-upload="updateDocuments"/>
+      </b-row>
+      <b-row class="my-3" id="toolbar">
+        <b-button id="generate-thumb" variant="primary" class="mr-1" @click="generateMissingThumbnail">
+          {{this.$_('Generate missing thumb')}}
+        </b-button>
+        <b-button id="refresh-documents" variant="primary" class="mr-1" @click="updateDocuments">
+          {{this.$_('Refresh documents list')}}
+        </b-button>
+        {{ this.$_('Last refresh') }} {{ lastRefreshFormatted }}
+      </b-row>
 
-    <section>
-      <b-container>
-        <b-row>
-          <b-button variant="primary" class="m-1" v-if="previousLevels.length"
-                    @click="changeToPreviousFolder">
-            Up
-          </b-button>
-          <b-button v-else variant="primary" class="m-1" disabled>Up</b-button>
-          <FTLFolder v-for="folder in folders" :key="folder.id" :folder="folder"
-                     @event-change-folder="navigateToFolder"/>
-          <b-button id="create-folder" class="m-1" variant="outline-primary" size="sm"
-                    @click.prevent="newFolderModal = true">
-            {{ this.$_('Create new folder') }}
-          </b-button>
-        </b-row>
-      </b-container>
-    </section>
+      <b-row class="my-3" id="folders-list">
+        <b-button variant="primary" class="m-1" v-if="previousLevels.length"
+                  @click="changeToPreviousFolder">
+          Up
+        </b-button>
+        <b-button v-else variant="primary" class="m-1" disabled>Up</b-button>
+        <FTLFolder v-for="folder in folders" :key="folder.id" :folder="folder"
+                   @event-change-folder="navigateToFolder"/>
+        <b-button id="create-folder" class="m-1" variant="outline-primary" size="sm"
+                  @click.prevent="newFolderModal = true">
+          {{ this.$_('Create new folder') }}
+        </b-button>
+      </b-row>
 
-    <section id="documents-list">
-      <b-container>
-        <b-row v-if="docLoading">
-          <b-col>
-            <b-spinner id="documents-list-loader" style="width: 3rem; height: 3rem;" class="m-5"
-                       label="Loading..."></b-spinner>
-          </b-col>
-        </b-row>
-        <b-row align-h="around" v-else-if="docs.length">
-          <FTLDocument v-for="doc in docs" :key="doc.pid" :doc="doc" @event-delete-doc="updateDocuments"
-                       @event-open-doc="openDocument"/>
-        </b-row>
-        <b-row v-else>
-          <b-col>{{ this.$_('No document yet') }}</b-col>
-        </b-row>
-      </b-container>
-    </section>
+      <b-row class="my-3" id="documents-list">
+        <b-col v-if="docLoading">
+          <b-spinner class="mx-auto" id="documents-list-loader"
+                     label="Loading..."></b-spinner>
+        </b-col>
+        <b-col v-else-if="docs.length">
+          <section class="row">
+            <FTLDocument v-for="doc in docs" :key="doc.pid" :doc="doc" @event-delete-doc="updateDocuments"
+                         @event-open-doc="openDocument"/>
+          </section>
+        </b-col>
+        <b-col v-else class="text-center">
+          {{ this.$_('No document yet') }}
+        </b-col>
+      </b-row>
 
+      <!-- Pdf viewer popup -->
+      <div v-if="docModal" class="doc-view-modal" :class="{open: docModal}">
+        <b-container>
+          <b-row>
+            <b-col md="10">
+              <span id="document-title">{{ this.$_('Title:') }} {{ currentOpenDoc.title }}</span>
+            </b-col>
+            <b-col>
+              <b-button id="close-document" variant="secondary" @click="closeDocument">{{this.$_('Close')}}</b-button>
+            </b-col>
+          </b-row>
 
-    <!-- Pdf viewer popup -->
-    <div v-if="docModal" class="doc-view-modal" :class="{open: docModal}">
-      <b-container>
-        <b-row>
-          <b-col md="10">
-            <span id="document-title">{{ this.$_('Title:') }} {{ currentOpenDoc.title }}</span>
-          </b-col>
-          <b-col>
-            <b-button id="close-document" variant="secondary" @click="closeDocument">{{this.$_('Close')}}</b-button>
-          </b-col>
-        </b-row>
+        </b-container>
+        <b-container>
+          <b-row scr>
+            <b-col md="8">
+              <div class="embed-responsive embed-responsive-1by1 doc-pdf ">
+                <iframe v-if="currentOpenDoc.pid" class="embed-responsive-item"
+                        :src="`/assets/pdfjs/web/viewer.html?file=/app/uploads/` + currentOpenDoc.pid + `#search=` + currentSearch">
+                </iframe>
+              </div>
+            </b-col>
+            <b-col>
+              <b-row>AAA</b-row>
+              <b-row>BBB</b-row>
+              <b-row>CCC</b-row>
+            </b-col>
+          </b-row>
+        </b-container>
+        <b-container>
+          <b-row align-h="end">
+            <b-col cols="2">
+              <b-button variant="secondary" @click="closeDocument">{{this.$_('Close')}}</b-button>
+            </b-col>
+          </b-row>
+        </b-container>
+      </div>
 
-      </b-container>
-      <b-container>
-        <b-row scr>
-          <b-col md="8">
-            <div class="embed-responsive embed-responsive-1by1 doc-pdf ">
-              <iframe v-if="currentOpenDoc.pid" class="embed-responsive-item"
-                      :src="`/assets/pdfjs/web/viewer.html?file=/app/uploads/` + currentOpenDoc.pid + `#search=` + currentSearch">
-              </iframe>
-            </div>
-          </b-col>
-          <b-col>
-            <b-row>AAA</b-row>
-            <b-row>BBB</b-row>
-            <b-row>CCC</b-row>
-          </b-col>
-        </b-row>
-      </b-container>
-      <b-container>
-        <b-row align-h="end">
-          <b-col cols="2">
-            <b-button variant="secondary" @click="closeDocument">{{this.$_('Close')}}</b-button>
-          </b-col>
-        </b-row>
-      </b-container>
-    </div>
-
-    <b-modal v-if="newFolderModal" v-model="newFolderModal" @ok="createNewFolder"
-             :ok-disabled="newFolderName === ''"
-             :cancel-title="this.$_('Cancel')"
-             :ok-title="this.$_('Create')">
-      <span slot="modal-title">{{ this.$_('Create a new folder') }}</span>
-      <b-container>
-        <!-- TODO add current folder name to title -->
-        <b-form-group
-          id="fieldset-new-folder"
-          :description="this.$_('The name of the folder')"
-          :label="this.$_('The folder will be created in the current folder.')"
-          label-for="new-folder">
-          <b-form-input id="new-folder" v-model="newFolderName" trim></b-form-input>
-        </b-form-group>
-      </b-container>
-    </b-modal>
-  </div>
+      <!-- Create folder modal -->
+      <b-modal v-if="newFolderModal" v-model="newFolderModal" @ok="createNewFolder"
+               :ok-disabled="newFolderName === ''"
+               :cancel-title="this.$_('Cancel')"
+               :ok-title="this.$_('Create')">
+        <span slot="modal-title">{{ this.$_('Create a new folder') }}</span>
+        <b-container>
+          <!-- TODO add current folder name to title -->
+          <b-form-group
+            id="fieldset-new-folder"
+            :description="this.$_('The name of the folder')"
+            :label="this.$_('The folder will be created in the current folder.')"
+            label-for="new-folder">
+            <b-form-input id="new-folder" v-model="newFolderName" trim></b-form-input>
+          </b-form-group>
+        </b-container>
+      </b-modal>
+    </b-col>
+  </section>
 </template>
 
 <script>
@@ -468,5 +456,20 @@
 
   .doc-pdf {
     padding-top: 100%;
+  }
+
+  #documents-list-loader{
+    width: 3em;
+    height: 3em;
+    display: block;
+  }
+
+  #folders-list, #toolbar{
+    padding: 0 15px;
+  }
+
+  #folders-list button, #folders-list button{
+    margin-left: 0 !important;
+    margin-right: 0.5rem !important;
   }
 </style>

@@ -1,30 +1,24 @@
 <template>
-  <b-col sm="3" :id="doc.pid" class="document-thumbnail">
-    <b-row class="text-truncate document-title"><span
-      @click="$emit('event-open-doc', doc.pid)">{{ doc.title }}</span></b-row>
-    <b-row align-h="center">
-      <b-img :src="'/app/api/v1/documents/' + doc.pid + '/thumbnail.png'" class="img-thumbnail" slot="aside"
-             blank-color="#abc"
-             @click="$emit('event-open-doc', doc.pid)"
-             onerror="this.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAADICAQAAACgjNDuAAABIElEQVR42u3QAQEAAAgCIP0/ui44ACbQXBhVlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVr9/mzyAFGRN6/AAAAAElFTkSuQmCC\n'"/>
-    </b-row>
-    <b-row>
-      <small>{{ getDate }}</small>
-    </b-row>
-    <b-row align-h="center">{{this.$_('Note: ')}}{{ doc.note }}</b-row>
-
-    <b-row>
-      <b-col>
+  <b-col class="col-12 mb-4 col-sm-6 col-md-4 col-lg-3 col-xl-2 document-thumbnail" :id="doc.pid">
+    <div class="card">
+      <div class="card-img-top" slot="aside"
+           :style="{'background-image': 'url(' + '/app/api/v1/documents/' + doc.pid + '/thumbnail.png' + ')'}"
+           @click="$emit('event-open-doc', doc.pid)"></div>
+      <div class="card-body">
+        <h5 class="card-title text-truncate document-title" @click="$emit('event-open-doc', doc.pid)">
+          {{ doc.title }}
+        </h5>
         <b-button variant="secondary" size="sm" :href="'uploads/' + doc.pid">{{this.$_('Download')}}</b-button>
-      </b-col>
-      <b-col>
         <b-button class="delete-document" variant="danger" size="sm" :disabled="deleting"
                   @click.once="deleteDocument">
           <b-spinner :class="{'d-none': !deleting}" small></b-spinner>
           <span :class="{'d-none': deleting}">{{this.$_('!! Delete doc (no warn) !!')}}</span>
         </b-button>
-      </b-col>
-    </b-row>
+      </div>
+      <div class="card-footer">
+        <small class="text-muted">{{ getDate }}</small>
+      </div>
+    </div>
   </b-col>
 </template>
 
@@ -67,7 +61,22 @@
 </script>
 
 <style scoped>
-  .img-thumbnail {
-    max-height: 200px;
+  .card-img-top {
+    height: 200px;
+    box-shadow: inset 0 -30px 55px -55px #0A0A0A;
+    background-repeat: no-repeat;
+    background-size: cover;
+    transition: background-position 1.2s cubic-bezier(.68,-0.55,.27,1.55) 1s,
+                box-shadow 1.2s ease-in-out 1s;
+    cursor:pointer;
+  }
+
+  .card-title{
+    cursor: pointer;
+  }
+
+  .card-img-top:hover {
+    background-position: bottom;
+    box-shadow: inset 0 30px 55px -55px #0A0A0A;
   }
 </style>
