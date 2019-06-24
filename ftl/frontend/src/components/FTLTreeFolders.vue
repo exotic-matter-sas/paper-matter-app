@@ -46,18 +46,18 @@
       axios
         .get("/app/api/v1/folders/" + qs)
         .then(response => {
-            vi.folders = response.data
+            if (!vi.root) {
+              // Add a static root
+              vi.folders.push({id: null, name: vi.$_('Root')});
+            }
+
+            vi.folders = vi.folders.concat(response.data
               .filter(function (e) {
                 return e.id !== vi.sourceFolder;
               })
               .map(function (e) {
                 return {id: e.id, name: e.name, has_descendant: e.has_descendant, children: []}
-              });
-
-            if (!vi.root) {
-              // Add a static root
-              vi.folders.push({id: null, name: vi.$_('Root')});
-            }
+              }));
           }
         )
         .catch(error => vi.mixinAlert(vi.$_('Unable to refresh folders list'), true));
