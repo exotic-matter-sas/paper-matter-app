@@ -57,7 +57,7 @@
             this.$store.commit('selectMoveTargetFolder', null);
           })
           .catch(error => {
-            this.mixinAlert(vi.$_('Could not move folder'), true)
+            this.mixinAlert(this.$_('Could not move folder'), true)
           });
       }
     }
