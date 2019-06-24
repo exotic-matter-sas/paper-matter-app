@@ -6,7 +6,8 @@
           class="item"
           v-for="folder in folders"
           :key="folder.id"
-          :item="folder">
+          :item="folder"
+          :source-folder="sourceFolder">
         </FTLTreeItem>
       </ul>
     </b-col>

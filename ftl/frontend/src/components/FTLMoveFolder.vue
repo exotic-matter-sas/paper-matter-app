@@ -11,7 +11,7 @@
     <b-container fluid>
       <span v-if="selectedMoveTargetFolder">{{this.$_('Selected folder: %s', [selectedMoveTargetFolder.name])}}</span>
       <span v-else>{{this.$_('No folder selected')}}</span>
-      <FTLTreeFolders :root="isRoot" :sourceFolder="folder.id"/>
+      <FTLTreeFolders :root="isRoot" :source-folder="folder.id"/>
     </b-container>
   </b-modal>
 </template>

@@ -12,7 +12,8 @@
         class="item"
         v-for="folder in item.children"
         :key="folder.id"
-        :item="folder">
+        :item="folder"
+        :source-folder="sourceFolder">
       </FTLTreeItem>
     </ul>
   </li>
@@ -25,7 +26,8 @@
     name: "FTLTreeItem",
 
     props: {
-      item: Object
+      item: Object,
+      sourceFolder: Number
     },
 
     data: function () {
@@ -79,9 +81,13 @@
         axios
           .get("/app/api/v1/folders/" + qs)
           .then(response => {
-              vi.item.children = response.data.map(function (e) {
-                return {id: e.id, name: e.name, has_descendant: e.has_descendant, children: []}
-              })
+              vi.item.children = response.data
+                .filter(function (e) {
+                  return e.id !== vi.sourceFolder;
+                })
+                .map(function (e) {
+                  return {id: e.id, name: e.name, has_descendant: e.has_descendant, children: []}
+                })
             }
           )
           .catch(error => vi.mixinAlert(vi.$_('Unable to refresh folders list'), true))
