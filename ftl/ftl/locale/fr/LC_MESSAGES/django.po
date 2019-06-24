@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-20 08:56+0000\n"
+"POT-Creation-Date: 2019-06-24 10:10+0000\n"
 "PO-Revision-Date: 2019-03-05 17:20+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,7 +18,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.0.6\n"
 
-#: ftl/signals/handlers.py:8
+#: ftl/signals/handlers.py:7
 msgid "You have been logged out. See you!"
 msgstr "Vous êtes déconnecté. À bientôt !"
 
@@ -27,10 +27,13 @@ msgid "Signup"
 msgstr "Inscription"
 
 #: ftl/templates/ftl/signup.html:12
+#, python-format
 msgid ""
 "Create your account in <span class=\"highlight\">%(org_name)s</span> "
 "organization"
-msgstr "Créez votre compte dans l'organisation <span class=\"highlight\">%(org_name)s</span>"
+msgstr ""
+"Créez votre compte dans l'organisation <span class=\"highlight\">"
+"%(org_name)s</span>"
 
 #: ftl/templates/ftl/signup_success.html:5
 msgid "Signup succeed"
@@ -43,6 +46,16 @@ msgstr "Une dernière chose..."
 #: ftl/templates/ftl/signup_success.html:13
 msgid "Your account have been created, verify your email to activate it."
 msgstr "Votre compte a été créé, consultez vos emails pour l'activer."
+
+#: ftl/templates/ftl/signup_success.html:14
+msgid "Login to your account here:"
+msgstr "Connectez-vous à votre compte :"
+
+#: ftl/templates/ftl/signup_success.html:14
+#, fuzzy
+#| msgid "Username"
+msgid "User login page"
+msgstr "Nom d'utilisateur"
 
 #: ftl/templates/registration/login.html:5
 #: ftl/templates/registration/login.html:13

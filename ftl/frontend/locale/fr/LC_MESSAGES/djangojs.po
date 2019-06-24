@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-20 17:43+0000\n"
+"POT-Creation-Date: 2019-06-24 10:14+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,119 +18,95 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: frontend/dist/js/app.2417ed07.js:8
+#: frontend/dist/js/app.bfaafaef.js:8
 msgid "aria-rowcount"
 msgstr ""
 
-#: frontend/dist/js/app.2417ed07.js:24
-msgid "ftl-app, open source software. Made with ❤ by "
-msgstr "ftl-app, logiciel open source. Fait avec ❤ par "
-
-#: frontend/dist/js/app.2417ed07.js:24
+#: frontend/dist/js/app.bfaafaef.js:24
 msgid "Key words..."
 msgstr "Mots clés..."
 
-#: frontend/dist/js/app.2417ed07.js:24
+#: frontend/dist/js/app.bfaafaef.js:24
 msgid "Search"
 msgstr "Chercher"
 
-#: frontend/dist/js/app.2417ed07.js:24
-msgid "X"
-msgstr "X"
-
-#: frontend/dist/js/app.2417ed07.js:24
-msgid "Lang"
-msgstr "Langue"
-
-#: frontend/dist/js/app.2417ed07.js:24
+#: frontend/dist/js/app.bfaafaef.js:24
 msgid "Profile"
 msgstr "Mon compte"
 
-#: frontend/dist/js/app.2417ed07.js:24
+#: frontend/dist/js/app.bfaafaef.js:24
 msgid "Sign Out"
 msgstr "Se déconnecter"
 
-#: frontend/dist/js/app.2417ed07.js:24
+#: frontend/dist/js/app.bfaafaef.js:24
+msgid "ftl-app, open source software. Made with ❤ by "
+msgstr "ftl-app, logiciel open source. Fait avec ❤ par "
+
+#: frontend/dist/js/app.bfaafaef.js:24
 msgid "Generate missing thumb"
 msgstr "Générer les miniatures manquantes"
 
-#: frontend/dist/js/app.2417ed07.js:24
+#: frontend/dist/js/app.bfaafaef.js:24
 msgid "Refresh documents list"
 msgstr "Rafraichir la liste des documents"
 
-#: frontend/dist/js/app.2417ed07.js:24
+#: frontend/dist/js/app.bfaafaef.js:24
 msgid "Last refresh"
 msgstr "Dernier rafraichissement"
 
-#: frontend/dist/js/app.2417ed07.js:24
+#: frontend/dist/js/app.bfaafaef.js:24
 msgid "Create new folder"
 msgstr "Créer un nouveau dossier"
 
-#: frontend/dist/js/app.2417ed07.js:24
+#: frontend/dist/js/app.bfaafaef.js:24
 msgid "No document yet"
 msgstr "Aucun document"
 
-#: frontend/dist/js/app.2417ed07.js:24
-msgid "Title"
-msgstr "Titre"
-
-#: frontend/dist/js/app.2417ed07.js:24
-msgid "Close"
-msgstr "Fermer"
-
-#: frontend/dist/js/app.2417ed07.js:24
+#: frontend/dist/js/app.bfaafaef.js:24
 msgid "Cancel"
 msgstr "Annuler"
 
-#: frontend/dist/js/app.2417ed07.js:24
+#: frontend/dist/js/app.bfaafaef.js:24
 msgid "Create"
 msgstr "Créer"
 
-#: frontend/dist/js/app.2417ed07.js:24
+#: frontend/dist/js/app.bfaafaef.js:24
 msgid "Create a new folder"
 msgstr "Créer un nouveau dossier"
 
-#: frontend/dist/js/app.2417ed07.js:24
+#: frontend/dist/js/app.bfaafaef.js:24
 msgid "The name of the folder"
 msgstr "Le nom du dossier"
 
-#: frontend/dist/js/app.2417ed07.js:24
+#: frontend/dist/js/app.bfaafaef.js:24
 msgid "The folder will be created in the current folder."
 msgstr "Le dossier sera créé dans le dossier courant"
 
-#: frontend/dist/js/app.2417ed07.js:24
-msgid "Note: "
-msgstr "Note : "
-
-#: frontend/dist/js/app.2417ed07.js:24
+#: frontend/dist/js/app.bfaafaef.js:24
 msgid "Download"
 msgstr "Télécharger"
 
-#: frontend/dist/js/app.2417ed07.js:24
+#: frontend/dist/js/app.bfaafaef.js:24
 msgid "!! Delete doc (no warn) !!"
 msgstr "!! Supprimer (définitif) !!"
 
-#: frontend/dist/js/app.2417ed07.js:24
+#: frontend/dist/js/app.bfaafaef.js:24
 msgid "Upload document"
 msgstr "Ajouter un document"
 
-#: frontend/dist/js/app.2417ed07.js:24
-msgid "Choose a file..."
-msgstr "Choisir un fichier..."
-
-#: frontend/dist/js/app.2417ed07.js:24
+#: frontend/dist/js/app.bfaafaef.js:24
 msgid "Drop file here..."
 msgstr "Déposer un fichier ici..."
 
-#: frontend/dist/js/app.2417ed07.js:24
+#: frontend/dist/js/app.bfaafaef.js:24
 msgid "Browse"
 msgstr "Parcourir"
 
-#: frontend/dist/js/app.2417ed07.js:24
+#: frontend/dist/js/app.bfaafaef.js:24
 msgid "Upload"
 msgstr "Envoyer"
 
-#: frontend/dist/js/app.2417ed07.js:24
+#: frontend/dist/js/app.bfaafaef.js:24
 #, javascript-format
 msgid "Folder %s created"
 msgstr "Dossier %s créé"
