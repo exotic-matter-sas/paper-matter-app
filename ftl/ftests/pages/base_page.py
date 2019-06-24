@@ -40,7 +40,7 @@ if DEV_MODE and not is_node_server_running():
     red_message = '\x1b[1;31m{}\033[0m'
     print(red_message.
           format('WARNING: Node server NOT running: all tests relative to JS frontend will be skipped.'))
-    input("Run Node server now if you want all tests to be run, press Enter to continue...")
+    input("Run Node server now if you want to run all tests, press Enter to continue...")
     NODE_SERVER_RUNNING = is_node_server_running()  # refresh value in case user hae just run Node
     print(f'Continue with NODE_SERVER_RUNNING: {NODE_SERVER_RUNNING}')
 
