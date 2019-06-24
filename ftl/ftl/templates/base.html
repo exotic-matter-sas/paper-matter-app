@@ -3,7 +3,7 @@
 {% load render_bundle from webpack_loader %}
 
 <!DOCTYPE html>
-<html lang="{{ request.LANGUAGE_CODE }}">
+<html lang="{{ request.LANGUAGE_CODE }}" class="h-100">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -12,9 +12,5 @@
     {% render_bundle 'app' 'css' %}
     {% block head %}{% endblock %}
 </head>
-<body class="container-fluid">
-{% block header %}{% endblock %}
-{% block main %}{% endblock %}
-{% block footer %}{% endblock %}
-</body>
+{% block body %}{% endblock %}
 </html>

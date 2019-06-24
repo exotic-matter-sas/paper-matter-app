@@ -153,12 +153,54 @@ body{
 // ==========
 
 #app {
+    header {
+        position: sticky;
+        top: 0;
+        z-index: $zindex-sticky;
+    }
+
+    footer{
+        background: $gray-200;
+    }
+
     input {
         background: $light;
     }
 }
 
-// FTLNavbar
+// FTL Document
+
+.document-title{
+    color: map_get($theme-colors, 'primary');
+}
+
+.card:hover{
+    border-color: map_get($theme-colors, 'primary');
+}
+
+// Home Document modal
+
+$document-viewer-padding : 2em;
+
+#document-viewer {
+    .container{
+        max-width: none;
+    }
+
+    .modal-dialog{
+        width: 100vw;
+        height: 100vh;
+        max-width: none;
+        padding: $document-viewer-padding;
+        margin:0;
+    }
+
+    .modal-content{
+        height: calc(100vh - (#{$document-viewer-padding} * 2));
+    }
+}
+
+// FTLHeader
 .navbar-brand{
     padding-right: 1em;
     border-right: 1px solid rgba(255, 255, 255, 0.1);

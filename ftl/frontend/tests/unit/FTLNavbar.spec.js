@@ -3,15 +3,15 @@ import { shallowMount, createLocalVue } from '@vue/test-utils';
 import BootstrapVue from "bootstrap-vue";
 
 import * as tv from './../tools/testValues.js'
-import FTLNavbar from "../../src/components/FTLNavbar";
+import FTLHeader from "@/components/FTLHeader";
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue); // to avoid warning on tests execution
 localVue.prototype.$_ = (text) => { return text; }; // i18n mock
 
 
-describe('FTLNavbar template', () => {
-  const wrapper = shallowMount(FTLNavbar, {
+describe('FTLHeader template', () => {
+  const wrapper = shallowMount(FTLHeader, {
     localVue: localVue,
     propsData: tv.ACCOUNT_PROPS
   });

@@ -1,19 +1,19 @@
 <template>
-  <div id="app">
-    <FTLNavbar class="row" :account="account"/>
-    <router-view class="row"/>
-    <FTLFooter class="row"/>
-  </div>
+  <body id="app" class="d-flex flex-column  h-100">
+    <FTLHeader :account="account"/>
+    <router-view/>
+    <FTLFooter/>
+  </body>
 </template>
 
 <script>
-  import FTLNavbar from "@/components/FTLNavbar";
+  import FTLHeader from "@/components/FTLHeader";
   import FTLFooter from "@/components/FTLFooter";
 
   export default {
     name: "app",
     components: {
-      FTLNavbar,
+      FTLHeader,
       FTLFooter
     },
 

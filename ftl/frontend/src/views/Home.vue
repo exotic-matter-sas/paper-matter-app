@@ -1,14 +1,14 @@
 <template>
-  <section>
+  <main>
     <b-col>
       <b-row class="my-3">
         <FTLUpload class="col" :currentFolder="getCurrentFolder" @event-new-upload="updateDocuments"/>
       </b-row>
       <b-row class="my-3" id="toolbar">
-        <b-button id="generate-thumb" variant="primary" class="mr-1" @click="generateMissingThumbnail">
+        <b-button id="generate-thumb" variant="primary" class="mt-2 mr-0 mt-sm-0 mr-sm-2" @click="generateMissingThumbnail">
           {{this.$_('Generate missing thumb')}}
         </b-button>
-        <b-button id="refresh-documents" variant="primary" class="mr-1" @click="updateDocuments">
+        <b-button id="refresh-documents" variant="primary" class="mt-2 mr-0 mt-sm-0 mr-sm-2" @click="updateDocuments">
           {{this.$_('Refresh documents list')}}
         </b-button>
         {{ this.$_('Last refresh') }} {{ lastRefreshFormatted }}
@@ -45,42 +45,27 @@
       </b-row>
 
       <!-- Pdf viewer popup -->
-      <div v-if="docModal" class="doc-view-modal" :class="{open: docModal}">
-        <b-container>
-          <b-row>
-            <b-col md="10">
-              <span id="document-title">{{ this.$_('Title:') }} {{ currentOpenDoc.title }}</span>
-            </b-col>
-            <b-col>
-              <b-button id="close-document" variant="secondary" @click="closeDocument">{{this.$_('Close')}}</b-button>
-            </b-col>
-          </b-row>
-
-        </b-container>
-        <b-container>
-          <b-row scr>
+      <b-modal id="document-viewer"
+               :title="currentOpenDoc.title"
+               hide-footer
+               centered>
+        <b-container class="h-100">
+          <b-row class="h-100">
             <b-col md="8">
-              <div class="embed-responsive embed-responsive-1by1 doc-pdf ">
+              <div class="h-100 embed-responsive doc-pdf ">
                 <iframe v-if="currentOpenDoc.pid" class="embed-responsive-item"
                         :src="`/assets/pdfjs/web/viewer.html?file=/app/uploads/` + currentOpenDoc.pid + `#search=` + currentSearch">
                 </iframe>
               </div>
             </b-col>
-            <b-col>
+            <b-col md="4" class="d-none d-md-block">
               <b-row>AAA</b-row>
               <b-row>BBB</b-row>
               <b-row>CCC</b-row>
             </b-col>
           </b-row>
         </b-container>
-        <b-container>
-          <b-row align-h="end">
-            <b-col cols="2">
-              <b-button variant="secondary" @click="closeDocument">{{this.$_('Close')}}</b-button>
-            </b-col>
-          </b-row>
-        </b-container>
-      </div>
+      </b-modal>
 
       <!-- Create folder modal -->
       <b-modal v-if="newFolderModal" v-model="newFolderModal" @ok="createNewFolder"
@@ -100,7 +85,7 @@
         </b-container>
       </b-modal>
     </b-col>
-  </section>
+  </main>
 </template>
 
 <script>
@@ -168,6 +153,13 @@
         // all docs
         this.updateDocuments();
       }
+
+      // Listen to modal event
+      this.$root.$on('bv::modal::hide', (bvEvent, modalId) => {
+        if (modalId === 'document-viewer') {
+          this.closeDocument()
+        }
+      })
     },
 
     watch: {
@@ -282,6 +274,8 @@
 
         this.docPid = pid;
         this.docModal = true;
+
+        this.$bvModal.show('document-viewer');
 
         axios
           .get('/app/api/v1/documents/' + pid)
@@ -437,27 +431,6 @@
 
 <style scoped>
   /* PDF.js viewer custom css */
-  .doc-view-modal {
-    display: none;
-    height: 100%;
-    left: 0;
-    position: fixed;
-    top: 0;
-    width: 100%;
-    background: white;
-    z-index: 1000;
-    padding: 20px;
-  }
-
-  .doc-view-modal {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .doc-pdf {
-    padding-top: 100%;
-  }
-
   #documents-list-loader{
     width: 3em;
     height: 3em;

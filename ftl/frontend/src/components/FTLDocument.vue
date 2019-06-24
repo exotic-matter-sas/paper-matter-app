@@ -69,6 +69,7 @@
     transition: background-position 1.2s cubic-bezier(.68,-0.55,.27,1.55) 1s,
                 box-shadow 1.2s ease-in-out 1s;
     cursor:pointer;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
   }
 
   .card-title{
