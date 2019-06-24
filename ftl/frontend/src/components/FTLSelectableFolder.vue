@@ -17,7 +17,7 @@
 <script>
 
   export default {
-    name: "FTLOrganizeFolder",
+    name: "FTLSelectableFolder",
 
     props: {
       folder: {
@@ -53,7 +53,7 @@
         this.selected = !this.selected;
         if (this.selected) {
           this.$emit('event-select-folder', this.folder);
-          // Store the selected panel folder for usage by Folders.vue for displaying the folder detail panel
+          // Store the selected panel folder for usage by ManageFolders.vue for displaying the folder detail panel
           this.$store.commit('selectPanelFolder', this.folder);
         } else {
           this.$emit('event-unselect-folder');

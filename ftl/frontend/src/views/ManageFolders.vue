@@ -17,9 +17,9 @@
             </b-col>
           </b-row>
           <b-row align-h="center" v-else>
-            <FTLOrganizeFolder v-for="folder in folders" :key="folder.id" :folder="folder"
-                               @event-navigate-folder="navigateToFolder"
-                               @event-select-folder="getFolderDetail"
+            <FTLSelectableFolder v-for="folder in folders" :key="folder.id" :folder="folder"
+                                 @event-navigate-folder="navigateToFolder"
+                                 @event-select-folder="getFolderDetail"
             />
             <b-col
               id="create-folder"
@@ -92,7 +92,7 @@
 </template>
 
 <script>
-  import FTLOrganizeFolder from "@/components/FTLOrganizeFolder";
+  import FTLSelectableFolder from "@/components/FTLSelectableFolder";
   import FTLNewFolder from "@/components/FTLNewFolder";
   import FTLRenameFolder from "@/components/FTLRenameFolder";
   import FTLDeleteFolder from "@/components/FTLDeleteFolder";
@@ -105,7 +105,7 @@
       FTLMoveFolder,
       FTLDeleteFolder,
       FTLRenameFolder,
-      FTLOrganizeFolder,
+      FTLSelectableFolder,
       FTLNewFolder
     },
     props: ['folder'],

@@ -33,7 +33,7 @@ export default new Router({
     {
       path: '/folders/:folder?',
       name: 'folders',
-      component: () => import(/* webpackChunkName: "folders" */ './views/Folders.vue'),
+      component: () => import(/* webpackChunkName: "folders" */ './views/ManageFolders.vue'),
       props: true
     }
   ]

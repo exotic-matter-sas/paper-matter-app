@@ -51,13 +51,16 @@
               vi.folders.push({id: null, name: vi.$_('Root')});
             }
 
-            vi.folders = vi.folders.concat(response.data
-              .filter(function (e) {
-                return e.id !== vi.sourceFolder;
-              })
-              .map(function (e) {
-                return {id: e.id, name: e.name, has_descendant: e.has_descendant, children: []}
-              }));
+            vi.folders = vi.folders
+              .concat(
+                response.data
+                  .filter(function (e) {
+                    return e.id !== vi.sourceFolder;
+                  })
+                  .map(function (e) {
+                    return {id: e.id, name: e.name, has_descendant: e.has_descendant, children: []}
+                  })
+              );
           }
         )
         .catch(error => vi.mixinAlert(vi.$_('Unable to refresh folders list'), true));
