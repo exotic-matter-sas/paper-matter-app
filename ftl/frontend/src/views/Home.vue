@@ -28,10 +28,10 @@
       </b-container>
       <b-container>
         <b-row>
-          <b-button id="refresh-documents" variant="outline-primary" class="m-1" @click="refreshAll">
+          <b-button id="refresh-documents" :disabled="docLoading" variant="primary" class="m-1" @click="refreshAll">
             <font-awesome-icon icon="sync" :spin="docLoading" :title="$_('Refresh documents list')"/>
           </b-button>
-          <b-button id="create-folder" class="m-1" variant="outline-primary" size="sm"
+          <b-button id="create-folder" class="m-1" variant="primary" size="sm"
                     v-b-modal="'modal-new-folder'">
             <font-awesome-icon icon="folder-plus" :title="$_('Create new folder')" size="2x"/>
           </b-button>
