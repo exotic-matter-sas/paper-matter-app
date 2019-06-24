@@ -7,7 +7,7 @@ from django.test import TestCase
 import core
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_folder, setup_document, \
-    setup_random_file
+    setup_temporary_file
 from ftl.settings import BASE_DIR
 from .models import FTLUser, FTLDocument, FTLFolder
 
@@ -69,7 +69,7 @@ class FTLUserModelTest(TestCase):
         with self.assertRaises(core.models.FTLDocument.DoesNotExist):
             FTLDocument.objects.get(pid=document_to_be_deleted.pid)
 
-            # File has been deleted.
+        # File has been deleted.
         self.assertTrue(not os.path.exists(binary_f.name))
         self.assertTrue(not os.path.exists(thumbnail_f.name))
 
@@ -79,9 +79,9 @@ class FTLUserModelTest(TestCase):
         user = setup_user(org)
         folder = setup_folder(org)
         folder_sub = setup_folder(org, parent=folder)
-        document_1 = setup_document(org, user, binary=setup_random_file().name)
-        document_2 = setup_document(org, user, folder, binary=setup_random_file().name)
-        document_3 = setup_document(org, user, folder_sub, binary=setup_random_file().name)
+        document_1 = setup_document(org, user, binary=setup_temporary_file().name)
+        document_2 = setup_document(org, user, folder, binary=setup_temporary_file().name)
+        document_3 = setup_document(org, user, folder_sub, binary=setup_temporary_file().name)
 
         self.assertEqual(FTLDocument.objects.count(), 3)
         self.assertEqual(FTLFolder.objects.count(), 2)

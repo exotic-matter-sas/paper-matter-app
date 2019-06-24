@@ -66,7 +66,7 @@ def setup_folder(org, name=tv.FOLDER1_NAME, parent=None):
     )
 
 
-def setup_random_file():
+def setup_temporary_file():
     f = tempfile.NamedTemporaryFile(dir=os.path.join(BASE_DIR, 'ftests', 'tools'), delete=False)
     f.write(b'Hello world!')  # Actual content doesn't matter
     f.close()
