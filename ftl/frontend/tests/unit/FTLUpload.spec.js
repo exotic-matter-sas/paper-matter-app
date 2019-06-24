@@ -12,7 +12,9 @@ localVue.use(BootstrapVue); // to avoid warning on tests execution
 localVue.prototype.$_ = (text) => {
   return text;
 }; // i18n mock
-localVue.prototype.$moment = jest.fn();
+localVue.prototype.$moment = () => {
+  return {fromNow: jest.fn()}
+};
 localVue.mixin({methods: {mixinAlert: jest.fn()}}); // mixin alert
 
 jest.mock('axios', () => ({

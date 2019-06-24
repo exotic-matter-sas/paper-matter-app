@@ -17,7 +17,9 @@ localVue.use(BootstrapVue); // to avoid warning on tests execution
 localVue.prototype.$_ = (text) => {
   return text;
 }; // i18n mock
-localVue.prototype.$moment = jest.fn();
+localVue.prototype.$moment = () => {
+  return {fromNow: jest.fn()}
+};
 localVue.prototype.$router = {push: jest.fn()}; // router mock
 localVue.mixin({methods: {mixinAlert: jest.fn()}}); // mixin alert
 
@@ -353,25 +355,6 @@ describe('Home script methods call proper api', () => {
     expect(axios.get).toHaveBeenCalledWith(
       '/app/api/v1/folders/?level=' + currentFolder.id
     );
-  });
-
-  it('createNewFolder call api', done => {
-    axios.post.mockResolvedValue(mockedPostFolderResponse);
-    wrapper.setData({newFolderName: tv.FOLDER_PROPS.name});
-
-    // when
-    wrapper.vm.createNewFolder();
-
-    // then
-    expect(axios.post).toHaveBeenCalledWith(
-      '/app/api/v1/folders/',
-      {name: wrapper.vm.newFolderName, parent: null},
-      axiosConfig
-    );
-    wrapper.vm.$nextTick(() => {
-      expect(mockedRefreshFolder).toHaveBeenCalled();
-      done();
-    });
   });
 
   it('generateMissingThumbnail call api', async () => {

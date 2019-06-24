@@ -1,20 +1,22 @@
 import {createLocalVue, shallowMount} from '@vue/test-utils';
 
 import axios from 'axios';
-import BootstrapVue from "bootstrap-vue";
 
 import * as tv from './../tools/testValues.js'
 import FTLDocument from "../../src/components/FTLDocument";
 import {axiosConfig} from "../../src/constants";
+import flushPromises from "flush-promises";
 
 const localVue = createLocalVue();
-localVue.use(BootstrapVue); // to avoid warning on tests execution
+// to avoid warning on tests execution, commented out here because we need to mock bvModal
+// localVue.use(BootstrapVue);
 localVue.prototype.$_ = (text) => {
   return text;
 }; // i18n mock
-localVue.prototype.$moment = {
-  fromNow: jest.fn()
+localVue.prototype.$moment = () => {
+  return {fromNow: jest.fn()}
 };
+localVue.prototype.$bvModal = {msgBoxConfirm: jest.fn()};
 
 jest.mock('axios', () => ({
   delete: jest.fn()
@@ -34,9 +36,18 @@ describe('FTLDocument template', () => {
   });
 
   it('renders properly document data', () => {
-    Object.values(tv.DOCUMENT_PROPS).forEach(function (documentData) {
-      expect(wrapper.html()).toContain(documentData)
-    })
+    const filters = [tv.DOCUMENT_PROPS.note, tv.DOCUMENT_PROPS.thumbnail_available];
+
+    Object.values(tv.DOCUMENT_PROPS)
+      .filter((prop) => {
+        // Filter out note and thumbnail boolean of the test because we don't show those values
+        return !filters.some((val) => {
+          return val === prop;
+        })
+      })
+      .forEach(function (documentData) {
+        expect(wrapper.html()).toContain(documentData)
+      })
   });
 });
 
@@ -52,9 +63,12 @@ describe('FTLDocument script', () => {
     });
   });
 
-  it('deleteDocument call api', () => {
+  it('deleteDocument call api', async () => {
+    wrapper.vm.$bvModal.msgBoxConfirm.mockResolvedValue(true);
+
     // when
     wrapper.vm.deleteDocument();
+    await flushPromises();
 
     // then
     expect(axios.delete).toHaveBeenCalledWith(
@@ -62,14 +76,15 @@ describe('FTLDocument script', () => {
       axiosConfig
     );
   });
-  it('deleteDocument emit event-delete-doc', done => {
+
+  it('deleteDocument emit event-delete-doc', async () => {
+    wrapper.vm.$bvModal.msgBoxConfirm.mockResolvedValue(true);
+
     // when
     wrapper.vm.deleteDocument();
+    await flushPromises();
 
     // then
-    wrapper.vm.$nextTick(() => {
-      expect(wrapper.emitted('event-delete-doc')).toBeTruthy();
-      done();
-    });
+    expect(wrapper.emitted('event-delete-doc')).toBeTruthy();
   });
 });
