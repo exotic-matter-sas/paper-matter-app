@@ -27,7 +27,7 @@ class HomePage(BasePage):
 
     documents_list = '#documents-list'
     documents_thumbnails = '.document-thumbnail'
-    first_document_title = '.document-title span'
+    first_document_title = '.document-thumbnail .card-title'
 
     def wait_document_list_loaded(self):
         self.wait_for_elem_to_disappear(self.document_list_loader)

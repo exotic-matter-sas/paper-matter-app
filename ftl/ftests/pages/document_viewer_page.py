@@ -4,9 +4,9 @@ from ftests.pages.base_page import BasePage
 class DocumentViewPage(BasePage):
     url = '/app/#/home?doc={}'
 
-    page_body = '.doc-view-modal'
-    document_title = '#document-title'
-    document_close = '#close-document'
+    page_body = '#document-viewer'
+    document_title = '#document-viewer .modal-title'
+    document_close = '#document-viewer .close'
 
     def close_document(self):
         self.get_elem(self.document_close).click()
