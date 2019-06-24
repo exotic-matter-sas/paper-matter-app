@@ -22,6 +22,6 @@ describe('App template', () => {
   });
 
   it('renders properly app template', () => {
-    expect(wrapper.text()).toContain('Made with ❤ by', 'Exotic Matter')
+    expect(wrapper.html()).toContain('id="app"', 'FTLHeader', 'router-view','FTLFooter')
   });
 });

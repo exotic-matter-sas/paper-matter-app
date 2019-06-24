@@ -161,7 +161,7 @@ class BasePage(LIVE_SERVER):
 
     @staticmethod
     def _wait_for_method_to_return(method, timeout, *method_args, custom_return_validator=None,
-                                   expected_exception_types=None, **method_kwargs):
+                                   expected_exception_types=(), **method_kwargs):
         """
         Wait for the given method to return a truthy value and return it
         If custom_return_validator is provided return value will be tested against the validator

@@ -11,6 +11,7 @@ from core.views import EXECUTOR
 from ftests.pages.base_page import NODE_SERVER_RUNNING
 from ftests.pages.django_admin_home_page import AdminHomePage
 from ftests.pages.django_admin_login_page import AdminLoginPage
+from ftests.pages.document_viewer_page import DocumentViewPage
 from ftests.pages.home_page import HomePage
 from ftests.pages.setup_pages import SetupPages
 from ftests.pages.signup_pages import SignupPages
@@ -87,7 +88,7 @@ class SecondOrgSetup(AdminLoginPage, AdminHomePage, SignupPages, LoginPage, Home
         self.assertIn(username, self.get_elem(self.profile_name).text)
 
 
-class NewUserAddDocumentInsideFolder(SignupPages, LoginPage, HomePage):
+class NewUserAddDocumentInsideFolder(SignupPages, LoginPage, HomePage, DocumentViewPage):
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     @patch.object(parser, 'from_file')
     def test_new_user_add_document_inside_folder(self, mock_tika_parser):
@@ -110,9 +111,10 @@ class NewUserAddDocumentInsideFolder(SignupPages, LoginPage, HomePage):
         self.get_elem(self.first_document_title).click()
 
         # User can see the uploaded document inside the viewer
-        pdf_viewer_iframe = self.browser.find_element_by_css_selector('.doc-view-modal iframe')
+        # User can see the pdf inside the pdf viewer
+        pdf_viewer_iframe = self.get_elem(self.pdf_viewer)
         self.browser.switch_to_frame(pdf_viewer_iframe)
-        pdf_viewer_iframe_title = self.browser.find_element_by_css_selector('title').get_attribute("innerHTML")
+        pdf_viewer_iframe_title = self.get_elem('title', False).get_attribute("innerHTML")
 
         self.assertEqual(pdf_viewer_iframe_title, 'PDF.js viewer')
 

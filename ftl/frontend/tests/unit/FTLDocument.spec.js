@@ -29,7 +29,9 @@ describe('FTLDocument template', () => {
   });
 
   it('renders properly document data', () => {
-    Object.values(tv.DOCUMENT_PROPS).forEach(function(documentData){
+    let document_props_to_test = tv.DOCUMENT_PROPS;
+    delete document_props_to_test.note;
+    Object.values(document_props_to_test).forEach(function(documentData){
       expect(wrapper.html()).toContain(documentData)
     })
   });
