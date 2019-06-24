@@ -7,6 +7,9 @@ import FTLNavbar from "../../src/components/FTLNavbar";
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue); // to avoid warning on tests execution
+localVue.component('font-awesome-icon', jest.fn()); // avoid font awesome warning
+localVue.component('router-link', jest.fn()); // avoid router-link warning
+localVue.prototype.$router = {push: jest.fn()}; // router mock
 localVue.prototype.$_ = (text) => {
   return text;
 }; // i18n mock

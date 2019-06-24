@@ -363,15 +363,14 @@
       },
 
       updateDocuments: function () {
-        const vi = this;
         let queryString = {};
 
-        if (vi.previousLevels.length > 0) {
+        if (this.previousLevels.length > 0) {
           queryString['level'] = this.getCurrentFolder.id;
         }
 
-        if (vi.currentSearch !== null && vi.currentSearch !== "") {
-          queryString['search'] = vi.currentSearch;
+        if (this.currentSearch !== null && this.currentSearch !== "") {
+          queryString['search'] = this.currentSearch;
         }
 
         let strQueryString = '?' + qs.stringify(queryString);
@@ -382,11 +381,11 @@
           .get('/app/api/v1/documents/' + strQueryString)
           .then(response => {
             this.docLoading = false;
-            vi.docs = response.data['results'];
-            vi.lastRefresh = Date.now();
+            this.docs = response.data['results'];
+            this.lastRefresh = Date.now();
           }).catch(error => {
           this.docLoading = false;
-          vi.mixinAlert("Unable to refresh documents list.", true);
+          this.mixinAlert("Unable to refresh documents list.", true);
         });
       },
 

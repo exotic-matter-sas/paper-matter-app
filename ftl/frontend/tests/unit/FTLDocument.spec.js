@@ -10,6 +10,7 @@ import flushPromises from "flush-promises";
 const localVue = createLocalVue();
 // to avoid warning on tests execution, commented out here because we need to mock bvModal
 // localVue.use(BootstrapVue);
+localVue.component('font-awesome-icon', jest.fn()); // avoid font awesome warning
 localVue.prototype.$_ = (text) => {
   return text;
 }; // i18n mock

@@ -14,6 +14,7 @@ import {createThumbFromUrl} from '../../src/thumbnailGenerator';
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue); // to avoid warning on tests execution
+localVue.component('font-awesome-icon', jest.fn()); // avoid font awesome warning
 localVue.prototype.$_ = (text) => {
   return text;
 }; // i18n mock
@@ -89,7 +90,6 @@ const mockedGetDocumentFlat2Response = {
 };
 
 const mockedUpdateFolder = jest.fn();
-const mockedUpdateDocument = jest.fn();
 const mockedChangeFolder = jest.fn();
 const mockedOpenDocument = jest.fn();
 const mockedAlert = jest.fn();
@@ -143,7 +143,7 @@ describe('Home script methods call proper methods', () => {
       localVue,
       methods: {
         changeFolder: mockedChangeFolder,
-        updateDocuments: mockedUpdateDocument,
+        updateDocuments: mockedUpdateDocuments,
         updateFolders: mockedUpdateFolder,
         createThumbnailForDocument: mockedCreateThumbnailForDocument
       }
@@ -162,7 +162,7 @@ describe('Home script methods call proper methods', () => {
     wrapper = shallowMount(Home, {
       localVue,
       methods: {
-        updateDocuments: mockedUpdateDocument,
+        updateDocuments: mockedUpdateDocuments,
         updateFolders: mockedUpdateFolder,
       }
     });
@@ -172,7 +172,7 @@ describe('Home script methods call proper methods', () => {
 
     // then
     expect(mockedUpdateFolder).toHaveBeenCalledWith(currentFolder);
-    expect(mockedUpdateDocument).toHaveBeenCalled();
+    expect(mockedUpdateDocuments).toHaveBeenCalled();
   });
 
   it('changeToPreviousFolder call proper methods', () => {
@@ -375,7 +375,7 @@ describe('Home script methods call proper api', () => {
       methods: {
         changeFolder: mockedChangeFolder,
         mixinAlert: mockedAlert,
-        updateDocuments: mockedUpdateDocument
+        updateDocuments: mockedUpdateDocuments
       }
     });
     axios.patch.mockResolvedValue({});
@@ -411,7 +411,7 @@ describe('Home event handling', () => {
       localVue,
       methods: {
         changeFolder: mockedChangeFolder,
-        updateDocuments: mockedUpdateDocument,
+        updateDocuments: mockedUpdateDocuments,
         openDocument: mockedOpenDocument,
         navigateToFolder: mockedNavigateToFolder
       }
@@ -424,7 +424,7 @@ describe('Home event handling', () => {
 
     // then
     wrapper.vm.$nextTick(() => {
-      expect(mockedUpdateDocument).toHaveBeenCalled();
+      expect(mockedUpdateDocuments).toHaveBeenCalled();
       done();
     });
   });
@@ -468,7 +468,7 @@ describe('Home event handling', () => {
 
     // then
     wrapper.vm.$nextTick(() => {
-      expect(mockedUpdateDocument).toHaveBeenCalled();
+      expect(mockedUpdateDocuments).toHaveBeenCalled();
       done();
     });
   });
