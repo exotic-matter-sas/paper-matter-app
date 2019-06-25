@@ -65,11 +65,6 @@ const mockedGetDocumentsResponse = {
   status: 200,
   config: axiosConfig
 };
-const mockedPostFolderResponse = {
-  data: tv.FOLDER_PROPS,
-  status: 200,
-  config: axiosConfig
-};
 const mockedGetDocumentFlat1Response = {
   data: {
     count: 2,
@@ -99,6 +94,21 @@ const mockedNavigateToFolder = jest.fn();
 const mockedComputeFolderUrlPath = jest.fn();
 const mockedRefreshDocumentWithSearch = jest.fn();
 const mockedUpdateDocuments = jest.fn();
+const mockedUpdateFoldersPath = jest.fn();
+
+describe('Home template', () => {
+  const wrapper = shallowMount(Home, {
+    localVue,
+    methods: {
+      refreshFolders: mockedRefreshFolder,
+      updateDocuments: mockedUpdateDocuments,
+    } // mock methods called in mounted
+  });
+
+  it('renders properly home template', () => {
+    expect(wrapper.text()).toContain('No document yet')
+  });
+});
 
 describe('Home script computed', () => {
   let wrapper;
@@ -133,6 +143,82 @@ describe('Home script computed', () => {
   });
 });
 
+describe('Mounted methods call proper methods with given props', () => {
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('mounted call proper methods without props ', () => {
+    shallowMount(Home, {
+      localVue,
+      methods: {
+        refreshFolders: mockedRefreshFolder,
+        updateDocuments: mockedUpdateDocuments,
+      }
+    });
+
+    // then
+    expect(mockedRefreshFolder).toHaveBeenCalled();
+    expect(mockedUpdateDocuments).toHaveBeenCalled();
+  });
+
+  it('mounted call proper methods with doc props ', () => {
+    shallowMount(Home, {
+      localVue,
+      methods: {
+        refreshFolders: mockedRefreshFolder,
+        updateDocuments: mockedUpdateDocuments,
+        openDocument: mockedOpenDocument
+      },
+      propsData: {doc: tv.DOCUMENT_PROPS}
+    });
+
+    // then
+    expect(mockedRefreshFolder).toHaveBeenCalled();
+    expect(mockedUpdateDocuments).toHaveBeenCalled();
+    expect(mockedOpenDocument).toHaveBeenCalled();
+  });
+
+  it('mounted call proper methods with folder props ', () => {
+    const current_folder = tv.FOLDER_PROPS;
+
+    shallowMount(Home, {
+      localVue,
+      methods: {
+        refreshFolders: mockedRefreshFolder,
+        updateDocuments: mockedUpdateDocuments,
+        updateFoldersPath: mockedUpdateFoldersPath
+      },
+      propsData: {folder: current_folder}
+    });
+
+    // then
+    expect(mockedRefreshFolder).not.toHaveBeenCalled();
+    expect(mockedUpdateDocuments).toHaveBeenCalled();
+    expect(mockedUpdateFoldersPath).toHaveBeenCalledWith(current_folder);
+  });
+
+  it('mounted call proper methods with searchQuery props ', () => {
+    const search_query = 'coucou!';
+
+    shallowMount(Home, {
+      localVue,
+      methods: {
+        refreshFolders: mockedRefreshFolder,
+        updateDocuments: mockedUpdateDocuments,
+        refreshDocumentWithSearch: mockedRefreshDocumentWithSearch
+      },
+      propsData: {searchQuery: search_query}
+    });
+
+    // then
+    expect(mockedRefreshFolder).toHaveBeenCalled();
+    expect(mockedUpdateDocuments).not.toHaveBeenCalled();
+    expect(mockedRefreshDocumentWithSearch).toHaveBeenCalledWith(search_query);
+  });
+});
+
 describe('Home script methods call proper methods', () => {
   const currentFolder = tv.FOLDER_PROPS;
   let wrapper;
@@ -148,13 +234,6 @@ describe('Home script methods call proper methods', () => {
         createThumbnailForDocument: mockedCreateThumbnailForDocument
       }
     });
-  });
-
-  it('mounted call proper methods', () => {
-    // view mounted in beforeEach
-    // then
-    expect(mockedRefreshFolder).toHaveBeenCalled();
-    expect(mockedUpdateDocuments).toHaveBeenCalled();
   });
 
   it('changeFolder call proper methods', () => {
