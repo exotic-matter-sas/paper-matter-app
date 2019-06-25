@@ -159,8 +159,9 @@ describe('Mounted methods call proper methods with given props', () => {
     });
 
     // then
-    expect(mockedRefreshFolder).toHaveBeenCalled();
-    expect(mockedUpdateDocuments).toHaveBeenCalled();
+    expect(mockedRefreshFolder).toHaveBeenCalledTimes(1);
+    expect(mockedUpdateDocuments).toHaveBeenCalledTimes(1);
+    expect(mockedOpenDocument).not.toHaveBeenCalled();
   });
 
   it('mounted call proper methods with doc props ', () => {
@@ -175,9 +176,9 @@ describe('Mounted methods call proper methods with given props', () => {
     });
 
     // then
-    expect(mockedRefreshFolder).toHaveBeenCalled();
-    expect(mockedUpdateDocuments).toHaveBeenCalled();
-    expect(mockedOpenDocument).toHaveBeenCalled();
+    expect(mockedRefreshFolder).toHaveBeenCalledTimes(1);
+    expect(mockedUpdateDocuments).toHaveBeenCalledTimes(1);
+    expect(mockedOpenDocument).toHaveBeenCalledTimes(1);
   });
 
   it('mounted call proper methods with folder props ', () => {
@@ -195,7 +196,8 @@ describe('Mounted methods call proper methods with given props', () => {
 
     // then
     expect(mockedRefreshFolder).not.toHaveBeenCalled();
-    expect(mockedUpdateDocuments).toHaveBeenCalled();
+    expect(mockedUpdateDocuments).toHaveBeenCalledTimes(1);
+    expect(mockedUpdateFoldersPath).toHaveBeenCalledTimes(1);
     expect(mockedUpdateFoldersPath).toHaveBeenCalledWith(current_folder);
   });
 
@@ -213,8 +215,9 @@ describe('Mounted methods call proper methods with given props', () => {
     });
 
     // then
-    expect(mockedRefreshFolder).toHaveBeenCalled();
+    expect(mockedRefreshFolder).toHaveBeenCalledTimes(1);
     expect(mockedUpdateDocuments).not.toHaveBeenCalled();
+    expect(mockedRefreshDocumentWithSearch).toHaveBeenCalledTimes(1);
     expect(mockedRefreshDocumentWithSearch).toHaveBeenCalledWith(search_query);
   });
 });
