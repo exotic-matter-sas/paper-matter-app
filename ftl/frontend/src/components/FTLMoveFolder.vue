@@ -9,9 +9,14 @@
       <span v-else>{{ this.$_('Move %s to ...', [folder.name])}}</span>
     </template>
     <b-container fluid>
-      <span v-if="selectedMoveTargetFolder">{{this.$_('Selected folder: %s', [selectedMoveTargetFolder.name])}}</span>
-      <span v-else>{{this.$_('No folder selected')}}</span>
-      <FTLTreeFolders :root="isRoot" :source-folder="folder.id"/>
+      <b-row>
+        <b-col>
+          <span
+            v-if="selectedMoveTargetFolder">{{this.$_('Selected folder: %s', [selectedMoveTargetFolder.name])}}</span>
+          <span v-else>{{this.$_('No folder selected')}}</span>
+          <FTLTreeFolders :root="isRoot" :source-folder="folder.id"/>
+        </b-col>
+      </b-row>
     </b-container>
   </b-modal>
 </template>
