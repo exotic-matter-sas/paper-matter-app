@@ -117,11 +117,14 @@ describe('Home script computed', () => {
     wrapper = shallowMount(Home, {
       localVue,
       methods: {
+        // mock for methods in mounted
         changeFolder: mockedChangeFolder,
         refreshFolders: mockedRefreshFolder,
         refreshDocumentWithSearch: mockedRefreshDocumentWithSearch,
-        updateDocuments: mockedUpdateDocuments
-      } // mock for methods in mount
+        updateDocuments: mockedUpdateDocuments,
+        // mock method call in breadcrumb
+        computeFolderUrlPath: mockedComputeFolderUrlPath
+      }
     });
   });
 
@@ -140,6 +143,36 @@ describe('Home script computed', () => {
 
     // then
     expect(getCurrentFolderValue).toBe(tv.FOLDER_PROPS_VARIANT);
+  });
+
+  it('breadcrumb return proper format', () => {
+    const fakePath = 'fakeComputeFolderPath';
+    mockedComputeFolderUrlPath.mockReturnValue(fakePath);
+    const fakeLevels = [tv.FOLDER_PROPS, tv.FOLDER_PROPS_VARIANT];
+    wrapper.setData({previousLevels: fakeLevels});
+
+    // when
+    const breadcrumbData = wrapper.vm.breadcrumb;
+
+    // then
+    const expectedFormat = [
+      {
+        text: 'Root',
+        to: {name: 'home'}
+      },
+      {
+        text: fakeLevels[0].name,
+        to: {path: '/home/' + fakePath }
+      },
+      {
+        text: fakeLevels[1].name,
+        to: {path: '/home/' + fakePath }
+      },
+    ];
+    expect(breadcrumbData).toEqual(expectedFormat);
+    expect(mockedComputeFolderUrlPath).toHaveBeenNthCalledWith(1, fakeLevels[0].id);
+    expect(mockedComputeFolderUrlPath).toHaveBeenNthCalledWith(2, fakeLevels[1].id);
+
   });
 });
 
