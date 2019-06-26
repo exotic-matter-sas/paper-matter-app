@@ -222,6 +222,80 @@ describe('Mounted methods call proper methods with given props', () => {
   });
 });
 
+describe('Watchers call proper methods', () => {
+  let wrapper;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    wrapper = shallowMount(Home, {
+      localVue,
+      methods: {
+        refreshFolders: mockedRefreshFolder,
+        updateDocuments: mockedUpdateDocuments,
+        refreshDocumentWithSearch: mockedRefreshDocumentWithSearch,
+        openDocument: mockedOpenDocument,
+        changeFolder: mockedChangeFolder,
+        updateFoldersPath: mockedUpdateFoldersPath
+      }
+    });
+  });
+
+  it('searchQuery watcher call refreshDocumentWithSearch', () => {
+    // wrapper mounted in beforeEach
+    const searchQuery = 'key words';
+
+    //when
+    wrapper.setData({searchQuery});
+
+    // then
+    expect(mockedRefreshDocumentWithSearch).toHaveBeenCalledTimes(1);
+    expect(mockedRefreshDocumentWithSearch).toHaveBeenCalledWith(searchQuery);
+  });
+
+  it('doc watcher call openDocument if doc value not undefined', () => {
+    // wrapper mounted in beforeEach
+
+    //when doc is defined
+    let doc = tv.DOCUMENT_PROPS.pid;
+    wrapper.setData({doc});
+
+    // then
+    expect(mockedOpenDocument).toHaveBeenCalledTimes(1);
+    expect(mockedOpenDocument).toHaveBeenCalledWith(doc);
+
+    //when doc is reset to undefined
+    jest.clearAllMocks();
+    doc = undefined;
+    wrapper.setData({doc});
+
+    // then
+    expect(wrapper.vm.docModal).toBe(false);
+    expect(mockedOpenDocument).not.toHaveBeenCalled();
+  });
+
+  it('folder watcher call proper method', () => {
+    // wrapper mounted in beforeEach
+
+    //when folder is defined
+    let folder = tv.FOLDER_PROPS.id;
+    wrapper.setData({folder});
+
+    // then
+    expect(mockedChangeFolder).not.toHaveBeenCalled();
+    expect(mockedUpdateFoldersPath).toHaveBeenCalledTimes(1);
+    expect(mockedUpdateFoldersPath).toHaveBeenCalledWith(folder, true);
+
+    //when folder value is reset to undefined
+    jest.clearAllMocks();
+    folder = undefined;
+    wrapper.setData({folder});
+
+    // then
+    expect(mockedChangeFolder).toHaveBeenCalledTimes(1);
+    expect(mockedUpdateFoldersPath).not.toHaveBeenCalled();
+  });
+});
+
 describe('Home script methods call proper methods', () => {
   const currentFolder = tv.FOLDER_PROPS;
   let wrapper;
