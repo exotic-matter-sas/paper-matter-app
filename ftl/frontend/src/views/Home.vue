@@ -28,19 +28,22 @@
       </b-container>
       <b-container>
         <b-row>
-          <b-button id="refresh-documents" :disabled="docLoading" variant="primary" class="m-1" @click="refreshAll">
-            <font-awesome-icon icon="sync" :spin="docLoading" :title="$_('Refresh documents list')"/>
-          </b-button>
-          <b-button id="create-folder" class="m-1" variant="primary" size="sm"
-                    v-b-modal="'modal-new-folder'">
-            <font-awesome-icon icon="folder-plus" :title="$_('Create new folder')" size="2x"/>
-          </b-button>
-          <b-button variant="primary" class="m-1" :disabled="!previousLevels.length"
-                    @click="changeToPreviousFolder">
-            <font-awesome-icon icon="level-up-alt"/>
-          </b-button>
-          <FTLFolder v-for="folder in folders" :key="folder.id" :folder="folder"
-                     @event-change-folder="navigateToFolder"/>
+          <b-col>
+            <div class="d-flex flex-wrap align-items-center">
+              <b-button id="refresh-documents" :disabled="docLoading" variant="primary" class="m-1" @click="refreshAll">
+                <font-awesome-icon icon="sync" :spin="docLoading" :title="$_('Refresh documents list')"/>
+              </b-button>
+              <b-button id="create-folder" class="m-1" variant="primary" v-b-modal="'modal-new-folder'">
+                <font-awesome-icon icon="folder-plus" :title="$_('Create new folder')"/>
+              </b-button>
+              <b-button variant="primary" class="m-1" :disabled="!previousLevels.length"
+                        @click="changeToPreviousFolder">
+                <font-awesome-icon icon="level-up-alt"/>
+              </b-button>
+              <FTLFolder v-for="folder in folders" :key="folder.id" :folder="folder"
+                         @event-change-folder="navigateToFolder"/>
+            </div>
+          </b-col>
         </b-row>
       </b-container>
     </section>
