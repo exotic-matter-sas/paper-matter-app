@@ -18,7 +18,7 @@ class SignupPageTests(SignupPages):
 
         # Success page appears
         self.assertIn('succeed', self.head_title)
-        self.assertIn('your account have been created', self.get_elem(self.page_title).text)
+        self.assertIn('account have been created', self.get_elem(self.main_panel).text)
 
     def test_signup_to_second_org(self):
         # User create an account in the second org
@@ -27,7 +27,7 @@ class SignupPageTests(SignupPages):
 
         # Success page appears
         self.assertIn('succeed', self.head_title)
-        self.assertIn('your account have been created', self.get_elem(self.page_title).text)
+        self.assertIn('account have been created', self.get_elem(self.main_panel).text)
 
     def test_signup_failed(self):
         # User try to create an account without filling fields

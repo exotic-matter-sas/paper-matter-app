@@ -4,6 +4,7 @@ from ftests.tools import test_values as tv
 
 class SignupPages(BasePage):
     page_title = 'h1'
+    main_panel = '#main-with-aside'
 
     # Signup form
     username_input = '#user-form #id_username'

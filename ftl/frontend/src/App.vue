@@ -56,9 +56,4 @@
     color: #2c3e50;
     margin-top: 60px;
   }
-
-  /* Temp for viewing layout */
-  div {
-    border: 1px dotted;
-  }
 </style>

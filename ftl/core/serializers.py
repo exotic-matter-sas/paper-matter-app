@@ -32,7 +32,12 @@ class FTLDocumentSerializer(serializers.ModelSerializer):
 
 
 class FTLFolderSerializer(serializers.ModelSerializer):
+    paths = serializers.SerializerMethodField()
+
+    def get_paths(self, obj):
+        return map(lambda e: {'id': e.id, 'name': e.name}, obj.get_ancestors(include_self=True))
+
     class Meta:
         model = FTLFolder
-        fields = ('id', 'name', 'created', 'parent')
+        fields = ('id', 'name', 'created', 'parent', 'paths')
         read_only_fields = ('created',)

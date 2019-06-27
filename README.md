@@ -104,3 +104,7 @@ To use specific Django settings without modifying main `ftl/ftl/settings.py` fil
 ### Reindex all documents
 
     python manage.py reindex_docs
+    
+# Credits
+ - Illustrations: https://undraw.co/
+ 

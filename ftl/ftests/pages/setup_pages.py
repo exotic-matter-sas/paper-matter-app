@@ -7,7 +7,8 @@ class SetupPages(BasePage):
     create_admin_url = '/setup/create_admin/'
     setup_completed_url = '/setup/success/'
 
-    page_title = 'h2'
+    breadcrumb = '.breadcrumb'
+    active_breadcrumb_item = '.breadcrumb .active'
 
     # Step 1/2
     org_name_input = '#organization-form #id_name'

@@ -1,14 +1,27 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load static %}
 
 {% block title %}{% trans 'Signup' %}{% endblock %}
 
-{% block content %}
-    <h1>{% blocktrans with org_name=org_name %}Create your account in {{ org_name }}
-        organization{% endblocktrans %}</h1>
-    <form method="post" id="user-form">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="{% trans "Create" %}">
-    </form>
+{% block main %}
+    <div class="row align-items-stretch min-vh-100 bg-light">
+        <main class="col pb-3 order-md-2 pb-md-0">
+            <div id="main-with-aside">
+                <form method="post" id="user-form">
+                <h1 class="text-primary">{% blocktrans %}Create your account in <span class="highlight">{{ org_name }}</span> organization{% endblocktrans %}</h1>
+                    {% csrf_token %}
+                    {{ form }}
+                    <input class="btn btn-lg btn-primary btn-block" type="submit" value="{% trans "Signup" %}">
+                </form>
+            </div>
+        </main>
+        <aside class="col-0 pt-3 bg-dark col-md-4 order-md-1 pt-md-0">
+            <div id="login-page-illustration" class="row align-items-center">
+                <div class="col">
+                    <img class="w-100 mx-auto d-block" src="{% static "user_setup.svg" %}" alt="">
+                </div>
+            </div>
+        </aside>
+    </div>
 {% endblock %}
