@@ -15,6 +15,12 @@ export const FOLDER_PROPS_VARIANT = {
   name: 'Folder title 2',
 };
 
+export const FOLDER_PROPS_WITH_PARENT = {
+  id: '1234',
+  name: 'Folder title',
+  parent: '4321'
+};
+
 export const DOCUMENT_PROPS = {
   pid: '1234',
   title: 'Document title',
