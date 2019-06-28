@@ -148,7 +148,7 @@
         previousLevels: [],
 
         // PDF viewer
-        currentOpenDoc: {title: 'loading'},
+        currentOpenDoc: {},
         publicPath: process.env.BASE_URL
       }
     },
@@ -331,6 +331,7 @@
       closeDocument: function () {
         this.docModal = false;
         this.docPid = null;
+        this.currentOpenDoc = {};
         this.$router.push({path: '/home/' + this.computeFolderUrlPath()});
       },
 
