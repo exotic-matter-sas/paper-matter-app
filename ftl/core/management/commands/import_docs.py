@@ -1,8 +1,10 @@
 import os
 import pathlib
+from datetime import datetime
 
 from django.core.files.base import File
 from django.core.management import BaseCommand
+from django.utils import timezone
 
 from core.models import FTLFolder, FTLDocument, FTLUser
 
@@ -47,5 +49,6 @@ class Command(BaseCommand):
                         document.binary = File(f)
                         document.org = self.user.org
                         document.title = file.name
-                        document.created = os.path.getmtime(file.path)
+                        document.created = timezone.make_aware(datetime.fromtimestamp(int(os.path.getmtime(file.path))),
+                                                               timezone.get_current_timezone())
                         document.save()
