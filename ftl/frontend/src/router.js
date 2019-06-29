@@ -29,6 +29,11 @@ export default new Router({
         paths: route.params.paths,
         folder: route.params.folder
       })
+    },
+    {
+      path: '/konami',
+      name: 'konami',
+      component: () => import(/* webpackChunkName: "Konami" */ '@/views/Konami.vue'),
     }
   ]
 })

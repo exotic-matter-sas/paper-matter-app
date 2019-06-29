@@ -9,9 +9,6 @@
         </b-row>
         <b-row>
           <b-col>
-            <b-button id="generate-thumb" variant="primary" class="m-1" @click="generateMissingThumbnail">
-              {{this.$_('Generate missing thumb')}}
-            </b-button>
             <b-button id="refresh-documents" variant="primary" class="m-1" @click="updateDocuments">
               {{this.$_('Refresh documents list')}}
             </b-button>
@@ -411,37 +408,6 @@
             vi.newFolderName = '';
             vi.refreshFolders();
           }).catch(error => vi.mixinAlert("Unable to create new folder.", true));
-      },
-
-      generateMissingThumbnail: function () {
-        const vi = this;
-        vi.mixinAlert("Updating thumbnail");
-
-        axios.get("/app/api/v1/documents?flat=true")
-          .then(async response => {
-            let documents = response.data;
-
-            while (documents !== null && documents.results.length > 0) {
-              for (const doc of documents.results) {
-                if (doc['thumbnail_available'] === false) {
-                  await vi.createThumbnailForDocument(doc, false);
-                }
-              }
-
-              if (documents.next == null) {
-                documents = null;
-              } else {
-                let resp = await axios.get(documents.next);
-                documents = await resp.data;
-              }
-            }
-          })
-          .catch(error => {
-            vi.mixinAlert("An error occurred while updating thumbnail", true)
-          })
-          .then(() => {
-            vi.mixinAlert("Finished updating thumbnail");
-          });
       }
     }
   }
