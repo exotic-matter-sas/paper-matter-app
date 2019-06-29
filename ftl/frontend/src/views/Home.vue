@@ -58,7 +58,7 @@
         </b-row>
         <b-row align-h="around" v-else-if="docs.length">
           <FTLDocument v-for="doc in docs" :key="doc.pid" :doc="doc" @event-delete-doc="updateDocuments"
-                       @event-open-doc="openDocument"/>
+                       @event-open-doc="navigateToDocument"/>
         </b-row>
         <b-row v-else>
           <b-col>{{ this.$_('No document yet') }}</b-col>
@@ -178,13 +178,17 @@
 
     watch: {
       searchQuery: function (newVal, oldVal) {
-        this.refreshDocumentWithSearch(newVal);
+        if (newVal !== oldVal) {
+          this.refreshDocumentWithSearch(newVal);
+        }
       },
       doc: function (newVal, oldVal) {
         if (newVal === undefined) {
           this.docModal = false;
         } else {
-          this.openDocument(newVal);
+          if (newVal !== oldVal) {
+            this.openDocument(newVal);
+          }
         }
       },
       folder: function (newVal, oldVal) {
@@ -307,6 +311,10 @@
           });
       },
 
+      navigateToDocument: function (pid) {
+        this.$router.push({path: '/home/' + this.computeFolderUrlPath(), query: {doc: pid}});
+      },
+
       openDocument: function (pid) {
         const vi = this;
 
@@ -321,7 +329,6 @@
             if (!response.data.thumbnail_available) {
               vi.createThumbnailForDocument(response.data);
             }
-            vi.$router.push({path: '/home/' + vi.computeFolderUrlPath(), query: {doc: pid}});
           })
           .catch(error => {
             vi.mixinAlert("Unable to show document.", true)
