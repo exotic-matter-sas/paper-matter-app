@@ -20,6 +20,7 @@
             <FTLSelectableFolder v-for="folder in folders" :key="folder.id" :folder="folder"
                                  @event-navigate-folder="navigateToFolder"
                                  @event-select-folder="getFolderDetail"
+                                 @event-unselect-folder="unselectFolder"
             />
             <b-col
               id="create-folder"
