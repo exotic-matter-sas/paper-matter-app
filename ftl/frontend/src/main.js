@@ -28,7 +28,22 @@ library.add(faHome, faFolder, faSearch, faWindowClose, faTrash, faFileDownload, 
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.use(BootstrapVue);
 
+/**
+ * Translate text string using Django Javascript catalog
+ * If vars is passed as an array it will make a positional interpolation
+ * If vars is passed as an object it will make a named interpolation
+ * @example translation only
+ * // returns 'Bonjour'
+ * this.$_('Hello');
+ * @example translation with positional interpolation
+ * // returns 'Bonjour Jon'
+ * this.$_('Hello %s', ['Jon']);
+ * @example translation with named interpolation
+ * // returns 'Bonjour Jon Snow'
+ * this.$_('Hello %(firstName)s %(lastName)s', {lastName: 'Snow', firstName: 'Jon'});
+ */
 Vue.prototype.$_ = function (text, vars = null) {
+
   let translated_text = text;
 
   if (typeof gettext === 'function') {
