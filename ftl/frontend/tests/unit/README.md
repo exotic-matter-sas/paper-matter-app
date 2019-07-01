@@ -4,7 +4,7 @@
 
 - Every Vue component (`.vue`) should be tested in a different `.spec.js` file
   
-  *eg. `Home.spec.js` test `Home.vue`*
+  *eg. `Home.spec.js` should test `Home.vue`*
   
 - When you need a fake props or attribute value use `./../tools/testValues.js` module instead of hardcoded values
 
@@ -41,7 +41,7 @@
 
 ### 1. Template rendering
 
-**How:** assert main text / html / element is present in template.
+**How:** assert main text / html / element / props value is present in template.
 
 ```javascript
 // text
@@ -57,14 +57,15 @@ expect(wrapper.find('#app')).toBeThruthy();
 Object.values(tv.DOCUMENT_PROPS).forEach(function(documentData){ expect(wrapper.html()).toContain(documentData) });
 ```
 
-**Utility:** check component / template association or prevent Vue template compilation error (eg. when there is 2 tags at root level)
+**Utility:** check component/template association and prevent Vue template compilation error (eg. when there is 2 tags at root level).
 
 ### 2. Methods
 
-**How:** assert method call proper method(s) / call proper api request / trigger proper event / return proper value / are called by event
+**How:** assert method call proper method(s) / call proper api request / trigger proper event / return proper value / are called by event...
 
 ```javascript
-...
+// imports here
+
 jest.mock('axios', () => ({ get: jest.fn() }));
 const wrapper = shallowMount(TestedComponent, {
   localVue,
@@ -93,18 +94,19 @@ expect(wrapper.emitted('proper-event')).toBeTruthy();
 // then return proper value
 expect(testedReturn).toBe('properValue');
 
+// ----------------------
 // when (called by event)
 wrapper.find(EventsComponent).vm.$emit('tested-event', argEvent);
 
 // then method called
-expect(mockedTestedMethod).toHaveBeenCalledWith(argEvent);
+expect(mockedMethodA).toHaveBeenCalledWith(argEvent);
 ```
 
-**Utility:** check components logic and interaction are not broken
+**Utility:** check component logic and interactions with other components are not broken.
 
 ### 3. Computed
 
-**How:** assert computed return proper value
+**How:** assert computed return proper value.
 
 ```javascript
 ...
@@ -119,11 +121,11 @@ const testedValue = wrapper.vm.testedComputed;
 expect(testedValue).toBe('ComputedValue');
 ```
 
-**Utility:** check computed logic and returned format
+**Utility:** check computed logic and returned format.
 
 ### 3. Error handling
 
-**How:** assert method error handling is working properly
+**How:** assert method error handling is working properly.
 
 ```javascript
 ...
@@ -145,11 +147,11 @@ await flushPromises(); // test have to be async to use await
 expect(mockedMixinAlert).toHaveBeenCalled();
 ```
 
-**Utility:** check computed logic and returned format
+**Utility:** check computed logic and returned format.
 
-## `.spec.js` file template
+## `.spec.js` template
 
-To avoid common pitfalls (listed in next section), respect the `_template.spec.js` structure.
+To avoid common pitfalls (listed in next section), respect the structure used in `_template.spec.js`.
 
 ## Commons pitfalls
 
