@@ -1,9 +1,8 @@
 <template>
   <b-modal id="modal-delete-folder"
            @ok="deleteFolder"
-           :ok-disabled="name !== folder.name"
+           :ok-disabled="deleting || name !== folder.name"
            :cancel-title="this.$_('Cancel')"
-           :ok-title="this.$_('Delete')"
            ok-variant="danger">
     <span slot="modal-title">{{ this.$_('Deletion of folders and its contents') }}</span>
     <b-container>
@@ -15,6 +14,11 @@
         <b-form-input id="delete-folder" autofocus v-model="name" trim></b-form-input>
       </b-form-group>
     </b-container>
+
+    <template slot="modal-ok">
+      <b-spinner :class="{'d-none': !deleting}" small></b-spinner>
+      <font-awesome-icon :class="{'d-none': deleting }" icon="trash" :alt="this.$_('Delete')"/>
+    </template>
   </b-modal>
 </template>
 
@@ -33,18 +37,30 @@
 
     data() {
       return {
-        name: ''
+        name: '',
+        deleting: false
       }
     },
 
     methods: {
-      deleteFolder: function () {
+      deleteFolder: function (bvModalEvt) {
+        const vi = this;
+        bvModalEvt.preventDefault();
+
+        this.deleting = true;
+
         axios
           .delete('/app/api/v1/folders/' + this.folder.id, axiosConfig)
           .then(response => {
             this.$emit("event-folder-deleted", this.folder);
+            this.$nextTick(() => {
+              vi.$bvModal.hide("modal-delete-folder");
+            })
           })
-          .catch(error => this.mixinAlert(this.$_('Unable to delete folder'), true));
+          .catch(error => this.mixinAlert(this.$_('Unable to delete folder'), true))
+          .then(() => {
+            this.deleting = false
+          })
       }
     }
   }
