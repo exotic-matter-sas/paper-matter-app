@@ -23,9 +23,12 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.stdout.write(
             self.style.MIGRATE_HEADING(
-                _('Starting to migrate for %(username)s from %(path)s'
-                  % {'username': options['username'], 'path': options['path']}
-                  )
+                _(
+                    'Starting to migrate for %(username)s from %(path)s'
+                ) % {
+                    'username': options['username'],
+                    'path': options['path']
+                }
             )
         )
 
@@ -37,11 +40,11 @@ class Command(BaseCommand):
 
         self.stdout.write(
             self.style.SUCCESS(
-                ngettext('One document successfully imported in %(time)s',
-                         '%(count)s documents successfully imported in %(time)s',
-                         count
-                         )
-                % {
+                ngettext(
+                    'One document successfully imported in %(time)s',
+                    '%(count)s documents successfully imported in %(time)s',
+                    count
+                ) % {
                     'count': count,
                     'time': round(end_time - start_time, 2)
                 }
@@ -60,7 +63,11 @@ class Command(BaseCommand):
                 folder.org = self.user.org
                 folder.save()
 
-                self.stdout.write(self.style.SUCCESS(f'Created folder {directory.name}'))
+                self.stdout.write(
+                    self.style.SUCCESS(
+                        _('Created folder %(name)s') % {'name': directory.name}
+                    )
+                )
 
                 _count += self._explore(directory.path, folder, count)
 
@@ -68,7 +75,11 @@ class Command(BaseCommand):
                 file = directory
 
                 if pathlib.Path(file.path).suffix.lower() == '.pdf':
-                    self.stdout.write(self.style.SUCCESS(f'Imported document {file.name}'))
+                    self.stdout.write(
+                        self.style.SUCCESS(
+                            _('Imported document %(name)s') % {'name': file.name}
+                        )
+                    )
 
                     with open(file.path, 'rb') as f:
                         document = FTLDocument()
