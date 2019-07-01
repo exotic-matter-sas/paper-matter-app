@@ -4,6 +4,7 @@
 
     <b-container fluid>
       <b-row>
+        <!-- Left panel -->
         <b-col md="8">
           <b-row>
             <b-col class="p-0">
@@ -38,8 +39,14 @@
             </b-col>
           </b-row>
         </b-col>
+        <!-- Right panel -->
         <b-col>
-          <b-row v-if="folderDetail" align-h="center">
+          <b-row v-if="folderDetailLoading">
+            <b-col>
+              <b-spinner :label="$_('Loading')"></b-spinner>
+            </b-col>
+          </b-row>
+          <b-row v-else-if="folderDetail" align-h="center">
             <b-col>
               <b-row>
                 <b-col>
@@ -124,6 +131,7 @@
 
         // Folder panel
         folderDetail: null,
+        folderDetailLoading: false
       }
     },
 
@@ -190,6 +198,7 @@
 
       getFolderDetail: function (folder) {
         if (!this.folderDetail || this.folderDetail.id !== folder.id) {
+          this.folderDetailLoading = true;
           // Avoid duplicate request to folder detail api because when doubleclicking, it also triggers single click event
           axios
             .get("/app/api/v1/folders/" + folder.id)
@@ -198,7 +207,8 @@
             })
             .catch(error => this.mixinAlert(this.$_('Unable to refresh folders list'), true))
             .finally(() => {
-            });
+            })
+            .then(() => this.folderDetailLoading = false);
         }
       },
 
