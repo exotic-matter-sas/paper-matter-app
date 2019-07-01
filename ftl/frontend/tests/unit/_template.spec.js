@@ -19,7 +19,8 @@ localVue.component('font-awesome-icon', jest.fn()); // avoid font awesome warnin
 localVue.prototype.$_ = (text) => {return text}; // i18n mock
 localVue.prototype.$moment = () => {return {fromNow: jest.fn()}}; // moment mock
 localVue.prototype.$router = {push: jest.fn()}; // router mock
-localVue.mixin({methods: {mixinAlert: jest.fn()}}); // mixin alert mock
+const mockedMixinAlert = jest.fn();
+localVue.mixin({methods: {mixinAlert: mockedMixinAlert}}); // mixinAlert mock
 
 // TODO mock thumbnail generation if needed (when test add documents)
 import {createThumbFromUrl} from '../../src/thumbnailGenerator';
@@ -53,23 +54,42 @@ const mountedMocks = {
 };
 
 describe('Component first type of test', () => {
-
+  let wrapper;
+  // defined const specific to this describe here
   beforeEach(() => {
-    const wrapper = shallowMount(Home, {
+    // set mocked component methods return value before shallowMount
+    wrapper = shallowMount(Home, {
       localVue,
-      methods: mountedMocks
+      methods: Object.assign(
+        {
+          methodA: mockedMethodA,
+          // Add other methods to mock here
+        },
+        mountedMocks
+      ),
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
 
   it('sync test', () => {
+    // define const specific to this test here
+    // define mocked library return value here
+    // set required component component data here
+
     // when method is called / event is emitted...
     // then expect something
   });
 
   it('async test', async () => {
     // when method is called / event is emitted...
-    await flushPromises(); // wait all pending promises are resolves / rejected
+    await flushPromises(); // wait all pending promises are resolved/rejected
+    // then expect something
+  });
+
+  it('unmock a method mocked in beforeEach to test it', () => {
+    // restore original method to test it
+    wrapper.setMethods({methodB: Home.methods.methodB});
+    // when method is called / event is emitted...
     // then expect something
   });
 });

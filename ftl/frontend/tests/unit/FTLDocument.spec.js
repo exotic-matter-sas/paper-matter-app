@@ -48,7 +48,7 @@ describe('FTLDocument template', () => {
       })
       .forEach(function (documentData) {
         expect(wrapper.html()).toContain(documentData)
-      })
+      });
   });
 });
 

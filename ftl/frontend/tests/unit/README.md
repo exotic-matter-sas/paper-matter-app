@@ -59,7 +59,7 @@ Object.values(tv.DOCUMENT_PROPS).forEach(function(documentData){ expect(wrapper.
 
 **Utility:** check component/template association and prevent Vue template compilation error (eg. when there is 2 tags at root level).
 
-### 2. Methods
+### 2. Methods (or watcher)
 
 **How:** assert method call proper method(s) / call proper api request / trigger proper event / return proper value / are called by event...
 
@@ -129,14 +129,14 @@ expect(testedValue).toBe('ComputedValue');
 
 ```javascript
 ...
+const mockedMixinAlert = jest.fn();
+localVue.mixin({methods: {mixinAlert: mockedMixinAlert}});
+
 jest.mock('axios', () => ({ get: jest.fn() }));
 axios.get.mockRejectedValue('errorDescription');
 
 const wrapper = shallowMount(TestedComponent, {
-  localVue,
-  methods: {
-      mixinAlert: mockedMixinAlert,
-    }
+  localVue
 });
 
 // when calling method and api request return an error
@@ -144,7 +144,7 @@ wrapper.vm.testedMethod();
 
 // then it call mixinAlert to show error to user
 await flushPromises(); // test have to be async to use await
-expect(mockedMixinAlert).toHaveBeenCalled();
+expect(mockedMixinAlert).toHaveBeenCalledTimes(1);
 ```
 
 **Utility:** check computed logic and returned format.
@@ -153,10 +153,11 @@ expect(mockedMixinAlert).toHaveBeenCalled();
 
 To avoid common pitfalls (listed in next section), respect the structure used in `_template.spec.js`.
 
-## Commons pitfalls
-
-TODO finish this section
+## Common pitfalls
 
 | Error | Suggested solution |
 |-------------------|------------------|
-|  |  |
+| Cannot read property 'then' of undefined | A unmock method is probably called by the test, try to add a mock for component method mentioned in stacktrace |
+| Mock return `null` instead of value set with `mockReturnValue` | Check that `mockedMethod.mockReturnValue('value')` is called before shallowMount |
+| Mocked method is called too many times | Check that `jest.clearAllMocks();` line is present after shallowMount to reset mockedMethod.mock.calls counter after `mounted`|
+|  | Also check that a unmocked method/computed isn't calling the mocked method, it should be mocked |

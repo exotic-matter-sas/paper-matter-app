@@ -395,8 +395,8 @@
             this.docs = response.data['results'];
             this.lastRefresh = Date.now();
           }).catch(error => {
-          this.docLoading = false;
-          this.mixinAlert("Unable to refresh documents list.", true);
+            this.docLoading = false;
+            this.mixinAlert("Unable to refresh documents list.", true);
         });
       },
 
