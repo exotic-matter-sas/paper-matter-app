@@ -96,6 +96,7 @@ const mockedComputeFolderUrlPath = jest.fn();
 const mockedRefreshDocumentWithSearch = jest.fn();
 const mockedUpdateDocuments = jest.fn();
 const mockedUpdateFoldersPath = jest.fn();
+const mockedNavigateToDocument = jest.fn();
 const mockedGetCurrentFolder =  jest.fn();
 const mockedFolderCreated = jest.fn();
 
@@ -170,11 +171,11 @@ describe('Home script computed', () => {
       },
       {
         text: fakeLevels[0].name,
-        to: {path: '/home/' + fakePath }
+        to: {path: '/home/' + fakePath}
       },
       {
         text: fakeLevels[1].name,
-        to: {path: '/home/' + fakePath }
+        to: {path: '/home/' + fakePath}
       },
     ];
     expect(breadcrumbData).toEqual(expectedFormat);
@@ -671,7 +672,9 @@ describe('Home event handling', () => {
         changeFolder: mockedChangeFolder,
         openDocument: mockedOpenDocument,
         navigateToFolder: mockedNavigateToFolder,
-        folderCreated: mockedFolderCreated
+        folderCreated: mockedFolderCreated,
+        navigateToDocument: mockedNavigateToDocument,
+        updateFolders: mockedUpdateFolder
         },
         mountedMocks
       )
@@ -715,7 +718,7 @@ describe('Home event handling', () => {
 
     // then
     wrapper.vm.$nextTick(() => {
-      expect(mockedOpenDocument).toHaveBeenCalledWith(documentPid);
+      expect(mockedNavigateToDocument).toHaveBeenCalledWith(documentPid);
       done();
     });
   });

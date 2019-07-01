@@ -20,6 +20,7 @@
             <FTLSelectableFolder v-for="folder in folders" :key="folder.id" :folder="folder"
                                  @event-navigate-folder="navigateToFolder"
                                  @event-select-folder="getFolderDetail"
+                                 @event-unselect-folder="unselectFolder"
             />
             <b-col
               id="create-folder"
@@ -27,10 +28,12 @@
               class="m-1"
               v-b-modal="'modal-new-folder'">
               <b-row align-h="center">
-                <font-awesome-icon icon="folder-plus" size="5x" class="text-primary"/>
+                <b-col>
+                  <font-awesome-icon icon="folder-plus" size="5x" class="text-primary"/>
+                </b-col>
               </b-row>
               <b-row align-h="center">
-                <b>{{ this.$_('Create new folder') }}</b>
+                <b-col><b>{{ this.$_('Create new folder') }}</b></b-col>
               </b-row>
             </b-col>
           </b-row>

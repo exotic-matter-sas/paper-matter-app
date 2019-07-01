@@ -3,13 +3,15 @@
     sm="2"
     class="m-1 folder"
     :class="{selected: selected}"
-    @dblclick="$emit('event-navigate-folder', folder)"
+    @dblclick="dbClickFolder"
     @click="clickFolder">
     <b-row align-h="center">
-      <font-awesome-icon icon="folder" size="5x" class="text-secondary"/>
+      <b-col>
+        <font-awesome-icon icon="folder" size="5x" class="text-secondary"/>
+      </b-col>
     </b-row>
     <b-row align-h="center">
-      {{ folder.name }}
+      <b-col>{{ folder.name }}</b-col>
     </b-row>
   </b-col>
 </template>
@@ -49,6 +51,10 @@
     },
 
     methods: {
+      dbClickFolder: function () {
+        this.$emit('event-navigate-folder', this.folder);
+      },
+
       clickFolder: function () {
         this.selected = !this.selected;
         if (this.selected) {

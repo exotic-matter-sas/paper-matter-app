@@ -98,7 +98,9 @@
 </script>
 
 
-<style scoped>
+<style scoped lang="scss">
+  @import '../styles/customBootstrap.scss';
+
   .bold {
     font-weight: bold;
   }
@@ -108,6 +110,6 @@
   }
 
   .selected {
-    background: dodgerblue;
+    background: map_get($theme-colors, 'active');
   }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <b-col sm="3" :id="doc.pid" class="document-thumbnail">
     <b-row align-h="center" class="text-truncate document-title">
-      <span @click="$emit('event-open-doc', doc.pid)">{{ doc.title }}</span>
+      <span @click="openDoc">{{ doc.title }}</span>
     </b-row>
     <b-row align-h="center">
       <b-img thumbnail fluid
@@ -9,7 +9,7 @@
              class="img-thumbnail"
              slot="aside"
              blank-color="#abc"
-             @click="$emit('event-open-doc', doc.pid)"
+             @click="openDoc"
              onerror="this.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAADICAQAAACgjNDuAAABIElEQVR42u3QAQEAAAgCIP0/ui44ACbQXBhVlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVr9/mzyAFGRN6/AAAAAElFTkSuQmCC\n'"/>
     </b-row>
     <b-row align-h="center">
@@ -51,6 +51,10 @@
     },
 
     methods: {
+      openDoc: function () {
+        this.$emit('event-open-doc', this.doc.pid);
+      },
+
       deleteDocument: function () {
         let vi = this;
 

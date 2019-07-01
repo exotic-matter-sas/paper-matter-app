@@ -28,19 +28,22 @@
       </b-container>
       <b-container>
         <b-row>
-          <b-button id="refresh-documents" :disabled="docLoading" variant="primary" class="m-1" @click="refreshAll">
-            <font-awesome-icon icon="sync" :spin="docLoading" :title="$_('Refresh documents list')"/>
-          </b-button>
-          <b-button id="create-folder" class="m-1" variant="primary" size="sm"
-                    v-b-modal="'modal-new-folder'">
-            <font-awesome-icon icon="folder-plus" :title="$_('Create new folder')" size="2x"/>
-          </b-button>
-          <b-button variant="primary" class="m-1" :disabled="!previousLevels.length"
-                    @click="changeToPreviousFolder">
-            <font-awesome-icon icon="level-up-alt"/>
-          </b-button>
-          <FTLFolder v-for="folder in folders" :key="folder.id" :folder="folder"
-                     @event-change-folder="navigateToFolder"/>
+          <b-col>
+            <div class="d-flex flex-wrap align-items-center">
+              <b-button id="refresh-documents" :disabled="docLoading" variant="primary" class="m-1" @click="refreshAll">
+                <font-awesome-icon icon="sync" :spin="docLoading" :title="$_('Refresh documents list')"/>
+              </b-button>
+              <b-button id="create-folder" class="m-1" variant="primary" v-b-modal="'modal-new-folder'">
+                <font-awesome-icon icon="folder-plus" :title="$_('Create new folder')"/>
+              </b-button>
+              <b-button variant="primary" class="m-1" :disabled="!previousLevels.length"
+                        @click="changeToPreviousFolder">
+                <font-awesome-icon icon="level-up-alt"/>
+              </b-button>
+              <FTLFolder v-for="folder in folders" :key="folder.id" :folder="folder"
+                         @event-change-folder="navigateToFolder"/>
+            </div>
+          </b-col>
         </b-row>
       </b-container>
     </section>
@@ -55,7 +58,7 @@
         </b-row>
         <b-row align-h="around" v-else-if="docs.length">
           <FTLDocument v-for="doc in docs" :key="doc.pid" :doc="doc" @event-delete-doc="updateDocuments"
-                       @event-open-doc="openDocument"/>
+                       @event-open-doc="navigateToDocument"/>
         </b-row>
         <b-row v-else>
           <b-col>{{ this.$_('No document yet') }}</b-col>
@@ -145,7 +148,7 @@
         previousLevels: [],
 
         // PDF viewer
-        currentOpenDoc: {title: 'loading'},
+        currentOpenDoc: {},
         publicPath: process.env.BASE_URL
       }
     },
@@ -175,13 +178,17 @@
 
     watch: {
       searchQuery: function (newVal, oldVal) {
-        this.refreshDocumentWithSearch(newVal);
+        if (newVal !== oldVal) {
+          this.refreshDocumentWithSearch(newVal);
+        }
       },
       doc: function (newVal, oldVal) {
         if (newVal === undefined) {
           this.docModal = false;
         } else {
-          this.openDocument(newVal);
+          if (newVal !== oldVal) {
+            this.openDocument(newVal);
+          }
         }
       },
       folder: function (newVal, oldVal) {
@@ -304,6 +311,10 @@
           });
       },
 
+      navigateToDocument: function (pid) {
+        this.$router.push({path: '/home/' + this.computeFolderUrlPath(), query: {doc: pid}});
+      },
+
       openDocument: function (pid) {
         const vi = this;
 
@@ -318,7 +329,6 @@
             if (!response.data.thumbnail_available) {
               vi.createThumbnailForDocument(response.data);
             }
-            vi.$router.push({path: '/home/' + vi.computeFolderUrlPath(), query: {doc: pid}});
           })
           .catch(error => {
             vi.mixinAlert("Unable to show document.", true)
@@ -328,6 +338,7 @@
       closeDocument: function () {
         this.docModal = false;
         this.docPid = null;
+        this.currentOpenDoc = {};
         this.$router.push({path: '/home/' + this.computeFolderUrlPath()});
       },
 

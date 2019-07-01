@@ -12,7 +12,7 @@
         :description="this.$_('Type the name of the folder to validate.')"
         :label="this.$_('Please confirm that you want to delete the folder and everything inside. This action is not reversible.')"
         label-for="delete-folder">
-        <b-form-input id="delete-folder" v-model="name" trim></b-form-input>
+        <b-form-input id="delete-folder" autofocus v-model="name" trim></b-form-input>
       </b-form-group>
     </b-container>
   </b-modal>

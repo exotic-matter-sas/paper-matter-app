@@ -72,8 +72,4 @@
   .item {
     cursor: pointer;
   }
-
-  .selected {
-    background: dodgerblue;
-  }
 </style>

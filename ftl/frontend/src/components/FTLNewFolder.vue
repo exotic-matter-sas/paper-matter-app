@@ -12,7 +12,7 @@
         :description="this.$_('The folder will be created in the current folder.')"
         :label="this.$_('Name of the folder')"
         label-for="new-folder">
-        <b-form-input id="new-folder" v-model="newFolderName" trim></b-form-input>
+        <b-form-input id="new-folder" autofocus v-model="newFolderName" trim></b-form-input>
       </b-form-group>
     </b-container>
   </b-modal>
