@@ -161,3 +161,6 @@ To avoid common pitfalls (listed in next section), respect the structure used in
 | Mock return `null` instead of value set with `mockReturnValue` | Check that `mockedMethod.mockReturnValue('value')` is called before shallowMount |
 | Mocked method is called too many times | Check that `jest.clearAllMocks();` line is present after shallowMount to reset mockedMethod.mock.calls counter after `mounted`|
 |  | Also check that a unmocked method/computed isn't calling the mocked method, it should be mocked |
+
+## Known issues
+ - `wrapper.setData` cause "[Vue warn]: Avoid mutating a prop directly" warning during test run (no clean solution found to hide this warning for now)
