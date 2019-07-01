@@ -151,7 +151,7 @@ expect(mockedMixinAlert).toHaveBeenCalledTimes(1);
 
 ## `.spec.js` template
 
-To avoid common pitfalls (listed in next section), respect the structure used in `_template.spec.js`.
+To avoid common pitfalls (listed in next section), respect the structure used in `_template.js`.
 
 ## Common pitfalls
 
