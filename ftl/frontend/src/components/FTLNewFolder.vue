@@ -6,10 +6,9 @@
            :ok-title="this.$_('Create')">
     <span slot="modal-title">{{ this.$_('Create a new folder') }}</span>
     <b-container>
-      <!-- TODO add current folder name to title -->
       <b-form-group
         id="fieldset-new-folder"
-        :description="this.$_('The folder will be created in the current folder.')"
+        :description='this.$_("The folder will be created in \"%s\" folder.", [this.getParentName])'
         :label="this.$_('Name of the folder')"
         label-for="new-folder">
         <b-form-input id="new-folder" autofocus v-model="newFolderName" trim></b-form-input>
@@ -35,6 +34,16 @@
     data() {
       return {
         newFolderName: '',
+      }
+    },
+
+    computed: {
+      getParentName: function () {
+        if(this.parent == null) {
+          return this.$_('Root');
+        } else {
+          return this.parent.name;
+        }
       }
     },
 
