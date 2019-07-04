@@ -12,6 +12,8 @@ import Home from "../../src/views/Home"; // TODO import tested component here
 
 // Create clean Vue instance and set installed package to avoid warning
 const localVue = createLocalVue();
+
+// Mock BootstrapVue prototypes here (eg. localVue.prototype.$bvModal = {msgBoxConfirm: jest.fn()}; )
 localVue.use(BootstrapVue); // avoid bootstrap vue warnings
 localVue.component('font-awesome-icon', jest.fn()); // avoid font awesome warnings
 
