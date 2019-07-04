@@ -88,11 +88,14 @@ await flushPromises(); // test have to be async to use await
 expect(axios.get).toHaveBeenCalledTimes(1);
 expect(axios.get).toHaveBeenCalledWith('/app/api/v1/documents');
 
-// then trigger event
-expect(wrapper.emitted('proper-event')).toBeTruthy();
-
 // then return proper value
 expect(testedReturn).toBe('properValue');
+
+// then trigger event
+await flushPromises(); // test have to be async to use await
+expect(wrapper.emitted('proper-event')).toBeTruthy();
+expect(wrapper.emitted('proper-event').length).toBe(1);
+expect(wrapper.emitted('proper-event')[0]).toEqual(['eventArg1', 'eventArg2'])
 
 // ----------------------
 // when (called by event)

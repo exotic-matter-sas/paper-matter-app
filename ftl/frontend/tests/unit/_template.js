@@ -93,5 +93,77 @@ describe('Component first type of test', () => {
     // then expect something
   });
 });
+// TODO add as many describe block and tests as needed, commons one below
 
-// TODO add as many describe block as needed
+
+// TEMPLATE
+describe('Component template', () => {
+  it('renders properly component template', () => {});
+  // or
+  it('renders properly component data', async () => {});
+});
+
+
+// COMPUTED
+describe('Component computed', () => {
+  it('computedA return proper format', () => {});
+});
+
+
+// METHODS
+describe('Component methods/watcher call proper methods', () => {
+  it('methodA call proper methods', () => {});
+});
+
+describe('Component methods/watcher return proper value', () => {
+  it('methodA return proper value', () => {});
+});
+
+describe('Component methods error handling', () => {
+  it('methodA call mixinAlert in case of error', async () => {
+    // force an error
+    axios.get.mockRejectedValue('errorDescription');
+
+    // when
+    wrapper.vm.methodA();
+    await flushPromises();
+
+    // then mixinAlert is called with proper message
+    expect(mockedMixinAlert).toHaveBeenCalledTimes(1);
+    expect(mockedMixinAlert.mock.calls[0][0]).toContain('Alert message');
+  });
+});
+
+describe('Component methods call api', () => {
+  it('methodA call api', async () => {
+    axios.get.mockResolvedValue('mockedApiResponse');
+
+    // when
+    wrapper.vm.methodA();
+
+    // then
+    expect(axios.get).toHaveBeenCalledWith('/app/api/v1/request/');
+    expect(axios.get).toHaveBeenCalledTimes(1);
+  });
+});
+
+
+// EVENT
+describe('Event emitted by component', () => {
+  it('event-a emitted when calling methodA', async () => {
+    const testedEvent = 'event-a';
+
+    // when
+    wrapper.vm.methodA();
+    await flushPromises();
+
+    // then
+    expect(wrapper.emitted(testedEvent)).toBeTruthy();
+    expect(wrapper.emitted(testedEvent).length).toBe(1);
+    expect(wrapper.emitted(testedEvent)[0]).toEqual(['eventArg1'])
+  });
+});
+
+describe('Event received and handled by component', () => {
+  it('event-b call methodB', async () => {});
+});
