@@ -394,7 +394,8 @@ describe('Home methods call proper methods', () => {
 
     // then
     expect(wrapper.vm.previousLevels.length).toBe(fakePreviousLevels.length - 1);
-    expect(wrapper.vm.$router.push).toHaveBeenNthCalledWith(1, {path: '/home/' + fakePath});
+    expect(wrapper.vm.$router.push).toHaveBeenCalledWith({path: '/home/' + fakePath});
+    expect(wrapper.vm.$router.push).toHaveBeenCalledTimes(1);
   });
 
   it('refreshFolders call proper methods', () => {
