@@ -4,7 +4,7 @@
            :ok-disabled="deleting || name !== folder.name"
            :cancel-title="this.$_('Cancel')"
            ok-variant="danger">
-    <span slot="modal-title">{{ this.$_('Deletion of folders and its contents') }}</span>
+    <span slot="modal-title">{{ this.$_('Deletion of folder "%s" and its contents', [this.folder.name]) }}</span>
     <b-container>
       <b-form-group
         id="fieldset-delete-folder"
