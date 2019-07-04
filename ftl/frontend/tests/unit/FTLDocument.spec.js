@@ -41,7 +41,7 @@ describe('FTLDocument template', () => {
 
     Object.values(tv.DOCUMENT_PROPS)
       .filter((prop) => {
-        // Filter out note and thumbnail boolean of the test because we don't show those values
+        // Filter out note and thumbnail_available of the test because we don't show those values
         return !filters.some((val) => {
           return val === prop;
         })

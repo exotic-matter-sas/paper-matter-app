@@ -128,7 +128,7 @@ describe('Home template', () => {
   });
 });
 
-describe('Home script computed', () => {
+describe('Home computed', () => {
   let wrapper;
   const fakePath = 'fakeComputeFolderPath';
 
@@ -194,7 +194,7 @@ describe('Home script computed', () => {
   });
 });
 
-describe('Mounted call proper methods with given props', () => {
+describe('Home mounted call proper methods with given props', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -273,7 +273,7 @@ describe('Mounted call proper methods with given props', () => {
   });
 });
 
-describe('Watchers call proper methods', () => {
+describe('Home watchers call proper methods', () => {
   let wrapper;
 
   beforeEach(() => {
@@ -343,7 +343,7 @@ describe('Watchers call proper methods', () => {
   });
 });
 
-describe('Home script methods call proper methods', () => {
+describe('Home methods call proper methods', () => {
   let wrapper;
   const fakeCurrentFolder = tv.FOLDER_PROPS_WITH_PARENT;
   const fakePath =
@@ -496,7 +496,7 @@ describe('Home script methods call proper methods', () => {
   });
 });
 
-describe('Home script methods return proper value', () => {
+describe('Home methods return proper value', () => {
   let wrapper;
 
   beforeEach(() => {
@@ -526,7 +526,7 @@ describe('Home script methods return proper value', () => {
   });
 });
 
-describe('Home script methods error handling', () => {
+describe('Home methods error handling', () => {
   let wrapper;
 
   beforeEach(() => {
@@ -543,7 +543,7 @@ describe('Home script methods error handling', () => {
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
 
-  it('updateDocuments call alert method in case of api error', async () => {
+  it('updateDocuments call mixinAlert in case of api error', async () => {
     // restore original method to test it
     wrapper.setMethods({updateDocuments: Home.methods.updateDocuments});
     axios.get.mockRejectedValue('error');
@@ -558,7 +558,7 @@ describe('Home script methods error handling', () => {
   });
 });
 
-describe('Home script methods call proper api', () => {
+describe('Home methods call proper api', () => {
   let wrapper;
 
   beforeEach(() => {
