@@ -42,7 +42,8 @@ describe('FTLDeleteFolder template', () => {
   });
 
   it('renders properly FTLDeleteFolder data', () => {
-    expect(wrapper.html()).toContain('Deletion of folder', tv.FOLDER_PROPS.name)
+    expect(wrapper.html()).toContain('Deletion of folder');
+    expect(wrapper.html()).toContain(tv.FOLDER_PROPS.name);
   });
 });
 

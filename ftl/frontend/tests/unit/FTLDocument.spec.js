@@ -109,7 +109,10 @@ describe('FTLDocument script', () => {
 
     // then
     expect(localVue.prototype.$bvModal.msgBoxConfirm).toHaveBeenCalledTimes(1);
-    expect(localVue.prototype.$bvModal.msgBoxConfirm.mock.calls[0][0]).toContain('confirm', 'delete', 'document');
+    const modalFirstArg = localVue.prototype.$bvModal.msgBoxConfirm.mock.calls[0][0]
+    expect(modalFirstArg).toContain('confirm');
+    expect(modalFirstArg).toContain('delete');
+    expect(modalFirstArg).toContain('document');
   });
 
   it('deleteDocument call mixinAlert in case of API error', async () => {
@@ -122,6 +125,8 @@ describe('FTLDocument script', () => {
 
     // then mixinAlert is called with proper message
     expect(mockedMixinAlert).toHaveBeenCalledTimes(1);
-    expect(mockedMixinAlert.mock.calls[0][0]).toContain('delete', 'document');
+    const modalFirstArg = mockedMixinAlert.mock.calls[0][0];
+    expect(modalFirstArg).toContain('delete');
+    expect(modalFirstArg).toContain('document');
   });
 });

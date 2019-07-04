@@ -162,7 +162,7 @@ describe('Event emitted by component', () => {
     // then
     expect(wrapper.emitted(testedEvent)).toBeTruthy();
     expect(wrapper.emitted(testedEvent).length).toBe(1);
-    expect(wrapper.emitted(testedEvent)[0]).toEqual(['eventArg1'])
+    expect(wrapper.emitted(testedEvent)[0]).toEqual(['eventArg1']);
   });
 });
 

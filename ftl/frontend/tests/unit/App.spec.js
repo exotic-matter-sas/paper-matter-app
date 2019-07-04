@@ -25,6 +25,7 @@ describe('App template', () => {
   });
 
   it('renders properly app template', () => {
-    expect(wrapper.text()).toContain('Made with ❤ by', 'Exotic Matter')
+    expect(wrapper.text()).toContain('Made with ❤ by');
+    expect(wrapper.text()).toContain('Exotic Matter');
   });
 });
