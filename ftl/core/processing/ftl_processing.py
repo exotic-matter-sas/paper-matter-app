@@ -48,8 +48,11 @@ class FTLDocumentProcessing:
     def _handle(self, ftl_doc):
         # for each registered processing plugin, apply processing
         for plugin in self.plugins:
-            logger.debug(f'Executing plugin {plugin} on {ftl_doc.pid}')
-            plugin.process(ftl_doc)
+            try:
+                logger.debug(f'Executing plugin {plugin} on {ftl_doc.pid}')
+                plugin.process(ftl_doc)
+            except:
+                logger.exception(f'Error while processing {ftl_doc.pid} with plugin {plugin}')
 
         ftl_doc.tsvector = SEARCH_VECTOR
         ftl_doc.save()

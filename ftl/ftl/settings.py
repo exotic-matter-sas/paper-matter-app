@@ -186,6 +186,7 @@ os.environ['TIKA_SERVER_JAR'] = pathlib.Path(os.path.join(BASE_DIR, 'vendors', '
 # FTL document processing plugins (order is important)
 FTL_DOC_PROCESSING_PLUGINS = [
     'core.processing.proc_tika',
+    # 'core.processing.proc_google_vision',
     'core.processing.proc_lang',
 ]
 

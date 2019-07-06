@@ -1,4 +1,3 @@
-import six
 from django.conf import settings
 from google.cloud import vision_v1
 from google.cloud.vision_v1 import enums
@@ -9,7 +8,7 @@ from core.processing.ftl_processing import FTLDocProcessingBase
 class FTLOCRGoogleVision(FTLDocProcessingBase):
     client = vision_v1.ImageAnnotatorClient()
 
-    def __init(self, gcs_bucket_name=settings.GS_BUCKET_NAME):
+    def __init__(self, gcs_bucket_name=settings.GS_BUCKET_NAME):
         self.gcs_bucket_name = gcs_bucket_name
 
     def process(self, ftl_doc):
@@ -19,9 +18,6 @@ class FTLOCRGoogleVision(FTLDocProcessingBase):
     def _sample_batch_annotate_files(self, storage_uri):
         storage_uri = f'gs://{self.gcs_bucket_name}/{storage_uri.name}'
         # storage_uri = 'gs://cloud-samples-data/vision/document_understanding/kafka.pdf'
-
-        if isinstance(storage_uri, six.binary_type):
-            storage_uri = storage_uri.decode('utf-8')
 
         gcs_source = {'uri': storage_uri}
         input_config = {'gcs_source': gcs_source}
