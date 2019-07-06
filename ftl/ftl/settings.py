@@ -183,6 +183,12 @@ ATOMIC_REQUESTS = True
 # Workaround for configuring a preloaded Tika
 os.environ['TIKA_SERVER_JAR'] = pathlib.Path(os.path.join(BASE_DIR, 'vendors', 'tika-server-1.20.jar')).as_uri()
 
+# FTL document processing plugins (order is important)
+FTL_DOC_PROCESSING_PLUGINS = [
+    'core.processing.proc_tika',
+    'core.processing.proc_lang',
+]
+
 # ==================================================
 # No settings under this line
 # Auto import local `settings_local.py` if available
