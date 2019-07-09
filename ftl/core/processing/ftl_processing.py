@@ -42,21 +42,28 @@ class FTLDocumentProcessing:
                 self.plugins.append(classz())
 
     def apply_processing(self, ftl_doc):
-        self.executor.submit(self._handle, ftl_doc)
-        logger.debug(f'Submitted {ftl_doc.pid} to processing')
+        submit = self.executor.submit(self._handle, ftl_doc)
+        submit.add_done_callback(self._callback)
+        logger.info(f'{ftl_doc.pid} submitted to docs processing')
 
     def _handle(self, ftl_doc):
         # for each registered processing plugin, apply processing
         for plugin in self.plugins:
             try:
-                logger.debug(f'Executing plugin {plugin} on {ftl_doc.pid}')
+                logger.debug(f'Executing plugin {plugin.__class__.__name__} on {ftl_doc.pid}')
                 plugin.process(ftl_doc)
             except:
                 logger.exception(f'Error while processing {ftl_doc.pid} with plugin {plugin}')
 
         ftl_doc.tsvector = SEARCH_VECTOR
         ftl_doc.save()
-        logger.debug(f'Processed {ftl_doc.pid}')
+        logger.info(f'{ftl_doc.pid} was processed correctly')
+
+    def _callback(self, future):
+        exception = future.exception()
+        # never wait as this callback is called when the future is terminated
+        if exception is not None:
+            logger.error(f'One or more errors occurred during processing', exception)
 
 
 class FTLDocProcessingBase:
