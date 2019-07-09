@@ -15,8 +15,8 @@ class FTLOCRGoogleVision(FTLDocProcessingBase):
         ftl_doc.content_text = self._sample_batch_annotate_files(ftl_doc.binary)
         ftl_doc.save()
 
-    def _sample_batch_annotate_files(self, storage_uri):
-        storage_uri = f'gs://{self.gcs_bucket_name}/{storage_uri.name}'
+    def _sample_batch_annotate_files(self, ftl_doc):
+        storage_uri = f'gs://{self.gcs_bucket_name}/{ftl_doc.name}'
         # storage_uri = 'gs://cloud-samples-data/vision/document_understanding/kafka.pdf'
 
         gcs_source = {'uri': storage_uri}

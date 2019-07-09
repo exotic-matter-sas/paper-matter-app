@@ -53,7 +53,7 @@ class FTLDocumentProcessing:
                 logger.debug(f'Executing plugin {plugin.__class__.__name__} on {ftl_doc.pid}')
                 plugin.process(ftl_doc)
             except:
-                logger.exception(f'Error while processing {ftl_doc.pid} with plugin {plugin}')
+                logger.exception(f'Error while processing {ftl_doc.pid} with plugin {plugin.__class__.__name__}')
 
         ftl_doc.tsvector = SEARCH_VECTOR
         ftl_doc.save()
