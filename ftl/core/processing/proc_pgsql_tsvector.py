@@ -1,0 +1,14 @@
+from django.contrib.postgres.search import SearchVector
+from django.db.models import F
+
+from core.processing.ftl_processing import FTLDocProcessingBase
+
+SEARCH_VECTOR = SearchVector('content_text', weight='C', config=F('language')) \
+                + SearchVector('note', weight='B', config=F('language')) \
+                + SearchVector('title', weight='A', config=F('language'))
+
+
+class FTLDocPgSQLTSVector(FTLDocProcessingBase):
+    def process(self, ftl_doc):
+        ftl_doc.tsvector = SEARCH_VECTOR
+        ftl_doc.save()

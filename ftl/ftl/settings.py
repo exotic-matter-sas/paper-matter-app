@@ -188,6 +188,7 @@ FTL_DOC_PROCESSING_PLUGINS = [
     'core.processing.proc_tika',
     # 'core.processing.proc_google_vision',
     'core.processing.proc_lang',
+    'core.processing.proc_pgsql_tsvector',
 ]
 
 # ==================================================

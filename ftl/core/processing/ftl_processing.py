@@ -4,12 +4,6 @@ import logging
 from concurrent.futures.thread import ThreadPoolExecutor
 
 from django.conf import settings
-from django.contrib.postgres.search import SearchVector
-from django.db.models import F
-
-SEARCH_VECTOR = SearchVector('content_text', weight='C', config=F('language')) \
-                + SearchVector('note', weight='B', config=F('language')) \
-                + SearchVector('title', weight='A', config=F('language'))
 
 logger = logging.getLogger(__name__)
 
@@ -55,8 +49,6 @@ class FTLDocumentProcessing:
             except:
                 logger.exception(f'Error while processing {ftl_doc.pid} with plugin {plugin.__class__.__name__}')
 
-        ftl_doc.tsvector = SEARCH_VECTOR
-        ftl_doc.save()
         logger.info(f'{ftl_doc.pid} was processed correctly')
 
     def _callback(self, future):
