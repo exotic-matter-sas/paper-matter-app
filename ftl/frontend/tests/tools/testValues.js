@@ -5,20 +5,20 @@ export const ACCOUNT_PROPS = {
 };
 
 export const FOLDER_PROPS = {
-  id: '1234',
+  id: 1234,
   name: 'Folder title',
   created: new Date('2019-04-18T10:59:00').toString(),
   parent: null,
 };
 
 export const FOLDER_PROPS_VARIANT = {
-  id: '5678',
+  id: 5678,
   name: 'Folder title 2',
   parent: null,
 };
 
 export const FOLDER_PROPS_WITH_PARENT = {
-  id: '1234',
+  id: 1234,
   name: 'Folder title',
   parent: '4321',
 };

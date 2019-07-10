@@ -40,7 +40,7 @@
       let qs = '';
 
       if (this.start) {
-        qs = '?level=' + start;
+        qs = '?level=' + this.start;
       }
 
       axios
