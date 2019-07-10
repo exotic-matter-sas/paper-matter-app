@@ -48,7 +48,6 @@ describe('FTLUpload script', () => {
   formData.append('file', null);
   formData.append('json', JSON.stringify({'ftl_folder': tv.FOLDER_PROPS.id}));
   let wrapper;
-  let upload_button;
 
   beforeEach(() => {
     axios.post.mockResolvedValue(mockedPostResponse);
@@ -62,7 +61,6 @@ describe('FTLUpload script', () => {
       onUploadProgress: wrapper.vm.refreshUploadProgression
     };
     Object.assign(axios_upload_conf, axiosConfig); // merge upload specific conf with generic crsf conf
-    upload_button = wrapper.find('#upload-button');
   });
 
   it('uploadDocument call api', async () => {

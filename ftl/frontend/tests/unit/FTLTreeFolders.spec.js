@@ -25,7 +25,6 @@ jest.mock('axios', () => ({
   get: jest.fn(),
 }));
 
-// TODO store mocked response for tested api request here
 const mockedGetFoldersListResponse = {
   data: [tv.FOLDER_PROPS, tv.FOLDER_PROPS_VARIANT],
   status: 200,
@@ -43,7 +42,10 @@ describe('Component template', () => {
   });
 
   it('renders properly component template', () => {
-    expect(wrapper.html()).toContain('id="moving-folders"');
+    const elementSelector= '#moving-folders';
+    const elem = wrapper.find(elementSelector);
+
+    expect(elem.is(elementSelector)).toBe(true);
   });
 });
 

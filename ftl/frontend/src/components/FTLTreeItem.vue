@@ -1,5 +1,5 @@
 <template>
-  <li>
+  <li class="folder-tree-item">
     <span
       :class="{bold: isFolder, selected: selected}">
       <span @click="selectFolder">{{ item.name }}&nbsp;</span>
@@ -26,11 +26,17 @@
     name: "FTLTreeItem",
 
     props: {
-      item: Object,
-      sourceFolder: Number
+      item: {
+        type: Object,
+        required: true
+      },
+      sourceFolder: {
+        type: Number,
+        required: true
+      },
     },
 
-    data: function () {
+    data() {
       return {
         loading: false,
         isOpen: false

@@ -51,7 +51,10 @@ expect(wrapper.text()).toContain('No document yet');
 expect(wrapper.html()).toContain('<div id="app">');
 
 // element
-expect(wrapper.find('#app')).toBeThruthy();
+const elementSelector= '#element-id';
+const elem = wrapper.find(elementSelector);
+
+expect(elem.is(elementSelector)).toBe(true);
 
 // props value in html
 Object.values(tv.DOCUMENT_PROPS).forEach(function(documentData){ expect(wrapper.html()).toContain(documentData) });
