@@ -101,7 +101,9 @@ describe('Component first type of test', () => {
 // TODO add as many describe block and tests as needed to group tests by type, commons ones below
 // TEMPLATE
 describe('Component template', () => {
-  it('renders properly component template', () => {});
+  it('renders properly component template', () => {
+    expect(wrapper.text()).toContain('text displayed in template');
+  });
   // or
   it('renders properly component data', async () => {});
 });
@@ -123,7 +125,7 @@ describe('Component methods/watcher return proper value', () => {
 describe('Component methods error handling', () => {
   it('methodA call mixinAlert in case of error', async () => {
     // force an error
-    axios.get.mockRejectedValue('errorDescription');
+    axios.get.mockRejectedValue('fakeError');
 
     // when
     wrapper.vm.methodA();
@@ -141,6 +143,7 @@ describe('Component methods call api', () => {
 
     // when
     wrapper.vm.methodA();
+    await flushPromises();
 
     // then
     expect(axios.get).toHaveBeenCalledWith('/app/api/v1/request/');
