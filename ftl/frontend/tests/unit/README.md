@@ -169,3 +169,4 @@ To avoid common pitfalls (listed in next section), respect the structure used in
 
 ## Known issues
  - `wrapper.setData` cause "[Vue warn]: Avoid mutating a prop directly" warning during test run (no clean solution found to hide this warning for now)
+ - `wrapper.setComputed` have been removed from vue-test-utils, it prevent us from restoring original computed at the start of the test (like was is done with methods), forcing us to shallowMount component in each test. But there could be better ways to do it, as described here: https://github.com/vuejs/vue-test-utils/issues/331#issuecomment-403087709

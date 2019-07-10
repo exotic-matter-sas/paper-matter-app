@@ -18,7 +18,7 @@ localVue.use(BootstrapVue); // avoid bootstrap vue warnings
 localVue.component('font-awesome-icon', jest.fn()); // avoid font awesome warnings
 
 // Mock prototype and mixin bellow
-localVue.prototype.$_ = (text) => {return text}; // i18n mock
+localVue.prototype.$_ = (text, args) => {return text + ' ' + args};// i18n mock
 localVue.prototype.$moment = () => {return {fromNow: jest.fn()}}; // moment mock
 localVue.prototype.$router = {push: jest.fn()}; // router mock
 const mockedMixinAlert = jest.fn();
@@ -38,16 +38,17 @@ jest.mock('axios', () => ({
 }));
 
 // TODO store mocked response for tested api request here
-const mockedGetRequestA = {
+const mockedGetResponseA = {
   data: tv.DOCUMENT_PROPS,
   status: 200,
   config: axiosConfig
 };
 
-// TODO mock tested component methods here
+// TODO mock tested component methods and computed here
 const mockedMethodA = jest.fn();
 const mockedMethodB = jest.fn();
 const mockedMethodC = jest.fn();
+const mockedComputedA = jest.fn();
 
 // TODO list method call in Component.mounted here
 const mountedMocks = {
@@ -55,6 +56,7 @@ const mountedMocks = {
   methodC: mockedMethodC,
 };
 
+// TODO Generic tests structure example
 describe('Component first type of test', () => {
   let wrapper;
   // defined const specific to this describe here
@@ -95,9 +97,8 @@ describe('Component first type of test', () => {
     // then expect something
   });
 });
-// TODO add as many describe block and tests as needed, commons one below
 
-
+// TODO add as many describe block and tests as needed to group tests by type, commons ones below
 // TEMPLATE
 describe('Component template', () => {
   it('renders properly component template', () => {});
@@ -105,12 +106,10 @@ describe('Component template', () => {
   it('renders properly component data', async () => {});
 });
 
-
 // COMPUTED
 describe('Component computed', () => {
   it('computedA return proper format', () => {});
 });
-
 
 // METHODS
 describe('Component methods/watcher call proper methods', () => {
@@ -138,7 +137,7 @@ describe('Component methods error handling', () => {
 
 describe('Component methods call api', () => {
   it('methodA call api', async () => {
-    axios.get.mockResolvedValue('mockedApiResponse');
+    axios.get.mockResolvedValue(mockedGetResponseA);
 
     // when
     wrapper.vm.methodA();
@@ -148,7 +147,6 @@ describe('Component methods call api', () => {
     expect(axios.get).toHaveBeenCalledTimes(1);
   });
 });
-
 
 // EVENT
 describe('Event emitted by component', () => {
