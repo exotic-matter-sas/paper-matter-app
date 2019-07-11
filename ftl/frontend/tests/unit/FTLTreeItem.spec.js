@@ -34,6 +34,7 @@ const mockedUpdateMovingFolder = jest.fn();
 const mockedSelected = jest.fn();
 
 const item = tv.FOLDER_TREE_ITEM;
+const itemWithDescendant = tv.FOLDER_TREE_ITEM_WITH_DESCENDANT;
 const sourceFolder = 1;
 
 describe('FTLTreeItem template', () => {
@@ -59,28 +60,6 @@ describe('FTLTreeItem template', () => {
   });
 });
 
-describe('FTLTreeItem computed isFolder', () => {
-  let wrapper;
-  beforeEach(() => {
-    // set mocked component methods return value before shallowMount
-    wrapper = shallowMount(FTLTreeItem, {
-      localVue,
-      computed: {
-        selected: mockedSelected
-      },
-      propsData: { item, sourceFolder },
-    });
-    jest.clearAllMocks(); // Reset mock call count done by mounted
-  });
-  it('isFolder return proper format', () => {
-    // when
-    const testValue = wrapper.vm.isFolder;
-
-    // then
-    expect(testValue).toBe(item.has_descendant);
-  });
-});
-
 describe('FTLTreeItem computed selected', () => {
   it('selected return proper format', () => {
     // TODO Vuex test
@@ -90,7 +69,6 @@ describe('FTLTreeItem computed selected', () => {
 describe('FTLTreeItem methods call proper methods', () => {
   let wrapper;
   beforeEach(() => {
-    mockedIsFolder.mockReturnValue(true);
     wrapper = shallowMount(FTLTreeItem, {
       localVue,
       computed: {
@@ -99,7 +77,7 @@ describe('FTLTreeItem methods call proper methods', () => {
       methods: {
         updateMovingFolder: mockedUpdateMovingFolder
       },
-      propsData: { item, sourceFolder },
+      propsData: { item: itemWithDescendant, sourceFolder },
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
@@ -114,7 +92,6 @@ describe('FTLTreeItem methods call proper methods', () => {
     expect(mockedUpdateMovingFolder).toHaveBeenCalledWith(item.id);
 
     //when calling toggle for the second time
-    mockedIsFolder.mockReturnValue(false);
     wrapper.vm.toggle();
 
     //then
