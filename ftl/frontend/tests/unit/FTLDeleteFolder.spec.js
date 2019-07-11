@@ -15,7 +15,7 @@ localVue.use(BootstrapVue); // avoid bootstrap vue warnings
 localVue.component('font-awesome-icon', jest.fn()); // avoid font awesome warnings
 
 // Mock prototype and mixin bellow
-localVue.prototype.$_ = (text) => {return text}; // i18n mock
+localVue.prototype.$_ = (text, args='') => {return text + args};// i18n mock
 localVue.prototype.$moment = () => {return {fromNow: jest.fn()}}; // moment mock
 const mockedMixinAlert = jest.fn();
 localVue.mixin({methods: {mixinAlert: mockedMixinAlert}}); // mixinAlert mock
@@ -43,7 +43,7 @@ describe('FTLDeleteFolder template', () => {
 
   it('renders properly FTLDeleteFolder data', () => {
     expect(wrapper.html()).toContain('Deletion of folder');
-    expect(wrapper.html()).toContain(tv.FOLDER_PROPS.name);
+    expect(wrapper.html()).toContain(folderToDelete.name);
   });
 });
 
