@@ -118,6 +118,20 @@ describe('Component methods/watcher call proper methods', () => {
   it('methodA call proper methods', () => {});
 });
 
+describe('Component methods call api', () => {
+  it('methodA call api', async () => {
+    axios.get.mockResolvedValue(mockedGetResponseA);
+
+    // when
+    wrapper.vm.methodA();
+    await flushPromises();
+
+    // then
+    expect(axios.get).toHaveBeenCalledWith('/app/api/v1/request/');
+    expect(axios.get).toHaveBeenCalledTimes(1);
+  });
+});
+
 describe('Component methods/watcher return proper value', () => {
   it('methodA return proper value', () => {});
 });
@@ -134,20 +148,6 @@ describe('Component methods error handling', () => {
     // then mixinAlert is called with proper message
     expect(mockedMixinAlert).toHaveBeenCalledTimes(1);
     expect(mockedMixinAlert.mock.calls[0][0]).toContain('Alert message');
-  });
-});
-
-describe('Component methods call api', () => {
-  it('methodA call api', async () => {
-    axios.get.mockResolvedValue(mockedGetResponseA);
-
-    // when
-    wrapper.vm.methodA();
-    await flushPromises();
-
-    // then
-    expect(axios.get).toHaveBeenCalledWith('/app/api/v1/request/');
-    expect(axios.get).toHaveBeenCalledTimes(1);
   });
 });
 

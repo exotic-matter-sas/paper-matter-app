@@ -205,7 +205,7 @@
             .then(response => {
               this.folderDetail = response.data;
             })
-            .catch(error => this.mixinAlert(this.$_('Unable to refresh folders list'), true))
+            .catch(error => this.mixinAlert(this.$_('Unable to get folder details'), true))
             .finally(() => {
             })
             .then(() => this.folderDetailLoading = false);
