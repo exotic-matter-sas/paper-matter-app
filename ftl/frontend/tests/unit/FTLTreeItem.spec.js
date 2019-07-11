@@ -30,10 +30,7 @@ const mockedGetFoldersListResponse = {
   config: axiosConfig
 };
 
-const mockedToggle = jest.fn();
-const mockedSelectFolder = jest.fn();
 const mockedUpdateMovingFolder = jest.fn();
-const mockedIsFolder = jest.fn();
 const mockedSelected = jest.fn();
 
 const item = tv.FOLDER_TREE_ITEM;
@@ -46,7 +43,6 @@ describe('FTLTreeItem template', () => {
     wrapper = shallowMount(FTLTreeItem, {
       localVue,
       computed: {
-        isFolder: mockedIsFolder,
         selected: mockedSelected
       },
       propsData: { item, sourceFolder },
@@ -98,7 +94,6 @@ describe('FTLTreeItem methods call proper methods', () => {
     wrapper = shallowMount(FTLTreeItem, {
       localVue,
       computed: {
-        isFolder: mockedIsFolder,
         selected: mockedSelected
       },
       methods: {
@@ -139,7 +134,6 @@ describe('FTLTreeItem methods call api', () => {
     wrapper = shallowMount(FTLTreeItem, {
       localVue,
       computed: {
-        isFolder: mockedIsFolder,
         selected: mockedSelected
       },
       propsData: { item, sourceFolder },
@@ -184,7 +178,6 @@ describe('FTLTreeItem methods error handling', () => {
     wrapper = shallowMount(FTLTreeItem, {
       localVue,
       computed: {
-        isFolder: mockedIsFolder,
         selected: mockedSelected
       },
       propsData: { item, sourceFolder },
@@ -192,7 +185,7 @@ describe('FTLTreeItem methods error handling', () => {
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
 
-  it('methodA call mixinAlert in case of error', async () => {
+  it('updateMovingFolder call mixinAlert in case of error', async () => {
     // force an error
     axios.get.mockRejectedValue('fakeError');
 

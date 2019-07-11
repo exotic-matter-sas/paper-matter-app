@@ -1,14 +1,17 @@
 <template>
   <b-row>
-    <b-col>
-      <ul id="moving-folders">
+    <b-col id="moving-folders">
+      <ul v-if="folders.length">
         <FTLTreeItem
           class="item"
           v-for="folder in folders"
           :key="folder.id"
           :item="folder"
-          :source-folder="sourceFolder">
-        </FTLTreeItem>
+          :source-folder="sourceFolder"
+        ></FTLTreeItem>
+      </ul>
+      <ul v-else>
+        <li class="text-muted">{{ this.$_('No other folder.') }}</li>
       </ul>
     </b-col>
   </b-row>

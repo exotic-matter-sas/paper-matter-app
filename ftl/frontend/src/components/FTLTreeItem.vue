@@ -1,13 +1,13 @@
 <template>
   <li class="folder-tree-item">
     <span
-      :class="{bold: isFolder, selected: selected}">
+      :class="{bold: item.has_descendant, selected: selected}">
       <span @click="selectFolder">{{ item.name }}&nbsp;</span>
-      <span v-if="isFolder && !loading" @click="toggle">[{{ isOpen ? '-' : '+' }}]</span>
+      <span v-if="item.has_descendant && !loading" @click="toggle">[{{ isOpen ? '-' : '+' }}]</span>
       <b-spinner :class="{'d-none': !loading}" small></b-spinner>
     </span>
 
-    <ul v-show="isOpen" v-if="isFolder">
+    <ul v-show="isOpen" v-if="item.has_descendant">
       <FTLTreeItem
         class="item"
         v-for="folder in item.children"
@@ -44,10 +44,6 @@
     },
 
     computed: {
-      isFolder: function () {
-        return this.item.has_descendant
-      },
-
       selected: function () {
         return !!(this.$store.state.selectedMoveTargetFolder
           && this.$store.state.selectedMoveTargetFolder.id === this.item.id);
@@ -58,7 +54,7 @@
       toggle: function () {
         this.isOpen = !this.isOpen;
 
-        if (this.isFolder && this.isOpen) {
+        if (this.item.has_descendant && this.isOpen) {
           this.updateMovingFolder(this.item.id);
         }
 
