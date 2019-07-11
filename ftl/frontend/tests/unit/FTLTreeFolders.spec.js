@@ -31,12 +31,15 @@ const mockedGetFoldersListResponse = {
   config: axiosConfig
 };
 
+const sourceFolder = 1;
+
 describe('Component template', () => {
   let wrapper;
   beforeEach(() => {
     axios.get.mockResolvedValue(mockedGetFoldersListResponse);
     wrapper = shallowMount(FTLTreeFolders, {
       localVue,
+      propsData: { sourceFolder }
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
@@ -56,6 +59,7 @@ describe('Component mounted without props', () => {
     axios.get.mockResolvedValue(mockedGetFoldersListResponse);
     wrapper = shallowMount(FTLTreeFolders, {
       localVue,
+      propsData: { sourceFolder }
     });
   });
 
@@ -77,7 +81,7 @@ describe('Component mounted with start props', () => {
     axios.get.mockResolvedValue(mockedGetFoldersListResponse);
     wrapper = shallowMount(FTLTreeFolders, {
       localVue,
-      propsData: { start }
+      propsData: { start, sourceFolder }
     });
   });
 
@@ -98,7 +102,7 @@ describe('Component mounted with root props false', () => {
     axios.get.mockResolvedValue(mockedGetFoldersListResponse);
     wrapper = shallowMount(FTLTreeFolders, {
       localVue,
-      propsData: { root }
+      propsData: { root, sourceFolder }
     });
   });
 
@@ -139,6 +143,7 @@ describe('Component API error handling', () => {
     axios.get.mockRejectedValue('fakeError');
     wrapper = shallowMount(FTLTreeFolders, {
       localVue,
+      propsData: { sourceFolder }
     });
   });
 
