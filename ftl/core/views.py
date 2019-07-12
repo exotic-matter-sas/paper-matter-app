@@ -1,5 +1,4 @@
 import json
-import os
 from base64 import b64decode
 
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
@@ -12,7 +11,6 @@ from django.utils.http import http_date
 from django.views import View
 from rest_framework import generics, views
 from rest_framework.authentication import SessionAuthentication
-from rest_framework.exceptions import ValidationError
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 
@@ -87,26 +85,8 @@ class FTLDocumentDetail(generics.RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         return FTLDocument.objects.filter(org=self.request.user.org)
 
-    def get_object(self):
-        return get_object_or_404(self.get_queryset(), pid=self.kwargs['pid'])
-
     def perform_update(self, serializer):
-        serializer.save(ftl_user=self.request.user)
-
-    def perform_destroy(self, instance):
-        if instance.org == self.request.user.org:
-            binary = instance.binary
-            thumbnail_binary = instance.thumbnail_binary
-            super().perform_destroy(instance)
-
-            binary.file.close()
-            os.remove(binary.file.name)
-
-            if thumbnail_binary:
-                thumbnail_binary.file.close()
-                os.remove(thumbnail_binary.file.name)
-        else:
-            raise ValidationError("Trying to delete document from wrong user!")
+        serializer.save(org=self.request.user.org)
 
 
 class FTLDocumentThumbnail(LoginRequiredMixin, views.APIView):
@@ -200,10 +180,17 @@ class FTLFolderDetail(generics.RetrieveUpdateDestroyAPIView):
         return FTLFolder.objects.filter(org=self.request.user.org)
 
     def perform_update(self, serializer):
-        serializer.save(org=self.request.user.org)
+        # When detecting `parent` change, call the move_to to handle moving folder in the tree (mptt)
+        if serializer.initial_data and 'parent' in serializer.initial_data:
+            if serializer.instance.parent != serializer.initial_data['parent']:
 
-    def perform_destroy(self, instance):
-        if instance.org == self.request.user.org:
-            instance.delete()
+                if serializer.initial_data['parent'] is None:
+                    # Root
+                    serializer.instance.move_to(None)
+                else:
+                    target_folder = get_object_or_404(self.get_queryset(), id=serializer.initial_data['parent'])
+                    serializer.instance.move_to(target_folder)
+            else:
+                serializer.save(org=self.request.user.org)
         else:
-            raise ValidationError('Trying to delete a folder from wrong user!')
+            serializer.save(org=self.request.user.org)
