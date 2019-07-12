@@ -10,6 +10,9 @@ localVue.use(VueRouter);
 localVue.prototype.$_ = (text) => {
   return text;
 }; // i18n mock
+localVue.prototype.$moment = () => {
+  return {fromNow: jest.fn()}
+};
 localVue.mixin({methods: {mixinAlert}}); // set mixinAlert as set in main.js
 
 const mockedUpdateFolder = jest.fn();
