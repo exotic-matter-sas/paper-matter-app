@@ -131,7 +131,7 @@ class DocumentsTests(APITestCase):
     def test_upload_document(self, mock_tika_parser):
         mock_tika_parser.return_value = ""
 
-        with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test.pdf'), mode='rb') as fp:
+        with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'test.pdf'), mode='rb') as fp:
             client_post = self.client.post('/app/api/v1/documents/upload', {'json': '{}', 'file': fp})
         self.assertEqual(client_post.status_code, status.HTTP_201_CREATED)
 
@@ -149,7 +149,7 @@ class DocumentsTests(APITestCase):
         """Test that the async call to extract text is made"""
         mock_executor.submit = MagicMock("submit")
 
-        with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test.pdf'), 'rb') as f:
+        with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'test.pdf'), 'rb') as f:
             body_post = {'json': '{}', 'file': f}
             self.client.post('/app/api/v1/documents/upload', body_post)
 
@@ -173,7 +173,7 @@ class DocumentsTests(APITestCase):
 
         post_body = {'ftl_folder': self.first_level_folder.id}
 
-        with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test.pdf'), mode='rb') as fp:
+        with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'test.pdf'), mode='rb') as fp:
             client_post = self.client.post('/app/api/v1/documents/upload', {'json': json.dumps(post_body), 'file': fp})
         self.assertEqual(client_post.status_code, status.HTTP_201_CREATED)
 

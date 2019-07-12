@@ -138,7 +138,7 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage):
         # User upload 2 documents
         self.upload_document()
         second_document_title = 'green.pdf'
-        self.upload_document(os.path.join(BASE_DIR, 'ftests', 'tools', second_document_title))
+        self.upload_document(os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', second_document_title))
 
         # User wait for document to be indexed
         # TODO replace by a wait_for_element_to_disappear when a indexing indicator is implemented

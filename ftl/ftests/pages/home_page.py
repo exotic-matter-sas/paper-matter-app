@@ -42,7 +42,7 @@ class HomePage(BasePage):
 
     def upload_document(self, absolute_path=None):
         if not absolute_path:
-            absolute_path = os.path.join(BASE_DIR, 'ftests', 'tools', 'test.pdf')
+            absolute_path = os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'test.pdf')
         self.get_elem(self.document_upload_input, is_visible=False).send_keys(absolute_path)
         self.get_elem(self.submit_document_upload_button).click()
         self.wait_for_elem_to_disappear(self.document_upload_loader)
