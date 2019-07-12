@@ -21,17 +21,29 @@
     <section>
       <b-container>
         <b-row>
-          <b-button variant="primary" class="m-1" v-if="previousLevels.length"
-                    @click="changeToPreviousFolder">
-            Up
-          </b-button>
-          <b-button v-else variant="primary" class="m-1" disabled>Up</b-button>
-          <FTLFolder v-for="folder in folders" :key="folder.id" :folder="folder"
-                     @event-change-folder="navigateToFolder"/>
-          <b-button id="create-folder" class="m-1" variant="outline-primary" size="sm"
-                    @click.prevent="newFolderModal = true">
-            {{ this.$_('Create new folder') }}
-          </b-button>
+          <b-col class="p-0">
+            <b-breadcrumb class="m-0" :items="breadcrumb"/>
+          </b-col>
+        </b-row>
+      </b-container>
+      <b-container>
+        <b-row>
+          <b-col>
+            <div class="d-flex flex-wrap align-items-center">
+              <b-button id="refresh-documents" :disabled="docLoading" variant="primary" class="m-1" @click="refreshAll">
+                <font-awesome-icon icon="sync" :spin="docLoading" :title="$_('Refresh documents list')"/>
+              </b-button>
+              <b-button id="create-folder" class="m-1" variant="primary" v-b-modal="'modal-new-folder'">
+                <font-awesome-icon icon="folder-plus" :title="$_('Create new folder')"/>
+              </b-button>
+              <b-button variant="primary" class="m-1" :disabled="!previousLevels.length"
+                        @click="changeToPreviousFolder">
+                <font-awesome-icon icon="level-up-alt"/>
+              </b-button>
+              <FTLFolder v-for="folder in folders" :key="folder.id" :folder="folder"
+                         @event-change-folder="navigateToFolder"/>
+            </div>
+          </b-col>
         </b-row>
       </b-container>
     </section>
@@ -46,7 +58,7 @@
         </b-row>
         <b-row align-h="around" v-else-if="docs.length">
           <FTLDocument v-for="doc in docs" :key="doc.pid" :doc="doc" @event-delete-doc="updateDocuments"
-                       @event-open-doc="openDocument"/>
+                       @event-open-doc="navigateToDocument"/>
         </b-row>
         <b-row v-else>
           <b-col>{{ this.$_('No document yet') }}</b-col>
@@ -93,22 +105,9 @@
       </b-container>
     </div>
 
-    <b-modal v-if="newFolderModal" v-model="newFolderModal" @ok="createNewFolder"
-             :ok-disabled="newFolderName === ''"
-             :cancel-title="this.$_('Cancel')"
-             :ok-title="this.$_('Create')">
-      <span slot="modal-title">{{ this.$_('Create a new folder') }}</span>
-      <b-container>
-        <!-- TODO add current folder name to title -->
-        <b-form-group
-          id="fieldset-new-folder"
-          :description="this.$_('The name of the folder')"
-          :label="this.$_('The folder will be created in the current folder.')"
-          label-for="new-folder">
-          <b-form-input id="new-folder" v-model="newFolderName" trim></b-form-input>
-        </b-form-group>
-      </b-container>
-    </b-modal>
+    <FTLNewFolder
+      :parent="getCurrentFolder"
+      @event-folder-created="folderCreated"/>
   </div>
 </template>
 
@@ -117,6 +116,7 @@
   import FTLFolder from '@/components/FTLFolder.vue';
   import FTLDocument from '@/components/FTLDocument';
   import FTLUpload from '@/components/FTLUpload';
+  import FTLNewFolder from "@/components/FTLNewFolder";
   import axios from 'axios';
   import qs from 'qs';
   import {createThumbFromUrl} from "@/thumbnailGenerator";
@@ -125,6 +125,7 @@
   export default {
     name: 'home',
     components: {
+      FTLNewFolder,
       FTLFolder,
       FTLDocument,
       FTLUpload
@@ -146,12 +147,8 @@
         folders: [],
         previousLevels: [],
 
-        // Create folder data
-        newFolderName: '',
-        newFolderModal: false,
-
         // PDF viewer
-        currentOpenDoc: {title: 'loading'},
+        currentOpenDoc: {},
         publicPath: process.env.BASE_URL
       }
     },
@@ -181,13 +178,17 @@
 
     watch: {
       searchQuery: function (newVal, oldVal) {
-        this.refreshDocumentWithSearch(newVal);
+        if (newVal !== oldVal) {
+          this.refreshDocumentWithSearch(newVal);
+        }
       },
       doc: function (newVal, oldVal) {
         if (newVal === undefined) {
           this.docModal = false;
         } else {
-          this.openDocument(newVal);
+          if (newVal !== oldVal) {
+            this.openDocument(newVal);
+          }
         }
       },
       folder: function (newVal, oldVal) {
@@ -215,6 +216,25 @@
           return null;
         }
       },
+
+      breadcrumb: function () {
+        const vi = this;
+        let paths = [];
+
+        paths.push({
+          text: this.$_('Root'),
+          to: {name: 'home'}
+        });
+
+        return paths.concat(this.previousLevels.map((e) => {
+          return {
+            text: e.name,
+            to: {
+              path: '/home/' + vi.computeFolderUrlPath(e.id)
+            }
+          }
+        }));
+      }
     },
 
     methods: {
@@ -236,6 +256,11 @@
 
       refreshFolders: function () {
         this.updateFolders(this.getCurrentFolder);
+      },
+
+      refreshAll: function () {
+        this.refreshFolders();
+        this.updateDocuments();
       },
 
       changeFolder: function (folder = null) {
@@ -286,6 +311,10 @@
           });
       },
 
+      navigateToDocument: function (pid) {
+        this.$router.push({path: '/home/' + this.computeFolderUrlPath(), query: {doc: pid}});
+      },
+
       openDocument: function (pid) {
         const vi = this;
 
@@ -300,7 +329,6 @@
             if (!response.data.thumbnail_available) {
               vi.createThumbnailForDocument(response.data);
             }
-            vi.$router.push({path: '/home/' + vi.computeFolderUrlPath(), query: {doc: pid}});
           })
           .catch(error => {
             vi.mixinAlert("Unable to show document.", true)
@@ -310,6 +338,7 @@
       closeDocument: function () {
         this.docModal = false;
         this.docPid = null;
+        this.currentOpenDoc = {};
         this.$router.push({path: '/home/' + this.computeFolderUrlPath()});
       },
 
@@ -345,15 +374,14 @@
       },
 
       updateDocuments: function () {
-        const vi = this;
         let queryString = {};
 
-        if (vi.previousLevels.length > 0) {
+        if (this.previousLevels.length > 0) {
           queryString['level'] = this.getCurrentFolder.id;
         }
 
-        if (vi.currentSearch !== null && vi.currentSearch !== "") {
-          queryString['search'] = vi.currentSearch;
+        if (this.currentSearch !== null && this.currentSearch !== "") {
+          queryString['search'] = this.currentSearch;
         }
 
         let strQueryString = '?' + qs.stringify(queryString);
@@ -364,11 +392,11 @@
           .get('/app/api/v1/documents/' + strQueryString)
           .then(response => {
             this.docLoading = false;
-            vi.docs = response.data['results'];
-            vi.lastRefresh = Date.now();
+            this.docs = response.data['results'];
+            this.lastRefresh = Date.now();
           }).catch(error => {
-          this.docLoading = false;
-          vi.mixinAlert("Unable to refresh documents list.", true);
+            this.docLoading = false;
+            this.mixinAlert("Unable to refresh documents list.", true);
         });
       },
 
@@ -390,24 +418,39 @@
           }).catch(error => vi.mixinAlert("Unable to refresh folders list", true));
       },
 
-      createNewFolder: function () {
+      folderCreated: function (folder) {
+        this.refreshFolders();
+      },
+
+      generateMissingThumbnail: function () {
         const vi = this;
-        let parent = null;
+        vi.mixinAlert("Updating thumbnail");
 
-        if (vi.previousLevels.length > 0) {
-          parent = vi.previousLevels[vi.previousLevels.length - 1].id;
-        }
+        axios.get("/app/api/v1/documents?flat=true")
+          .then(async response => {
+            let documents = response.data;
 
-        let postBody = {name: vi.newFolderName, parent: parent};
+            while (documents !== null && documents.results.length > 0) {
+              for (const doc of documents.results) {
+                if (doc['thumbnail_available'] === false) {
+                  await vi.createThumbnailForDocument(doc, false);
+                }
+              }
 
-        axios
-          .post("/app/api/v1/folders/", postBody, axiosConfig)
+              if (documents.next == null) {
+                documents = null;
+              } else {
+                let resp = await axios.get(documents.next);
+                documents = await resp.data;
+              }
+            }
+          })
+          .catch(error => {
+            vi.mixinAlert("An error occurred while updating thumbnail", true)
+          })
           .then(() => {
-            // TODO flash the new folder when just created
-            vi.mixinAlert(vi.$_("Folder %s created", [vi.newFolderName]));
-            vi.newFolderName = '';
-            vi.refreshFolders();
-          }).catch(error => vi.mixinAlert("Unable to create new folder.", true));
+            vi.mixinAlert("Finished updating thumbnail");
+          });
       }
     }
   }

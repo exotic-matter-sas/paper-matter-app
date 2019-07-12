@@ -5,10 +5,14 @@
     <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
     <b-collapse id="nav-collapse" is-nav>
-      <!-- <b-navbar-nav>
-          <b-nav-item href="#">Link</b-nav-item>
-          <b-nav-item href="#" disabled>Disabled</b-nav-item>
-      </b-navbar-nav> -->
+      <b-navbar-nav>
+        <router-link :to="{name: 'home'}" tag="b-nav-item">
+          <font-awesome-icon icon="home"/>
+        </router-link>
+        <router-link :to="{name: 'folders'}" tag="b-nav-item">
+          <font-awesome-icon icon="folder"/>
+        </router-link>
+      </b-navbar-nav>
 
       <!-- Right aligned nav items -->
       <b-navbar-nav class="ml-auto">
@@ -18,13 +22,12 @@
                         @keydown.enter.prevent="doSearch"></b-form-input>
           <b-button id="search-button" size="sm" class="m-1" variant="secondary" type="button"
                     @click="doSearch">
-            {{this.$_('Search')}}
+            <font-awesome-icon icon="search" :alt="this.$_('Search')"/>
           </b-button>
           <b-button size="sm" class="m-1" type="button" variant="secondary"
                     @click="clear">
-            {{this.$_('X')}}
+            <font-awesome-icon icon="window-close" :alt="this.$_('X')"/>
           </b-button>
-
         </b-nav-form>
 
         <b-nav-item-dropdown :text="this.$_('Lang')" right>

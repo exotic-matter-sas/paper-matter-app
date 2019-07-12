@@ -31,6 +31,12 @@ export default new Router({
       })
     },
     {
+      path: '/folders/:folder?',
+      name: 'folders',
+      component: () => import(/* webpackChunkName: "folders" */ './views/ManageFolders.vue'),
+      props: true
+    },
+    {
       path: '/konami',
       name: 'konami',
       component: () => import(/* webpackChunkName: "Konami" */ '@/views/Konami.vue'),
