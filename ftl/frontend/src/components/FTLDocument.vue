@@ -63,7 +63,7 @@
 <style scoped>
   .card-img-top {
     height: 200px;
-    box-shadow: inset 0 -30px 55px -55px #0A0A0A;
+    box-shadow: inset 0 -10px 30px -30px #0A0A0A;
     background-repeat: no-repeat;
     background-size: cover;
     transition: background-position 1.2s cubic-bezier(.68,-0.55,.27,1.55) 1s,
@@ -78,6 +78,6 @@
 
   .card-img-top:hover {
     background-position: bottom;
-    box-shadow: inset 0 30px 55px -55px #0A0A0A;
+    box-shadow: inset 0 10px 30px -30px #0A0A0A;
   }
 </style>
