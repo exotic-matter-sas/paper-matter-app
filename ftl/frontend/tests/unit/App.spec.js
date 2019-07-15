@@ -9,6 +9,9 @@ localVue.use(VueRouter);
 localVue.prototype.$_ = (text) => {
   return text;
 }; // i18n mock
+localVue.prototype.$moment = () => {
+  return {fromNow: jest.fn()}
+};
 localVue.mixin({methods: {mixinAlert: jest.fn()}}); // mixin alert
 
 
@@ -22,6 +25,7 @@ describe('App template', () => {
   });
 
   it('renders properly app template', () => {
-    expect(wrapper.html()).toContain('id="app"', 'FTLHeader', 'router-view','FTLFooter')
+    expect(wrapper.text()).toContain('Made with ❤ by');
+    expect(wrapper.text()).toContain('Exotic Matter');
   });
 });
