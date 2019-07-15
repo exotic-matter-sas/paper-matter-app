@@ -17,7 +17,7 @@
           <span :class="{'d-none': deleting}"><font-awesome-icon icon="trash" :alt="this.$_('Delete')"/></span>
         </b-button>
       </b-card-body>
-      <b-card-footer>
+      <b-card-footer :title="$moment(doc.created).format('LLLL')">
         <small class="text-muted">{{ $moment(doc.created).fromNow() }}</small>
       </b-card-footer>
     </div>

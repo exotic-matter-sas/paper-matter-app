@@ -69,7 +69,8 @@
     <FTLNewFolder
       :parent="getCurrentFolder"
       @event-folder-created="folderCreated"/>
-  </div>
+    </b-col>
+  </main>
 </template>
 
 <script>
