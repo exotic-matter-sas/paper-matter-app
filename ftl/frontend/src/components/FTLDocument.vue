@@ -4,20 +4,20 @@
       <div class="card-img-top" slot="aside"
            :style="{'background-image': 'url(' + '/app/api/v1/documents/' + doc.pid + '/thumbnail.png' + ')'}"
            @click="$emit('event-open-doc', doc.pid)"></div>
-      <div class="card-body">
-        <h5 class="card-title text-truncate document-title" @click="$emit('event-open-doc', doc.pid)">
+      <b-card-body>
+        <b-card-title class="text-truncate document-title" @click="$emit('event-open-doc', doc.pid)">
           {{ doc.title }}
-        </h5>
+        </b-card-title>
         <b-button variant="secondary" size="sm" :href="'uploads/' + doc.pid">{{this.$_('Download')}}</b-button>
         <b-button class="delete-document" variant="danger" size="sm" :disabled="deleting"
                   @click.once="deleteDocument">
           <b-spinner :class="{'d-none': !deleting}" small></b-spinner>
           <span :class="{'d-none': deleting}">{{this.$_('!! Delete doc (no warn) !!')}}</span>
         </b-button>
-      </div>
-      <div class="card-footer">
+      </b-card-body>
+      <b-card-footer>
         <small class="text-muted">{{ getDate }}</small>
-      </div>
+      </b-card-footer>
     </div>
   </b-col>
 </template>
