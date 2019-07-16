@@ -232,6 +232,40 @@ class HomePageTests(LoginPage, HomePage):
         self.assertEqual(document_c.title, self.get_elem(self.first_document_title).text,
                          'Setup document title should appears in folder c')
 
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_document_list_pagination(self):
+        # User has already added 21 documents
+        for i in range(21):
+            setup_document(self.org, self.user, title=i+1)
+        self.refresh_document_list()
+
+        # Only 10 documents are shown by default
+        self.wait_document_list_loaded()
+
+        self.assertEqual(self.get_elem_text(self.first_document_title), '21')
+        self.assertEqual(self.get_elem_text(self.last_document_title), '12')
+        self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 10)
+
+        # User display 10 more document
+        self.get_elem(self.more_documents_button).click()
+        self.wait_more_documents_loaded()
+
+        self.assertEqual(self.get_elem_text(self.first_document_title), '21')
+        self.assertEqual(self.get_elem_text(self.last_document_title), '2')
+        self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 20)
+
+        # User display the last document
+        self.get_elem(self.more_documents_button).click()
+        self.wait_more_documents_loaded()
+
+        self.assertEqual(self.get_elem_text(self.first_document_title), '21')
+        self.assertEqual(self.get_elem_text(self.last_document_title), '1')
+        self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 21)
+
+        # There are no more documents to show
+        with self.assertRaises(NoSuchElementException):
+            self.get_elem(self.more_documents_button)
+
 
 class DocumentViewPageTests(LoginPage, HomePage, DocumentViewPage):
     def setUp(self, **kwargs):
