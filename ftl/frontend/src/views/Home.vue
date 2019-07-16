@@ -65,8 +65,8 @@
         </b-row>
 
         <b-row v-if="moreDocs" align-h="center" class="my-3">
-          <b-button block variant="secondary" @click.prevent="loadMoreDocuments">
-            <b-spinner id ="more-documents-loader" :class="{'d-none': !moreDocsLoading}" small></b-spinner>
+          <b-button id="more-documents" block variant="secondary" @click.prevent="loadMoreDocuments">
+            <b-spinner class="loader" :class="{'d-none': !moreDocsLoading}" small></b-spinner>
             <span :class="{'d-none': moreDocsLoading}">{{ this.$_('Load more') }}</span>
           </b-button>
         </b-row>
