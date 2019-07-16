@@ -2,6 +2,15 @@
   <b-navbar tag="header" toggleable="sm" type="dark" variant="dark">
     <b-navbar-brand href="/app">FTL-APP</b-navbar-brand>
 
+    <b-navbar-nav>
+      <router-link :to="{name: 'home'}" tag="b-nav-item">
+        <font-awesome-icon icon="home"/>
+      </router-link>
+      <router-link :to="{name: 'folders'}" tag="b-nav-item">
+        <font-awesome-icon icon="folder"/>
+      </router-link>
+    </b-navbar-nav>
+
     <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
     <b-collapse id="nav-collapse" is-nav>
