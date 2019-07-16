@@ -91,6 +91,7 @@
 
   .card-title{
     cursor: pointer;
+    font-size: 1.1rem;
   }
 
   .card-img-top:hover {

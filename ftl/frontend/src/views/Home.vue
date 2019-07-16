@@ -4,19 +4,15 @@
       <b-row class="my-3">
         <FTLUpload class="col" :currentFolder="getCurrentFolder" @event-new-upload="updateDocuments"/>
       </b-row>
-      <b-row class="my-3" id="toolbar">
+      <!-- <b-row class="my-3" id="toolbar">
         <b-button id="generate-thumb" variant="primary" class="mt-2 mr-0 mt-sm-0 mr-sm-2" @click="generateMissingThumbnail">
           {{this.$_('Generate missing thumb')}}
         </b-button>
-        <b-button id="refresh-documents" variant="primary" class="mt-2 mr-0 mt-sm-0 mr-sm-2" @click="updateDocuments">
-          {{this.$_('Refresh documents list')}}
-        </b-button>
-        {{ this.$_('Last refresh') }} {{ lastRefreshFormatted }}
-      </b-row>
+      </b-row> -->
 
       <b-row class="my-3" id="folders-list">
         <b-button id="refresh-documents" :disabled="docLoading" variant="primary" class="m-1" @click="refreshAll">
-          <font-awesome-icon icon="sync" :spin="docLoading" :title="$_('Refresh documents list')"/>
+          <font-awesome-icon icon="sync" spin v-bind:class="{ 'stop-spin': !docLoading }" :title="$_('Refresh documents list')"/>
         </b-button>
         <b-button id="create-folder" class="m-1" variant="primary" v-b-modal="'modal-new-folder'">
           <font-awesome-icon icon="folder-plus" :title="$_('Create new folder')"/>
@@ -442,5 +438,15 @@
   #folders-list button, #folders-list button{
     margin-left: 0 !important;
     margin-right: 0.5rem !important;
+  }
+
+  .stop-spin{
+    animation: unspin 0.5s 1 ease-out;
+  }
+
+  @keyframes unspin {
+    to {
+      transform: rotate(-0.5turn);
+    }
   }
 </style>
