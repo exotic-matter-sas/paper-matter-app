@@ -5,6 +5,8 @@ import uuid
 from django.contrib.auth.models import User, AbstractUser, Permission
 from django.contrib.postgres.search import SearchVectorField
 from django.db import models
+from django.db.models import UniqueConstraint
+from django.contrib.postgres.fields.citext import CICharField
 from django.utils.translation import gettext_lazy as _
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
@@ -92,7 +94,7 @@ class FTLDocument(models.Model):
 # FTL Folders
 class FTLFolder(MPTTModel):
     org = models.ForeignKey('FTLOrg', on_delete=models.CASCADE)
-    name = models.CharField(max_length=128)
+    name = CICharField(max_length=128)
     parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
     created = models.DateTimeField(auto_now_add=True)
 
@@ -114,6 +116,11 @@ class FTLFolder(MPTTModel):
 
     class MPTTMeta:
         order_insertion_by = ['name']
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(fields=['name', 'level', 'org_id'], name='folder_name_unique_for_org_level'),
+        ]
 
 
 class FTLModelPermissions(DjangoModelPermissions):

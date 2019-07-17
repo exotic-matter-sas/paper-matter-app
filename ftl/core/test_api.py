@@ -302,3 +302,11 @@ class FoldersTests(APITestCase):
 
         with self.assertRaises(core.models.FTLFolder.DoesNotExist):
             FTLFolder.objects.get(id=folder_to_be_delete.id)
+
+    def test_create_same_folder_name(self):
+        # We try to create a folder with a name already used in setUp
+        response = self.client.post('/app/api/v1/folders/',
+                                    {'name': self.folder_root.name}, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['code'], 'folder_name_unique_for_org_level')

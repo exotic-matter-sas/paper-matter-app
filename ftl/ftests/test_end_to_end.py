@@ -105,7 +105,7 @@ class NewUserAddDocumentInsideFolder(SignupPages, LoginPage, HomePage):
 
         # First user add a folder, a document inside it and display document
         self.create_folder()
-        self.get_elem(self.first_folder_button).click()
+        self.get_elem(self.folders_list_buttons).click()
         self.upload_document()
         self.get_elem(self.first_document_title).click()
 

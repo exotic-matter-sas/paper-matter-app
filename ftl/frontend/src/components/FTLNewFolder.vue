@@ -63,7 +63,13 @@
             this.mixinAlert(this.$_("Folder %s created", [this.newFolderName]));
             this.newFolderName = '';
             this.$emit('event-folder-created', response.data);
-          }).catch(error => this.mixinAlert("Unable to create new folder.", true));
+          }).catch((error) => {
+            let error_details = null;
+            if (error.response.data.details) {
+              error_details = error.response.data.details
+            }
+            this.mixinAlert(this.$_('Unable to create new folder'), true, error_details);
+        });
       }
     }
   }
