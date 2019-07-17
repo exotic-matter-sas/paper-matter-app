@@ -43,6 +43,13 @@
         <b-col v-else class="text-center">{{ this.$_('No document yet') }}</b-col>
       </b-row>
 
+      <b-row v-if="moreDocs" align-h="center" class="my-3">
+        <b-button id="more-documents" block variant="secondary" @click.prevent="loadMoreDocuments">
+          <b-spinner class="loader" :class="{'d-none': !moreDocsLoading}" small></b-spinner>
+          <span :class="{'d-none': moreDocsLoading}">{{ this.$_('Load more') }}</span>
+        </b-button>
+      </b-row>
+
       <!-- Pdf viewer popup -->
       <b-modal id="document-viewer"
                :title="currentOpenDoc.title"
@@ -103,7 +110,9 @@
         docModal: false,
         lastRefresh: Date.now(),
         currentSearch: "",
-        docLoading: false,
+        docsLoading: false,
+        moreDocsLoading: false,
+        moreDocs: null,
 
         // Folders list and breadcrumb
         folders: [],
@@ -344,6 +353,22 @@
         this.refreshDocumentWithSearch("");
       },
 
+      loadMoreDocuments: function () {
+        const vi = this;
+        this.moreDocsLoading = true;
+        axios
+          .get(this.moreDocs)
+          .then(response => {
+            this.moreDocsLoading = false;
+            vi.docs = vi.docs.concat(response.data['results']);
+            vi.moreDocs = response.data['next'];
+            vi.lastRefresh = Date.now();
+          }).catch(error => {
+            this.moreDocsLoading = false;
+            vi.mixinAlert("Unable to load more document.", true);
+        });
+      },
+
       updateDocuments: function () {
         let queryString = {};
 
@@ -357,16 +382,17 @@
 
         let strQueryString = '?' + qs.stringify(queryString);
 
-        this.docLoading = true;
+        this.docsLoading = true;
 
         axios
           .get('/app/api/v1/documents/' + strQueryString)
           .then(response => {
-            this.docLoading = false;
+            this.docsLoading = false;
             this.docs = response.data['results'];
+            this.moreDocs = response.data['next'];
             this.lastRefresh = Date.now();
           }).catch(error => {
-            this.docLoading = false;
+            this.docsLoading = false;
             this.mixinAlert("Unable to refresh documents list.", true);
         });
       },

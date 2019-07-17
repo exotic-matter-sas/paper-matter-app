@@ -27,13 +27,20 @@ class HomePage(BasePage):
 
     documents_list = '#documents-list'
     documents_thumbnails = '.document-thumbnail'
-    first_document_title = '.document-thumbnail .card-title'
+    first_document_title = '.document-thumbnail:first-child .card-title'
+    last_document_title = '.document-thumbnail:last-child .card-title'
+
+    more_documents_button = '#more-documents'
+    more_documents_loader = '#more-documents .loader'
 
     def wait_document_list_loaded(self):
         self.wait_for_elem_to_disappear(self.document_list_loader)
 
     def wait_folder_list_loaded(self):
         self.wait_for_elem_to_disappear(self.folder_list_loader)
+
+    def wait_more_documents_loaded(self):
+        self.wait_for_elem_to_disappear(self.more_documents_loader)
 
     def search_document(self, search_text):
         self.get_elem(self.search_input).send_keys(search_text)

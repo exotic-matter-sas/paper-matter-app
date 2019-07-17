@@ -4,8 +4,9 @@ const mixinAlert = function (message, error = false, title = "Notification") {
   this.$bvToast.toast(message, {
     title: title,
     variant: error ? 'danger' : 'success',
-    solid: true
+    solid: true,
+    toaster: 'b-toaster-bottom-right'
   });
 };
 
-export { mixinAlert };
+export {mixinAlert};
