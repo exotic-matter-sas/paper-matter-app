@@ -15,8 +15,8 @@
       </b-row>
 
       <b-row class="my-3" id="folders-list">
-        <b-button id="refresh-documents" :disabled="docLoading" variant="primary" class="m-1" @click="refreshAll">
-          <font-awesome-icon icon="sync" spin v-bind:class="{ 'stop-spin': !docLoading }" :title="$_('Refresh documents list')"/>
+        <b-button id="refresh-documents" :disabled="docsLoading" variant="primary" class="m-1" @click="refreshAll">
+          <font-awesome-icon icon="sync" spin :class="{ 'stop-spin':!docsLoading }" :title="$_('Refresh documents list')"/>
         </b-button>
         <b-button id="create-folder" class="m-1" variant="primary" v-b-modal="'modal-new-folder'">
           <font-awesome-icon icon="folder-plus" :title="$_('Create new folder')"/>
@@ -30,7 +30,7 @@
       </b-row>
 
       <b-row class="my-3" id="documents-list">
-        <b-col v-if="docLoading">
+        <b-col v-if="docsLoading">
           <b-spinner class="mx-auto" id="documents-list-loader"
                      label="Loading..."></b-spinner>
         </b-col>
@@ -455,26 +455,6 @@
 
 <style scoped lang="scss">
   @import '../styles/customBootstrap.scss';
-
-  $document-viewer-padding : 2em;
-
-  #document-viewer {
-    .container{
-      max-width: none;
-    }
-
-    .modal-dialog{
-      width: 100vw;
-      height: 100vh;
-      max-width: none;
-      padding: $document-viewer-padding;
-      margin:0;
-    }
-
-    .modal-content{
-      height: calc(100vh - (#{$document-viewer-padding} * 2));
-    }
-  }
 
   #documents-list-loader{
     width: 3em;
