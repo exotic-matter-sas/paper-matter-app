@@ -427,8 +427,29 @@
   }
 </script>
 
-<style scoped>
-  /* PDF.js viewer custom css */
+<style scoped lang="scss">
+  @import '../styles/customBootstrap.scss';
+
+  $document-viewer-padding : 2em;
+
+  #document-viewer {
+    .container{
+      max-width: none;
+    }
+
+    .modal-dialog{
+      width: 100vw;
+      height: 100vh;
+      max-width: none;
+      padding: $document-viewer-padding;
+      margin:0;
+    }
+
+    .modal-content{
+      height: calc(100vh - (#{$document-viewer-padding} * 2));
+    }
+  }
+
   #documents-list-loader{
     width: 3em;
     height: 3em;

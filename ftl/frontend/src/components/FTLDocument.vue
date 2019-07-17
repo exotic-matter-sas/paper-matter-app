@@ -77,7 +77,21 @@
   }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+  @import '../styles/customBootstrap.scss';
+
+  .document-title{
+    color: map_get($theme-colors, 'primary');
+  }
+
+  .card{
+    border-color: rgba(0, 0, 0, 0.250);
+  }
+
+  .card:hover{
+    border-color: map_get($theme-colors, 'primary');
+  }
+
   .card-img-top {
     height: 200px;
     box-shadow: inset 0 -10px 30px -30px #0A0A0A;
