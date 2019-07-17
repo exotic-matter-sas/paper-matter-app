@@ -2,7 +2,7 @@ import os
 import tempfile
 
 from core.models import FTLOrg, FTLUser, FTLDocument, FTLFolder, permissions_names_to_objects, FTL_PERMISSIONS_USER
-from core.views import SEARCH_VECTOR
+from core.processing.proc_pgsql_tsvector import SEARCH_VECTOR
 from ftests.tools import test_values as tv
 from ftl.settings import BASE_DIR
 
