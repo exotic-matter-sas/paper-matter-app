@@ -10,6 +10,10 @@
         </b-button>
       </b-row> -->
 
+      <b-row class="my-3" id="breadcrumb">
+        <b-breadcrumb class="m-0" :items="breadcrumb"/>
+      </b-row>
+
       <b-row class="my-3" id="folders-list">
         <b-button id="refresh-documents" :disabled="docLoading" variant="primary" class="m-1" @click="refreshAll">
           <font-awesome-icon icon="sync" spin v-bind:class="{ 'stop-spin': !docLoading }" :title="$_('Refresh documents list')"/>
@@ -431,7 +435,7 @@
     display: block;
   }
 
-  #folders-list, #toolbar{
+  #folders-list, #breadcrumb{
     padding: 0 15px;
   }
 
