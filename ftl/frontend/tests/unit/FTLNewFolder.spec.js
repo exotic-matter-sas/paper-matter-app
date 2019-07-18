@@ -3,7 +3,6 @@ import {createLocalVue, shallowMount} from '@vue/test-utils';
 import axios from 'axios';
 import BootstrapVue from "bootstrap-vue";
 import flushPromises from "flush-promises"; // needed for async tests
-
 import * as tv from './../tools/testValues.js'
 import {axiosConfig} from "../../src/constants";
 
@@ -14,8 +13,12 @@ const localVue = createLocalVue();
 localVue.use(BootstrapVue); // avoid bootstrap vue warnings
 localVue.component('font-awesome-icon', jest.fn()); // avoid font awesome warnings
 
-localVue.prototype.$_ = (text) => {return text}; // i18n mock
-localVue.prototype.$moment = () => {return {fromNow: jest.fn()}}; // moment mock
+localVue.prototype.$_ = (text) => {
+  return text
+}; // i18n mock
+localVue.prototype.$moment = () => {
+  return {fromNow: jest.fn()}
+}; // moment mock
 localVue.prototype.$router = {push: jest.fn()}; // router mock
 const mockedMixinAlert = jest.fn();
 localVue.mixin({methods: {mixinAlert: mockedMixinAlert}}); // mixinAlert mock
@@ -97,7 +100,7 @@ describe('createNewFolder scripts', () => {
 
   it('createNewFolder call mixinAlert in case of error', async () => {
     // force an error
-    axios.post.mockRejectedValue('errorDescription');
+    axios.post.mockRejectedValue({response: {data: {'code': '', 'details': ''}}});
 
     // when
     wrapper.vm.createNewFolder();
