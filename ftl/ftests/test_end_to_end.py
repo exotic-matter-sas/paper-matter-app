@@ -149,6 +149,7 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage):
                 return True
             else:
                 return False
+
         self._wait_for_method_to_return(queryset.filter, 60, custom_return_validator=query_set_validator,
                                         tsvector_length__gt=0)
 
@@ -158,4 +159,3 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage):
         # Only the second document appears in search results
         self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
         self.assertEqual(second_document_title, self.get_elem(self.first_document_title).text)
-

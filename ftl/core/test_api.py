@@ -3,10 +3,10 @@ import os
 import tempfile
 from unittest.mock import MagicMock, ANY, patch
 
+from django.contrib import messages
 from rest_framework import status
 from rest_framework.test import APITestCase
 from tika import parser
-from django.contrib import messages
 
 import core
 from core.models import FTLDocument, FTLFolder

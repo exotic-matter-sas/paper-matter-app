@@ -3,10 +3,10 @@ import pathlib
 import uuid
 
 from django.contrib.auth.models import User, AbstractUser, Permission
+from django.contrib.postgres.fields.citext import CICharField
 from django.contrib.postgres.search import SearchVectorField
 from django.db import models
 from django.db.models import UniqueConstraint
-from django.contrib.postgres.fields.citext import CICharField
 from django.utils.translation import gettext_lazy as _
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
