@@ -1,8 +1,8 @@
 <template>
-  <section id="folders-mngt">
-    <h1>Organize your folders</h1>
+  <main id="folders-mngt">
+    <h1 class="text-center">Organize your folders</h1>
 
-    <b-container fluid>
+    <b-container>
       <b-row>
         <!-- Left panel -->
         <b-col md="8">
@@ -30,11 +30,11 @@
               v-b-modal="'modal-new-folder'">
               <b-row align-h="center">
                 <b-col>
-                  <font-awesome-icon icon="folder-plus" size="5x" class="text-primary"/>
+                  <font-awesome-icon icon="folder-plus" size="5x" class="text-primary w-100"/>
                 </b-col>
               </b-row>
               <b-row align-h="center">
-                <b-col><b>{{ this.$_('Create new folder') }}</b></b-col>
+                <b-col class="text-center"><b>{{ this.$_('Create new folder') }}</b></b-col>
               </b-row>
             </b-col>
           </b-row>
@@ -98,7 +98,7 @@
         :folder="folderDetail"
         @event-folder-moved="refreshFolder"/>
     </b-container>
-  </section>
+  </main>
 </template>
 
 <script>
