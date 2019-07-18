@@ -105,7 +105,7 @@ class NewUserAddDocumentInsideFolder(SignupPages, LoginPage, HomePage):
 
         # First user add a folder, a document inside it and display document
         self.create_folder()
-        self.get_elem(self.first_folder_button).click()
+        self.get_elem(self.folders_list_buttons).click()
         self.upload_document()
         self.get_elem(self.first_document_title).click()
 
@@ -149,6 +149,7 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage):
                 return True
             else:
                 return False
+
         self._wait_for_method_to_return(queryset.filter, 60, custom_return_validator=query_set_validator,
                                         tsvector_length__gt=0)
 
@@ -158,4 +159,3 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage):
         # Only the second document appears in search results
         self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
         self.assertEqual(second_document_title, self.get_elem(self.first_document_title).text)
-
