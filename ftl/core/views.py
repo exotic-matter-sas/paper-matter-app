@@ -6,17 +6,19 @@ import langid
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 from django.core.files.base import ContentFile
+from django.db import IntegrityError
 from django.db.models import F
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404
 from django.utils.http import http_date
 from django.views import View
-from rest_framework import generics, views
+from rest_framework import generics, views, serializers
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from tika import parser
 
+from core.error_codes import get_api_error
 from core.models import FTLDocument, FTLFolder, FTLModelPermissions
 from core.serializers import FTLDocumentSerializer, FTLFolderSerializer
 
@@ -185,7 +187,13 @@ class FTLFolderList(generics.ListCreateAPIView):
         return queryset
 
     def perform_create(self, serializer):
-        serializer.save(org=self.request.user.org)
+        try:
+            serializer.save(org=self.request.user.org)
+        except IntegrityError as e:
+            if 'folder_name_unique_for_org_level' in str(e):
+                raise serializers.ValidationError(get_api_error('folder_name_unique_for_org_level'))
+            else:
+                raise
 
 
 class FTLFolderDetail(generics.RetrieveUpdateDestroyAPIView):
