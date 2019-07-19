@@ -39,7 +39,7 @@
 
     computed: {
       getParentName: function () {
-        if(this.parent == null) {
+        if (this.parent == null) {
           return this.$_('Root');
         } else {
           return this.parent.name;
@@ -63,7 +63,14 @@
             this.mixinAlert(this.$_("Folder %s created", [this.newFolderName]));
             this.newFolderName = '';
             this.$emit('event-folder-created', response.data);
-          }).catch(error => this.mixinAlert("Unable to create new folder.", true));
+          }).catch((error) => {
+          let error_details = null;
+          try {
+            error_details = error.response.data.details;
+          } finally {
+            this.mixinAlert(this.$_('Unable to create new folder'), true, error_details);
+          }
+        });
       }
     }
   }

@@ -44,7 +44,7 @@ class HomePageTests(LoginPage, HomePage):
         self.visit(HomePage.url)
 
         # User upload open its subfolder and upload a document
-        self.get_elem(self.first_folder_button).click()
+        self.get_elem(self.folders_list_buttons).click()
         self.upload_document()
 
         # Document appears as the first document of the list
@@ -75,30 +75,48 @@ class HomePageTests(LoginPage, HomePage):
         self.create_folder()
 
         # The folder properly appears in the folder list
-        self.assertEqual(tv.FOLDER1_NAME, self.get_elem(self.first_folder_button).text)
+        self.assertEqual(tv.FOLDER1_NAME, self.get_elem(self.folders_list_buttons).text)
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_create_folder_with_name_already_used(self):
+        # A folder already exist
+        existing_folder = setup_folder(self.org)
+        # Refresh page to display folder
+        self.visit(HomePage.url)
+        self.wait_folder_list_loaded()
+
+        # User try to create a second folder at the same level using the existing folder name
+        self.create_folder(folder_name=existing_folder.name, close_notification=False)
+
+        # The second folder isn't created and an error message appears
+        self.assertEqual(len(self.get_elems(self.folders_list_buttons)), 1,
+                         'The second folder should not have been created because its name is already used')
+        self.assertIn('name already exist', self.get_elem_text(self.error_notification),
+                      'An error message should have been displayed to user to tell him folder creation failed because'
+                      ' of duplicate name')
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_create_folder_tree(self):
         # User create a folder at root level
         self.create_folder(tv.FOLDER1_NAME)
         # User open previous folder and create a subfolder
-        self.get_elem(self.first_folder_button).click()
+        self.get_elem(self.folders_list_buttons).click()
         self.create_folder(tv.FOLDER2_NAME)
         # User open previous folder and create another subfolder
-        self.get_elem(self.first_folder_button).click()
+        self.get_elem(self.folders_list_buttons).click()
         self.create_folder(tv.FOLDER3_NAME)
 
         # Check if each folder have been created at proper level
         self.visit(HomePage.url)
-        self.wait_for_elem_to_show(self.first_folder_button)
-        self.assertEqual(tv.FOLDER1_NAME, self.get_elem(self.first_folder_button).text)
-        self.get_elem(self.first_folder_button).click()
-        self.wait_for_elem_to_show(self.first_folder_button)
-        self.assertEqual(tv.FOLDER2_NAME, self.get_elem(self.first_folder_button).text)
-        self.get_elem(self.first_folder_button).click()
-        self.wait_for_elem_to_show(self.first_folder_button)
-        self.assertEqual(tv.FOLDER3_NAME, self.get_elem(self.first_folder_button).text)
-        self.get_elem(self.first_folder_button).click()
+        self.wait_for_elem_to_show(self.folders_list_buttons)
+        self.assertEqual(tv.FOLDER1_NAME, self.get_elem(self.folders_list_buttons).text)
+        self.get_elem(self.folders_list_buttons).click()
+        self.wait_for_elem_to_show(self.folders_list_buttons)
+        self.assertEqual(tv.FOLDER2_NAME, self.get_elem(self.folders_list_buttons).text)
+        self.get_elem(self.folders_list_buttons).click()
+        self.wait_for_elem_to_show(self.folders_list_buttons)
+        self.assertEqual(tv.FOLDER3_NAME, self.get_elem(self.folders_list_buttons).text)
+        self.get_elem(self.folders_list_buttons).click()
 
     @skip('TODO when implemented in UI')  # TODO
     def test_delete_folder(self):
@@ -203,11 +221,11 @@ class HomePageTests(LoginPage, HomePage):
 
         # User browse to folder c
         self.wait_document_list_loaded()
-        self.get_elem(self.first_folder_button).click()
+        self.get_elem(self.folders_list_buttons).click()
         self.wait_folder_list_loaded()
-        self.get_elem(self.first_folder_button).click()
+        self.get_elem(self.folders_list_buttons).click()
         self.wait_folder_list_loaded()
-        self.get_elem(self.first_folder_button).click()
+        self.get_elem(self.folders_list_buttons).click()
         self.wait_folder_list_loaded()
 
         # User use the browser previous button to come back to root
@@ -231,6 +249,40 @@ class HomePageTests(LoginPage, HomePage):
         self.wait_document_list_loaded()
         self.assertEqual(document_c.title, self.get_elem(self.first_document_title).text,
                          'Setup document title should appears in folder c')
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_document_list_pagination(self):
+        # User has already added 21 documents
+        for i in range(21):
+            setup_document(self.org, self.user, title=i+1)
+        self.refresh_document_list()
+
+        # Only 10 documents are shown by default
+        self.wait_document_list_loaded()
+
+        self.assertEqual(self.get_elem_text(self.first_document_title), '21')
+        self.assertEqual(self.get_elem_text(self.last_document_title), '12')
+        self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 10)
+
+        # User display 10 more document
+        self.get_elem(self.more_documents_button).click()
+        self.wait_more_documents_loaded()
+
+        self.assertEqual(self.get_elem_text(self.first_document_title), '21')
+        self.assertEqual(self.get_elem_text(self.last_document_title), '2')
+        self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 20)
+
+        # User display the last document
+        self.get_elem(self.more_documents_button).click()
+        self.wait_more_documents_loaded()
+
+        self.assertEqual(self.get_elem_text(self.first_document_title), '21')
+        self.assertEqual(self.get_elem_text(self.last_document_title), '1')
+        self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 21)
+
+        # There are no more documents to show
+        with self.assertRaises(NoSuchElementException):
+            self.get_elem(self.more_documents_button)
 
 
 class DocumentViewPageTests(LoginPage, HomePage, DocumentViewPage):
