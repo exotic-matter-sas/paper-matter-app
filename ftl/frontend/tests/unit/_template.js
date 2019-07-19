@@ -101,11 +101,20 @@ describe('Component first type of test', () => {
 // TODO add as many describe block and tests as needed to group tests by type, commons ones below
 // TEMPLATE
 describe('Component template', () => {
-  it('renders properly component template', () => {
+  it('renders properly text', () => {
     expect(wrapper.text()).toContain('text displayed in template');
   });
   // or
-  it('renders properly component data', async () => {});
+  it('renders properly html element', () => {
+    const elementSelector= '#element-id';
+    const elem = wrapper.find(elementSelector);
+    expect(elem.is(elementSelector)).toBe(true);
+  });
+  // or
+  it('renders properly component data', async () => {
+    delete tv.DOCUMENT_PROPS.note // remove unwanted data here
+    Object.values(tv.DOCUMENT_PROPS).forEach(function(documentData){ expect(wrapper.html()).toContain(documentData) });
+  });
 });
 
 // COMPUTED

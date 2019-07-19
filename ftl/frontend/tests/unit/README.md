@@ -57,6 +57,7 @@ const elem = wrapper.find(elementSelector);
 expect(elem.is(elementSelector)).toBe(true);
 
 // props value in html
+delete tv.DOCUMENT_PROPS.note // remove unwanted data here
 Object.values(tv.DOCUMENT_PROPS).forEach(function(documentData){ expect(wrapper.html()).toContain(documentData) });
 ```
 

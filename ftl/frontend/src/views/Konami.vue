@@ -2,7 +2,7 @@
   <b-container>
     <b-row class="m-2">
       <b-col>
-        <b-button variant="primary" @click="generateMissingThumbnail" v-if="thumbnailProgress === 0">Generate missing
+        <b-button id="generate-missing-thumbnails" variant="primary" @click="generateMissingThumbnail" v-if="thumbnailProgress === 0">Generate missing
           thumbnail
         </b-button>
         <div v-if="thumbnailProgress > 0">
