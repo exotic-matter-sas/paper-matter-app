@@ -11,7 +11,7 @@
       </b-col>
     </b-row>
     <b-row align-h="center">
-      <b-col class="text-center">{{ folder.name }}</b-col>
+      <b-col class="text-center text-truncate"><span :title="folder.name">{{ folder.name }}</span></b-col>
     </b-row>
   </b-col>
 </template>

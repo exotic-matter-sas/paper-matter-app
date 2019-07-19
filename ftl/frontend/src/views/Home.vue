@@ -2,7 +2,9 @@
   <main>
     <b-col>
       <b-row class="my-3">
-        <FTLUpload class="col" :currentFolder="getCurrentFolder" @event-new-upload="updateDocuments"/>
+        <b-col>
+          <FTLUpload class="col" :currentFolder="getCurrentFolder" @event-new-upload="updateDocuments"/>
+        </b-col>
       </b-row>
       <!-- <b-row class="my-3" id="toolbar">
         <b-button id="generate-thumb" variant="primary" class="mt-2 mr-0 mt-sm-0 mr-sm-2" @click="generateMissingThumbnail">
@@ -11,22 +13,29 @@
       </b-row> -->
 
       <b-row class="my-3" id="breadcrumb">
-        <b-breadcrumb class="m-0" :items="breadcrumb"/>
+        <b-col>
+          <b-breadcrumb class="m-0" :items="breadcrumb"/>
+        </b-col>
       </b-row>
 
       <b-row class="my-3" id="folders-list">
-        <b-button id="refresh-documents" :disabled="docsLoading" variant="primary" class="m-1" @click="refreshAll">
-          <font-awesome-icon icon="sync" spin :class="{ 'stop-spin':!docsLoading }" :title="$_('Refresh documents list')"/>
-        </b-button>
-        <b-button id="create-folder" class="m-1" variant="primary" v-b-modal="'modal-new-folder'">
-          <font-awesome-icon icon="folder-plus" :title="$_('Create new folder')"/>
-        </b-button>
-        <b-button variant="primary" class="m-1" :disabled="!previousLevels.length"
-                        @click="changeToPreviousFolder">
-          <font-awesome-icon icon="level-up-alt"/>
-        </b-button>
-        <FTLFolder v-for="folder in folders" :key="folder.id" :folder="folder"
-                   @event-change-folder="navigateToFolder"/>
+        <b-col>
+
+
+          <b-button id="refresh-documents" :disabled="docsLoading" variant="primary" class="m-1" @click="refreshAll">
+            <font-awesome-icon icon="sync" spin :class="{ 'stop-spin':!docsLoading }"
+                               :title="$_('Refresh documents list')"/>
+          </b-button>
+          <b-button id="create-folder" class="m-1" variant="primary" v-b-modal="'modal-new-folder'">
+            <font-awesome-icon icon="folder-plus" :title="$_('Create new folder')"/>
+          </b-button>
+          <b-button variant="primary" class="m-1" :disabled="!previousLevels.length"
+                    @click="changeToPreviousFolder">
+            <font-awesome-icon icon="level-up-alt"/>
+          </b-button>
+          <FTLFolder v-for="folder in folders" :key="folder.id" :folder="folder"
+                     @event-change-folder="navigateToFolder"/>
+        </b-col>
       </b-row>
 
       <b-row class="my-3" id="documents-list">
@@ -44,10 +53,12 @@
       </b-row>
 
       <b-row v-if="moreDocs" align-h="center" class="my-3">
-        <b-button id="more-documents" block variant="secondary" @click.prevent="loadMoreDocuments">
-          <b-spinner class="loader" :class="{'d-none': !moreDocsLoading}" small></b-spinner>
-          <span :class="{'d-none': moreDocsLoading}">{{ this.$_('Load more') }}</span>
-        </b-button>
+        <b-col>
+          <b-button id="more-documents" block variant="secondary" @click.prevent="loadMoreDocuments">
+            <b-spinner class="loader" :class="{'d-none': !moreDocsLoading}" small></b-spinner>
+            <span :class="{'d-none': moreDocsLoading}">{{ this.$_('Load more') }}</span>
+          </b-button>
+        </b-col>
       </b-row>
 
       <!-- Pdf viewer popup -->
@@ -73,9 +84,9 @@
         </b-container>
       </b-modal>
 
-    <FTLNewFolder
-      :parent="getCurrentFolder"
-      @event-folder-created="folderCreated"/>
+      <FTLNewFolder
+        :parent="getCurrentFolder"
+        @event-folder-created="folderCreated"/>
     </b-col>
   </main>
 </template>
@@ -364,8 +375,8 @@
             vi.moreDocs = response.data['next'];
             vi.lastRefresh = Date.now();
           }).catch(error => {
-            this.moreDocsLoading = false;
-            vi.mixinAlert("Unable to load more document.", true);
+          this.moreDocsLoading = false;
+          vi.mixinAlert("Unable to load more document.", true);
         });
       },
 
@@ -392,8 +403,8 @@
             this.moreDocs = response.data['next'];
             this.lastRefresh = Date.now();
           }).catch(error => {
-            this.docsLoading = false;
-            this.mixinAlert("Unable to refresh documents list.", true);
+          this.docsLoading = false;
+          this.mixinAlert("Unable to refresh documents list.", true);
         });
       },
 
@@ -456,22 +467,22 @@
 <style scoped lang="scss">
   @import '../styles/customBootstrap.scss';
 
-  #documents-list-loader{
+  #documents-list-loader {
     width: 3em;
     height: 3em;
     display: block;
   }
 
-  #folders-list, #breadcrumb{
+  #folders-list, #breadcrumb {
     padding: 0 15px;
   }
 
-  #folders-list button, #folders-list button{
+  #folders-list button, #folders-list button {
     margin-left: 0 !important;
     margin-right: 0.5rem !important;
   }
 
-  .stop-spin{
+  .stop-spin {
     animation: unspin 0.5s 1 ease-out;
   }
 

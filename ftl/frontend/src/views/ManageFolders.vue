@@ -2,13 +2,13 @@
   <main id="folders-mngt">
     <h1 class="text-center">Organize your folders</h1>
 
-    <b-container>
+    <b-container fluid class="p-3">
       <b-row>
         <!-- Left panel -->
         <b-col md="8">
           <b-row>
-            <b-col class="p-0">
-              <b-breadcrumb class="m-0" :items="breadcrumb"/>
+            <b-col>
+              <b-breadcrumb :items="breadcrumb"/>
             </b-col>
           </b-row>
           <b-row v-if="foldersLoading">
