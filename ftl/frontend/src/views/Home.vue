@@ -3,14 +3,9 @@
     <b-col>
       <b-row class="my-3">
         <b-col>
-          <FTLUpload class="col" :currentFolder="getCurrentFolder" @event-new-upload="updateDocuments"/>
+          <FTLUpload :currentFolder="getCurrentFolder" @event-new-upload="updateDocuments"/>
         </b-col>
       </b-row>
-      <!-- <b-row class="my-3" id="toolbar">
-        <b-button id="generate-thumb" variant="primary" class="mt-2 mr-0 mt-sm-0 mr-sm-2" @click="generateMissingThumbnail">
-          {{this.$_('Generate missing thumb')}}
-        </b-button>
-      </b-row> -->
 
       <b-row class="my-3" id="breadcrumb">
         <b-col>
@@ -20,8 +15,6 @@
 
       <b-row class="my-3" id="folders-list">
         <b-col>
-
-
           <b-button id="refresh-documents" :disabled="docsLoading" variant="primary" class="m-1" @click="refreshAll">
             <font-awesome-icon icon="sync" spin :class="{ 'stop-spin':!docsLoading }"
                                :title="$_('Refresh documents list')"/>
@@ -65,7 +58,8 @@
       <b-modal id="document-viewer"
                :title="currentOpenDoc.title"
                hide-footer
-               centered>
+               centered
+               @close="closeDocument">
         <b-container class="h-100">
           <b-row class="h-100">
             <b-col md="8">
@@ -156,13 +150,6 @@
         // all docs
         this.updateDocuments();
       }
-
-      // Listen to modal event
-      this.$root.$on('bv::modal::hide', (bvEvent, modalId) => {
-        if (modalId === 'document-viewer') {
-          this.closeDocument()
-        }
-      })
     },
 
     watch: {

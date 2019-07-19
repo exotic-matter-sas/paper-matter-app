@@ -1,5 +1,5 @@
 <template>
-  <b-col class="col-12 mb-4 col-sm-6 col-md-4 col-lg-3 col-xl-2 document-thumbnail" :id="doc.pid">
+  <b-col cols="12" mb="4" sm="6" md="4" lg="3" xl="2" class="document-thumbnail" :id="doc.pid">
     <div class="card">
       <div class="card-img-top" slot="aside"
            :style="{'background-image': 'url(' + '/app/api/v1/documents/' + doc.pid + '/thumbnail.png' + ')'}"
@@ -80,15 +80,15 @@
 <style scoped lang="scss">
   @import '../styles/customBootstrap.scss';
 
-  .document-title{
+  .document-title {
     color: map_get($theme-colors, 'primary');
   }
 
-  .card{
+  .card {
     border-color: rgba(0, 0, 0, 0.250);
   }
 
-  .card:hover{
+  .card:hover {
     border-color: map_get($theme-colors, 'primary');
   }
 
@@ -97,13 +97,13 @@
     box-shadow: inset 0 -10px 30px -30px #0A0A0A;
     background-repeat: no-repeat;
     background-size: cover;
-    transition: background-position 1.2s cubic-bezier(.68,-0.55,.27,1.55) 1s,
-                box-shadow 1.2s ease-in-out 1s;
-    cursor:pointer;
+    transition: background-position 1.2s cubic-bezier(.68, -0.55, .27, 1.55) 1s,
+    box-shadow 1.2s ease-in-out 1s;
+    cursor: pointer;
     border-bottom: 1px solid rgba(0, 0, 0, 0.125);
   }
 
-  .card-title{
+  .card-title {
     cursor: pointer;
     font-size: 1.1rem;
   }
