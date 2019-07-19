@@ -117,13 +117,14 @@
   import FTLDocument from '@/components/FTLDocument';
   import FTLUpload from '@/components/FTLUpload';
   import FTLNewFolder from "@/components/FTLNewFolder";
+  import FTLThumbnailGenMixin from "@/components/FTLThumbnailGenMixin";
   import axios from 'axios';
   import qs from 'qs';
-  import {createThumbFromUrl} from "@/thumbnailGenerator";
-  import {axiosConfig} from "@/constants";
 
   export default {
     name: 'home',
+    mixins: [FTLThumbnailGenMixin],
+
     components: {
       FTLNewFolder,
       FTLFolder,
@@ -327,7 +328,11 @@
             vi.currentOpenDoc = response.data;
 
             if (!response.data.thumbnail_available) {
-              vi.createThumbnailForDocument(response.data);
+              vi.createThumbnailForDocument(response.data)
+                .then(response => {
+                  vi.mixinAlert("Thumbnail updated!");
+                })
+                .catch(error => vi.mixinAlert("Unable to update thumbnail", true));
             }
           })
           .catch(error => {
@@ -342,27 +347,6 @@
         this.$router.push({path: '/home/' + this.computeFolderUrlPath()});
       },
 
-      createThumbnailForDocument: async function (doc, updateDocuments = true) {
-        const vi = this;
-        let thumb64;
-
-        try {
-          thumb64 = await createThumbFromUrl('/app/uploads/' + doc.pid);
-        } catch (e) {
-          vi.mixinAlert("Unable to update thumbnail", true);
-          return;
-        }
-
-        let jsonData = {'thumbnail_binary': thumb64};
-
-        axios.patch('/app/api/v1/documents/' + doc.pid, jsonData, axiosConfig)
-          .then(response => {
-            vi.mixinAlert("Thumbnail updated!");
-            if (updateDocuments) {
-              vi.updateDocuments();
-            }
-          }).catch(error => vi.mixinAlert("Unable to update thumbnail", true));
-      },
 
       refreshDocumentWithSearch: function (text) {
         this.currentSearch = text;
@@ -395,8 +379,8 @@
             this.docs = response.data['results'];
             this.lastRefresh = Date.now();
           }).catch(error => {
-            this.docLoading = false;
-            this.mixinAlert("Unable to refresh documents list.", true);
+          this.docLoading = false;
+          this.mixinAlert("Unable to refresh documents list.", true);
         });
       },
 
@@ -421,37 +405,6 @@
       folderCreated: function (folder) {
         this.refreshFolders();
       },
-
-      generateMissingThumbnail: function () {
-        const vi = this;
-        vi.mixinAlert("Updating thumbnail");
-
-        axios.get("/app/api/v1/documents?flat=true")
-          .then(async response => {
-            let documents = response.data;
-
-            while (documents !== null && documents.results.length > 0) {
-              for (const doc of documents.results) {
-                if (doc['thumbnail_available'] === false) {
-                  await vi.createThumbnailForDocument(doc, false);
-                }
-              }
-
-              if (documents.next == null) {
-                documents = null;
-              } else {
-                let resp = await axios.get(documents.next);
-                documents = await resp.data;
-              }
-            }
-          })
-          .catch(error => {
-            vi.mixinAlert("An error occurred while updating thumbnail", true)
-          })
-          .then(() => {
-            vi.mixinAlert("Finished updating thumbnail");
-          });
-      }
     }
   }
 </script>

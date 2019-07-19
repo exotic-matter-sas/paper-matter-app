@@ -19,12 +19,12 @@
 </template>
 
 <script>
+  import FTLThumbnailGenMixin from "@/components/FTLThumbnailGenMixin";
   import axios from 'axios';
-  import {createThumbFromUrl} from "@/thumbnailGenerator";
-  import {axiosConfig} from "@/constants";
 
   export default {
     name: 'Konami',
+    mixins: [FTLThumbnailGenMixin],
 
     data() {
       return {
@@ -34,26 +34,6 @@
     },
 
     methods: {
-      createThumbnailForDocument: async function (doc, updateDocuments = true) {
-        const vi = this;
-        let thumb64;
-
-        try {
-          thumb64 = await createThumbFromUrl('/app/uploads/' + doc.pid);
-        } catch (e) {
-          vi.mixinAlert("Unable to update thumbnail", true);
-          return;
-        }
-
-        let jsonData = {'thumbnail_binary': thumb64};
-
-        axios
-          .patch('/app/api/v1/documents/' + doc.pid, jsonData, axiosConfig)
-          .then(response => {
-          })
-          .catch(error => vi.mixinAlert("Unable to update thumbnail", true));
-      },
-
       generateMissingThumbnail: function () {
         const vi = this;
 
@@ -67,7 +47,11 @@
               for (const doc of documents.results) {
                 vi.thumbnailProgress += 1;
                 if (doc['thumbnail_available'] === false) {
-                  await vi.createThumbnailForDocument(doc, false);
+                  await vi.createThumbnailForDocument(doc)
+                    .then(response => {
+                      vi.mixinAlert("Thumbnail updated!");
+                    })
+                    .catch(error => vi.mixinAlert("Unable to update thumbnail", true));
                 }
               }
 
