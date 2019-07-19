@@ -131,7 +131,7 @@ describe('Home computed', () => {
   const fakePath = 'fakeComputeFolderPath';
 
   beforeEach(() => {
-    mockedComputeFolderUrlPath.mockRe(fakePath);
+    mockedComputeFolderUrlPath.mockReturnValue(fakePath);
     wrapper = shallowMount(Home, {
       localVue,
       methods: Object.assign(
