@@ -1,5 +1,3 @@
-<template></template>
-
 <script>
   import {createThumbFromUrl} from "@/thumbnailGenerator";
   import axios from 'axios';
@@ -11,14 +9,12 @@
 
     methods: {
       createThumbnailForDocument: async function (doc) {
-        const vi = this;
         let thumb64;
 
         try {
           thumb64 = await createThumbFromUrl('/app/uploads/' + doc.pid);
         } catch (e) {
-          vi.mixinAlert("Unable to create thumbnail", true);
-          return;
+          return Promise.reject("Unable to create thumbnail");
         }
 
         let jsonData = {'thumbnail_binary': thumb64};

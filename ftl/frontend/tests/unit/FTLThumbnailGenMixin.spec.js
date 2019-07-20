@@ -67,15 +67,15 @@ describe('FTLThumbnailGenMixin methods', () => {
   });
 
   it('createThumbnailForDocument handle error on createThumbFromUrl', async () => {
+    // Expect a rejected promise is returned
+    expect.assertions(1);
+
     // force createThumbFromUrl error
     createThumbFromUrl.mockRejectedValue("fakeError");
 
-    // when
-    wrapper.vm.createThumbnailForDocument(tv.DOCUMENT_PROPS);
+    // Test catch
+    wrapper.vm.createThumbnailForDocument(tv.DOCUMENT_PROPS)
+      .catch(e => expect(e).toMatch("Unable to create thumbnail"));
     await flushPromises();
-
-    // then mixinAlert is called with proper message
-    expect(mockedMixinAlert).toHaveBeenCalledTimes(1);
-    expect(mockedMixinAlert.mock.calls[0][0]).toContain('create thumbnail');
   });
 });
