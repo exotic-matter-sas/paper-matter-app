@@ -31,29 +31,17 @@ jest.mock('axios', () => ({
   patch: jest.fn()
 }));
 
-const mockedGetDocumentFlat1Response = {
-  data: {
-    count: 2,
-    next: "http://localhost/next",
-    previous: null,
-    results: [tv.DOCUMENT_PROPS, tv.DOCUMENT_NO_THUMB_PROPS]
-  },
+const mockedUpdateDocumentResponse = {
+  data: tv.DOCUMENT_PROPS,
   status: 200,
-};
-const mockedGetDocumentFlat2Response = {
-  data: Promise.resolve({
-    count: 1,
-    next: null,
-    previous: "http://localhost/previous",
-    results: [tv.DOCUMENT_NO_THUMB_PROPS_2]
-  }),
-  status: 200,
+  config: axiosConfig
 };
 
-describe('FTLThumbnailGenMixin methods call proper api', () => {
+describe('FTLThumbnailGenMixin methods', () => {
   let wrapper;
-
+  axios.patch.mockResolvedValue(mockedUpdateDocumentResponse);
   beforeEach(() => {
+    createThumbFromUrl.mockResolvedValue("base64str");
     wrapper = shallowMount(FTLThumbnailGenMixin, {
         localVue,
       }
@@ -61,19 +49,33 @@ describe('FTLThumbnailGenMixin methods call proper api', () => {
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
 
-  it('createThumbnailForDocument call api', async () => {
-    axios.patch.mockResolvedValue({});
+  it('createThumbnailForDocument call proper methods and api', async () => {
+    axios.patch.mockResolvedValue(mockedUpdateDocumentResponse);
 
-    createThumbFromUrl.mockResolvedValue("base64str");
-
+    // when
     wrapper.vm.createThumbnailForDocument(tv.DOCUMENT_PROPS);
     await flushPromises();
 
+    // then
+    expect(createThumbFromUrl).toBeCalledTimes(1);
+    expect(axios.patch).toBeCalledTimes(1);
     expect(axios.patch).toHaveBeenCalledWith(
       '/app/api/v1/documents/' + tv.DOCUMENT_PROPS.pid,
       {'thumbnail_binary': 'base64str'},
       axiosConfig
     );
-    expect(axios.patch).toHaveBeenCalledTimes(1);
+  });
+
+  it('createThumbnailForDocument handle error on createThumbFromUrl', async () => {
+    // force createThumbFromUrl error
+    createThumbFromUrl.mockRejectedValue("fakeError");
+
+    // when
+    wrapper.vm.createThumbnailForDocument(tv.DOCUMENT_PROPS);
+    await flushPromises();
+
+    // then mixinAlert is called with proper message
+    expect(mockedMixinAlert).toHaveBeenCalledTimes(1);
+    expect(mockedMixinAlert.mock.calls[0][0]).toContain('create thumbnail');
   });
 });

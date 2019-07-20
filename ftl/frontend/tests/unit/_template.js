@@ -136,8 +136,8 @@ describe('Component methods call api', () => {
     await flushPromises();
 
     // then
-    expect(axios.get).toHaveBeenCalledWith('/app/api/v1/request/');
-    expect(axios.get).toHaveBeenCalledTimes(1);
+    expect(axios.get).toBeCalledWith('/app/api/v1/request/');
+    expect(axios.get).toBeCalledTimes(1);
   });
 });
 
@@ -146,8 +146,8 @@ describe('Component methods/watcher return proper value', () => {
 });
 
 describe('Component methods error handling', () => {
-  it('methodA call mixinAlert in case of error', async () => {
-    // force an error
+  it('methodA call mixinAlert in case of API error', async () => {
+    // force an API error
     axios.get.mockRejectedValue('fakeError');
 
     // when
@@ -155,7 +155,7 @@ describe('Component methods error handling', () => {
     await flushPromises();
 
     // then mixinAlert is called with proper message
-    expect(mockedMixinAlert).toHaveBeenCalledTimes(1);
+    expect(mockedMixinAlert).toBeCalledTimes(1);
     expect(mockedMixinAlert.mock.calls[0][0]).toContain('Alert message');
   });
 });

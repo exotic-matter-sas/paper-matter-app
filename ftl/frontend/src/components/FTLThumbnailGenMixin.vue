@@ -1,3 +1,5 @@
+<template></template>
+
 <script>
   import {createThumbFromUrl} from "@/thumbnailGenerator";
   import axios from 'axios';
@@ -15,7 +17,7 @@
         try {
           thumb64 = await createThumbFromUrl('/app/uploads/' + doc.pid);
         } catch (e) {
-          vi.mixinAlert("Unable to update thumbnail", true);
+          vi.mixinAlert("Unable to create thumbnail", true);
           return;
         }
 
