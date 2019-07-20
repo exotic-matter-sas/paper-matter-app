@@ -101,11 +101,20 @@ describe('Component first type of test', () => {
 // TODO add as many describe block and tests as needed to group tests by type, commons ones below
 // TEMPLATE
 describe('Component template', () => {
-  it('renders properly component template', () => {
+  it('renders properly text', () => {
     expect(wrapper.text()).toContain('text displayed in template');
   });
   // or
-  it('renders properly component data', async () => {});
+  it('renders properly html element', () => {
+    const elementSelector= '#element-id';
+    const elem = wrapper.find(elementSelector);
+    expect(elem.is(elementSelector)).toBe(true);
+  });
+  // or
+  it('renders properly component data', async () => {
+    delete tv.DOCUMENT_PROPS.note // remove unwanted data here
+    Object.values(tv.DOCUMENT_PROPS).forEach(function(documentData){ expect(wrapper.html()).toContain(documentData) });
+  });
 });
 
 // COMPUTED
@@ -127,8 +136,8 @@ describe('Component methods call api', () => {
     await flushPromises();
 
     // then
-    expect(axios.get).toHaveBeenCalledWith('/app/api/v1/request/');
-    expect(axios.get).toHaveBeenCalledTimes(1);
+    expect(axios.get).toBeCalledWith('/app/api/v1/request/');
+    expect(axios.get).toBeCalledTimes(1);
   });
 });
 
@@ -137,8 +146,8 @@ describe('Component methods/watcher return proper value', () => {
 });
 
 describe('Component methods error handling', () => {
-  it('methodA call mixinAlert in case of error', async () => {
-    // force an error
+  it('methodA call mixinAlert in case of API error', async () => {
+    // force an API error
     axios.get.mockRejectedValue('fakeError');
 
     // when
@@ -146,7 +155,7 @@ describe('Component methods error handling', () => {
     await flushPromises();
 
     // then mixinAlert is called with proper message
-    expect(mockedMixinAlert).toHaveBeenCalledTimes(1);
+    expect(mockedMixinAlert).toBeCalledTimes(1);
     expect(mockedMixinAlert.mock.calls[0][0]).toContain('Alert message');
   });
 });

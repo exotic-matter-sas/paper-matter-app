@@ -3,10 +3,8 @@ import {createLocalVue, shallowMount} from '@vue/test-utils';
 import axios from 'axios';
 import BootstrapVue from "bootstrap-vue";
 import flushPromises from "flush-promises"; // needed for async tests
-
 import * as tv from './../tools/testValues.js'
 import {axiosConfig} from "../../src/constants";
-import {createThumbFromUrl} from '../../src/thumbnailGenerator';
 
 import Home from "../../src/views/Home";
 import FTLUpload from "../../src/components/FTLUpload";
@@ -103,7 +101,7 @@ const mockedRefreshDocumentWithSearch = jest.fn();
 const mockedUpdateDocuments = jest.fn();
 const mockedUpdateFoldersPath = jest.fn();
 const mockedNavigateToDocument = jest.fn();
-const mockedGetCurrentFolder =  jest.fn();
+const mockedGetCurrentFolder = jest.fn();
 const mockedFolderCreated = jest.fn();
 const mockedBreadcrumb = jest.fn();
 
@@ -419,17 +417,6 @@ describe('Home methods call proper methods', () => {
     expect(mockedUpdateDocuments).toHaveBeenCalledTimes(1);
   });
 
-  it('generateMissingThumbnail call proper methods', async () => {
-    axios.get.mockResolvedValueOnce(mockedGetDocumentFlat1Response);
-    axios.get.mockResolvedValueOnce(mockedGetDocumentFlat2Response);
-
-    wrapper.vm.generateMissingThumbnail();
-    await flushPromises();
-
-    // Only 2 thumbnails are not available in the 3 documents listed
-    expect(mockedCreateThumbnailForDocument).toHaveBeenCalledTimes(2)
-  });
-
   it('openDocument call createThumbnailForDocument if needed', async () => {
     axios.get.mockResolvedValueOnce(mockedGetDocumentDetailWithThumbResponse);
     axios.get.mockResolvedValueOnce(mockedGetDocumentDetailWithoutThumbResponse);
@@ -567,10 +554,10 @@ describe('Home methods call proper api', () => {
         localVue,
         methods: Object.assign(
           {
-          changeFolder: mockedChangeFolder,
-          refreshFolders: mockedRefreshFolders,
-          createThumbnailForDocument: mockedCreateThumbnailForDocument,
-          computeFolderUrlPath: mockedComputeFolderUrlPath,
+            changeFolder: mockedChangeFolder,
+            refreshFolders: mockedRefreshFolders,
+            createThumbnailForDocument: mockedCreateThumbnailForDocument,
+            computeFolderUrlPath: mockedComputeFolderUrlPath,
           },
           mountedMocks
         ),
@@ -622,36 +609,6 @@ describe('Home methods call proper api', () => {
     expect(axios.get).toHaveBeenCalledTimes(1);
   });
 
-  it('generateMissingThumbnail call api', async () => {
-    axios.get.mockResolvedValueOnce(mockedGetDocumentFlat1Response);
-    axios.get.mockResolvedValueOnce(mockedGetDocumentFlat2Response);
-
-    wrapper.vm.generateMissingThumbnail();
-    await flushPromises();
-
-    expect(axios.get).toHaveBeenCalledWith("/app/api/v1/documents?flat=true");
-    expect(axios.get).toHaveBeenCalledWith("http://localhost/next");
-    expect(axios.get).toHaveBeenCalledTimes(2);
-  });
-
-  it('createThumbnailForDocument call api', async () => {
-    // restore original method to test it
-    wrapper.setMethods({createThumbnailForDocument: Home.methods.createThumbnailForDocument});
-    axios.patch.mockResolvedValue({});
-
-    createThumbFromUrl.mockResolvedValue("base64str");
-
-    wrapper.vm.createThumbnailForDocument(tv.DOCUMENT_PROPS);
-    await flushPromises();
-
-    expect(axios.patch).toHaveBeenCalledWith(
-      '/app/api/v1/documents/' + tv.DOCUMENT_PROPS.pid,
-      {'thumbnail_binary': 'base64str'},
-      axiosConfig
-    );
-    expect(axios.patch).toHaveBeenCalledTimes(1);
-  });
-
   it('updateFoldersPath call api', async () => {
     axios.get.mockResolvedValueOnce(mockedGetFolderResponse);
     wrapper.vm.updateFoldersPath(tv.FOLDER_PROPS.id);
@@ -674,12 +631,12 @@ describe('Home event handling', () => {
       localVue,
       methods: Object.assign(
         {
-        changeFolder: mockedChangeFolder,
-        openDocument: mockedOpenDocument,
-        navigateToFolder: mockedNavigateToFolder,
-        folderCreated: mockedFolderCreated,
-        navigateToDocument: mockedNavigateToDocument,
-        updateFolders: mockedUpdateFolders
+          changeFolder: mockedChangeFolder,
+          openDocument: mockedOpenDocument,
+          navigateToFolder: mockedNavigateToFolder,
+          folderCreated: mockedFolderCreated,
+          navigateToDocument: mockedNavigateToDocument,
+          updateFolders: mockedUpdateFolders
         },
         mountedMocks
       )
@@ -710,7 +667,7 @@ describe('Home event handling', () => {
     expect(mockedNavigateToFolder).toHaveBeenCalledTimes(1);
   });
 
-  it('event-open-doc call openDocument', async() => {
+  it('event-open-doc call openDocument', async () => {
     // Need to define at least one document in order FTLDocument component is instantiated
     wrapper.setData({docs: [tv.DOCUMENT_PROPS]});
     let documentPid = tv.DOCUMENT_PROPS.pid;
@@ -724,7 +681,7 @@ describe('Home event handling', () => {
     expect(mockedNavigateToDocument).toHaveBeenCalledTimes(1);
   });
 
-  it('event-delete-doc call updateDocuments', async() => {
+  it('event-delete-doc call updateDocuments', async () => {
     // Need to define at least one document in order FTLDocument component is instantiated
     wrapper.setData({docs: [tv.DOCUMENT_PROPS]});
 
@@ -736,7 +693,7 @@ describe('Home event handling', () => {
     expect(mockedUpdateDocuments).toHaveBeenCalledTimes(1);
   });
 
-  it('event-folder-created call folderCreated', async() => {
+  it('event-folder-created call folderCreated', async () => {
     // when
     wrapper.find(FTLNewFolder).vm.$emit('event-folder-created');
     await flushPromises(); // wait all pending promises are resolved/rejected
