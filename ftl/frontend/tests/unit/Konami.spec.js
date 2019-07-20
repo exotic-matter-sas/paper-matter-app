@@ -33,17 +33,6 @@ jest.mock('axios', () => ({
   patch: jest.fn()
 }));
 
-const mockedGetDocumentsFlatResponse = {
-  data: tv.DOCUMENT_PROPS,
-  status: 200,
-  config: axiosConfig
-};
-const mockedUpdateDocumentResponse = {
-  data: tv.DOCUMENT_PROPS,
-  status: 200,
-  config: axiosConfig
-};
-
 const mockedGetDocumentFlat1Response = {
   data: {
     count: 2,
@@ -54,12 +43,12 @@ const mockedGetDocumentFlat1Response = {
   status: 200,
 };
 const mockedGetDocumentFlat2Response = {
-  data: Promise.resolve({
+  data: {
     count: 1,
     next: null,
     previous: "http://localhost/previous",
     results: [tv.DOCUMENT_NO_THUMB_PROPS_2]
-  }),
+  },
   status: 200,
 };
 
@@ -86,6 +75,20 @@ describe('Component template', () => {
     const elem = wrapper.find(elementSelector);
     expect(elem.is(elementSelector)).toBe(true);
   });
+});
+
+describe('Konami methods', () => {
+  let wrapper;
+  beforeEach(() => {
+    mockedCreateThumbnailForDocument.mockResolvedValue("DD");
+    wrapper = shallowMount(Konami, {
+      localVue,
+      methods: {
+        createThumbnailForDocument: mockedCreateThumbnailForDocument,
+      },
+    });
+    jest.clearAllMocks(); // Reset mock call count done by mounted
+  });
 
   it('generateMissingThumbnail call api', async () => {
     axios.get.mockResolvedValueOnce(mockedGetDocumentFlat1Response);
@@ -96,6 +99,7 @@ describe('Component template', () => {
 
     expect(axios.get).toHaveBeenCalledWith("/app/api/v1/documents?flat=true");
     expect(axios.get).toHaveBeenCalledWith("http://localhost/next");
+    // mocked API responses contains 2 documents without thumbs
     expect(axios.get).toHaveBeenCalledTimes(2);
   });
 
@@ -107,6 +111,36 @@ describe('Component template', () => {
     await flushPromises();
 
     // Only 2 thumbnails are not available in the 3 documents listed
-    expect(mockedCreateThumbnailForDocument).toHaveBeenCalledTimes(2)
+    expect(mockedCreateThumbnailForDocument).toHaveBeenCalledTimes(2);
+    expect(mockedMixinAlert).toBeCalledTimes(2 + 1); // 1 call for each of the 2 docs processed and 1 for processing finished
+    const alertCalls = mockedMixinAlert.mock.calls;
+    expect(alertCalls[alertCalls.length-1][0]).toContain('Finished');
+  });
+
+  it('generateMissingThumbnail call mixinAlert in case of API error', async () => {
+    // force an API error
+    axios.get.mockRejectedValue('fakeError');
+
+    // when
+    wrapper.vm.generateMissingThumbnail();
+    await flushPromises();
+
+    // then mixinAlert is called with proper message
+    expect(mockedMixinAlert).toBeCalledTimes(1 + 1); // 1 call is always make at the end when process finished
+    expect(mockedMixinAlert.mock.calls[0][0]).toContain('unknown error');
+  });
+
+  it('generateMissingThumbnail call mixinAlert in case of createThumbnailForDocument error', async () => {
+    axios.get.mockResolvedValueOnce(mockedGetDocumentFlat2Response);
+    // force an createThumbnailForDocument error
+    mockedCreateThumbnailForDocument.mockRejectedValue("fakeError");
+
+    // when
+    wrapper.vm.generateMissingThumbnail();
+    await flushPromises();
+
+    // then mixinAlert is called with proper message
+    expect(mockedMixinAlert).toBeCalledTimes(1 + 1);  // 1 call is always make at the end when process finished
+    expect(mockedMixinAlert.mock.calls[0][0]).toContain('create thumbnail');
   });
 });

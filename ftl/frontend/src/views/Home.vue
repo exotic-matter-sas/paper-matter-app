@@ -334,7 +334,7 @@
                 .then(response => {
                   vi.mixinAlert("Thumbnail updated!");
                 })
-                .catch(error => vi.mixinAlert("Unable to update thumbnail", true));
+                .catch(error => vi.mixinAlert("Unable to create thumbnail", true));
             }
           })
           .catch(error => {

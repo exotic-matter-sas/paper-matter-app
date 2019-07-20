@@ -49,9 +49,9 @@
                 if (doc['thumbnail_available'] === false) {
                   await vi.createThumbnailForDocument(doc)
                     .then(response => {
-                      vi.mixinAlert("Thumbnail updated!");
+                      vi.mixinAlert("Thumbnail created!");
                     })
-                    .catch(error => vi.mixinAlert("Unable to update thumbnail", true));
+                    .catch(error => vi.mixinAlert("Unable to create thumbnail", true));
                 }
               }
 
@@ -64,10 +64,10 @@
             }
           })
           .catch(error => {
-            vi.mixinAlert("An error occurred while updating thumbnail", true)
+            vi.mixinAlert("An unknown error occurred while creating missing thumbnails", true)
           })
           .then(() => {
-            vi.mixinAlert("Finished updating thumbnail");
+            vi.mixinAlert("Finished processing missing thumbnails");
             vi.thumbnailProgress = 0;
             vi.max = 100;
           });
