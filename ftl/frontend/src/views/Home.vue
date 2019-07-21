@@ -132,7 +132,7 @@
       FTLUpload
     },
 
-    props: ['searchQuery', 'doc', 'paths', 'folder'],
+    props: ['searchQuery', 'doc', 'folder'],
 
     data() {
       return {
@@ -195,14 +195,16 @@
         }
       },
       folder: function (newVal, oldVal) {
-        // Detect navigation in folders
-        if (newVal === undefined) {
-          // Root folder
-          this.changeFolder()
-        } else {
+        if (this.$route.name === 'home') {
+          // Coming back to home so clear everything and reload from root folder
+          this.changeFolder();
+        } else if (this.$route.name === 'home-folder') {
+          // This is navigation between folders
           if (newVal !== oldVal) {
             this.updateFoldersPath(newVal, true);
           }
+        } else if (this.$route.name === 'home-search') {
+          // Do something? Nothing for now
         }
       }
     },
@@ -277,6 +279,7 @@
 
       navigateToFolder: function (folder) {
         if (folder) this.previousLevels.push(folder);
+        this.currentSearch = "";
         this.$router.push({path: '/home/' + this.computeFolderUrlPath(folder.id)})
       },
 
@@ -315,7 +318,7 @@
       },
 
       navigateToDocument: function (pid) {
-        this.$router.push({path: '/home/' + this.computeFolderUrlPath(), query: {doc: pid}});
+        this.$router.push({query: {doc: pid}});
       },
 
       openDocument: function (pid) {
@@ -346,7 +349,7 @@
         this.docModal = false;
         this.docPid = null;
         this.currentOpenDoc = {};
-        this.$router.push({path: '/home/' + this.computeFolderUrlPath()});
+        this.$router.push({path: this.$route.path});
       },
 
 
@@ -378,12 +381,12 @@
       updateDocuments: function () {
         let queryString = {};
 
-        if (this.previousLevels.length > 0) {
-          queryString['level'] = this.getCurrentFolder.id;
-        }
-
         if (this.currentSearch !== null && this.currentSearch !== "") {
           queryString['search'] = this.currentSearch;
+        } else {
+          if (this.previousLevels.length > 0) {
+            queryString['level'] = this.getCurrentFolder.id;
+          }
         }
 
         let strQueryString = '?' + qs.stringify(queryString);

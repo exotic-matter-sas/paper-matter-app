@@ -21,6 +21,8 @@ localVue.component('font-awesome-icon', jest.fn()); // avoid font awesome warnin
 localVue.prototype.$_ = (text, args='') => {return text + args};// i18n mock
 localVue.prototype.$moment = () => {return {fromNow: jest.fn()}}; // moment mock
 localVue.prototype.$router = {push: jest.fn()}; // router mock
+const mockedRouteName = jest.fn();
+localVue.prototype.$route = {get name() { return mockedRouteName()}}; // router mock
 const mockedMixinAlert = jest.fn();
 localVue.mixin({methods: {mixinAlert: mockedMixinAlert}}); // mixinAlert mock
 

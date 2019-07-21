@@ -22,6 +22,8 @@ localVue.prototype.$moment = () => {
   return {fromNow: jest.fn()}
 };
 localVue.prototype.$router = {push: jest.fn()}; // router mock
+const mockedRouteName = jest.fn();
+localVue.prototype.$route = {get name() { return mockedRouteName()}}; // router mock
 const mockedMixinAlert = jest.fn();
 localVue.mixin({methods: {mixinAlert: mockedMixinAlert}}); // mixin alert
 
@@ -320,24 +322,37 @@ describe('Home watchers call proper methods', () => {
     expect(mockedOpenDocument).not.toHaveBeenCalled();
   });
 
-  it('folder watcher call proper method', () => {
-    //when folder is defined
-    let folder = tv.FOLDER_PROPS.id;
+  it('folder watcher call proper methods based on route name', async () => {
+    const folder = tv.FOLDER_PROPS.id;
+    const folderVariant = tv.FOLDER_PROPS_VARIANT.id;
+    //when route is home
+    mockedRouteName.mockReturnValue('home');
     wrapper.setData({folder});
+    await flushPromises();
+
+    // then
+    expect(mockedChangeFolder).toHaveBeenCalledTimes(1);
+    expect(mockedChangeFolder).toHaveBeenCalledWith();
+    expect(mockedUpdateFoldersPath).not.toHaveBeenCalled();
+
+    //when route is home-folder and folder change
+    jest.clearAllMocks();
+    mockedRouteName.mockReturnValue('home-folder');
+    wrapper.setData({folder: folderVariant});
 
     // then
     expect(mockedChangeFolder).not.toHaveBeenCalled();
     expect(mockedUpdateFoldersPath).toHaveBeenCalledTimes(1);
-    expect(mockedUpdateFoldersPath).toHaveBeenCalledWith(folder, true);
+    expect(mockedUpdateFoldersPath).toHaveBeenCalledWith(folderVariant, true);
 
-    //when folder value is reset to undefined
+    //when route is home-search
     jest.clearAllMocks();
-    folder = undefined;
+    mockedRouteName.mockReturnValue('home-search');
     wrapper.setData({folder});
 
     // then
-    expect(mockedChangeFolder).toHaveBeenCalledTimes(1);
     expect(mockedUpdateFoldersPath).not.toHaveBeenCalled();
+    expect(mockedChangeFolder).not.toHaveBeenCalled();
   });
 });
 
