@@ -39,11 +39,17 @@ ADD docker/settings.py /app/ftl/settings.py
 
 ADD ftl /app/
 COPY --from=backendbuild /app/core/locale /app/core/locale
+RUN true
 COPY --from=backendbuild /app/frontend/locale /app/frontend/locale
+RUN true
 COPY --from=backendbuild /app/setup/locale /app/setup/locale
+RUN true
 COPY --from=frontbuild /app/dist /app/frontend/dist
+RUN true
 COPY --from=frontbuild /app/pdfjs /app/frontend/pdfjs
+RUN true
 COPY --from=frontbuild /app/webpack-stats.json /app/frontend/
+RUN true
 COPY --from=frontbuild /app/__init__.py /app/frontend/
 
 WORKDIR /app
