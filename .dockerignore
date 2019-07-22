@@ -1,0 +1,7 @@
+ftl/assets/
+ftl/frontend/node_modules
+ftl/uploads
+ftl/ftests
+/ftl/ftl/settings*
+**/test_*.py
+**/.git
