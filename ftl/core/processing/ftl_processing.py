@@ -3,8 +3,6 @@ import inspect
 import logging
 from concurrent.futures.thread import ThreadPoolExecutor
 
-from django.conf import settings
-
 logger = logging.getLogger(__name__)
 
 
@@ -16,12 +14,11 @@ class FTLDocumentProcessing:
     executor = None
     plugins = list()
 
-    def __init__(self, max_workers=1):
+    def __init__(self, configured_plugins, max_workers=1):
         self.executor = ThreadPoolExecutor(
             max_workers=max_workers,
             thread_name_prefix="ftl_doc_processing_worker"
         )
-        configured_plugins = settings.FTL_DOC_PROCESSING_PLUGINS
 
         for configured_plugin in configured_plugins:
             module = importlib.import_module(configured_plugin)
@@ -39,6 +36,7 @@ class FTLDocumentProcessing:
         submit = self.executor.submit(self._handle, ftl_doc)
         submit.add_done_callback(self._callback)
         logger.info(f'{ftl_doc.pid} submitted to docs processing')
+        return submit
 
     def _handle(self, ftl_doc):
         # for each registered processing plugin, apply processing

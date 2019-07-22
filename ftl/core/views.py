@@ -1,6 +1,7 @@
 import json
 from base64 import b64decode
 
+from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.core.files.base import ContentFile
@@ -20,7 +21,7 @@ from core.models import FTLDocument, FTLFolder, FTLModelPermissions
 from core.processing.ftl_processing import FTLDocumentProcessing
 from core.serializers import FTLDocumentSerializer, FTLFolderSerializer
 
-ftl_doc_processing = FTLDocumentProcessing()
+ftl_doc_processing = FTLDocumentProcessing(settings.FTL_DOC_PROCESSING_PLUGINS)
 
 
 def _extract_binary_from_data_uri(data_uri):
