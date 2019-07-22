@@ -1,7 +1,6 @@
-import importlib
-import inspect
 import logging
 from concurrent.futures.thread import ThreadPoolExecutor
+from pydoc import locate
 
 logger = logging.getLogger(__name__)
 
@@ -21,16 +20,10 @@ class FTLDocumentProcessing:
         )
 
         for configured_plugin in configured_plugins:
-            module = importlib.import_module(configured_plugin)
-            classes = inspect.getmembers(
-                module,
-                lambda c:
-                inspect.isclass(c)
-                and issubclass(c, FTLDocProcessingBase)
-                and c is not FTLDocProcessingBase
-            )
-            for name, classz in classes:
-                self.plugins.append(classz())
+            my_class = locate(configured_plugin)
+
+            if issubclass(my_class, FTLDocProcessingBase) and my_class is not FTLDocProcessingBase:
+                self.plugins.append(my_class())
 
     def apply_processing(self, ftl_doc):
         submit = self.executor.submit(self._handle, ftl_doc)

@@ -6,7 +6,6 @@ from django.test import TestCase
 from django.urls import reverse_lazy
 from tika import parser
 
-from core.views import _extract_text_from_pdf
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_authenticated_session, setup_document
 
