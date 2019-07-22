@@ -37,6 +37,7 @@ RUN apk add --no-cache postgresql-libs openjdk11-jre pcre && rm -rf /var/cache/a
 ADD docker/ftl_uwsgi.ini /app/ftl_uwsgi.ini
 ADD docker/settings.py /app/ftl/settings.py
 
+# Those RUN true commands are a workaround for https://github.com/moby/moby/issues/37965
 ADD ftl /app/
 COPY --from=backendbuild /app/core/locale /app/core/locale
 RUN true
