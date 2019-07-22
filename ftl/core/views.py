@@ -58,22 +58,20 @@ class FTLDocumentList(generics.ListAPIView):
     def get_queryset(self):
         current_folder = self.request.query_params.get('level', None)
         flat_mode = self.request.query_params.get('flat', False)
+        text_search = self.request.query_params.get('search', None)
 
         queryset = FTLDocument.objects.filter(org=self.request.user.org).order_by('-created')
 
         if not flat_mode:
-            if current_folder is not None and int(current_folder) > 0:
+            if text_search:
+                search_query = SearchQuery(text_search.strip(), config=F('language'))
+                queryset = queryset.annotate(rank=SearchRank(F('tsvector'), search_query)) \
+                    .filter(rank__gte=0.1) \
+                    .order_by('-rank')
+            elif current_folder is not None and int(current_folder) > 0:
                 queryset = queryset.filter(ftl_folder__id=current_folder)
             else:
                 queryset = queryset.filter(ftl_folder__isnull=True)
-
-        text_search = self.request.query_params.get('search')
-
-        if text_search:
-            search_query = SearchQuery(text_search.strip(), config=F('language'))
-            queryset = queryset.annotate(rank=SearchRank(F('tsvector'), search_query)) \
-                .filter(rank__gte=0.1) \
-                .order_by('-rank')
 
         return queryset
 
