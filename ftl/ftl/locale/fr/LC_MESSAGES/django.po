@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-17 15:30+0000\n"
+"POT-Creation-Date: 2019-07-23 15:49+0000\n"
 "PO-Revision-Date: 2019-03-05 17:20+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -57,19 +57,24 @@ msgstr "Page de connexion pour les utilisateurs"
 
 #: ftl/templates/registration/login.html:5
 #: ftl/templates/registration/login.html:13
-#: ftl/templates/registration/login.html:33
+#: ftl/templates/registration/login.html:37
 msgid "Login"
 msgstr "Se connecter"
 
-#: ftl/templates/registration/login.html:18
 #: ftl/templates/registration/login.html:19
+#: ftl/templates/registration/login.html:20
 msgid "Username"
 msgstr "Nom d'utilisateur"
 
-#: ftl/templates/registration/login.html:26
-#: ftl/templates/registration/login.html:27
+#: ftl/templates/registration/login.html:28
+#: ftl/templates/registration/login.html:29
 msgid "Password"
 msgstr "Mot de passe"
+
+#: ftl/templates/registration/login.html:30
+#| msgid "Reset password"
+msgid "Forgot password?"
+msgstr "Mot de passe oublié ?"
 
 #: ftl/templates/registration/password_change_done.html:4
 #: ftl/templates/registration/password_change_form.html:4
@@ -82,7 +87,6 @@ msgstr "Le mot de passe a été modifié !"
 
 #: ftl/templates/registration/password_change_form.html:7
 #: ftl/templates/registration/password_change_form.html:47
-#: ftl/templates/registration/password_reset_confirm.html:20
 msgid "Change my password"
 msgstr "Modifier mon mot de passe"
 
@@ -103,25 +107,43 @@ msgstr ""
 "saisissez ensuite le nouveau deux fois."
 
 #: ftl/templates/registration/password_reset_complete.html:4
-#: ftl/templates/registration/password_reset_confirm.html:4
 #: ftl/templates/registration/password_reset_done.html:4
-#: ftl/templates/registration/password_reset_form.html:4
+#: ftl/templates/registration/password_reset_form.html:5
+#: ftl/templates/registration/password_reset_form.html:13
 msgid "Reset password"
 msgstr "Réinitialiser mon mot de passe"
 
-#: ftl/templates/registration/password_reset_complete.html:8
-msgid "Your password has been set.  You may go ahead and log in now."
-msgstr ""
-"Votre mot de passe a bien été enregistré, vous pouvez vous connecter avec "
-"celui-ci."
-
-#: ftl/templates/registration/password_reset_confirm.html:12
+#: ftl/templates/registration/password_reset_confirm.html:5
 msgid "New password:"
 msgstr "Nouveau mot de passe :"
 
-#: ftl/templates/registration/password_reset_confirm.html:17
-msgid "Confirm password:"
-msgstr "Confirmez le mot de passe :"
+#: ftl/templates/registration/password_reset_confirm.html:14
+msgid "Set new password"
+msgstr "Définition du nouveau mot de passe :"
+
+#: ftl/templates/registration/password_reset_confirm.html:15
+msgid ""
+"Please enter your new password twice so we can verify you typed it in "
+"correctly."
+msgstr ""
+"Veuillez saisir votre nouveau mot de passe deux pour vérifier qu'il n'y a pas d'erreur."
+
+#: ftl/templates/registration/password_reset_confirm.html:18
+#: ftl/templates/registration/password_reset_form.html:17
+msgid "Reset my password"
+msgstr "Réinitialiser mon mot de passe"
+
+#: ftl/templates/registration/password_reset_confirm.html:21
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used.  Please request a new password reset."
+msgstr ""
+"Le lien de réinitialisation de mot de passe est invalide, Il est possible que celui-ci est déjà été utilisé."
+"Veuillez renouveler la demande de réinitialisation."
+
+#: ftl/templates/registration/password_reset_confirm.html:22
+msgid "Back"
+msgstr "Retour"
 
 #: ftl/templates/registration/password_reset_done.html:8
 msgid "Reset email sent (or not)."
@@ -135,7 +157,7 @@ msgstr ""
 "Une demande réinitialisation du mot de passe a été effectuée pour l'email "
 "%(email)s. Pour poursuivre, cliquez sur le lien ci-dessous :"
 
-#: ftl/templates/registration/password_reset_form.html:10
+#: ftl/templates/registration/password_reset_form.html:14
 msgid ""
 "Forgotten your password? Enter your email address below, and we'll email "
 "instructions for setting a new one."
@@ -143,10 +165,21 @@ msgstr ""
 "Mot de passe oublié ? Saisissez votre email ci-dessous et nous vous "
 "enverrons les instructions pour en définir un nouveau."
 
-#: ftl/templates/registration/password_reset_form.html:16
-msgid "Email address:"
-msgstr "Adresse email :"
+#: ftl/urls.py:50
+msgid ""
+"We’ve emailed you instructions for setting your password, if an account "
+"exists with the email you entered. You should receive them shortly (check "
+"your spam folder if that's not the case)."
+msgstr ""
+"Nous vous avons envoyé par email les instruction pour réinitialiser votre mot de passe,"
+"si l'email indiqué correspond à un compte. Vous devriez le recevoir rapidement (vérifiez "
+"votre dossier spam si ce n'est pas le cas)."
 
-#: ftl/templates/registration/password_reset_form.html:19
-msgid "Reset my password"
-msgstr "Réinitialiser mon mot de passe"
+#: ftl/urls.py:58
+#, fuzzy
+#| msgid "Your password has been set.  You may go ahead and log in now."
+msgid "Your password has been set. You may go ahead and log in now."
+msgstr ""
+"Votre mot de passe a bien été enregistré, vous pouvez vous connecter avec "
+"celui-ci."
+
