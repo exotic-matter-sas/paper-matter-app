@@ -3,7 +3,6 @@ from unittest import skipIf
 
 from django.core import mail
 
-from ftests.tools import test_values as tv
 from ftests.pages.base_page import NODE_SERVER_RUNNING
 from ftests.pages.home_page import HomePage
 from ftests.pages.user_login_page import LoginPage

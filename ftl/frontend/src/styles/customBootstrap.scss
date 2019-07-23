@@ -117,9 +117,10 @@ $breadcrumb-divider: quote(">");
   }
 }
 
-// SETUP PAGES + SIGNUP PAGE
+// SETUP PAGES + SIGNUP PAGE + RESET PASSWORD PAGES
 
-#organization-form, #admin-form, #user-form {
+#organization-form, #admin-form, #user-form, #password-reset-form,
+#password-reset-confirm{
     label {
         color:  map_get($theme-colors, 'primary');
         display: block;
