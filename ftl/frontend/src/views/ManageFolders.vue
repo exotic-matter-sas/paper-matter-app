@@ -2,8 +2,8 @@
   <main id="folders-mngt">
     <h1 class="text-center">Organize your folders</h1>
 
-    <b-container fluid class="p-3">
-      <b-row>
+    <b-container fluid class="p-3 text-center">
+      <b-row align-h="center">
         <!-- Left panel -->
         <b-col md="8">
           <b-row>
@@ -28,13 +28,13 @@
               sm="2"
               class="m-1"
               v-b-modal="'modal-new-folder'">
-              <b-row align-h="center">
+              <b-row>
                 <b-col>
                   <font-awesome-icon icon="folder-plus" size="5x" class="text-primary w-100"/>
                 </b-col>
               </b-row>
-              <b-row align-h="center">
-                <b-col class="text-center"><b>{{ this.$_('Create new folder') }}</b></b-col>
+              <b-row>
+                <b-col><b>{{ this.$_('Create new folder') }}</b></b-col>
               </b-row>
             </b-col>
           </b-row>
@@ -46,7 +46,7 @@
               <b-spinner :label="$_('Loading')"></b-spinner>
             </b-col>
           </b-row>
-          <b-row v-else-if="folderDetail" align-h="center">
+          <b-row v-else-if="folderDetail">
             <b-col>
               <b-row>
                 <b-col>
@@ -73,7 +73,7 @@
               </b-row>
             </b-col>
           </b-row>
-          <b-row v-else align-h="center">
+          <b-row v-else>
             <b-col><h1>No folder selected</h1></b-col>
           </b-row>
         </b-col>
