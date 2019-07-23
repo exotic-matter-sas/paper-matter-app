@@ -17,7 +17,8 @@
       <!-- Right aligned nav items -->
       <b-navbar-nav class="ml-auto">
         <b-nav-form>
-          <b-form-input id="search-input" size="sm" class="m-1" variant="secondary" :placeholder="this.$_('Key words...')"
+          <b-form-input id="search-input" size="sm" class="m-1" variant="secondary"
+                        :placeholder="this.$_('Key words...')"
                         v-model="search"
                         @keydown.enter.prevent="doSearch"></b-form-input>
           <b-button id="search-button" size="sm" class="m-1" variant="secondary" type="button"
@@ -65,14 +66,32 @@
       }
     },
 
+    watch: {
+      '$route'(to, from) {
+        this.update();
+      }
+    },
+
+    mounted() {
+      this.update();
+    },
+
     methods: {
       clear: function () {
         this.search = "";
-        this.doSearch();
+        this.$router.push({name: 'home'})
+      },
+
+      update: function () {
+        if (this.$route.params.search) {
+          this.search = this.$route.params.search;
+        } else {
+          this.search = '';
+        }
       },
 
       doSearch: function () {
-        this.$router.push({name: 'home', query: {q: this.search}})
+        this.$router.push({name: 'home-search', params: {search: this.search}})
       }
     }
   }
