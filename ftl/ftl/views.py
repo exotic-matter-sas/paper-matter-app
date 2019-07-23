@@ -1,6 +1,7 @@
+from django.contrib import messages
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
-from django.views.generic import FormView
+from django.views.generic import FormView, RedirectView
 
 from core.models import FTLOrg, permissions_names_to_objects, FTL_PERMISSIONS_USER
 from ftl.forms import FTLUserCreationForm
@@ -39,3 +40,12 @@ def signup_success(request, org_slug):
     }
 
     return render(request, 'ftl/signup_success.html', context)
+
+
+class SetMessageAndRedirectView(RedirectView):
+    message_type = messages.SUCCESS
+    message = None
+
+    def get(self, request, *args, **kwargs):
+        messages.add_message(request, self.message_type, self.message)
+        return super().get(request, *args, **kwargs)

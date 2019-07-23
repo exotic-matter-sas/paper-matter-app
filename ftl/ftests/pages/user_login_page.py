@@ -13,6 +13,7 @@ class LoginPage(BasePage):
 
     login_success_div = '#app'
     login_failed_div = '#login-form .errorlist'
+    login_messages = '#messages'
 
     password_reset_link = '#password-reset'
 

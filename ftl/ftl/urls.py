@@ -18,9 +18,11 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path, include, re_path, reverse_lazy
 from django.views.generic import RedirectView
+from django.utils.translation import gettext_lazy as _
 
 from ftl import views, view_local_proxy
 from ftl.ftl_setup_middleware import SetupState
+from ftl.views import SetMessageAndRedirectView
 from ftl.views_auth import LoginViewFTL
 
 urlpatterns = [
@@ -42,9 +44,20 @@ urlpatterns = [
     path('password_change/done/', auth_views.PasswordChangeDoneView.as_view(), name='password_change_done'),
 
     path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
-    path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
+    path('password_reset/done/',
+         SetMessageAndRedirectView.as_view(
+             url=reverse_lazy('login'),
+             message=_('We’ve emailed you instructions for setting your password, if an account exists with the email '
+                       'you entered. You should receive them shortly (check your spam folder if that\'s not the case).')
+         ),
+         name='password_reset_done'),
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
-    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete')
+    path('reset/done/',
+         SetMessageAndRedirectView.as_view(
+             url=reverse_lazy('login'),
+             message=_('Your password has been set. You may go ahead and log in now.')
+         ),
+         name='password_reset_complete'),
 ]
 
 if settings.DEBUG:

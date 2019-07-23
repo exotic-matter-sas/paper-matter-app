@@ -72,6 +72,8 @@ class ForgotPasswordTests(LoginPage, ResetPasswordPages):
 
         # User fulfil the password reset form
         self.reset_password_step1(self.user.email)
+        self.assertIn('instructions for setting your password', self.get_elem_text(self.login_messages),
+                      'A confirmation message should tell user to check its emails')
 
         # User received the email with the link to reset its password
         self.assertEqual(len(mail.outbox), 1)
@@ -89,11 +91,13 @@ class ForgotPasswordTests(LoginPage, ResetPasswordPages):
 
         # He click on the password reset link and is invited to set its new password
         self.visit(reset_password_link.group(1), absolute_url=True)
-        self.assertIn('set new password', self.head_title)
+        self.assertIn('new password', self.head_title)
 
         # User set is new password
         new_password = 'reset_a123456!'
         self.reset_password_step2(new_password)
+        self.assertIn('Your password has been set', self.get_elem_text(self.login_messages),
+                      'A confirmation message should tell user than he can login now')
 
         # User is not able to login using its old password
         self.visit(LoginPage.url)
