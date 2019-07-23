@@ -27,8 +27,8 @@ class HomePage(BasePage):
 
     documents_list = '#documents-list'
     documents_thumbnails = '.document-thumbnail'
-    first_document_title = '.document-thumbnail:first-child .document-title span'
-    last_document_title = '.document-thumbnail:last-child .document-title span'
+    first_document_title = '.document-thumbnail:first-child .card-title'
+    last_document_title = '.document-thumbnail:last-child .card-title'
 
     more_documents_button = '#more-documents'
     more_documents_loader = '#more-documents .loader'

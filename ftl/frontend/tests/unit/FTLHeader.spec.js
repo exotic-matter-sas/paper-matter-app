@@ -3,8 +3,7 @@ import {createLocalVue, shallowMount} from '@vue/test-utils';
 import BootstrapVue from "bootstrap-vue";
 
 import * as tv from './../tools/testValues.js'
-
-import FTLNavbar from "../../src/components/FTLNavbar";
+import FTLHeader from "@/components/FTLHeader";
 
 // Create clean Vue instance and set installed package to avoid warning
 const localVue = createLocalVue();
@@ -28,12 +27,12 @@ const mountedMocks = {
   update: mockedUpdate,
 };
 
-describe('FTLNavbar template', () => {
+describe('FTLHeader template', () => {
   let wrapper;
 
   beforeEach(() => {
     // set mocked component methods return value before shallowMount
-    wrapper = shallowMount(FTLNavbar, {
+    wrapper = shallowMount(FTLHeader, {
       localVue,
       propsData: tv.ACCOUNT_PROPS,
       stubs: ['router-link'],
@@ -47,13 +46,13 @@ describe('FTLNavbar template', () => {
   })
 });
 
-describe('FTLNavbar methods call proper methods', () => {
+describe('FTLHeader methods call proper methods', () => {
   let wrapper;
   const testedSearch = 'bingo!';
 
   beforeEach(() => {
     // set mocked component methods return value before shallowMount
-    wrapper = shallowMount(FTLNavbar, {
+    wrapper = shallowMount(FTLHeader, {
       localVue,
       propsData: tv.ACCOUNT_PROPS,
       methods: Object.assign(
@@ -80,7 +79,7 @@ describe('FTLNavbar methods call proper methods', () => {
 
   it('doSearch push search to router', () => {
     // restore original method to test it
-    wrapper.setMethods({doSearch: FTLNavbar.methods.doSearch});
+    wrapper.setMethods({doSearch: FTLHeader.methods.doSearch});
 
     //when
     wrapper.setData({search: testedSearch});

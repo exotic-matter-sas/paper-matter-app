@@ -13,7 +13,7 @@ from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup
 from ftl.settings import DEV_MODE
 
 
-class HomePageTests(LoginPage, HomePage):
+class HomePageTests(LoginPage, HomePage, DocumentViewPage):
     def setUp(self, **kwargs):
         # first org, admin, user are already created, user is already logged on home page
         super().setUp()
@@ -63,9 +63,9 @@ class HomePageTests(LoginPage, HomePage):
         # User click on the first listed document
         self.open_first_document()
         # User can see the pdf inside the pdf viewer
-        pdf_viewer_iframe = self.browser.find_element_by_css_selector('.doc-view-modal iframe')
+        pdf_viewer_iframe = self.get_elem(self.pdf_viewer)
         self.browser.switch_to_frame(pdf_viewer_iframe)
-        pdf_viewer_iframe_title = self.browser.find_element_by_css_selector('title').get_attribute("innerHTML")
+        pdf_viewer_iframe_title = self.get_elem('title', False).get_attribute("innerHTML")
 
         self.assertEqual(pdf_viewer_iframe_title, 'PDF.js viewer')
 
@@ -156,9 +156,9 @@ class HomePageTests(LoginPage, HomePage):
         self.wait_folder_list_loaded()
 
         # User go in folder_a_1 and search for 'bingo!'
-        self.get_elem(self.first_folder_button).click()  # open folder A
+        self.get_elem(self.folders_list_buttons).click()  # open folder A
         self.wait_folder_list_loaded()
-        self.get_elem(self.first_folder_button).click()  # open folder B
+        self.get_elem(self.folders_list_buttons).click()  # open folder B
         self.wait_folder_list_loaded()
         self.search_document('bingo!')
         self.wait_document_list_loaded()
@@ -205,7 +205,7 @@ class HomePageTests(LoginPage, HomePage):
         self.wait_folder_list_loaded()
 
         # User open the folder and then search something that isn't present in its document
-        self.get_elem(self.first_folder_button).click()
+        self.get_elem(self.folders_list_buttons).click()
         self.wait_folder_list_loaded()
         self.search_document('this text doesn\'t exist')
 
@@ -349,7 +349,7 @@ class DocumentViewPageTests(LoginPage, HomePage, DocumentViewPage):
 
         # User open second document through url
         self.visit(DocumentViewPage.url.format(second_document.pid))
-        self.wait_for_elem_text_not_to_be(self.document_title, 'Title: loading')
+        self.wait_for_elem_to_show(self.document_title)
 
         self.assertIn(second_document_title,
                       self.get_elem_text(self.document_title),
@@ -368,11 +368,13 @@ class DocumentViewPageTests(LoginPage, HomePage, DocumentViewPage):
 
         # User open folder and document through url
         self.visit(f'{HomePage.url}#/home/folderFakePath/{folder_c.id}?doc={document.pid}')
-        self.wait_for_elem_text_not_to_be(self.document_title, 'Title: loading')
+        self.wait_for_elem_to_show(self.document_title)
 
         self.assertIn(document_title,
                       self.get_elem_text(self.document_title),
                       'Setup document title should match opened document')
+
+        self.close_last_notification()  # close thumbnail generated notification
 
         # User close document
         self.close_document()

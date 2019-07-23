@@ -1,34 +1,30 @@
 <template>
-  <b-container>
-    <b-row>
-      <b-col>
-        {{this.$_('Upload document')}}
-      </b-col>
-      <b-col md="8">
+  <section>
+    <b-row no-gutters>
+      <b-col cols="12" md="10">
         <b-form-file
           ref="fileUploadField"
           v-model="file"
           :state="Boolean(file)"
-          :placeholder="this.$_('Choose a file...')"
+          :placeholder="this.$_('Upload document')"
           :drop-placeholder="this.$_('Drop file here...')"
           :browse-text="this.$_('Browse')"
         ></b-form-file>
       </b-col>
-      <b-col md="auto">
-        <b-button id="upload-button" variant="primary" :disabled="uploading || !file" @click="uploadDocument">
+      <b-col cols="12" md="2">
+        <b-button class="w-100 mt-2 ml-0 mt-md-0 ml-md-2" id="upload-button" variant="primary" :disabled="uploading || !file" @click="uploadDocument">
           {{this.$_('Upload')}}
         </b-button>
       </b-col>
     </b-row>
-    <b-row align-h="center">
-      <b-col cols="12">
+    <b-row>
+      <b-col>
         <b-progress id="document-upload-loader" :class="{ 'd-none': !uploading }" :max="100" :value="uploadProgress"
                     variant="success"
                     show-progress/>
       </b-col>
     </b-row>
-
-  </b-container>
+  </section>
 </template>
 
 <script>

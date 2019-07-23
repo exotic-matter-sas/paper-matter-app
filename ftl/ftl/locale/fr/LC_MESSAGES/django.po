@@ -49,7 +49,7 @@ msgstr "Votre compte a été créé, consultez vos emails pour l'activer."
 
 #: ftl/templates/ftl/signup_success.html:14
 msgid "Login to your account here:"
-msgstr "Connectez-vous à votre compte:"
+msgstr "Connectez-vous à votre compte :"
 
 #: ftl/templates/ftl/signup_success.html:14
 msgid "User login page"

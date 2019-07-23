@@ -1,21 +1,24 @@
 <template>
-  <b-container>
-    <b-row class="m-2">
-      <b-col>
-        <b-button id="generate-missing-thumbnails" variant="primary" @click="generateMissingThumbnail" v-if="thumbnailProgress === 0">Generate missing
-          thumbnail
-        </b-button>
-        <div v-if="thumbnailProgress > 0">
-          <h5 class="mt-3">Thumbnail generation in progress...</h5>
-          <b-progress :max="max" show-progressanimated>
-            <b-progress-bar :value="thumbnailProgress">
-              <strong>{{ thumbnailProgress }} / {{ max }}</strong>
-            </b-progress-bar>
-          </b-progress>
-        </div>
-      </b-col>
-    </b-row>
-  </b-container>
+  <main class="flex-grow">
+    <b-container>
+      <b-row align-h="center" class="m-2 text-center">
+        <b-col>
+          <b-button id="generate-missing-thumbnails" variant="primary" @click="generateMissingThumbnail"
+                    v-if="thumbnailProgress === 0">Generate missing
+            thumbnail
+          </b-button>
+          <div v-if="thumbnailProgress > 0">
+            <h5 class="mt-3">Thumbnail generation in progress...</h5>
+            <b-progress :max="max" show-progressanimated>
+              <b-progress-bar :value="thumbnailProgress">
+                <strong>{{ thumbnailProgress }} / {{ max }}</strong>
+              </b-progress-bar>
+            </b-progress>
+          </div>
+        </b-col>
+      </b-row>
+    </b-container>
+  </main>
 </template>
 
 <script>

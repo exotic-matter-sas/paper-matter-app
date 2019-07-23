@@ -30,11 +30,11 @@ msgstr "addresse email"
 msgid "Home"
 msgstr "Accueil"
 
-#: core/templates/core/home.html:13
+#: core/templates/core/home.html:14
 msgid ""
 "We're sorry but ftl-app will not work without JavaScript enabled. Please "
 "enable it\n"
-"            to continue."
+"                to continue."
 msgstr ""
 "Désolé mais ftl-app ne fonctionne pas sans Javascript, veuillez l'activer "
 "dans votre navigateur."

@@ -17,7 +17,7 @@ localVue.use(BootstrapVue); // avoid bootstrap vue warnings
 localVue.component('font-awesome-icon', jest.fn()); // avoid font awesome warnings
 
 localVue.prototype.$_ = (text) => {return text}; // i18n mock
-localVue.prototype.$moment = () => {return {fromNow: jest.fn()}}; // moment mock
+localVue.prototype.$moment = () => {return {fromNow: jest.fn(), format: jest.fn()}}; // moment mock
 const mockedMixinAlert = jest.fn();
 localVue.mixin({methods: {mixinAlert: mockedMixinAlert}}); // mixinAlert mock
 
@@ -38,18 +38,12 @@ describe('FTLDocument template', () => {
   });
 
   it('renders properly document data', () => {
-    const ignoredProps = [tv.DOCUMENT_PROPS.note, tv.DOCUMENT_PROPS.thumbnail_available];
-
-    Object.values(tv.DOCUMENT_PROPS)
-      .filter((prop) => {
-        // Filter out note and thumbnail_available because they are not shown in template
-        return !ignoredProps.some((val) => {
-          return val === prop;
-        })
-      })
-      .forEach(function (documentData) {
-        expect(wrapper.html()).toContain(documentData)
-      });
+    let document_props_to_test = tv.DOCUMENT_PROPS;
+    delete document_props_to_test.note;
+    delete document_props_to_test.created;
+    Object.values(document_props_to_test).forEach(function(documentData){
+      expect(wrapper.html()).toContain(documentData)
+    })
   });
 });
 
