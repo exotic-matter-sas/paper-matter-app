@@ -183,6 +183,16 @@ ATOMIC_REQUESTS = True
 # Workaround for configuring a preloaded Tika
 os.environ['TIKA_SERVER_JAR'] = pathlib.Path(os.path.join(BASE_DIR, 'vendors', 'tika-server-1.20.jar')).as_uri()
 
+# SMTP EMAIL SERVER conf
+EMAIL_HOST = 'localhost'
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+EMAIL_PORT = 25
+EMAIL_USE_SSL = False
+
+# apply to emails sent by: django.core.mail.mail_admins, django.core.mail.mail_managers
+EMAIL_SUBJECT_PREFIX = ''
+
 # ==================================================
 # No settings under this line
 # Auto import local `settings_local.py` if available
