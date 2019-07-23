@@ -68,14 +68,32 @@
       }
     },
 
+    watch: {
+      '$route'(to, from) {
+        this.update();
+      }
+    },
+
+    mounted() {
+      this.update();
+    },
+
     methods: {
       clear: function () {
         this.search = "";
-        this.doSearch();
+        this.$router.push({name: 'home'})
+      },
+
+      update: function () {
+        if (this.$route.params.search) {
+          this.search = this.$route.params.search;
+        } else {
+          this.search = '';
+        }
       },
 
       doSearch: function () {
-        this.$router.push({name: 'home', query: {q: this.search}})
+        this.$router.push({name: 'home-search', params: {search: this.search}})
       }
     }
   }
@@ -84,23 +102,25 @@
 <style scoped lang="scss">
   @import '../styles/customBootstrap.scss';
 
-  .navbar-brand{
+  .navbar-brand {
     margin-right: 0.5rem;
   }
 
-  .navbar > .navbar-nav{
+  .navbar > .navbar-nav {
     padding-right: 0.5em;
     border-right: 1px solid rgba(255, 255, 255, 0.1);
     margin-right: 1em;
   }
 
-  #search-input{
+  #search-input {
     width: 150px;
-    transition: width 0.5s cubic-bezier(.77,0,.18,1);
+    transition: width 0.5s cubic-bezier(.77, 0, .18, 1);
+
     &:not(:placeholder-shown) {
       width: 33vw;
     }
-    &:invalid{
+
+    &:invalid {
       box-shadow: none;
     }
   }

@@ -11,11 +11,21 @@ const localVue = createLocalVue();
 localVue.use(BootstrapVue); // avoid bootstrap vue warnings
 localVue.component('font-awesome-icon', jest.fn()); // avoid font awesome warnings
 
-localVue.prototype.$_ = (text) => {return text}; // i18n mock
-localVue.prototype.$moment = () => {return {fromNow: jest.fn()}}; // moment mock
+localVue.prototype.$_ = (text) => {
+  return text
+}; // i18n mock
+localVue.prototype.$moment = () => {
+  return {fromNow: jest.fn()}
+}; // moment mock
 localVue.prototype.$router = {push: jest.fn()}; // router mock
+localVue.prototype.$route = {query: jest.fn()}; // router mock
 
 const mockedDoSearch = jest.fn();
+const mockedUpdate = jest.fn();
+
+const mountedMocks = {
+  update: mockedUpdate,
+};
 
 describe('FTLHeader template', () => {
   let wrapper;
@@ -25,7 +35,8 @@ describe('FTLHeader template', () => {
     wrapper = shallowMount(FTLHeader, {
       localVue,
       propsData: tv.ACCOUNT_PROPS,
-      stubs: ['router-link']
+      stubs: ['router-link'],
+      methods: mountedMocks,
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
@@ -44,20 +55,26 @@ describe('FTLHeader methods call proper methods', () => {
     wrapper = shallowMount(FTLHeader, {
       localVue,
       propsData: tv.ACCOUNT_PROPS,
-      methods: { doSearch: mockedDoSearch},
+      methods: Object.assign(
+        {
+          doSearch: mockedDoSearch,
+        },
+        mountedMocks
+      ),
       stubs: ['router-link'],
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
 
-  it('clear call doSearch', () => {
+  it('clear reset search data and push home to router', () => {
     //when
     wrapper.setData({search: testedSearch});
     wrapper.vm.clear();
 
     //then
     expect(wrapper.vm.search).toEqual('');
-    expect(mockedDoSearch).toHaveBeenCalledTimes(1);
+    expect(wrapper.vm.$router.push).toHaveBeenCalledTimes(1);
+    expect(wrapper.vm.$router.push).toHaveBeenCalledWith({name: 'home'});
   });
 
   it('doSearch push search to router', () => {
@@ -70,6 +87,6 @@ describe('FTLHeader methods call proper methods', () => {
 
     //then
     expect(wrapper.vm.$router.push).toHaveBeenCalledTimes(1);
-    expect(wrapper.vm.$router.push).toHaveBeenCalledWith({name: 'home', query: {q: testedSearch}});
+    expect(wrapper.vm.$router.push).toHaveBeenCalledWith({name: 'home-search', params: {search: testedSearch}});
   });
 });

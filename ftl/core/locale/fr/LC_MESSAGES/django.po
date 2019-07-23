@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-11 13:08+0000\n"
+"POT-Creation-Date: 2019-07-17 15:30+0000\n"
 "PO-Revision-Date: 2019-03-05 16:56+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,7 +18,11 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.0.6\n"
 
-#: core/models.py:43
+#: core/error_codes.py:12
+msgid "a folder with this name already exist"
+msgstr "un dossier avec ce nom existe déjà"
+
+#: core/models.py:45
 msgid "email address"
 msgstr "addresse email"
 

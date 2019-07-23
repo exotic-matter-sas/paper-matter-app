@@ -6,17 +6,19 @@ import langid
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 from django.core.files.base import ContentFile
+from django.db import IntegrityError
 from django.db.models import F
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404
 from django.utils.http import http_date
 from django.views import View
-from rest_framework import generics, views
+from rest_framework import generics, views, serializers
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from tika import parser
 
+from core.error_codes import get_api_error
 from core.models import FTLDocument, FTLFolder, FTLModelPermissions
 from core.serializers import FTLDocumentSerializer, FTLFolderSerializer
 
@@ -74,22 +76,20 @@ class FTLDocumentList(generics.ListAPIView):
     def get_queryset(self):
         current_folder = self.request.query_params.get('level', None)
         flat_mode = self.request.query_params.get('flat', False)
+        text_search = self.request.query_params.get('search', None)
 
         queryset = FTLDocument.objects.filter(org=self.request.user.org).order_by('-created')
 
         if not flat_mode:
-            if current_folder is not None and int(current_folder) > 0:
+            if text_search:
+                search_query = SearchQuery(text_search.strip(), config=F('language'))
+                queryset = queryset.annotate(rank=SearchRank(F('tsvector'), search_query)) \
+                    .filter(rank__gte=0.1) \
+                    .order_by('-rank')
+            elif current_folder is not None and int(current_folder) > 0:
                 queryset = queryset.filter(ftl_folder__id=current_folder)
             else:
                 queryset = queryset.filter(ftl_folder__isnull=True)
-
-        text_search = self.request.query_params.get('search')
-
-        if text_search:
-            search_query = SearchQuery(text_search.strip(), config=F('language'))
-            queryset = queryset.annotate(rank=SearchRank(F('tsvector'), search_query)) \
-                .filter(rank__gte=0.1) \
-                .order_by('-rank')
 
         return queryset
 
@@ -185,7 +185,13 @@ class FTLFolderList(generics.ListCreateAPIView):
         return queryset
 
     def perform_create(self, serializer):
-        serializer.save(org=self.request.user.org)
+        try:
+            serializer.save(org=self.request.user.org)
+        except IntegrityError as e:
+            if 'folder_name_unique_for_org_level' in str(e):
+                raise serializers.ValidationError(get_api_error('folder_name_unique_for_org_level'))
+            else:
+                raise
 
 
 class FTLFolderDetail(generics.RetrieveUpdateDestroyAPIView):
