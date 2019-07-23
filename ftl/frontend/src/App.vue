@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" class="d-flex flex-column">
     <FTLHeader :account="account"/>
     <router-view/>
     <FTLFooter/>
@@ -36,6 +36,7 @@
 
 <style>
   #app {
+    min-height: 100vh;
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

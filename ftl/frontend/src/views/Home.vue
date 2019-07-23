@@ -1,5 +1,5 @@
 <template>
-  <main>
+  <main class="flex-grow">
     <b-col>
       <b-row class="my-3">
         <b-col>

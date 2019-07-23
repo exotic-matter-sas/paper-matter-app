@@ -1,5 +1,5 @@
 <template>
-  <main id="folders-mngt">
+  <main id="folders-mngt" class="flex-grow">
     <h1 class="text-center">Organize your folders</h1>
 
     <b-container fluid class="p-3 text-center">
