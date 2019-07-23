@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="d-flex flex-column h-100">
+  <div id="app">
     <FTLHeader :account="account"/>
     <router-view/>
     <FTLFooter/>
