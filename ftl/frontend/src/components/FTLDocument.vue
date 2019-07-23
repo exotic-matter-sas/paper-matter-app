@@ -1,24 +1,13 @@
 <template>
-  <b-col sm="3" :id="doc.pid" class="document-thumbnail">
-    <b-row align-h="center" class="text-truncate document-title">
-      <span @click="openDoc">{{ doc.title }}</span>
-    </b-row>
-    <b-row align-h="center">
-      <b-img thumbnail fluid
-             :src="'/app/api/v1/documents/' + doc.pid + '/thumbnail.png'"
-             class="img-thumbnail"
-             slot="aside"
-             blank-color="#abc"
-             @click="openDoc"
-             onerror="this.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAADICAQAAACgjNDuAAABIElEQVR42u3QAQEAAAgCIP0/ui44ACbQXBhVlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVLlixZsmTJkiVr9/mzyAFGRN6/AAAAAElFTkSuQmCC\n'"/>
-    </b-row>
-    <b-row align-h="center">
-      <span :title="doc.created">{{ $moment(doc.created).fromNow() }}</span>
-    </b-row>
-    <!--    <b-row align-h="center">{{this.$_('Note: ')}}{{ doc.note }}</b-row>-->
-
-    <b-row align-h="center">
-      <b-col>
+  <b-col cols="12" mb="4" sm="6" md="4" lg="3" xl="2" class="document-thumbnail" :id="doc.pid">
+    <div class="card">
+      <div class="card-img-top" slot="aside"
+           :style="{'background-image': 'url(' + '/app/api/v1/documents/' + doc.pid + '/thumbnail.png' + ')'}"
+           @click="$emit('event-open-doc', doc.pid)"></div>
+      <b-card-body>
+        <b-card-title class="text-truncate document-title" @click="$emit('event-open-doc', doc.pid)">
+          {{ doc.title }}
+        </b-card-title>
         <b-button class="m-1" variant="secondary" size="sm" :href="'uploads/' + doc.pid">
           <font-awesome-icon icon="file-download" :alt="this.$_('Download')"/>
         </b-button>
@@ -27,8 +16,11 @@
           <b-spinner :class="{'d-none': !deleting}" small></b-spinner>
           <span :class="{'d-none': deleting}"><font-awesome-icon icon="trash" :alt="this.$_('Delete')"/></span>
         </b-button>
-      </b-col>
-    </b-row>
+      </b-card-body>
+      <b-card-footer :title="$moment(doc.created).format('LLLL')">
+        <small class="text-muted">{{ $moment(doc.created).fromNow() }}</small>
+      </b-card-footer>
+    </div>
   </b-col>
 </template>
 
@@ -85,8 +77,39 @@
   }
 </script>
 
-<style scoped>
-  /*.img-thumbnail {*/
-  /*  max-height: 200px;*/
-  /*}*/
+<style scoped lang="scss">
+  @import '../styles/customBootstrap.scss';
+
+  .document-title {
+    color: map_get($theme-colors, 'primary');
+  }
+
+  .card {
+    border-color: rgba(0, 0, 0, 0.250);
+  }
+
+  .card:hover {
+    border-color: map_get($theme-colors, 'primary');
+  }
+
+  .card-img-top {
+    height: 200px;
+    box-shadow: inset 0 -10px 30px -30px #0A0A0A;
+    background-repeat: no-repeat;
+    background-size: cover;
+    transition: background-position 1.2s cubic-bezier(.68, -0.55, .27, 1.55) 1s,
+    box-shadow 1.2s ease-in-out 1s;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+  }
+
+  .card-title {
+    cursor: pointer;
+    font-size: 1.1rem;
+  }
+
+  .card-img-top:hover {
+    background-position: bottom;
+    box-shadow: inset 0 10px 30px -30px #0A0A0A;
+  }
 </style>
