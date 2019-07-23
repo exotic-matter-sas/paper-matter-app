@@ -1,11 +1,13 @@
+import re
 from unittest import skipIf
 
 from django.core import mail
 
+from ftests.tools import test_values as tv
 from ftests.pages.base_page import NODE_SERVER_RUNNING
 from ftests.pages.home_page import HomePage
 from ftests.pages.user_login_page import LoginPage
-from ftests.pages.user_reset_password_page import ResetPasswordPage
+from ftests.pages.user_reset_password_pages import ResetPasswordPages
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user
 from ftl.settings import DEV_MODE
 
@@ -52,7 +54,7 @@ class LoginPageTests(LoginPage, HomePage):
         self.assertIn('Home', self.browser.title)
 
 
-class ForgotPasswordTests(LoginPage, ResetPasswordPage):
+class ForgotPasswordTests(LoginPage, ResetPasswordPages):
     def setUp(self, **kwargs):
         # first org, admin, user are already created
         super().setUp()
@@ -70,10 +72,37 @@ class ForgotPasswordTests(LoginPage, ResetPasswordPage):
         self.assertIn('Reset password', self.browser.title)
 
         # User fulfil the password reset form
-        self.reset_password(self.user.email)
+        self.reset_password_step1(self.user.email)
 
         # User received the email with the link to reset its password
         self.assertEqual(len(mail.outbox), 1)
         self.assertIn(self.user.email, mail.outbox[0].to)
         self.assertEqual('Set a new password', mail.outbox[0].subject)
-        self.assertRegex(mail.outbox[0].body, 'http://.+/reset/.+/.+/')
+        self.assertRegex(mail.outbox[0].body, 'https?://.+/reset/.+/.+/')
+
+    def test_password_reset_link_working_properly(self):
+        # User already received the reset password email
+        self.visit(ResetPasswordPages.url)
+        self.reset_password_step1(self.user.email)
+        reset_password_link = re.search(r'(https?://.+/reset/.+/.+/)', mail.outbox[0].body)
+        self.assertIsNotNone(reset_password_link,
+                             'Reset password link should be present in password reset email')
+
+        # He click on the password reset link and is invited to set its new password
+        self.visit(reset_password_link.group(1), absolute_url=True)
+        self.assertIn('set new password', self.head_title)
+
+        # User set is new password
+        new_password = 'reset_a123456!'
+        self.reset_password_step2(new_password)
+
+        # User is not able to login using its old password
+        self.visit(LoginPage.url)
+        self.log_user()
+        self.assertIn('username and password', self.get_elem_text(self.login_failed_div),
+                      'User login should failed using its old password')
+
+        # User is able to login using its new password
+        self.log_user(password=new_password)
+        self.assertIsNotNone(self.login_success_div,
+                             'User login should success using new password')

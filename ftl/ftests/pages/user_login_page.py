@@ -16,11 +16,16 @@ class LoginPage(BasePage):
 
     password_reset_link = '#password-reset'
 
-    def log_user(self,  user_num=1):
+    def log_user(self,  user_num=1, username=None, password=None):
         username_input = self.get_elem(self.login_username_input)
         password_input = self.get_elem(self.login_password_input)
         submit_input = self.get_elem(self.login_submit_input)
 
-        username_input.send_keys(getattr(tv, f'USER{user_num}_USERNAME'))
-        password_input.send_keys(getattr(tv, f'USER{user_num}_PASS'))
+        if not username:
+            username = getattr(tv, f'USER{user_num}_USERNAME')
+        if not password:
+            password = getattr(tv, f'USER{user_num}_PASS')
+
+        username_input.send_keys(username)
+        password_input.send_keys(password)
         submit_input.click()
