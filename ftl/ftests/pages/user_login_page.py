@@ -14,6 +14,8 @@ class LoginPage(BasePage):
     login_success_div = '#app'
     login_failed_div = '#login-form .errorlist'
 
+    password_reset_link = '#password-reset'
+
     def log_user(self,  user_num=1):
         username_input = self.get_elem(self.login_username_input)
         password_input = self.get_elem(self.login_password_input)

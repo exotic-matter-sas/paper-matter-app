@@ -25,7 +25,7 @@ else:
 
 def is_node_server_running():
     """
-    Check if Node server is running when launching ftests in DEV mode to display a warning
+    Check if Node server is running
     """
     if DEV_MODE:
         try:
@@ -35,9 +35,10 @@ def is_node_server_running():
             return False
 
 
+# Display a warning if Node server not running during test execution
 NODE_SERVER_RUNNING = is_node_server_running()
+red_message = '\x1b[1;31m{}\033[0m'
 if DEV_MODE and not is_node_server_running():
-    red_message = '\x1b[1;31m{}\033[0m'
     print(red_message.
           format('WARNING: Node server NOT running: all tests relative to JS frontend will be skipped.'))
     input("Run Node server now if you want all tests to be run, press Enter to continue...")
@@ -227,3 +228,11 @@ class BasePage(LIVE_SERVER):
         self.wait_for_elem_to_show(self.notification)
         self.get_elem(self.close_notification).click()
         self.wait_for_elem_to_disappear(self.notification)
+
+    def _finish_test_reminder(self, message='Finish test!', pause_test=False):
+        print(red_message.
+              format(message))
+
+        if pause_test:
+            input(f'Test paused for debugging, press Enter to terminate')
+        self.fail(message)

@@ -1,8 +1,11 @@
-from unittest import skip, skipIf
+from unittest import skipIf
+
+from django.core import mail
 
 from ftests.pages.base_page import NODE_SERVER_RUNNING
 from ftests.pages.home_page import HomePage
 from ftests.pages.user_login_page import LoginPage
+from ftests.pages.user_reset_password_page import ResetPasswordPage
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user
 from ftl.settings import DEV_MODE
 
@@ -48,6 +51,29 @@ class LoginPageTests(LoginPage, HomePage):
         # User is redirected to home page as he is already logged
         self.assertIn('Home', self.browser.title)
 
-    @skip('TODO when implemented in UI')  # TODO
-    def test_password_forgotten(self):
-        pass
+
+class ForgotPasswordTests(LoginPage, ResetPasswordPage):
+    def setUp(self, **kwargs):
+        # first org, admin, user are already created
+        super().setUp()
+        org = setup_org()
+        setup_admin(org=org)
+        # User have already created its account
+        self.user = setup_user(org=org)
+
+    def test_password_forgot_send_email(self):
+        # User want to login
+        self.visit(LoginPage.url)
+
+        # But as he forgot its password he click on the related link
+        self.get_elem(self.password_reset_link).click()
+        self.assertIn('Reset password', self.browser.title)
+
+        # User fulfil the password reset form
+        self.reset_password(self.user.email)
+
+        # User received the email with the link to reset its password
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn(self.user.email, mail.outbox[0].to)
+        self.assertEqual('Set a new password', mail.outbox[0].subject)
+        self.assertRegex(mail.outbox[0].body, 'http://.+/reset/.+/.+/')

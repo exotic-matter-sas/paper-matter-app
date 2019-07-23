@@ -189,7 +189,7 @@ EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
 EMAIL_PORT = 25
 EMAIL_USE_SSL = False
-
+DEFAULT_FROM_EMAIL = 'noreply@localhost.com'
 # apply to emails sent by: django.core.mail.mail_admins, django.core.mail.mail_managers
 EMAIL_SUBJECT_PREFIX = ''
 
