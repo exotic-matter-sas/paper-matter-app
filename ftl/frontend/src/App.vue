@@ -1,9 +1,9 @@
 <template>
-  <body id="app" class="d-flex flex-column  h-100">
+  <div id="app" class="d-flex flex-column h-100">
     <FTLHeader :account="account"/>
     <router-view/>
     <FTLFooter/>
-  </body>
+  </div>
 </template>
 
 <script>

@@ -28,10 +28,8 @@
           </b-button>
           <FTLFolder v-for="folder in folders" :key="folder.id" :folder="folder"
                      @event-change-folder="navigateToFolder"/>
-            </div>
         </b-col>
       </b-row>
-        </b-row>
 
       <b-row class="my-3" id="documents-list">
         <b-col v-if="docsLoading">
@@ -61,7 +59,7 @@
                :title="currentOpenDoc.title"
                hide-footer
                centered
-               @close="closeDocument">
+               @hidden="closeDocument">
         <b-container class="h-100">
           <b-row class="h-100">
             <b-col md="8">
@@ -329,7 +327,6 @@
         this.currentOpenDoc = {};
         this.$router.push({path: this.$route.path});
       },
-
 
       refreshDocumentWithSearch: function (text) {
         this.currentSearch = text;

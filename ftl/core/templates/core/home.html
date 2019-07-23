@@ -10,11 +10,12 @@
 {% endblock %}
 
 {% block body %}
-    <body id="app">
-        <noscript>
-            <strong>{% blocktrans %}We're sorry but ftl-app will not work without JavaScript enabled. Please enable it
-                to continue.{% endblocktrans %}</strong>
-        </noscript>
+    <body>
+    <noscript>
+        <strong>{% blocktrans %}We're sorry but ftl-app will not work without JavaScript enabled. Please enable it
+            to continue.{% endblocktrans %}</strong>
+    </noscript>
+    <div id="app"></div>
     </body>
     {% render_bundle 'app' 'js' %}
 {% endblock %}
