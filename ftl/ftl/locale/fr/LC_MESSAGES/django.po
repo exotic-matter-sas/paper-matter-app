@@ -167,12 +167,11 @@ msgid ""
 "exists with the email you entered. You should receive them shortly (check "
 "your spam folder if that's not the case)."
 msgstr ""
-"Nous vous avons envoyé par email les instruction pour réinitialiser votre "
-"mot de passe,si l'email indiqué correspond à un compte. Vous devriez le "
-"recevoir rapidement (vérifiez votre dossier spam si ce n'est pas le cas)."
+"Si l'email indiqué correspond à un compte, des instructions pour réinitialiser votre "
+"mot de passe vous ont été envoyées . Vous devriez les recevoir rapidement (vérifiez "
+"votre dossier spam si ce n'est pas le cas)."
 
 #: ftl/urls.py:58
-#, fuzzy
 #| msgid "Your password has been set.  You may go ahead and log in now."
 msgid "Your password has been set. You may go ahead and log in now."
 msgstr ""
