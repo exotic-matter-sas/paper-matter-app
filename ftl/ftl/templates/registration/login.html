@@ -9,23 +9,27 @@
         <main class="col pb-3 order-md-2 pb-md-0">
             <div id="main-with-aside" class="row align-items-center">
                 <div class="col">
-                    <form id="login-form" action="{{ app_path }}" method="post" >
+                    <form id="login-form" action="{{ app_path }}" method="post">
                         <h1 class="text-primary">{% trans 'Login' %}</h1>
 
                         {% csrf_token %}
 
                         <div class="form-label-group">
-                          <input type="text" name="username" id="id_username" class="form-control" placeholder="{% trans 'Username' %}" required="" autofocus="">
-                          <label for="inputEmail">{% trans 'Username' %}</label>
+                            <input type="text" name="username" id="id_username" class="form-control"
+                                   placeholder="{% trans 'Username' %}" required="" autofocus="">
+                            <label for="inputEmail">{% trans 'Username' %}</label>
                         </div>
                         {% if form.username.errors %}
                             <div class="alert alert-danger">{{ form.username.errors }}</div>
                         {% endif %}
 
                         <div class="form-label-group">
-                          <input type="password" name="password" id="id_password" class="form-control" placeholder="{% trans 'Password' %}" required="">
-                          <label for="inputPassword">{% trans 'Password' %}</label>
+                            <input type="password" name="password" id="id_password" class="form-control"
+                                   placeholder="{% trans 'Password' %}" required="">
+                            <label for="inputPassword">{% trans 'Password' %}</label>
+                            <a class="mt-1 d-block" href="{% url 'password_reset' %}" id="password-reset">{% trans "Forgot password?" %}</a>
                         </div>
+
                         {% if form.password.errors %}
                             <div class="alert alert-danger">{{ form.password.errors }}</div>
                         {% endif %}
