@@ -156,9 +156,9 @@ class HomePageTests(LoginPage, HomePage, DocumentViewPage):
         self.wait_folder_list_loaded()
 
         # User go in folder_a_1 and search for 'bingo!'
-        self.get_elem(self.first_folder_button).click()  # open folder A
+        self.get_elem(self.folders_list_buttons).click()  # open folder A
         self.wait_folder_list_loaded()
-        self.get_elem(self.first_folder_button).click()  # open folder B
+        self.get_elem(self.folders_list_buttons).click()  # open folder B
         self.wait_folder_list_loaded()
         self.search_document('bingo!')
         self.wait_document_list_loaded()
@@ -205,7 +205,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewPage):
         self.wait_folder_list_loaded()
 
         # User open the folder and then search something that isn't present in its document
-        self.get_elem(self.first_folder_button).click()
+        self.get_elem(self.folders_list_buttons).click()
         self.wait_folder_list_loaded()
         self.search_document('this text doesn\'t exist')
 
