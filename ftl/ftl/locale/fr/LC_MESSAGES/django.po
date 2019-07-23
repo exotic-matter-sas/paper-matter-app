@@ -168,7 +168,7 @@ msgid ""
 "your spam folder if that's not the case)."
 msgstr ""
 "Si l'email indiqué correspond à un compte, des instructions pour réinitialiser votre "
-"mot de passe vous ont été envoyées . Vous devriez les recevoir rapidement (vérifiez "
+"mot de passe vous ont été envoyées. Vous devriez les recevoir rapidement (vérifiez "
 "votre dossier spam si ce n'est pas le cas)."
 
 #: ftl/urls.py:58
