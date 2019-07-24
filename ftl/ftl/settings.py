@@ -26,7 +26,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'q-2%l!knv+331nqu&ypc+gv&85nd$9*1g1max3692uxfu_!7w8'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -208,5 +208,8 @@ MESSAGE_TAGS = {
 # Auto import local `settings_local.py` if available
 try:
     from .settings_local import *
-except ImportError:
+    print('Imported local setting')
+except ImportError as e:
+    print(e)
+    print('No local setting')
     pass
