@@ -13,7 +13,7 @@ from core.models import FTLFolder, FTLDocument, FTLUser
 
 
 class Command(BaseCommand):
-    help = 'Mass import documents to FTL'
+    help = 'Mass import PDF documents and folder tree to FTL'
     user = None
 
     def add_arguments(self, parser):
@@ -35,7 +35,7 @@ class Command(BaseCommand):
         self.user = FTLUser.objects.get(username=options['username'])
 
         start_time = time.time()
-        count = self._explore(options['path'])
+        count = self._explore_and_import(options['path'])
         end_time = time.time()
 
         self.stdout.write(
@@ -51,28 +51,28 @@ class Command(BaseCommand):
             )
         )
 
-    def _explore(self, path, ftl_parent_folder=None, count=0):
-        current = os.scandir(path)
+    def _explore_and_import(self, path, ftl_parent_folder=None, count=0):
+        items_to_import = os.scandir(path)
         _count = count
 
-        for directory in current:
-            if directory.is_dir():
+        for item in items_to_import:
+            if item.is_dir():
                 folder = FTLFolder()
-                folder.name = directory.name
+                folder.name = item.name
                 folder.parent = ftl_parent_folder
                 folder.org = self.user.org
                 folder.save()
 
                 self.stdout.write(
                     self.style.SUCCESS(
-                        _('Created folder %(name)s') % {'name': directory.name}
+                        _('Created folder %(name)s') % {'name': item.name}
                     )
                 )
 
-                _count += self._explore(directory.path, folder, count)
+                _count += self._explore_and_import(item.path, folder, count)
 
-            elif directory.is_file():
-                file = directory
+            elif item.is_file():
+                file = item
 
                 if pathlib.Path(file.path).suffix.lower() == '.pdf':
                     self.stdout.write(
