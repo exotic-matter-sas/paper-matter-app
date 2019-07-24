@@ -2,21 +2,19 @@ import { shallowMount, createLocalVue } from '@vue/test-utils';
 
 import BootstrapVue from "bootstrap-vue";
 
-import * as tv from './../tools/testValues.js'
-import FTLNavbar from "../../src/components/FTLNavbar";
+import FTLFooter from "@/components/FTLFooter";
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue); // to avoid warning on tests execution
 localVue.prototype.$_ = (text) => { return text; }; // i18n mock
 
 
-describe('FTLNavbar template', () => {
-  const wrapper = shallowMount(FTLNavbar, {
-    localVue: localVue,
-    propsData: tv.ACCOUNT_PROPS
+describe('FTLFooter template', () => {
+  const wrapper = shallowMount(FTLFooter, {
+    localVue: localVue
   });
 
   it('renders properly account name', () => {
-    expect(wrapper.text()).toMatch('Jon Snow')
+    expect(wrapper.text()).toContain('Made with ❤ by', 'Exotic Matter')
   })
 });

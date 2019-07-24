@@ -2,10 +2,10 @@ $em-purple: #313851;
 $em-orange: #f99947;
 
 $theme-colors: (
-  "primary": lighten($em-purple, 28%),
-  "secondary": #ced4da,
-  "dark": $em-purple,
-  "active": darken($em-orange, 10%)
+    "primary": lighten($em-purple, 28%),
+    "secondary": #ced4da,
+    "dark": $em-purple,
+    "active": darken($em-orange, 10%)
 );
 
 $breadcrumb-divider: quote(">");
@@ -13,7 +13,11 @@ $breadcrumb-divider: quote(">");
 @import '../../node_modules/bootstrap/scss/bootstrap';
 @import '../../node_modules/bootstrap-vue/src/index';
 
-#main-with-aside{
+body {
+    background: $light;
+}
+
+#main-with-aside {
     width: 100%;
     max-width: 520px;
     padding: 15px;
@@ -21,9 +25,9 @@ $breadcrumb-divider: quote(">");
 }
 
 @include media-breakpoint-up(md) {
-  #main-with-aside {
-    min-height: 100vh;
-  }
+    #main-with-aside {
+        min-height: 100vh;
+    }
 }
 
 .highlight {
@@ -36,19 +40,19 @@ $breadcrumb-divider: quote(">");
     font-weight: bold;
     font-size: 0.8em;
 
-    .active{
+    .active {
         color: map_get($theme-colors, 'active');
     }
 
-    .active + li{
+    .active + li {
         color: $gray-700;
         font-weight: normal;
     }
 }
 
 // LOGIN PAGE
-
-#login-form{
+// ==========
+#login-form {
     .form-label-group {
         position: relative;
         margin-bottom: 1rem;
@@ -87,19 +91,19 @@ $breadcrumb-divider: quote(">");
         }
     }
 
-    ul{
+    ul {
         list-style: none;
         padding-left: 0;
         text-align: justify;
         margin-bottom: 0;
     }
 
-    .alert-danger li{
+    .alert-danger li {
         border-top: 1px solid lighten($danger, 20%);
         margin-top: 0.5em;
         padding-top: 0.5em;
 
-        &:first-child{
+        &:first-child {
             margin-top: 0;
             padding-top: 0;
             border-top: none;
@@ -107,39 +111,86 @@ $breadcrumb-divider: quote(">");
     }
 }
 
-#login-page-illustration img{
+#login-page-illustration img {
     max-width: 410px;
 }
 
 @include media-breakpoint-up(md) {
-  #login-page-illustration {
-    min-height: 100vh;
-  }
+    #login-page-illustration {
+        min-height: 100vh;
+    }
 }
 
-// SETUP PAGES + SIGNUP PAGE
-
-#organization-form, #admin-form, #user-form {
+// SETUP PAGES + SIGNUP PAGE + RESET PASSWORD PAGES
+// ==========
+#organization-form, #admin-form, #user-form, #password-reset-form,
+#password-reset-confirm{
     label {
-        color:  map_get($theme-colors, 'primary');
+        color: map_get($theme-colors, 'primary');
         display: block;
     }
+
     input {
         display: block;
         margin-bottom: 1em;
         width: 100%;
     }
-    br{
+
+    br {
         display: none;
     }
-    .helptext{
-        font-size:0.9em;
+
+    .helptext {
+        font-size: 0.9em;
         display: block;
         color: $gray-700;
         font-style: italic;
         margin-bottom: 1em;
     }
-    .errorlist{
-        color:$danger
+
+    .errorlist {
+        color: $danger
+    }
+}
+
+
+// HOME PAGE
+// ==========
+
+#app {
+    header {
+        position: sticky;
+        top: 0;
+        z-index: $zindex-sticky;
+    }
+
+    footer {
+        background: $gray-200;
+    }
+
+    input {
+        background: $light;
+    }
+}
+
+// Home.vue document modal
+
+$document-viewer-padding: 2em;
+
+#document-viewer {
+    .container {
+        max-width: none;
+    }
+
+    .modal-dialog {
+        width: 100vw;
+        height: 100vh;
+        max-width: none;
+        padding: $document-viewer-padding;
+        margin: 0;
+    }
+
+    .modal-content {
+        height: calc(100vh - (#{$document-viewer-padding} * 2));
     }
 }

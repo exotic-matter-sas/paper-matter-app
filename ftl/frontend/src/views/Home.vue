@@ -1,118 +1,88 @@
 <template>
-  <div>
-    <section>
-      <b-container>
-        <b-row>
-          <b-col>
-            <FTLUpload :currentFolder="getCurrentFolder" @event-new-upload="updateDocuments"/>
-          </b-col>
-        </b-row>
-        <b-row>
-          <b-col>
-            <b-button id="generate-thumb" variant="primary" class="m-1" @click="generateMissingThumbnail">
-              {{this.$_('Generate missing thumb')}}
-            </b-button>
-            <b-button id="refresh-documents" variant="primary" class="m-1" @click="updateDocuments">
-              {{this.$_('Refresh documents list')}}
-            </b-button>
-            {{ this.$_('Last refresh') }} {{ lastRefreshFormatted }}
-          </b-col>
-        </b-row>
-      </b-container>
-    </section>
+  <main class="flex-grow">
+    <b-col>
+      <b-row class="my-3">
+        <b-col>
+          <FTLUpload :currentFolder="getCurrentFolder" @event-new-upload="updateDocuments"/>
+        </b-col>
+      </b-row>
 
-    <section>
-      <b-container>
-        <b-row>
-          <b-button variant="primary" class="m-1" v-if="previousLevels.length"
-                    @click="changeToPreviousFolder">
-            Up
+      <b-row class="my-3" id="breadcrumb">
+        <b-col>
+          <b-breadcrumb class="m-0" :items="breadcrumb"/>
+        </b-col>
+      </b-row>
+
+      <b-row class="my-3" id="folders-list">
+        <b-col>
+          <b-button id="refresh-documents" :disabled="docsLoading" variant="primary" class="m-1" @click="refreshAll">
+            <font-awesome-icon icon="sync" :spin="docsLoading" :class="{ 'stop-spin':!docsLoading }"
+                               :title="$_('Refresh documents list')"/>
           </b-button>
-          <b-button v-else variant="primary" class="m-1" disabled>Up</b-button>
+          <b-button id="create-folder" class="m-1" variant="primary" v-b-modal="'modal-new-folder'">
+            <font-awesome-icon icon="folder-plus" :title="$_('Create new folder')"/>
+          </b-button>
+          <b-button variant="primary" class="m-1" :disabled="!previousLevels.length"
+                    @click="changeToPreviousFolder">
+            <font-awesome-icon icon="level-up-alt"/>
+          </b-button>
           <FTLFolder v-for="folder in folders" :key="folder.id" :folder="folder"
                      @event-change-folder="navigateToFolder"/>
-          <b-button id="create-folder" class="m-1" variant="outline-primary" size="sm"
-                    @click.prevent="newFolderModal = true">
-            {{ this.$_('Create new folder') }}
+        </b-col>
+      </b-row>
+
+      <b-row class="my-3" id="documents-list">
+        <b-col v-if="docsLoading">
+          <b-spinner class="mx-auto" id="documents-list-loader"
+                     label="Loading..."></b-spinner>
+        </b-col>
+        <b-col v-else-if="docs.length">
+          <section class="row">
+            <FTLDocument v-for="doc in docs" :key="doc.pid" :doc="doc" @event-delete-doc="updateDocuments"
+                         @event-open-doc="navigateToDocument"/>
+          </section>
+        </b-col>
+        <b-col v-else class="text-center">{{ this.$_('No document yet') }}</b-col>
+      </b-row>
+
+      <b-row v-if="moreDocs" align-h="center" class="my-3">
+        <b-col>
+          <b-button id="more-documents" block variant="secondary" @click.prevent="loadMoreDocuments">
+            <b-spinner class="loader" :class="{'d-none': !moreDocsLoading}" small></b-spinner>
+            <span :class="{'d-none': moreDocsLoading}">{{ this.$_('Load more') }}</span>
           </b-button>
-        </b-row>
-      </b-container>
-    </section>
+        </b-col>
+      </b-row>
 
-    <section id="documents-list">
-      <b-container>
-        <b-row v-if="docLoading">
-          <b-col>
-            <b-spinner id="documents-list-loader" style="width: 3rem; height: 3rem;" class="m-5"
-                       label="Loading..."></b-spinner>
-          </b-col>
-        </b-row>
-        <b-row align-h="around" v-else-if="docs.length">
-          <FTLDocument v-for="doc in docs" :key="doc.pid" :doc="doc" @event-delete-doc="updateDocuments"
-                       @event-open-doc="openDocument"/>
-        </b-row>
-        <b-row v-else>
-          <b-col>{{ this.$_('No document yet') }}</b-col>
-        </b-row>
-      </b-container>
-    </section>
+      <!-- Pdf viewer popup -->
+      <b-modal id="document-viewer"
+               :title="currentOpenDoc.title"
+               hide-footer
+               centered
+               @hidden="closeDocument">
+        <b-container class="h-100">
+          <b-row class="h-100">
+            <b-col md="8">
+              <div class="h-100 embed-responsive doc-pdf ">
+                <iframe v-if="currentOpenDoc.pid" class="embed-responsive-item"
+                        :src="`/assets/pdfjs/web/viewer.html?file=/app/uploads/` + currentOpenDoc.pid + `#search=` + currentSearch">
+                </iframe>
+              </div>
+            </b-col>
+            <b-col md="4" class="d-none d-md-block">
+              <b-row>AAA</b-row>
+              <b-row>BBB</b-row>
+              <b-row>CCC</b-row>
+            </b-col>
+          </b-row>
+        </b-container>
+      </b-modal>
 
-
-    <!-- Pdf viewer popup -->
-    <div v-if="docModal" class="doc-view-modal" :class="{open: docModal}">
-      <b-container>
-        <b-row>
-          <b-col md="10">
-            <span id="document-title">{{ this.$_('Title:') }} {{ currentOpenDoc.title }}</span>
-          </b-col>
-          <b-col>
-            <b-button id="close-document" variant="secondary" @click="closeDocument">{{this.$_('Close')}}</b-button>
-          </b-col>
-        </b-row>
-
-      </b-container>
-      <b-container>
-        <b-row scr>
-          <b-col md="8">
-            <div class="embed-responsive embed-responsive-1by1 doc-pdf ">
-              <iframe v-if="currentOpenDoc.pid" class="embed-responsive-item"
-                      :src="`/assets/pdfjs/web/viewer.html?file=/app/uploads/` + currentOpenDoc.pid + `#search=` + currentSearch">
-              </iframe>
-            </div>
-          </b-col>
-          <b-col>
-            <b-row>AAA</b-row>
-            <b-row>BBB</b-row>
-            <b-row>CCC</b-row>
-          </b-col>
-        </b-row>
-      </b-container>
-      <b-container>
-        <b-row align-h="end">
-          <b-col cols="2">
-            <b-button variant="secondary" @click="closeDocument">{{this.$_('Close')}}</b-button>
-          </b-col>
-        </b-row>
-      </b-container>
-    </div>
-
-    <b-modal v-if="newFolderModal" v-model="newFolderModal" @ok="createNewFolder"
-             :ok-disabled="newFolderName === ''"
-             :cancel-title="this.$_('Cancel')"
-             :ok-title="this.$_('Create')">
-      <span slot="modal-title">{{ this.$_('Create a new folder') }}</span>
-      <b-container>
-        <!-- TODO add current folder name to title -->
-        <b-form-group
-          id="fieldset-new-folder"
-          :description="this.$_('The name of the folder')"
-          :label="this.$_('The folder will be created in the current folder.')"
-          label-for="new-folder">
-          <b-form-input id="new-folder" v-model="newFolderName" trim></b-form-input>
-        </b-form-group>
-      </b-container>
-    </b-modal>
-  </div>
+      <FTLNewFolder
+        :parent="getCurrentFolder"
+        @event-folder-created="folderCreated"/>
+    </b-col>
+  </main>
 </template>
 
 <script>
@@ -120,20 +90,23 @@
   import FTLFolder from '@/components/FTLFolder.vue';
   import FTLDocument from '@/components/FTLDocument';
   import FTLUpload from '@/components/FTLUpload';
+  import FTLNewFolder from "@/components/FTLNewFolder";
+  import FTLThumbnailGenMixin from "@/components/FTLThumbnailGenMixin";
   import axios from 'axios';
   import qs from 'qs';
-  import {createThumbFromUrl} from "@/thumbnailGenerator";
-  import {axiosConfig} from "@/constants";
 
   export default {
     name: 'home',
+    mixins: [FTLThumbnailGenMixin],
+
     components: {
+      FTLNewFolder,
       FTLFolder,
       FTLDocument,
       FTLUpload
     },
 
-    props: ['searchQuery', 'doc', 'paths', 'folder'],
+    props: ['searchQuery', 'doc', 'folder'],
 
     data() {
       return {
@@ -143,18 +116,16 @@
         docModal: false,
         lastRefresh: Date.now(),
         currentSearch: "",
-        docLoading: false,
+        docsLoading: false,
+        moreDocsLoading: false,
+        moreDocs: null,
 
         // Folders list and breadcrumb
         folders: [],
         previousLevels: [],
 
-        // Create folder data
-        newFolderName: '',
-        newFolderModal: false,
-
         // PDF viewer
-        currentOpenDoc: {title: 'loading'},
+        currentOpenDoc: {},
         publicPath: process.env.BASE_URL
       }
     },
@@ -184,24 +155,30 @@
 
     watch: {
       searchQuery: function (newVal, oldVal) {
-        this.refreshDocumentWithSearch(newVal);
+        if (newVal !== oldVal) {
+          this.refreshDocumentWithSearch(newVal);
+        }
       },
       doc: function (newVal, oldVal) {
         if (newVal === undefined) {
           this.docModal = false;
         } else {
-          this.openDocument(newVal);
+          if (newVal !== oldVal) {
+            this.openDocument(newVal);
+          }
         }
       },
       folder: function (newVal, oldVal) {
-        // Detect navigation in folders
-        if (newVal === undefined) {
-          // Root folder
-          this.changeFolder()
-        } else {
+        if (this.$route.name === 'home') {
+          // Coming back to home so clear everything and reload from root folder
+          this.changeFolder();
+        } else if (this.$route.name === 'home-folder') {
+          // This is navigation between folders
           if (newVal !== oldVal) {
             this.updateFoldersPath(newVal, true);
           }
+        } else if (this.$route.name === 'home-search') {
+          // Do something? Nothing for now
         }
       }
     },
@@ -218,6 +195,25 @@
           return null;
         }
       },
+
+      breadcrumb: function () {
+        const vi = this;
+        let paths = [];
+
+        paths.push({
+          text: this.$_('Root'),
+          to: {name: 'home'}
+        });
+
+        return paths.concat(this.previousLevels.map((e) => {
+          return {
+            text: e.name,
+            to: {
+              path: '/home/' + vi.computeFolderUrlPath(e.id)
+            }
+          }
+        }));
+      }
     },
 
     methods: {
@@ -241,6 +237,11 @@
         this.updateFolders(this.getCurrentFolder);
       },
 
+      refreshAll: function () {
+        this.refreshFolders();
+        this.updateDocuments();
+      },
+
       changeFolder: function (folder = null) {
         this.currentSearch = "";
         if (folder === null) {
@@ -252,6 +253,7 @@
 
       navigateToFolder: function (folder) {
         if (folder) this.previousLevels.push(folder);
+        this.currentSearch = "";
         this.$router.push({path: '/home/' + this.computeFolderUrlPath(folder.id)})
       },
 
@@ -289,11 +291,17 @@
           });
       },
 
+      navigateToDocument: function (pid) {
+        this.$router.push({query: {doc: pid}});
+      },
+
       openDocument: function (pid) {
         const vi = this;
 
         this.docPid = pid;
         this.docModal = true;
+
+        this.$bvModal.show('document-viewer');
 
         axios
           .get('/app/api/v1/documents/' + pid)
@@ -301,9 +309,12 @@
             vi.currentOpenDoc = response.data;
 
             if (!response.data.thumbnail_available) {
-              vi.createThumbnailForDocument(response.data);
+              vi.createThumbnailForDocument(response.data)
+                .then(response => {
+                  vi.mixinAlert("Thumbnail updated!");
+                })
+                .catch(error => vi.mixinAlert("Unable to create thumbnail", true));
             }
-            vi.$router.push({path: '/home/' + vi.computeFolderUrlPath(), query: {doc: pid}});
           })
           .catch(error => {
             vi.mixinAlert("Unable to show document.", true)
@@ -313,29 +324,8 @@
       closeDocument: function () {
         this.docModal = false;
         this.docPid = null;
-        this.$router.push({path: '/home/' + this.computeFolderUrlPath()});
-      },
-
-      createThumbnailForDocument: async function (doc, updateDocuments = true) {
-        const vi = this;
-        let thumb64;
-
-        try {
-          thumb64 = await createThumbFromUrl('/app/uploads/' + doc.pid);
-        } catch (e) {
-          vi.mixinAlert("Unable to update thumbnail", true);
-          return;
-        }
-
-        let jsonData = {'thumbnail_binary': thumb64};
-
-        axios.patch('/app/api/v1/documents/' + doc.pid, jsonData, axiosConfig)
-          .then(response => {
-            vi.mixinAlert("Thumbnail updated!");
-            if (updateDocuments) {
-              vi.updateDocuments();
-            }
-          }).catch(error => vi.mixinAlert("Unable to update thumbnail", true));
+        this.currentOpenDoc = {};
+        this.$router.push({path: this.$route.path});
       },
 
       refreshDocumentWithSearch: function (text) {
@@ -347,31 +337,47 @@
         this.refreshDocumentWithSearch("");
       },
 
-      updateDocuments: function () {
+      loadMoreDocuments: function () {
         const vi = this;
+        this.moreDocsLoading = true;
+        axios
+          .get(this.moreDocs)
+          .then(response => {
+            this.moreDocsLoading = false;
+            vi.docs = vi.docs.concat(response.data['results']);
+            vi.moreDocs = response.data['next'];
+            vi.lastRefresh = Date.now();
+          }).catch(error => {
+          this.moreDocsLoading = false;
+          vi.mixinAlert("Unable to load more document.", true);
+        });
+      },
+
+      updateDocuments: function () {
         let queryString = {};
 
-        if (vi.previousLevels.length > 0) {
-          queryString['level'] = this.getCurrentFolder.id;
-        }
-
-        if (vi.currentSearch !== null && vi.currentSearch !== "") {
-          queryString['search'] = vi.currentSearch;
+        if (this.currentSearch !== null && this.currentSearch !== "") {
+          queryString['search'] = this.currentSearch;
+        } else {
+          if (this.previousLevels.length > 0) {
+            queryString['level'] = this.getCurrentFolder.id;
+          }
         }
 
         let strQueryString = '?' + qs.stringify(queryString);
 
-        this.docLoading = true;
+        this.docsLoading = true;
 
         axios
           .get('/app/api/v1/documents/' + strQueryString)
           .then(response => {
-            this.docLoading = false;
-            vi.docs = response.data['results'];
-            vi.lastRefresh = Date.now();
+            this.docsLoading = false;
+            this.docs = response.data['results'];
+            this.moreDocs = response.data['next'];
+            this.lastRefresh = Date.now();
           }).catch(error => {
-          this.docLoading = false;
-          vi.mixinAlert("Unable to refresh documents list.", true);
+          this.docsLoading = false;
+          this.mixinAlert("Unable to refresh documents list.", true);
         });
       },
 
@@ -393,80 +399,38 @@
           }).catch(error => vi.mixinAlert("Unable to refresh folders list", true));
       },
 
-      createNewFolder: function () {
-        const vi = this;
-        let parent = null;
-
-        if (vi.previousLevels.length > 0) {
-          parent = vi.previousLevels[vi.previousLevels.length - 1].id;
-        }
-
-        let postBody = {name: vi.newFolderName, parent: parent};
-
-        axios
-          .post("/app/api/v1/folders/", postBody, axiosConfig)
-          .then(() => {
-            // TODO flash the new folder when just created
-            vi.mixinAlert(vi.$_("Folder %s created", [vi.newFolderName]));
-            vi.newFolderName = '';
-            vi.refreshFolders();
-          }).catch(error => vi.mixinAlert("Unable to create new folder.", true));
+      folderCreated: function (folder) {
+        this.refreshFolders();
       },
-
-      generateMissingThumbnail: function () {
-        const vi = this;
-        vi.mixinAlert("Updating thumbnail");
-
-        axios.get("/app/api/v1/documents?flat=true")
-          .then(async response => {
-            let documents = response.data;
-
-            while (documents !== null && documents.results.length > 0) {
-              for (const doc of documents.results) {
-                if (doc['thumbnail_available'] === false) {
-                  await vi.createThumbnailForDocument(doc, false);
-                }
-              }
-
-              if (documents.next == null) {
-                documents = null;
-              } else {
-                let resp = await axios.get(documents.next);
-                documents = await resp.data;
-              }
-            }
-          })
-          .catch(error => {
-            vi.mixinAlert("An error occurred while updating thumbnail", true)
-          })
-          .then(() => {
-            vi.mixinAlert("Finished updating thumbnail");
-          });
-      }
     }
   }
 </script>
 
-<style scoped>
-  /* PDF.js viewer custom css */
-  .doc-view-modal {
-    display: none;
-    height: 100%;
-    left: 0;
-    position: fixed;
-    top: 0;
-    width: 100%;
-    background: white;
-    z-index: 1000;
-    padding: 20px;
+<style scoped lang="scss">
+  @import '../styles/customBootstrap.scss';
+
+  #documents-list-loader {
+    width: 3em;
+    height: 3em;
+    display: block;
   }
 
-  .doc-view-modal {
-    display: flex;
-    flex-direction: column;
+  #folders-list, #breadcrumb {
+    padding: 0 15px;
   }
 
-  .doc-pdf {
-    padding-top: 100%;
+  #folders-list button, #folders-list button {
+    margin-left: 0 !important;
+    margin-right: 0.5rem !important;
+  }
+
+  .stop-spin {
+    animation: unspin 0.5s 1 ease-out;
+  }
+
+  @keyframes unspin {
+    to {
+      transform: rotate(-0.5turn);
+    }
   }
 </style>

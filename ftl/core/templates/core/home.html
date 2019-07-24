@@ -5,15 +5,17 @@
 {% block title %}{% trans 'Home' %}{% endblock %}
 {% block head %}
     {{ ftl_account|json_script:"ftlAccount" }}
+    {{ request.LANGUAGE_CODE|json_script:"locale" }}
     <script type="text/javascript" src="{% url 'javascript-catalog' %}"></script>
 {% endblock %}
 
-{% block main %}
+{% block body %}
+    <body>
     <noscript>
         <strong>{% blocktrans %}We're sorry but ftl-app will not work without JavaScript enabled. Please enable it
             to continue.{% endblocktrans %}</strong>
     </noscript>
-
     <div id="app"></div>
+    </body>
     {% render_bundle 'app' 'js' %}
 {% endblock %}

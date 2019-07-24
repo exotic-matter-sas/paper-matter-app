@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-20 08:56+0000\n"
+"POT-Creation-Date: 2019-07-23 16:07+0000\n"
 "PO-Revision-Date: 2019-03-05 16:56+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,7 +18,11 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.0.6\n"
 
-#: core/models.py:42
+#: core/error_codes.py:12
+msgid "a folder with this name already exist"
+msgstr "un dossier avec ce nom existe déjà"
+
+#: core/models.py:45
 msgid "email address"
 msgstr "addresse email"
 
@@ -26,11 +30,11 @@ msgstr "addresse email"
 msgid "Home"
 msgstr "Accueil"
 
-#: core/templates/core/home.html:13
+#: core/templates/core/home.html:14
 msgid ""
 "We're sorry but ftl-app will not work without JavaScript enabled. Please "
 "enable it\n"
-"            to continue."
+"                to continue."
 msgstr ""
 "Désolé mais ftl-app ne fonctionne pas sans Javascript, veuillez l'activer "
 "dans votre navigateur."

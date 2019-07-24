@@ -10,13 +10,18 @@
     "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {
-    "axios": "^0.18.0",
-    "bootstrap-vue": "^2.0.0-rc.20",
+    "@fortawesome/fontawesome-svg-core": "^1.2.19",
+    "@fortawesome/free-solid-svg-icons": "^5.9.0",
+    "@fortawesome/vue-fontawesome": "^0.1.6",
+    "axios": "^0.18.1",
+    "bootstrap-vue": "^2.0.0-rc.26",
     "core-js": "^2.6.5",
+    "moment": "^2.24.0",
     "pdfjs-dist": "^2.0.943",
     "qs": "^6.7.0",
     "vue": "^2.6.6",
     "vue-router": "^3.0.6",
+    "vuex": "^3.0.1",
     "webpack-bundle-tracker": "^0.4.2-beta"
   },
   "devDependencies": {

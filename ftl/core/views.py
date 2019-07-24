@@ -1,5 +1,4 @@
 import json
-import os
 from base64 import b64decode
 from concurrent.futures.thread import ThreadPoolExecutor
 
@@ -7,18 +6,19 @@ import langid
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 from django.core.files.base import ContentFile
+from django.db import IntegrityError
 from django.db.models import F
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404
 from django.utils.http import http_date
 from django.views import View
-from rest_framework import generics, views
+from rest_framework import generics, views, serializers
 from rest_framework.authentication import SessionAuthentication
-from rest_framework.exceptions import ValidationError
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from tika import parser
 
+from core.error_codes import get_api_error
 from core.models import FTLDocument, FTLFolder, FTLModelPermissions
 from core.serializers import FTLDocumentSerializer, FTLFolderSerializer
 
@@ -77,22 +77,20 @@ class FTLDocumentList(generics.ListAPIView):
     def get_queryset(self):
         current_folder = self.request.query_params.get('level', None)
         flat_mode = self.request.query_params.get('flat', False)
+        text_search = self.request.query_params.get('search', None)
 
         queryset = FTLDocument.objects.filter(org=self.request.user.org).order_by('-created')
 
         if not flat_mode:
-            if current_folder is not None and int(current_folder) > 0:
+            if text_search:
+                search_query = SearchQuery(text_search.strip(), config=F('language'))
+                queryset = queryset.annotate(rank=SearchRank(F('tsvector'), search_query)) \
+                    .filter(rank__gte=0.1) \
+                    .order_by('-rank')
+            elif current_folder is not None and int(current_folder) > 0:
                 queryset = queryset.filter(ftl_folder__id=current_folder)
             else:
                 queryset = queryset.filter(ftl_folder__isnull=True)
-
-        text_search = self.request.query_params.get('search')
-
-        if text_search:
-            search_query = SearchQuery(text_search.strip(), config=F('language'))
-            queryset = queryset.annotate(rank=SearchRank(F('tsvector'), search_query)) \
-                .filter(rank__gte=0.1) \
-                .order_by('-rank')
 
         return queryset
 
@@ -106,26 +104,8 @@ class FTLDocumentDetail(generics.RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         return FTLDocument.objects.filter(org=self.request.user.org)
 
-    def get_object(self):
-        return get_object_or_404(self.get_queryset(), pid=self.kwargs['pid'])
-
     def perform_update(self, serializer):
-        serializer.save(ftl_user=self.request.user)
-
-    def perform_destroy(self, instance):
-        if instance.org == self.request.user.org:
-            binary = instance.binary
-            thumbnail_binary = instance.thumbnail_binary
-            super().perform_destroy(instance)
-
-            binary.file.close()
-            os.remove(binary.file.name)
-
-            if thumbnail_binary:
-                thumbnail_binary.file.close()
-                os.remove(thumbnail_binary.file.name)
-        else:
-            raise ValidationError("Trying to delete document from wrong user!")
+        serializer.save(org=self.request.user.org)
 
 
 class FTLDocumentThumbnail(LoginRequiredMixin, views.APIView):
@@ -206,7 +186,13 @@ class FTLFolderList(generics.ListCreateAPIView):
         return queryset
 
     def perform_create(self, serializer):
-        serializer.save(org=self.request.user.org)
+        try:
+            serializer.save(org=self.request.user.org)
+        except IntegrityError as e:
+            if 'folder_name_unique_for_org_level' in str(e):
+                raise serializers.ValidationError(get_api_error('folder_name_unique_for_org_level'))
+            else:
+                raise
 
 
 class FTLFolderDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -219,10 +205,17 @@ class FTLFolderDetail(generics.RetrieveUpdateDestroyAPIView):
         return FTLFolder.objects.filter(org=self.request.user.org)
 
     def perform_update(self, serializer):
-        serializer.save(org=self.request.user.org)
+        # When detecting `parent` change, call the move_to to handle moving folder in the tree (mptt)
+        if serializer.initial_data and 'parent' in serializer.initial_data:
+            if serializer.instance.parent != serializer.initial_data['parent']:
 
-    def perform_destroy(self, instance):
-        if instance.org == self.request.user.org:
-            instance.delete()
+                if serializer.initial_data['parent'] is None:
+                    # Root
+                    serializer.instance.move_to(None)
+                else:
+                    target_folder = get_object_or_404(self.get_queryset(), id=serializer.initial_data['parent'])
+                    serializer.instance.move_to(target_folder)
+            else:
+                serializer.save(org=self.request.user.org)
         else:
-            raise ValidationError('Trying to delete a folder from wrong user!')
+            serializer.save(org=self.request.user.org)

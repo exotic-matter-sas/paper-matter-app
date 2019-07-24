@@ -22,18 +22,25 @@ class HomePage(BasePage):
     refresh_documents_button = '#refresh-documents'
 
     create_folder_button = '#create-folder'
-    first_folder_button = 'button.folder > span:not(.spinner-border):not(.d-none)'
-    folder_list_loader = '#folder-list-loader'
+    folders_list_buttons = 'button.folder > span:not(.spinner-border):not(.d-none)'
+    folders_list_loader = '#folder-list-loader'
 
     documents_list = '#documents-list'
     documents_thumbnails = '.document-thumbnail'
-    first_document_title = '.document-title span'
+    first_document_title = '.document-thumbnail:first-child .card-title'
+    last_document_title = '.document-thumbnail:last-child .card-title'
+
+    more_documents_button = '#more-documents'
+    more_documents_loader = '#more-documents .loader'
 
     def wait_document_list_loaded(self):
         self.wait_for_elem_to_disappear(self.document_list_loader)
 
     def wait_folder_list_loaded(self):
-        self.wait_for_elem_to_disappear(self.folder_list_loader)
+        self.wait_for_elem_to_disappear(self.folders_list_loader)
+
+    def wait_more_documents_loaded(self):
+        self.wait_for_elem_to_disappear(self.more_documents_loader)
 
     def search_document(self, search_text):
         self.get_elem(self.search_input).send_keys(search_text)
@@ -49,12 +56,13 @@ class HomePage(BasePage):
         # Needed in case of several upload in a row as upload success trigger a notification that hide upload button
         self.close_last_notification()
 
-    def create_folder(self, folder_name=tv.FOLDER1_NAME):
+    def create_folder(self, folder_name=tv.FOLDER1_NAME, close_notification=True):
         self.get_elem(self.create_folder_button).click()
         self.wait_for_elem_to_show(self.modal_input)
         self.get_elem(self.modal_input).send_keys(folder_name)
         self.get_elem(self.modal_accept_button).click()
-        self.close_last_notification()
+        if close_notification:
+            self.close_last_notification()
 
     def refresh_document_list(self):
         refresh_button = self.get_elem(self.refresh_documents_button)

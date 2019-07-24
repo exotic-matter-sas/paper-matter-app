@@ -27,5 +27,5 @@ class I18nTests(SetupPages, LoginPage, HomePage):
         self.log_user()
 
         self.visit(self.root_url)
-        self.assertIn('fichier', self.get_elem(self.document_upload_label).text,
-                      '"file" should be translated to "fichier"')
+        self.assertIn('Ajouter un document', self.get_elem(self.document_upload_label).text,
+                      '"Upload document" should be translated to "Ajouter un document"')

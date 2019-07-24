@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 
 import os
 
+from django.contrib.messages import constants as message_constants
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import pathlib
 
@@ -182,6 +184,24 @@ ATOMIC_REQUESTS = True
 
 # Workaround for configuring a preloaded Tika
 os.environ['TIKA_SERVER_JAR'] = pathlib.Path(os.path.join(BASE_DIR, 'vendors', 'tika-server-1.20.jar')).as_uri()
+
+# SMTP EMAIL SERVER conf
+EMAIL_HOST = 'localhost'
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+EMAIL_PORT = 25
+EMAIL_USE_SSL = False
+DEFAULT_FROM_EMAIL = 'noreply@localhost.com'
+# apply to emails sent by: django.core.mail.mail_admins, django.core.mail.mail_managers
+EMAIL_SUBJECT_PREFIX = ''
+
+# Customize MESSAGE_TAGS to match bootstrap alert classes
+MESSAGE_TAGS = {
+    message_constants.INFO: 'text-center alert alert-primary',
+    message_constants.SUCCESS: 'text-center alert alert-success',
+    message_constants.WARNING: 'text-center alert alert-warning',
+    message_constants.ERROR: 'text-center alert alert-danger',
+}
 
 # ==================================================
 # No settings under this line
