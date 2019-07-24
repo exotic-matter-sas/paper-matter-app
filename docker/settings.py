@@ -194,6 +194,14 @@ if bool(strtobool(os.getenv("USE_S3", "False"))):
     AWS_DEFAULT_ACL = 'private'
     S3_USE_SIGV4 = True
 
+# Email settings
+EMAIL_HOST = os.getenv("EMAIL_HOST")
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+EMAIL_PORT = int(os.getenv("EMAIL_PORT", 25))
+EMAIL_USE_SSL = True
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", 'noreply@localhost')
+
 # Configure Django App for Heroku.
 django_heroku.settings(locals(), db_colors=False, databases=True, test_runner=False, staticfiles=False,
                        allowed_hosts=False, logging=True, secret_key=True)
