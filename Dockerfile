@@ -50,6 +50,7 @@ RUN true
 COPY --from=frontbuild /app/webpack-stats.json /app/frontend/
 RUN true
 COPY --from=frontbuild /app/__init__.py /app/frontend/
+RUN true
 
 ADD docker/ftl_uwsgi.ini /app/ftl_uwsgi.ini
 ADD docker/settings_local.py /app/ftl/settings_local.py
