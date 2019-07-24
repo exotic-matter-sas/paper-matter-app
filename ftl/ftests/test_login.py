@@ -78,7 +78,7 @@ class ForgotPasswordTests(LoginPage, ResetPasswordPages):
         # User received the email with the link to reset its password
         self.assertEqual(len(mail.outbox), 1)
         self.assertIn(self.user.email, mail.outbox[0].to)
-        self.assertIn('Set a new password', mail.outbox[0].subject)
+        self.assertIn('set new password', mail.outbox[0].subject.lower())
         self.assertRegex(mail.outbox[0].body, 'https?://.+/reset/.+/.+/')
 
     def test_password_reset_link_working_properly(self):
