@@ -30,11 +30,15 @@ class Command(BaseCommand):
         )
 
         for doc in docs:
+            self.stdout.write(
+                _('Reindexing %(title)s') % {'title': doc.title}
+            )
+
             _extract_text_from_pdf(SEARCH_VECTOR, doc)
 
             self.stdout.write(
                 self.style.SUCCESS(
-                    _('Reindexed %(title)s') % {'title': doc.title}
+                    _('OK')
                 )
             )
 
