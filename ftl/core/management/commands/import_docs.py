@@ -17,8 +17,8 @@ class Command(BaseCommand):
     user = None
 
     def add_arguments(self, parser):
-        parser.add_argument('path', nargs='?', type=str)
-        parser.add_argument('username', nargs='?', type=str)
+        parser.add_argument('-p', '--path', nargs='?', type=str, required=True)
+        parser.add_argument('-u', '--username', nargs='?', type=str, required=True)
 
     def handle(self, *args, **options):
         self.stdout.write(
