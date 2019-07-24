@@ -4,7 +4,7 @@ from django.utils.translation import gettext as _
 
 
 def show_message(request, **kwargs):
-    messages.success(request, _('You have been logged out. See you!'), extra_tags='alert alert-success text-center')
+    messages.success(request, _('You have been logged out. See you!'))
 
 
 user_logged_out.connect(show_message, dispatch_uid='login_page')
