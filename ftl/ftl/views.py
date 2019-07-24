@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.shortcuts import render, get_object_or_404
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
+from django.utils.translation import gettext_lazy as _
 from django.views.generic import FormView, RedirectView
 
 from core.models import FTLOrg, permissions_names_to_objects, FTL_PERMISSIONS_USER
@@ -43,9 +44,24 @@ def signup_success(request, org_slug):
 
 
 class SetMessageAndRedirectView(RedirectView):
+    """
+    View for showing a flash message
+    """
     message_type = messages.SUCCESS
     message = None
 
     def get(self, request, *args, **kwargs):
         messages.add_message(request, self.message_type, self.message)
         return super().get(request, *args, **kwargs)
+
+
+class PasswordResetAsked(SetMessageAndRedirectView):
+    url = reverse_lazy('login')
+    message = _(
+        'We’ve emailed you instructions for setting your password, if an account exists with the email '
+        'you entered. You should receive them shortly (check your spam folder if that\'s not the case).')
+
+
+class PasswordResetDone(SetMessageAndRedirectView):
+    url = reverse_lazy('login')
+    message = _('Your password has been set. You may go ahead and log in now.')
