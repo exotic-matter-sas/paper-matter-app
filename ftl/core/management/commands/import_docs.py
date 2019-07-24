@@ -24,7 +24,7 @@ class Command(BaseCommand):
         self.stdout.write(
             self.style.MIGRATE_HEADING(
                 _(
-                    'Starting to migrate for %(username)s from %(path)s'
+                    'Starting mass import for %(username)s from %(path)s'
                 ) % {
                     'username': options['username'],
                     'path': options['path']
