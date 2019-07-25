@@ -78,3 +78,4 @@ build-docker:
     - docker build --cache-from $CI_REGISTRY_IMAGE:heroku-latest -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA -t $CI_REGISTRY_IMAGE:heroku-latest .
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
     - docker push $CI_REGISTRY_IMAGE:heroku-latest
+  when: manual
