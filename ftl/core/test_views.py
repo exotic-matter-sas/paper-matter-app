@@ -24,7 +24,7 @@ class CorePagesTests(TestCase):
         self.assertContains(
             response,
             f'<script id="ftlAccount" type="application/json">{{"name": "{self.user.username}"}}</script>')
-        self.assertContains(response, '<div id="app"></div>')
+        self.assertContains(response, '<div id="app">')
         self.assertTemplateUsed(response, 'core/home.html')
 
     def test_home_get_proper_context(self):

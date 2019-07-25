@@ -65,6 +65,10 @@ Vue.prototype.$_ = function (text, vars = null) {
 
 // Moment JS for nice date
 Vue.prototype.$moment = moment;
+let localeElem = document.getElementById('locale');
+if (localeElem) {
+  Vue.prototype.$moment.locale(JSON.parse(localeElem.textContent));
+}
 
 // Defined mixins
 Vue.mixin({

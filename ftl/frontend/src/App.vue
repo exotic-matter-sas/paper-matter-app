@@ -1,32 +1,20 @@
 <template>
-  <div id="app" class="m-0">
-    <header>
-      <b-container fluid class="p-0">
-        <FTLNavbar :account="account"/>
-      </b-container>
-    </header>
-
-    <router-view class="content"/>
-
-    <footer>
-      <b-container>
-        <b-row>
-          <b-col>
-            {{ this.$_('ftl-app, open source software. Made with ❤ by ') }} <a href="https://www.exotic-matter.fr">Exotic Matter</a>.
-          </b-col>
-        </b-row>
-      </b-container>
-    </footer>
+  <div id="app" class="d-flex flex-column">
+    <FTLHeader :account="account"/>
+    <router-view/>
+    <FTLFooter/>
   </div>
 </template>
 
 <script>
-  import FTLNavbar from "@/components/FTLNavbar";
+  import FTLHeader from "@/components/FTLHeader";
+  import FTLFooter from "@/components/FTLFooter";
 
   export default {
     name: "app",
     components: {
-      FTLNavbar
+      FTLHeader,
+      FTLFooter
     },
 
     data() {
@@ -48,25 +36,9 @@
 
 <style>
   #app {
+    min-height: 100vh;
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-align: center;
-    color: #2c3e50;
-    margin-top: 60px;
-
-    /* Sticky footer */
-    display: flex;
-    min-height: 100vh;
-    flex-direction: column;
-  }
-
-  /* Sticky footer */
-  .content {
-    flex: 1;
-  }
-
-  #app > footer {
-    background: lightgray;
   }
 </style>
