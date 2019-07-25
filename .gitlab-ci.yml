@@ -13,6 +13,7 @@ services:
 stages:
   - build-frontend
   - build-backend
+  - docker
   - test
   - deploy
 
@@ -68,3 +69,12 @@ test-app:
     - export DJANGO_SETTINGS_MODULE=ftl.settings_tests
     - source venv/bin/activate && cd ftl
     - python3 manage.py test
+
+build-docker:
+  stage: docker
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker pull $CI_REGISTRY_IMAGE:heroku-latest || true
+    - docker build --cache-from $CI_REGISTRY_IMAGE:heroku-latest -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA -t $CI_REGISTRY_IMAGE:heroku-latest .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker push $CI_REGISTRY_IMAGE:heroku-latest
