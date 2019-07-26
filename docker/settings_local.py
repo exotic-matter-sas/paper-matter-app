@@ -51,9 +51,11 @@ if bool(strtobool(os.getenv("USE_S3", "False"))):
     S3_USE_SIGV4 = True
 
 if bool(strtobool(os.getenv("USE_GCS", "False"))):
+    import json
+
     DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
     GS_BUCKET_NAME = 'GCS_BUCKET_NAME'
-    credentials_raw = os.environ.get('GCS_CREDENTIALS_CONTENT')
+    credentials_raw = json.loads(os.environ.get('GCS_CREDENTIALS_CONTENT'))
     GS_CREDENTIALS = service_account.Credentials.from_service_account_info(credentials_raw)
 
 # Email settings
