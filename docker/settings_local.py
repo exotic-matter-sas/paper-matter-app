@@ -54,7 +54,7 @@ if bool(strtobool(os.getenv("USE_GCS", "False"))):
     import json
 
     DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
-    GS_BUCKET_NAME = 'GCS_BUCKET_NAME'
+    GS_BUCKET_NAME = os.environ.get('GCS_BUCKET_NAME')
     credentials_raw = json.loads(os.environ.get('GCS_CREDENTIALS_CONTENT'))
     GS_CREDENTIALS = service_account.Credentials.from_service_account_info(credentials_raw)
 
