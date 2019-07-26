@@ -3,12 +3,13 @@ from base64 import b64decode
 from concurrent.futures.thread import ThreadPoolExecutor
 
 import langid
+from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 from django.core.files.base import ContentFile
 from django.db import IntegrityError
 from django.db.models import F
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.utils.http import http_date
 from django.views import View
@@ -59,13 +60,18 @@ class HomeView(LoginRequiredMixin, View):
 class DownloadView(LoginRequiredMixin, PermissionRequiredMixin, View):
     http_method_names = ['get']
     permission_required = ('core.view_ftldocument',)
+    s3_mode = settings.FTL_USE_GCS or settings.FTL_USE_S3
 
     def get(self, request, *args, **kwargs):
         doc = get_object_or_404(FTLDocument.objects.filter(org=self.request.user.org, pid=kwargs['uuid']))
-        response = HttpResponse(doc.binary, 'application/octet')
-        response['Last-Modified'] = http_date(doc.edited.timestamp())
-        response['Content-Disposition'] = 'attachment; filename="%s"' % doc.binary.name
-        return response
+
+        if self.s3_mode:
+            return HttpResponseRedirect(doc.binary.url)
+        else:
+            response = HttpResponse(doc.binary, 'application/octet')
+            response['Last-Modified'] = http_date(doc.edited.timestamp())
+            response['Content-Disposition'] = 'attachment; filename="%s"' % doc.binary.name
+            return response
 
 
 class FTLDocumentList(generics.ListAPIView):
@@ -112,6 +118,7 @@ class FTLDocumentThumbnail(LoginRequiredMixin, views.APIView):
     serializer_class = FTLDocumentSerializer
     lookup_field = 'pid'
     permission_classes = (FTLModelPermissions,)
+    s3_mode = settings.FTL_USE_GCS or settings.FTL_USE_S3
 
     def get_queryset(self):
         return FTLDocument.objects.filter(org=self.request.user.org)
@@ -122,10 +129,13 @@ class FTLDocumentThumbnail(LoginRequiredMixin, views.APIView):
         if not bool(doc.thumbnail_binary):
             return HttpResponseNotFound()
 
-        response = HttpResponse(doc.thumbnail_binary, 'image/png')
-        response['Last-Modified'] = http_date(doc.edited.timestamp())
-        # TODO add ETAG and last modified for caching
-        return response
+        if self.s3_mode:
+            return HttpResponseRedirect(doc.thumbnail_binary.url)
+        else:
+            response = HttpResponse(doc.thumbnail_binary, 'image/png')
+            response['Last-Modified'] = http_date(doc.edited.timestamp())
+            # TODO add ETAG and last modified for caching
+            return response
 
 
 class FileUploadView(LoginRequiredMixin, views.APIView):

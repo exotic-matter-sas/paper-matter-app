@@ -40,7 +40,8 @@ DATABASES = {
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-if bool(strtobool(os.getenv("USE_S3", "False"))):
+FTL_USE_S3 = bool(strtobool(os.getenv("USE_S3", "False")))
+if FTL_USE_S3:
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
     AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
@@ -50,7 +51,8 @@ if bool(strtobool(os.getenv("USE_S3", "False"))):
     AWS_DEFAULT_ACL = 'private'
     S3_USE_SIGV4 = True
 
-if bool(strtobool(os.getenv("USE_GCS", "False"))):
+FTL_USE_GCS = bool(strtobool(os.getenv("USE_GCS", "False")))
+if FTL_USE_GCS:
     import json
 
     DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'

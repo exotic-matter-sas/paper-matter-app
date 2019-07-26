@@ -11,11 +11,10 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
-
-from django.contrib.messages import constants as message_constants
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import pathlib
+
+from django.contrib.messages import constants as message_constants
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -203,11 +202,32 @@ MESSAGE_TAGS = {
     message_constants.ERROR: 'text-center alert alert-danger',
 }
 
+# Use AWS S3 storage
+FTL_USE_S3 = False
+# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+# AWS_ACCESS_KEY_ID = ""
+# AWS_SECRET_ACCESS_KEY = ""
+# AWS_STORAGE_BUCKET_NAME = ""
+# AWS_S3_ENDPOINT_URL = ""
+# AWS_S3_REGION_NAME = ""
+# AWS_DEFAULT_ACL = 'private'
+# S3_USE_SIGV4 = True
+
+# Use Google Cloud Storage
+FTL_USE_GCS = False
+# import json
+#
+# DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+# GS_BUCKET_NAME = os.environ.get('GCS_BUCKET_NAME')
+# credentials_raw = json.loads(os.environ.get('GCS_CREDENTIALS_CONTENT'))
+# GS_CREDENTIALS = service_account.Credentials.from_service_account_info(credentials_raw)
+
 # ==================================================
 # No settings under this line
 # Auto import local `settings_local.py` if available
 try:
     from .settings_local import *
+
     print('Imported local setting')
 except ImportError as e:
     print(e)
