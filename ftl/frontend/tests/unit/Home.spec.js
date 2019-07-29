@@ -247,7 +247,7 @@ describe('Home mounted call proper methods with given props', () => {
 
     // then
     expect(mockedRefreshFolders).not.toHaveBeenCalled();
-    expect(mockedUpdateDocuments).toHaveBeenCalledTimes(1);
+    expect(mockedUpdateDocuments).toHaveBeenCalledTimes(0);
     expect(mockedUpdateFoldersPath).toHaveBeenCalledTimes(1);
     expect(mockedUpdateFoldersPath).toHaveBeenCalledWith(current_folder);
   });

@@ -142,14 +142,14 @@
       } else {
         // Or just show the current folders
         this.refreshFolders();
-      }
 
-      if (this.searchQuery) {
-        // search docs
-        this.refreshDocumentWithSearch(this.searchQuery);
-      } else {
-        // all docs
-        this.updateDocuments();
+        if (this.searchQuery) {
+          // search docs
+          this.refreshDocumentWithSearch(this.searchQuery);
+        } else {
+          // all docs
+          this.updateDocuments();
+        }
       }
     },
 
