@@ -32,9 +32,9 @@ msgstr "Accueil"
 
 #: core/templates/core/home.html:14
 msgid ""
-"We're sorry but Paper matter will not work without JavaScript enabled. Please "
+"We're sorry but Paper Matter will not work without JavaScript enabled. Please "
 "enable it\n"
 "                to continue."
 msgstr ""
-"Désolé mais Paper matter ne fonctionne pas sans Javascript, veuillez l'activer "
+"Désolé mais Paper Matter ne fonctionne pas sans Javascript, veuillez l'activer "
 "dans votre navigateur."

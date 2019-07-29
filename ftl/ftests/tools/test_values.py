@@ -1,4 +1,4 @@
-APP_NAME = 'Paper matter'
+APP_NAME = 'Paper Matter'
 
 ADMIN_USERNAME = 'admin'
 ADMIN_EMAIL = 'admin@localhost.com'
