@@ -1,0 +1,1 @@
+placeholder to keep until /frontend/src/assets dir is no more empty
