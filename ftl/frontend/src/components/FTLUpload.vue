@@ -1,6 +1,6 @@
 <template>
   <section>
-    <b-row no-gutters>
+    <b-row>
       <b-col cols="12" md="10">
         <b-form-file
           ref="fileUploadField"
@@ -12,7 +12,7 @@
         ></b-form-file>
       </b-col>
       <b-col cols="12" md="2">
-        <b-button class="w-100 mt-2 ml-0 mt-md-0 ml-md-2" id="upload-button" variant="primary" :disabled="uploading || !file" @click="uploadDocument">
+        <b-button class="w-100 mt-2 mt-md-0" id="upload-button" variant="primary" :disabled="uploading || !file" @click="uploadDocument">
           {{this.$_('Upload')}}
         </b-button>
       </b-col>

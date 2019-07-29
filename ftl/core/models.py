@@ -7,6 +7,7 @@ from django.contrib.postgres.fields.citext import CICharField
 from django.contrib.postgres.search import SearchVectorField
 from django.db import models
 from django.db.models import UniqueConstraint
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
@@ -59,7 +60,7 @@ class FTLDocument(models.Model):
     note = models.TextField(blank=True)
     content_text = models.TextField(blank=True)
     binary = models.FileField(upload_to=_get_name_binary, max_length=256, null=True)
-    created = models.DateTimeField(auto_now_add=True)
+    created = models.DateTimeField(default=timezone.now)
     edited = models.DateTimeField(auto_now=True)
     tsvector = SearchVectorField(blank=True)
     language = models.CharField(max_length=64, default="english")
