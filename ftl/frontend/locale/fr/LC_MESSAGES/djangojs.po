@@ -38,8 +38,8 @@ msgid "Sign Out"
 msgstr "Se déconnecter"
 
 #: frontend/dist/js/app.bfaafaef.js:24
-msgid "ftl-app, open source software. Made with ❤ by "
-msgstr "ftl-app, logiciel open source. Fait avec ❤ par "
+msgid "Paper matter, open source software. Made with ❤ by "
+msgstr "Paper matter, logiciel open source. Fait avec ❤ par "
 
 #: frontend/dist/js/app.bfaafaef.js:24
 msgid "Generate missing thumb"

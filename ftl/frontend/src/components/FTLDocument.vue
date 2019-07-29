@@ -1,5 +1,5 @@
 <template>
-  <b-col cols="12" mb="4" sm="6" md="4" lg="3" xl="2" class="document-thumbnail" :id="doc.pid">
+  <b-col cols="12" mb="4" sm="6" md="4" lg="3" xl="2" class="mb-3 document-thumbnail" :id="doc.pid">
     <div class="card">
       <div class="card-img-top" slot="aside"
            :style="{'background-image': 'url(' + '/app/api/v1/documents/' + doc.pid + '/thumbnail.png' + ')'}"
@@ -111,5 +111,16 @@
   .card-img-top:hover {
     background-position: bottom;
     box-shadow: inset 0 10px 30px -30px #0A0A0A;
+  }
+
+  .card-footer {
+    &:first-letter{
+      text-transform: capitalize;
+    }
+
+    text-align: center;
+    font-size: 0.9em;
+    padding: 0.25rem 1.25rem;
+    font-style: italic;
   }
 </style>
