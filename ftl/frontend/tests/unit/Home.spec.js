@@ -200,7 +200,7 @@ describe('Home mounted call proper methods with given props', () => {
     jest.clearAllMocks();
   });
 
-  it('mounted call proper methods without props ', () => {
+  it('mounted call proper methods without props', () => {
     shallowMount(Home, {
       localVue,
       methods: {
@@ -247,12 +247,12 @@ describe('Home mounted call proper methods with given props', () => {
 
     // then
     expect(mockedRefreshFolders).not.toHaveBeenCalled();
-    expect(mockedUpdateDocuments).toHaveBeenCalledTimes(0);
+    expect(mockedUpdateDocuments).not.toHaveBeenCalled();
     expect(mockedUpdateFoldersPath).toHaveBeenCalledTimes(1);
     expect(mockedUpdateFoldersPath).toHaveBeenCalledWith(current_folder);
   });
 
-  it('mounted call proper methods with searchQuery props ', () => {
+  it('mounted call proper methods with searchQuery props', () => {
     const search_query = 'coucou!';
 
     shallowMount(Home, {
@@ -268,6 +268,7 @@ describe('Home mounted call proper methods with given props', () => {
     // then
     expect(mockedRefreshFolders).toHaveBeenCalledTimes(1);
     expect(mockedUpdateDocuments).not.toHaveBeenCalled();
+    expect(mockedUpdateFoldersPath).not.toHaveBeenCalled();
     expect(mockedRefreshDocumentWithSearch).toHaveBeenCalledTimes(1);
     expect(mockedRefreshDocumentWithSearch).toHaveBeenCalledWith(search_query);
   });
