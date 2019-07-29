@@ -37,7 +37,7 @@ describe('FTLSelectableFolder template', () => {
     // set mocked component methods return value before shallowMount
     wrapper = shallowMount(FTLSelectableFolder, {
       localVue,
-      propsData: { folder },
+      propsData: {folder},
       computed: {
         globalSelected: mockedGlobalSelected
       }
@@ -68,7 +68,7 @@ describe('Event emitted by component', () => {
     // set mocked component methods return value before shallowMount
     wrapper = shallowMount(FTLSelectableFolder, {
       localVue,
-      propsData: { folder },
+      propsData: {folder},
       computed: {
         globalSelected: mockedGlobalSelected
       }
@@ -93,7 +93,7 @@ describe('Event emitted by component', () => {
     const testedEvent = 'event-select-folder';
 
     // when
-    wrapper.vm.clickFolder();
+    wrapper.setData({state: true});
     await flushPromises();
 
     // then
@@ -104,10 +104,10 @@ describe('Event emitted by component', () => {
 
   it('event-unselect-folder emitted when calling clickFolder and no folder selected', async () => {
     const testedEvent = 'event-unselect-folder';
-    wrapper.setData({selected: true});
+    wrapper.setData({state: true});
 
     // when
-    wrapper.vm.clickFolder();
+    wrapper.setData({state: false});
     await flushPromises();
 
     // then

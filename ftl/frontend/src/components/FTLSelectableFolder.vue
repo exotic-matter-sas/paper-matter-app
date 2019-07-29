@@ -2,16 +2,22 @@
   <b-col
     sm="2"
     class="m-1 folder"
-    :class="{selected: selected}"
-    @dblclick="dbClickFolder"
-    @click="clickFolder">
+    :class="{selected: state}"
+  >
     <b-row align-h="center">
-      <b-col>
+      <b-col @click="dbClickFolder">
         <font-awesome-icon icon="folder" size="5x" class="text-secondary w-100"/>
       </b-col>
     </b-row>
-    <b-row align-h="center">
-      <b-col class="text-center text-truncate"><span :title="folder.name">{{ folder.name }}</span></b-col>
+    <b-row align-h="left">
+      <b-col class="text-truncate">
+        <b-form-checkbox
+          :id="'checkbox-folder-' + folder.id"
+          v-model="state"
+        >
+          <span :title="folder.name">{{ folder.name }}</span>
+        </b-form-checkbox>
+      </b-col>
     </b-row>
   </b-col>
 </template>
@@ -30,7 +36,7 @@
 
     data() {
       return {
-        selected: false
+        state: false
       }
     },
 
@@ -45,7 +51,17 @@
       globalSelected: function (newVal, oldVal) {
         // Watch the global selected folder panel and deselect itself if any other folder is selected
         if (this.globalSelected !== null && this.globalSelected.id !== this.folder.id) {
-          this.selected = false;
+          this.state = false;
+        }
+      },
+      state: function (newVal, oldVal) {
+        if (newVal === true) {
+          this.$emit('event-select-folder', this.folder);
+          // Store the selected panel folder for usage by ManageFolders.vue for displaying the folder detail panel
+          this.$store.commit('selectPanelFolder', this.folder);
+        } else {
+          this.$emit('event-unselect-folder', this.folder);
+          this.$store.commit('selectPanelFolder', null);
         }
       }
     },
@@ -53,18 +69,6 @@
     methods: {
       dbClickFolder: function () {
         this.$emit('event-navigate-folder', this.folder);
-      },
-
-      clickFolder: function () {
-        this.selected = !this.selected;
-        if (this.selected) {
-          this.$emit('event-select-folder', this.folder);
-          // Store the selected panel folder for usage by ManageFolders.vue for displaying the folder detail panel
-          this.$store.commit('selectPanelFolder', this.folder);
-        } else {
-          this.$emit('event-unselect-folder');
-          this.$store.commit('selectPanelFolder', null);
-        }
       }
     }
   }
