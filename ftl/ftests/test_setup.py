@@ -14,7 +14,7 @@ class LandingPageTests(SetupPages):
         self.visit(self.root_url)
 
         # The user is welcomed and asked to complete 1st setup step: org creation
-        self.assertIn(tv.APP_NAME, self.head_title)
+        self.assertIn(tv.APP_NAME.lower(), self.head_title)
         self.assertIn('organization', self.get_elem(self.active_breadcrumb_item).text)
 
     def test_landing_page_display_properly_after_admin_creation(self):
@@ -31,7 +31,7 @@ class LandingPageTests(SetupPages):
         self.visit(self.root_url)
 
         # The landing page welcome the user and ask him to complete 2nd step: admin creation
-        self.assertIn(tv.APP_NAME, self.head_title)
+        self.assertIn(tv.APP_NAME.lower(), self.head_title)
         self.assertIn('administrator', self.get_elem(self.active_breadcrumb_item).text)
 
     def test_landing_page_redirect_to_user_login_when_setup_complete(self):
