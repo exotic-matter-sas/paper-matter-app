@@ -7,7 +7,7 @@
         </b-col>
       </b-row>
 
-      <b-row class="my-3" id="breadcrumb">
+      <b-row class="my-3" id="breadcrumb" no-gutter>
         <b-col>
           <b-breadcrumb class="m-0" :items="breadcrumb"/>
         </b-col>
@@ -37,10 +37,10 @@
                      label="Loading..."></b-spinner>
         </b-col>
         <b-col v-else-if="docs.length">
-          <section class="row">
+          <b-row tag="section">
             <FTLDocument v-for="doc in docs" :key="doc.pid" :doc="doc" @event-delete-doc="updateDocuments"
                          @event-open-doc="navigateToDocument"/>
-          </section>
+          </b-row>
         </b-col>
         <b-col v-else class="text-center">{{ this.$_('No document yet') }}</b-col>
       </b-row>
@@ -413,10 +413,6 @@
     width: 3em;
     height: 3em;
     display: block;
-  }
-
-  #folders-list, #breadcrumb {
-    padding: 0 15px;
   }
 
   #folders-list button, #folders-list button {

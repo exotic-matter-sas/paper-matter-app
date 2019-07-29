@@ -26,7 +26,7 @@ class FTLSetupMiddleware:
         self.get_response = get_response
 
         if self.first_org_state and self.admin_state:
-            raise MiddlewareNotUsed()  # automatic disable when ftl-app is already setup
+            raise MiddlewareNotUsed()  # automatic disable when app is already setup
 
     @property
     def first_org_state(self):
