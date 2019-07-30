@@ -1,4 +1,4 @@
-from unittest import TestCase
+from unittest import TestCase, skip
 from unittest.mock import Mock, patch
 
 import langid
@@ -10,7 +10,16 @@ from core.processing.proc_pgsql_tsvector import FTLDocPgSQLTSVector, SEARCH_VECT
 from core.processing.proc_tika import FTLDocTextExtractionTika
 
 
-class FTLDocumentProcessingTests(TestCase):
+class ProcTest(FTLDocProcessingBase):
+    """
+    Mocked test processing class
+    """
+
+    def process(self, ftl_doc):
+        pass
+
+
+class DocumentProcessingTests(TestCase):
     def setUp(self):
         configured_plugins = ['core.test_processing.ProcTest']
         self.processing = FTLDocumentProcessing(configured_plugins)
@@ -29,48 +38,59 @@ class FTLDocumentProcessingTests(TestCase):
         self.processing.executor.submit.assert_called_once_with(self.processing._handle, doc)
 
     def test_handle(self):
-        mock_plugin = Mock(spec=ProcTest)
+        mock_plugin_1 = Mock(spec=ProcTest)
+        mock_plugin_2 = Mock(spec=ProcTest)
+        mock_plugin_3 = Mock(spec=ProcTest)
+
         self.processing.plugins = list()
-        self.processing.plugins.append(mock_plugin)
+        self.processing.plugins.append(mock_plugin_1)
+        self.processing.plugins.append(mock_plugin_2)
+        self.processing.plugins.append(mock_plugin_3)
 
         doc = Mock()
         self.processing.apply_processing(doc)
 
-        mock_plugin.process.assert_called_once_with(doc)
+        mock_plugin_1.process.assert_called_once_with(doc)
+        mock_plugin_2.process.assert_called_once_with(doc)
+        mock_plugin_3.process.assert_called_once_with(doc)
+
+    @skip('TODO')  # TODO
+    def test_error_handling(self):
+        pass
 
 
-class FTLProcLangTests(TestCase):
+class ProcLangTests(TestCase):
 
     @patch.object(langid, 'classify')
-    def test_process(self, mock_langid):
-        mock_langid.return_value = ['fr']
+    def test_process(self, mocked_classify):
+        mocked_classify.return_value = ['fr']
 
         lang = FTLDocLangDetector()
         doc = Mock()
         lang.process(doc)
 
-        mock_langid.assert_called_once_with(doc.content_text)
+        mocked_classify.assert_called_once_with(doc.content_text)
         self.assertEqual('french', doc.language)
         doc.save.assert_called_once()
 
 
-class FTLProcTikaTests(TestCase):
+class ProcTikaTests(TestCase):
 
     @patch.object(parser, 'from_buffer')
-    def test_process(self, mock_parser):
-        indexed_text_ = {"content": "indexed text"}
-        mock_parser.return_value = indexed_text_
+    def test_process(self, mocked_from_buffer):
+        indexed_text = {"content": "indexed text"}
+        mocked_from_buffer.return_value = indexed_text
 
         tika = FTLDocTextExtractionTika()
         doc = Mock()
         tika.process(doc)
 
-        mock_parser.assert_called_once_with(doc.binary.read())
-        self.assertEqual(doc.content_text, indexed_text_['content'])
+        mocked_from_buffer.assert_called_once_with(doc.binary.read())
+        self.assertEqual(doc.content_text, indexed_text['content'])
         doc.save.assert_called_once()
 
 
-class FTLProcPGsqlTests(TestCase):
+class ProcPGsqlTests(TestCase):
 
     def test_process(self):
         pgsql = FTLDocPgSQLTSVector()
@@ -81,10 +101,22 @@ class FTLProcPGsqlTests(TestCase):
         doc.save.assert_called_once()
 
 
-class ProcTest(FTLDocProcessingBase):
-    """
-    Test processing class
-    """
+class ProcAwsTextractTests(TestCase):
 
-    def process(self, ftl_doc):
+    @skip('TODO')  # TODO
+    def test_process(self):
+        pass
+
+
+class ProcGoogleVisionTests(TestCase):
+
+    @skip('TODO')  # TODO
+    def test_process(self):
+        pass
+
+
+class ProcOcrMyPdfTests(TestCase):
+
+    @skip('TODO')  # TODO
+    def test_process(self):
         pass
