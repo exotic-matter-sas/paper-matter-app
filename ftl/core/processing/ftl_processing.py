@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 class FTLDocumentProcessing:
     """
-    A base document processing class, to be used for adding processing to document such as OCR,
+    A generic document processing class, to be used for adding processing to document such as OCR,
     text extraction, etc.
     """
     executor = None
