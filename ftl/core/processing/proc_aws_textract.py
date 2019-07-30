@@ -55,6 +55,7 @@ class FTLAwsTextract(FTLDocProcessingBase):
 
     def _is_job_complete(self, job_id):
         first_iteration = True
+        status = None
 
         while first_iteration or status == "IN_PROGRESS":
             time.sleep(5)
@@ -68,6 +69,7 @@ class FTLAwsTextract(FTLDocProcessingBase):
     def _get_job_results(self, job_id):
         pages = []
         first_iteration = True
+        next_token = None
 
         while first_iteration or next_token:
             time.sleep(5)
