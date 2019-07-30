@@ -10,6 +10,9 @@ from core.processing.ftl_processing import FTLDocProcessingBase
 
 
 class FTLOCRGoogleVisionAsync(FTLDocProcessingBase):
+    """
+    Plugin to use Google Vision as document OCR.
+    """
     client = vision_v1.ImageAnnotatorClient()
 
     def __init__(self, gcs_bucket_name=settings.GS_BUCKET_NAME):
@@ -47,7 +50,7 @@ class FTLOCRGoogleVisionAsync(FTLDocProcessingBase):
         operation = self.client.async_batch_annotate_files(
             requests=[async_request])
 
-        # Wait for the COR to finish
+        # Wait for the OCR to finish
         operation.result(timeout=None)
 
         # Once the request has completed and the output has been
@@ -57,7 +60,7 @@ class FTLOCRGoogleVisionAsync(FTLDocProcessingBase):
 
         # List objects with the given prefix.
         blob_list = list(self.bucket.list_blobs(prefix=prefix))
-        texts = list()
+        pages_text = list()
 
         for blob in blob_list:
             json_string = blob.download_as_string()
@@ -65,6 +68,6 @@ class FTLOCRGoogleVisionAsync(FTLDocProcessingBase):
                 json_string, vision.types.AnnotateFileResponse())
 
             for response in response.responses:
-                texts.append(response.full_text_annotation.text)
+                pages_text.append(response.full_text_annotation.text)
 
         return "\n".join(pages_text)
