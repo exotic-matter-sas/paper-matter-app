@@ -54,39 +54,31 @@ class FTLAwsTextract(FTLDocProcessingBase):
         return response["JobId"]
 
     def _is_job_complete(self, job_id):
-        time.sleep(5)
-        response = self.client.get_document_text_detection(JobId=job_id)
-        status = response["JobStatus"]
-        # print("Job status: {}".format(status))
+        first_iteration = True
 
-        while status == "IN_PROGRESS":
+        while first_iteration or status == "IN_PROGRESS":
             time.sleep(5)
             response = self.client.get_document_text_detection(JobId=job_id)
             status = response["JobStatus"]
+            first_iteration = False
             # print("Job status: {}".format(status))
 
         return status
 
     def _get_job_results(self, job_id):
         pages = []
+        first_iteration = True
 
-        time.sleep(5)
-
-        response = self.client.get_document_text_detection(JobId=job_id)
-
-        pages.append(response)
-        next_token = None
-        if 'NextToken' in response:
-            next_token = response['NextToken']
-
-        while next_token:
+        while first_iteration or next_token:
             time.sleep(5)
 
             response = self.client.get_document_text_detection(JobId=job_id, NextToken=next_token)
 
             pages.append(response)
-            next_token = None
             if 'NextToken' in response:
                 next_token = response['NextToken']
+            else:
+                next_token = None
+            first_iteration = False
 
         return pages
