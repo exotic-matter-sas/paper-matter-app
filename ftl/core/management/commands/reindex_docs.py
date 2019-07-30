@@ -1,5 +1,6 @@
 import time
 
+from django.conf import settings
 from django.core.management import BaseCommand
 from django.utils.translation import gettext as _
 from django.utils.translation import ngettext
@@ -12,7 +13,7 @@ class Command(BaseCommand):
     help = 'Reindex all documents'
 
     def handle(self, *args, **options):
-        processing = FTLDocumentProcessing()
+        processing = FTLDocumentProcessing(settings.FTL_DOC_PROCESSING_PLUGINS)
         docs = FTLDocument.objects.all()
 
         start_time = time.time()
