@@ -32,13 +32,13 @@ class FTLAwsTextract(FTLDocProcessingBase):
         if self._is_job_complete(job_id):
             response = self._get_job_results(job_id)
 
-            texts = list()
+            text_lines = list()
             for resultPage in response:
                 for item in resultPage["Blocks"]:
                     if item["BlockType"] == "LINE":
-                        texts.append(item["Text"])
+                        text_lines.append(item["Text"])
 
-            return " ".join(texts)
+            return " ".join(text_lines)
         else:
             return ""
 
