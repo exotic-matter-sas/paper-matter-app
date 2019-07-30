@@ -29,17 +29,19 @@ class FTLAwsTextract(FTLDocProcessingBase):
         document_name = ftl_doc_binary.name
 
         job_id = self._start_job(self.aws_bucket, document_name)
-        if self._is_job_complete(job_id):
-            response = self._get_job_results(job_id)
+
+        first_response_chunk = self._get_job_response_once_completed(job_id)
+        if first_response_chunk['JobStatus'] in ['SUCCEEDED', 'PARTIAL_SUCCESS']:
+            response_chunks = self._get_all_response_chunks(job_id, first_response_chunk)
 
             text_lines = list()
-            for resultPage in response:
-                for item in resultPage["Blocks"]:
+            for chunk in response_chunks:
+                for item in chunk["Blocks"]:
                     if item["BlockType"] == "LINE":
                         text_lines.append(item["Text"])
 
             return " ".join(text_lines)
-        else:
+        else:  # JobStatus is FAILED
             return ""
 
     def _start_job(self, s3_bucket_name, object_name):
@@ -53,9 +55,10 @@ class FTLAwsTextract(FTLDocProcessingBase):
 
         return response["JobId"]
 
-    def _is_job_complete(self, job_id):
+    def _get_job_response_once_completed(self, job_id):
         first_iteration = True
         status = None
+        response = {}
 
         while first_iteration or status == "IN_PROGRESS":
             time.sleep(5)
@@ -64,23 +67,18 @@ class FTLAwsTextract(FTLDocProcessingBase):
             first_iteration = False
             # print("Job status: {}".format(status))
 
-        return status
+        return response
 
-    def _get_job_results(self, job_id):
-        pages = []
-        first_iteration = True
-        next_token = None
+    def _get_all_response_chunks(self, job_id, first_response_chunk):
+        response_chunks = [first_response_chunk]
+        next_token = first_response_chunk['NextToken'] if 'NextToken' in first_response_chunk else None
 
-        while first_iteration or next_token:
+        while next_token:
             time.sleep(5)
 
             response = self.client.get_document_text_detection(JobId=job_id, NextToken=next_token)
 
-            pages.append(response)
-            if 'NextToken' in response:
-                next_token = response['NextToken']
-            else:
-                next_token = None
-            first_iteration = False
+            response_chunks.append(response)
+            next_token = response['NextToken'] if 'NextToken' in response else None
 
-        return pages
+        return response_chunks
