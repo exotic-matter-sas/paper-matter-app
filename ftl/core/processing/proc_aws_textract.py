@@ -40,7 +40,7 @@ class FTLAwsTextract(FTLDocProcessingBase):
                     if item["BlockType"] == "LINE":
                         text_lines.append(item["Text"])
 
-            return " ".join(text_lines)
+            return "\n".join(text_lines)
         else:  # JobStatus is FAILED
             return ""
 

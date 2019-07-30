@@ -67,4 +67,4 @@ class FTLOCRGoogleVisionAsync(FTLDocProcessingBase):
             for response in response.responses:
                 texts.append(response.full_text_annotation.text)
 
-        return " ".join(texts)
+        return "\n".join(pages_text)
