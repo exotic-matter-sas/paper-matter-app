@@ -37,7 +37,7 @@ class FTLDocumentProcessing:
             try:
                 logger.debug(f'Executing plugin {plugin.__class__.__name__} on {ftl_doc.pid}')
                 plugin.process(ftl_doc)
-            except:
+            except Exception:
                 logger.exception(f'Error while processing {ftl_doc.pid} with plugin {plugin.__class__.__name__}')
 
         logger.info(f'{ftl_doc.pid} was processed correctly')

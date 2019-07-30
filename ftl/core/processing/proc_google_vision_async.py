@@ -12,6 +12,7 @@ from core.processing.ftl_processing import FTLDocProcessingBase
 class FTLOCRGoogleVisionAsync(FTLDocProcessingBase):
     """
     Plugin to use Google Vision as document OCR.
+    Currently plugin support Google Cloud Storage hosted documents only
     """
     client = vision_v1.ImageAnnotatorClient()
 
