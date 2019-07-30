@@ -7,6 +7,10 @@ from core.processing.ftl_processing import FTLDocProcessingBase
 
 
 class FTLAwsTextract(FTLDocProcessingBase):
+    """
+    Plugin to use Amazon Textract service as document OCR.
+    Document have to stored on a Amazon S3 bucket for this plugin to work.
+    """
     def __init__(self, aws_bucket=settings.AWS_STORAGE_BUCKET_NAME):
         self.aws_bucket = aws_bucket
         self.client = boto3.client(
