@@ -29,6 +29,7 @@ class FTLOCRGoogleVisionAsync(FTLDocProcessingBase):
         self.feature = vision.types.Feature(type=vision.enums.Feature.Type.DOCUMENT_TEXT_DETECTION)
 
     def process(self, ftl_doc):
+        # TODO raise a specific error if file storage not supported
         # If full text not already extracted
         if not ftl_doc.content.text.strip():
             ftl_doc.content_text = self._async_detect_document(ftl_doc.binary)
