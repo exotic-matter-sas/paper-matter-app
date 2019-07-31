@@ -1,23 +1,38 @@
+import logging
+
 from django.conf import settings
 from google.cloud import vision_v1
 from google.cloud.vision_v1 import enums
 
 from core.processing.ftl_processing import FTLDocProcessingBase
 
+logger = logging.getLogger(__name__)
+
 
 class FTLOCRGoogleVision(FTLDocProcessingBase):
+    """
+    Plugin to use Google Vision as document OCR.
+    API LIMITATION: only the first 5 pages of document will be OCRised
+    It support both Google Cloud Storage and File system storage documents
+    """
     client = vision_v1.ImageAnnotatorClient()
 
     def __init__(self, gcs_bucket_name=settings.GS_BUCKET_NAME):
+        self.log_prefix = f'[{self.__class__.__name__}]'
         self.gcs_bucket_name = gcs_bucket_name
 
     def process(self, ftl_doc):
-        ftl_doc.content_text = self._sample_batch_annotate_files(ftl_doc.binary)
-        ftl_doc.save()
+        # TODO raise a specific error if file storage not supported
+        # If full text not already extracted
+        if not ftl_doc.content.text.strip():
+            ftl_doc.content_text = self._sample_batch_annotate_files(ftl_doc.binary)
+            ftl_doc.save()
+        else:
+            logger.info(f'{self.log_prefix} Processing skipped, document {ftl_doc.id} already get a text_content')
 
     def _sample_batch_annotate_files(self, ftl_doc):
+        # TODO add support for FILE_SYSTEM storage
         storage_uri = f'gs://{self.gcs_bucket_name}/{ftl_doc.name}'
-        # storage_uri = 'gs://cloud-samples-data/vision/document_understanding/kafka.pdf'
 
         gcs_source = {'uri': storage_uri}
         input_config = {'gcs_source': gcs_source}
@@ -35,7 +50,5 @@ class FTLOCRGoogleVision(FTLDocProcessingBase):
         requests = [requests_element]
 
         response = self.client.batch_annotate_files(requests)
-        # for image_response in response.responses[0].responses:
-        #     print('Full text: {}'.format(image_response.full_text_annotation.text))
 
-        return " ".join([e.full_text_annotation.text for e in response.responses[0].responses])
+        return "\n".join([e.full_text_annotation.text for e in response.responses[0].responses])
