@@ -3,12 +3,13 @@ from base64 import b64decode
 from concurrent.futures.thread import ThreadPoolExecutor
 
 import langid
+from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 from django.core.files.base import ContentFile
 from django.db import IntegrityError
 from django.db.models import F
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.utils.http import http_date
 from django.views import View
@@ -21,6 +22,7 @@ from tika import parser
 from core.error_codes import get_api_error
 from core.models import FTLDocument, FTLFolder, FTLModelPermissions
 from core.serializers import FTLDocumentSerializer, FTLFolderSerializer
+from ftl.constants import FTLStorages
 
 SEARCH_VECTOR = SearchVector('content_text', weight='C', config=F('language')) \
                 + SearchVector('note', weight='B', config=F('language')) \
@@ -33,7 +35,7 @@ EXECUTOR = ThreadPoolExecutor(max_workers=1, thread_name_prefix="ftl_indexation_
 
 
 def _extract_text_from_pdf(vector, ftl_doc_instance):
-    parsed_txt = parser.from_file(ftl_doc_instance.binary.name)
+    parsed_txt = parser.from_file(ftl_doc_instance.binary.read())
     if 'content' in parsed_txt and parsed_txt["content"]:
         ftl_doc_instance.content_text = parsed_txt["content"].strip()
         ftl_doc_instance.language = COUNTRY_CODE_INDEX.get(langid.classify(ftl_doc_instance.content_text)[0], 'english')
@@ -63,10 +65,14 @@ class DownloadView(LoginRequiredMixin, PermissionRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         doc = get_object_or_404(FTLDocument.objects.filter(org=self.request.user.org, pid=kwargs['uuid']))
-        response = HttpResponse(doc.binary, 'application/octet')
-        response['Last-Modified'] = http_date(doc.edited.timestamp())
-        response['Content-Disposition'] = 'attachment; filename="%s"' % doc.binary.name
-        return response
+
+        if settings.DEFAULT_FILE_STORAGE in [FTLStorages.GCS, FTLStorages.AWS_S3]:
+            return HttpResponseRedirect(doc.binary.url)
+        else:
+            response = HttpResponse(doc.binary, 'application/octet')
+            response['Last-Modified'] = http_date(doc.edited.timestamp())
+            response['Content-Disposition'] = 'attachment; filename="%s"' % doc.binary.name
+            return response
 
 
 class FTLDocumentList(generics.ListAPIView):
@@ -123,10 +129,13 @@ class FTLDocumentThumbnail(LoginRequiredMixin, views.APIView):
         if not bool(doc.thumbnail_binary):
             return HttpResponseNotFound()
 
-        response = HttpResponse(doc.thumbnail_binary, 'image/png')
-        response['Last-Modified'] = http_date(doc.edited.timestamp())
-        # TODO add ETAG and last modified for caching
-        return response
+        if settings.DEFAULT_FILE_STORAGE in [FTLStorages.GCS, FTLStorages.AWS_S3]:
+            return HttpResponseRedirect(doc.thumbnail_binary.url)
+        else:
+            response = HttpResponse(doc.thumbnail_binary, 'image/png')
+            response['Last-Modified'] = http_date(doc.edited.timestamp())
+            # TODO add ETAG and last modified for caching
+            return response
 
 
 class FileUploadView(LoginRequiredMixin, views.APIView):

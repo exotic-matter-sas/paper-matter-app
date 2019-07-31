@@ -91,6 +91,6 @@ class IndexerTests(TestCase):
 
         _extract_text_from_pdf(vector, ftl_doc)
 
-        mock_parser.assert_called_once_with(ftl_doc.binary.name)
+        mock_parser.assert_called_once_with(ftl_doc.binary.read())
         self.assertEqual(ftl_doc.content_text, indexed_text_['content'])
         self.assertEqual(ftl_doc.tsvector, vector)

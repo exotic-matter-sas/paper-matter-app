@@ -19,7 +19,7 @@ from django.contrib.auth import views as auth_views
 from django.urls import path, include, re_path, reverse_lazy
 from django.views.generic import RedirectView
 
-from ftl import views, view_local_proxy
+from ftl import views
 from ftl.ftl_setup_middleware import SetupState
 from ftl.views import PasswordResetAsked, PasswordResetDone
 from ftl.views_auth import LoginViewFTL
@@ -56,6 +56,7 @@ if settings.DEBUG:
     ]
 
 if settings.DEV_MODE:
+    from ftl import view_local_proxy
     urlpatterns += [
         re_path(r'^local/(?P<url>.*)$', view_local_proxy.LocalProxy.as_view())
     ]
