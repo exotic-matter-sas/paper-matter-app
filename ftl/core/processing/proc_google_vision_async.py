@@ -24,6 +24,10 @@ class FTLOCRGoogleVisionAsync(FTLDocProcessingBase):
         self.gcs_bucket_name = gcs_bucket_name
         self.bucket = storage.Client().get_bucket(gcs_bucket_name)
 
+        self.mime_type = 'application/pdf'
+        self.batch_size = 10  # How many pages should be grouped into each json output file
+        self.feature = vision.types.Feature(type=vision.enums.Feature.Type.DOCUMENT_TEXT_DETECTION)
+
     def process(self, ftl_doc):
         # If full text not already extracted
         if not ftl_doc.content.text.strip():
@@ -36,24 +40,16 @@ class FTLOCRGoogleVisionAsync(FTLDocProcessingBase):
         storage_uri = f'gs://{self.gcs_bucket_name}/{ftl_doc_binary.name}'
         storage_uri_ocr_target = f'gs://{self.gcs_bucket_name}/{ftl_doc_binary.name}.ocr.json'
 
-        mime_type = 'application/pdf'
-
-        # How many pages should be grouped into each json output file.
-        batch_size = 10
-
-        feature = vision.types.Feature(
-            type=vision.enums.Feature.Type.DOCUMENT_TEXT_DETECTION)
-
         gcs_source = vision.types.GcsSource(uri=storage_uri)
         input_config = vision.types.InputConfig(
-            gcs_source=gcs_source, mime_type=mime_type)
+            gcs_source=gcs_source, mime_type=self.mime_type)
 
         gcs_destination = vision.types.GcsDestination(uri=storage_uri_ocr_target)
         output_config = vision.types.OutputConfig(
-            gcs_destination=gcs_destination, batch_size=batch_size)
+            gcs_destination=gcs_destination, batch_size=self.batch_size)
 
         async_request = vision.types.AsyncAnnotateFileRequest(
-            features=[feature], input_config=input_config,
+            features=[self.feature], input_config=input_config,
             output_config=output_config)
 
         operation = self.client.async_batch_annotate_files(
