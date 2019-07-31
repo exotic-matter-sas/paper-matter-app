@@ -1,3 +1,4 @@
+import logging
 import re
 
 from django.conf import settings
@@ -7,6 +8,8 @@ from google.cloud import vision_v1
 from google.protobuf import json_format
 
 from core.processing.ftl_processing import FTLDocProcessingBase
+
+logger = logging.getLogger(__name__)
 
 
 class FTLOCRGoogleVisionAsync(FTLDocProcessingBase):
@@ -21,8 +24,12 @@ class FTLOCRGoogleVisionAsync(FTLDocProcessingBase):
         self.bucket = storage.Client().get_bucket(gcs_bucket_name)
 
     def process(self, ftl_doc):
-        ftl_doc.content_text = self._async_detect_document(ftl_doc.binary)
-        ftl_doc.save()
+        # If full text not already extracted
+        if not ftl_doc.content.text.strip():
+            ftl_doc.content_text = self._async_detect_document(ftl_doc.binary)
+            ftl_doc.save()
+        else:
+            logger.info(f'{ftl_doc.pid} - {self.__name__} processing skip, document already get a text_content')
 
     def _async_detect_document(self, ftl_doc):
         storage_uri = f'gs://{self.gcs_bucket_name}/{ftl_doc.name}'

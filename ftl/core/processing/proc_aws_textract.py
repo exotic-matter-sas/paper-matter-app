@@ -1,9 +1,12 @@
+import logging
 import time
 
 import boto3
 from django.conf import settings
 
 from core.processing.ftl_processing import FTLDocProcessingBase
+
+logger = logging.getLogger(__name__)
 
 
 class FTLAwsTextract(FTLDocProcessingBase):
@@ -22,8 +25,12 @@ class FTLAwsTextract(FTLDocProcessingBase):
         )
 
     def process(self, ftl_doc):
-        ftl_doc.content_text = self._extract_text(ftl_doc.binary)
-        ftl_doc.save()
+        # If full text not already extracted
+        if not ftl_doc.content.text.strip():
+            ftl_doc.content_text = self._extract_text(ftl_doc.binary)
+            ftl_doc.save()
+        else:
+            logger.info(f'{ftl_doc.pid} - {self.__name__} processing skip, document already get a text_content')
 
     def _extract_text(self, ftl_doc_binary):
         document_name = ftl_doc_binary.name
