@@ -32,9 +32,9 @@ class FTLOCRGoogleVisionAsync(FTLDocProcessingBase):
         else:
             logger.info(f'{self.log_prefix} Processing skipped, document {ftl_doc.id} already get a text_content')
 
-    def _async_detect_document(self, ftl_doc):
-        storage_uri = f'gs://{self.gcs_bucket_name}/{ftl_doc.name}'
-        storage_uri_ocr_target = f'gs://{self.gcs_bucket_name}/{ftl_doc.name}.ocr.json'
+    def _async_detect_document(self, ftl_doc_binary):
+        storage_uri = f'gs://{self.gcs_bucket_name}/{ftl_doc_binary.name}'
+        storage_uri_ocr_target = f'gs://{self.gcs_bucket_name}/{ftl_doc_binary.name}.ocr.json'
 
         mime_type = 'application/pdf'
 
