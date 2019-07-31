@@ -1,7 +1,7 @@
 import json
 import os
 import tempfile
-from unittest.mock import ANY, patch
+from unittest.mock import patch
 
 from django.contrib import messages
 from rest_framework import status
@@ -146,12 +146,15 @@ class DocumentsTests(APITestCase):
 
     @patch.object(FTLDocumentProcessing, 'apply_processing')
     def test_upload_doc_pdf_extract_async_call(self, mock_apply_processing):
-
         with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'test.pdf'), 'rb') as f:
             body_post = {'json': '{}', 'file': f}
             self.client.post('/app/api/v1/documents/upload', body_post)
 
-        mock_apply_processing.assert_called_once_with(ANY)
+        mock_apply_processing.assert_called_once()
+        # Check argument is a FTLDocument
+        kall = mock_apply_processing.call_args_list[0]
+        args, kwarg = kall
+        self.assertTrue(isinstance(args[0], FTLDocument))
 
     def test_document_in_folder(self):
         client_get = self.client.get(f'/app/api/v1/documents/?level={self.first_level_folder.id}', format='json')
