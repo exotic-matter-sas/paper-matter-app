@@ -23,6 +23,7 @@ RUN python3 manage.py compilemessages
 
 
 FROM python:3.7.3-alpine3.10
+# PORT is used by uwsgi config, it's mainly used by Heroku because they assign random port to app.
 ENV PORT 8000
 ADD ftl/requirements.txt /app/requirements.txt
 ADD docker/requirements_deploy.txt /app/requirements_deploy.txt
@@ -62,7 +63,7 @@ RUN python3 manage.py collectstatic --no-input
 
 VOLUME /app/uploads
 
-# For local or standard use, the expose command is not used by Heroku
+# For local or standard use, must match the env var PORT value.
 EXPOSE 8000
 
 # Run the image as a non-root user
