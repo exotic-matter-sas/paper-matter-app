@@ -42,9 +42,9 @@ class FTLDocumentProcessing:
                 errors.append(plugin.__class__.__name__)
                 logger.exception(f'Error while processing {ftl_doc.pid} with plugin {plugin.__class__.__name__}')
 
-        if len(errors) > 0:
-            logger.error(f'{ftl_doc.pid} was processed by {len(self.plugins)} plugins ({len(errors)}) are failing: '
-                         f'({",".join(errors)})')
+        if errors:
+            logger.error(f'{ftl_doc.pid} was processed by {len(self.plugins)} plugins ({len(errors)} are failing: '
+                         f'{", ".join(errors)})')
         else:
             logger.info(f'{ftl_doc.pid} was processed correctly')
 
