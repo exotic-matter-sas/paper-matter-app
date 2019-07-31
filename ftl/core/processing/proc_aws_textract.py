@@ -9,7 +9,7 @@ from core.processing.ftl_processing import FTLDocProcessingBase
 logger = logging.getLogger(__name__)
 
 
-class FTLAwsTextract(FTLDocProcessingBase):
+class FTLOCRAwsTextract(FTLDocProcessingBase):
     """
     Plugin to use Amazon Textract service as document OCR.
     Document have to stored on a Amazon S3 bucket for this plugin to work.
