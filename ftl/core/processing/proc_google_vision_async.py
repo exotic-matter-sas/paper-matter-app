@@ -17,12 +17,13 @@ class FTLOCRGoogleVisionAsync(FTLDocProcessingBase):
     Plugin to use Google Vision as document OCR.
     Currently plugin support Google Cloud Storage hosted documents only
     """
-    client = vision_v1.ImageAnnotatorClient()
 
-    def __init__(self, gcs_bucket_name=settings.GS_BUCKET_NAME):
+    def __init__(self, credentials=settings.GS_CREDENTIALS, gcs_bucket_name=settings.GS_BUCKET_NAME):
         self.log_prefix = f'[{self.__class__.__name__}]'
         self.gcs_bucket_name = gcs_bucket_name
-        self.bucket = storage.Client().get_bucket(gcs_bucket_name)
+        self.bucket = storage.Client(project=credentials.project_id, credentials=credentials).get_bucket(
+            gcs_bucket_name)
+        self.client = vision_v1.ImageAnnotatorClient(credentials=credentials)
 
         self.mime_type = 'application/pdf'
         self.batch_size = 10  # How many pages should be grouped into each json output file
@@ -31,7 +32,7 @@ class FTLOCRGoogleVisionAsync(FTLDocProcessingBase):
     def process(self, ftl_doc):
         # TODO raise a specific error if file storage not supported
         # If full text not already extracted
-        if not ftl_doc.content.text.strip():
+        if not ftl_doc.content_text.strip():
             ftl_doc.content_text = self._async_detect_document(ftl_doc.binary)
             ftl_doc.save()
         else:
