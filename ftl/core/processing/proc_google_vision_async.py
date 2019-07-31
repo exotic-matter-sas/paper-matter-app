@@ -20,6 +20,7 @@ class FTLOCRGoogleVisionAsync(FTLDocProcessingBase):
     client = vision_v1.ImageAnnotatorClient()
 
     def __init__(self, gcs_bucket_name=settings.GS_BUCKET_NAME):
+        self.log_prefix = f'[{self.__class__.__name__}]'
         self.gcs_bucket_name = gcs_bucket_name
         self.bucket = storage.Client().get_bucket(gcs_bucket_name)
 
@@ -29,7 +30,7 @@ class FTLOCRGoogleVisionAsync(FTLDocProcessingBase):
             ftl_doc.content_text = self._async_detect_document(ftl_doc.binary)
             ftl_doc.save()
         else:
-            logger.info(f'{ftl_doc.pid} - {self.__name__} processing skip, document already get a text_content')
+            logger.info(f'{self.log_prefix} Processing skipped, document {ftl_doc.id} already get a text_content')
 
     def _async_detect_document(self, ftl_doc):
         storage_uri = f'gs://{self.gcs_bucket_name}/{ftl_doc.name}'

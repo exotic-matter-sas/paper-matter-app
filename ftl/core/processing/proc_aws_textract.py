@@ -15,6 +15,7 @@ class FTLAwsTextract(FTLDocProcessingBase):
     Document have to stored on a Amazon S3 bucket for this plugin to work.
     """
     def __init__(self, aws_bucket=settings.AWS_STORAGE_BUCKET_NAME):
+        self.log_prefix = f'[{self.__class__.__name__}]'
         self.aws_bucket = aws_bucket
         self.client = boto3.client(
             aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
@@ -30,7 +31,7 @@ class FTLAwsTextract(FTLDocProcessingBase):
             ftl_doc.content_text = self._extract_text(ftl_doc.binary)
             ftl_doc.save()
         else:
-            logger.info(f'{ftl_doc.pid} - {self.__name__} processing skip, document already get a text_content')
+            logger.info(f'{self.log_prefix} Processing skipped, document {ftl_doc.id} already get a text_content')
 
     def _extract_text(self, ftl_doc_binary):
         document_name = ftl_doc_binary.name
@@ -39,6 +40,8 @@ class FTLAwsTextract(FTLDocProcessingBase):
 
         first_response_chunk = self._get_job_response_once_completed(job_id)
         if first_response_chunk['JobStatus'] in ['SUCCEEDED', 'PARTIAL_SUCCESS']:
+            if first_response_chunk['JobStatus'] == 'PARTIAL_SUCCESS':
+                logger.warning(f'{self.log_prefix} Text extraction only partial (Amazon side)')
             response_chunks = self._get_all_response_chunks(job_id, first_response_chunk)
 
             text_lines = list()
@@ -49,6 +52,7 @@ class FTLAwsTextract(FTLDocProcessingBase):
 
             return "\n".join(text_lines)
         else:  # JobStatus is FAILED
+            logger.error(f'{self.log_prefix} Text extraction failed (Amazon side)')
             return ""
 
     def _start_job(self, s3_bucket_name, object_name):
@@ -72,7 +76,6 @@ class FTLAwsTextract(FTLDocProcessingBase):
             response = self.client.get_document_text_detection(JobId=job_id)
             status = response["JobStatus"]
             first_iteration = False
-            # print("Job status: {}".format(status))
 
         return response
 
