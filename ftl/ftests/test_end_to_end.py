@@ -24,7 +24,7 @@ from ftl.settings import BASE_DIR, DEV_MODE
 class InitialSetupTest(SetupPages, SignupPages, LoginPage, HomePage):
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_end_to_end_setup(self):
-        # Admin have just install ftl-app and display it for the first time
+        # Admin have just install Paper Matter and display it for the first time
         self.visit(self.root_url)
 
         # Admin fulfill the org creation form

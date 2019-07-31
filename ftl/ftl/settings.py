@@ -11,11 +11,12 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+import pathlib
 
 from django.contrib.messages import constants as message_constants
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-import pathlib
+from ftl.constants import FTLStorages
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -26,7 +27,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'q-2%l!knv+331nqu&ypc+gv&85nd$9*1g1max3692uxfu_!7w8'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -147,6 +148,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'assets')  # internal path
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'frontend', 'dist'),  # Webpack final bundle
     os.path.join(BASE_DIR, 'frontend', 'pdfjs'),
+    os.path.join(BASE_DIR, 'frontend', 'src', 'assets'),
     os.path.join(BASE_DIR, 'ftl', 'static'),
 )
 
@@ -203,6 +205,26 @@ MESSAGE_TAGS = {
     message_constants.ERROR: 'text-center alert alert-danger',
 }
 
+# Doc binary storage
+DEFAULT_FILE_STORAGE = FTLStorages.FILE_SYSTEM
+
+# Additional settings required if you chose a remote storage
+if DEFAULT_FILE_STORAGE == FTLStorages.AWS_S3:  # Amazon S3 storage
+    AWS_ACCESS_KEY_ID = ""
+    AWS_SECRET_ACCESS_KEY = ""
+    AWS_STORAGE_BUCKET_NAME = ""
+    AWS_S3_ENDPOINT_URL = ""
+    AWS_S3_REGION_NAME = ""
+    AWS_DEFAULT_ACL = 'private'
+    S3_USE_SIGV4 = True
+elif DEFAULT_FILE_STORAGE == FTLStorages.GCS:  # Google Cloud Storage
+    import json
+    from google.oauth2 import service_account
+
+    GS_BUCKET_NAME = ''
+    credentials_raw = ''
+    GS_CREDENTIALS = service_account.Credentials.from_service_account_info(credentials_raw)
+
 # FTL document processing plugins (order is important)
 FTL_DOC_PROCESSING_PLUGINS = [
     'core.processing.proc_tika.FTLDocTextExtractionTika',
@@ -219,5 +241,9 @@ FTL_DOC_PROCESSING_PLUGINS = [
 # Auto import local `settings_local.py` if available
 try:
     from .settings_local import *
-except ImportError:
-    pass
+
+    print('Local setting imported')
+except ImportError as e:
+    print(e)
+    print('No local setting')
+
