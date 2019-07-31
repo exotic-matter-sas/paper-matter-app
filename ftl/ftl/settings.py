@@ -246,4 +246,3 @@ try:
 except ImportError as e:
     print(e)
     print('No local setting')
-
