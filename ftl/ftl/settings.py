@@ -206,7 +206,7 @@ MESSAGE_TAGS = {
 # FTL document processing plugins (order is important)
 FTL_DOC_PROCESSING_PLUGINS = [
     'core.processing.proc_tika.FTLDocTextExtractionTika',
-    # 'core.processing.proc_google_vision.FTLOCRGoogleVision',
+    # Add OCR plugin here if needed
     'core.processing.proc_lang.FTLDocLangDetector',
     'core.processing.proc_pgsql_tsvector.FTLDocPgSQLTSVector',
 ]
