@@ -6,6 +6,8 @@ import sentry_sdk
 from google.oauth2 import service_account
 from sentry_sdk.integrations.django import DjangoIntegration
 
+from ftl.constants import FTLStorages
+
 sentry_sdk.init(
     dsn=os.getenv('SENTRY_DSN', None),
     integrations=[DjangoIntegration()]
@@ -40,8 +42,11 @@ DATABASES = {
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-FTL_USE_S3 = bool(strtobool(os.getenv("USE_S3", "False")))
-if FTL_USE_S3:
+# Doc binary storage
+DEFAULT_FILE_STORAGE = os.getenv("DEFAULT_FILE_STORAGE")
+
+# Additional settings required if you chose a remote storage
+if DEFAULT_FILE_STORAGE == FTLStorages.AWS_S3:  # Amazon S3 storage
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
     AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
@@ -50,9 +55,7 @@ if FTL_USE_S3:
     AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME")
     AWS_DEFAULT_ACL = 'private'
     S3_USE_SIGV4 = True
-
-FTL_USE_GCS = bool(strtobool(os.getenv("USE_GCS", "False")))
-if FTL_USE_GCS:
+elif DEFAULT_FILE_STORAGE == FTLStorages.GCS:  # Google Cloud Storage
     import json
 
     DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
@@ -71,3 +74,5 @@ DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", 'noreply@localhost')
 # Configure Django App for Heroku.
 django_heroku.settings(locals(), db_colors=False, databases=True, test_runner=False, staticfiles=False,
                        allowed_hosts=False, logging=True, secret_key=True)
+
+# TODO remove heroku specific settings from here when repo forked for SaaS version

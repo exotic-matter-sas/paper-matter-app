@@ -16,6 +16,8 @@ import pathlib
 
 from django.contrib.messages import constants as message_constants
 
+from ftl.constants import FTLStorages
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
@@ -203,25 +205,25 @@ MESSAGE_TAGS = {
     message_constants.ERROR: 'text-center alert alert-danger',
 }
 
-# Use AWS S3 storage
-FTL_USE_S3 = False
-# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-# AWS_ACCESS_KEY_ID = ""
-# AWS_SECRET_ACCESS_KEY = ""
-# AWS_STORAGE_BUCKET_NAME = ""
-# AWS_S3_ENDPOINT_URL = ""
-# AWS_S3_REGION_NAME = ""
-# AWS_DEFAULT_ACL = 'private'
-# S3_USE_SIGV4 = True
+# Doc binary storage
+DEFAULT_FILE_STORAGE = FTLStorages.FILE_SYSTEM
 
-# Use Google Cloud Storage
-FTL_USE_GCS = False
-# import json
-#
-# DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
-# GS_BUCKET_NAME = os.environ.get('GCS_BUCKET_NAME')
-# credentials_raw = json.loads(os.environ.get('GCS_CREDENTIALS_CONTENT'))
-# GS_CREDENTIALS = service_account.Credentials.from_service_account_info(credentials_raw)
+# Additional settings required if you chose a remote storage
+if DEFAULT_FILE_STORAGE == FTLStorages.AWS_S3:  # Amazon S3 storage
+    AWS_ACCESS_KEY_ID = ""
+    AWS_SECRET_ACCESS_KEY = ""
+    AWS_STORAGE_BUCKET_NAME = ""
+    AWS_S3_ENDPOINT_URL = ""
+    AWS_S3_REGION_NAME = ""
+    AWS_DEFAULT_ACL = 'private'
+    S3_USE_SIGV4 = True
+elif DEFAULT_FILE_STORAGE == FTLStorages.GCS:  # Google Cloud Storage
+    import json
+    from google.oauth2 import service_account
+
+    GS_BUCKET_NAME = ''
+    credentials_raw = ''
+    GS_CREDENTIALS = service_account.Credentials.from_service_account_info(credentials_raw)
 
 # ==================================================
 # No settings under this line
@@ -229,8 +231,8 @@ FTL_USE_GCS = False
 try:
     from .settings_local import *
 
-    print('Imported local setting')
+    print('Local setting imported')
 except ImportError as e:
     print(e)
     print('No local setting')
-    pass
+

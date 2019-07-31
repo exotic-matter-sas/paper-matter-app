@@ -22,6 +22,7 @@ from tika import parser
 from core.error_codes import get_api_error
 from core.models import FTLDocument, FTLFolder, FTLModelPermissions
 from core.serializers import FTLDocumentSerializer, FTLFolderSerializer
+from ftl.constants import FTLStorages
 
 SEARCH_VECTOR = SearchVector('content_text', weight='C', config=F('language')) \
                 + SearchVector('note', weight='B', config=F('language')) \
@@ -61,12 +62,11 @@ class HomeView(LoginRequiredMixin, View):
 class DownloadView(LoginRequiredMixin, PermissionRequiredMixin, View):
     http_method_names = ['get']
     permission_required = ('core.view_ftldocument',)
-    s3_mode = settings.FTL_USE_GCS or settings.FTL_USE_S3
 
     def get(self, request, *args, **kwargs):
         doc = get_object_or_404(FTLDocument.objects.filter(org=self.request.user.org, pid=kwargs['uuid']))
 
-        if self.s3_mode:
+        if settings.DEFAULT_FILE_STORAGE in [FTLStorages.GCS, FTLStorages.AWS_S3]:
             return HttpResponseRedirect(doc.binary.url)
         else:
             response = HttpResponse(doc.binary, 'application/octet')
@@ -119,7 +119,6 @@ class FTLDocumentThumbnail(LoginRequiredMixin, views.APIView):
     serializer_class = FTLDocumentSerializer
     lookup_field = 'pid'
     permission_classes = (FTLModelPermissions,)
-    s3_mode = settings.FTL_USE_GCS or settings.FTL_USE_S3
 
     def get_queryset(self):
         return FTLDocument.objects.filter(org=self.request.user.org)
@@ -130,7 +129,7 @@ class FTLDocumentThumbnail(LoginRequiredMixin, views.APIView):
         if not bool(doc.thumbnail_binary):
             return HttpResponseNotFound()
 
-        if self.s3_mode:
+        if settings.DEFAULT_FILE_STORAGE in [FTLStorages.GCS, FTLStorages.AWS_S3]:
             return HttpResponseRedirect(doc.thumbnail_binary.url)
         else:
             response = HttpResponse(doc.thumbnail_binary, 'image/png')
