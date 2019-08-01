@@ -49,7 +49,9 @@ class FTLOCRGoogleVisionAsync(FTLDocProcessingBase):
 
     def _async_detect_document(self, ftl_doc_binary):
         storage_uri = f'gs://{self.gcs_bucket_name}/{ftl_doc_binary.name}'
-        storage_uri_ocr_target = f'gs://{self.gcs_bucket_name}/{ftl_doc_binary.name}.ocr.json'
+        # This will used by Google to generate a filename like this:
+        # 1ac7b8e9-ecc6-4522-9948-1775f188feaa.pdf.ocr.output-1-to-1.json
+        storage_uri_ocr_target = f'gs://{self.gcs_bucket_name}/{ftl_doc_binary.name}.ocr.'
 
         gcs_source = vision.types.GcsSource(uri=storage_uri)
         input_config = vision.types.InputConfig(
@@ -71,8 +73,8 @@ class FTLOCRGoogleVisionAsync(FTLDocProcessingBase):
 
         # Once the request has completed and the output has been
         # written to GCS, we can list all the output files.
-        match = re.match(r'gs://([^/]+)/(.+)', storage_uri_ocr_target)
-        prefix = match.group(2)
+        # Example output file: 1ac7b8e9-ecc6-4522-9948-1775f188feaa.pdf.ocr.output-1-to-1.json
+        prefix = f'{ftl_doc_binary.name}.ocr.'
 
         # List objects with the given prefix.
         blob_list = list(self.bucket.list_blobs(prefix=prefix))
