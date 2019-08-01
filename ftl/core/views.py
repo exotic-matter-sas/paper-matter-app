@@ -17,6 +17,7 @@ from rest_framework import generics, views, serializers
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from tika import parser
 
 from core.error_codes import get_api_error
@@ -76,7 +77,7 @@ class DownloadView(LoginRequiredMixin, PermissionRequiredMixin, View):
 
 
 class FTLDocumentList(generics.ListAPIView):
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (SessionAuthentication, JWTAuthentication)
     serializer_class = FTLDocumentSerializer
     permission_classes = (FTLModelPermissions,)
 
@@ -102,7 +103,7 @@ class FTLDocumentList(generics.ListAPIView):
 
 
 class FTLDocumentDetail(generics.RetrieveUpdateDestroyAPIView):
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (SessionAuthentication, JWTAuthentication)
     serializer_class = FTLDocumentSerializer
     lookup_field = 'pid'
     permission_classes = (FTLModelPermissions,)
@@ -115,7 +116,7 @@ class FTLDocumentDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class FTLDocumentThumbnail(LoginRequiredMixin, views.APIView):
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (SessionAuthentication, JWTAuthentication)
     serializer_class = FTLDocumentSerializer
     lookup_field = 'pid'
     permission_classes = (FTLModelPermissions,)
@@ -139,7 +140,7 @@ class FTLDocumentThumbnail(LoginRequiredMixin, views.APIView):
 
 
 class FileUploadView(LoginRequiredMixin, views.APIView):
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (SessionAuthentication, JWTAuthentication)
     parser_classes = (MultiPartParser,)
     serializer_class = FTLDocumentSerializer
     permission_classes = (FTLModelPermissions,)
@@ -178,7 +179,7 @@ class FileUploadView(LoginRequiredMixin, views.APIView):
 
 
 class FTLFolderList(generics.ListCreateAPIView):
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (SessionAuthentication, JWTAuthentication)
     serializer_class = FTLFolderSerializer
     pagination_class = None
     permission_classes = (FTLModelPermissions,)
@@ -205,7 +206,7 @@ class FTLFolderList(generics.ListCreateAPIView):
 
 
 class FTLFolderDetail(generics.RetrieveUpdateDestroyAPIView):
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (SessionAuthentication, JWTAuthentication)
     serializer_class = FTLFolderSerializer
     lookup_field = 'id'
     permission_classes = (FTLModelPermissions,)
