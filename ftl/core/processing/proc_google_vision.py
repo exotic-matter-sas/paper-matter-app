@@ -4,31 +4,40 @@ from django.conf import settings
 from google.cloud import vision_v1
 from google.cloud.vision_v1 import enums
 
+from core.errors import PluginUnsupportedStorage
 from core.processing.ftl_processing import FTLDocProcessingBase
+from ftl.constants import FTLStorages
+from ftl.settings import DEFAULT_FILE_STORAGE
 
 logger = logging.getLogger(__name__)
 
 
 class FTLOCRGoogleVision(FTLDocProcessingBase):
     """
-    Plugin to use Google Vision as document OCR.
+    Plugin to use Google Vision sync as document OCR.
     API LIMITATION: only the first 5 pages of document will be OCRised
-    It support both Google Cloud Storage and File system storage documents
+    It support both Google Cloud Storage and File system storage documents (up to 20 MB)
+    Doc: https://cloud.google.com/vision/docs/reference/rest/v1/files/annotate
     """
     client = vision_v1.ImageAnnotatorClient()
 
     def __init__(self, gcs_bucket_name=settings.GS_BUCKET_NAME):
         self.log_prefix = f'[{self.__class__.__name__}]'
         self.gcs_bucket_name = gcs_bucket_name
+        self.supported_storages = [FTLStorages.FILE_SYSTEM, FTLStorages.GCS]
 
     def process(self, ftl_doc):
-        # TODO raise a specific error if file storage not supported
-        # If full text not already extracted
-        if not ftl_doc.content.text.strip():
-            ftl_doc.content_text = self._sample_batch_annotate_files(ftl_doc.binary)
-            ftl_doc.save()
+        if DEFAULT_FILE_STORAGE in self.supported_storages:
+            # If full text not already extracted
+            if not ftl_doc.content.text.strip():
+                ftl_doc.content_text = self._sample_batch_annotate_files(ftl_doc.binary)
+                ftl_doc.save()
+            else:
+                logger.info(f'{self.log_prefix} Processing skipped, document {ftl_doc.id} already get a text_content')
         else:
-            logger.info(f'{self.log_prefix} Processing skipped, document {ftl_doc.id} already get a text_content')
+            raise PluginUnsupportedStorage(
+                f'Plugin {self.__class__.__name__} does not support storage {DEFAULT_FILE_STORAGE} (supported storages '
+                f'are: {self.supported_storages}).')
 
     def _sample_batch_annotate_files(self, ftl_doc):
         # TODO add support for FILE_SYSTEM storage

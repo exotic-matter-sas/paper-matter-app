@@ -7,15 +7,19 @@ from google.cloud import vision
 from google.cloud import vision_v1
 from google.protobuf import json_format
 
+from core.errors import PluginUnsupportedStorage
 from core.processing.ftl_processing import FTLDocProcessingBase
+from ftl.constants import FTLStorages
+from ftl.settings import DEFAULT_FILE_STORAGE
 
 logger = logging.getLogger(__name__)
 
 
 class FTLOCRGoogleVisionAsync(FTLDocProcessingBase):
     """
-    Plugin to use Google Vision as document OCR.
-    Currently plugin support Google Cloud Storage hosted documents only
+    Plugin to use Google Vision async as document OCR.
+    Support Google Cloud Storage hosted documents only.
+    Doc: https://cloud.google.com/vision/docs/reference/rest/v1/files/asyncBatchAnnotate
     """
 
     def __init__(self, credentials=settings.GS_CREDENTIALS, gcs_bucket_name=settings.GS_BUCKET_NAME):
@@ -24,19 +28,24 @@ class FTLOCRGoogleVisionAsync(FTLDocProcessingBase):
         self.bucket = storage.Client(project=credentials.project_id, credentials=credentials).get_bucket(
             gcs_bucket_name)
         self.client = vision_v1.ImageAnnotatorClient(credentials=credentials)
+        self.supported_storages = [FTLStorages.GCS]
 
         self.mime_type = 'application/pdf'
         self.batch_size = 10  # How many pages should be grouped into each json output file
         self.feature = vision.types.Feature(type=vision.enums.Feature.Type.DOCUMENT_TEXT_DETECTION)
 
     def process(self, ftl_doc):
-        # TODO raise a specific error if file storage not supported
-        # If full text not already extracted
-        if not ftl_doc.content_text.strip():
-            ftl_doc.content_text = self._async_detect_document(ftl_doc.binary)
-            ftl_doc.save()
+        if DEFAULT_FILE_STORAGE in self.supported_storages:
+            # If full text not already extracted
+            if not ftl_doc.content_text.strip():
+                ftl_doc.content_text = self._async_detect_document(ftl_doc.binary)
+                ftl_doc.save()
+            else:
+                logger.info(f'{self.log_prefix} Processing skipped, document {ftl_doc.id} already get a text_content')
         else:
-            logger.info(f'{self.log_prefix} Processing skipped, document {ftl_doc.id} already get a text_content')
+            raise PluginUnsupportedStorage(
+                f'Plugin {self.__class__.__name__} does not support storage {DEFAULT_FILE_STORAGE} (supported storages '
+                f'are: {self.supported_storages}).')
 
     def _async_detect_document(self, ftl_doc_binary):
         storage_uri = f'gs://{self.gcs_bucket_name}/{ftl_doc_binary.name}'

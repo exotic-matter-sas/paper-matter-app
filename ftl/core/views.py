@@ -16,7 +16,7 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 
-from core.error_codes import get_api_error
+from core.errors import get_api_error
 from core.models import FTLDocument, FTLFolder, FTLModelPermissions
 from core.processing.ftl_processing import FTLDocumentProcessing
 from core.serializers import FTLDocumentSerializer, FTLFolderSerializer
