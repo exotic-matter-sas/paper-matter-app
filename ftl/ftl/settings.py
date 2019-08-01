@@ -31,6 +31,9 @@ DEBUG = False
 
 ALLOWED_HOSTS = []
 
+# This param allow app to run with an unbuilt frontend
+DEV_MODE = False
+
 # Custom user auth model
 AUTH_USER_MODEL = 'core.FTLUser'
 
@@ -164,7 +167,6 @@ LOGIN_REDIRECT_URL = '/app'
 # Default settings for browser used for functional tests
 DEFAULT_TEST_BROWSER = 'firefox'
 TEST_BROWSER_HEADLESS = True
-DEV_MODE = False
 
 # Django Rest Framework settings
 REST_FRAMEWORK = {
@@ -207,9 +209,9 @@ MESSAGE_TAGS = {
 
 # Doc binary storage
 DEFAULT_FILE_STORAGE = FTLStorages.FILE_SYSTEM
-
-# Additional settings required if you chose a remote storage
+# WARNING: Additional settings and Python modules are required if you are not using FTLStorages.FILE_SYSTEM
 if DEFAULT_FILE_STORAGE == FTLStorages.AWS_S3:  # Amazon S3 storage
+    # Uncomment django-storages + boto3 in requirements.txt
     AWS_ACCESS_KEY_ID = ""
     AWS_SECRET_ACCESS_KEY = ""
     AWS_STORAGE_BUCKET_NAME = ""
@@ -218,7 +220,7 @@ if DEFAULT_FILE_STORAGE == FTLStorages.AWS_S3:  # Amazon S3 storage
     AWS_DEFAULT_ACL = 'private'
     S3_USE_SIGV4 = True
 elif DEFAULT_FILE_STORAGE == FTLStorages.GCS:  # Google Cloud Storage
-    import json
+    # Uncomment django-storages + google-cloud-storage in requirements.txt
     from google.oauth2 import service_account
 
     GS_BUCKET_NAME = ''
@@ -228,10 +230,13 @@ elif DEFAULT_FILE_STORAGE == FTLStorages.GCS:  # Google Cloud Storage
 # FTL document processing plugins (order is important)
 FTL_DOC_PROCESSING_PLUGINS = [
     'core.processing.proc_tika.FTLDocTextExtractionTika',
-    # Uncomment ONLY one of plugins below if OCR is needed
+    # Uncomment ONLY ONE of FTLOCR* plugins below to enable OCR for scanned documents
+    # LIMITATION: Most OCR required a specific DEFAULT_FILE_STORAGE, see plugin source for more info
+    # WARNING: Additional Python modules are required for some OCR (see below)
+    # ------------------------------------------------------------------------
     # 'core.processing.proc_aws_textract.FTLOCRAwsTextract',
-    # 'core.processing.proc_google_vision.FTLOCRGoogleVision',
-    # 'core.processing.proc_google_vision_async.FTLOCRGoogleVisionAsync',
+    # 'core.processing.proc_google_vision.FTLOCRGoogleVision',  # Uncomment google-cloud-vision in requirements.txt
+    # 'core.processing.proc_google_vision_async.FTLOCRGoogleVisionAsync',  # Uncomment google-cloud-vision in require...
     'core.processing.proc_lang.FTLDocLangDetector',
     'core.processing.proc_pgsql_tsvector.FTLDocPgSQLTSVector',
 ]
