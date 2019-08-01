@@ -1,4 +1,5 @@
 import logging
+from base64 import b64encode
 
 from django.conf import settings
 from google.cloud import vision_v1
@@ -40,11 +41,13 @@ class FTLOCRGoogleVision(FTLDocProcessingBase):
                 f'are: {self.supported_storages}).')
 
     def _sample_batch_annotate_files(self, ftl_doc):
-        # TODO add support for FILE_SYSTEM storage
-        storage_uri = f'gs://{self.gcs_bucket_name}/{ftl_doc.name}'
+        if DEFAULT_FILE_STORAGE == FTLStorages.GCS:
+            storage_uri = f'gs://{self.gcs_bucket_name}/{ftl_doc.name}'
+            gcs_source = {'uri': storage_uri}
+            input_config = {'gcs_source': gcs_source}
+        else:  # Default is FILE_SYSTEM storage
+            input_config = {'content': b64encode(ftl_doc.binary)}
 
-        gcs_source = {'uri': storage_uri}
-        input_config = {'gcs_source': gcs_source}
         type_ = enums.Feature.Type.DOCUMENT_TEXT_DETECTION
         features_element = {'type': type_}
         features = [features_element]
@@ -52,10 +55,7 @@ class FTLOCRGoogleVision(FTLDocProcessingBase):
         # The service can process up to 5 pages per document file.
         # Here we specify the first, second, and last page of the document to be
         # processed.
-        pages_element = 1
-        pages_element_2 = -1
-        pages = [pages_element, pages_element_2]
-        requests_element = {'input_config': input_config, 'features': features, 'pages': pages}
+        requests_element = {'input_config': input_config, 'features': features}
         requests = [requests_element]
 
         response = self.client.batch_annotate_files(requests)
