@@ -33,7 +33,7 @@ class FTLOCRAwsTextract(FTLDocProcessingBase):
     def process(self, ftl_doc):
         if DEFAULT_FILE_STORAGE in self.supported_storages:
             # If full text not already extracted
-            if not ftl_doc.content.text.strip():
+            if not ftl_doc.content_text.strip():
                 ftl_doc.content_text = self._extract_text(ftl_doc.binary)
                 ftl_doc.save()
             else:
