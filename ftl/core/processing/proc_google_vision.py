@@ -8,7 +8,7 @@ from google.cloud.vision_v1 import enums
 from core.errors import PluginUnsupportedStorage
 from core.processing.ftl_processing import FTLDocProcessingBase
 from ftl.constants import FTLStorages
-from ftl.settings import DEFAULT_FILE_STORAGE
+from ftl.settings import DEFAULT_FILE_STORAGE, GS_CREDENTIALS
 
 logger = logging.getLogger(__name__)
 
@@ -20,11 +20,11 @@ class FTLOCRGoogleVision(FTLDocProcessingBase):
     It support both Google Cloud Storage and File system storage documents (up to 20 MB)
     Doc: https://cloud.google.com/vision/docs/reference/rest/v1/files/annotate
     """
-    client = vision_v1.ImageAnnotatorClient()
 
-    def __init__(self, gcs_bucket_name=settings.GS_BUCKET_NAME):
+    def __init__(self, credentials=settings.GS_CREDENTIALS, gcs_bucket_name=settings.GS_BUCKET_NAME):
         self.log_prefix = f'[{self.__class__.__name__}]'
         self.gcs_bucket_name = gcs_bucket_name
+        self.client = vision_v1.ImageAnnotatorClient(credentials=credentials)
         self.supported_storages = [FTLStorages.FILE_SYSTEM, FTLStorages.GCS]
 
     def process(self, ftl_doc):
