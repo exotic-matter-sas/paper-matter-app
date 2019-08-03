@@ -20,6 +20,7 @@ import {mixinAlert} from "./vueMixins";
 import router from './router';
 import store from './store'
 import moment from 'moment'
+import axios from 'axios';
 
 Vue.config.productionTip = false;
 
@@ -82,3 +83,14 @@ new Vue({
   store,
   render: h => h(App)
 }).$mount('#app');
+
+axios.interceptors.response.use(function (response) {
+  return response;
+}, function (error) {
+  if (error.response.status === 403) {
+    // Redirect to root page when an XHR returns 403
+    window.location.replace("/");
+  } else {
+    return Promise.reject(error);
+  }
+});
