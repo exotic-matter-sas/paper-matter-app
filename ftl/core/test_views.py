@@ -1,9 +1,7 @@
 from unittest.mock import MagicMock, patch
-from urllib.parse import quote_plus
 
 from django.contrib.staticfiles import finders
 from django.test import TestCase
-from django.urls import reverse_lazy
 from tika import parser
 
 from core.views import _extract_text_from_pdf
@@ -55,10 +53,10 @@ class DownloadDocumentTests(TestCase):
         # Add a document in first org with first user
         doc = setup_document(self.org, self.user)
 
-        # Trying to download the document when not logged redirect to login page
+        # Trying to download the document when not logged returns an error
         download_url = f'/app/uploads/{doc.pid}'
         response = self.client.get(download_url)
-        self.assertRedirects(response, f'{reverse_lazy("login")}?next={quote_plus(download_url)}')
+        self.assertEqual(response.status_code, 403)
 
     def test_document_download_only_work_for_users_in_the_doc_org(self):
         # Add a document in first org with first user

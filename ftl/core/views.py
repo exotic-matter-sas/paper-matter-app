@@ -4,7 +4,7 @@ from concurrent.futures.thread import ThreadPoolExecutor
 
 import langid
 from django.conf import settings
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 from django.core.files.base import ContentFile
 from django.db import IntegrityError
@@ -14,13 +14,12 @@ from django.shortcuts import render, get_object_or_404
 from django.utils.http import http_date
 from django.views import View
 from rest_framework import generics, views, serializers
-from rest_framework.authentication import SessionAuthentication
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from tika import parser
 
 from core.error_codes import get_api_error
-from core.models import FTLDocument, FTLFolder, FTLModelPermissions
+from core.models import FTLDocument, FTLFolder
 from core.serializers import FTLDocumentSerializer, FTLFolderSerializer
 from ftl.constants import FTLStorages
 
@@ -59,12 +58,17 @@ class HomeView(LoginRequiredMixin, View):
         return render(request, 'core/home.html', context)
 
 
-class DownloadView(LoginRequiredMixin, PermissionRequiredMixin, View):
-    http_method_names = ['get']
-    permission_required = ('core.view_ftldocument',)
+# API
+
+class DownloadView(views.APIView):
+    serializer_class = FTLDocumentSerializer
+    lookup_field = 'pid'
+
+    def get_queryset(self):
+        return FTLDocument.objects.filter(org=self.request.user.org)
 
     def get(self, request, *args, **kwargs):
-        doc = get_object_or_404(FTLDocument.objects.filter(org=self.request.user.org, pid=kwargs['uuid']))
+        doc = get_object_or_404(self.get_queryset(), pid=kwargs['uuid'])
 
         if settings.DEFAULT_FILE_STORAGE in [FTLStorages.GCS, FTLStorages.AWS_S3]:
             return HttpResponseRedirect(doc.binary.url)
@@ -76,9 +80,7 @@ class DownloadView(LoginRequiredMixin, PermissionRequiredMixin, View):
 
 
 class FTLDocumentList(generics.ListAPIView):
-    authentication_classes = (SessionAuthentication,)
     serializer_class = FTLDocumentSerializer
-    permission_classes = (FTLModelPermissions,)
 
     def get_queryset(self):
         current_folder = self.request.query_params.get('level', None)
@@ -102,10 +104,8 @@ class FTLDocumentList(generics.ListAPIView):
 
 
 class FTLDocumentDetail(generics.RetrieveUpdateDestroyAPIView):
-    authentication_classes = (SessionAuthentication,)
     serializer_class = FTLDocumentSerializer
     lookup_field = 'pid'
-    permission_classes = (FTLModelPermissions,)
 
     def get_queryset(self):
         return FTLDocument.objects.filter(org=self.request.user.org)
@@ -114,11 +114,9 @@ class FTLDocumentDetail(generics.RetrieveUpdateDestroyAPIView):
         serializer.save(org=self.request.user.org)
 
 
-class FTLDocumentThumbnail(LoginRequiredMixin, views.APIView):
-    authentication_classes = (SessionAuthentication,)
+class FTLDocumentThumbnail(views.APIView):
     serializer_class = FTLDocumentSerializer
     lookup_field = 'pid'
-    permission_classes = (FTLModelPermissions,)
 
     def get_queryset(self):
         return FTLDocument.objects.filter(org=self.request.user.org)
@@ -138,11 +136,9 @@ class FTLDocumentThumbnail(LoginRequiredMixin, views.APIView):
             return response
 
 
-class FileUploadView(LoginRequiredMixin, views.APIView):
-    authentication_classes = (SessionAuthentication,)
+class FileUploadView(views.APIView):
     parser_classes = (MultiPartParser,)
     serializer_class = FTLDocumentSerializer
-    permission_classes = (FTLModelPermissions,)
     # Needed for applying permission checking on view that don't have any queryset
     queryset = FTLDocument.objects.none()
 
@@ -178,10 +174,8 @@ class FileUploadView(LoginRequiredMixin, views.APIView):
 
 
 class FTLFolderList(generics.ListCreateAPIView):
-    authentication_classes = (SessionAuthentication,)
     serializer_class = FTLFolderSerializer
     pagination_class = None
-    permission_classes = (FTLModelPermissions,)
 
     def get_queryset(self):
         current_folder = self.request.query_params.get('level')
@@ -205,10 +199,8 @@ class FTLFolderList(generics.ListCreateAPIView):
 
 
 class FTLFolderDetail(generics.RetrieveUpdateDestroyAPIView):
-    authentication_classes = (SessionAuthentication,)
     serializer_class = FTLFolderSerializer
     lookup_field = 'id'
-    permission_classes = (FTLModelPermissions,)
 
     def get_queryset(self):
         return FTLFolder.objects.filter(org=self.request.user.org)
