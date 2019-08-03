@@ -89,7 +89,7 @@ axios.interceptors.response.use(function (response) {
 }, function (error) {
   if (error.response.status === 403) {
     // Redirect to root page when an XHR returns 403
-    window.location.replace("/");
+    window.location.replace("/logout");
   } else {
     return Promise.reject(error);
   }
