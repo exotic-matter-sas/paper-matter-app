@@ -115,7 +115,7 @@ class FTLDocumentDetail(generics.RetrieveUpdateDestroyAPIView):
         serializer.save(org=self.request.user.org)
 
 
-class FTLDocumentThumbnail(LoginRequiredMixin, views.APIView):
+class FTLDocumentThumbnail(views.APIView):
     authentication_classes = (SessionAuthentication, JWTAuthentication)
     serializer_class = FTLDocumentSerializer
     lookup_field = 'pid'
@@ -139,7 +139,7 @@ class FTLDocumentThumbnail(LoginRequiredMixin, views.APIView):
             return response
 
 
-class FileUploadView(LoginRequiredMixin, views.APIView):
+class FileUploadView(views.APIView):
     authentication_classes = (SessionAuthentication, JWTAuthentication)
     parser_classes = (MultiPartParser,)
     serializer_class = FTLDocumentSerializer
