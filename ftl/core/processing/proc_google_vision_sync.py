@@ -1,5 +1,4 @@
 import logging
-from base64 import b64encode
 
 from django.conf import settings
 from google.cloud import vision_v1
@@ -8,7 +7,7 @@ from google.cloud.vision_v1 import enums
 from core.errors import PluginUnsupportedStorage
 from core.processing.ftl_processing import FTLDocProcessingBase
 from ftl.constants import FTLStorages
-from ftl.settings import DEFAULT_FILE_STORAGE, GS_CREDENTIALS
+from ftl.settings import DEFAULT_FILE_STORAGE
 
 logger = logging.getLogger(__name__)
 
@@ -21,9 +20,10 @@ class FTLOCRGoogleVisionSync(FTLDocProcessingBase):
     Doc: https://cloud.google.com/vision/docs/reference/rest/v1/files/annotate
     """
 
-    def __init__(self, credentials=settings.GS_CREDENTIALS, gcs_bucket_name=settings.GS_BUCKET_NAME):
+    def __init__(self, credentials=settings.GS_CREDENTIALS):
         self.log_prefix = f'[{self.__class__.__name__}]'
-        self.gcs_bucket_name = gcs_bucket_name
+        if DEFAULT_FILE_STORAGE == FTLStorages.GCS:
+            self.gcs_bucket_name = settings.GS_BUCKET_NAME
         self.client = vision_v1.ImageAnnotatorClient(credentials=credentials)
         self.supported_storages = [FTLStorages.FILE_SYSTEM, FTLStorages.GCS]
 
@@ -46,7 +46,9 @@ class FTLOCRGoogleVisionSync(FTLDocProcessingBase):
             gcs_source = {'uri': storage_uri}
             input_config = {'gcs_source': gcs_source}
         else:  # Default is FILE_SYSTEM storage
-            input_config = {'content': b64encode(ftl_doc.binary)}
+            ftl_doc.open('rb')
+            input_config = {'content': ftl_doc.read()}
+            ftl_doc.close()
 
         type_ = enums.Feature.Type.DOCUMENT_TEXT_DETECTION
         features_element = {'type': type_}
