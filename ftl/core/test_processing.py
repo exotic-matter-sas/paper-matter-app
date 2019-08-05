@@ -5,9 +5,9 @@ import langid
 from tika import parser
 
 from core.processing.ftl_processing import FTLDocumentProcessing, FTLDocProcessingBase
-from core.processing.proc_lang import FTLDocLangDetector
-from core.processing.proc_pgsql_tsvector import FTLDocPgSQLTSVector, SEARCH_VECTOR
-from core.processing.proc_tika import FTLDocTextExtractionTika
+from core.processing.proc_lang import FTLLangDetectorLangId
+from core.processing.proc_pgsql_tsvector import FTLSearchEnginePgSQLTSVector, SEARCH_VECTOR
+from core.processing.proc_tika import FTLTextExtractionTika
 
 
 class ProcTest(FTLDocProcessingBase):
@@ -65,7 +65,7 @@ class ProcLangTests(TestCase):
     def test_process(self, mocked_classify):
         mocked_classify.return_value = ['fr']
 
-        lang = FTLDocLangDetector()
+        lang = FTLLangDetectorLangId()
         doc = Mock()
         lang.process(doc)
 
@@ -81,7 +81,7 @@ class ProcTikaTests(TestCase):
         indexed_text = {"content": "indexed text"}
         mocked_from_buffer.return_value = indexed_text
 
-        tika = FTLDocTextExtractionTika()
+        tika = FTLTextExtractionTika()
         doc = Mock()
         tika.process(doc)
 
@@ -93,7 +93,7 @@ class ProcTikaTests(TestCase):
 class ProcPGsqlTests(TestCase):
 
     def test_process(self):
-        pgsql = FTLDocPgSQLTSVector()
+        pgsql = FTLSearchEnginePgSQLTSVector()
         doc = Mock()
         pgsql.process(doc)
 

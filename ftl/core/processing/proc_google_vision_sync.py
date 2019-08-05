@@ -13,7 +13,7 @@ from ftl.settings import DEFAULT_FILE_STORAGE, GS_CREDENTIALS
 logger = logging.getLogger(__name__)
 
 
-class FTLOCRGoogleVision(FTLDocProcessingBase):
+class FTLOCRGoogleVisionSync(FTLDocProcessingBase):
     """
     Plugin to use Google Vision sync as document OCR.
     API LIMITATION: only the first 5 pages of document will be OCRised

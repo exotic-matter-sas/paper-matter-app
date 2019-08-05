@@ -8,7 +8,7 @@ COUNTRY_CODE_INDEX = {
 }
 
 
-class FTLDocLangDetector(FTLDocProcessingBase):
+class FTLLangDetectorLangId(FTLDocProcessingBase):
     def process(self, ftl_doc):
         ftl_doc.language = COUNTRY_CODE_INDEX.get(
             langid.classify(ftl_doc.content_text)[0], 'english'

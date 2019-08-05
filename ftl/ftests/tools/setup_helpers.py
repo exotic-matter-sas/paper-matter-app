@@ -2,7 +2,7 @@ import os
 import tempfile
 
 from core.models import FTLOrg, FTLUser, FTLDocument, FTLFolder, permissions_names_to_objects, FTL_PERMISSIONS_USER
-from core.processing.proc_pgsql_tsvector import FTLDocPgSQLTSVector
+from core.processing.proc_pgsql_tsvector import FTLSearchEnginePgSQLTSVector
 from ftests.tools import test_values as tv
 from ftl.settings import BASE_DIR
 
@@ -52,7 +52,7 @@ def setup_document(org, ftl_user, ftl_folder=None, title=tv.DOCUMENT1_TITLE, not
         language=language,
     )
     # Update document to allow PGSQL to process search vector
-    vector_plugin = FTLDocPgSQLTSVector()
+    vector_plugin = FTLSearchEnginePgSQLTSVector()
     vector_plugin.process(document)
 
     return document
