@@ -16,6 +16,7 @@ class FTLOCRAwsTextract(FTLDocProcessingBase):
     """
     Plugin to use Amazon Textract service as document OCR.
     Support Amazon S3 bucket hosted documents only (see self.supported_storages).
+    API LIMITATION: only english language supported
     Doc: https://docs.aws.amazon.com/fr_fr/textract/latest/dg/API_StartDocumentAnalysis.html
     """
     def __init__(self, aws_bucket=settings.AWS_STORAGE_BUCKET_NAME):

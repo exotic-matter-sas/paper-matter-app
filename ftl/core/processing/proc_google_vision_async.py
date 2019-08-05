@@ -18,6 +18,7 @@ class FTLOCRGoogleVisionAsync(FTLDocProcessingBase):
     """
     Plugin to use Google Vision async as document OCR.
     Support Google Cloud Storage hosted documents only (self.supported_storages).
+    Many languages supported: https://cloud.google.com/vision/docs/languages
     Doc: https://cloud.google.com/vision/docs/reference/rest/v1/files/asyncBatchAnnotate
     """
 

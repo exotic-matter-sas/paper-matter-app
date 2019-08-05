@@ -16,6 +16,7 @@ class FTLOCRGoogleVisionSync(FTLDocProcessingBase):
     """
     Plugin to use Google Vision sync as document OCR.
     It support both Google Cloud Storage and File system storage documents (up to 20 MB, see self.supported_storages).
+    Many languages supported: https://cloud.google.com/vision/docs/languages
     API LIMITATION: only the first 5 pages document will be OCRised.
     Doc: https://cloud.google.com/vision/docs/reference/rest/v1/files/annotate
     """
