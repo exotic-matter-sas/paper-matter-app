@@ -9,6 +9,32 @@ from ftl.enums import FTLStorages, FTLPlugins
 DEV_MODE = True
 DEBUG = True
 
+# Redirect logs to console for easy debugging
+LOGGER_LEVEL = 'INFO'
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'core': {
+            'handlers': ['console'],
+            'level': LOGGER_LEVEL,
+        },
+        'ftl': {
+            'handlers': ['console'],
+            'level': LOGGER_LEVEL,
+        },
+        'setup': {
+            'handlers': ['console'],
+            'level': LOGGER_LEVEL,
+        },
+    },
+}
+
 # TODO create an empty PGSQL DB locally and enter the related data below
 DATABASES = {
     'default': {
