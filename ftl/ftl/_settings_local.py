@@ -4,7 +4,7 @@ Template for setting_local.py file, useful for new contributors
 1. Copy file and rename it without the starting underscore => `settings_local.py`
 2. Read the to-do comments bellow to set proper value for local settings
 """
-from ftl.constants import FTLStorages
+from ftl.enums import FTLStorages, FTLPlugins
 
 DEV_MODE = True
 DEBUG = True
@@ -33,38 +33,54 @@ DEFAULT_TEST_BROWSER = 'firefox'  # or 'chrome'
 TEST_BROWSER_HEADLESS = True
 #  TEST_BROWSER_HEADLESS = False
 
-# TODO Doc binary storage, default should be fine unless your dev is related to remote storage and/or OCR
+# TODO default should be fine unless your dev is related to remote storage and/or OCR
+"""
+DOCUMENT BINARY STORAGE
+=======================
+Remote storage required:
+    - extra settings (see EXTRA SETTINGS FOR STORAGE below)
+    - extra Python module (see ftl.constants.FTLStorages docstring)
+"""
 DEFAULT_FILE_STORAGE = FTLStorages.FILE_SYSTEM
-# WARNING: Additional settings and Python modules are required if you are not using FTLStorages.FILE_SYSTEM
-if DEFAULT_FILE_STORAGE == FTLStorages.AWS_S3:  # Amazon S3 storage
-    # Uncomment django-storages + boto3 in requirements.txt
-    AWS_ACCESS_KEY_ID = ""
-    AWS_SECRET_ACCESS_KEY = ""
-    AWS_STORAGE_BUCKET_NAME = ""
-    AWS_S3_ENDPOINT_URL = ""
-    AWS_S3_REGION_NAME = ""
-    AWS_DEFAULT_ACL = 'private'
-    S3_USE_SIGV4 = True
-elif DEFAULT_FILE_STORAGE == FTLStorages.GCS:  # Google Cloud Storage
-    # Uncomment django-storages + google-cloud-storage in requirements.txt
-    from google.oauth2 import service_account
 
-    GS_BUCKET_NAME = ''
-    credentials_raw = ''
-    GS_CREDENTIALS = service_account.Credentials.from_service_account_info(credentials_raw)
-
-# TODO FTL document processing plugins (order is important), default should be fine unless your dev is related to a
-# processing plugin
+# TODO default should be fine unless your dev is related to an OCR
+"""
+DOCUMENT PROCESSING PLUGINS (order is important)
+================================================
+- Edit lines below to change enabled plugins
+    - Optional plugins required to install additional Python modules
+    - Most OCR plugins required a specific DEFAULT_FILE_STORAGE
+    - Check ftl.constants.FTLplugins docstring to know what's required for the desired plugin 
+- Only one plugin of each type should be enable at a time
+"""
 FTL_DOC_PROCESSING_PLUGINS = [
-    'core.processing.proc_tika.FTLDocTextExtractionTika',
-    # Uncomment ONLY ONE of FTLOCR* plugins below to enable OCR for scanned documents
-    # LIMITATION: Most OCR required a specific DEFAULT_FILE_STORAGE, see plugin source for more info
-    # WARNING: Additional Python modules are required for some OCR (see below)
-    # ------------------------------------------------------------------------
-    # 'core.processing.proc_aws_textract.FTLOCRAwsTextract',
-    # 'core.processing.proc_google_vision.FTLOCRGoogleVision',  # Uncomment google-cloud-vision in requirements.txt
-    # 'core.processing.proc_google_vision_async.FTLOCRGoogleVisionAsync',  # Uncomment google-cloud-vision in require...
-    'core.processing.proc_lang.FTLDocLangDetector',
-    'core.processing.proc_pgsql_tsvector.FTLDocPgSQLTSVector',
+    # Extract text of non scanned documents (required)
+    FTLPlugins.TEXT_EXTRACTION_TIKA,
+
+    # Detect lang (required for search feature)
+    FTLPlugins.LANG_DETECTOR_LANGID,
+
+    # Search feature (required)
+    FTLPlugins.SEARCH_ENGINE_PGSQL_TSVECTOR,
 ]
 
+"""
+EXTRA SETTINGS FOR REMOTE STORAGE OR OCR_GOOGLE_VISION_SYNC 
+"""
+if DEFAULT_FILE_STORAGE == FTLStorages.AWS_S3:
+    AWS_ACCESS_KEY_ID = ''
+    AWS_SECRET_ACCESS_KEY = ''
+    AWS_STORAGE_BUCKET_NAME = ''
+    AWS_S3_ENDPOINT_URL = ''
+    AWS_S3_REGION_NAME = ''
+    AWS_DEFAULT_ACL = ''
+    S3_USE_SIGV4 = True
+if DEFAULT_FILE_STORAGE == FTLStorages.GCS or \
+   FTLPlugins.OCR_GOOGLE_VISION_SYNC in FTL_DOC_PROCESSING_PLUGINS:
+    from google.oauth2 import service_account
+
+    credentials_raw = {}
+    GS_CREDENTIALS = service_account.Credentials.from_service_account_info(credentials_raw)
+
+    if DEFAULT_FILE_STORAGE == FTLStorages.GCS:
+        GS_BUCKET_NAME = ''

@@ -6,7 +6,7 @@ import sentry_sdk
 from google.oauth2 import service_account
 from sentry_sdk.integrations.django import DjangoIntegration
 
-from ftl.constants import FTLStorages
+from ftl.enums import FTLStorages, FTLPlugins
 
 sentry_sdk.init(
     dsn=os.getenv('SENTRY_DSN', None),
@@ -42,12 +42,40 @@ DATABASES = {
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Doc binary storage
+"""
+DOCUMENT BINARY STORAGE
+=======================
+Remote storage required:
+    - extra settings (see EXTRA SETTINGS FOR STORAGE below)
+    - extra Python module (see ftl.constants.FTLStorages docstring)
+"""
 DEFAULT_FILE_STORAGE = os.getenv("DEFAULT_FILE_STORAGE")
 
+"""
+DOCUMENT PROCESSING PLUGINS (order is important)
+================================================
+- Edit lines below to change enabled plugins
+    - Optional plugins required to install additional Python modules
+    - Most OCR plugins required a specific DEFAULT_FILE_STORAGE
+    - Check ftl.constants.FTLplugins docstring to know what's required for the desired plugin 
+- Only one plugin of each type should be enable at a time
+"""
+FTL_DOC_PROCESSING_PLUGINS = [
+    # Extract text of non scanned documents (required)
+    FTLPlugins.TEXT_EXTRACTION_TIKA,
+
+    # Detect lang (required for search feature)
+    FTLPlugins.LANG_DETECTOR_LANGID,
+
+    # Search feature (required)
+    FTLPlugins.SEARCH_ENGINE_PGSQL_TSVECTOR,
+]
+
+"""
+EXTRA SETTINGS FOR REMOTE STORAGE OR OCR_GOOGLE_VISION_SYNC 
+"""
 # Additional settings required if you chose a remote storage
 if DEFAULT_FILE_STORAGE == FTLStorages.AWS_S3:  # Amazon S3 storage
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
     AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
     AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
@@ -55,13 +83,14 @@ if DEFAULT_FILE_STORAGE == FTLStorages.AWS_S3:  # Amazon S3 storage
     AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME")
     AWS_DEFAULT_ACL = 'private'
     S3_USE_SIGV4 = True
-elif DEFAULT_FILE_STORAGE == FTLStorages.GCS:  # Google Cloud Storage
+if DEFAULT_FILE_STORAGE == FTLStorages.GCS or \
+   FTLPlugins.OCR_GOOGLE_VISION_SYNC in FTL_DOC_PROCESSING_PLUGINS:
     import json
 
-    DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
-    GS_BUCKET_NAME = os.environ.get('GCS_BUCKET_NAME')
     credentials_raw = json.loads(os.environ.get('GCS_CREDENTIALS_CONTENT'))
     GS_CREDENTIALS = service_account.Credentials.from_service_account_info(credentials_raw)
+    if DEFAULT_FILE_STORAGE == FTLStorages.GCS:
+        GS_BUCKET_NAME = os.environ.get('GCS_BUCKET_NAME')
 
 # Email settings
 EMAIL_HOST = os.getenv("EMAIL_HOST")

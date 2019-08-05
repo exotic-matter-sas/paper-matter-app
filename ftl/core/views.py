@@ -20,7 +20,7 @@ from core.errors import get_api_error
 from core.models import FTLDocument, FTLFolder, FTLModelPermissions
 from core.processing.ftl_processing import FTLDocumentProcessing
 from core.serializers import FTLDocumentSerializer, FTLFolderSerializer
-from ftl.constants import FTLStorages
+from ftl.enums import FTLStorages
 
 ftl_doc_processing = FTLDocumentProcessing(settings.FTL_DOC_PROCESSING_PLUGINS)
 

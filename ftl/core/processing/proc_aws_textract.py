@@ -6,7 +6,7 @@ from django.conf import settings
 
 from core.errors import PluginUnsupportedStorage
 from core.processing.ftl_processing import FTLDocProcessingBase
-from ftl.constants import FTLStorages
+from ftl.enums import FTLStorages
 from ftl.settings import DEFAULT_FILE_STORAGE
 
 logger = logging.getLogger(__name__)
@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 class FTLOCRAwsTextract(FTLDocProcessingBase):
     """
     Plugin to use Amazon Textract service as document OCR.
-    Document have to stored on a Amazon S3 bucket for this plugin to work.
+    Support Amazon S3 bucket hosted documents only (see self.supported_storages).
     Doc: https://docs.aws.amazon.com/fr_fr/textract/latest/dg/API_StartDocumentAnalysis.html
     """
     def __init__(self, aws_bucket=settings.AWS_STORAGE_BUCKET_NAME):

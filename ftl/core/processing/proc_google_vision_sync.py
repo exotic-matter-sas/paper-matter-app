@@ -6,7 +6,7 @@ from google.cloud.vision_v1 import enums
 
 from core.errors import PluginUnsupportedStorage
 from core.processing.ftl_processing import FTLDocProcessingBase
-from ftl.constants import FTLStorages
+from ftl.enums import FTLStorages
 from ftl.settings import DEFAULT_FILE_STORAGE
 
 logger = logging.getLogger(__name__)
@@ -15,8 +15,8 @@ logger = logging.getLogger(__name__)
 class FTLOCRGoogleVisionSync(FTLDocProcessingBase):
     """
     Plugin to use Google Vision sync as document OCR.
-    API LIMITATION: only the first 5 pages of document will be OCRised
-    It support both Google Cloud Storage and File system storage documents (up to 20 MB)
+    It support both Google Cloud Storage and File system storage documents (up to 20 MB, see self.supported_storages).
+    API LIMITATION: only the first 5 pages document will be OCRised.
     Doc: https://cloud.google.com/vision/docs/reference/rest/v1/files/annotate
     """
 

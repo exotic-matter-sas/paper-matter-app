@@ -8,7 +8,7 @@ from google.protobuf import json_format
 
 from core.errors import PluginUnsupportedStorage
 from core.processing.ftl_processing import FTLDocProcessingBase
-from ftl.constants import FTLStorages
+from ftl.enums import FTLStorages
 from ftl.settings import DEFAULT_FILE_STORAGE
 
 logger = logging.getLogger(__name__)
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 class FTLOCRGoogleVisionAsync(FTLDocProcessingBase):
     """
     Plugin to use Google Vision async as document OCR.
-    Support Google Cloud Storage hosted documents only.
+    Support Google Cloud Storage hosted documents only (self.supported_storages).
     Doc: https://cloud.google.com/vision/docs/reference/rest/v1/files/asyncBatchAnnotate
     """
 

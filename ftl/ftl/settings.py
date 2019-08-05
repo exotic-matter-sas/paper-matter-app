@@ -16,7 +16,7 @@ import pathlib
 
 from django.contrib.messages import constants as message_constants
 
-from ftl.constants import FTLStorages
+from ftl.enums import FTLStorages
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
