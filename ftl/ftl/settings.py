@@ -16,7 +16,7 @@ import pathlib
 
 from django.contrib.messages import constants as message_constants
 
-from ftl.enums import FTLStorages
+from ftl.enums import FTLStorages, FTLPlugins
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -196,8 +196,6 @@ EMAIL_HOST_PASSWORD = ''
 EMAIL_PORT = 25
 EMAIL_USE_SSL = False
 DEFAULT_FROM_EMAIL = 'noreply@localhost.com'
-# apply to emails sent by: django.core.mail.mail_admins, django.core.mail.mail_managers
-EMAIL_SUBJECT_PREFIX = ''
 
 # Customize MESSAGE_TAGS to match bootstrap alert classes
 MESSAGE_TAGS = {
@@ -207,39 +205,56 @@ MESSAGE_TAGS = {
     message_constants.ERROR: 'text-center alert alert-danger',
 }
 
-# Doc binary storage
+"""
+DOCUMENT BINARY STORAGE
+=======================
+Remote storage required:
+    - extra settings (see EXTRA SETTINGS FOR STORAGE below)
+    - extra Python module (see ftl.constants.FTLStorages docstring)
+"""
 DEFAULT_FILE_STORAGE = FTLStorages.FILE_SYSTEM
-# WARNING: Additional settings and Python modules are required if you are not using FTLStorages.FILE_SYSTEM
+
+"""
+DOCUMENT PROCESSING PLUGINS (order is important)
+================================================
+- Edit lines below to change enabled plugins
+    - Optional plugins required to install additional Python modules
+    - Most OCR plugins required a specific DEFAULT_FILE_STORAGE
+    - Check ftl.constants.FTLplugins docstring to know what's required for the desired plugin 
+- Only one plugin of each type should be enable at a time
+"""
+FTL_DOC_PROCESSING_PLUGINS = [
+    # Extract text of non scanned documents (required)
+    FTLPlugins.TEXT_EXTRACTION_TIKA,
+
+    # Detect lang (required for search feature)
+    FTLPlugins.LANG_DETECTOR_LANGID,
+
+    # Search feature (required)
+    FTLPlugins.SEARCH_ENGINE_PGSQL_TSVECTOR,
+]
+
+"""
+EXTRA SETTINGS FOR REMOTE STORAGE OR OCR_GOOGLE_VISION_SYNC 
+"""
+# Additional settings required if you chose a remote storage
 if DEFAULT_FILE_STORAGE == FTLStorages.AWS_S3:  # Amazon S3 storage
-    # Uncomment django-storages + boto3 in requirements.txt
-    AWS_ACCESS_KEY_ID = ""
-    AWS_SECRET_ACCESS_KEY = ""
-    AWS_STORAGE_BUCKET_NAME = ""
-    AWS_S3_ENDPOINT_URL = ""
-    AWS_S3_REGION_NAME = ""
+    AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+    AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
+    AWS_S3_ENDPOINT_URL = os.getenv("AWS_S3_ENDPOINT_URL")
+    AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME")
     AWS_DEFAULT_ACL = 'private'
     S3_USE_SIGV4 = True
-elif DEFAULT_FILE_STORAGE == FTLStorages.GCS:  # Google Cloud Storage
-    # Uncomment django-storages + google-cloud-storage in requirements.txt
+if DEFAULT_FILE_STORAGE == FTLStorages.GCS or \
+   FTLPlugins.OCR_GOOGLE_VISION_SYNC in FTL_DOC_PROCESSING_PLUGINS:
+    import json
     from google.oauth2 import service_account
 
-    GS_BUCKET_NAME = ''
-    credentials_raw = ''
+    credentials_raw = json.loads(os.environ.get('GCS_CREDENTIALS_CONTENT'))
     GS_CREDENTIALS = service_account.Credentials.from_service_account_info(credentials_raw)
-
-# FTL document processing plugins (order is important)
-FTL_DOC_PROCESSING_PLUGINS = [
-    'core.processing.proc_tika.FTLDocTextExtractionTika',
-    # Uncomment ONLY ONE of FTLOCR* plugins below to enable OCR for scanned documents
-    # LIMITATION: Most OCR required a specific DEFAULT_FILE_STORAGE, see plugin source for more info
-    # WARNING: Additional Python modules are required for some OCR (see below)
-    # ------------------------------------------------------------------------
-    # 'core.processing.proc_aws_textract.FTLOCRAwsTextract',
-    # 'core.processing.proc_google_vision.FTLOCRGoogleVision',  # Uncomment google-cloud-vision in requirements.txt
-    # 'core.processing.proc_google_vision_async.FTLOCRGoogleVisionAsync',  # Uncomment google-cloud-vision in require...
-    'core.processing.proc_lang.FTLDocLangDetector',
-    'core.processing.proc_pgsql_tsvector.FTLDocPgSQLTSVector',
-]
+    if DEFAULT_FILE_STORAGE == FTLStorages.GCS:
+        GS_BUCKET_NAME = os.environ.get('GCS_BUCKET_NAME')
 
 # ==================================================
 # No settings under this line
