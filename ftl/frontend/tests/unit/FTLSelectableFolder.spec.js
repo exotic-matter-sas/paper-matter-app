@@ -74,11 +74,11 @@ describe('Event emitted by component', () => {
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
 
-  it('event-navigate-folder emitted when calling navigateFolder', async () => {
+  it('event-navigate-folder emitted when calling navigateToFolder', async () => {
     const testedEvent = 'event-navigate-folder';
 
     // when
-    wrapper.vm.navigateFolder();
+    wrapper.vm.navigateToFolder();
     await flushPromises();
 
     // then
