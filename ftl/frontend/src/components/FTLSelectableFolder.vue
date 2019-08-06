@@ -4,13 +4,13 @@
     class="m-1 folder"
     :class="{selected: state}"
   >
-    <b-row align-h="center">
-      <b-col @click="navigateFolder">
+    <b-row class="icon" align-h="center">
+      <b-col @click="navigateToFolder">
         <font-awesome-icon icon="folder" size="5x" class="text-secondary w-100"/>
       </b-col>
     </b-row>
-    <b-row align-h="left">
-      <b-col class="text-truncate">
+    <b-row align-h="left" no-gutters>
+      <b-col>
         <b-form-checkbox
           :id="'checkbox-folder-' + folder.id"
           v-model="state"
@@ -67,7 +67,7 @@
     },
 
     methods: {
-      navigateFolder: function () {
+      navigateToFolder: function () {
         this.$emit('event-navigate-folder', this.folder);
       }
     }
@@ -78,11 +78,47 @@
   @import '../styles/customBootstrap.scss';
 
   .folder {
-    cursor: pointer;
     border: 3px solid transparent;
+
+    .icon{
+      cursor: pointer;
+    }
   }
 
-  .selected {
+  .folder.selected {
     border: 3px solid $em-orange;
+  }
+</style>
+
+<style lang="scss">
+  @import '../styles/customBootstrap.scss';
+
+  .folder .custom-control{
+      margin-left: -1.5rem;
+
+      label{
+        cursor: pointer;
+
+        span{
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          display: block;
+          overflow: hidden;
+        }
+      }
+  }
+
+  @include media-breakpoint-up(sm) {
+    .folder .custom-control label{
+      width: 100%;
+
+      span{
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        width: 100%;
+        display: block;
+        overflow: hidden;
+      }
+    }
   }
 </style>

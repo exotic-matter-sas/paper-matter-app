@@ -4,10 +4,10 @@
 
     <b-navbar-nav>
       <router-link :to="{name: 'home'}" tag="b-nav-item">
-        <font-awesome-icon icon="home"/>
+        <font-awesome-icon icon="home" :title="this.$_('Home')"/>
       </router-link>
       <router-link :to="{name: 'folders'}" tag="b-nav-item">
-        <font-awesome-icon icon="folder"/>
+        <font-awesome-icon icon="folder" :title="this.$_('Folders management')"/>
       </router-link>
     </b-navbar-nav>
 

@@ -1,7 +1,5 @@
 <template>
   <main id="folders-mngt" class="flex-grow">
-    <h1 class="text-center">Organize your folders</h1>
-
     <b-container fluid class="p-3 text-center">
       <b-row align-h="center">
         <!-- Left panel -->
@@ -40,7 +38,7 @@
           </b-row>
         </b-col>
         <!-- Right panel -->
-        <b-col>
+        <b-col class="right-panel">
           <b-row v-if="folderDetailLoading">
             <b-col>
               <b-spinner :label="$_('Loading')"></b-spinner>
@@ -74,7 +72,7 @@
             </b-col>
           </b-row>
           <b-row v-else>
-            <b-col><h1>No folder selected</h1></b-col>
+            <b-col><h1 class="text-muted">{{ this.$_('No folder selected') }}</h1></b-col>
           </b-row>
         </b-col>
       </b-row>
@@ -265,9 +263,26 @@
   }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+  @import '../styles/customBootstrap.scss';
+
   #create-folder {
     cursor: pointer;
     border: 3px solid transparent;
+  }
+
+  .right-panel{
+    border-top: 2px solid map_get($theme-colors, 'light-gray');
+    margin-top: 1em;
+    padding-top: 1em;
+  }
+
+  @include media-breakpoint-up(md) {
+    .right-panel{
+      border-top: 0;
+      border-left: 2px solid map_get($theme-colors, 'light-gray');
+      margin-top: 0;
+      padding-top: 0;
+    }
   }
 </style>
