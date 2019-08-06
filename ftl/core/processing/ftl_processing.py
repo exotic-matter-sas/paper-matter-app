@@ -2,6 +2,9 @@ import logging
 from concurrent.futures.thread import ThreadPoolExecutor
 from pydoc import locate
 
+from core.errors import PluginUnsupportedStorage
+from ftl.settings import DEFAULT_FILE_STORAGE
+
 logger = logging.getLogger(__name__)
 
 
@@ -57,4 +60,26 @@ class FTLDocumentProcessing:
 
 class FTLDocProcessingBase:
     def process(self, ftl_doc):
+        raise NotImplementedError
+
+
+class FTLOCRBase(FTLDocProcessingBase):
+    def __init__(self):
+        self.log_prefix = f'[{self.__class__.__name__}]'
+        self.supported_storages = []
+
+    def process(self, ftl_doc):
+        if DEFAULT_FILE_STORAGE in self.supported_storages:
+            # If full text not already extracted
+            if not ftl_doc.content_text.strip():
+                ftl_doc.content_text = self._extract_text(ftl_doc.binary)
+                ftl_doc.save()
+            else:
+                logger.info(f'{self.log_prefix} Processing skipped, document {ftl_doc.id} already get a text_content')
+        else:
+            raise PluginUnsupportedStorage(
+                f'{self.log_prefix} does not support storage {DEFAULT_FILE_STORAGE} (supported storages are: '
+                f'{self.supported_storages}).')
+
+    def _extract_text(self, ftl_doc_binary):
         raise NotImplementedError

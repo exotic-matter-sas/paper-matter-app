@@ -7,14 +7,14 @@ from google.cloud import vision_v1
 from google.protobuf import json_format
 
 from core.errors import PluginUnsupportedStorage
-from core.processing.ftl_processing import FTLDocProcessingBase
+from core.processing.ftl_processing import FTLOCRBase
 from ftl.enums import FTLStorages
 from ftl.settings import DEFAULT_FILE_STORAGE
 
 logger = logging.getLogger(__name__)
 
 
-class FTLOCRGoogleVisionAsync(FTLDocProcessingBase):
+class FTLOCRGoogleVisionAsync(FTLOCRBase):
     """
     Plugin to use Google Vision async as document OCR.
     Support Google Cloud Storage hosted documents only (self.supported_storages).
@@ -23,7 +23,7 @@ class FTLOCRGoogleVisionAsync(FTLDocProcessingBase):
     """
 
     def __init__(self, credentials=settings.GS_CREDENTIALS, gcs_bucket_name=settings.GS_BUCKET_NAME):
-        self.log_prefix = f'[{self.__class__.__name__}]'
+        super().__init__()
         self.gcs_bucket_name = gcs_bucket_name
         self.bucket = storage.Client(project=credentials.project_id, credentials=credentials).get_bucket(
             gcs_bucket_name)
@@ -38,7 +38,7 @@ class FTLOCRGoogleVisionAsync(FTLDocProcessingBase):
         if DEFAULT_FILE_STORAGE in self.supported_storages:
             # If full text not already extracted
             if not ftl_doc.content_text.strip():
-                ftl_doc.content_text = self._async_detect_document(ftl_doc.binary)
+                ftl_doc.content_text = self._extract_text(ftl_doc.binary)
                 ftl_doc.save()
             else:
                 logger.info(f'{self.log_prefix} Processing skipped, document {ftl_doc.id} already get a text_content')
@@ -47,7 +47,7 @@ class FTLOCRGoogleVisionAsync(FTLDocProcessingBase):
                 f'Plugin {self.__class__.__name__} does not support storage {DEFAULT_FILE_STORAGE} (supported storages '
                 f'are: {self.supported_storages}).')
 
-    def _async_detect_document(self, ftl_doc_binary):
+    def _extract_text(self, ftl_doc_binary):
         storage_uri = f'gs://{self.gcs_bucket_name}/{ftl_doc_binary.name}'
         # This will used by Google to generate a filename like this:
         # 1ac7b8e9-ecc6-4522-9948-1775f188feaa.pdf.ocr.output-1-to-1.json

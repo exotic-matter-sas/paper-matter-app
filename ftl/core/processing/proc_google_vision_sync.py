@@ -5,14 +5,14 @@ from google.cloud import vision_v1
 from google.cloud.vision_v1 import enums
 
 from core.errors import PluginUnsupportedStorage
-from core.processing.ftl_processing import FTLDocProcessingBase
+from core.processing.ftl_processing import FTLOCRBase
 from ftl.enums import FTLStorages
 from ftl.settings import DEFAULT_FILE_STORAGE
 
 logger = logging.getLogger(__name__)
 
 
-class FTLOCRGoogleVisionSync(FTLDocProcessingBase):
+class FTLOCRGoogleVisionSync(FTLOCRBase):
     """
     Plugin to use Google Vision sync as document OCR.
     It support both Google Cloud Storage and File system storage documents (up to 20 MB, see self.supported_storages).
@@ -22,7 +22,7 @@ class FTLOCRGoogleVisionSync(FTLDocProcessingBase):
     """
 
     def __init__(self, credentials=settings.GS_CREDENTIALS):
-        self.log_prefix = f'[{self.__class__.__name__}]'
+        super().__init__()
         if DEFAULT_FILE_STORAGE == FTLStorages.GCS:
             self.gcs_bucket_name = settings.GS_BUCKET_NAME
         self.client = vision_v1.ImageAnnotatorClient(credentials=credentials)
@@ -32,7 +32,7 @@ class FTLOCRGoogleVisionSync(FTLDocProcessingBase):
         if DEFAULT_FILE_STORAGE in self.supported_storages:
             # If full text not already extracted
             if not ftl_doc.content_text.strip():
-                ftl_doc.content_text = self._sample_batch_annotate_files(ftl_doc.binary)
+                ftl_doc.content_text = self._extract_text(ftl_doc.binary)
                 ftl_doc.save()
             else:
                 logger.info(f'{self.log_prefix} Processing skipped, document {ftl_doc.id} already get a text_content')
@@ -41,7 +41,7 @@ class FTLOCRGoogleVisionSync(FTLDocProcessingBase):
                 f'Plugin {self.__class__.__name__} does not support storage {DEFAULT_FILE_STORAGE} (supported storages '
                 f'are: {self.supported_storages}).')
 
-    def _sample_batch_annotate_files(self, ftl_doc):
+    def _extract_text(self, ftl_doc):
         if DEFAULT_FILE_STORAGE == FTLStorages.GCS:
             storage_uri = f'gs://{self.gcs_bucket_name}/{ftl_doc.name}'
             gcs_source = {'uri': storage_uri}
