@@ -1,7 +1,7 @@
 import json
 import os
 import tempfile
-from unittest.mock import MagicMock, ANY, patch
+from unittest.mock import patch
 
 from django.contrib import messages
 from rest_framework import status
@@ -10,6 +10,7 @@ from tika import parser
 
 import core
 from core.models import FTLDocument, FTLFolder
+from core.processing.ftl_processing import FTLDocumentProcessing
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_document, setup_folder
 from ftl.settings import BASE_DIR
@@ -131,7 +132,7 @@ class DocumentsTests(APITestCase):
     def test_upload_document(self, mock_tika_parser):
         mock_tika_parser.return_value = ""
 
-        with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test.pdf'), mode='rb') as fp:
+        with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'test.pdf'), mode='rb') as fp:
             client_post = self.client.post('/app/api/v1/documents/upload', {'json': '{}', 'file': fp})
         self.assertEqual(client_post.status_code, status.HTTP_201_CREATED)
 
@@ -143,17 +144,17 @@ class DocumentsTests(APITestCase):
         self.assertEqual(objects_get.note, client_doc['note'])
         self.assertIsNone(objects_get.ftl_folder)
 
-    @patch('core.views._extract_text_from_pdf')
-    @patch('core.views.EXECUTOR')
-    def test_upload_doc_pdf_extract_async_call(self, mock_executor, mock_extract_func):
-        """Test that the async call to extract text is made"""
-        mock_executor.submit = MagicMock("submit")
-
-        with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test.pdf'), 'rb') as f:
+    @patch.object(FTLDocumentProcessing, 'apply_processing')
+    def test_upload_doc_pdf_extract_async_call(self, mock_apply_processing):
+        with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'test.pdf'), 'rb') as f:
             body_post = {'json': '{}', 'file': f}
             self.client.post('/app/api/v1/documents/upload', body_post)
 
-        mock_executor.submit.assert_called_once_with(mock_extract_func, ANY, ANY)
+        mock_apply_processing.assert_called_once()
+        # Check argument is a FTLDocument
+        kall = mock_apply_processing.call_args_list[0]
+        args, kwarg = kall
+        self.assertTrue(isinstance(args[0], FTLDocument))
 
     def test_document_in_folder(self):
         client_get = self.client.get(f'/app/api/v1/documents/?level={self.first_level_folder.id}', format='json')
@@ -173,7 +174,7 @@ class DocumentsTests(APITestCase):
 
         post_body = {'ftl_folder': self.first_level_folder.id}
 
-        with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test.pdf'), mode='rb') as fp:
+        with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'test.pdf'), mode='rb') as fp:
             client_post = self.client.post('/app/api/v1/documents/upload', {'json': json.dumps(post_body), 'file': fp})
         self.assertEqual(client_post.status_code, status.HTTP_201_CREATED)
 

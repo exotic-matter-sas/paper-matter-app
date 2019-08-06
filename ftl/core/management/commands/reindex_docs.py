@@ -1,17 +1,19 @@
 import time
 
+from django.conf import settings
 from django.core.management import BaseCommand
 from django.utils.translation import gettext as _
 from django.utils.translation import ngettext
 
 from core.models import FTLDocument
-from core.views import _extract_text_from_pdf, SEARCH_VECTOR
+from core.processing.ftl_processing import FTLDocumentProcessing
 
 
 class Command(BaseCommand):
     help = 'Reindex all documents'
 
     def handle(self, *args, **options):
+        processing = FTLDocumentProcessing(settings.FTL_DOC_PROCESSING_PLUGINS)
         docs = FTLDocument.objects.all()
 
         start_time = time.time()
@@ -34,13 +36,16 @@ class Command(BaseCommand):
                 _('Reindexing %(title)s') % {'title': doc.title}
             )
 
-            _extract_text_from_pdf(SEARCH_VECTOR, doc)
+            processing.apply_processing(doc)
 
             self.stdout.write(
                 self.style.SUCCESS(
                     _('OK')
                 )
             )
+
+        # Wait for all processing done
+        processing.executor.shutdown(True)
 
         end_time = time.time()
 
