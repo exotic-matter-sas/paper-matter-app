@@ -5,7 +5,7 @@
     :class="{selected: state}"
   >
     <b-row align-h="center">
-      <b-col @click="dbClickFolder">
+      <b-col @click="navigateFolder">
         <font-awesome-icon icon="folder" size="5x" class="text-secondary w-100"/>
       </b-col>
     </b-row>
@@ -67,7 +67,7 @@
     },
 
     methods: {
-      dbClickFolder: function () {
+      navigateFolder: function () {
         this.$emit('event-navigate-folder', this.folder);
       }
     }

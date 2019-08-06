@@ -24,8 +24,6 @@ localVue.prototype.$store = {commit: jest.fn()}; // vuex mock
 const mockedMixinAlert = jest.fn();
 localVue.mixin({methods: {mixinAlert: mockedMixinAlert}}); // mixinAlert mock
 
-const mockedDbClickFolder = jest.fn();
-const mockedClickFolder = jest.fn();
 const mockedGlobalSelected = jest.fn();
 
 const folder = tv.FOLDER_PROPS;
@@ -76,11 +74,11 @@ describe('Event emitted by component', () => {
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
 
-  it('event-navigate-folder emitted when calling dbClickFolder', async () => {
+  it('event-navigate-folder emitted when calling navigateFolder', async () => {
     const testedEvent = 'event-navigate-folder';
 
     // when
-    wrapper.vm.dbClickFolder();
+    wrapper.vm.navigateFolder();
     await flushPromises();
 
     // then
