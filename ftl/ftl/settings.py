@@ -247,7 +247,7 @@ FTL_DOC_PROCESSING_PLUGINS = [
 try:
     from .settings_local import *
 
-    print('Local setting imported')
+    print('Local setting imported\n')
 except ImportError as e:
     print(e)
-    print('No local setting')
+    print('No local setting\n')

@@ -374,8 +374,6 @@ class DocumentViewPageTests(LoginPage, HomePage, DocumentViewPage):
                       self.get_elem_text(self.document_title),
                       'Setup document title should match opened document')
 
-        self.close_last_notification()  # close thumbnail generated notification
-
         # User close document
         self.close_document()
         self.assertEqual(document.title, self.get_elem(self.first_document_title).text,
