@@ -257,8 +257,7 @@ if DEFAULT_FILE_STORAGE == FTLStorages.AWS_S3:  # Amazon S3 storage
     AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME")
     AWS_DEFAULT_ACL = 'private'
     S3_USE_SIGV4 = True
-if DEFAULT_FILE_STORAGE == FTLStorages.GCS or \
-   FTLPlugins.OCR_GOOGLE_VISION_SYNC in FTL_DOC_PROCESSING_PLUGINS:
+if DEFAULT_FILE_STORAGE == FTLStorages.GCS or FTLPlugins.OCR_GOOGLE_VISION_SYNC in FTL_DOC_PROCESSING_PLUGINS:
     import json
     from google.oauth2 import service_account
 

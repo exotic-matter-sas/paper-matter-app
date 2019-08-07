@@ -3,7 +3,7 @@ from base64 import b64decode
 
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
+from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.core.files.base import ContentFile
 from django.db import IntegrityError
 from django.db.models import F
@@ -17,8 +17,6 @@ from rest_framework.response import Response
 
 from core.errors import get_api_error
 from core.models import FTLDocument, FTLFolder
-from core.errors import get_api_error
-from core.models import FTLDocument, FTLFolder, FTLModelPermissions
 from core.processing.ftl_processing import FTLDocumentProcessing
 from core.serializers import FTLDocumentSerializer, FTLFolderSerializer
 from ftl.enums import FTLStorages

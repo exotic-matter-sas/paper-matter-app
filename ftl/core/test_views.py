@@ -1,9 +1,5 @@
-from unittest.mock import MagicMock, patch
-
 from django.contrib.staticfiles import finders
 from django.test import TestCase
-from tika import parser
-from django.urls import reverse_lazy
 
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_authenticated_session, setup_document
