@@ -24,8 +24,6 @@ localVue.prototype.$store = {commit: jest.fn()}; // vuex mock
 const mockedMixinAlert = jest.fn();
 localVue.mixin({methods: {mixinAlert: mockedMixinAlert}}); // mixinAlert mock
 
-const mockedDbClickFolder = jest.fn();
-const mockedClickFolder = jest.fn();
 const mockedGlobalSelected = jest.fn();
 
 const folder = tv.FOLDER_PROPS;
@@ -37,7 +35,7 @@ describe('FTLSelectableFolder template', () => {
     // set mocked component methods return value before shallowMount
     wrapper = shallowMount(FTLSelectableFolder, {
       localVue,
-      propsData: { folder },
+      propsData: {folder},
       computed: {
         globalSelected: mockedGlobalSelected
       }
@@ -68,7 +66,7 @@ describe('Event emitted by component', () => {
     // set mocked component methods return value before shallowMount
     wrapper = shallowMount(FTLSelectableFolder, {
       localVue,
-      propsData: { folder },
+      propsData: {folder},
       computed: {
         globalSelected: mockedGlobalSelected
       }
@@ -76,11 +74,11 @@ describe('Event emitted by component', () => {
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
 
-  it('event-navigate-folder emitted when calling dbClickFolder', async () => {
+  it('event-navigate-folder emitted when calling navigateToFolder', async () => {
     const testedEvent = 'event-navigate-folder';
 
     // when
-    wrapper.vm.dbClickFolder();
+    wrapper.vm.navigateToFolder();
     await flushPromises();
 
     // then
@@ -93,7 +91,7 @@ describe('Event emitted by component', () => {
     const testedEvent = 'event-select-folder';
 
     // when
-    wrapper.vm.clickFolder();
+    wrapper.setData({state: true});
     await flushPromises();
 
     // then
@@ -104,10 +102,10 @@ describe('Event emitted by component', () => {
 
   it('event-unselect-folder emitted when calling clickFolder and no folder selected', async () => {
     const testedEvent = 'event-unselect-folder';
-    wrapper.setData({selected: true});
+    wrapper.setData({state: true});
 
     // when
-    wrapper.vm.clickFolder();
+    wrapper.setData({state: false});
     await flushPromises();
 
     // then

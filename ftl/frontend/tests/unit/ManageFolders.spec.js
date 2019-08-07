@@ -49,7 +49,6 @@ const mockedUnselectFolder = jest.fn();
 const mockedNavigateToFolder = jest.fn();
 const mockedUpdateFolders = jest.fn();
 const mockedUpdateFoldersFromUrl = jest.fn();
-const mockedFolderWatch = jest.fn();
 const mockedBreadcrumb = jest.fn();
 const mockedGetCurrentFolder = jest.fn();
 
@@ -79,7 +78,6 @@ describe('ManageFolders template', () => {
 
     expect(elem.is(elementSelector)).toBe(true);
 
-    expect(wrapper.text()).toContain('Organize your folders');
     expect(wrapper.text()).toContain('No folder selected');
   });
 });
