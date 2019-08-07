@@ -48,7 +48,7 @@ urlpatterns = [
     path('reset/done/', PasswordResetDone.as_view(), name='password_reset_complete'),
 ]
 
-if settings.DEBUG:
+if settings.DEBUG and settings.DEV_MODE:
     import debug_toolbar
 
     urlpatterns += [

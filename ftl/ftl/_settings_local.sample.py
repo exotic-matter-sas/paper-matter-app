@@ -63,7 +63,7 @@ TEST_BROWSER_HEADLESS = True
 """
 DOCUMENT BINARY STORAGE
 =======================
-Remote storage required:
+Remote storage requires:
     - extra settings (see EXTRA SETTINGS FOR STORAGE below)
     - extra Python module (see ftl.constants.FTLStorages docstring)
 """
