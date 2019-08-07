@@ -85,8 +85,9 @@
     }
   }
 
-  .folder.selected {
-    border: 3px solid $em-orange;
+  .folder.selected .icon svg {
+    stroke: $em-orange;
+    stroke-width: 0.25em;
   }
 </style>
 
