@@ -56,7 +56,7 @@ INSTALLED_APPS = [
     'frontend'
 ]
 
-if DEBUG:
+if DEBUG and DEV_MODE:
     INSTALLED_APPS += [
         'debug_toolbar',
     ]
@@ -72,7 +72,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'ftl.ftl_setup_middleware.FTLSetupMiddleware'
 ]
-if DEBUG:
+if DEBUG and DEV_MODE:
     MIDDLEWARE += [
         'debug_toolbar.middleware.DebugToolbarMiddleware',
     ]
@@ -208,7 +208,7 @@ MESSAGE_TAGS = {
 """
 DOCUMENT BINARY STORAGE
 =======================
-Remote storage required:
+Remote storage requires:
     - extra settings (see EXTRA SETTINGS FOR STORAGE below)
     - extra Python module (see ftl.constants.FTLStorages docstring)
 """

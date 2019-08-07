@@ -1,18 +1,11 @@
 import os
 from distutils.util import strtobool
 
-import django_heroku
-import sentry_sdk
 from google.oauth2 import service_account
-from sentry_sdk.integrations.django import DjangoIntegration
 
 from ftl.enums import FTLStorages, FTLPlugins
 
-sentry_sdk.init(
-    dsn=os.getenv('SENTRY_DSN', None),
-    integrations=[DjangoIntegration()]
-)
-SECRET_KEY = 'changed-by-django-heroku'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'CHANGEME')
 DEBUG = bool(strtobool(os.getenv("DJANGO_DEBUG", "False")))
 ALLOWED_HOSTS = ['*']
 
@@ -45,11 +38,11 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 """
 DOCUMENT BINARY STORAGE
 =======================
-Remote storage required:
+Remote storage requires:
     - extra settings (see EXTRA SETTINGS FOR STORAGE below)
     - extra Python module (see ftl.constants.FTLStorages docstring)
 """
-DEFAULT_FILE_STORAGE = os.getenv("DEFAULT_FILE_STORAGE")
+DEFAULT_FILE_STORAGE = os.getenv("DEFAULT_FILE_STORAGE", FTLStorages.FILE_SYSTEM)
 
 """
 DOCUMENT PROCESSING PLUGINS (order is important)
@@ -84,7 +77,7 @@ if DEFAULT_FILE_STORAGE == FTLStorages.AWS_S3:  # Amazon S3 storage
     AWS_DEFAULT_ACL = 'private'
     S3_USE_SIGV4 = True
 if DEFAULT_FILE_STORAGE == FTLStorages.GCS or \
-   FTLPlugins.OCR_GOOGLE_VISION_SYNC in FTL_DOC_PROCESSING_PLUGINS:
+        FTLPlugins.OCR_GOOGLE_VISION_SYNC in FTL_DOC_PROCESSING_PLUGINS:
     import json
 
     credentials_raw = json.loads(os.environ.get('GCS_CREDENTIALS_CONTENT'))
@@ -99,9 +92,3 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 EMAIL_PORT = int(os.getenv("EMAIL_PORT", 25))
 EMAIL_USE_SSL = True
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", 'noreply@localhost')
-
-# Configure Django App for Heroku.
-django_heroku.settings(locals(), db_colors=False, databases=True, test_runner=False, staticfiles=False,
-                       allowed_hosts=False, logging=True, secret_key=True)
-
-# TODO remove heroku specific settings from here when repo forked for SaaS version
