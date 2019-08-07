@@ -7,6 +7,7 @@ from tika import parser
 from ftests.pages.base_page import NODE_SERVER_RUNNING
 from ftests.pages.document_viewer_page import DocumentViewPage
 from ftests.pages.home_page import HomePage
+from ftests.pages.manage_folder_page import ManageFolderPage
 from ftests.pages.user_login_page import LoginPage
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_document, setup_folder
@@ -63,6 +64,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewPage):
         # User click on the first listed document
         self.open_first_document()
         # User can see the pdf inside the pdf viewer
+        self.wait_for_elem_to_show(self.pdf_viewer)
         pdf_viewer_iframe = self.get_elem(self.pdf_viewer)
         self.browser.switch_to_frame(pdf_viewer_iframe)
         pdf_viewer_iframe_title = self.get_elem('title', False).get_attribute("innerHTML")
@@ -374,9 +376,137 @@ class DocumentViewPageTests(LoginPage, HomePage, DocumentViewPage):
                       self.get_elem_text(self.document_title),
                       'Setup document title should match opened document')
 
-        self.close_last_notification()  # close thumbnail generated notification
-
         # User close document
         self.close_document()
         self.assertEqual(document.title, self.get_elem(self.first_document_title).text,
                          'Setup document title should appears in folder C')
+
+
+class ManageFoldersPageTests(LoginPage, ManageFolderPage):
+    def setUp(self, **kwargs):
+        # first org, admin, user are already created, user is already logged on manage folder page
+        super().setUp()
+        self.org = setup_org()
+        setup_admin(self.org)
+        self.user = setup_user(self.org)
+        self.visit(ManageFolderPage.url)
+        self.log_user()
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_create_folder(self):
+        # User create 3 folders at root
+        folders_to_create = ['folder 1', 'folder 2', 'folder 3']
+        for folder in folders_to_create:
+            self.create_folder(folder)
+
+        # Folder appears in the list with the proper order
+        self.assertEqual(folders_to_create, self.get_elems_text(self.folders_title))
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_create_folder_tree(self):
+        # User create a folder tree of 3 levels :
+        # folder 1
+        #   folder 2
+        #       folder 3
+        folders_to_create = ['folder 1', 'folder 2', 'folder 3']
+        for folder in folders_to_create:
+            self.create_folder(folder)
+            self.navigate_to_folder(folder)
+
+        # Folders appears as a tree
+        self.visit(ManageFolderPage.url)
+        self.assertEqual([folders_to_create[0]], self.get_elems_text(self.folders_title),
+                         'First level should only show first folder')
+
+        self.navigate_to_folder(folders_to_create[0])
+        self.assertEqual([folders_to_create[1]], self.get_elems_text(self.folders_title),
+                         'Second level should only show second folder')
+
+        self.navigate_to_folder(folders_to_create[1])
+        self.assertEqual([folders_to_create[2]], self.get_elems_text(self.folders_title),
+                         'Third level should only show third folder')
+
+        self.navigate_to_folder(folders_to_create[2])
+        self.assertEqual('Root\n' + '\n'.join(folders_to_create), self.get_elem_text(self.breadcrumb),
+                         'Breadcrumb should show all folders created on the deepest level')
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_select_folder(self):
+        # User have already created 2 folders
+        folder_to_select_name = 'folder 1'
+        self.create_folder(folder_to_select_name)
+        self.create_folder('folder 2')
+
+        # No folder select message appears in the right panel
+        self.assertEqual('No folder selected', self.get_elem_text(self.right_panel))
+
+        # User select the folder to select
+        self.select_folder(folder_to_select_name)
+
+        # The selected folder name appears in the right panel
+        self.assertEqual(folder_to_select_name, self.get_elem_text(self.selected_folder_name))
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_rename_selected_folder(self):
+        # User have already created 2 folders
+        folder_to_rename_name = 'rename me plz'
+        self.create_folder(folder_to_rename_name)
+        folder_not_to_rename_name = 'do not rename me :C!'
+        self.create_folder(folder_not_to_rename_name)
+
+        # User select the folder to rename and rename it
+        self.select_folder(folder_to_rename_name)
+        folder_renamed_name = 'fresh new name'
+        self.rename_selected_folder(folder_renamed_name)
+
+        # The desired folder have been renamed the other folder keep its name
+        folder_title_list = self.get_elems_text(self.folders_title)
+        self.assertNotIn(folder_to_rename_name, folder_title_list,
+                         'Old folder name should not be present anymore')
+        self.assertIn(folder_not_to_rename_name, folder_title_list,
+                      'The not renamed folder should have kept its name')
+        self.assertIn(folder_renamed_name, folder_title_list,
+                      'New folder name should be present')
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_move_selected_folder(self):
+        # User have already created 2 folders
+        folder_to_move_name = 'move me plz'
+        self.create_folder(folder_to_move_name)
+        folder_not_to_move_name = 'do not move me :C!'
+        self.create_folder(folder_not_to_move_name)
+
+        # User select the folder to move and move it
+        self.select_folder(folder_to_move_name)
+        self.move_selected_folder(target_folder_name=folder_not_to_move_name)
+
+        # The desired folder have been moved
+        folder_title_list = self.get_elems_text(self.folders_title)
+        self.assertNotIn(folder_to_move_name, folder_title_list,
+                         'Moved folder should not appears at root anymore')
+        self.assertIn(folder_not_to_move_name, folder_title_list,
+                      'Unmoved folder appears at root')
+
+        self.navigate_to_folder(folder_not_to_move_name)
+        folder_title_list = self.get_elems_text(self.folders_title)
+        self.assertIn(folder_to_move_name, folder_title_list,
+                      'Moved folder should appears in target folder')
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_delete_selected_folder(self):
+        # User have already created 2 folders
+        folder_to_delete_name = 'delete me plz'
+        self.create_folder(folder_to_delete_name)
+        folder_not_to_delete_name = 'do not delete me :C!'
+        self.create_folder(folder_not_to_delete_name)
+
+        # User select the folder to move and move it
+        self.select_folder(folder_to_delete_name)
+        self.delete_selected_folder()
+
+        # The desired folder have been deleted
+        folder_title_list = self.get_elems_text(self.folders_title)
+        self.assertNotIn(folder_to_delete_name, folder_title_list,
+                         'Delete folder should not appears anymore')
+        self.assertIn(folder_not_to_delete_name, folder_title_list,
+                      'Undeleted folder should appears')

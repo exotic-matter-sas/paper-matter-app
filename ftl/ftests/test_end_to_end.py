@@ -6,8 +6,8 @@ from django import db
 from django.db.models import Func, F
 from tika import parser
 
+from core import views
 from core.models import FTLDocument
-from core.views import EXECUTOR
 from ftests.pages.base_page import NODE_SERVER_RUNNING
 from ftests.pages.django_admin_home_page import AdminHomePage
 from ftests.pages.django_admin_login_page import AdminLoginPage
@@ -131,8 +131,8 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage):
 
     def tearDown(self):
         """ Additional teardown required to shutdown indexation thread and associated DB connection"""
-        EXECUTOR.submit(db.connections.close_all)
-        EXECUTOR.shutdown()
+        views.ftl_doc_processing.executor.submit(db.connections.close_all)
+        views.ftl_doc_processing.executor.shutdown()
         super().tearDown()
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
@@ -140,7 +140,7 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage):
         # User upload 2 documents
         self.upload_document()
         second_document_title = 'green.pdf'
-        self.upload_document(os.path.join(BASE_DIR, 'ftests', 'tools', second_document_title))
+        self.upload_document(os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', second_document_title))
 
         # User wait for document to be indexed
         # TODO replace by a wait_for_element_to_disappear when a indexing indicator is implemented
