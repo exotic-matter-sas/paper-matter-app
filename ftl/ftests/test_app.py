@@ -64,6 +64,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewPage):
         # User click on the first listed document
         self.open_first_document()
         # User can see the pdf inside the pdf viewer
+        self.wait_for_elem_to_show(self.pdf_viewer)
         pdf_viewer_iframe = self.get_elem(self.pdf_viewer)
         self.browser.switch_to_frame(pdf_viewer_iframe)
         pdf_viewer_iframe_title = self.get_elem('title', False).get_attribute("innerHTML")
@@ -374,8 +375,6 @@ class DocumentViewPageTests(LoginPage, HomePage, DocumentViewPage):
         self.assertIn(document_title,
                       self.get_elem_text(self.document_title),
                       'Setup document title should match opened document')
-
-        self.close_last_notification()  # close thumbnail generated notification
 
         # User close document
         self.close_document()
