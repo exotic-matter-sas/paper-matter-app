@@ -49,7 +49,6 @@ const mockedUnselectFolder = jest.fn();
 const mockedNavigateToFolder = jest.fn();
 const mockedUpdateFolders = jest.fn();
 const mockedUpdateFoldersFromUrl = jest.fn();
-const mockedFolderWatch = jest.fn();
 const mockedBreadcrumb = jest.fn();
 const mockedGetCurrentFolder = jest.fn();
 

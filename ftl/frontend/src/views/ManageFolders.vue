@@ -3,7 +3,7 @@
     <b-container fluid class="p-3 text-center">
       <b-row align-h="center">
         <!-- Left panel -->
-        <b-col md="8">
+        <b-col id="left-panel" md="8">
           <b-row>
             <b-col>
               <b-breadcrumb :items="breadcrumb"/>
@@ -38,7 +38,7 @@
           </b-row>
         </b-col>
         <!-- Right panel -->
-        <b-col class="right-panel">
+        <b-col id="right-panel">
           <b-row v-if="folderDetailLoading">
             <b-col>
               <b-spinner :label="$_('Loading')"></b-spinner>
@@ -52,21 +52,21 @@
                 </b-col>
               </b-row>
               <b-row>
-                <b-col><h1> {{ folderDetail.name }}</h1></b-col>
+                <b-col id="selected-folder-name"><h1> {{ folderDetail.name }}</h1></b-col>
               </b-row>
               <b-row>
                 <b-col>
                   Creation date
                 </b-col>
                 <b-col>
-                  <span :title="folderDetail.created">{{ $moment(folderDetail.created).fromNow() }}</span>
+                  <span id="selected-folder-date" :title="folderDetail.created">{{ $moment(folderDetail.created).fromNow() }}</span>
                 </b-col>
               </b-row>
               <b-row>
                 <b-col>
-                  <b-button class="m-1" variant="secondary" v-b-modal="'modal-rename-folder'">Rename</b-button>
-                  <b-button class="m-1" variant="secondary" v-b-modal="'modal-move-folder'">Move</b-button>
-                  <b-button class="m-1" variant="danger" v-b-modal="'modal-delete-folder'">Delete</b-button>
+                  <b-button id="rename-selected-folder" class="m-1" variant="secondary" v-b-modal="'modal-rename-folder'">Rename</b-button>
+                  <b-button id="move-selected-folder" class="m-1" variant="secondary" v-b-modal="'modal-move-folder'">Move</b-button>
+                  <b-button id="delete-selected-folder" class="m-1" variant="danger" v-b-modal="'modal-delete-folder'">Delete</b-button>
                 </b-col>
               </b-row>
             </b-col>
@@ -271,14 +271,14 @@
     border: 3px solid transparent;
   }
 
-  .right-panel{
+  #right-panel{
     border-top: 2px solid map_get($theme-colors, 'light-gray');
     margin-top: 1em;
     padding-top: 1em;
   }
 
   @include media-breakpoint-up(md) {
-    .right-panel{
+    #right-panel{
       border-top: 0;
       border-left: 2px solid map_get($theme-colors, 'light-gray');
       margin-top: 0;

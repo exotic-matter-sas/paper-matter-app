@@ -48,7 +48,7 @@ if DEV_MODE and not is_node_server_running():
 
 class BasePage(LIVE_SERVER):
     modal_input = '.modal-dialog input'
-    modal_accept_button = '.modal-dialog .modal-footer .btn-primary'
+    modal_accept_button = '.modal-dialog .modal-footer .btn-primary, .modal-dialog .modal-footer .btn-danger'
     modal_reject_button = '.modal-dialog .modal-footer .btn-secondary'
 
     notification = '.b-toaster-slot .b-toast'
@@ -159,6 +159,22 @@ class BasePage(LIVE_SERVER):
             return elem.find_element_by_css_selector('option:checked').text
         else:
             return elem.text
+
+    def get_elems_text(self, css_selector, is_visible=True):
+        elems_text = []
+        elems = self.browser.find_elements_by_css_selector(css_selector)
+
+        if elems and elems[0].is_displayed() == is_visible:
+            for elem in elems:
+                if elem.tag_name == 'input':
+                    elems_text.append(elem.get_attribute('value'))
+                elif elem.tag_name == 'select':
+                    elems_text.append(elem.find_element_by_css_selector('option:checked').text)
+                else:
+                    elems_text.append(elem.text)
+            return elems_text
+        else:
+            raise NoSuchElementException()
 
     @staticmethod
     def _wait_for_method_to_return(method, timeout, *method_args, custom_return_validator=None,
