@@ -95,6 +95,5 @@ ftl/ftl/settings*
 !ftl/ftl/settings.py
 !ftl/ftl/settings_tests.py
 ftl/uploads/
-!ftl/uploads/test.pdf
 ftl/assets/
 !ftl/assets/README.md
