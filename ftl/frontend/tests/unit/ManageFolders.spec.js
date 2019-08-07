@@ -78,7 +78,6 @@ describe('ManageFolders template', () => {
 
     expect(elem.is(elementSelector)).toBe(true);
 
-    expect(wrapper.text()).toContain('Organize your folders');
     expect(wrapper.text()).toContain('No folder selected');
   });
 });
