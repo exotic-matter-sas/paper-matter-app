@@ -47,7 +47,7 @@ export default new Router({
     {
       path: '/konami',
       name: 'konami',
-      component: () => import(/* webpackChunkName: "Konami" */ '@/views/Konami.vue'),
+      component: () => import(/* webpackChunkName: "konami" */ '@/views/Konami.vue'),
     }
   ]
 })

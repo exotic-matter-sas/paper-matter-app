@@ -11,11 +11,12 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+import pathlib
 
 from django.contrib.messages import constants as message_constants
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-import pathlib
+from ftl.enums import FTLStorages, FTLPlugins
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -26,9 +27,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'q-2%l!knv+331nqu&ypc+gv&85nd$9*1g1max3692uxfu_!7w8'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
+
+# This param allow app to run with an unbuilt frontend
+DEV_MODE = False
 
 # Custom user auth model
 AUTH_USER_MODEL = 'core.FTLUser'
@@ -147,6 +151,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'assets')  # internal path
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'frontend', 'dist'),  # Webpack final bundle
     os.path.join(BASE_DIR, 'frontend', 'pdfjs'),
+    os.path.join(BASE_DIR, 'frontend', 'src', 'assets'),
     os.path.join(BASE_DIR, 'ftl', 'static'),
 )
 
@@ -162,7 +167,6 @@ LOGIN_REDIRECT_URL = '/app'
 # Default settings for browser used for functional tests
 DEFAULT_TEST_BROWSER = 'firefox'
 TEST_BROWSER_HEADLESS = True
-DEV_MODE = False
 
 # Django Rest Framework settings
 REST_FRAMEWORK = {
@@ -192,8 +196,6 @@ EMAIL_HOST_PASSWORD = ''
 EMAIL_PORT = 25
 EMAIL_USE_SSL = False
 DEFAULT_FROM_EMAIL = 'noreply@localhost.com'
-# apply to emails sent by: django.core.mail.mail_admins, django.core.mail.mail_managers
-EMAIL_SUBJECT_PREFIX = ''
 
 # Customize MESSAGE_TAGS to match bootstrap alert classes
 MESSAGE_TAGS = {
@@ -203,10 +205,64 @@ MESSAGE_TAGS = {
     message_constants.ERROR: 'text-center alert alert-danger',
 }
 
+"""
+DOCUMENT BINARY STORAGE
+=======================
+Remote storage required:
+    - extra settings (see EXTRA SETTINGS FOR STORAGE below)
+    - extra Python module (see ftl.constants.FTLStorages docstring)
+"""
+DEFAULT_FILE_STORAGE = FTLStorages.FILE_SYSTEM
+
+"""
+DOCUMENT PROCESSING PLUGINS (order is important)
+================================================
+- Edit lines below to change enabled plugins
+    - Optional plugins required to install additional Python modules
+    - Most OCR plugins required a specific DEFAULT_FILE_STORAGE
+    - Check ftl.constants.FTLplugins docstring to know what's required for the desired plugin 
+- Only one plugin of each type should be enable at a time
+"""
+FTL_DOC_PROCESSING_PLUGINS = [
+    # Extract text of non scanned documents (required)
+    FTLPlugins.TEXT_EXTRACTION_TIKA,
+
+    # Detect lang (required for search feature)
+    FTLPlugins.LANG_DETECTOR_LANGID,
+
+    # Search feature (required)
+    FTLPlugins.SEARCH_ENGINE_PGSQL_TSVECTOR,
+]
+
+"""
+EXTRA SETTINGS FOR REMOTE STORAGE OR OCR_GOOGLE_VISION_SYNC 
+"""
+# Additional settings required if you chose a remote storage
+if DEFAULT_FILE_STORAGE == FTLStorages.AWS_S3:  # Amazon S3 storage
+    AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+    AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
+    AWS_S3_ENDPOINT_URL = os.getenv("AWS_S3_ENDPOINT_URL")
+    AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME")
+    AWS_DEFAULT_ACL = 'private'
+    S3_USE_SIGV4 = True
+if DEFAULT_FILE_STORAGE == FTLStorages.GCS or \
+   FTLPlugins.OCR_GOOGLE_VISION_SYNC in FTL_DOC_PROCESSING_PLUGINS:
+    import json
+    from google.oauth2 import service_account
+
+    credentials_raw = json.loads(os.environ.get('GCS_CREDENTIALS_CONTENT'))
+    GS_CREDENTIALS = service_account.Credentials.from_service_account_info(credentials_raw)
+    if DEFAULT_FILE_STORAGE == FTLStorages.GCS:
+        GS_BUCKET_NAME = os.environ.get('GCS_BUCKET_NAME')
+
 # ==================================================
 # No settings under this line
 # Auto import local `settings_local.py` if available
 try:
     from .settings_local import *
-except ImportError:
-    pass
+
+    print('Local setting imported\n')
+except ImportError as e:
+    print(e)
+    print('No local setting\n')

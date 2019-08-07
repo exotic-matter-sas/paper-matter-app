@@ -1,14 +1,13 @@
 import json
 from base64 import b64decode
-from concurrent.futures.thread import ThreadPoolExecutor
 
-import langid
+from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
+from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.core.files.base import ContentFile
 from django.db import IntegrityError
 from django.db.models import F
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.utils.http import http_date
 from django.views import View
@@ -16,30 +15,14 @@ from rest_framework import generics, views, serializers
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
-from tika import parser
 
-from core.error_codes import get_api_error
+from core.errors import get_api_error
 from core.models import FTLDocument, FTLFolder, FTLModelPermissions
+from core.processing.ftl_processing import FTLDocumentProcessing
 from core.serializers import FTLDocumentSerializer, FTLFolderSerializer
+from ftl.enums import FTLStorages
 
-SEARCH_VECTOR = SearchVector('content_text', weight='C', config=F('language')) \
-                + SearchVector('note', weight='B', config=F('language')) \
-                + SearchVector('title', weight='A', config=F('language'))
-COUNTRY_CODE_INDEX = {
-    'fr': 'french',
-    'en': 'english',
-}
-EXECUTOR = ThreadPoolExecutor(max_workers=1, thread_name_prefix="ftl_indexation_worker")
-
-
-def _extract_text_from_pdf(vector, ftl_doc_instance):
-    parsed_txt = parser.from_file(ftl_doc_instance.binary.name)
-    if 'content' in parsed_txt and parsed_txt["content"]:
-        ftl_doc_instance.content_text = parsed_txt["content"].strip()
-        ftl_doc_instance.language = COUNTRY_CODE_INDEX.get(langid.classify(ftl_doc_instance.content_text)[0], 'english')
-        ftl_doc_instance.save()  # Need to save in actual DB before computing the tsvector
-        ftl_doc_instance.tsvector = vector
-        ftl_doc_instance.save()
+ftl_doc_processing = FTLDocumentProcessing(settings.FTL_DOC_PROCESSING_PLUGINS)
 
 
 def _extract_binary_from_data_uri(data_uri):
@@ -63,10 +46,14 @@ class DownloadView(LoginRequiredMixin, PermissionRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         doc = get_object_or_404(FTLDocument.objects.filter(org=self.request.user.org, pid=kwargs['uuid']))
-        response = HttpResponse(doc.binary, 'application/octet')
-        response['Last-Modified'] = http_date(doc.edited.timestamp())
-        response['Content-Disposition'] = 'attachment; filename="%s"' % doc.binary.name
-        return response
+
+        if settings.DEFAULT_FILE_STORAGE in [FTLStorages.GCS, FTLStorages.AWS_S3]:
+            return HttpResponseRedirect(doc.binary.url)
+        else:
+            response = HttpResponse(doc.binary, 'application/octet')
+            response['Last-Modified'] = http_date(doc.edited.timestamp())
+            response['Content-Disposition'] = 'attachment; filename="%s"' % doc.binary.name
+            return response
 
 
 class FTLDocumentList(generics.ListAPIView):
@@ -123,10 +110,13 @@ class FTLDocumentThumbnail(LoginRequiredMixin, views.APIView):
         if not bool(doc.thumbnail_binary):
             return HttpResponseNotFound()
 
-        response = HttpResponse(doc.thumbnail_binary, 'image/png')
-        response['Last-Modified'] = http_date(doc.edited.timestamp())
-        # TODO add ETAG and last modified for caching
-        return response
+        if settings.DEFAULT_FILE_STORAGE in [FTLStorages.GCS, FTLStorages.AWS_S3]:
+            return HttpResponseRedirect(doc.thumbnail_binary.url)
+        else:
+            response = HttpResponse(doc.thumbnail_binary, 'image/png')
+            response['Last-Modified'] = http_date(doc.edited.timestamp())
+            # TODO add ETAG and last modified for caching
+            return response
 
 
 class FileUploadView(LoginRequiredMixin, views.APIView):
@@ -163,7 +153,7 @@ class FileUploadView(LoginRequiredMixin, views.APIView):
 
         ftl_doc.save()
 
-        EXECUTOR.submit(_extract_text_from_pdf, SEARCH_VECTOR, ftl_doc)
+        ftl_doc_processing.apply_processing(ftl_doc)
 
         return Response(self.serializer_class(ftl_doc).data, status=201)
 

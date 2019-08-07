@@ -1,12 +1,9 @@
-from unittest.mock import MagicMock, patch
 from urllib.parse import quote_plus
 
 from django.contrib.staticfiles import finders
 from django.test import TestCase
 from django.urls import reverse_lazy
-from tika import parser
 
-from core.views import _extract_text_from_pdf
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_authenticated_session, setup_document
 
@@ -78,19 +75,3 @@ class PDFViewerTests(TestCase):
     def test_pdf_viewer_accessible(self):
         result = finders.find('pdfjs/web/viewer.html')
         self.assertIsNotNone(result, 'Pdfjs resources not found')
-
-
-class IndexerTests(TestCase):
-    @patch.object(parser, 'from_file')
-    def test_text_extraction(self, mock_parser):
-        indexed_text_ = {"content": "indexed text"}
-        mock_parser.return_value = indexed_text_
-
-        vector = MagicMock()
-        ftl_doc = MagicMock()
-
-        _extract_text_from_pdf(vector, ftl_doc)
-
-        mock_parser.assert_called_once_with(ftl_doc.binary.name)
-        self.assertEqual(ftl_doc.content_text, indexed_text_['content'])
-        self.assertEqual(ftl_doc.tsvector, vector)

@@ -1,4 +1,4 @@
-APP_NAME = 'ftl-app'
+APP_NAME = 'Paper Matter'
 
 ADMIN_USERNAME = 'admin'
 ADMIN_EMAIL = 'admin@localhost.com'
@@ -19,7 +19,7 @@ USER2_PASS = 'a123456!'
 
 DOCUMENT1_TITLE = 'test.pdf'
 DOCUMENT1_NOTE = 'Document 1 note'
-DOCUMENT1_BINARY_PATH = 'ftests/tools/test.pdf'
+DOCUMENT1_BINARY_PATH = 'ftests/tools/test_documents/test.pdf'
 DOCUMENT1_CONTENT = 'Document 1 content'
 DOCUMENT1_LANGUAGE = 'english'
 

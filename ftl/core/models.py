@@ -82,12 +82,10 @@ class FTLDocument(models.Model):
         thumbnail_binary = self.thumbnail_binary
 
         if binary:
-            binary.file.close()
-            os.remove(binary.file.name)
+            binary.delete(False)
 
         if thumbnail_binary:
-            thumbnail_binary.file.close()
-            os.remove(thumbnail_binary.file.name)
+            thumbnail_binary.delete(False)
 
         super().delete(*args, **kwargs)
 
