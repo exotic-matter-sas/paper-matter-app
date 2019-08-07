@@ -2,8 +2,8 @@
   <li class="folder-tree-item">
     <span
       :class="{bold: item.has_descendant, selected: selected}">
-      <span @click="selectFolder">{{ item.name }}&nbsp;</span>
-      <span v-if="item.has_descendant && !loading" @click="toggle">[{{ isOpen ? '-' : '+' }}]</span>
+      <span class="target-folder-name" @click="selectFolder">{{ item.name }}&nbsp;</span>
+      <span class="expand-folder-child" v-if="item.has_descendant && !loading" @click="toggle">[{{ isOpen ? '-' : '+' }}]</span>
       <b-spinner :class="{'d-none': !loading}" small></b-spinner>
     </span>
 

@@ -5,7 +5,9 @@ $theme-colors: (
     "primary": lighten($em-purple, 28%),
     "secondary": #ced4da,
     "dark": $em-purple,
-    "active": darken($em-orange, 10%)
+    "active": darken($em-orange, 10%),
+    "light-gray": #6c757d,
+    "dark-gray": #343a40
 );
 
 $breadcrumb-divider: quote(">");
