@@ -52,8 +52,8 @@ msgid "Login to your account here:"
 msgstr "Connectez-vous à votre compte :"
 
 #: ftl/templates/ftl/signup_success.html:14
-msgid "User login page"
-msgstr "Page de connexion pour les utilisateurs"
+msgid "login page"
+msgstr "page de connexion"
 
 #: ftl/templates/registration/login.html:5
 #: ftl/templates/registration/login.html:13
