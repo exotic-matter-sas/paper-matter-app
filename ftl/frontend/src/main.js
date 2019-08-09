@@ -88,8 +88,8 @@ axios.interceptors.response.use(function (response) {
   return response;
 }, function (error) {
   if (error.response.status === 403) {
-    // Redirect to root page when an XHR returns 403
-    window.location.replace("/logout");
+    // Logout user when an XHR returns 403
+    window.location.replace("/logout?auto");
   } else {
     return Promise.reject(error);
   }
