@@ -1,4 +1,4 @@
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 
 from django.contrib import messages
 from django.test import TestCase
@@ -102,6 +102,8 @@ class FtlPagesTests(TestCase):
     def test_logout_signal_trigger_django_messages(self, messages_mocked):
         message_to_display_on_login_page = 'bingo!'
         messages_mocked.return_value = message_to_display_on_login_page
-        user_logged_out.send(self.__class__, request='fake_value')
+        mocked_request = Mock()
+        mocked_request.GET = {}
+        user_logged_out.send(self.__class__, request=mocked_request)
 
         messages_mocked.assert_called_once()

@@ -170,11 +170,22 @@ TEST_BROWSER_HEADLESS = True
 
 # Django Rest Framework settings
 REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication'
+    ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
+        'core.models.FTLModelPermissions',
     ),
-    'PAGE_SIZE': 10
+    'PAGE_SIZE': 10,
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle'
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '1/second',
+        'user': '15/second'
+    }
 }
 
 WEBPACK_LOADER = {
@@ -246,8 +257,7 @@ if DEFAULT_FILE_STORAGE == FTLStorages.AWS_S3:  # Amazon S3 storage
     AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME")
     AWS_DEFAULT_ACL = 'private'
     S3_USE_SIGV4 = True
-if DEFAULT_FILE_STORAGE == FTLStorages.GCS or \
-   FTLPlugins.OCR_GOOGLE_VISION_SYNC in FTL_DOC_PROCESSING_PLUGINS:
+if DEFAULT_FILE_STORAGE == FTLStorages.GCS or FTLPlugins.OCR_GOOGLE_VISION_SYNC in FTL_DOC_PROCESSING_PLUGINS:
     import json
     from google.oauth2 import service_account
 
