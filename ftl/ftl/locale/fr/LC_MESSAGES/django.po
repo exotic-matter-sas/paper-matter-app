@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-08 21:12+0000\n"
+"POT-Creation-Date: 2019-08-09 12:30+0000\n"
 "PO-Revision-Date: 2019-03-05 17:20+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,7 +18,11 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.0.6\n"
 
-#: ftl/signals/handlers.py:7
+#: ftl/signals/handlers.py:8
+msgid "Your session has expired or have been invalidated. Please log back in."
+msgstr "Votre session a expiré ou a été invalidée. Veuillez vous reconnecter."
+
+#: ftl/signals/handlers.py:10
 msgid "You have been logged out. See you!"
 msgstr "Vous êtes déconnecté. À bientôt !"
 
