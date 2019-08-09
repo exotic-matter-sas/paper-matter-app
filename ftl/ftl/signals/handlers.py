@@ -11,7 +11,7 @@ user_logged_out.connect(show_message, dispatch_uid='login_page')
 
 
 def set_ftl_session(request, **kwargs):
-    org = request.user.org
+    org = kwargs['user'].org
     request.session['org_id'] = org.id
     request.session['org_name'] = org.name
 
