@@ -34,7 +34,9 @@ class HomeView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         context = {
             'org_name': request.session['org_name'],
-            'ftl_account': {'name': request.user.get_username()},
+            # ftl_account is exposed to javascript through json_script filter in home.html template
+            'ftl_account': {'name': request.user.get_username(),
+                            'isSuperUser': request.user.is_superuser},
         }
         return render(request, 'core/home.html', context)
 

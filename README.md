@@ -22,7 +22,7 @@ Archiving documents solution
  * PostgreSQL 11
  * Firefox or Chrome (to run functional tests)
  * Poedit or equivalent (to add/update i18n)
- * Node.js
+ * Node.js LTS
  * Java 8+ (for documents indexing)
 
  * _Under Linux, you may need additional tools to build Python modules which includes C code:_

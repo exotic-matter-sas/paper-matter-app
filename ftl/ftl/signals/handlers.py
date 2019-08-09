@@ -1,5 +1,5 @@
-from django.contrib.auth.signals import user_logged_out
 from django.contrib import messages
+from django.contrib.auth.signals import user_logged_out, user_logged_in
 from django.utils.translation import gettext as _
 
 
@@ -11,3 +11,12 @@ def show_message(request, **kwargs):
 
 
 user_logged_out.connect(show_message, dispatch_uid='login_page')
+
+
+def set_ftl_session(request, **kwargs):
+    org = kwargs['user'].org
+    request.session['org_id'] = org.id
+    request.session['org_name'] = org.name
+
+
+user_logged_in.connect(set_ftl_session, dispatch_uid='set_ftl_session')

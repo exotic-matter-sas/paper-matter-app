@@ -18,14 +18,15 @@ class CorePagesTests(TestCase):
         response = self.client.get('/app/')
         self.assertContains(
             response,
-            f'<script id="ftlAccount" type="application/json">{{"name": "{self.user.username}"}}</script>')
+            f'<script id="ftlAccount" type="application/json">{{"name": "{self.user.username}", "isSuperUser": false}}'
+            f'</script>')
         self.assertContains(response, '<div id="app">')
         self.assertTemplateUsed(response, 'core/home.html')
 
     def test_home_get_proper_context(self):
         response = self.client.get('/app/')
         self.assertEqual(response.context['org_name'], self.org.name)
-        self.assertEqual(response.context['ftl_account'], {'name': self.user.username})
+        self.assertEqual(response.context['ftl_account'], {'name': self.user.username, 'isSuperUser': False})
 
 
 class DownloadDocumentTests(TestCase):

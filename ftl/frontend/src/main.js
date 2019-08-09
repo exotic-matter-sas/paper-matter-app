@@ -12,7 +12,8 @@ import {
   faSearch,
   faSync,
   faTrash,
-  faWindowClose
+  faWindowClose,
+  faCrown
 } from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
 
@@ -25,7 +26,8 @@ import axios from 'axios';
 Vue.config.productionTip = false;
 
 // Font Awesome icons definition
-library.add(faHome, faFolder, faSearch, faWindowClose, faTrash, faFileDownload, faFolderPlus, faSync, faLevelUpAlt);
+library.add(faHome, faFolder, faSearch, faWindowClose, faTrash, faFileDownload, faFolderPlus, faSync, faLevelUpAlt,
+  faCrown);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.use(BootstrapVue);
 

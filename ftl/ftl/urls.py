@@ -22,7 +22,6 @@ from django.views.generic import RedirectView
 from ftl import views
 from ftl.ftl_setup_middleware import SetupState
 from ftl.views import PasswordResetAsked, PasswordResetDone
-from ftl.views_auth import LoginViewFTL
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -35,7 +34,7 @@ urlpatterns = [
     path('signup/<slug:org_slug>/', views.CreateFTLUserFormView.as_view(), name='signup'),
     path('signup/<slug:org_slug>/success/', views.signup_success, name='signup_success'),
 
-    path('login/', LoginViewFTL.as_view(redirect_authenticated_user=True),
+    path('login/', auth_views.LoginView.as_view(redirect_authenticated_user=True),
          kwargs={"ftl_setup_state": SetupState.admin_created}, name='login'),
     path('logout/', auth_views.logout_then_login, name='logout'),
 
@@ -57,6 +56,7 @@ if settings.DEBUG and settings.DEV_MODE:
 
 if settings.DEV_MODE:
     from ftl import view_local_proxy
+
     urlpatterns += [
         re_path(r'^local/(?P<url>.*)$', view_local_proxy.LocalProxy.as_view())
     ]
