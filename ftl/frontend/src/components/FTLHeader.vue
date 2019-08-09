@@ -76,7 +76,10 @@
       <b-navbar-nav class="ml-auto">
         <b-nav-item-dropdown right>
           <!-- Using 'button-content' slot -->
-          <template slot="button-content"><em id="username">{{ account.name }}</em></template>
+          <template slot="button-content">
+            <font-awesome-icon v-if="account.isSuperUser" icon="crown" class="super-user" title="Super User"/>
+            <em id="username">{{ account.name }}</em>
+          </template>
           <b-dropdown-item href="/account">{{this.$_('Profile')}}</b-dropdown-item>
           <b-dropdown-item href="/logout">{{this.$_('Sign Out')}}</b-dropdown-item>
         </b-nav-item-dropdown>
@@ -210,5 +213,11 @@
     #search-input {
       margin-left: 0.5rem;
     }
+  }
+
+  .super-user{
+    color: #d0d8d9;
+    margin-right: 0.5em;
+    font-size: 0.7em;
   }
 </style>
