@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-23 16:07+0000\n"
+"POT-Creation-Date: 2019-08-08 21:12+0000\n"
 "PO-Revision-Date: 2019-03-05 16:56+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,11 +18,56 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.0.6\n"
 
-#: core/error_codes.py:12
+#: core/errors.py:12
 msgid "a folder with this name already exist"
 msgstr "un dossier avec ce nom existe déjà"
 
-#: core/models.py:45
+#: core/management/commands/import_docs.py:27
+#, python-format
+msgid "Starting mass import for %(username)s from %(path)s"
+msgstr "Début de l'import de masse pour %(username)s depuis %(path)s"
+
+#: core/management/commands/import_docs.py:44
+#, python-format
+msgid "One document successfully imported in %(time)s"
+msgid_plural "%(count)s documents successfully imported in %(time)s"
+msgstr[0] "Un document importé avec succès en %(time)s"
+msgstr[1] "%(count)s documents importés avec succès en %(time)s"
+
+#: core/management/commands/import_docs.py:68
+#, python-format
+msgid "Created folder %(name)s"
+msgstr "Dossier %(name)s créé"
+
+#: core/management/commands/import_docs.py:80
+#, python-format
+msgid "Imported document %(name)s"
+msgstr "Document %(name)s importé"
+
+#: core/management/commands/reindex_docs.py:25
+#, python-format
+msgid "Starting to reindex one document"
+msgid_plural "Starting to reindex %(count)s documents"
+msgstr[0] "Réindexation d'un document lancée"
+msgstr[1] "Réindexation de %(count)s documents lancée"
+
+#: core/management/commands/reindex_docs.py:36
+#, python-format
+msgid "Reindexing %(title)s"
+msgstr "Réindexation de %(title)s"
+
+#: core/management/commands/reindex_docs.py:43
+msgid "OK"
+msgstr "OK"
+
+#: core/management/commands/reindex_docs.py:55
+#, python-format
+msgid "One document successfully reindexed in %(time)s seconds"
+msgid_plural "%(count)s documents successfully reindexed in %(time)s seconds"
+msgstr[0] "Réindexation d'un document réussie en %(time)s secondes"
+msgstr[1] "Réindexation de %(count)s documents réussie en %(time)s secondes"
+
+#: core/models.py:46
 msgid "email address"
 msgstr "addresse email"
 
@@ -30,11 +75,16 @@ msgstr "addresse email"
 msgid "Home"
 msgstr "Accueil"
 
-#: core/templates/core/home.html:14
+#: core/templates/core/home.html:15
+#, fuzzy
+#| msgid ""
+#| "We're sorry but Paper Matter will not work without JavaScript enabled. "
+#| "Please enable it\n"
+#| "                to continue."
 msgid ""
-"We're sorry but Paper Matter will not work without JavaScript enabled. Please "
-"enable it\n"
-"                to continue."
+"We're sorry but Paper Matter will not work without JavaScript enabled. "
+"Please enable it\n"
+"            to continue."
 msgstr ""
-"Désolé mais Paper Matter ne fonctionne pas sans Javascript, veuillez l'activer "
-"dans votre navigateur."
+"Désolé mais Paper Matter ne fonctionne pas sans Javascript, veuillez "
+"l'activer dans votre navigateur."
