@@ -1,0 +1,26 @@
+{% extends "django_app_base.html" %}
+{% load static %}
+
+{% block main %}
+    <div class="row align-items-stretch min-vh-100">
+        <main class="col pb-3 order-md-2 pb-md-0">
+            <div id="main-with-aside" {% block vcenter_class %}{% endblock %}>
+                {% block main_content %}{% endblock %}
+            </div>
+        </main>
+        <aside class="col-0 pt-3 bg-dark col-md-4 order-md-1 pt-md-0">
+            <div id="logo-container">
+                <div>
+                    <img id="logo" src="{% static "grays_logo.svg" %}" alt="Paper Matter logo">
+                </div>
+            </div>
+
+            <div id="aside-illustration" class="row align-items-center">
+                <div class="col">
+                    {% block aside_illustration %}{% endblock %}
+                </div>
+            </div>
+        </aside>
+    </div>
+{% endblock %}
+
