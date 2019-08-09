@@ -1,0 +1,11 @@
+{% extends "main_with_aside.html" %}
+{% load static %}
+
+{% block vcenter_class %}class="row align-items-center"{% endblock %}
+
+{% block main_content %}
+    <div class="col">
+        {% block main_content_vcenter %}{% endblock %}
+    </div>
+{% endblock %}
+

@@ -128,8 +128,9 @@ class DocumentsTests(APITestCase):
         # File has been deleted.
         self.assertTrue(not os.path.exists(binary_f.name))
 
+    @patch.object(FTLDocumentProcessing, 'apply_processing')
     @patch.object(parser, 'from_file')
-    def test_upload_document(self, mock_tika_parser):
+    def test_upload_document(self, mock_tika_parser, mock_apply_processing):
         mock_tika_parser.return_value = ""
 
         with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'test.pdf'), mode='rb') as fp:
@@ -168,8 +169,9 @@ class DocumentsTests(APITestCase):
         self.assertEqual(client_doc['note'], self.doc_in_folder.note)
         self.assertEqual(client_doc['ftl_folder'], self.first_level_folder.id)
 
+    @patch.object(FTLDocumentProcessing, 'apply_processing')
     @patch.object(parser, 'from_file')
-    def test_upload_document_in_folder(self, mock_tika_parser):
+    def test_upload_document_in_folder(self, mock_tika_parser, mock_apply_processing):
         mock_tika_parser.return_value = ""
 
         post_body = {'ftl_folder': self.first_level_folder.id}
