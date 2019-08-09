@@ -25,6 +25,9 @@ Archiving documents solution
  * Node.js
  * Java 8+ (for documents indexing)
 
+ * _Under Linux, you may need additional tools to build Python modules which includes C code:_
+   * _apt-get install build-essential python3-dev libpq-dev_
+
 ### Install Python modules
  
     python -m pip install requirements.txt
