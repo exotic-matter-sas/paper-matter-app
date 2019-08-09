@@ -4,6 +4,7 @@ from unittest import skipIf
 from django.core import mail
 
 from ftests.pages.base_page import NODE_SERVER_RUNNING
+from ftests.pages.django_admin_login_page import AdminLoginPage
 from ftests.pages.home_page import HomePage
 from ftests.pages.user_login_page import LoginPage
 from ftests.pages.user_reset_password_pages import ResetPasswordPages
@@ -11,18 +12,17 @@ from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user
 from ftl.settings import DEV_MODE
 
 
-class LoginPageTests(LoginPage, HomePage):
+class LoginPageTests(LoginPage, HomePage, AdminLoginPage):
     def setUp(self, **kwargs):
         # first org, admin, user are already created
         super().setUp()
         org = setup_org()
-        setup_admin(org=org)
+        self.admin = setup_admin(org=org)
         # User have already created its account
         self.user = setup_user(org=org)
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_first_user_can_login(self):
-        """First user can login and access a logged page"""
         # User login and is redirected to the home page
         self.visit(LoginPage.url)
         self.log_user()
@@ -41,7 +41,6 @@ class LoginPageTests(LoginPage, HomePage):
         self.assertIn('Please enter a correct username and password', self.get_elem(self.login_failed_div).text)
 
     def test_login_page_redirect_logged_user(self):
-        """First user can login and access a logged page"""
         # User login
         self.visit(LoginPage.url)
         self.log_user()
@@ -51,6 +50,16 @@ class LoginPageTests(LoginPage, HomePage):
 
         # User is redirected to home page as he is already logged
         self.assertIn('Home', self.browser.title)
+
+    def test_admin_can_login_to_app_through_admin_form(self):
+        # Admin login through admin login page
+        self.visit(AdminLoginPage.url)
+        self.log_admin()
+
+        # He can access app and see it's username plus a little admin icon
+        self.visit(HomePage.url)
+        self.assertIn('home', self.head_title)
+        self.assertIn(self.admin.username, self.get_elem(self.profile_name).text)
 
 
 class ForgotPasswordTests(LoginPage, ResetPasswordPages):
