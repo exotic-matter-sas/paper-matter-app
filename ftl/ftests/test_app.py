@@ -4,6 +4,7 @@ from unittest.mock import patch
 from selenium.common.exceptions import NoSuchElementException
 from tika import parser
 
+from core.processing.ftl_processing import FTLDocumentProcessing
 from ftests.pages.base_page import NODE_SERVER_RUNNING
 from ftests.pages.document_viewer_page import DocumentViewPage
 from ftests.pages.home_page import HomePage
@@ -25,8 +26,9 @@ class HomePageTests(LoginPage, HomePage, DocumentViewPage):
         self.log_user()
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @patch.object(FTLDocumentProcessing, 'apply_processing')
     @patch.object(parser, 'from_file')
-    def test_upload_document_to_root(self, mock_tika_parser):
+    def test_upload_document_to_root(self, mock_tika_parser, mock_apply_processing):
         mock_tika_parser.return_value = ""
 
         # User upload a document
@@ -36,8 +38,9 @@ class HomePageTests(LoginPage, HomePage, DocumentViewPage):
         self.assertEqual(tv.DOCUMENT1_TITLE, self.get_elem(self.first_document_title).text)
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @patch.object(FTLDocumentProcessing, 'apply_processing')
     @patch.object(parser, 'from_file')
-    def test_upload_document_to_subfolder(self, mock_tika_parser):
+    def test_upload_document_to_subfolder(self, mock_tika_parser, mock_apply_processing):
         mock_tika_parser.return_value = ""
 
         # User has already created a folder

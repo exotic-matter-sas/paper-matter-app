@@ -212,12 +212,12 @@ class BasePage(LIVE_SERVER):
                                         custom_return_validator=function,
                                         expected_exception_types=exception_types)
 
-    def wait_for_elem_to_show(self, css_selector, timeout=5):
+    def wait_for_elem_to_show(self, css_selector, timeout=2):
         WebDriverWait(self.browser, timeout).until(
             Ec.visibility_of_element_located((By.CSS_SELECTOR, css_selector))
         )
 
-    def wait_for_elem_to_disappear(self, css_selector, timeout=5):
+    def wait_for_elem_to_disappear(self, css_selector, timeout=2):
         try:
             self._wait_for_method_to_raise_exception(self.get_elem, timeout,
                                                      (NoSuchElementException, StaleElementReferenceException),
@@ -225,18 +225,18 @@ class BasePage(LIVE_SERVER):
         except TimeoutException:
             raise TimeoutException(f'The element "{css_selector}" doesn\'t disapear after {timeout}s')
 
-    def wait_for_elem_text_to_be_valid(self, css_selector, validator, timeout=5):
+    def wait_for_elem_text_to_be_valid(self, css_selector, validator, timeout=2):
         try:
             self._wait_for_method_to_return(self.get_elem_text, timeout, css_selector, True,
                                             custom_return_validator=validator)
         except TimeoutException:
             raise TimeoutException(f'The element text "{css_selector}" doesn\'t turn to be valid after {timeout}s')
 
-    def wait_for_elem_text_to_be(self, css_selector, elem_text, timeout=5):
+    def wait_for_elem_text_to_be(self, css_selector, elem_text, timeout=2):
         validator = lambda text: True if text == elem_text else False
         self.wait_for_elem_text_to_be_valid(css_selector, validator, timeout)
 
-    def wait_for_elem_text_not_to_be(self, css_selector, elem_text, timeout=5):
+    def wait_for_elem_text_not_to_be(self, css_selector, elem_text, timeout=2):
         validator = lambda text: True if text != elem_text else False
         self.wait_for_elem_text_to_be_valid(css_selector, validator, timeout)
 
