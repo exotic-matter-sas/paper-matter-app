@@ -146,15 +146,15 @@ class DocumentsTests(APITestCase):
         self.assertIsNone(objects_get.ftl_folder)
 
     @patch.object(FTLDocumentProcessing, 'apply_processing')
-    def test_upload_doc_pdf_extract_async_call(self, mock_apply_processing):
+    def test_upload_doc_trigger_document_processing(self, mock_apply_processing):
         with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'test.pdf'), 'rb') as f:
             body_post = {'json': '{}', 'file': f}
             self.client.post('/app/api/v1/documents/upload', body_post)
 
         mock_apply_processing.assert_called_once()
         # Check argument is a FTLDocument
-        kall = mock_apply_processing.call_args_list[0]
-        args, kwarg = kall
+        call = mock_apply_processing.call_args_list[0]
+        args, kwarg = call
         self.assertTrue(isinstance(args[0], FTLDocument))
 
     def test_document_in_folder(self):
