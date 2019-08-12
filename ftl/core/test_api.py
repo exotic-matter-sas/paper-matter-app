@@ -6,7 +6,6 @@ from unittest.mock import patch
 from django.contrib import messages
 from rest_framework import status
 from rest_framework.test import APITestCase
-from tika import parser
 
 import core
 from core.models import FTLDocument, FTLFolder
@@ -129,10 +128,7 @@ class DocumentsTests(APITestCase):
         self.assertTrue(not os.path.exists(binary_f.name))
 
     @patch.object(FTLDocumentProcessing, 'apply_processing')
-    @patch.object(parser, 'from_file')
-    def test_upload_document(self, mock_tika_parser, mock_apply_processing):
-        mock_tika_parser.return_value = ""
-
+    def test_upload_document(self, mock_apply_processing):
         with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'test.pdf'), mode='rb') as fp:
             client_post = self.client.post('/app/api/v1/documents/upload', {'json': '{}', 'file': fp})
         self.assertEqual(client_post.status_code, status.HTTP_201_CREATED)
@@ -170,10 +166,7 @@ class DocumentsTests(APITestCase):
         self.assertEqual(client_doc['ftl_folder'], self.first_level_folder.id)
 
     @patch.object(FTLDocumentProcessing, 'apply_processing')
-    @patch.object(parser, 'from_file')
-    def test_upload_document_in_folder(self, mock_tika_parser, mock_apply_processing):
-        mock_tika_parser.return_value = ""
-
+    def test_upload_document_in_folder(self, mock_apply_processing):
         post_body = {'ftl_folder': self.first_level_folder.id}
 
         with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'test.pdf'), mode='rb') as fp:

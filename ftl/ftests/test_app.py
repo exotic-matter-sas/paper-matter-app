@@ -2,7 +2,6 @@ from unittest import skip, skipIf
 from unittest.mock import patch
 
 from selenium.common.exceptions import NoSuchElementException
-from tika import parser
 
 from core.processing.ftl_processing import FTLDocumentProcessing
 from ftests.pages.base_page import NODE_SERVER_RUNNING
@@ -27,10 +26,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewPage):
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     @patch.object(FTLDocumentProcessing, 'apply_processing')
-    @patch.object(parser, 'from_file')
-    def test_upload_document_to_root(self, mock_tika_parser, mock_apply_processing):
-        mock_tika_parser.return_value = ""
-
+    def test_upload_document_to_root(self, mock_apply_processing):
         # User upload a document
         self.upload_document()
 
@@ -39,10 +35,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewPage):
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     @patch.object(FTLDocumentProcessing, 'apply_processing')
-    @patch.object(parser, 'from_file')
-    def test_upload_document_to_subfolder(self, mock_tika_parser, mock_apply_processing):
-        mock_tika_parser.return_value = ""
-
+    def test_upload_document_to_subfolder(self, mock_apply_processing):
         # User has already created a folder
         setup_folder(self.org)
         self.visit(HomePage.url)
@@ -344,9 +337,7 @@ class DocumentViewPageTests(LoginPage, HomePage, DocumentViewPage):
         self.log_user()
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
-    @patch.object(parser, 'from_file')
-    def test_visit_url_with_document_pid(self, mock_tika_parser):
-        mock_tika_parser.return_value = ""
+    def test_visit_url_with_document_pid(self):
         # User have already added 2 documents
         setup_document(self.org, self.user)
         second_document_title = 'bingo!'
@@ -361,9 +352,7 @@ class DocumentViewPageTests(LoginPage, HomePage, DocumentViewPage):
                       'Setup document title should match opened document')
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
-    @patch.object(parser, 'from_file')
-    def test_visit_url_with_folder_id_and_document_pid(self, mock_tika_parser):
-        mock_tika_parser.return_value = ""
+    def test_visit_url_with_folder_id_and_document_pid(self):
         # User already created a 3 levels folder three (a > b > c) and have added a document inside c folder
         folder_a = setup_folder(self.org)
         folder_b = setup_folder(self.org, parent=folder_a)
