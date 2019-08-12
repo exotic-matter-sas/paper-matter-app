@@ -68,7 +68,7 @@ test-fast-python:
   script:
     - export DJANGO_SETTINGS_MODULE=ftl.settings_tests
     - source venv/bin/activate && cd ftl
-    - python3 manage.py test -v 2 --exclude-tag=slow
+    - python3 manage.py test -v 2 --exclude-tag=slow --parallel
 
 test-slow-python:
   stage: test
@@ -80,7 +80,7 @@ test-slow-python:
   script:
     - export DJANGO_SETTINGS_MODULE=ftl.settings_tests
     - source venv/bin/activate && cd ftl
-    - python3 manage.py test -v 2 --tag=slow
+    - python3 manage.py test -v 2 --tag=slow --parallel
   when: manual
 
 build-docker:
