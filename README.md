@@ -55,6 +55,8 @@ Second terminal
 Run all tests
 
     python manage.py test
+    # Run all tests excepted slow ones (all functional tests are tagged as "slow")
+    python manage.py test --exclude-tag=slow
     
 Run test for a specific module
 

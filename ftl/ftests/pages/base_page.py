@@ -5,7 +5,7 @@ import urllib.request
 import urllib.error
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from django.test import LiveServerTestCase
+from django.test import LiveServerTestCase, tag
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException, NoSuchElementException, StaleElementReferenceException
 from selenium.webdriver.chrome.options import Options as ChromeOptions
@@ -46,6 +46,7 @@ if DEV_MODE and not is_node_server_running():
     print(f'Continue with NODE_SERVER_RUNNING: {NODE_SERVER_RUNNING}')
 
 
+@tag('slow')
 class BasePage(LIVE_SERVER):
     modal_input = '.modal-dialog input'
     modal_accept_button = '.modal-dialog .modal-footer .btn-primary, .modal-dialog .modal-footer .btn-danger'
