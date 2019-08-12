@@ -327,8 +327,6 @@ class JWTAuthenticationTests(APITestCase):
         self.doc_in_folder = setup_document(self.org, self.user, title='Document in folder',
                                             ftl_folder=self.first_level_folder)
 
-        self.client.login(username=tv.USER1_USERNAME, password=tv.USER2_PASS)
-
     def test_get_token(self):
         response = self.client.post('/app/api/token',
                                     {'username': tv.USER1_USERNAME, 'password': tv.USER2_PASS},
@@ -355,7 +353,8 @@ class JWTAuthenticationTests(APITestCase):
                                           {'username': tv.USER1_USERNAME, 'password': tv.USER2_PASS},
                                           format='json')
 
-        response = self.client.get('/app/api/v1/documents/', AUTHORIZATION=f'Bearer {response_token.data["access"]}')
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {response_token.data["access"]}')
+        response = self.client.get('/app/api/v1/documents/')
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIsNotNone(response.data['count'])
