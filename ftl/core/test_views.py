@@ -1,8 +1,5 @@
-from urllib.parse import quote_plus
-
 from django.contrib.staticfiles import finders
 from django.test import TestCase
-from django.urls import reverse_lazy
 
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_authenticated_session, setup_document
@@ -21,14 +18,15 @@ class CorePagesTests(TestCase):
         response = self.client.get('/app/')
         self.assertContains(
             response,
-            f'<script id="ftlAccount" type="application/json">{{"name": "{self.user.username}"}}</script>')
+            f'<script id="ftlAccount" type="application/json">{{"name": "{self.user.username}", "isSuperUser": false}}'
+            f'</script>')
         self.assertContains(response, '<div id="app">')
         self.assertTemplateUsed(response, 'core/home.html')
 
     def test_home_get_proper_context(self):
         response = self.client.get('/app/')
         self.assertEqual(response.context['org_name'], self.org.name)
-        self.assertEqual(response.context['ftl_account'], {'name': self.user.username})
+        self.assertEqual(response.context['ftl_account'], {'name': self.user.username, 'isSuperUser': False})
 
 
 class DownloadDocumentTests(TestCase):
@@ -52,10 +50,10 @@ class DownloadDocumentTests(TestCase):
         # Add a document in first org with first user
         doc = setup_document(self.org, self.user)
 
-        # Trying to download the document when not logged redirect to login page
+        # Trying to download the document when not logged returns an error
         download_url = f'/app/uploads/{doc.pid}'
         response = self.client.get(download_url)
-        self.assertRedirects(response, f'{reverse_lazy("login")}?next={quote_plus(download_url)}')
+        self.assertEqual(response.status_code, 403)
 
     def test_document_download_only_work_for_users_in_the_doc_org(self):
         # Add a document in first org with first user

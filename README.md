@@ -22,8 +22,11 @@ Archiving documents solution
  * PostgreSQL 11
  * Firefox or Chrome (to run functional tests)
  * Poedit or equivalent (to add/update i18n)
- * Node.js
+ * Node.js LTS
  * Java 8+ (for documents indexing)
+
+ * _Under Linux, you may need additional tools to build Python modules which includes C code:_
+   * _apt-get install build-essential python3-dev libpq-dev_
 
 ### Install Python modules
  
@@ -106,5 +109,27 @@ To use specific Django settings without modifying main `ftl/ftl/settings.py` fil
     python manage.py reindex_docs
     
 # Credits
- - Illustrations: https://undraw.co/
+ - Programming languages:
+   - [Python](https://www.python.org/)
+   - [Vue.js](https://vuejs.org/)
+
+ - Main technologies used:
+   - Web framework: [Django](https://www.djangoproject.com/)
+   - Database: [PostgreSQL](https://www.postgresql.org/)
+   - Document storage, [django-storages](https://github.com/jschneier/django-storages) allow to choose between:
+     - File system
+     - [Google Cloud Storage](https://cloud.google.com/storage/)
+     - [Amazon S3](https://aws.amazon.com/s3/)
+   - Optical Character Recognition, to choose between:
+     - _disable_
+     - [Google Cloud Vision API (sync or async)](https://cloud.google.com/vision/docs/)
+     - [Amazon Textract API](https://aws.amazon.com/textract/)
+   - Document text extraction: [Apache Tika](https://tika.apache.org/)
+   - Document preview: [PDF.js](https://mozilla.github.io/pdf.js/)
+   - Search engine: [PostgreSQL tsvector](https://www.postgresql.org/docs/10/datatype-textsearch.html)
+
+ - UI:
+   - Logo police: [Quicksand](https://github.com/andrew-paglinawan/QuicksandFamily)
+   - App Icons: [Font Awesome](https://fontawesome.com/)
+   - SVG illustrations: [Undraw](https://undraw.co/)
  

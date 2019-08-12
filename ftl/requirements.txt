@@ -1,4 +1,4 @@
-django==2.2.2
+django==2.2.4
 django-mptt==0.9.1
 django-webpack-loader==0.6.0
 psycopg2==2.8.3
@@ -10,5 +10,5 @@ djangorestframework_simplejwt==4.3.0
 
 # django-storages==1.7.1
 # boto3==1.9.183
-# google-cloud-storage
-# google-cloud-vision
+# google-cloud-storage==1.18.0
+# google-cloud-vision==0.38.1

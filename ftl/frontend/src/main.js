@@ -12,7 +12,8 @@ import {
   faSearch,
   faSync,
   faTrash,
-  faWindowClose
+  faWindowClose,
+  faCrown
 } from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
 
@@ -20,11 +21,13 @@ import {mixinAlert} from "./vueMixins";
 import router from './router';
 import store from './store'
 import moment from 'moment'
+import axios from 'axios';
 
 Vue.config.productionTip = false;
 
 // Font Awesome icons definition
-library.add(faHome, faFolder, faSearch, faWindowClose, faTrash, faFileDownload, faFolderPlus, faSync, faLevelUpAlt);
+library.add(faHome, faFolder, faSearch, faWindowClose, faTrash, faFileDownload, faFolderPlus, faSync, faLevelUpAlt,
+  faCrown);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.use(BootstrapVue);
 
@@ -82,3 +85,14 @@ new Vue({
   store,
   render: h => h(App)
 }).$mount('#app');
+
+axios.interceptors.response.use(function (response) {
+  return response;
+}, function (error) {
+  if (error.response.status === 403) {
+    // Logout user when an XHR returns 403
+    window.location.replace("/logout?auto");
+  } else {
+    return Promise.reject(error);
+  }
+});

@@ -4,6 +4,7 @@ from django.contrib.auth.views import LoginView
 class LoginViewFTL(LoginView):
     """
     Custom login view for setting some session variables
+    (not used anymore, replaced by signals)
     """
 
     def form_valid(self, form):
