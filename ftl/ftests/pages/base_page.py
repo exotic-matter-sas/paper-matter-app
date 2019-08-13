@@ -5,7 +5,7 @@ import urllib.request
 import urllib.error
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from django.test import LiveServerTestCase
+from django.test import LiveServerTestCase, tag
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException, NoSuchElementException, StaleElementReferenceException
 from selenium.webdriver.chrome.options import Options as ChromeOptions
@@ -46,6 +46,7 @@ if DEV_MODE and not is_node_server_running():
     print(f'Continue with NODE_SERVER_RUNNING: {NODE_SERVER_RUNNING}')
 
 
+@tag('slow')
 class BasePage(LIVE_SERVER):
     modal_input = '.modal-dialog input'
     modal_accept_button = '.modal-dialog .modal-footer .btn-primary, .modal-dialog .modal-footer .btn-danger'
@@ -109,7 +110,7 @@ class BasePage(LIVE_SERVER):
         # Set a default window size
         self.browser.set_window_size(1024, 768)
         # Set default timeout
-        self.browser.implicitly_wait(5)
+        self.browser.implicitly_wait(1)
 
     def tearDown(self):
         self.browser.quit()
@@ -212,12 +213,12 @@ class BasePage(LIVE_SERVER):
                                         custom_return_validator=function,
                                         expected_exception_types=exception_types)
 
-    def wait_for_elem_to_show(self, css_selector, timeout=5):
+    def wait_for_elem_to_show(self, css_selector, timeout=2):
         WebDriverWait(self.browser, timeout).until(
             Ec.visibility_of_element_located((By.CSS_SELECTOR, css_selector))
         )
 
-    def wait_for_elem_to_disappear(self, css_selector, timeout=5):
+    def wait_for_elem_to_disappear(self, css_selector, timeout=2):
         try:
             self._wait_for_method_to_raise_exception(self.get_elem, timeout,
                                                      (NoSuchElementException, StaleElementReferenceException),
@@ -225,18 +226,18 @@ class BasePage(LIVE_SERVER):
         except TimeoutException:
             raise TimeoutException(f'The element "{css_selector}" doesn\'t disapear after {timeout}s')
 
-    def wait_for_elem_text_to_be_valid(self, css_selector, validator, timeout=5):
+    def wait_for_elem_text_to_be_valid(self, css_selector, validator, timeout=2):
         try:
             self._wait_for_method_to_return(self.get_elem_text, timeout, css_selector, True,
                                             custom_return_validator=validator)
         except TimeoutException:
             raise TimeoutException(f'The element text "{css_selector}" doesn\'t turn to be valid after {timeout}s')
 
-    def wait_for_elem_text_to_be(self, css_selector, elem_text, timeout=5):
+    def wait_for_elem_text_to_be(self, css_selector, elem_text, timeout=2):
         validator = lambda text: True if text == elem_text else False
         self.wait_for_elem_text_to_be_valid(css_selector, validator, timeout)
 
-    def wait_for_elem_text_not_to_be(self, css_selector, elem_text, timeout=5):
+    def wait_for_elem_text_not_to_be(self, css_selector, elem_text, timeout=2):
         validator = lambda text: True if text != elem_text else False
         self.wait_for_elem_text_to_be_valid(css_selector, validator, timeout)
 
