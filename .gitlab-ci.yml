@@ -31,7 +31,7 @@ compile-frontend:
     - npm ci
     - npm run build
 
-test-frontend:
+test-frontend-js:
   stage: test
   image: node:10.15.3-alpine
   dependencies:
@@ -58,7 +58,7 @@ compile-backend:
     - python3 manage.py compilemessages
     - python3 manage.py collectstatic
 
-test-app:
+test-fast-python:
   stage: test
   image: registry.gitlab.com/exotic-matter/ftl-base-image-ci:latest
   services:
@@ -68,7 +68,20 @@ test-app:
   script:
     - export DJANGO_SETTINGS_MODULE=ftl.settings_tests
     - source venv/bin/activate && cd ftl
-    - python3 manage.py test
+    - python3 manage.py test -v 2 --exclude-tag=slow --parallel
+
+test-slow-python:
+  stage: test
+  image: registry.gitlab.com/exotic-matter/ftl-base-image-ci:latest
+  services:
+    - postgres:10.7-alpine
+  dependencies:
+    - compile-backend
+  script:
+    - export DJANGO_SETTINGS_MODULE=ftl.settings_tests
+    - source venv/bin/activate && cd ftl
+    - python3 manage.py test -v 2 --tag=slow --parallel
+  when: manual
 
 build-docker:
   stage: docker

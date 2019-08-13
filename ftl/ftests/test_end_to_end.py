@@ -4,10 +4,10 @@ from unittest.mock import patch
 
 from django import db
 from django.db.models import Func, F
-from tika import parser
 
 from core import views
 from core.models import FTLDocument
+from core.processing.ftl_processing import FTLDocumentProcessing
 from ftests.pages.base_page import NODE_SERVER_RUNNING
 from ftests.pages.django_admin_home_page import AdminHomePage
 from ftests.pages.django_admin_login_page import AdminLoginPage
@@ -90,10 +90,8 @@ class SecondOrgSetup(AdminLoginPage, AdminHomePage, SignupPages, LoginPage, Home
 
 class NewUserAddDocumentInsideFolder(SignupPages, LoginPage, HomePage, DocumentViewPage):
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
-    @patch.object(parser, 'from_file')
-    def test_new_user_add_document_inside_folder(self, mock_tika_parser):
-        mock_tika_parser.return_value = ""
-
+    @patch.object(FTLDocumentProcessing, 'apply_processing')
+    def test_new_user_add_document_inside_folder(self,  mock_apply_processing):
         # first org, admin, are already created
         org = setup_org()
         setup_admin(org=org)
