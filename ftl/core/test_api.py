@@ -30,7 +30,7 @@ class DocumentsTests(APITestCase):
         self.doc_in_folder = setup_document(self.org, self.user, title='Document in folder',
                                             ftl_folder=self.first_level_folder)
 
-        self.client.login(username=tv.USER1_USERNAME, password=tv.USER2_PASS)
+        self.client.login(username=tv.USER1_USERNAME, password=tv.USER1_PASS)
 
     def test_list_documents(self):
         ftl_document = FTLDocument.objects.get(pid=self.doc.pid)
@@ -331,7 +331,7 @@ class JWTAuthenticationTests(APITestCase):
 
     def test_get_token(self):
         response = self.client.post('/app/api/token',
-                                    {'username': tv.USER1_USERNAME, 'password': tv.USER2_PASS},
+                                    {'username': tv.USER1_USERNAME, 'password': tv.USER1_PASS},
                                     format='json')
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -340,7 +340,7 @@ class JWTAuthenticationTests(APITestCase):
 
     def test_refresh_token(self):
         response_token = self.client.post('/app/api/token',
-                                          {'username': tv.USER1_USERNAME, 'password': tv.USER2_PASS},
+                                          {'username': tv.USER1_USERNAME, 'password': tv.USER1_PASS},
                                           format='json')
 
         response = self.client.post('/app/api/token/refresh',
@@ -352,7 +352,7 @@ class JWTAuthenticationTests(APITestCase):
 
     def test_use_token(self):
         response_token = self.client.post('/app/api/token',
-                                          {'username': tv.USER1_USERNAME, 'password': tv.USER2_PASS},
+                                          {'username': tv.USER1_USERNAME, 'password': tv.USER1_PASS},
                                           format='json')
 
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {response_token.data["access"]}')
