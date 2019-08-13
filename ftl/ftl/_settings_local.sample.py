@@ -110,3 +110,16 @@ if DEFAULT_FILE_STORAGE == FTLStorages.GCS or \
 
     if DEFAULT_FILE_STORAGE == FTLStorages.GCS:
         GS_BUCKET_NAME = ''
+
+# Disable API rate limit during tests
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'DEFAULT_PERMISSION_CLASSES': (
+        'core.models.FTLModelPermissions',
+    ),
+    'PAGE_SIZE': 10,
+}
