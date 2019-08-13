@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import pathlib
+from datetime import timedelta
 
 from django.contrib.messages import constants as message_constants
 
@@ -171,7 +172,8 @@ TEST_BROWSER_HEADLESS = True
 # Django Rest Framework settings
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication'
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'DEFAULT_PERMISSION_CLASSES': (
@@ -186,6 +188,13 @@ REST_FRAMEWORK = {
         'anon': '1/second',
         'user': '15/second'
     }
+}
+
+# JWT API Token
+# Docs: https://github.com/davesque/django-rest-framework-simplejwt#settings
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
 WEBPACK_LOADER = {
