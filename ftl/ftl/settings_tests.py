@@ -10,7 +10,8 @@ DATABASES = {
         'USER': 'postgres',
         'PASSWORD': 'bleubleu',
         'HOST': 'postgres',
-        'PORT': '5432'
+        'PORT': '5432',
+        'ATOMIC_REQUESTS': True
     }
 }
 
