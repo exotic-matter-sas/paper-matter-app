@@ -199,7 +199,10 @@ class FTLFolderDetail(generics.RetrieveUpdateDestroyAPIView):
                 else:
                     target_folder = get_object_or_404(self.get_queryset(), id=serializer.initial_data['parent'])
                     serializer.instance.move_to(target_folder)
-            else:
-                serializer.save(org=self.request.user.org)
-        else:
+        try:
             serializer.save(org=self.request.user.org)
+        except IntegrityError as e:
+            if 'folder_name_unique_for_org_level' in str(e):
+                raise serializers.ValidationError(get_api_error('folder_name_unique_for_org_level'))
+            else:
+                raise
