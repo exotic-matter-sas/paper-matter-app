@@ -609,7 +609,7 @@ describe('Home methods call proper api', () => {
     wrapper.vm.updateDocuments();
 
     // then
-    expect(axios.get).toHaveBeenCalledWith('/app/api/v1/documents/?level=' + currentFolder.id);
+    expect(axios.get).toHaveBeenCalledWith('/app/api/v1/documents?level=' + currentFolder.id);
     expect(axios.get).toHaveBeenCalledTimes(1);
   });
 
@@ -621,7 +621,7 @@ describe('Home methods call proper api', () => {
     wrapper.vm.updateFolders(currentFolder);
 
     // then
-    expect(axios.get).toHaveBeenCalledWith('/app/api/v1/folders/?level=' + currentFolder.id);
+    expect(axios.get).toHaveBeenCalledWith('/app/api/v1/folders?level=' + currentFolder.id);
     expect(axios.get).toHaveBeenCalledTimes(1);
   });
 

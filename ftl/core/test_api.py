@@ -38,7 +38,7 @@ class DocumentsTests(APITestCase):
         ftl_document_bis = FTLDocument.objects.get(pid=self.doc_bis.pid)
         self.assertIsNotNone(ftl_document_bis.pid)
 
-        client_get = self.client.get('/app/api/v1/documents/', format='json')
+        client_get = self.client.get('/app/api/v1/documents', format='json')
         self.assertEqual(client_get.status_code, status.HTTP_200_OK)
         self.assertEqual(client_get['Content-Type'], 'application/json')
         self.assertEqual(client_get.data['count'], 2)
@@ -48,7 +48,7 @@ class DocumentsTests(APITestCase):
         ftl_document_first = FTLDocument.objects.get(pid=self.doc.pid)
         ftl_document_second = FTLDocument.objects.get(pid=self.doc_bis.pid)
 
-        client_get = self.client.get('/app/api/v1/documents/', format='json')
+        client_get = self.client.get('/app/api/v1/documents', format='json')
         self.assertEqual(client_get.status_code, status.HTTP_200_OK)
 
         # First document should be the last one uploaded. (default sort: recent to old)
@@ -71,7 +71,7 @@ class DocumentsTests(APITestCase):
         setup_user(self.org, tv.USER2_EMAIL, tv.USER2_USERNAME, tv.USER2_PASS)
         self.client.login(username=tv.USER2_USERNAME, password=tv.USER2_PASS)
 
-        client_get = self.client.get('/app/api/v1/documents/', format='json')
+        client_get = self.client.get('/app/api/v1/documents', format='json')
         self.assertEqual(client_get.status_code, status.HTTP_200_OK)
         self.assertEqual(client_get['Content-Type'], 'application/json')
         self.assertEqual(client_get.data['count'], 2)
@@ -85,7 +85,7 @@ class DocumentsTests(APITestCase):
         setup_user(org2, tv.USER2_EMAIL, tv.USER2_USERNAME, tv.USER2_PASS)
         self.client.login(username=tv.USER2_USERNAME, password=tv.USER2_PASS)
 
-        client_get = self.client.get('/app/api/v1/documents/', format='json')
+        client_get = self.client.get('/app/api/v1/documents', format='json')
         self.assertEqual(client_get.status_code, status.HTTP_200_OK)
         self.assertEqual(client_get['Content-Type'], 'application/json')
         self.assertEqual(client_get.data['count'], 0)
@@ -154,7 +154,7 @@ class DocumentsTests(APITestCase):
         self.assertTrue(isinstance(args[0], FTLDocument))
 
     def test_document_in_folder(self):
-        client_get = self.client.get(f'/app/api/v1/documents/?level={self.first_level_folder.id}', format='json')
+        client_get = self.client.get(f'/app/api/v1/documents?level={self.first_level_folder.id}', format='json')
         self.assertEqual(client_get.status_code, status.HTTP_200_OK)
         self.assertEqual(client_get.data['count'], 1)
         self.assertEqual(len(client_get.data['results']), 1)
@@ -182,7 +182,7 @@ class DocumentsTests(APITestCase):
         self.assertEqual(ftl_doc_from_db.note, client_doc['note'])
         self.assertEqual(ftl_doc_from_db.ftl_folder, self.first_level_folder)
 
-        client_get_level = self.client.get(f'/app/api/v1/documents/?level={self.first_level_folder.id}', format='json')
+        client_get_level = self.client.get(f'/app/api/v1/documents?level={self.first_level_folder.id}', format='json')
         self.assertEqual(client_get_level.status_code, status.HTTP_200_OK)
         # There should be 2 documents (one from setUp and the new uploaded one)
         self.assertEqual(client_get_level.data['count'], 2)
@@ -207,7 +207,7 @@ class DocumentsSearchTests(APITestCase):
     def test_list_documents_search_title(self):
         doc_to_search = setup_document(self.org, self.user, note='bingo!')
 
-        search_result = self.client.get(f'/app/api/v1/documents/?search={doc_to_search.title}', format='json')
+        search_result = self.client.get(f'/app/api/v1/documents?search={doc_to_search.title}', format='json')
         self.assertEqual(search_result.status_code, status.HTTP_200_OK)
         self.assertEqual(search_result['Content-Type'], 'application/json')
         self.assertEqual(search_result.data['count'], 1)
@@ -217,7 +217,7 @@ class DocumentsSearchTests(APITestCase):
     def test_list_documents_search_note(self):
         doc_to_search = setup_document(self.org, self.user, title='bingo!')
 
-        search_result = self.client.get(f'/app/api/v1/documents/?search={doc_to_search.note}', format='json')
+        search_result = self.client.get(f'/app/api/v1/documents?search={doc_to_search.note}', format='json')
         self.assertEqual(search_result.status_code, status.HTTP_200_OK)
         self.assertEqual(search_result['Content-Type'], 'application/json')
         self.assertEqual(search_result.data['count'], 1)
@@ -227,7 +227,7 @@ class DocumentsSearchTests(APITestCase):
     def test_list_documents_search_content_text(self):
         doc_to_search = setup_document(self.org, self.user, title='bingo!')
 
-        search_result = self.client.get(f'/app/api/v1/documents/?search={doc_to_search.content_text}', format='json')
+        search_result = self.client.get(f'/app/api/v1/documents?search={doc_to_search.content_text}', format='json')
         self.assertEqual(search_result.status_code, status.HTTP_200_OK)
         self.assertEqual(search_result['Content-Type'], 'application/json')
         self.assertEqual(search_result.data['count'], 1)
@@ -248,7 +248,7 @@ class FoldersTests(APITestCase):
         self.client.login(username=tv.USER1_USERNAME, password=tv.USER1_PASS)
 
     def test_folder_tree_root_level(self):
-        client_get = self.client.get('/app/api/v1/folders/', format='json')
+        client_get = self.client.get('/app/api/v1/folders', format='json')
         self.assertEqual(client_get.status_code, status.HTTP_200_OK)
         self.assertEqual(len(client_get.data), 1)
 
@@ -258,7 +258,7 @@ class FoldersTests(APITestCase):
         self.assertIsNone(client_data['parent'])
 
     def test_folder_tree_root_subfolder(self):
-        client_get = self.client.get(f'/app/api/v1/folders/?level={self.folder_root.id}', format='json')
+        client_get = self.client.get(f'/app/api/v1/folders?level={self.folder_root.id}', format='json')
         self.assertEqual(client_get.status_code, status.HTTP_200_OK)
         self.assertEqual(len(client_get.data), 1)
 
@@ -268,7 +268,7 @@ class FoldersTests(APITestCase):
         self.assertEqual(client_data['parent'], self.folder_root.id)
 
     def test_create_folder(self):
-        client_post = self.client.post('/app/api/v1/folders/', {'name': 'Folder created'}, format='json')
+        client_post = self.client.post('/app/api/v1/folders', {'name': 'Folder created'}, format='json')
         self.assertEqual(client_post.status_code, status.HTTP_201_CREATED)
 
         objects_get = FTLFolder.objects.get(id=client_post.data['id'])
@@ -278,7 +278,7 @@ class FoldersTests(APITestCase):
         self.assertIsNone(client_post.data['parent'])
 
     def test_create_folder_in_folder(self):
-        client_post = self.client.post('/app/api/v1/folders/',
+        client_post = self.client.post('/app/api/v1/folders',
                                        {'name': 'Folder created', 'parent': self.folder_root.id}, format='json')
         self.assertEqual(client_post.status_code, status.HTTP_201_CREATED)
         self.assertEqual(client_post.data['parent'], self.folder_root.id)
@@ -301,7 +301,7 @@ class FoldersTests(APITestCase):
 
     def test_create_same_folder_name(self):
         # We try to create a folder with a name already used in setUp
-        response = self.client.post('/app/api/v1/folders/',
+        response = self.client.post('/app/api/v1/folders',
                                     {'name': self.folder_root.name}, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -349,7 +349,7 @@ class JWTAuthenticationTests(APITestCase):
                                           format='json')
 
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {response_token.data["access"]}')
-        response = self.client.get('/app/api/v1/documents/')
+        response = self.client.get('/app/api/v1/documents')
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIsNotNone(response.data['count'])

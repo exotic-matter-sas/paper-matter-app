@@ -81,7 +81,7 @@
 
         this.loading = true;
         axios
-          .get("/app/api/v1/folders/" + qs)
+          .get("/app/api/v1/folders" + qs)
           .then(response => {
               vi.item.children = response.data
                 .filter(function (e) {

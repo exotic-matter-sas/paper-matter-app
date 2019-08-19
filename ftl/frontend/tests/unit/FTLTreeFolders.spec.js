@@ -68,7 +68,7 @@ describe('Component mounted without props', () => {
     await flushPromises();
 
     // then
-    expect(axios.get).toHaveBeenCalledWith('/app/api/v1/folders/');
+    expect(axios.get).toHaveBeenCalledWith('/app/api/v1/folders');
     expect(axios.get).toHaveBeenCalledTimes(1);
   });
 });
@@ -90,7 +90,7 @@ describe('Component mounted with start props', () => {
     await flushPromises();
 
     // then
-    expect(axios.get).toHaveBeenCalledWith('/app/api/v1/folders/?level=' + start);
+    expect(axios.get).toHaveBeenCalledWith('/app/api/v1/folders?level=' + start);
     expect(axios.get).toHaveBeenCalledTimes(1);
   });
 });
