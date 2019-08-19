@@ -133,7 +133,7 @@ class FileUploadView(views.APIView):
         file_obj = request.FILES['file']
         payload = json.loads(request.POST['json'])
 
-        if 'ftl_folder' in payload:
+        if 'ftl_folder' in payload and payload['ftl_folder']:
             ftl_folder = get_object_or_404(FTLFolder.objects.filter(org=self.request.user.org),
                                            id=payload['ftl_folder'])
         else:
