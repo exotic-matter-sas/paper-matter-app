@@ -1,10 +1,13 @@
 import binascii
 from base64 import b64decode
 
+from django.conf import settings
 from django.core.files.base import ContentFile
+from django.urls import reverse
 from rest_framework import serializers
 
 from core.models import FTLDocument, FTLFolder
+from ftl.enums import FTLStorages
 
 
 class ThumbnailField(serializers.FileField):
@@ -21,14 +24,25 @@ class ThumbnailField(serializers.FileField):
 class FTLDocumentSerializer(serializers.ModelSerializer):
     thumbnail_binary = ThumbnailField(write_only=True)
     thumbnail_available = serializers.SerializerMethodField()
+    thumbnail_url = serializers.SerializerMethodField()
 
     def get_thumbnail_available(self, obj):
         return bool(obj.thumbnail_binary)
 
+    def get_thumbnail_url(self, obj):
+        if bool(obj.thumbnail_binary):
+            if settings.DEFAULT_FILE_STORAGE in [FTLStorages.GCS, FTLStorages.AWS_S3]:
+                return obj.thumbnail_binary.url
+            else:
+                return reverse('api_thumbnail_url', kwargs={'pid': obj.pid})
+        else:
+            return None
+
     class Meta:
         model = FTLDocument
-        fields = ('pid', 'title', 'note', 'created', 'edited', 'ftl_folder', 'thumbnail_binary', 'thumbnail_available')
-        read_only_fields = ('created', 'edited', 'thumbnail_available')
+        fields = ('pid', 'title', 'note', 'created', 'edited', 'ftl_folder', 'thumbnail_binary', 'thumbnail_available',
+                  'thumbnail_url')
+        read_only_fields = ('created', 'edited', 'thumbnail_available', 'thumbnail_url')
 
 
 class FTLFolderSerializer(serializers.ModelSerializer):

@@ -12,7 +12,7 @@ urlpatterns = [
     path('api/v1/folders/<int:id>', views.FTLFolderDetail.as_view()),
     path('api/v1/documents/', views.FTLDocumentList.as_view()),
     path('api/v1/documents/<uuid:pid>', views.FTLDocumentDetail.as_view()),
-    path('api/v1/documents/<uuid:pid>/thumbnail.png', views.FTLDocumentThumbnail.as_view()),
+    path('api/v1/documents/<uuid:pid>/thumbnail.png', views.FTLDocumentThumbnail.as_view(), name='api_thumbnail_url'),
     path('api/v1/documents/upload', views.FileUploadView.as_view()),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('api/token', TokenObtainPairView.as_view(), name='token_obtain_pair'),
