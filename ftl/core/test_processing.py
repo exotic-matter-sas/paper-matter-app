@@ -105,7 +105,12 @@ class ProcTikaTests(TestCase):
 
     @patch.object(parser, 'from_buffer')
     def test_process(self, mocked_from_buffer):
-        indexed_text = {"content": "indexed text"}
+        indexed_text = {
+            "content": "indexed text",
+            "metadata": {
+                "xmpTPg:NPages": 42
+            }
+        }
         mocked_from_buffer.return_value = indexed_text
 
         tika = FTLTextExtractionTika()
@@ -114,6 +119,7 @@ class ProcTikaTests(TestCase):
 
         mocked_from_buffer.assert_called_once_with(doc.binary.read())
         self.assertEqual(doc.content_text, indexed_text['content'])
+        self.assertEqual(doc.count_pages, indexed_text['metadata']['xmpTPg:NPages'])
         doc.save.assert_called_once()
 
 
@@ -133,7 +139,7 @@ class FTLOCRBaseTests(TestCase):
     @patch.object(FTLOCRBase, '_extract_text')
     def test_process(self, mocked_extract_text):
         expected_extracted_text = 'bingo!'
-        mocked_extract_text.return_value = expected_extracted_text
+        mocked_extract_text.return_value = expected_extracted_text, 42
         base_ocr = FTLOCRBase()
         base_ocr.supported_storages.append(DEFAULT_FILE_STORAGE)
 

@@ -4,7 +4,6 @@ from django.conf import settings
 from google.cloud import vision_v1
 from google.cloud.vision_v1 import enums
 
-from core.errors import PluginUnsupportedStorage
 from core.processing.ftl_processing import FTLOCRBase
 from ftl.enums import FTLStorages
 from ftl.settings import DEFAULT_FILE_STORAGE
@@ -28,19 +27,6 @@ class FTLOCRGoogleVisionSync(FTLOCRBase):
         self.client = vision_v1.ImageAnnotatorClient(credentials=credentials)
         self.supported_storages = [FTLStorages.FILE_SYSTEM, FTLStorages.GCS]
 
-    def process(self, ftl_doc):
-        if DEFAULT_FILE_STORAGE in self.supported_storages:
-            # If full text not already extracted
-            if not ftl_doc.content_text.strip():
-                ftl_doc.content_text = self._extract_text(ftl_doc.binary)
-                ftl_doc.save()
-            else:
-                logger.info(f'{self.log_prefix} Processing skipped, document {ftl_doc.id} already get a text_content')
-        else:
-            raise PluginUnsupportedStorage(
-                f'Plugin {self.__class__.__name__} does not support storage {DEFAULT_FILE_STORAGE} (supported storages '
-                f'are: {self.supported_storages}).')
-
     def _extract_text(self, ftl_doc):
         if DEFAULT_FILE_STORAGE == FTLStorages.GCS:
             storage_uri = f'gs://{self.gcs_bucket_name}/{ftl_doc.name}'
@@ -63,4 +49,5 @@ class FTLOCRGoogleVisionSync(FTLOCRBase):
 
         response = self.client.batch_annotate_files(requests)
 
-        return "\n".join([e.full_text_annotation.text for e in response.responses[0].responses])
+        return "\n".join([e.full_text_annotation.text for e in response.responses[0].responses]), \
+               response.responses[0].responses[-1].context.page_number

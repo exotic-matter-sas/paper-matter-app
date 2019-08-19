@@ -46,7 +46,7 @@ class FTLOCRAwsTextract(FTLOCRBase):
                     if item["BlockType"] == "LINE":
                         text_lines.append(item["Text"])
 
-            return "\n".join(text_lines)
+            return "\n".join(text_lines), response_chunks[-1]['DocumentMetadata']['Pages']
         else:  # JobStatus is FAILED
             logger.error(f'{self.log_prefix} Text extraction failed (Amazon side)')
             return ""
