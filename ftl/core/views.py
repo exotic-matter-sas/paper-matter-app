@@ -7,7 +7,7 @@ from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.core.files.base import ContentFile
 from django.db import IntegrityError
 from django.db.models import F
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound, HttpResponseRedirect, Http404
 from django.shortcuts import render, get_object_or_404
 from django.utils.http import http_date
 from django.views import View
@@ -134,8 +134,11 @@ class FileUploadView(views.APIView):
         payload = json.loads(request.POST['json'])
 
         if 'ftl_folder' in payload and payload['ftl_folder']:
-            ftl_folder = get_object_or_404(FTLFolder.objects.filter(org=self.request.user.org),
-                                           id=payload['ftl_folder'])
+            try:
+                ftl_folder = get_object_or_404(FTLFolder.objects.filter(org=self.request.user.org),
+                                               id=payload['ftl_folder'])
+            except Http404:
+                raise serializers.ValidationError(get_api_error('ftl_folder_not_found'))
         else:
             ftl_folder = None
 
