@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-08 21:12+0000\n"
+"POT-Creation-Date: 2019-08-19 20:30+0000\n"
 "PO-Revision-Date: 2019-03-05 16:56+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -19,8 +19,16 @@ msgstr ""
 "X-Generator: Poedit 2.0.6\n"
 
 #: core/errors.py:12
-msgid "a folder with this name already exist"
-msgstr "un dossier avec ce nom existe déjà"
+msgid "A folder with this name already exist"
+msgstr "Un dossier avec ce nom existe déjà"
+
+#: core/errors.py:13
+msgid "A folder can't be move inside one of its children"
+msgstr "Un dossier ne peut être déplacé dans un des dossiers qu'il contient"
+
+#: core/errors.py:14
+msgid "Specified ftl_folder doesn't exist"
+msgstr "Le ftl_folder spécifié n'existe pas"
 
 #: core/management/commands/import_docs.py:27
 #, python-format
@@ -76,11 +84,6 @@ msgid "Home"
 msgstr "Accueil"
 
 #: core/templates/core/home.html:15
-#, fuzzy
-#| msgid ""
-#| "We're sorry but Paper Matter will not work without JavaScript enabled. "
-#| "Please enable it\n"
-#| "                to continue."
 msgid ""
 "We're sorry but Paper Matter will not work without JavaScript enabled. "
 "Please enable it\n"
