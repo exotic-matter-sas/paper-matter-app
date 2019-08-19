@@ -9,7 +9,8 @@ def get_api_error(code):
 
 
 ERROR_CODES_DETAILS = {
-    'folder_name_unique_for_org_level': _('a folder with this name already exist')
+    'folder_name_unique_for_org_level': _('A folder with this name already exist'),
+    'folder_parent_invalid': _('A folder can\'t be move inside one of its children')
 }
 
 

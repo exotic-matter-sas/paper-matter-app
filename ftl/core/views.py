@@ -11,6 +11,7 @@ from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFou
 from django.shortcuts import render, get_object_or_404
 from django.utils.http import http_date
 from django.views import View
+from mptt.exceptions import InvalidMove
 from rest_framework import generics, views, serializers
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
@@ -198,7 +199,10 @@ class FTLFolderDetail(generics.RetrieveUpdateDestroyAPIView):
                     serializer.instance.move_to(None)
                 else:
                     target_folder = get_object_or_404(self.get_queryset(), id=serializer.initial_data['parent'])
-                    serializer.instance.move_to(target_folder)
+                    try:
+                        serializer.instance.move_to(target_folder)
+                    except InvalidMove:
+                        raise serializers.ValidationError(get_api_error('folder_parent_invalid'))
         try:
             serializer.save(org=self.request.user.org)
         except IntegrityError as e:
