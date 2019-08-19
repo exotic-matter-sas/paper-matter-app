@@ -52,8 +52,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'webpack_loader',
     'ftl',
-    'setup',
-    'core',
+    'setup.apps.SetupConfig',
+    'core.apps.CoreConfig',
     'frontend'
 ]
 
