@@ -42,11 +42,11 @@ Generate an access and refresh token that follow the [JSON Web Token standard](h
 
 To use when the `access` token is expired or going to (eg. <1min), it return a fresh new access token to store in place of the previous one.
 
-You can know when access token is about to expired by parsing the `exp` field inside the decoded access token (split the 3 parts on `.` and base64 url decode the 2nd part OR use a JWT lib to do it).
+You can know when the access token is about to expire by parsing the `exp` field inside the decoded access token (split the 3 parts on `.` and base64 url decode the 2nd part OR use a JWT lib to do it).
 
 If the token is already expired all authenticated request will returns an `401` error (`{"code": "token_not_valid"}`).
 
-Eventually the refresh token will also expired (after a longer period), if you're trying to refresh an expired refresh token a specific error will be returned. When it occurred you should recall [Get access token](#get-access-token) request and store new token values.
+Eventually the refresh token will also expire (after a longer period), if you're trying to refresh an expired refresh token a specific error will be returned. When it occurs, you should recall [Get access token](#get-access-token) request and store new token values.
 
 **Request body**
 
@@ -203,7 +203,6 @@ Rename or move an existing folder.
 - _**json** (optional): additional data to set for document uploaded_
     - **ftl_folder**: parent folder id (if omitted or `null`, folder is created inside root folder)
 - _**thumbnail** (optional): thumbnail to display in the documents list, thumbnail should be a PNG image encoded as data uri `data:image/png;base64,...` (if omitted thumbnail will be generated on next document display from web interface, recommended format is half the size of the original document)
-non
 ```
 -----------------------------197247801933990060269089656
 Content-Disposition: form-data; name="thumbnail"
@@ -292,7 +291,7 @@ OR
   ]
 }
 ```
-If there is too many results, results will be paginated. To get the next page results you have to repeat the request on the url specified in `next` field (or set an additional `page` query string with desired page number).
+If there is too many results, results will be paginated. To get the next page results you have to call the url specified in `next` field (or set an additional `page` query string with desired page number).
 
 ### Update a document
 **PATCH /api/v1/documents/`document_pid`**
