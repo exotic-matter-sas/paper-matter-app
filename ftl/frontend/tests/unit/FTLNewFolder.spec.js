@@ -76,7 +76,7 @@ describe('createNewFolder scripts', () => {
 
     // then
     expect(axios.post).toHaveBeenCalledWith(
-      '/app/api/v1/folders/',
+      '/app/api/v1/folders',
       {name: tv.FOLDER_PROPS.name},
       axiosConfig
     );

@@ -127,7 +127,7 @@ describe('FTLTreeItem methods call api', () => {
     await flushPromises();
 
     // then
-    expect(axios.get).toHaveBeenCalledWith('/app/api/v1/folders/?level=' + level);
+    expect(axios.get).toHaveBeenCalledWith('/app/api/v1/folders?level=' + level);
     expect(axios.get).toHaveBeenCalledTimes(1);
   });
 

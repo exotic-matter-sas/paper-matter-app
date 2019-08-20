@@ -7,10 +7,11 @@ from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.core.files.base import ContentFile
 from django.db import IntegrityError
 from django.db.models import F
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound, HttpResponseRedirect, Http404
 from django.shortcuts import render, get_object_or_404
 from django.utils.http import http_date
 from django.views import View
+from mptt.exceptions import InvalidMove
 from rest_framework import generics, views, serializers
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
@@ -67,7 +68,7 @@ class FTLDocumentList(generics.ListAPIView):
 
     def get_queryset(self):
         current_folder = self.request.query_params.get('level', None)
-        flat_mode = self.request.query_params.get('flat', False)
+        flat_mode = True if self.request.query_params.get('flat', False) is not False else False
         text_search = self.request.query_params.get('search', None)
 
         queryset = FTLDocument.objects.filter(org=self.request.user.org).order_by('-created')
@@ -132,9 +133,12 @@ class FileUploadView(views.APIView):
         file_obj = request.FILES['file']
         payload = json.loads(request.POST['json'])
 
-        if 'ftl_folder' in payload:
-            ftl_folder = get_object_or_404(FTLFolder.objects.filter(org=self.request.user.org),
-                                           id=payload['ftl_folder'])
+        if 'ftl_folder' in payload and payload['ftl_folder']:
+            try:
+                ftl_folder = get_object_or_404(FTLFolder.objects.filter(org=self.request.user.org),
+                                               id=payload['ftl_folder'])
+            except Http404:
+                raise serializers.ValidationError(get_api_error('ftl_folder_not_found'))
         else:
             ftl_folder = None
 
@@ -198,8 +202,14 @@ class FTLFolderDetail(generics.RetrieveUpdateDestroyAPIView):
                     serializer.instance.move_to(None)
                 else:
                     target_folder = get_object_or_404(self.get_queryset(), id=serializer.initial_data['parent'])
-                    serializer.instance.move_to(target_folder)
-            else:
-                serializer.save(org=self.request.user.org)
-        else:
+                    try:
+                        serializer.instance.move_to(target_folder)
+                    except InvalidMove:
+                        raise serializers.ValidationError(get_api_error('folder_parent_invalid'))
+        try:
             serializer.save(org=self.request.user.org)
+        except IntegrityError as e:
+            if 'folder_name_unique_for_org_level' in str(e):
+                raise serializers.ValidationError(get_api_error('folder_name_unique_for_org_level'))
+            else:
+                raise

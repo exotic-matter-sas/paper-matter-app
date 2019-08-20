@@ -322,7 +322,7 @@ describe('ManageFolders methods call api', () => {
     await flushPromises();
 
     // then
-    expect(axios.get).toHaveBeenCalledWith('/app/api/v1/folders/');
+    expect(axios.get).toHaveBeenCalledWith('/app/api/v1/folders');
     expect(axios.get).toHaveBeenCalledTimes(1);
 
     // when called with folder arg
@@ -331,7 +331,7 @@ describe('ManageFolders methods call api', () => {
     await flushPromises();
 
     // then
-    expect(axios.get).toHaveBeenCalledWith('/app/api/v1/folders/?level=' + folder.id);
+    expect(axios.get).toHaveBeenCalledWith('/app/api/v1/folders?level=' + folder.id);
     expect(axios.get).toHaveBeenCalledTimes(1);
   });
   it('updateFoldersFromUrl call api', async () => {

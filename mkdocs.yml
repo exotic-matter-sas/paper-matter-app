@@ -1,0 +1,9 @@
+site_name: Paper Matter Doc
+nav:
+    - Home: index.md
+    - API v1 reference: api-v1.md
+    - About: about.md
+theme: readthedocs
+markdown_extensions:
+    - toc:
+        permalink: true

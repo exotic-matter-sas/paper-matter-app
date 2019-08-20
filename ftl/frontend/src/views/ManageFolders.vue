@@ -230,7 +230,7 @@
         }
 
         axios
-          .get("/app/api/v1/folders/" + qs)
+          .get("/app/api/v1/folders" + qs)
           .then(response => {
             vi.folders = response.data;
             vi.unselectFolder();

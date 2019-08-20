@@ -369,7 +369,7 @@
         this.docsLoading = true;
 
         axios
-          .get('/app/api/v1/documents/' + strQueryString)
+          .get('/app/api/v1/documents' + strQueryString)
           .then(response => {
             this.docsLoading = false;
             this.docs = response.data['results'];
@@ -393,7 +393,7 @@
         }
 
         axios
-          .get("/app/api/v1/folders/" + qs)
+          .get("/app/api/v1/folders" + qs)
           .then(response => {
             vi.folders = response.data;
           }).catch(error => vi.mixinAlert("Unable to refresh folders list", true));

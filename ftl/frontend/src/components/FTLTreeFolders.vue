@@ -47,7 +47,7 @@
       }
 
       axios
-        .get("/app/api/v1/folders/" + qs)
+        .get("/app/api/v1/folders" + qs)
         .then(response => {
             if (!vi.root) {
               // Add a static root
