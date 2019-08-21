@@ -64,7 +64,6 @@ class FTLOCRGoogleVisionAsync(FTLOCRBase):
         # List objects with the given prefix.
         blob_list = list(self.bucket.list_blobs(prefix=prefix))
         pages_text = list()
-        last_pages_count = 0
 
         for blob in blob_list:
             json_string = blob.download_as_string()
@@ -73,6 +72,5 @@ class FTLOCRGoogleVisionAsync(FTLOCRBase):
 
             for response in response.responses:
                 pages_text.append(response.full_text_annotation.text)
-                last_pages_count = response.context.page_number
 
-        return "\n".join(pages_text), last_pages_count
+        return "\n".join(pages_text)

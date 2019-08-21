@@ -17,6 +17,7 @@ class FTLOCRAwsTextract(FTLOCRBase):
     API LIMITATION: only english language supported
     Doc: https://docs.aws.amazon.com/fr_fr/textract/latest/dg/API_StartDocumentAnalysis.html
     """
+
     def __init__(self, aws_bucket=settings.AWS_STORAGE_BUCKET_NAME):
         super().__init__()
         self.aws_bucket = aws_bucket
@@ -46,7 +47,7 @@ class FTLOCRAwsTextract(FTLOCRBase):
                     if item["BlockType"] == "LINE":
                         text_lines.append(item["Text"])
 
-            return "\n".join(text_lines), response_chunks[-1]['DocumentMetadata']['Pages']
+            return "\n".join(text_lines)
         else:  # JobStatus is FAILED
             logger.error(f'{self.log_prefix} Text extraction failed (Amazon side)')
             return ""

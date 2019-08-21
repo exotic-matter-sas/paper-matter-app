@@ -72,9 +72,7 @@ class FTLOCRBase(FTLDocProcessingBase):
         if DEFAULT_FILE_STORAGE in self.supported_storages:
             # If full text not already extracted
             if not ftl_doc.content_text.strip():
-                text, count_pages = self._extract_text(ftl_doc.binary)
-                ftl_doc.content_text = text
-                ftl_doc.count_pages = count_pages
+                ftl_doc.content_text = self._extract_text(ftl_doc.binary)
                 ftl_doc.save()
             else:
                 logger.info(f'{self.log_prefix} Processing skipped, document {ftl_doc.id} already get a text_content')

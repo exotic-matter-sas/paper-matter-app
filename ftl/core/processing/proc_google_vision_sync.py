@@ -49,5 +49,4 @@ class FTLOCRGoogleVisionSync(FTLOCRBase):
 
         response = self.client.batch_annotate_files(requests)
 
-        return "\n".join([e.full_text_annotation.text for e in response.responses[0].responses]), \
-               response.responses[0].responses[-1].context.page_number
+        return "\n".join([e.full_text_annotation.text for e in response.responses[0].responses])
