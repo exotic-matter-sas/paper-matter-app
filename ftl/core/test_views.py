@@ -1,8 +1,9 @@
 from django.contrib.staticfiles import finders
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_authenticated_session, setup_document
+from ftl.enums import FTLStorages
 
 
 class CorePagesTests(TestCase):
@@ -36,6 +37,7 @@ class DownloadDocumentTests(TestCase):
         setup_admin(self.org)
         self.user = setup_user(self.org)
 
+    @override_settings(DEFAULT_FILE_STORAGE=FTLStorages.FILE_SYSTEM)
     def test_document_download_returns_proper_binary(self):
         # Add a document and log user
         doc = setup_document(self.org, self.user)

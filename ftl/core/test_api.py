@@ -4,6 +4,7 @@ import tempfile
 from unittest.mock import patch
 
 from django.contrib import messages
+from django.test import override_settings
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -12,6 +13,7 @@ from core.models import FTLDocument, FTLFolder
 from core.processing.ftl_processing import FTLDocumentProcessing
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_document, setup_folder
+from ftl.enums import FTLStorages
 from ftl.settings import BASE_DIR
 
 
@@ -105,6 +107,7 @@ class DocumentsTests(APITestCase):
         self.assertEqual(client_doc['note'], ftl_document_first.note)
         self.assertEqual(client_doc['ftl_folder'], ftl_document_first.ftl_folder)
 
+    @override_settings(DEFAULT_FILE_STORAGE=FTLStorages.FILE_SYSTEM)
     def test_delete_document(self):
         # Create a custom document specific to this test because we don't want to delete the test pdf file.
         binary_f = tempfile.NamedTemporaryFile(dir=os.path.join(BASE_DIR, 'ftests', 'tools'), delete=False)
