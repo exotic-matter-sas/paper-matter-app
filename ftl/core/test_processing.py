@@ -120,7 +120,8 @@ class ProcTikaTests(TestCase):
         mocked_from_buffer.assert_called_once_with(doc.binary.read())
         self.assertEqual(doc.content_text, indexed_text['content'])
         self.assertEqual(doc.count_pages, indexed_text['metadata']['xmpTPg:NPages'])
-        doc.save.assert_called_once()
+        doc.save.assert_called()
+        self.assertEqual(doc.save.call_count, 2)
 
 
 class ProcPGsqlTests(TestCase):
@@ -139,7 +140,7 @@ class FTLOCRBaseTests(TestCase):
     @patch.object(FTLOCRBase, '_extract_text')
     def test_process(self, mocked_extract_text):
         expected_extracted_text = 'bingo!'
-        mocked_extract_text.return_value = expected_extracted_text, 42
+        mocked_extract_text.return_value = expected_extracted_text
         base_ocr = FTLOCRBase()
         base_ocr.supported_storages.append(DEFAULT_FILE_STORAGE)
 
