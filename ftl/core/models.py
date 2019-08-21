@@ -1,4 +1,3 @@
-import os
 import pathlib
 import uuid
 
@@ -59,6 +58,7 @@ class FTLDocument(models.Model):
     title = models.TextField()
     note = models.TextField(blank=True)
     content_text = models.TextField(blank=True)
+    count_pages = models.IntegerField(null=True, blank=True)
     binary = models.FileField(upload_to=_get_name_binary, max_length=256, null=True)
     created = models.DateTimeField(default=timezone.now)
     edited = models.DateTimeField(auto_now=True)

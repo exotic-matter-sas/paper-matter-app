@@ -6,10 +6,8 @@ from google.cloud import vision
 from google.cloud import vision_v1
 from google.protobuf import json_format
 
-from core.errors import PluginUnsupportedStorage
 from core.processing.ftl_processing import FTLOCRBase
 from ftl.enums import FTLStorages
-from ftl.settings import DEFAULT_FILE_STORAGE
 
 logger = logging.getLogger(__name__)
 
@@ -33,19 +31,6 @@ class FTLOCRGoogleVisionAsync(FTLOCRBase):
         self.mime_type = 'application/pdf'
         self.batch_size = 10  # How many pages should be grouped into each json output file
         self.feature = vision.types.Feature(type=vision.enums.Feature.Type.DOCUMENT_TEXT_DETECTION)
-
-    def process(self, ftl_doc):
-        if DEFAULT_FILE_STORAGE in self.supported_storages:
-            # If full text not already extracted
-            if not ftl_doc.content_text.strip():
-                ftl_doc.content_text = self._extract_text(ftl_doc.binary)
-                ftl_doc.save()
-            else:
-                logger.info(f'{self.log_prefix} Processing skipped, document {ftl_doc.id} already get a text_content')
-        else:
-            raise PluginUnsupportedStorage(
-                f'Plugin {self.__class__.__name__} does not support storage {DEFAULT_FILE_STORAGE} (supported storages '
-                f'are: {self.supported_storages}).')
 
     def _extract_text(self, ftl_doc_binary):
         storage_uri = f'gs://{self.gcs_bucket_name}/{ftl_doc_binary.name}'
