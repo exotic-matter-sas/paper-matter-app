@@ -2,7 +2,7 @@
   <b-col cols="12" mb="4" sm="6" md="4" lg="3" xl="2" class="mb-3 document-thumbnail" :id="doc.pid">
     <div class="card">
       <div class="card-img-top" slot="aside"
-           :style="{'background-image': 'url(' + '/app/api/v1/documents/' + doc.pid + '/thumbnail.png' + ')'}"
+           :style="{'background-image': 'url(' + doc.thumbnail_url + ')'}"
            @click="$emit('event-open-doc', doc.pid)"></div>
       <b-card-body>
         <b-card-title class="text-truncate document-title" @click="$emit('event-open-doc', doc.pid)">
@@ -114,7 +114,7 @@
   }
 
   .card-footer {
-    &:first-letter{
+    &:first-letter {
       text-transform: capitalize;
     }
 
