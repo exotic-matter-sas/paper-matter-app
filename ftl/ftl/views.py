@@ -9,7 +9,7 @@ from ftl.forms import FTLUserCreationForm
 
 
 class CreateFTLUserFormView(FormView):
-    template_name = 'ftl/signup.html'
+    template_name = 'ftl/registration/signup.html'
     form_class = FTLUserCreationForm
 
     def get_success_url(self):
@@ -40,7 +40,7 @@ def signup_success(request, org_slug):
         'org_slug': org_slug,
     }
 
-    return render(request, 'ftl/signup_success.html', context)
+    return render(request, 'ftl/registration/signup_success.html', context)
 
 
 class SetMessageAndRedirectView(RedirectView):
