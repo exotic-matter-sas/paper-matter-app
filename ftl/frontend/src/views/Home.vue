@@ -56,10 +56,17 @@
 
       <!-- Pdf viewer popup -->
       <b-modal id="document-viewer"
-               :title="currentOpenDoc.title"
                hide-footer
                centered
                @hidden="closeDocument">
+        <template slot="modal-title">
+          <span>{{ currentOpenDoc.title }}</span>
+          <span>
+            <b-button variant="link" v-b-modal="'modal-rename-document'">
+              <font-awesome-icon icon="edit" :title="$_('Rename document')"/>
+            </b-button>
+          </span>
+        </template>
         <b-container class="h-100">
           <b-row class="h-100">
             <b-col md="8">
@@ -81,6 +88,11 @@
       <FTLNewFolder
         :parent="getCurrentFolder"
         @event-folder-created="folderCreated"/>
+
+      <FTLRenameDocument
+        v-if="currentOpenDoc.pid"
+        :doc="currentOpenDoc"
+        @event-document-renamed="documentRenamed"/>
     </b-col>
   </main>
 </template>
@@ -94,12 +106,14 @@
   import FTLThumbnailGenMixin from "@/components/FTLThumbnailGenMixin";
   import axios from 'axios';
   import qs from 'qs';
+  import FTLRenameDocument from "@/components/FTLRenameDocument";
 
   export default {
     name: 'home',
     mixins: [FTLThumbnailGenMixin],
 
     components: {
+      FTLRenameDocument,
       FTLNewFolder,
       FTLFolder,
       FTLDocument,
@@ -402,6 +416,11 @@
       folderCreated: function (folder) {
         this.refreshFolders();
       },
+
+      documentRenamed: function (document) {
+        this.currentOpenDoc = document;
+        this.refreshAll()
+      }
     }
   }
 </script>
