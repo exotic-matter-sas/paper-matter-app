@@ -95,7 +95,8 @@ class FTLDocumentDetail(generics.RetrieveUpdateDestroyAPIView):
         return FTLDocument.objects.filter(org=self.request.user.org)
 
     def perform_update(self, serializer):
-        serializer.save(org=self.request.user.org)
+        instance = serializer.save(org=self.request.user.org)
+        ftl_doc_processing.apply_processing(instance)
 
 
 class FTLDocumentThumbnail(views.APIView):
