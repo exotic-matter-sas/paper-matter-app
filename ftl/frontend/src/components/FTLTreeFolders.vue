@@ -29,7 +29,7 @@
     props: {
       start: Number,
       root: {type: Boolean, default: true},
-      sourceFolder: Number
+      sourceFolder: {type: Number, default: -1}
     },
 
     data() {

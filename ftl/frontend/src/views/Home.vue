@@ -70,9 +70,13 @@
               </div>
             </b-col>
             <b-col md="4" class="d-none d-md-block">
-              <b-row>AAA</b-row>
               <b-row>BBB</b-row>
               <b-row>CCC</b-row>
+              <b-row>
+                <b-col>
+                  <b-button variant="secondary" v-b-modal="'modal-move-document'">Move</b-button>
+                </b-col>
+              </b-row>
             </b-col>
           </b-row>
         </b-container>
@@ -81,6 +85,10 @@
       <FTLNewFolder
         :parent="getCurrentFolder"
         @event-folder-created="folderCreated"/>
+
+      <FTLMoveDocument
+        :doc="currentOpenDoc"
+        @event-document-moved="refreshAll"/>
     </b-col>
   </main>
 </template>
@@ -94,12 +102,14 @@
   import FTLThumbnailGenMixin from "@/components/FTLThumbnailGenMixin";
   import axios from 'axios';
   import qs from 'qs';
+  import FTLMoveDocument from "@/components/FTLMoveDocument";
 
   export default {
     name: 'home',
     mixins: [FTLThumbnailGenMixin],
 
     components: {
+      FTLMoveDocument,
       FTLNewFolder,
       FTLFolder,
       FTLDocument,
