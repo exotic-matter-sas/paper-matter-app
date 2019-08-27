@@ -28,11 +28,6 @@ jest.mock('axios', () => ({
   patch: jest.fn(),
 }));
 
-const mockedMoveFolderResponse = {
-  data: tv.FOLDER_PROPS_WITH_PARENT,
-  status: 200,
-};
-
 const mockedMoveDocumentResponse = {
   data: tv.DOCUMENT_PROPS_WITH_FOLDER,
   status: 200,
@@ -63,6 +58,12 @@ describe('Component template', () => {
   it('renders properly template text', async () => {
     expect(wrapper.text()).toContain('No folder selected');
   });
+
+  it('renders properly html element', () => {
+    const elementSelector= '#modal-move-document';
+    const elem = wrapper.find(elementSelector);
+    expect(elem.is(elementSelector)).toBe(true);
+  });
 });
 
 describe('FTLMoveDocument computed', () => {
@@ -85,6 +86,24 @@ describe('FTLMoveDocument computed', () => {
 
     // then
     expect(testedValue).toBe(-1);
+  });
+
+  it('getFolder return parent ftl_folder id when doc prop has one', () => {
+    const doc = tv.DOCUMENT_PROPS_WITH_FOLDER;
+    wrapper = shallowMount(FTLMoveDocument, {
+      localVue,
+      propsData: { doc },
+      computed: {
+        selectedMoveTargetFolder: mockedSelectedMoveTargetFolder
+      }
+    });
+    jest.clearAllMocks(); // Reset mock call count done by mounted
+
+    // when document props folder is null
+    let testedValue = wrapper.vm.getFolder;
+
+    // then
+    expect(testedValue).toBe(doc.ftl_folder);
   });
 
   it('selectedMoveTargetFolder return value from $store', () => {

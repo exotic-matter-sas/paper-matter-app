@@ -41,6 +41,7 @@ describe('FTLDocument template', () => {
     let document_props_to_test = tv.DOCUMENT_PROPS;
     delete document_props_to_test.note;
     delete document_props_to_test.created;
+    delete document_props_to_test.ftl_folder;
     Object.values(document_props_to_test).forEach(function(documentData){
       expect(wrapper.html()).toContain(documentData)
     })

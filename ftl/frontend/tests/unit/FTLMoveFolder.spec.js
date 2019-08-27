@@ -55,6 +55,12 @@ describe('Component template', () => {
   it('renders properly template text', async () => {
     expect(wrapper.text()).toContain('No folder selected');
   });
+
+  it('renders properly html element', () => {
+    const elementSelector= '#modal-move-folder';
+    const elem = wrapper.find(elementSelector);
+    expect(elem.is(elementSelector)).toBe(true);
+  });
 });
 
 describe('FTLMoveFolder computed', () => {
