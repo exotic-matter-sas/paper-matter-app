@@ -57,7 +57,7 @@ const elem = wrapper.find(elementSelector);
 expect(elem.is(elementSelector)).toBe(true);
 
 // props value in html
-delete tv.DOCUMENT_PROPS.note // remove unwanted data here
+delete tv.DOCUMENT_PROPS.note; // remove unwanted data here
 Object.values(tv.DOCUMENT_PROPS).forEach(function(documentData){ expect(wrapper.html()).toContain(documentData) });
 ```
 
@@ -170,6 +170,7 @@ To avoid common pitfalls (listed in next section), respect the structure used in
 |  | Also check that a unmocked method/computed isn't calling the mocked method, it should be mocked |
 | [Vue warn]: Unknown custom element: <customElement> - did you register the component correctly? | Call `localVue.use(ElementComponent)` to register the component (eg. BootstrapVue) |
 |  | If `localVue.use` isn't possible (eg. it prevent library mocking), add element to stubs option in shallowMount : `stubs: ['customElement']` |
+| Props value isn't updated after using wrapper.setData | By default props aren't reactive, unless they are also declared inside `data()` (see [explanations here](https://forum.vuejs.org/t/computed-property-not-updating/21148/6)) |
 
 ## Known issues
  - `wrapper.setData` cause "[Vue warn]: Avoid mutating a prop directly" warning during test run (no clean solution found to hide this warning for now)
