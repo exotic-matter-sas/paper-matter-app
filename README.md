@@ -6,13 +6,13 @@ Archiving documents solution
 
 ### Requirements
 
- * Python 3.7
+ * Python 3.7.3
  * PostgreSQL 11
  * Java 8+
  
 ### Install Python modules
- 
-    python -m pip install requirements.txt
+    cd ftl
+    python -m pip install -r requirements.txt
 
 ## For developers
 
@@ -29,23 +29,25 @@ Archiving documents solution
    * _apt-get install build-essential python3-dev libpq-dev_
 
 ### Install Python modules
- 
-    python -m pip install requirements.txt
-    python -m pip install requirements_dev.txt
+    cd ftl
+    python -m pip install -r requirements.txt
+    python -m pip install -r requirements_dev.txt
 
 ### Install Node modules
  
-    cd ftl/vuejs-app
-    npm install
+    cd ftl/frontend
+    npm ci
     
 ### Run local server
 
 First terminal
 
+    cd ftl/frontend
     npm run serve
 
 Second terminal
     
+    cd ftl
     python manage.py runserver
 
 ### Tests
