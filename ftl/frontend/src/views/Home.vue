@@ -88,7 +88,7 @@
 
       <FTLMoveDocument
         :doc="currentOpenDoc"
-        @event-document-moved="refreshAll"/>
+        @event-document-moved="updateDocuments"/>
     </b-col>
   </main>
 </template>
