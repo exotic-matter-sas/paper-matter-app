@@ -32,7 +32,7 @@ class FtlPagesTests(TestCase):
 
         response = self.client.get(f'/signup/{org.slug}/')
         self.assertContains(response, 'Create your account')
-        self.assertTemplateUsed(response, 'ftl/signup.html')
+        self.assertTemplateUsed(response, 'ftl/registration/signup.html')
 
     def test_signup_context(self):
         """Signup page get proper context"""
@@ -62,7 +62,7 @@ class FtlPagesTests(TestCase):
 
         response = self.client.get(f'/signup/{org.slug}/success/')
         self.assertContains(response, 'verify your email')
-        self.assertTemplateUsed(response, 'ftl/signup_success.html')
+        self.assertTemplateUsed(response, 'ftl/registration/signup_success.html')
 
     def test_signup_success_get_proper_context(self):
         """Signup success page get proper context"""
