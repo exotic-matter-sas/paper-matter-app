@@ -112,10 +112,10 @@
   import FTLUpload from '@/components/FTLUpload';
   import FTLNewFolder from "@/components/FTLNewFolder";
   import FTLThumbnailGenMixin from "@/components/FTLThumbnailGenMixin";
-  import axios from 'axios';
-  import qs from 'qs';
   import FTLMoveDocument from "@/components/FTLMoveDocument";
   import FTLRenameDocument from "@/components/FTLRenameDocument";
+  import axios from 'axios';
+  import qs from 'qs';
 
   export default {
     name: 'home',
