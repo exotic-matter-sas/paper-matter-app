@@ -42,7 +42,17 @@ export const DOCUMENT_PROPS = {
   title: 'Document title',
   note: 'Document note',
   created: new Date('2019-04-18T10:59:00').toString(),
-  thumbnail_available: true
+  thumbnail_available: true,
+  ftl_folder: null
+};
+
+export const DOCUMENT_PROPS_WITH_FOLDER = {
+  pid: '1234',
+  title: 'Document title',
+  note: 'Document note',
+  created: new Date('2019-04-18T10:59:00').toString(),
+  thumbnail_available: true,
+  ftl_folder: 123
 };
 
 export const DOCUMENT_NO_THUMB_PROPS = {
