@@ -23,7 +23,11 @@ localVue.prototype.$moment = () => {
 };
 localVue.prototype.$router = {push: jest.fn()}; // router mock
 const mockedRouteName = jest.fn();
-localVue.prototype.$route = {get name() { return mockedRouteName()}}; // router mock
+localVue.prototype.$route = {
+  get name() {
+    return mockedRouteName()
+  }
+}; // router mock
 const mockedMixinAlert = jest.fn();
 localVue.mixin({methods: {mixinAlert: mockedMixinAlert}}); // mixin alert
 
@@ -106,6 +110,8 @@ const mockedNavigateToDocument = jest.fn();
 const mockedGetCurrentFolder = jest.fn();
 const mockedFolderCreated = jest.fn();
 const mockedBreadcrumb = jest.fn();
+const mockedDocumentDeleted = jest.fn();
+const mockedDocumentUpdated = jest.fn();
 
 const mountedMocks = {
   updateDocuments: mockedUpdateDocuments,
@@ -652,7 +658,9 @@ describe('Home event handling', () => {
           navigateToFolder: mockedNavigateToFolder,
           folderCreated: mockedFolderCreated,
           navigateToDocument: mockedNavigateToDocument,
-          updateFolders: mockedUpdateFolders
+          updateFolders: mockedUpdateFolders,
+          documentDeleted: mockedDocumentDeleted,
+          documentUpdated: mockedDocumentUpdated
         },
         mountedMocks
       )
@@ -706,7 +714,7 @@ describe('Home event handling', () => {
     await flushPromises(); // wait all pending promises are resolved/rejected
 
     // then
-    expect(mockedUpdateDocuments).toHaveBeenCalledTimes(1);
+    expect(mockedDocumentDeleted).toHaveBeenCalledTimes(1);
   });
 
   it('event-folder-created call folderCreated', async () => {

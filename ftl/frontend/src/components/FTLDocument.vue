@@ -66,7 +66,9 @@
             if (value === true) {
               axios
                 .delete('/app/api/v1/documents/' + vi.doc.pid, axiosConfig)
-                .then(() => vi.$emit('event-delete-doc'))
+                .then((response) => {
+                  vi.$emit('event-delete-doc', {'doc': vi.doc})
+                })
                 .catch(error => vi.mixinAlert(this.$_('Could not delete document'), true));
             } else {
               vi.deleting = false;

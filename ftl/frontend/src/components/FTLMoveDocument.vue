@@ -64,7 +64,7 @@
         axios
           .patch('/app/api/v1/documents/' + this.doc.pid, body, axiosConfig)
           .then(response => {
-            this.$emit('event-document-moved', this.selectedMoveTargetFolder);
+            this.$emit('event-document-moved', {'doc': this.doc, 'folder': this.selectedMoveTargetFolder});
             this.$store.commit('selectMoveTargetFolder', null);
             this.mixinAlert('Document moved successfully');
           })

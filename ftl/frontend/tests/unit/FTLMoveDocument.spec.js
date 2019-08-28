@@ -34,6 +34,7 @@ const mockedMoveDocumentResponse = {
 };
 
 const mockedSelectedMoveTargetFolder = jest.fn();
+const mockedSelectedMoveTargetFolderResponse = {id: tv.FOLDER_PROPS.id, name: tv.FOLDER_PROPS.name};
 const mockedIsRoot = jest.fn();
 
 const documentProp = tv.DOCUMENT_PROPS;
@@ -60,7 +61,7 @@ describe('Component template', () => {
   });
 
   it('renders properly html element', () => {
-    const elementSelector= '#modal-move-document';
+    const elementSelector = '#modal-move-document';
     const elem = wrapper.find(elementSelector);
     expect(elem.is(elementSelector)).toBe(true);
   });
@@ -92,7 +93,7 @@ describe('FTLMoveDocument computed', () => {
     const doc = tv.DOCUMENT_PROPS_WITH_FOLDER;
     wrapper = shallowMount(FTLMoveDocument, {
       localVue,
-      propsData: { doc },
+      propsData: {doc},
       computed: {
         selectedMoveTargetFolder: mockedSelectedMoveTargetFolder
       }
@@ -214,7 +215,7 @@ describe('Event emitted by component', () => {
   let wrapper;
   beforeEach(() => {
     axios.patch.mockResolvedValue(mockedMoveDocumentResponse);
-    mockedSelectedMoveTargetFolder.mockReturnValue(tv.FOLDER_PROPS_VARIANT);
+    mockedSelectedMoveTargetFolder.mockReturnValue(mockedSelectedMoveTargetFolderResponse);
 
     wrapper = shallowMount(FTLMoveDocument, {
       localVue,
@@ -237,6 +238,9 @@ describe('Event emitted by component', () => {
     // then
     expect(wrapper.emitted(testedEvent)).toBeTruthy();
     expect(wrapper.emitted(testedEvent).length).toBe(1);
-    expect(wrapper.emitted(testedEvent)[0]).toEqual([mockedSelectedMoveTargetFolder()]);
+    expect(wrapper.emitted(testedEvent)[0]).toEqual([{
+      'doc': documentProp,
+      'folder': mockedSelectedMoveTargetFolderResponse
+    }]);
   });
 });
