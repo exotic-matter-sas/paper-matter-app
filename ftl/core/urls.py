@@ -1,6 +1,6 @@
 from django.urls import path, include
 from django.views.i18n import JavaScriptCatalog
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from . import views
 
@@ -14,6 +14,7 @@ urlpatterns = [
     path('api/v1/documents/<uuid:pid>', views.FTLDocumentDetail.as_view()),
     path('api/v1/documents/<uuid:pid>/thumbnail.png', views.FTLDocumentThumbnail.as_view(), name='api_thumbnail_url'),
     path('api/v1/documents/upload', views.FileUploadView.as_view()),
+    path('api/v2/documents/upload', views.FilesUploadView.as_view()),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('api/token', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh', TokenRefreshView.as_view(), name='token_refresh'),

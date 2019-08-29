@@ -3,7 +3,7 @@
     <b-col>
       <b-row class="my-3">
         <b-col>
-          <FTLUpload :currentFolder="getCurrentFolder" @event-new-upload="updateDocuments"/>
+          <FTLUpload :currentFolder="getCurrentFolder" @event-new-upload="documentsCreated"/>
         </b-col>
       </b-row>
 
@@ -412,6 +412,11 @@
       folderCreated: function (folder) {
         this.refreshFolders();
       },
+
+      documentsCreated: function (event) {
+        const docs = event.docs;
+        this.docs.unshift(...docs);
+      }
     }
   }
 </script>
