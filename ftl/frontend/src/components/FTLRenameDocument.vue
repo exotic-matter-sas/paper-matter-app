@@ -3,7 +3,7 @@
            :ok-disabled="!newDocumentName || newDocumentName === doc.title"
            @ok="renameDocument">
     <template slot="modal-title">
-      <span>this.$_('Rename document')</span>
+      <span>{{ this.$_('Rename document') }}</span>
     </template>
     <b-container fluid>
       <b-form-group
