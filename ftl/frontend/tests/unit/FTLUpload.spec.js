@@ -44,8 +44,8 @@ describe('FTLUpload script', () => {
     config: axiosConfig
   };
   let formData = new FormData();
-  formData.append('thumbnail', 'base64str');
-  formData.append('file', null);
+  formData.append('files[]', null);
+  formData.append('thumbs_0', 'base64str');
   formData.append('json', JSON.stringify({'ftl_folder': tv.FOLDER_PROPS.id}));
   let wrapper;
 
@@ -61,6 +61,7 @@ describe('FTLUpload script', () => {
       onUploadProgress: wrapper.vm.refreshUploadProgression
     };
     Object.assign(axios_upload_conf, axiosConfig); // merge upload specific conf with generic crsf conf
+    wrapper.setData({files: [null]})
   });
 
   it('uploadDocument call api', async () => {
@@ -70,7 +71,7 @@ describe('FTLUpload script', () => {
     await flushPromises();
     // then
     expect(axios.post).toHaveBeenCalledWith(
-      '/app/api/v1/documents/upload',
+      '/app/api/v2/documents/upload',
       formData,
       axios_upload_conf
     );

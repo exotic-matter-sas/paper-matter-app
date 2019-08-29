@@ -198,6 +198,18 @@ class DocumentsTests(APITestCase):
         self.assertEqual(client_doc_level['note'], client_doc['note'])
         self.assertEqual(client_doc_level['ftl_folder'], client_doc['ftl_folder'])
 
+    @patch.object(FTLDocumentProcessing, 'apply_processing')
+    def test_upload_documents(self, mock_apply_processing):
+        with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'test.pdf'), mode='rb') as fp:
+            with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'test.pdf'), mode='rb') as fp2:
+                client_post = self.client.post('/app/api/v2/documents/upload',
+                                               {'json': '{}', 'files[]': (fp, fp2)})
+
+        self.assertEqual(client_post.status_code, status.HTTP_201_CREATED)
+
+        client_docs = client_post.data
+        self.assertTrue(len(client_docs) == 2)
+
 
 class DocumentsSearchTests(APITestCase):
     def setUp(self):
