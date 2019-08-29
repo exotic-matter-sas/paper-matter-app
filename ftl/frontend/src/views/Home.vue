@@ -429,7 +429,7 @@
 
       documentRenamed: function (document) {
         this.currentOpenDoc = document;
-        this.refreshAll()
+        this.updateDocuments();
       }
     }
   }
