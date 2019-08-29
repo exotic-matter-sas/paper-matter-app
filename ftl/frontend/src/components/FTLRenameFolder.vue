@@ -32,7 +32,7 @@
 
     data() {
       return {
-        newFolderName: '',
+        newFolderName: this.folder.name,
       }
     },
 
