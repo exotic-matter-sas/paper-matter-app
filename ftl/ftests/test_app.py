@@ -116,10 +116,6 @@ class HomePageTests(LoginPage, HomePage, DocumentViewPage):
         self.assertEqual(tv.FOLDER3_NAME, self.get_elem(self.folders_list_buttons).text)
         self.get_elem(self.folders_list_buttons).click()
 
-    @skip('TODO when implemented in UI')  # TODO
-    def test_delete_folder(self):
-        pass
-
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_search_document_by_its_title(self):
         # User have already added 2 documents
@@ -136,6 +132,14 @@ class HomePageTests(LoginPage, HomePage, DocumentViewPage):
 
     @skip('TODO when document note implemented in UI')  # TODO
     def test_search_document_by_its_note(self):
+        pass
+
+    @skip('TODO')  # TODO
+    def test_search_renamed_doc(self):
+        pass
+
+    @skip('TODO')  # TODO
+    def test_search_re_annotted_doc(self):
         pass
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
