@@ -23,7 +23,11 @@ localVue.prototype.$moment = () => {
 };
 localVue.prototype.$router = {push: jest.fn()}; // router mock
 const mockedRouteName = jest.fn();
-localVue.prototype.$route = {get name() { return mockedRouteName()}}; // router mock
+localVue.prototype.$route = {
+  get name() {
+    return mockedRouteName()
+  }
+}; // router mock
 const mockedMixinAlert = jest.fn();
 localVue.mixin({methods: {mixinAlert: mockedMixinAlert}}); // mixin alert
 
@@ -106,6 +110,8 @@ const mockedNavigateToDocument = jest.fn();
 const mockedGetCurrentFolder = jest.fn();
 const mockedFolderCreated = jest.fn();
 const mockedBreadcrumb = jest.fn();
+const mockedDocumentDeleted = jest.fn();
+const mockedDocumentUpdated = jest.fn();
 
 const mountedMocks = {
   updateDocuments: mockedUpdateDocuments,
@@ -498,6 +504,39 @@ describe('Home methods call proper methods', () => {
     // then
     expect(mockedRefreshFolders).toHaveBeenCalledTimes(1);
   });
+
+  it('documentDeleted remove doc from list', () => {
+    // given
+    const documentToDelete = tv.DOCUMENT_NO_THUMB_PROPS_2;
+    const originalDocumentsList = [tv.DOCUMENT_NO_THUMB_PROPS, documentToDelete];
+    const originalDocumentsListLength = originalDocumentsList.length;
+    wrapper.setData({docs : originalDocumentsList});
+
+    // when
+    wrapper.vm.documentDeleted({doc: documentToDelete});
+
+    // then
+    expect(wrapper.vm.docs.length).toBe(originalDocumentsListLength - 1);
+  });
+
+  it('documentUpdated update doc in list', () => {
+    // given
+    const documentToUpdate = tv.DOCUMENT_NO_THUMB_PROPS_2;
+    const originalDocumentsList = [tv.DOCUMENT_NO_THUMB_PROPS, documentToUpdate];
+    const originalDocumentsListLength = originalDocumentsList.length;
+    wrapper.setData({docs : originalDocumentsList});
+
+    // when
+    const documentUpdated = Object.assign({}, documentToUpdate); // shallow copy
+    const updatedTitle = 'bingo!';
+    documentUpdated.title = updatedTitle;
+    wrapper.vm.documentUpdated({doc: documentUpdated});
+
+    // then
+    expect(wrapper.vm.docs.length).toBe(originalDocumentsListLength);
+    expect(wrapper.vm.docs[1].title).not.toBe(documentToUpdate.title);
+    expect(wrapper.vm.docs[1].title).toBe(updatedTitle);
+  });
 });
 
 describe('Home methods return proper value', () => {
@@ -652,7 +691,9 @@ describe('Home event handling', () => {
           navigateToFolder: mockedNavigateToFolder,
           folderCreated: mockedFolderCreated,
           navigateToDocument: mockedNavigateToDocument,
-          updateFolders: mockedUpdateFolders
+          updateFolders: mockedUpdateFolders,
+          documentDeleted: mockedDocumentDeleted,
+          documentUpdated: mockedDocumentUpdated
         },
         mountedMocks
       )
@@ -697,7 +738,7 @@ describe('Home event handling', () => {
     expect(mockedNavigateToDocument).toHaveBeenCalledTimes(1);
   });
 
-  it('event-delete-doc call updateDocuments', async () => {
+  it('event-delete-doc call documentDeleted', async () => {
     // Need to define at least one document in order FTLDocument component is instantiated
     wrapper.setData({docs: [tv.DOCUMENT_PROPS]});
 
@@ -706,7 +747,7 @@ describe('Home event handling', () => {
     await flushPromises(); // wait all pending promises are resolved/rejected
 
     // then
-    expect(mockedUpdateDocuments).toHaveBeenCalledTimes(1);
+    expect(mockedDocumentDeleted).toHaveBeenCalledTimes(1);
   });
 
   it('event-folder-created call folderCreated', async () => {
