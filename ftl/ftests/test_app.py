@@ -373,6 +373,24 @@ class DocumentViewPageTests(LoginPage, HomePage, DocumentViewPage):
         self.assertEqual(document.title, self.get_elem(self.first_document_title).text,
                          'Setup document title should appears in folder C')
 
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @patch.object(FTLDocumentProcessing, 'apply_processing')
+    def test_rename_document(self, mock_apply_processing):
+        # User has already added and opened a document
+        setup_document(self.org, self.user)
+        self.refresh_document_list()
+        self.open_first_document()
+        self.wait_for_elem_to_show(self.pdf_viewer)
+
+        # User rename the document
+        new_doc_title = 'Renamed doc'
+        self.rename_document(new_doc_title)
+
+        # Document title is properly updated in pdf viewer and list
+        self.assertEqual(self.get_elem_text(self.document_title), new_doc_title)
+        self.close_document()
+        self.assertEqual(self.get_elem_text(self.first_document_title), new_doc_title)
+
 
 class ManageFoldersPageTests(LoginPage, ManageFolderPage):
     def setUp(self, **kwargs):

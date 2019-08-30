@@ -73,6 +73,7 @@ class ManageFolderPage(BasePage):
         for target in target_list:
             if target.text.strip() == target_folder_name:
                 target.click()
+                break
 
         self.get_elem(self.modal_accept_button).click()
         self.wait_folder_list_loaded()

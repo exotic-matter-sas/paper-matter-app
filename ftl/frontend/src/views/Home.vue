@@ -62,7 +62,7 @@
         <template slot="modal-title">
           <span>{{ currentOpenDoc.title }}</span>
           <span>
-            <b-button variant="link" v-b-modal="'modal-rename-document'">
+            <b-button id="rename-document" variant="link" v-b-modal="'modal-rename-document'">
               <font-awesome-icon icon="edit" :title="$_('Rename document')"/>
             </b-button>
           </span>
@@ -81,7 +81,7 @@
               <b-row>CCC</b-row>
               <b-row>
                 <b-col>
-                  <b-button variant="secondary" v-b-modal="'modal-move-document'">Move</b-button>
+                  <b-button id="move-document" variant="secondary" v-b-modal="'modal-move-document'">Move</b-button>
                 </b-col>
               </b-row>
             </b-col>
