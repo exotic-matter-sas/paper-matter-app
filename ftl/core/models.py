@@ -31,7 +31,7 @@ def _get_name_binary(instance, filename):
 # FTP orgs
 class FTLOrg(models.Model):
     name = models.CharField(max_length=128)
-    slug = models.SlugField(max_length=128, unique=True)  # URL of the org (+ index auto create)
+    slug = models.SlugField(max_length=128, unique=True)  # URL of the org (unique auto create an index)
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
