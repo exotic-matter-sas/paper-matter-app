@@ -240,7 +240,7 @@ describe('Event emitted by component', () => {
     expect(wrapper.emitted(testedEvent).length).toBe(1);
     expect(wrapper.emitted(testedEvent)[0]).toEqual([{
       'doc': documentProp,
-      'folder': mockedSelectedMoveTargetFolderResponse
+      'target_folder': mockedSelectedMoveTargetFolderResponse
     }]);
   });
 });
