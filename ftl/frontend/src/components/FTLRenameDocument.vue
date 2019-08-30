@@ -11,7 +11,7 @@
         :description="this.$_('The new name of the document')"
         :label="this.$_('The document will be renamed to %s.', [newDocumentName])"
         label-for="rename-document-text">
-        <b-form-input id="rename-document-text" autofocus v-model="newDocumentName" trim></b-form-input>
+        <b-form-input id="rename-document-text" autofocus onfocus="this.select()" v-model="newDocumentName" trim></b-form-input>
       </b-form-group>
     </b-container>
   </b-modal>
