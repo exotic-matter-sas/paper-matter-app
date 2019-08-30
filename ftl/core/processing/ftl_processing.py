@@ -28,19 +28,19 @@ class FTLDocumentProcessing:
             if issubclass(my_class, FTLDocProcessingBase) and my_class is not FTLDocProcessingBase:
                 self.plugins.append(my_class())
 
-    def apply_processing(self, ftl_doc):
-        submit = self.executor.submit(self._handle, ftl_doc)
+    def apply_processing(self, ftl_doc, force=False):
+        submit = self.executor.submit(self._handle, ftl_doc, force)
         submit.add_done_callback(self._callback)
         logger.info(f'{ftl_doc.pid} submitted to docs processing')
         return submit
 
-    def _handle(self, ftl_doc):
+    def _handle(self, ftl_doc, force):
         errors = list()
         # for each registered processing plugin, apply processing
         for plugin in self.plugins:
             try:
                 logger.debug(f'Executing plugin {plugin.__class__.__name__} on {ftl_doc.pid}')
-                plugin.process(ftl_doc)
+                plugin.process(ftl_doc, force)
             except Exception:
                 errors.append(plugin.__class__.__name__)
                 logger.exception(f'Error while processing {ftl_doc.pid} with plugin {plugin.__class__.__name__}')
@@ -59,7 +59,7 @@ class FTLDocumentProcessing:
 
 
 class FTLDocProcessingBase:
-    def process(self, ftl_doc):
+    def process(self, ftl_doc, force):
         raise NotImplementedError
 
 
@@ -68,10 +68,10 @@ class FTLOCRBase(FTLDocProcessingBase):
         self.log_prefix = f'[{self.__class__.__name__}]'
         self.supported_storages = []
 
-    def process(self, ftl_doc):
+    def process(self, ftl_doc, force):
         if DEFAULT_FILE_STORAGE in self.supported_storages:
             # If full text not already extracted
-            if not ftl_doc.content_text.strip():
+            if force or not ftl_doc.content_text.strip():
                 ftl_doc.content_text = self._extract_text(ftl_doc.binary)
                 ftl_doc.save()
             else:
