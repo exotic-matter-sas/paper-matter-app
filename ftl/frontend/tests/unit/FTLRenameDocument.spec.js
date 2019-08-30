@@ -104,7 +104,7 @@ describe('FTLRenameDocument methods', () => {
     expect(mockedMixinAlert.mock.calls[0][0]).toContain('Could not rename document');
   });
 
-  it('event-document-renamed when calling renameDocument', async () => {
+  it('event-document-renamed emitted when calling renameDocument', async () => {
     axios.patch.mockResolvedValue(mockedRenameDocumentResponse);
     const testedEvent = 'event-document-renamed';
 
