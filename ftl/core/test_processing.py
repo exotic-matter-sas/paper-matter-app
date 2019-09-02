@@ -41,6 +41,38 @@ class DocumentProcessingTests(TestCase):
 
         self.processing.executor.submit.assert_called_once_with(self.processing._handle, doc, False)
 
+    def test_apply_processing_force_boolean(self):
+        mock_plugin_1 = Mock()
+        mock_plugin_2 = Mock()
+
+        self.processing.plugins = list()
+        self.processing.plugins.append(mock_plugin_1)
+        self.processing.plugins.append(mock_plugin_2)
+
+        doc = Mock()
+        future = self.processing.apply_processing(doc, True)
+        wait_futures([future], timeout=10)
+
+        mock_plugin_1.process.assert_called_once_with(doc, True)
+        mock_plugin_2.process.assert_called_once_with(doc, True)
+
+    def test_apply_processing_force_list(self):
+        mock_plugin_1 = Mock()
+        mock_plugin_2 = Mock(spec=ProcTest)
+
+        self.processing.plugins = list()
+        self.processing.plugins.append(mock_plugin_1)
+        self.processing.plugins.append(mock_plugin_2)
+
+        doc = Mock()
+        future = self.processing.apply_processing(doc, [".".join(
+            [mock_plugin_2.__class__.__module__, mock_plugin_2.__class__.__qualname__]), ])
+
+        wait_futures([future], timeout=10)
+
+        mock_plugin_1.process.assert_called_once_with(doc, False)
+        mock_plugin_2.process.assert_called_once_with(doc, True)
+
     def test_handle(self):
         mock_plugin_1 = Mock()
         mock_plugin_2 = Mock()
