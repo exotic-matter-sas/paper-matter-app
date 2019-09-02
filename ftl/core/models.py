@@ -31,7 +31,7 @@ def _get_name_binary(instance, filename):
 # FTP orgs
 class FTLOrg(models.Model):
     name = models.CharField(max_length=128)
-    slug = models.SlugField(max_length=128, unique=True)  # URL of the org
+    slug = models.SlugField(max_length=128, unique=True)  # URL of the org (unique auto create an index)
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -50,11 +50,11 @@ class FTLUser(AbstractUser):
 
 # FTL Documents
 class FTLDocument(models.Model):
-    pid = models.UUIDField(default=uuid.uuid4, editable=False)
+    pid = models.UUIDField(default=uuid.uuid4, editable=False, db_index=True)
 
-    org = models.ForeignKey('FTLOrg', on_delete=models.PROTECT)
+    org = models.ForeignKey('FTLOrg', on_delete=models.PROTECT, db_index=True)
     ftl_user = models.ForeignKey('FTLUser', on_delete=models.PROTECT)
-    ftl_folder = TreeForeignKey('FTLFolder', on_delete=models.PROTECT, null=True, blank=True)
+    ftl_folder = TreeForeignKey('FTLFolder', on_delete=models.PROTECT, null=True, blank=True, db_index=True)
     title = models.TextField()
     note = models.TextField(blank=True)
     content_text = models.TextField(blank=True)
@@ -66,11 +66,13 @@ class FTLDocument(models.Model):
     language = models.CharField(max_length=64, default="english")
     thumbnail_binary = models.FileField(upload_to=_get_name_binary, max_length=256, null=True)
 
-    # // TODO tsvector index missing
-    # class Meta:
-    #     indexes = [
-    #         GinIndex(fields=['tsvector'])
-    #     ]
+    class Meta:
+        indexes = [
+            models.Index(fields=['org', 'pid']),
+            models.Index(fields=['org', 'ftl_folder']),
+            # TODO tsvector index missing
+            # GinIndex(fields=['tsvector']),
+        ]
 
     def __str__(self):
         return self.title

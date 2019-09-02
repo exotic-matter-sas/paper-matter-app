@@ -58,7 +58,7 @@
         axios
           .patch('/app/api/v1/folders/' + this.folder.id, body, axiosConfig)
           .then(response => {
-            this.$emit('event-folder-moved', this.selectedMoveTargetFolder);
+            this.$emit('event-folder-moved', {'folder': this.folder, 'target_folder': this.selectedMoveTargetFolder});
             this.$store.commit('selectMoveTargetFolder', null);
           })
           .catch(error => {

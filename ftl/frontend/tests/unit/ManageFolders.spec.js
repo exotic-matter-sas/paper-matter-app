@@ -51,7 +51,7 @@ const mockedUpdateFolders = jest.fn();
 const mockedUpdateFoldersFromUrl = jest.fn();
 const mockedBreadcrumb = jest.fn();
 const mockedGetCurrentFolder = jest.fn();
-
+const mockedFolderDeleted = jest.fn();
 
 const mountedMocks = {
   updateFolders: mockedUpdateFolders,
@@ -59,6 +59,7 @@ const mountedMocks = {
 };
 
 const folder = tv.FOLDER_PROPS;
+const targetFolder = tv.FOLDER_PROPS_VARIANT;
 
 describe('ManageFolders template', () => {
   let wrapper;
@@ -419,6 +420,37 @@ describe('ManageFolders methods error handling', () => {
     expect(mockedMixinAlert).toHaveBeenCalledTimes(1);
     expect(mockedMixinAlert.mock.calls[0][0]).toContain('open this folder');
   });
+  it('folderDeleted remove folder from list', () => {
+    // given
+    const folderToDelete = tv.FOLDER_PROPS_VARIANT;
+    const originalFoldersList = [tv.FOLDER_PROPS, folderToDelete];
+    const originalFoldersListLength = originalFoldersList.length;
+    wrapper.setData({folders : originalFoldersList});
+
+    // when
+    wrapper.vm.folderDeleted({folder: folderToDelete});
+
+    // then
+    expect(wrapper.vm.folders.length).toBe(originalFoldersListLength - 1);
+  });
+  it('folderUpdated update folder in list', () => {
+    // given
+    const folderToUpdate = tv.FOLDER_PROPS_VARIANT;
+    const originalFoldersList = [tv.FOLDER_PROPS, folderToUpdate];
+    const originalFoldersListLength = originalFoldersList.length;
+    wrapper.setData({folders : originalFoldersList});
+
+    // when
+    const folderUpdated = Object.assign({}, folderToUpdate); // shallow copy
+    const updatedName = 'bingo!';
+    folderUpdated.name = updatedName;
+    wrapper.vm.folderUpdated({folder: folderUpdated});
+
+    // then
+    expect(wrapper.vm.folders.length).toBe(originalFoldersListLength);
+    expect(wrapper.vm.folders[1].name).not.toBe(folderToUpdate.name);
+    expect(wrapper.vm.folders[1].name).toBe(updatedName);
+  });
 });
 
 describe('Event received and handled by component', () => {
@@ -433,6 +465,7 @@ describe('Event received and handled by component', () => {
           refreshFolder: mockedRefreshFolder,
           navigateToFolder: mockedNavigateToFolder,
           getFolderDetail: mockedGetFolderDetail,
+          folderDeleted: mockedFolderDeleted
         },
         mountedMocks
       ),
@@ -501,26 +534,26 @@ describe('Event received and handled by component', () => {
     expect(mockedRefreshFolder).toHaveBeenCalledTimes(1);
     expect(mockedRefreshFolder).toHaveBeenCalledWith(folder);
   });
-  it('event-folder-deleted call refreshFolder', async () => {
+  it('event-folder-deleted call folderDeleted', async () => {
     // Need to defined folderDetail for FTLRenameFolder to appears
     wrapper.setData({ folderDetail: folder });
 
     // when
-    wrapper.find(FTLDeleteFolder).vm.$emit('event-folder-deleted', folder);
+    wrapper.find(FTLDeleteFolder).vm.$emit('event-folder-deleted', {folder: folder});
 
     // then
-    expect(mockedRefreshFolder).toHaveBeenCalledTimes(1);
-    expect(mockedRefreshFolder).toHaveBeenCalledWith(folder);
+    expect(mockedFolderDeleted).toHaveBeenCalledTimes(1);
+    expect(mockedFolderDeleted).toHaveBeenCalledWith({folder: folder});
   });
-  it('event-folder-moved call refreshFolder', async () => {
+  it('event-folder-moved call folderDeleted', async () => {
     // Need to defined folderDetail for FTLRenameFolder to appears
     wrapper.setData({ folderDetail: folder });
 
     // when
-    wrapper.find(FTLMoveFolder).vm.$emit('event-folder-moved', folder);
+    wrapper.find(FTLMoveFolder).vm.$emit('event-folder-moved', {folder: folder, target_folder: targetFolder});
 
     // then
-    expect(mockedRefreshFolder).toHaveBeenCalledTimes(1);
-    expect(mockedRefreshFolder).toHaveBeenCalledWith(folder);
+    expect(mockedFolderDeleted).toHaveBeenCalledTimes(1);
+    expect(mockedFolderDeleted).toHaveBeenCalledWith({folder: folder, target_folder: targetFolder});
   });
 });

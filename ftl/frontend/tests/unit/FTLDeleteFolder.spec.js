@@ -80,7 +80,7 @@ describe('FTLDeleteFolder methods', () => {
     // then
     expect(wrapper.emitted(testedEvent)).toBeTruthy();
     expect(wrapper.emitted(testedEvent).length).toBe(1);
-    expect(wrapper.emitted(testedEvent)[0]).toEqual([folderToDelete])
+    expect(wrapper.emitted(testedEvent)[0]).toEqual([{folder : folderToDelete}])
   });
 
   it('deleteFolder call mixinAlert in case of API error', async () => {

@@ -89,12 +89,12 @@
       <FTLDeleteFolder
         v-if="folderDetail"
         :folder="folderDetail"
-        @event-folder-deleted="refreshFolder"/>
+        @event-folder-deleted="folderDeleted"/>
 
       <FTLMoveFolder
         v-if="folderDetail"
         :folder="folderDetail"
-        @event-folder-moved="refreshFolder"/>
+        @event-folder-moved="folderDeleted"/>
     </b-container>
   </main>
 </template>
@@ -258,6 +258,18 @@
               this.foldersLoading = false
             });
         }
+      },
+
+      folderDeleted: function (event) {
+        const folder = event.folder;
+        const foundIndex = this.folders.findIndex(x => x.id === folder.id);
+        this.folders.splice(foundIndex, 1);
+      },
+
+      folderUpdated: function (event) {
+        const folder = event.folder;
+        const foundIndex = this.folders.findIndex(x => x.id === folder.id);
+        this.folders[foundIndex] = folder;
       }
     }
   }
