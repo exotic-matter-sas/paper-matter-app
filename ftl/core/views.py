@@ -96,7 +96,7 @@ class FTLDocumentDetail(generics.RetrieveUpdateDestroyAPIView):
 
     def perform_update(self, serializer):
         instance = serializer.save(org=self.request.user.org)
-        force_processing = set
+        force_processing = set()
         if serializer.initial_data and 'title' in serializer.initial_data:
             if serializer.instance.title != serializer.initial_data['title']:
                 force_processing.add(FTLPlugins.SEARCH_ENGINE_PGSQL_TSVECTOR)
@@ -105,7 +105,7 @@ class FTLDocumentDetail(generics.RetrieveUpdateDestroyAPIView):
             if serializer.instance.title != serializer.initial_data['note']:
                 force_processing.add(FTLPlugins.SEARCH_ENGINE_PGSQL_TSVECTOR)
 
-        ftl_doc_processing.apply_processing(instance, force_processing)
+        ftl_doc_processing.apply_processing(instance, list(force_processing))
 
 
 class FTLDocumentThumbnail(views.APIView):
