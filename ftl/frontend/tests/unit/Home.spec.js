@@ -511,7 +511,7 @@ describe('Home methods call proper methods', () => {
     const documentToDelete = tv.DOCUMENT_NO_THUMB_PROPS_2;
     const originalDocumentsList = [tv.DOCUMENT_NO_THUMB_PROPS, documentToDelete];
     const originalDocumentsListLength = originalDocumentsList.length;
-    wrapper.setData({docs : originalDocumentsList});
+    wrapper.setData({docs: originalDocumentsList});
 
     // when
     wrapper.vm.documentDeleted({doc: documentToDelete});
@@ -525,7 +525,7 @@ describe('Home methods call proper methods', () => {
     const documentToUpdate = tv.DOCUMENT_NO_THUMB_PROPS_2;
     const originalDocumentsList = [tv.DOCUMENT_NO_THUMB_PROPS, documentToUpdate];
     const originalDocumentsListLength = originalDocumentsList.length;
-    wrapper.setData({docs : originalDocumentsList});
+    wrapper.setData({docs: originalDocumentsList});
 
     // when
     const documentUpdated = Object.assign({}, documentToUpdate); // shallow copy
@@ -692,7 +692,6 @@ describe('Home event handling', () => {
           navigateToFolder: mockedNavigateToFolder,
           folderCreated: mockedFolderCreated,
           navigateToDocument: mockedNavigateToDocument,
-          updateFolders: mockedUpdateFolders,
           documentsCreated: mockedDocumentsCreated,
           updateFolders: mockedUpdateFolders,
           documentDeleted: mockedDocumentDeleted,
