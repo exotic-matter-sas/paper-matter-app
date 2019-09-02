@@ -36,7 +36,7 @@ class FTLDocumentProcessing:
 
     def _handle(self, ftl_doc, force):
         all = True if isinstance(force, bool) and force else False
-        plugins_forced = force if isinstance(force, list) else []
+        plugins_forced = force if isinstance(force, set) else set()
         errors = list()
         # for each registered processing plugin, apply processing
         for plugin in self.plugins:
