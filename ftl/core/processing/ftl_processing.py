@@ -35,14 +35,14 @@ class FTLDocumentProcessing:
         return submit
 
     def _handle(self, ftl_doc, force):
-        all = True if isinstance(force, bool) and force else False
+        plugins_all = True if isinstance(force, bool) and force else False
         plugins_forced = force if isinstance(force, list) else []
         errors = list()
         # for each registered processing plugin, apply processing
         for plugin in self.plugins:
             try:
                 logger.debug(f'Executing plugin {plugin.__class__.__name__} on {ftl_doc.pid}')
-                plugin.process(ftl_doc, all or ".".join(
+                plugin.process(ftl_doc, plugins_all or ".".join(
                     [plugin.__class__.__module__, plugin.__class__.__qualname__]) in plugins_forced)
             except Exception:
                 errors.append(plugin.__class__.__name__)
