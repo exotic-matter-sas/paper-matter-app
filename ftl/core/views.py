@@ -1,6 +1,7 @@
 import json
 from base64 import b64decode
 
+import filetype
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.postgres.search import SearchQuery, SearchRank
@@ -131,6 +132,11 @@ class FileUploadView(views.APIView):
             return HttpResponseBadRequest()
 
         file_obj = request.FILES['file']
+
+        kind = filetype.guess(file_obj)
+        if not kind or kind.mime != "application/pdf":
+            return HttpResponseBadRequest()
+
         payload = json.loads(request.POST['json'])
 
         if 'ftl_folder' in payload and payload['ftl_folder']:
@@ -171,6 +177,12 @@ class FilesUploadView(views.APIView):
             return HttpResponseBadRequest()
 
         files = request.FILES.getlist('files[]')
+
+        for f in files:
+            kind = filetype.guess(f)
+            if not kind or kind.mime != "application/pdf":
+                return HttpResponseBadRequest()
+
         payload = json.loads(request.POST['json'])
 
         if 'ftl_folder' in payload and payload['ftl_folder']:

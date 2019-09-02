@@ -27,10 +27,10 @@ export const createThumbFromUrl = function (url) {
           resolve(canvas.toDataURL());
         });
       }).catch(function () {
-        reject("pdf thumb error: could not open page 1 of document " + filePath + ". Not a pdf ?");
+        reject("pdf thumb error: could not open page 1 of document " + url + ". Not a pdf ?");
       });
     }).catch(function () {
-      reject("pdf thumb error: could not find or open document " + filePath + ". Not a pdf ?");
+      reject("pdf thumb error: could not find or open document " + url + ". Not a pdf ?");
     });
   });
 };
