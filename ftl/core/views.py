@@ -20,7 +20,7 @@ from core.errors import get_api_error
 from core.models import FTLDocument, FTLFolder
 from core.processing.ftl_processing import FTLDocumentProcessing
 from core.serializers import FTLDocumentSerializer, FTLFolderSerializer
-from ftl.enums import FTLStorages
+from ftl.enums import FTLStorages, FTLPlugins
 
 ftl_doc_processing = FTLDocumentProcessing(settings.FTL_DOC_PROCESSING_PLUGINS)
 
@@ -96,7 +96,16 @@ class FTLDocumentDetail(generics.RetrieveUpdateDestroyAPIView):
 
     def perform_update(self, serializer):
         instance = serializer.save(org=self.request.user.org)
-        ftl_doc_processing.apply_processing(instance)
+        force_processing = set
+        if serializer.initial_data and 'title' in serializer.initial_data:
+            if serializer.instance.title != serializer.initial_data['title']:
+                force_processing.add(FTLPlugins.SEARCH_ENGINE_PGSQL_TSVECTOR)
+
+        if serializer.initial_data and 'note' in serializer.initial_data:
+            if serializer.instance.title != serializer.initial_data['note']:
+                force_processing.add(FTLPlugins.SEARCH_ENGINE_PGSQL_TSVECTOR)
+
+        ftl_doc_processing.apply_processing(instance, force_processing)
 
 
 class FTLDocumentThumbnail(views.APIView):
