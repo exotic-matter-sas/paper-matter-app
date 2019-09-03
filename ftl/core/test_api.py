@@ -13,7 +13,7 @@ from core.models import FTLDocument, FTLFolder
 from core.processing.ftl_processing import FTLDocumentProcessing
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_document, setup_folder
-from ftl.enums import FTLStorages
+from ftl.enums import FTLStorages, FTLPlugins
 from ftl.settings import BASE_DIR
 
 
@@ -197,6 +197,32 @@ class DocumentsTests(APITestCase):
         self.assertEqual(client_doc_level['title'], client_doc['title'])
         self.assertEqual(client_doc_level['note'], client_doc['note'])
         self.assertEqual(client_doc_level['ftl_folder'], client_doc['ftl_folder'])
+
+    @patch.object(FTLDocumentProcessing, 'apply_processing')
+    def test_rename_document_reapply_tsvector_proc(self, mock_apply_processing):
+        client_get = self.client.patch(f'/app/api/v1/documents/{self.doc.pid}',
+                                       {'title': 'renamed'},
+                                       format='json')
+        self.assertEqual(client_get.status_code, status.HTTP_200_OK)
+
+        # tsvector processing should be forced on rename
+        mock_apply_processing.assert_called_once()
+        call = mock_apply_processing.call_args_list[0]
+        args, kwarg = call
+        self.assertIn(FTLPlugins.SEARCH_ENGINE_PGSQL_TSVECTOR, args[1])
+
+    @patch.object(FTLDocumentProcessing, 'apply_processing')
+    def test_annotate_document_reapply_tsvector_proc(self, mock_apply_processing):
+        client_get = self.client.patch(f'/app/api/v1/documents/{self.doc.pid}',
+                                       {'note': 'reannoted'},
+                                       format='json')
+        self.assertEqual(client_get.status_code, status.HTTP_200_OK)
+
+        # tsvector processing should be forced on rename
+        mock_apply_processing.assert_called_once()
+        call = mock_apply_processing.call_args_list[0]
+        args, kwarg = call
+        self.assertIn(FTLPlugins.SEARCH_ENGINE_PGSQL_TSVECTOR, args[1])
 
 
 class DocumentsSearchTests(APITestCase):

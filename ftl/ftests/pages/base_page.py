@@ -242,7 +242,7 @@ class BasePage(LIVE_SERVER):
         self.wait_for_elem_text_to_be_valid(css_selector, validator, timeout)
 
     def close_last_notification(self):
-        self.wait_for_elem_to_show(self.notification)
+        self.wait_for_elem_to_show(self.close_notification)
         self.get_elem(self.close_notification).click()
         self.wait_for_elem_to_disappear(self.notification)
 
