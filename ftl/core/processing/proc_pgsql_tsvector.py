@@ -9,6 +9,7 @@ SEARCH_VECTOR = SearchVector('content_text', weight='C', config=F('language')) \
 
 
 class FTLSearchEnginePgSQLTSVector(FTLDocProcessingBase):
-    def process(self, ftl_doc):
-        ftl_doc.tsvector = SEARCH_VECTOR
-        ftl_doc.save()
+    def process(self, ftl_doc, force):
+        if force or not ftl_doc.tsvector:
+            ftl_doc.tsvector = SEARCH_VECTOR
+            ftl_doc.save()

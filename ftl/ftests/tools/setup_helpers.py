@@ -53,7 +53,7 @@ def setup_document(org, ftl_user, ftl_folder=None, title=tv.DOCUMENT1_TITLE, not
     )
     # Update document to allow PGSQL to process search vector
     vector_plugin = FTLSearchEnginePgSQLTSVector()
-    vector_plugin.process(document)
+    vector_plugin.process(document, False)
 
     return document
 
