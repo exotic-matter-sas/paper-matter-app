@@ -5,8 +5,8 @@
            :style="{'background-image': 'url(' + doc.thumbnail_url + ')'}"
            @click="$emit('event-open-doc', doc.pid)"></div>
       <b-card-body>
-        <b-card-title class="text-truncate document-title" @click="$emit('event-open-doc', doc.pid)">
-          {{ doc.title }}
+        <b-card-title class="text-truncate document-title">
+          <b-form-checkbox class="m-1" v-model="selected">{{ doc.title }}</b-form-checkbox>
         </b-card-title>
         <b-button class="m-1" variant="secondary" size="sm" :href="'uploads/' + doc.pid">
           <font-awesome-icon icon="file-download" :alt="this.$_('Download')"/>
@@ -38,7 +38,8 @@
 
     data() {
       return {
-        deleting: false
+        deleting: false,
+        selected: false
       }
     },
 
