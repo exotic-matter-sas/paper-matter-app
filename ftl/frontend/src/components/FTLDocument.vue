@@ -1,12 +1,12 @@
 <template>
   <b-col cols="12" mb="4" sm="6" md="4" lg="3" xl="2" class="mb-3 document-thumbnail" :id="doc.pid">
-    <div class="card">
+    <div class="card" :class="{'selected': storeSelected}">
       <div class="card-img-top" slot="aside"
            :style="{'background-image': 'url(' + doc.thumbnail_url + ')'}"
            @click="$emit('event-open-doc', doc.pid)"></div>
       <b-card-body>
         <b-card-title class="text-truncate document-title">
-          <b-form-checkbox class="m-1" v-model="selected">{{ doc.title }}</b-form-checkbox>
+          <b-form-checkbox class="m-1" v-model="storeSelected">{{ doc.title }}</b-form-checkbox>
         </b-card-title>
         <b-button class="m-1" variant="secondary" size="sm" :href="'uploads/' + doc.pid">
           <font-awesome-icon icon="file-download" :alt="this.$_('Download')"/>
@@ -39,7 +39,24 @@
     data() {
       return {
         deleting: false,
-        selected: false
+      }
+    },
+
+    computed: {
+      storeSelected: {
+        get: function () {
+          // check the box if we found the document in the selected document list in vuex store
+          return this.$store.state.selectedDocumentsHome.findIndex(x => x.pid === this.doc.pid) > -1;
+        },
+
+        set: function (value) {
+          // update the store
+          if (value === true) {
+            this.$store.commit("selectDocument", this.doc)
+          } else {
+            this.$store.commit("unselectDocument", this.doc)
+          }
+        }
       }
     },
 
@@ -89,6 +106,11 @@
 
   .card {
     border-color: rgba(0, 0, 0, 0.250);
+  }
+
+  .selected {
+    border-width: 2px;
+    border-color: map_get($theme-colors, 'active');
   }
 
   .card:hover {

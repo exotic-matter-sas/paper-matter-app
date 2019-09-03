@@ -6,7 +6,8 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     selectedMoveTargetFolder: null,
-    panelSelectedFolder: null
+    panelSelectedFolder: null,
+    selectedDocumentsHome: []
   },
   mutations: {
     selectMoveTargetFolder: function (state, folder) {
@@ -15,6 +16,21 @@ export default new Vuex.Store({
 
     selectPanelFolder: function (state, folder) {
       state.panelSelectedFolder = folder;
+    },
+
+    selectDocument: function (state, document) {
+      state.selectedDocumentsHome.push(document);
+    },
+
+    unselectDocument: function (state, document) {
+      const foundIndex = state.selectedDocumentsHome.findIndex(x => x.pid === document.pid);
+      if (foundIndex > -1) {
+        state.selectedDocumentsHome.splice(foundIndex, 1);
+      }
+    },
+
+    unselectAllDocuments: function (state) {
+      state.selectedDocumentsHome = [];
     }
   },
   actions: {}

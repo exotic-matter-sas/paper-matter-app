@@ -31,6 +31,15 @@
         </b-col>
       </b-row>
 
+      <b-row v-if="documentsSelected.length" id="action-selected-documents" align-h="end">
+        <b-col>
+          <b-button variant="link" @click="$store.commit('unselectAllDocuments')">{{ $_('Deselect all') }}</b-button>
+          {{ $_('%s documents selected', [documentsSelected.length])}}
+          <b-button variant="secondary" class="m-1" size="sm" v-b-modal="'modal-move-documents'">Move</b-button>
+          <b-button variant="danger" class="m-1" size="sm" v-b-modal="'modal-delete-documents'">Delete</b-button>
+        </b-col>
+      </b-row>
+
       <b-row class="my-3" id="documents-list">
         <b-col v-if="docsLoading">
           <b-spinner class="mx-auto" id="documents-list-loader"
@@ -86,9 +95,24 @@
         :parent="getCurrentFolder"
         @event-folder-created="folderCreated"/>
 
-      <FTLMoveDocument
-        :doc="currentOpenDoc"
+      <!-- For document panel Move button -->
+      <FTLMoveDocuments
+        v-if="currentOpenDoc"
+        id="modal-move-document"
+        :docs="[currentOpenDoc]"
         @event-document-moved="documentDeleted"/>
+
+      <!-- For batch action move document -->
+      <FTLMoveDocuments
+        v-if="documentsSelected.length > 0"
+        id="modal-move-documents"
+        :docs="documentsSelected"
+        @event-document-moved="documentDeleted"/>
+
+      <FTLDeleteDocuments
+        v-if="documentsSelected.length > 0"
+        :docs="documentsSelected"
+        @event-document-deleted="documentDeleted"/>
     </b-col>
   </main>
 </template>
@@ -99,17 +123,20 @@
   import FTLDocument from '@/components/FTLDocument';
   import FTLUpload from '@/components/FTLUpload';
   import FTLNewFolder from "@/components/FTLNewFolder";
+  import FTLDeleteDocuments from "@/components/FTLDeleteDocuments";
   import FTLThumbnailGenMixin from "@/components/FTLThumbnailGenMixin";
+  import FTLMoveDocuments from "@/components/FTLMoveDocuments";
   import axios from 'axios';
   import qs from 'qs';
-  import FTLMoveDocument from "@/components/FTLMoveDocument";
+
 
   export default {
     name: 'home',
     mixins: [FTLThumbnailGenMixin],
 
     components: {
-      FTLMoveDocument,
+      FTLDeleteDocuments,
+      FTLMoveDocuments,
       FTLNewFolder,
       FTLFolder,
       FTLDocument,
@@ -190,6 +217,9 @@
         } else if (this.$route.name === 'home-search') {
           // Do something? Nothing for now
         }
+
+        // Clear the selected documents when moving between folders
+        this.$store.commit("unselectAllDocuments");
       }
     },
 
@@ -223,6 +253,15 @@
             }
           }
         }));
+      },
+
+      documentsSelected: function () {
+        // FIXME SLOW
+        // filter selected document with the current docs list
+        // it's avoid edge case like documents being selected while not being in the current folder
+        // cases such as: moved or deleted documents which were selected
+        const flapDocs = this.docs.flatMap(x => x.pid);
+        return this.$store.state.selectedDocumentsHome.filter(x => flapDocs.includes(x.pid));
       }
     },
 
