@@ -182,6 +182,7 @@ class ProcPGsqlTests(TestCase):
     def test_process(self):
         pgsql = FTLSearchEnginePgSQLTSVector()
         doc = Mock()
+        doc.tsvector = None
         pgsql.process(doc, False)
 
         self.assertEqual(doc.tsvector, SEARCH_VECTOR)

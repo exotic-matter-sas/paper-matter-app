@@ -1,5 +1,5 @@
 import os
-from unittest import skipIf
+from unittest import skipIf, skip
 from unittest.mock import patch
 
 from django import db
@@ -117,7 +117,7 @@ class NewUserAddDocumentInsideFolder(SignupPages, LoginPage, HomePage, DocumentV
         self.assertEqual(pdf_viewer_iframe_title, 'PDF.js viewer')
 
 
-class TikaDocumentIndexationAndSearch(LoginPage, HomePage):
+class TikaDocumentIndexationAndSearch(LoginPage, HomePage, DocumentViewPage):
     def setUp(self, **kwargs):
         # first org, admin, user are already created, user is already logged on home page
         super().setUp()
@@ -130,7 +130,6 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage):
     def tearDown(self):
         """ Additional teardown required to shutdown indexation thread and associated DB connection"""
         views.ftl_doc_processing.executor.submit(db.connections.close_all)
-        views.ftl_doc_processing.executor.shutdown()
         super().tearDown()
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
@@ -159,3 +158,43 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage):
         # Only the second document appears in search results
         self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
         self.assertEqual(second_document_title, self.get_elem(self.first_document_title).text)
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_search_renamed_doc(self):
+        # User upload 2 documents
+        self.upload_document()
+        second_document_title = 'green.pdf'
+        self.upload_document(os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', second_document_title))
+
+        # User wait for document to be indexed
+        # TODO replace by a wait_for_element_to_disappear when a indexing indicator is implemented
+        queryset = FTLDocument.objects.annotate(tsvector_length=Func(F('tsvector'), function='length'))
+
+        def query_set_validator(query_set):
+            if len(query_set) == 2:
+                return True
+            else:
+                return False
+
+        self._wait_for_method_to_return(queryset.filter, 60, custom_return_validator=query_set_validator,
+                                        tsvector_length__gt=0)
+
+        # Refresh page to display documents
+        self.visit(HomePage.url)
+
+        # User open second document and rename it
+        self.get_elem(self.first_document_title).click()
+        new_title = 'bingo!'
+        self.rename_document(new_title)
+        self.close_document()
+
+        # user search for document using its new title
+        self.search_document(new_title)
+
+        # the second uploaded document appears in search results
+        self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
+        self.assertEqual(new_title, self.get_elem_text(self.first_document_title))
+
+    @skip('TODO when document note implemented in UI')  # TODO
+    def test_search_re_annotted_doc(self):
+        pass
