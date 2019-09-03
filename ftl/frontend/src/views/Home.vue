@@ -100,7 +100,7 @@
       <FTLRenameDocument
         v-if="currentOpenDoc.pid"
         :doc="currentOpenDoc"
-        @event-document-renamed="documentRenamed"/>
+        @event-document-renamed="documentUpdated"/>
     </b-col>
   </main>
 </template>
@@ -427,11 +427,6 @@
         this.refreshFolders();
       },
 
-      documentRenamed: function (document) {
-        this.currentOpenDoc = document;
-        this.updateDocuments();
-      },
-
       documentDeleted: function (event) {
         const doc = event.doc;
         const foundIndex = this.docs.findIndex(x => x.pid === doc.pid);
@@ -439,9 +434,12 @@
       },
 
       documentUpdated: function (event) {
+        if (this.currentOpenDoc.pid === event.doc.pid){
+          this.currentOpenDoc = event.doc; // update open doc
+        }
         const doc = event.doc;
         const foundIndex = this.docs.findIndex(x => x.pid === doc.pid);
-        this.docs[foundIndex] = doc;
+        this.docs[foundIndex] = doc; // update doc in the list
       }
     }
   }

@@ -44,7 +44,7 @@
         axios
           .patch('/app/api/v1/documents/' + this.doc.pid, body, axiosConfig)
           .then(response => {
-            this.$emit('event-document-renamed', response.data);
+            this.$emit('event-document-renamed', {doc : response.data});
             this.mixinAlert('Document successfully renamed');
           })
           .catch(error => {
