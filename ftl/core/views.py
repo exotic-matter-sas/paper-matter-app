@@ -95,7 +95,6 @@ class FTLDocumentDetail(generics.RetrieveUpdateDestroyAPIView):
         return FTLDocument.objects.filter(org=self.request.user.org)
 
     def perform_update(self, serializer):
-        instance = serializer.save(org=self.request.user.org)
         force_processing = set()
         if serializer.initial_data and 'title' in serializer.initial_data:
             if serializer.instance.title != serializer.initial_data['title']:
@@ -105,6 +104,7 @@ class FTLDocumentDetail(generics.RetrieveUpdateDestroyAPIView):
             if serializer.instance.title != serializer.initial_data['note']:
                 force_processing.add(FTLPlugins.SEARCH_ENGINE_PGSQL_TSVECTOR)
 
+        instance = serializer.save(org=self.request.user.org)
         ftl_doc_processing.apply_processing(instance, list(force_processing))
 
 
