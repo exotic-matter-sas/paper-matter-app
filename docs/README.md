@@ -10,7 +10,7 @@ Install MkDocs :
 
 ## Run dev server to preview html documentation
 
-    python -m mkdocs serve --a localhost:8001
+    python -m mkdocs serve -a localhost:8001
 
 ## Generate doc static files for production
 
