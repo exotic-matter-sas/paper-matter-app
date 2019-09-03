@@ -52,7 +52,7 @@
         axios
           .delete('/app/api/v1/folders/' + this.folder.id, axiosConfig)
           .then(response => {
-            this.$emit("event-folder-deleted", this.folder);
+            this.$emit("event-folder-deleted", {'folder': this.folder});
             this.$nextTick(() => {
               vi.$bvModal.hide("modal-delete-folder");
             })

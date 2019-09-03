@@ -38,7 +38,7 @@
         </b-col>
         <b-col v-else-if="docs.length">
           <b-row tag="section">
-            <FTLDocument v-for="doc in docs" :key="doc.pid" :doc="doc" @event-delete-doc="updateDocuments"
+            <FTLDocument v-for="doc in docs" :key="doc.pid" :doc="doc" @event-delete-doc="documentDeleted"
                          @event-open-doc="navigateToDocument"/>
           </b-row>
         </b-col>
@@ -95,7 +95,7 @@
 
       <FTLMoveDocument
         :doc="currentOpenDoc"
-        @event-document-moved="updateDocuments"/>
+        @event-document-moved="documentDeleted"/>
 
       <FTLRenameDocument
         v-if="currentOpenDoc.pid"
@@ -430,6 +430,18 @@
       documentRenamed: function (document) {
         this.currentOpenDoc = document;
         this.updateDocuments();
+      },
+
+      documentDeleted: function (event) {
+        const doc = event.doc;
+        const foundIndex = this.docs.findIndex(x => x.pid === doc.pid);
+        this.docs.splice(foundIndex, 1);
+      },
+
+      documentUpdated: function (event) {
+        const doc = event.doc;
+        const foundIndex = this.docs.findIndex(x => x.pid === doc.pid);
+        this.docs[foundIndex] = doc;
       }
     }
   }
