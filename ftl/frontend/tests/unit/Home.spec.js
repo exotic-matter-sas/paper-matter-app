@@ -22,6 +22,7 @@ localVue.prototype.$moment = () => {
   return {fromNow: jest.fn()}
 };
 localVue.prototype.$router = {push: jest.fn()}; // router mock
+localVue.prototype.$store = {commit: jest.fn()}; // vuex mock
 const mockedRouteName = jest.fn();
 localVue.prototype.$route = {
   get name() {
