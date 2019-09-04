@@ -1,11 +1,12 @@
 <template>
-  <b-modal id="modal-delete-documents"
+  <b-modal :id="id"
            :title="$_('Delete documents')"
            ok-variant="danger"
            :ok-title="$_('Delete')"
            :cancel-title="$_('Cancel')"
            @ok="deleteDocuments">
-    {{ $_('Please confirm that you want to delete %s documents', [docs.length]) }}
+    <span v-if="docs.length > 1">{{ $_('Please confirm that you want to delete %s documents', [docs.length]) }}</span>
+    <span v-else>{{ $_('Please confirm that you want to delete %s', [docs[0].title])}}</span>
   </b-modal>
 </template>
 <script>
@@ -17,6 +18,13 @@
     name: 'FTLDeleteDocuments',
 
     props: {
+      // customize the id to allow multiple time this component in Home
+      // Used one time for batch delete document
+      // TODO next, in doc panel?
+      id: {
+        type: String,
+        default: "modal-delete-documents"
+      },
       docs: {
         type: Array,
         required: true
