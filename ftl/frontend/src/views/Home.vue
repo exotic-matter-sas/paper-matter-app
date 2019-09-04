@@ -269,12 +269,12 @@
       },
 
       documentsSelected: function () {
-        // FIXME SLOW
-        // filter selected document with the current docs list
+        // filter selected document with the current docs list (SLOW)
         // it's avoid edge case like documents being selected while not being in the current folder
         // cases such as: moved or deleted documents which were selected
-        const flapDocs = this.docs.flatMap(x => x.pid);
-        return this.$store.state.selectedDocumentsHome.filter(x => flapDocs.includes(x.pid));
+        // const flapDocs = this.docs.flatMap(x => x.pid);
+        // return this.$store.state.selectedDocumentsHome.filter(x => flapDocs.includes(x.pid));
+        return this.$store.state.selectedDocumentsHome;
       }
     },
 
@@ -469,6 +469,8 @@
         const doc = event.doc;
         const foundIndex = this.docs.findIndex(x => x.pid === doc.pid);
         this.docs.splice(foundIndex, 1);
+        // remove from selection if necessary
+        this.$store.commit('unselectDocument', doc)
       },
 
       documentUpdated: function (event) {
