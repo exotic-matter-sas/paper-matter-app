@@ -6,7 +6,7 @@ import flushPromises from "flush-promises"; // needed for async tests
 import * as tv from './../tools/testValues.js'
 import {axiosConfig} from "../../src/constants";
 
-import FTLMoveDocument from "../../src/components/FTLMoveDocument";
+import FTLMoveDocuments from "../../src/components/FTLMoveDocuments";
 
 const localVue = createLocalVue();
 
@@ -43,10 +43,10 @@ describe('Component template', () => {
   let wrapper;
   beforeEach(() => {
     // set mocked component methods return value before shallowMount
-    wrapper = shallowMount(FTLMoveDocument, {
+    wrapper = shallowMount(FTLMoveDocuments, {
       localVue,
       propsData: {
-        doc: documentProp
+        docs: [documentProp]
       },
       computed: {
         selectedMoveTargetFolder: mockedSelectedMoveTargetFolder,
@@ -61,20 +61,20 @@ describe('Component template', () => {
   });
 
   it('renders properly html element', () => {
-    const elementSelector = '#modal-move-document';
+    const elementSelector = '#modal-move-documents';
     const elem = wrapper.find(elementSelector);
     expect(elem.is(elementSelector)).toBe(true);
   });
 });
 
-describe('FTLMoveDocument computed', () => {
+describe('FTLMoveDocuments computed', () => {
   let wrapper;
 
   it('getFolder return -1 when doc prop has no parent', () => {
-    wrapper = shallowMount(FTLMoveDocument, {
+    wrapper = shallowMount(FTLMoveDocuments, {
       localVue,
       propsData: {
-        doc: documentProp
+        docs: [documentProp]
       },
       computed: {
         selectedMoveTargetFolder: mockedSelectedMoveTargetFolder
@@ -91,9 +91,9 @@ describe('FTLMoveDocument computed', () => {
 
   it('getFolder return parent ftl_folder id when doc prop has one', () => {
     const doc = tv.DOCUMENT_PROPS_WITH_FOLDER;
-    wrapper = shallowMount(FTLMoveDocument, {
+    wrapper = shallowMount(FTLMoveDocuments, {
       localVue,
-      propsData: {doc},
+      propsData: {docs: [doc]},
       computed: {
         selectedMoveTargetFolder: mockedSelectedMoveTargetFolder
       }
@@ -112,10 +112,10 @@ describe('FTLMoveDocument computed', () => {
   });
 
   it('isRoot return true when doc props get no parent', () => {
-    wrapper = shallowMount(FTLMoveDocument, {
+    wrapper = shallowMount(FTLMoveDocuments, {
       localVue,
       propsData: {
-        doc: documentProp
+        docs: [documentProp]
       },
       computed: {
         selectedMoveTargetFolder: mockedSelectedMoveTargetFolder
@@ -131,10 +131,10 @@ describe('FTLMoveDocument computed', () => {
   });
 
   it('isRoot return false when doc props get parent', () => {
-    wrapper = shallowMount(FTLMoveDocument, {
+    wrapper = shallowMount(FTLMoveDocuments, {
       localVue,
       propsData: {
-        doc: tv.DOCUMENT_PROPS_WITH_FOLDER
+        docs: [tv.DOCUMENT_PROPS_WITH_FOLDER]
       },
       computed: {
         selectedMoveTargetFolder: mockedSelectedMoveTargetFolder
@@ -156,9 +156,9 @@ describe('Component methods call api', () => {
     axios.patch.mockResolvedValue(mockedMoveDocumentResponse);
     mockedSelectedMoveTargetFolder.mockReturnValue(tv.FOLDER_PROPS_VARIANT);
 
-    wrapper = shallowMount(FTLMoveDocument, {
+    wrapper = shallowMount(FTLMoveDocuments, {
       localVue,
-      propsData: {doc: documentProp},
+      propsData: {docs: [documentProp]},
       computed: {
         selectedMoveTargetFolder: mockedSelectedMoveTargetFolder,
         isRoot: mockedIsRoot
@@ -187,9 +187,9 @@ describe('Component methods error handling', () => {
     axios.patch.mockRejectedValue('fakeError');
     mockedSelectedMoveTargetFolder.mockReturnValue(tv.FOLDER_PROPS_VARIANT);
 
-    wrapper = shallowMount(FTLMoveDocument, {
+    wrapper = shallowMount(FTLMoveDocuments, {
       localVue,
-      propsData: {doc: documentProp},
+      propsData: {docs: [documentProp]},
       computed: {
         selectedMoveTargetFolder: mockedSelectedMoveTargetFolder,
         isRoot: mockedIsRoot
@@ -217,9 +217,9 @@ describe('Event emitted by component', () => {
     axios.patch.mockResolvedValue(mockedMoveDocumentResponse);
     mockedSelectedMoveTargetFolder.mockReturnValue(mockedSelectedMoveTargetFolderResponse);
 
-    wrapper = shallowMount(FTLMoveDocument, {
+    wrapper = shallowMount(FTLMoveDocuments, {
       localVue,
-      propsData: {doc: documentProp},
+      propsData: {docs: [documentProp]},
       computed: {
         selectedMoveTargetFolder: mockedSelectedMoveTargetFolder,
         isRoot: mockedIsRoot

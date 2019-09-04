@@ -117,7 +117,7 @@
         @event-document-moved="documentDeleted"/>
 
       <FTLRenameDocument
-        v-if="currentOpenDoc.pid"
+        v-if="currentOpenDoc"
         :doc="currentOpenDoc"
         @event-document-renamed="documentUpdated"/>
 

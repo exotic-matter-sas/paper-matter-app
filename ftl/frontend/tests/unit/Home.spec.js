@@ -112,19 +112,25 @@ const mockedFolderCreated = jest.fn();
 const mockedBreadcrumb = jest.fn();
 const mockedDocumentDeleted = jest.fn();
 const mockedDocumentUpdated = jest.fn();
+const mockedDocumentsSelected = jest.fn();
 
 const mountedMocks = {
   updateDocuments: mockedUpdateDocuments,
   refreshFolders: mockedRefreshFolders,
+  documentUpdated: mockedDocumentUpdated
 };
 
 describe('Home template', () => {
   let wrapper;
 
   beforeEach(() => {
+    mockedDocumentsSelected.mockReturnValue([]);
     wrapper = shallowMount(Home, {
       localVue,
-      methods: mountedMocks
+      methods: mountedMocks,
+      computed: {
+        documentsSelected: mockedDocumentsSelected
+      }
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
@@ -140,6 +146,7 @@ describe('Home computed', () => {
 
   beforeEach(() => {
     mockedComputeFolderUrlPath.mockReturnValue(fakePath);
+    mockedDocumentsSelected.mockReturnValue([]);
     wrapper = shallowMount(Home, {
       localVue,
       methods: Object.assign(
@@ -150,6 +157,9 @@ describe('Home computed', () => {
         },
         mountedMocks
       ),
+      computed: {
+        documentsSelected: mockedDocumentsSelected
+      }
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
@@ -207,11 +217,15 @@ describe('Home mounted call proper methods with given props', () => {
   });
 
   it('mounted call proper methods without props', () => {
+    mockedDocumentsSelected.mockReturnValue([]);
     shallowMount(Home, {
       localVue,
       methods: {
         refreshFolders: mockedRefreshFolders,
         updateDocuments: mockedUpdateDocuments,
+      },
+      computed: {
+        documentsSelected: mockedDocumentsSelected
       }
     });
 
@@ -228,6 +242,9 @@ describe('Home mounted call proper methods with given props', () => {
         refreshFolders: mockedRefreshFolders,
         updateDocuments: mockedUpdateDocuments,
         openDocument: mockedOpenDocument
+      },
+      computed: {
+        documentsSelected: mockedDocumentsSelected
       },
       propsData: {doc: tv.DOCUMENT_PROPS}
     });
@@ -247,6 +264,9 @@ describe('Home mounted call proper methods with given props', () => {
         refreshFolders: mockedRefreshFolders,
         updateDocuments: mockedUpdateDocuments,
         updateFoldersPath: mockedUpdateFoldersPath
+      },
+      computed: {
+        documentsSelected: mockedDocumentsSelected
       },
       propsData: {folder: current_folder}
     });
@@ -268,6 +288,9 @@ describe('Home mounted call proper methods with given props', () => {
         updateDocuments: mockedUpdateDocuments,
         refreshDocumentWithSearch: mockedRefreshDocumentWithSearch
       },
+      computed: {
+        documentsSelected: mockedDocumentsSelected
+      },
       propsData: {searchQuery: search_query}
     });
 
@@ -284,6 +307,7 @@ describe('Home watchers call proper methods', () => {
   let wrapper;
 
   beforeEach(() => {
+    mockedDocumentsSelected.mockReturnValue([]);
     wrapper = shallowMount(Home, {
       localVue,
       methods: Object.assign(
@@ -295,6 +319,9 @@ describe('Home watchers call proper methods', () => {
         },
         mountedMocks
       ),
+      computed: {
+        documentsSelected: mockedDocumentsSelected
+      }
     });
     jest.clearAllMocks();
   });
@@ -373,6 +400,7 @@ describe('Home methods call proper methods', () => {
   beforeEach(() => {
     mockedGetCurrentFolder.mockReturnValue(fakeCurrentFolder);
     mockedComputeFolderUrlPath.mockReturnValue(fakePath);
+    mockedDocumentsSelected.mockReturnValue([]);
     wrapper = shallowMount(Home, {
       localVue,
       methods: Object.assign(
@@ -386,7 +414,8 @@ describe('Home methods call proper methods', () => {
         mountedMocks
       ),
       computed: {
-        getCurrentFolder: mockedGetCurrentFolder
+        getCurrentFolder: mockedGetCurrentFolder,
+        documentsSelected: mockedDocumentsSelected
       }
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
@@ -510,7 +539,7 @@ describe('Home methods call proper methods', () => {
     const documentToDelete = tv.DOCUMENT_NO_THUMB_PROPS_2;
     const originalDocumentsList = [tv.DOCUMENT_NO_THUMB_PROPS, documentToDelete];
     const originalDocumentsListLength = originalDocumentsList.length;
-    wrapper.setData({docs : originalDocumentsList});
+    wrapper.setData({docs: originalDocumentsList});
 
     // when
     wrapper.vm.documentDeleted({doc: documentToDelete});
@@ -524,7 +553,7 @@ describe('Home methods call proper methods', () => {
     const documentToUpdate = tv.DOCUMENT_NO_THUMB_PROPS_2;
     const originalDocumentsList = [tv.DOCUMENT_NO_THUMB_PROPS, documentToUpdate];
     const originalDocumentsListLength = originalDocumentsList.length;
-    wrapper.setData({docs : originalDocumentsList});
+    wrapper.setData({docs: originalDocumentsList});
 
     // when
     const documentUpdated = Object.assign({}, documentToUpdate); // shallow copy
@@ -543,6 +572,7 @@ describe('Home methods return proper value', () => {
   let wrapper;
 
   beforeEach(() => {
+    mockedDocumentsSelected.mockReturnValue([]);
     wrapper = shallowMount(Home, {
       localVue,
       methods: Object.assign(
@@ -553,6 +583,9 @@ describe('Home methods return proper value', () => {
         },
         mountedMocks
       ),
+      computed: {
+        documentsSelected: mockedDocumentsSelected
+      }
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
@@ -573,6 +606,7 @@ describe('Home methods error handling', () => {
   let wrapper;
 
   beforeEach(() => {
+    mockedDocumentsSelected.mockReturnValue([]);
     wrapper = shallowMount(Home, {
       localVue,
       methods: Object.assign(
@@ -581,7 +615,10 @@ describe('Home methods error handling', () => {
           refreshDocumentWithSearch: mockedRefreshDocumentWithSearch,
         },
         mountedMocks
-      )
+      ),
+      computed: {
+        documentsSelected: mockedDocumentsSelected
+      }
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
@@ -605,6 +642,7 @@ describe('Home methods call proper api', () => {
   let wrapper;
 
   beforeEach(() => {
+    mockedDocumentsSelected.mockReturnValue([]);
     wrapper = shallowMount(Home, {
         localVue,
         methods: Object.assign(
@@ -617,7 +655,8 @@ describe('Home methods call proper api', () => {
           mountedMocks
         ),
         computed: {
-          breadcrumb: mockedBreadcrumb
+          breadcrumb: mockedBreadcrumb,
+          documentsSelected: mockedDocumentsSelected
         }
       }
     );
@@ -682,6 +721,7 @@ describe('Home event handling', () => {
   let wrapper;
 
   beforeEach(() => {
+    mockedDocumentsSelected.mockReturnValue([]);
     wrapper = shallowMount(Home, {
       localVue,
       methods: Object.assign(
@@ -696,7 +736,10 @@ describe('Home event handling', () => {
           documentUpdated: mockedDocumentUpdated
         },
         mountedMocks
-      )
+      ),
+      computed: {
+        documentsSelected: mockedDocumentsSelected
+      }
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
