@@ -158,7 +158,7 @@ describe('Component methods call api', () => {
 
     wrapper = shallowMount(FTLMoveDocuments, {
       localVue,
-      propsData: {docs: [documentProp]},
+      propsData: {docs: [documentProp, tv.DOCUMENT_PROPS_WITH_FOLDER]},
       computed: {
         selectedMoveTargetFolder: mockedSelectedMoveTargetFolder,
         isRoot: mockedIsRoot
@@ -177,7 +177,12 @@ describe('Component methods call api', () => {
       {ftl_folder: tv.FOLDER_PROPS_VARIANT.id},
       axiosConfig
     );
-    expect(axios.patch).toHaveBeenCalledTimes(1);
+    expect(axios.patch).toHaveBeenCalledWith(
+      '/app/api/v1/documents/' + tv.DOCUMENT_PROPS_WITH_FOLDER.pid,
+      {ftl_folder: tv.FOLDER_PROPS_VARIANT.id},
+      axiosConfig
+    );
+    expect(axios.patch).toHaveBeenCalledTimes(2);
   });
 });
 
