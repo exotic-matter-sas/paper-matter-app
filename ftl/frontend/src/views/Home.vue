@@ -69,12 +69,14 @@
                centered
                @hidden="closeDocument">
         <template slot="modal-title">
-          <span>{{ currentOpenDoc.title }}</span>
-          <span>
-            <b-button id="rename-document" variant="link" v-b-modal="'modal-rename-document'">
-              <font-awesome-icon icon="edit" :title="$_('Rename document')"/>
-            </b-button>
-          </span>
+          <b-row align-v="center">
+            <b-col><span>{{ currentOpenDoc.title }}</span></b-col>
+            <b-col>
+              <b-button id="rename-document" variant="link" v-b-modal="'modal-rename-document'">
+                <font-awesome-icon icon="edit" :title="$_('Rename document')"/>
+              </b-button>
+            </b-col>
+          </b-row>
         </template>
         <b-container class="h-100">
           <b-row class="h-100">
