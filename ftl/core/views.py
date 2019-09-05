@@ -12,7 +12,7 @@ from django.shortcuts import render, get_object_or_404
 from django.utils.http import http_date
 from django.views import View
 from mptt.exceptions import InvalidMove
-from rest_framework import generics, views, serializers
+from rest_framework import generics, views, serializers, filters
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 
@@ -65,6 +65,8 @@ class DownloadView(views.APIView):
 
 class FTLDocumentList(generics.ListAPIView):
     serializer_class = FTLDocumentSerializer
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['created', 'title']
 
     def get_queryset(self):
         current_folder = self.request.query_params.get('level', None)

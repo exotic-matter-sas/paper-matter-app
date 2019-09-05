@@ -31,6 +31,17 @@
         </b-col>
       </b-row>
 
+      <b-row class="my-3" id="documents-sort" align-h="end">
+        <b-col cols="*">
+          <b-dropdown id="dropdown-right" size="sm" right :text="$_('Sort')" variant="primary" class="m-2">
+            <b-dropdown-item href="#">A-Z</b-dropdown-item>
+            <b-dropdown-item href="#">Z-A</b-dropdown-item>
+            <b-dropdown-item href="#">Recent first</b-dropdown-item>
+            <b-dropdown-item href="#">Older first</b-dropdown-item>
+          </b-dropdown>
+        </b-col>
+      </b-row>
+
       <b-row class="my-3" id="documents-list">
         <b-col v-if="docsLoading">
           <b-spinner class="mx-auto" id="documents-list-loader"
@@ -143,6 +154,7 @@
         docsLoading: false,
         moreDocsLoading: false,
         moreDocs: null,
+        sort: 'recent',
 
         // Folders list and breadcrumb
         folders: [],
@@ -434,7 +446,7 @@
       },
 
       documentUpdated: function (event) {
-        if (this.currentOpenDoc.pid === event.doc.pid){
+        if (this.currentOpenDoc.pid === event.doc.pid) {
           this.currentOpenDoc = event.doc; // update open doc
         }
         const doc = event.doc;
