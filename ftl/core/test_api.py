@@ -46,7 +46,7 @@ class DocumentsTests(APITestCase):
         self.assertEqual(client_get.data['count'], 2)
         self.assertEqual(len(client_get.data['results']), 2)
 
-    def test_list_documents_order(self):
+    def test_list_documents_order_recent(self):
         ftl_document_first = FTLDocument.objects.get(pid=self.doc.pid)
         ftl_document_second = FTLDocument.objects.get(pid=self.doc_bis.pid)
 
@@ -65,6 +65,71 @@ class DocumentsTests(APITestCase):
         self.assertEqual(client_doc_2['title'], ftl_document_first.title)
         self.assertEqual(client_doc_2['note'], ftl_document_first.note)
         self.assertEqual(client_doc_2['ftl_folder'], ftl_document_first.ftl_folder)
+
+    def test_list_documents_order_older(self):
+        ftl_document_first = FTLDocument.objects.get(pid=self.doc.pid)
+        ftl_document_second = FTLDocument.objects.get(pid=self.doc_bis.pid)
+
+        client_get = self.client.get('/app/api/v1/documents?ordering=created', format='json')
+        self.assertEqual(client_get.status_code, status.HTTP_200_OK)
+
+        client_doc_1 = client_get.data['results'][0]
+        self.assertEqual(client_doc_1['pid'], str(ftl_document_first.pid))
+
+        client_doc_2 = client_get.data['results'][1]
+        self.assertEqual(client_doc_2['pid'], str(ftl_document_second.pid))
+
+    def test_list_documents_order_az(self):
+        FTLDocument.objects.all().delete()
+
+        doc_efg = setup_document(self.org, self.user, title='EFG')
+        doc_bcd = setup_document(self.org, self.user, title='BCD')
+        doc_abc = setup_document(self.org, self.user, title='ABC')
+
+        ftl_document_first = FTLDocument.objects.get(pid=doc_abc.pid)
+        ftl_document_second = FTLDocument.objects.get(pid=doc_bcd.pid)
+        ftl_document_third = FTLDocument.objects.get(pid=doc_efg.pid)
+
+        client_get = self.client.get('/app/api/v1/documents?ordering=title', format='json')
+        self.assertEqual(client_get.status_code, status.HTTP_200_OK)
+
+        client_doc_1 = client_get.data['results'][0]
+        self.assertEqual(client_doc_1['pid'], str(ftl_document_first.pid))
+        self.assertEqual(client_doc_1['title'], ftl_document_first.title)
+
+        client_doc_2 = client_get.data['results'][1]
+        self.assertEqual(client_doc_2['pid'], str(ftl_document_second.pid))
+        self.assertEqual(client_doc_2['title'], ftl_document_second.title)
+
+        client_doc_3 = client_get.data['results'][2]
+        self.assertEqual(client_doc_3['pid'], str(ftl_document_third.pid))
+        self.assertEqual(client_doc_3['title'], ftl_document_third.title)
+
+    def test_list_documents_order_za(self):
+        FTLDocument.objects.all().delete()
+
+        doc_efg = setup_document(self.org, self.user, title='EFG')
+        doc_bcd = setup_document(self.org, self.user, title='BCD')
+        doc_abc = setup_document(self.org, self.user, title='ABC')
+
+        ftl_document_first = FTLDocument.objects.get(pid=doc_efg.pid)
+        ftl_document_second = FTLDocument.objects.get(pid=doc_bcd.pid)
+        ftl_document_third = FTLDocument.objects.get(pid=doc_abc.pid)
+
+        client_get = self.client.get('/app/api/v1/documents?ordering=-title', format='json')
+        self.assertEqual(client_get.status_code, status.HTTP_200_OK)
+
+        client_doc_1 = client_get.data['results'][0]
+        self.assertEqual(client_doc_1['pid'], str(ftl_document_first.pid))
+        self.assertEqual(client_doc_1['title'], ftl_document_first.title)
+
+        client_doc_2 = client_get.data['results'][1]
+        self.assertEqual(client_doc_2['pid'], str(ftl_document_second.pid))
+        self.assertEqual(client_doc_2['title'], ftl_document_second.title)
+
+        client_doc_3 = client_get.data['results'][2]
+        self.assertEqual(client_doc_3['pid'], str(ftl_document_third.pid))
+        self.assertEqual(client_doc_3['title'], ftl_document_third.title)
 
     @patch.object(messages, 'success')
     def test_list_documents_added_by_another_user_of_same_org(self, messages_mocked):
