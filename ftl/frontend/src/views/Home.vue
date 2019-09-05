@@ -33,11 +33,20 @@
 
       <b-row class="my-3" id="documents-sort" align-h="end">
         <b-col cols="*">
-          <b-dropdown id="dropdown-right" size="sm" right :text="$_('Sort')" variant="primary" class="m-2">
-            <b-dropdown-item href="#">A-Z</b-dropdown-item>
-            <b-dropdown-item href="#">Z-A</b-dropdown-item>
-            <b-dropdown-item href="#">Recent first</b-dropdown-item>
-            <b-dropdown-item href="#">Older first</b-dropdown-item>
+          <b-dropdown id="dropdown-right" size="sm" right variant="primary" class="m-2">
+            <template slot="button-content">
+              <font-awesome-icon icon="sort"/>
+              {{ $_('Sort')}}
+            </template>
+            <b-dropdown-item-button href="#" @click.prevent="sort = 'az'">{{ $_('A-Z') }}&nbsp;
+              <span v-if="sort === 'az'">&checkmark;</span></b-dropdown-item-button>
+            <b-dropdown-item-button href="#" @click.prevent="sort = 'za'">{{ $_('Z-A') }}&nbsp;
+              <span v-if="sort === 'za'">&checkmark;</span></b-dropdown-item-button>
+            <b-dropdown-divider/>
+            <b-dropdown-item-button href="#" @click.prevent="sort = 'recent'">{{ $_('Recent first') }}&nbsp;
+              <span v-if="sort === 'recent'">&checkmark;</span></b-dropdown-item-button>
+            <b-dropdown-item-button href="#" @click.prevent="sort = 'older'">{{ $_('Older first') }}&nbsp;
+              <span v-if="sort === 'older'">&checkmark;</span></b-dropdown-item-button>
           </b-dropdown>
         </b-col>
       </b-row>
@@ -215,6 +224,11 @@
           }
         } else if (this.$route.name === 'home-search') {
           // Do something? Nothing for now
+        }
+      },
+      sort: function (newVal, oldVal) {
+        if (newVal !== oldVal) {
+          this.updateDocuments()
         }
       }
     },
@@ -398,6 +412,14 @@
           if (this.previousLevels.length > 0) {
             queryString['level'] = this.getCurrentFolder.id;
           }
+        }
+
+        if (this.sort === 'az') {
+          queryString['ordering'] = 'title';
+        } else if (this.sort === 'za') {
+          queryString['ordering'] = '-title';
+        } else if (this.sort === 'older') {
+          queryString['ordering'] = 'created';
         }
 
         let strQueryString = '?' + qs.stringify(queryString);
