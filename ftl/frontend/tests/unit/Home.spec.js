@@ -510,7 +510,7 @@ describe('Home methods call proper methods', () => {
     const documentToDelete = tv.DOCUMENT_NO_THUMB_PROPS_2;
     const originalDocumentsList = [tv.DOCUMENT_NO_THUMB_PROPS, documentToDelete];
     const originalDocumentsListLength = originalDocumentsList.length;
-    wrapper.setData({docs : originalDocumentsList});
+    wrapper.setData({docs: originalDocumentsList});
 
     // when
     wrapper.vm.documentDeleted({doc: documentToDelete});
@@ -524,7 +524,7 @@ describe('Home methods call proper methods', () => {
     const documentToUpdate = tv.DOCUMENT_NO_THUMB_PROPS_2;
     const originalDocumentsList = [tv.DOCUMENT_NO_THUMB_PROPS, documentToUpdate];
     const originalDocumentsListLength = originalDocumentsList.length;
-    wrapper.setData({docs : originalDocumentsList});
+    wrapper.setData({docs: originalDocumentsList});
 
     // when
     const documentUpdated = Object.assign({}, documentToUpdate); // shallow copy
@@ -649,6 +649,51 @@ describe('Home methods call proper api', () => {
 
     // then
     expect(axios.get).toHaveBeenCalledWith('/app/api/v1/documents?level=' + currentFolder.id);
+    expect(axios.get).toHaveBeenCalledTimes(1);
+  });
+
+  it('updateDocuments call api with sorting older', () => {
+    wrapper.setData({sort: 'older'});
+    // restore original method to test it
+    wrapper.setMethods({updateDocuments: Home.methods.updateDocuments});
+
+    axios.get.mockResolvedValue(mockedGetDocumentsResponse);
+
+    // when
+    wrapper.vm.updateDocuments();
+
+    // then
+    expect(axios.get).toHaveBeenCalledWith('/app/api/v1/documents?ordering=created');
+    expect(axios.get).toHaveBeenCalledTimes(1);
+  });
+
+  it('updateDocuments call api with sorting az', () => {
+    wrapper.setData({sort: 'az'});
+    // restore original method to test it
+    wrapper.setMethods({updateDocuments: Home.methods.updateDocuments});
+
+    axios.get.mockResolvedValue(mockedGetDocumentsResponse);
+
+    // when
+    wrapper.vm.updateDocuments();
+
+    // then
+    expect(axios.get).toHaveBeenCalledWith('/app/api/v1/documents?ordering=title');
+    expect(axios.get).toHaveBeenCalledTimes(1);
+  });
+
+  it('updateDocuments call api with sorting za', () => {
+    wrapper.setData({sort: 'za'});
+    // restore original method to test it
+    wrapper.setMethods({updateDocuments: Home.methods.updateDocuments});
+
+    axios.get.mockResolvedValue(mockedGetDocumentsResponse);
+
+    // when
+    wrapper.vm.updateDocuments();
+
+    // then
+    expect(axios.get).toHaveBeenCalledWith('/app/api/v1/documents?ordering=-title');
     expect(axios.get).toHaveBeenCalledTimes(1);
   });
 
