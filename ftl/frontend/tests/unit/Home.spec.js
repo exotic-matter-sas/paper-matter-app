@@ -551,6 +551,7 @@ describe('Home methods call proper methods', () => {
 
   it('documentUpdated update doc in list', () => {
     // given
+    wrapper.setMethods({documentUpdated: Home.methods.documentUpdated});
     const documentToUpdate = tv.DOCUMENT_NO_THUMB_PROPS_2;
     const originalDocumentsList = [tv.DOCUMENT_NO_THUMB_PROPS, documentToUpdate];
     const originalDocumentsListLength = originalDocumentsList.length;

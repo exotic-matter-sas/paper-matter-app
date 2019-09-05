@@ -476,10 +476,12 @@
       },
 
       documentUpdated: function (event) {
-        if (this.currentOpenDoc.pid === event.doc.pid) {
-          this.currentOpenDoc = event.doc; // update open doc
-        }
         const doc = event.doc;
+
+        if (this.currentOpenDoc.pid === doc.pid) {
+          this.currentOpenDoc = doc; // update open doc
+        }
+
         const foundIndex = this.docs.findIndex(x => x.pid === doc.pid);
         this.docs[foundIndex] = doc; // update doc in the list
       }
