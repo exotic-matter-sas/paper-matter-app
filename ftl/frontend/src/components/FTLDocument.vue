@@ -1,33 +1,29 @@
 <template>
-  <b-col cols="12" mb="4" sm="6" md="4" lg="3" xl="2" class="mb-3 document-thumbnail" :id="doc.pid">
+  <b-col cols="12" mb="4" sm="6" md="4" lg="3" xl="2" class="mb-3 document-thumbnail" :id="doc.pid"
+         @click.ctrl="clickDoc">
     <div class="card" :class="{'selected': storeSelected}">
       <div class="card-img-top" slot="aside"
            :style="{'background-image': 'url(' + doc.thumbnail_url + ')'}"
-           @click="$emit('event-open-doc', doc.pid)"></div>
+           @click.exact="$emit('event-open-doc', doc.pid)"></div>
       <b-card-body>
-        <b-card-title class="text-truncate document-title">
-          <b-form-checkbox class="m-1" v-model="storeSelected">{{ doc.title }}</b-form-checkbox>
-        </b-card-title>
+        <b-card-title class="text-truncate document-title">{{ doc.title }}</b-card-title>
         <b-button class="m-1" variant="secondary" size="sm" :href="'uploads/' + doc.pid">
           <font-awesome-icon icon="file-download" :alt="this.$_('Download')"/>
         </b-button>
-        <b-button class="delete-document m-1" variant="danger" size="sm" :disabled="deleting"
-                  @click="deleteDocument">
-          <b-spinner :class="{'d-none': !deleting}" small></b-spinner>
-          <span :class="{'d-none': deleting}"><font-awesome-icon icon="trash" :alt="this.$_('Delete')"/></span>
-        </b-button>
       </b-card-body>
       <b-card-footer :title="$moment(doc.created).format('LLLL')">
-        <small class="text-muted">{{ $moment(doc.created).fromNow() }}</small>
+        <b-row align-h="between" align-v="center">
+          <b-col class="p-1">
+            <b-form-checkbox v-model="storeSelected" :title="$_('Use CTRL to select multiple documents')"/>
+          </b-col>
+          <b-col cols="10" class="p-1"><small class="text-muted">{{ $moment(doc.created).fromNow() }}</small></b-col>
+        </b-row>
       </b-card-footer>
     </div>
   </b-col>
 </template>
 
 <script>
-  import axios from 'axios';
-  import {axiosConfig} from "../constants";
-
   export default {
     props: {
       doc: {
@@ -37,9 +33,7 @@
     },
 
     data() {
-      return {
-        deleting: false,
-      }
+      return {}
     },
 
     computed: {
@@ -65,33 +59,8 @@
         this.$emit('event-open-doc', this.doc.pid);
       },
 
-      deleteDocument: function () {
-        let vi = this;
-
-        this.deleting = true;
-        this.$bvModal.msgBoxConfirm(this.$_('Please confirm that you want to delete the document'), {
-          title: this.$_('Deletion of the document'),
-          size: 'md',
-          buttonSize: 'md',
-          okVariant: 'danger',
-          okTitle: this.$_('Yes, I want to delete the document'),
-          cancelTitle: this.$_('No, cancel'),
-          footerClass: 'm-1',
-          hideHeaderClose: false,
-          centered: true
-        })
-          .then(value => {
-            if (value === true) {
-              axios
-                .delete('/app/api/v1/documents/' + vi.doc.pid, axiosConfig)
-                .then((response) => {
-                  vi.$emit('event-delete-doc', {'doc': vi.doc})
-                })
-                .catch(error => vi.mixinAlert(this.$_('Could not delete document'), true));
-            } else {
-              vi.deleting = false;
-            }
-          });
+      clickDoc: function () {
+        this.storeSelected = this.storeSelected !== true;
       }
     }
   }
