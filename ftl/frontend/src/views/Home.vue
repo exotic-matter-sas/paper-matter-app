@@ -56,6 +56,7 @@
 
       <!-- Pdf viewer popup -->
       <b-modal id="document-viewer"
+               v-if="currentOpenDoc"
                hide-footer
                centered
                @hidden="closeDocument">
@@ -67,18 +68,22 @@
             </b-button>
           </span>
         </template>
-        <b-container class="h-100">
+        <b-container class="h-100" fluid>
           <b-row class="h-100">
             <b-col md="8">
-              <div class="h-100 embed-responsive doc-pdf ">
+              <div class="h-100 embed-responsive doc-pdf">
                 <iframe v-if="currentOpenDoc.pid" class="embed-responsive-item"
                         :src="`/assets/pdfjs/web/viewer.html?file=/app/uploads/` + currentOpenDoc.pid + `#search=` + currentSearch">
                 </iframe>
               </div>
             </b-col>
-            <b-col md="4" class="d-none d-md-block">
-              <b-row>BBB</b-row>
-              <b-row>CCC</b-row>
+            <b-col>
+              <b-row>
+                <b-col>
+                  <FTLNote v-if="currentOpenDoc.pid" :doc="currentOpenDoc"
+                           @event-document-note-edited="documentUpdated"/>
+                </b-col>
+              </b-row>
               <b-row>
                 <b-col>
                   <b-button id="move-document" variant="secondary" v-b-modal="'modal-move-document'">Move</b-button>
@@ -114,6 +119,7 @@
   import FTLThumbnailGenMixin from "@/components/FTLThumbnailGenMixin";
   import FTLMoveDocument from "@/components/FTLMoveDocument";
   import FTLRenameDocument from "@/components/FTLRenameDocument";
+  import FTLNote from "@/components/FTLNote";
   import axios from 'axios';
   import qs from 'qs';
 
@@ -122,6 +128,7 @@
     mixins: [FTLThumbnailGenMixin],
 
     components: {
+      FTLNote,
       FTLMoveDocument,
       FTLRenameDocument,
       FTLNewFolder,
@@ -434,7 +441,7 @@
       },
 
       documentUpdated: function (event) {
-        if (this.currentOpenDoc.pid === event.doc.pid){
+        if (this.currentOpenDoc.pid === event.doc.pid) {
           this.currentOpenDoc = event.doc; // update open doc
         }
         const doc = event.doc;
