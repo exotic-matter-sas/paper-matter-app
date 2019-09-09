@@ -10,7 +10,8 @@
                   id="edit-note"
                   v-model="text"
                   :placeholder="$_('Document note ...')"
-                  class="note">
+                  class="note"
+                  max-rows="10">
                 </b-form-textarea>
               </b-tab>
               <b-tab :title="$_('Preview')">
@@ -94,7 +95,7 @@
 <style scoped>
   .note {
     overflow: auto;
-    height: 50vh;
+    max-height: 50vh;
   }
 </style>
 
