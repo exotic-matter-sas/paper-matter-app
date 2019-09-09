@@ -202,7 +202,7 @@ class DocumentsTests(APITestCase):
     def test_upload_documents(self, mock_apply_processing):
         with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'test.pdf'), mode='rb') as fp:
             with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'test.pdf'), mode='rb') as fp2:
-                client_post = self.client.post('/app/api/v2/documents/upload',
+                client_post = self.client.post('/app/api/v1/documents/upload',
                                                {'json': '{}', 'files[]': (fp, fp2)})
 
         self.assertEqual(client_post.status_code, status.HTTP_201_CREATED)

@@ -414,8 +414,8 @@
       },
 
       documentsCreated: function (event) {
-        const docs = event.docs;
-        this.docs.unshift(...docs);
+        const doc = event.doc;
+        this.docs.unshift(doc);
       },
 
       documentDeleted: function (event) {

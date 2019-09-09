@@ -166,57 +166,6 @@ class FileUploadView(views.APIView):
         return Response(self.serializer_class(ftl_doc).data, status=201)
 
 
-class FilesUploadView(views.APIView):
-    parser_classes = (MultiPartParser,)
-    serializer_class = FTLDocumentSerializer
-    # Needed for applying permission checking on view that don't have any queryset
-    queryset = FTLDocument.objects.none()
-
-    def post(self, request, *args, **kwargs):
-        if 'files[]' not in request.FILES or 'json' not in request.POST:
-            return HttpResponseBadRequest()
-
-        files = request.FILES.getlist('files[]')
-
-        for f in files:
-            kind = filetype.guess(f)
-            if not kind or kind.mime != "application/pdf":
-                return HttpResponseBadRequest()
-
-        payload = json.loads(request.POST['json'])
-
-        if 'ftl_folder' in payload and payload['ftl_folder']:
-            try:
-                ftl_folder = get_object_or_404(FTLFolder.objects.filter(org=self.request.user.org),
-                                               id=payload['ftl_folder'])
-            except Http404:
-                raise serializers.ValidationError(get_api_error('ftl_folder_not_found'))
-        else:
-            ftl_folder = None
-
-        ftl_docs = list()
-
-        for i, file in enumerate(files):
-            ftl_doc = FTLDocument()
-            ftl_doc.ftl_folder = ftl_folder
-            ftl_doc.ftl_user = self.request.user
-            ftl_doc.binary = file
-            ftl_doc.org = self.request.user.org
-            ftl_doc.title = file.name
-
-            if f'thumbs_{i}' in request.POST:
-                ftl_doc.thumbnail_binary = ContentFile(_extract_binary_from_data_uri(request.POST[f'thumbs_{i}']),
-                                                       'thumb.png')
-
-            ftl_doc.save()
-
-            ftl_doc_processing.apply_processing(ftl_doc)
-
-            ftl_docs.append(ftl_doc)
-
-        return Response(self.serializer_class(ftl_docs, many=True).data, status=201)
-
-
 class FTLFolderList(generics.ListCreateAPIView):
     serializer_class = FTLFolderSerializer
     pagination_class = None

@@ -23,7 +23,7 @@
     </b-row>
     <b-row>
       <b-col>
-        <b-progress id="document-upload-loader" :class="{ 'd-none': !uploading }" :max="100" :value="uploadProgress"
+        <b-progress id="document-upload-loader" :class="{ 'd-none': !uploading }" :max="100" :value="globalUploadProgress"
                     variant="success"
                     show-progress/>
       </b-col>
@@ -49,7 +49,9 @@
       return {
         files: [],
         uploading: false,
-        uploadProgress: 0,
+        uploadedFilesCount: 0,
+        currentUploadProgress: 0,
+        globalUploadProgress: 0,
       }
     },
 
@@ -57,55 +59,54 @@
       refreshUploadProgression: function (progressEvent) {
         let vi = this;
         if (progressEvent.lengthComputable) {
-          vi.uploadProgress = progressEvent.loaded * 100 / progressEvent.total;
+          vi.currentUploadProgress = progressEvent.loaded * 100 / progressEvent.total;
         } else {
-          vi.uploadProgress = 100;
+          vi.currentUploadProgress = 100;
         }
+
+        vi.globalUploadProgress = (vi.currentUploadProgress + vi.uploadedFilesCount * 100) / vi.files.length;
       },
 
       uploadDocument: async function () {
         let vi = this;
-        let formData = new FormData();
-
         vi.uploading = true;
 
-        // start thumbnail generation
-        vi.uploadProgress = 10;
+        for (const file of vi.files) {
+          let formData = new FormData();
+          // file binary
+          formData.append('file', file);
 
-        // TODO disable thumbnail generation on mobile
-        for (let i = 0; i < vi.files.length; ++i) {
-          formData.append('files[]', vi.files[i]);
-          try {
-            let thumb = await createThumbFromFile(vi.files[i]);
-            formData.append('thumbs_' + i, thumb);
-          } catch (e) {
-            vi.mixinAlert("Error creating thumbnail", true);
+          // parent folder
+          let jsonData = {};
+          if (vi.currentFolder != null) {
+            jsonData = {'ftl_folder': vi.currentFolder.id};
           }
+          formData.append('json', JSON.stringify(jsonData));
+
+          // thumbnail generation (skipped on mobile)
+          if (!navigator.userAgent.toLowerCase().includes("mobi")){
+            try {
+              let thumb = await createThumbFromFile(file);
+              formData.append('thumbnail', thumb);
+            } catch (e) {
+              vi.mixinAlert("Error creating thumbnail", true);
+            }
+          }
+
+          const updatedAxiosConfig = Object.assign({}, axiosConfig, {onUploadProgress: this.refreshUploadProgression});
+          await axios
+            .post('/app/api/v1/documents/upload', formData, updatedAxiosConfig)
+            .then(response => {
+              vi.$emit('event-new-upload', {doc: response.data}); // Event for refresh documents list
+              vi.mixinAlert("Document uploaded");
+            })
+            .catch(error => vi.mixinAlert("Could not upload document", true));
+          vi.uploadedFilesCount++;
         }
 
-        vi.uploadProgress = 20;
-        let jsonData = {};
-
-        if (vi.currentFolder != null) {
-          jsonData = {'ftl_folder': vi.currentFolder.id};
-        }
-
-        formData.append('json', JSON.stringify(jsonData));
-
-        const updatedAxiosConfig = Object.assign({}, axiosConfig, {onUploadProgress: this.refreshUploadProgression});
-
-        axios
-          .post('/app/api/v2/documents/upload', formData, updatedAxiosConfig)
-          .then(response => {
-            vi.$emit('event-new-upload', {docs: response.data}); // Event for refresh documents list
-            vi.files = [];
-            vi.mixinAlert("Document uploaded");
-          })
-          .catch(error => vi.mixinAlert("Could not upload document", true))
-          .then(function () {
-            vi.uploadProgress = 0;
-            vi.uploading = false;
-          });
+        vi.files = [];
+        vi.uploadedFilesCount = vi.currentUploadProgress = vi.globalUploadProgress = 0;
+        vi.uploading = false;
       }
     }
   }
