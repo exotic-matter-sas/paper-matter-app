@@ -105,7 +105,7 @@ class NewUserAddDocumentInsideFolder(SignupPages, LoginPage, HomePage, DocumentV
         # First user add a folder, a document inside it and display document
         self.create_folder()
         self.get_elem(self.folders_list_buttons).click()
-        self.upload_document()
+        self.upload_documents()
         self.get_elem(self.first_document_title).click()
 
         # User can see the uploaded document inside the viewer
@@ -136,9 +136,9 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage, DocumentViewPage):
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_upload_doc_wait_tika_indexation_and_search_for_doc(self):
         # User upload 2 documents
-        self.upload_document()
+        self.upload_documents()
         second_document_title = 'green.pdf'
-        self.upload_document(os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', second_document_title))
+        self.upload_documents(os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', second_document_title))
 
         # User wait for document to be indexed
         # TODO replace by a wait_for_element_to_disappear when a indexing indicator is implemented
@@ -163,9 +163,9 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage, DocumentViewPage):
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_search_renamed_doc(self):
         # User upload 2 documents
-        self.upload_document()
+        self.upload_documents()
         second_document_title = 'green.pdf'
-        self.upload_document(os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', second_document_title))
+        self.upload_documents(os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', second_document_title))
 
         # User wait for document to be indexed
         # TODO replace by a wait_for_element_to_disappear when a indexing indicator is implemented
