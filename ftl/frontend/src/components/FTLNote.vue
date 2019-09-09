@@ -10,14 +10,15 @@
                   id="edit-note"
                   v-model="text"
                   :placeholder="$_('Document note ...')"
-                  rows="3"
-                  max-rows="8">
+                  class="note">
                 </b-form-textarea>
               </b-tab>
-              <b-tab :title="$_('Preview')"><span v-html="getNoteMarkdownSanitized"></span></b-tab>
+              <b-tab :title="$_('Preview')">
+                <div class="note"><span v-html="getNoteMarkdownSanitized"></span></div>
+              </b-tab>
             </b-tabs>
           </div>
-          <div v-else>
+          <div v-else class="note">
             <span v-html="getNoteMarkdownSanitized"></span>
           </div>
         </b-col>
@@ -90,5 +91,10 @@
   }
 </script>
 
-<style scoped></style>
+<style scoped>
+  .note {
+    overflow: auto;
+    height: 50vh;
+  }
+</style>
 
