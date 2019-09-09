@@ -1,3 +1,4 @@
+import os
 from unittest import skip, skipIf
 from unittest.mock import patch
 
@@ -11,7 +12,7 @@ from ftests.pages.manage_folder_page import ManageFolderPage
 from ftests.pages.user_login_page import LoginPage
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_document, setup_folder
-from ftl.settings import DEV_MODE
+from ftl.settings import DEV_MODE, BASE_DIR
 
 
 class HomePageTests(LoginPage, HomePage, DocumentViewPage):
@@ -28,7 +29,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewPage):
     @patch.object(FTLDocumentProcessing, 'apply_processing')
     def test_upload_document_to_root(self, mock_apply_processing):
         # User upload a document
-        self.upload_document()
+        self.upload_documents()
 
         # Document appears as the first document of the list
         self.assertEqual(tv.DOCUMENT1_TITLE, self.get_elem_text(self.first_document_title))
@@ -42,7 +43,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewPage):
 
         # User upload open its subfolder and upload a document
         self.get_elem(self.folders_list_buttons).click()
-        self.upload_document()
+        self.upload_documents()
 
         # Document appears as the first document of the list
         self.assertEqual(tv.DOCUMENT1_TITLE, self.get_elem_text(self.first_document_title))
@@ -50,6 +51,20 @@ class HomePageTests(LoginPage, HomePage, DocumentViewPage):
         self.visit(HomePage.url)
         with self.assertRaises(NoSuchElementException):
             self.get_elem(self.first_document_title)
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @patch.object(FTLDocumentProcessing, 'apply_processing')
+    def test_upload_documents_to_root(self, mock_apply_processing):
+        # User upload several documents
+        documents_to_upload = [
+            os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'test.pdf'),
+            os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'test.pdf'),
+            os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'test.pdf')
+        ]
+        self.upload_documents(documents_to_upload)
+
+        # Document appears as the first document of the list
+        self.assertEqual(3, len(self.get_elems(self.documents_thumbnails)))
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_display_document(self):

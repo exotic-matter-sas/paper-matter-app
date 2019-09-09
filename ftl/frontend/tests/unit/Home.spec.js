@@ -112,6 +112,7 @@ const mockedFolderCreated = jest.fn();
 const mockedBreadcrumb = jest.fn();
 const mockedDocumentDeleted = jest.fn();
 const mockedDocumentUpdated = jest.fn();
+const mockedDocumentsCreated = jest.fn();
 
 const mountedMocks = {
   updateDocuments: mockedUpdateDocuments,
@@ -510,7 +511,7 @@ describe('Home methods call proper methods', () => {
     const documentToDelete = tv.DOCUMENT_NO_THUMB_PROPS_2;
     const originalDocumentsList = [tv.DOCUMENT_NO_THUMB_PROPS, documentToDelete];
     const originalDocumentsListLength = originalDocumentsList.length;
-    wrapper.setData({docs : originalDocumentsList});
+    wrapper.setData({docs: originalDocumentsList});
 
     // when
     wrapper.vm.documentDeleted({doc: documentToDelete});
@@ -524,7 +525,7 @@ describe('Home methods call proper methods', () => {
     const documentToUpdate = tv.DOCUMENT_NO_THUMB_PROPS_2;
     const originalDocumentsList = [tv.DOCUMENT_NO_THUMB_PROPS, documentToUpdate];
     const originalDocumentsListLength = originalDocumentsList.length;
-    wrapper.setData({docs : originalDocumentsList});
+    wrapper.setData({docs: originalDocumentsList});
 
     // when
     const documentUpdated = Object.assign({}, documentToUpdate); // shallow copy
@@ -691,6 +692,7 @@ describe('Home event handling', () => {
           navigateToFolder: mockedNavigateToFolder,
           folderCreated: mockedFolderCreated,
           navigateToDocument: mockedNavigateToDocument,
+          documentsCreated: mockedDocumentsCreated,
           updateFolders: mockedUpdateFolders,
           documentDeleted: mockedDocumentDeleted,
           documentUpdated: mockedDocumentUpdated
@@ -707,7 +709,7 @@ describe('Home event handling', () => {
     await flushPromises(); // wait all pending promises are resolved/rejected
 
     // then
-    expect(mockedUpdateDocuments).toHaveBeenCalledTimes(1);
+    expect(mockedDocumentsCreated).toHaveBeenCalledTimes(1);
   });
 
   it('event-change-folder call navigateToFolder', async () => {
