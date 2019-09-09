@@ -52,7 +52,7 @@ class HomePage(BasePage):
             absolute_paths = os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'test.pdf')
         else:
             if type(absolute_paths) is not list:
-                absolute_paths = list(absolute_paths)
+                absolute_paths = [absolute_paths]
             absolute_paths = "\n".join(absolute_paths)
 
         self.get_elem(self.document_upload_input, is_visible=False).send_keys(absolute_paths)
