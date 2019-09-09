@@ -1,41 +1,50 @@
 <template>
-  <b-row>
-    <b-col>
-      <b-row class="my-1">
+  <b-row class="my-1">
+    <b-col v-if="editing || doc.note">
+      <b-row v-if="editing">
         <b-col>
-          <div v-if="editing">
-            <b-tabs content-class="mt-3" small lazy>
-              <b-tab :title="$_('Note')" active>
-                <b-form-textarea
-                  id="edit-note"
-                  v-model="text"
-                  :placeholder="$_('Document note ...')"
-                  class="note"
-                  max-rows="10">
-                </b-form-textarea>
-              </b-tab>
-              <b-tab :title="$_('Preview')">
-                <div class="note"><span v-html="getNoteMarkdownSanitized"></span></div>
-              </b-tab>
-            </b-tabs>
-          </div>
-          <div v-else class="note">
-            <span v-html="getNoteMarkdownSanitized"></span>
-          </div>
+          <b-row>
+            <b-col>
+              <b-tabs content-class="mt-3" small lazy>
+                <b-tab :title="$_('Note')" active>
+                  <b-form-textarea
+                    id="edit-note"
+                    v-model="text"
+                    :placeholder="$_('Document note ...')"
+                    class="note"
+                    max-rows="10">
+                  </b-form-textarea>
+                </b-tab>
+                <b-tab :title="$_('Preview')">
+                  <div class="note"><span v-html="getNoteMarkdownSanitized"></span></div>
+                </b-tab>
+              </b-tabs>
+            </b-col>
+          </b-row>
+          <b-row class="my-1" align-v="center">
+            <b-col>
+              <b-button class="m-1" variant="link" size="sm" :disabled="editing === false"
+                        @click.prevent="editing = false">
+                {{$_('Close')}}
+              </b-button>
+              <b-button class="m-1" variant="primary" size="sm" :disabled="doc.note === text"
+                        @click.prevent="updateNote">
+                {{$_('Save')}}
+              </b-button>
+              <span class="font-weight-bold" :class="{'d-none': doc.note === text}">{{$_('Unsaved note!')}}</span>
+            </b-col>
+          </b-row>
         </b-col>
       </b-row>
-      <b-row class="my-1">
+
+      <b-row v-else>
         <b-col>
-          <b-button class="m-1" variant="primary" size="sm" :disabled="editing === true"
-                    @click.prevent="editing = true">
-            {{$_('Edit')}}
-          </b-button>
-          <b-button class="m-1" variant="primary" size="sm" :disabled="doc.note === text" @click.prevent="updateNote">
-            {{$_('Save')}}
-          </b-button>
-          <span class="font-weight-bold" :class="{'d-none': doc.note === text}">{{$_('Unsaved note!')}}</span>
+          <div class="note" @click.prevent="editing = true"><span v-html="getNoteMarkdownSanitized"></span></div>
         </b-col>
       </b-row>
+    </b-col>
+    <b-col v-else>
+      <b-button variant="primary" @click.prevent="editing = true">{{ $_('Add a note...') }}</b-button>
     </b-col>
   </b-row>
 </template>
@@ -65,7 +74,7 @@
 
     computed: {
       getNoteMarkdownSanitized: function () {
-        const markdownHtml = marked(this.text);
+        const markdownHtml = marked(this.text, {gfm: true});
         return dompurify.sanitize(markdownHtml);
       }
     },
