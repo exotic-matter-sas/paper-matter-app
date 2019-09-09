@@ -3,17 +3,31 @@
     <b-col>
       <b-row class="my-1">
         <b-col>
-          <b-form-textarea
-            id="edit-note"
-            v-model="text"
-            :placeholder="$_('Document note ...')"
-            rows="3"
-            max-rows="8">
-          </b-form-textarea>
+          <div v-if="editing">
+            <b-tabs content-class="mt-3" small lazy>
+              <b-tab :title="$_('Note')" active>
+                <b-form-textarea
+                  id="edit-note"
+                  v-model="text"
+                  :placeholder="$_('Document note ...')"
+                  rows="3"
+                  max-rows="8">
+                </b-form-textarea>
+              </b-tab>
+              <b-tab :title="$_('Preview')"><span v-html="getNoteMarkdownSanitized"></span></b-tab>
+            </b-tabs>
+          </div>
+          <div v-else>
+            <span v-html="getNoteMarkdownSanitized"></span>
+          </div>
         </b-col>
       </b-row>
       <b-row class="my-1">
         <b-col>
+          <b-button class="m-1" variant="primary" size="sm" :disabled="editing === true"
+                    @click.prevent="editing = true">
+            {{$_('Edit')}}
+          </b-button>
           <b-button class="m-1" variant="primary" size="sm" :disabled="doc.note === text" @click.prevent="updateNote">
             {{$_('Save')}}
           </b-button>
@@ -25,6 +39,8 @@
 </template>
 
 <script>
+  import marked from "marked";
+  import dompurify from "dompurify";
   import axios from "axios";
   import {axiosConfig} from "@/constants";
 
@@ -40,12 +56,22 @@
 
     data() {
       return {
+        editing: false,
         text: this.doc.note
+      }
+    },
+
+    computed: {
+      getNoteMarkdownSanitized: function () {
+        const markdownHtml = marked(this.text);
+        return dompurify.sanitize(markdownHtml);
       }
     },
 
     methods: {
       updateNote: function () {
+        this.editing = false;
+
         let body = {
           note: this.text
         };
