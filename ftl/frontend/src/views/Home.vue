@@ -56,10 +56,17 @@
 
       <!-- Pdf viewer popup -->
       <b-modal id="document-viewer"
-               :title="currentOpenDoc.title"
                hide-footer
                centered
                @hidden="closeDocument">
+        <template slot="modal-title">
+          <span>{{ currentOpenDoc.title }}</span>
+          <span>
+            <b-button id="rename-document" variant="link" v-b-modal="'modal-rename-document'">
+              <font-awesome-icon icon="edit" :title="$_('Rename document')"/>
+            </b-button>
+          </span>
+        </template>
         <b-container class="h-100">
           <b-row class="h-100">
             <b-col md="8">
@@ -74,7 +81,7 @@
               <b-row>CCC</b-row>
               <b-row>
                 <b-col>
-                  <b-button variant="secondary" v-b-modal="'modal-move-document'">Move</b-button>
+                  <b-button id="move-document" variant="secondary" v-b-modal="'modal-move-document'">Move</b-button>
                 </b-col>
               </b-row>
             </b-col>
@@ -89,6 +96,11 @@
       <FTLMoveDocument
         :doc="currentOpenDoc"
         @event-document-moved="documentDeleted"/>
+
+      <FTLRenameDocument
+        v-if="currentOpenDoc.pid"
+        :doc="currentOpenDoc"
+        @event-document-renamed="documentUpdated"/>
     </b-col>
   </main>
 </template>
@@ -100,9 +112,10 @@
   import FTLUpload from '@/components/FTLUpload';
   import FTLNewFolder from "@/components/FTLNewFolder";
   import FTLThumbnailGenMixin from "@/components/FTLThumbnailGenMixin";
+  import FTLMoveDocument from "@/components/FTLMoveDocument";
+  import FTLRenameDocument from "@/components/FTLRenameDocument";
   import axios from 'axios';
   import qs from 'qs';
-  import FTLMoveDocument from "@/components/FTLMoveDocument";
 
   export default {
     name: 'home',
@@ -110,6 +123,7 @@
 
     components: {
       FTLMoveDocument,
+      FTLRenameDocument,
       FTLNewFolder,
       FTLFolder,
       FTLDocument,
@@ -425,9 +439,12 @@
       },
 
       documentUpdated: function (event) {
+        if (this.currentOpenDoc.pid === event.doc.pid){
+          this.currentOpenDoc = event.doc; // update open doc
+        }
         const doc = event.doc;
         const foundIndex = this.docs.findIndex(x => x.pid === doc.pid);
-        this.docs[foundIndex] = doc;
+        this.docs[foundIndex] = doc; // update doc in the list
       }
     }
   }

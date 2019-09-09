@@ -11,7 +11,7 @@
         :description="this.$_('The new name of the folder')"
         :label="this.$_('The folder will be renamed.')"
         label-for="rename-folder-text">
-        <b-form-input id="rename-folder-text" autofocus v-model="newFolderName" trim></b-form-input>
+        <b-form-input id="rename-folder-text" autofocus onfocus="this.select()" v-model="newFolderName" trim></b-form-input>
       </b-form-group>
     </b-container>
   </b-modal>
@@ -32,7 +32,7 @@
 
     data() {
       return {
-        newFolderName: '',
+        newFolderName: this.folder.name,
       }
     },
 

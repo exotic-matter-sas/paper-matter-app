@@ -31,7 +31,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewPage):
         self.upload_document()
 
         # Document appears as the first document of the list
-        self.assertEqual(tv.DOCUMENT1_TITLE, self.get_elem(self.first_document_title).text)
+        self.assertEqual(tv.DOCUMENT1_TITLE, self.get_elem_text(self.first_document_title))
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     @patch.object(FTLDocumentProcessing, 'apply_processing')
@@ -45,7 +45,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewPage):
         self.upload_document()
 
         # Document appears as the first document of the list
-        self.assertEqual(tv.DOCUMENT1_TITLE, self.get_elem(self.first_document_title).text)
+        self.assertEqual(tv.DOCUMENT1_TITLE, self.get_elem_text(self.first_document_title))
         # Document doesn't appears in root folder
         self.visit(HomePage.url)
         with self.assertRaises(NoSuchElementException):
@@ -73,7 +73,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewPage):
         self.create_folder()
 
         # The folder properly appears in the folder list
-        self.assertEqual(tv.FOLDER1_NAME, self.get_elem(self.folders_list_buttons).text)
+        self.assertEqual(tv.FOLDER1_NAME, self.get_elem_text(self.folders_list_buttons))
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_create_folder_with_name_already_used(self):
@@ -107,18 +107,14 @@ class HomePageTests(LoginPage, HomePage, DocumentViewPage):
         # Check if each folder have been created at proper level
         self.visit(HomePage.url)
         self.wait_for_elem_to_show(self.folders_list_buttons)
-        self.assertEqual(tv.FOLDER1_NAME, self.get_elem(self.folders_list_buttons).text)
+        self.assertEqual(tv.FOLDER1_NAME, self.get_elem_text(self.folders_list_buttons))
         self.get_elem(self.folders_list_buttons).click()
         self.wait_for_elem_to_show(self.folders_list_buttons)
-        self.assertEqual(tv.FOLDER2_NAME, self.get_elem(self.folders_list_buttons).text)
+        self.assertEqual(tv.FOLDER2_NAME, self.get_elem_text(self.folders_list_buttons))
         self.get_elem(self.folders_list_buttons).click()
         self.wait_for_elem_to_show(self.folders_list_buttons)
-        self.assertEqual(tv.FOLDER3_NAME, self.get_elem(self.folders_list_buttons).text)
+        self.assertEqual(tv.FOLDER3_NAME, self.get_elem_text(self.folders_list_buttons))
         self.get_elem(self.folders_list_buttons).click()
-
-    @skip('TODO when implemented in UI')  # TODO
-    def test_delete_folder(self):
-        pass
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_search_document_by_its_title(self):
@@ -132,7 +128,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewPage):
 
         # Only the second document appears in search results
         self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
-        self.assertEqual(second_document_title, self.get_elem(self.first_document_title).text)
+        self.assertEqual(second_document_title, self.get_elem_text(self.first_document_title))
 
     @skip('TODO when document note implemented in UI')  # TODO
     def test_search_document_by_its_note(self):
@@ -178,7 +174,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewPage):
 
         # Only the second document appears in search results
         self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
-        self.assertEqual(second_document_title, self.get_elem(self.first_document_title).text)
+        self.assertEqual(second_document_title, self.get_elem_text(self.first_document_title))
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_search_not_found(self):
@@ -226,7 +222,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewPage):
 
         self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1,
                          'Only second document should appears in the search result')
-        self.assertEqual(second_document_title, self.get_elem(self.first_document_title).text,
+        self.assertEqual(second_document_title, self.get_elem_text(self.first_document_title),
                          'Second document title should appears in search result')
 
         self.assertEqual(second_document_title, self.get_elem_text(self.search_input),
@@ -244,7 +240,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewPage):
         self.visit(f'/app/#/home/folderFakePath/{folder_c.id}')
         self.wait_document_list_loaded()
 
-        self.assertEqual(document.title, self.get_elem(self.first_document_title).text,
+        self.assertEqual(document.title, self.get_elem_text(self.first_document_title),
                          'Setup document title should appears in folder C')
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
@@ -272,15 +268,15 @@ class HomePageTests(LoginPage, HomePage, DocumentViewPage):
         # User use the browser previous button to come back to root
         self.previous_page()
         self.wait_document_list_loaded()
-        self.assertEqual(document_b.title, self.get_elem(self.first_document_title).text,
+        self.assertEqual(document_b.title, self.get_elem_text(self.first_document_title),
                          'Setup document title should appears in folder b')
         self.previous_page()
         self.wait_document_list_loaded()
-        self.assertEqual(document_a.title, self.get_elem(self.first_document_title).text,
+        self.assertEqual(document_a.title, self.get_elem_text(self.first_document_title),
                          'Setup document title should appears in folder a')
         self.previous_page()
         self.wait_document_list_loaded()
-        self.assertEqual(document_root.title, self.get_elem(self.first_document_title).text,
+        self.assertEqual(document_root.title, self.get_elem_text(self.first_document_title),
                          'Setup document title should appears in root folder')
         self.next_page()
         self.wait_document_list_loaded()
@@ -288,7 +284,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewPage):
         self.wait_document_list_loaded()
         self.next_page()
         self.wait_document_list_loaded()
-        self.assertEqual(document_c.title, self.get_elem(self.first_document_title).text,
+        self.assertEqual(document_c.title, self.get_elem_text(self.first_document_title),
                          'Setup document title should appears in folder c')
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
@@ -370,8 +366,26 @@ class DocumentViewPageTests(LoginPage, HomePage, DocumentViewPage):
 
         # User close document
         self.close_document()
-        self.assertEqual(document.title, self.get_elem(self.first_document_title).text,
+        self.assertEqual(document.title, self.get_elem_text(self.first_document_title),
                          'Setup document title should appears in folder C')
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @patch.object(FTLDocumentProcessing, 'apply_processing')
+    def test_rename_document(self, mock_apply_processing):
+        # User has already added and opened a document
+        setup_document(self.org, self.user)
+        self.refresh_document_list()
+        self.open_first_document()
+        self.wait_for_elem_to_show(self.pdf_viewer)
+
+        # User rename the document
+        new_doc_title = 'Renamed doc'
+        self.rename_document(new_doc_title)
+
+        # Document title is properly updated in pdf viewer and list
+        self.assertEqual(self.get_elem_text(self.document_title), new_doc_title)
+        self.close_document()
+        self.assertEqual(self.get_elem_text(self.first_document_title), new_doc_title)
 
 
 class ManageFoldersPageTests(LoginPage, ManageFolderPage):

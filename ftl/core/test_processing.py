@@ -19,7 +19,7 @@ class ProcTest(FTLDocProcessingBase):
     Mocked test processing class
     """
 
-    def process(self, ftl_doc):
+    def process(self, ftl_doc, force):
         pass
 
 
@@ -39,7 +39,39 @@ class DocumentProcessingTests(TestCase):
         doc = Mock()
         self.processing.apply_processing(doc)
 
-        self.processing.executor.submit.assert_called_once_with(self.processing._handle, doc)
+        self.processing.executor.submit.assert_called_once_with(self.processing._handle, doc, False)
+
+    def test_apply_processing_force_boolean(self):
+        mock_plugin_1 = Mock()
+        mock_plugin_2 = Mock()
+
+        self.processing.plugins = list()
+        self.processing.plugins.append(mock_plugin_1)
+        self.processing.plugins.append(mock_plugin_2)
+
+        doc = Mock()
+        future = self.processing.apply_processing(doc, True)
+        wait_futures([future], timeout=10)
+
+        mock_plugin_1.process.assert_called_once_with(doc, True)
+        mock_plugin_2.process.assert_called_once_with(doc, True)
+
+    def test_apply_processing_force_list(self):
+        mock_plugin_1 = Mock()
+        mock_plugin_2 = Mock(spec=ProcTest)
+
+        self.processing.plugins = list()
+        self.processing.plugins.append(mock_plugin_1)
+        self.processing.plugins.append(mock_plugin_2)
+
+        doc = Mock()
+        future = self.processing.apply_processing(doc, [".".join(
+            [mock_plugin_2.__class__.__module__, mock_plugin_2.__class__.__qualname__]), ])
+
+        wait_futures([future], timeout=10)
+
+        mock_plugin_1.process.assert_called_once_with(doc, False)
+        mock_plugin_2.process.assert_called_once_with(doc, True)
 
     def test_handle(self):
         mock_plugin_1 = Mock()
@@ -55,9 +87,9 @@ class DocumentProcessingTests(TestCase):
         future = self.processing.apply_processing(doc)
         wait_futures([future], timeout=10)
 
-        mock_plugin_1.process.assert_called_once_with(doc)
-        mock_plugin_2.process.assert_called_once_with(doc)
-        mock_plugin_3.process.assert_called_once_with(doc)
+        mock_plugin_1.process.assert_called_once_with(doc, False)
+        mock_plugin_2.process.assert_called_once_with(doc, False)
+        mock_plugin_3.process.assert_called_once_with(doc, False)
 
     def test_handle_error_handling(self):
         # Given
@@ -94,11 +126,21 @@ class ProcLangTests(TestCase):
 
         lang = FTLLangDetectorLangId()
         doc = Mock()
-        lang.process(doc)
+        lang.process(doc, True)
 
         mocked_classify.assert_called_once_with(doc.content_text)
         self.assertEqual('french', doc.language)
         doc.save.assert_called_once()
+
+    @patch.object(langid, 'classify')
+    def test_process_value_exists(self, mocked_classify):
+        lang = FTLLangDetectorLangId()
+        doc = Mock()
+        doc.language = 'french'
+        lang.process(doc, False)
+
+        mocked_classify.assert_not_called()
+        doc.save.assert_not_called()
 
 
 class ProcTikaTests(TestCase):
@@ -115,7 +157,7 @@ class ProcTikaTests(TestCase):
 
         tika = FTLTextExtractionTika()
         doc = Mock()
-        tika.process(doc)
+        tika.process(doc, True)
 
         mocked_from_buffer.assert_called_once_with(doc.binary.read())
         self.assertEqual(doc.content_text, indexed_text['content'])
@@ -123,13 +165,25 @@ class ProcTikaTests(TestCase):
         doc.save.assert_called()
         self.assertEqual(doc.save.call_count, 2)
 
+    @patch.object(parser, 'from_buffer')
+    def test_process_value_exists(self, mocked_from_buffer):
+        tika = FTLTextExtractionTika()
+        doc = Mock()
+        doc.content_text = 'indexed text'
+        doc.count_pages = 42
+        tika.process(doc, False)
+
+        mocked_from_buffer.assert_not_called()
+        doc.save.assert_not_called()
+
 
 class ProcPGsqlTests(TestCase):
 
     def test_process(self):
         pgsql = FTLSearchEnginePgSQLTSVector()
         doc = Mock()
-        pgsql.process(doc)
+        doc.tsvector = None
+        pgsql.process(doc, False)
 
         self.assertEqual(doc.tsvector, SEARCH_VECTOR)
         doc.save.assert_called_once()
@@ -148,7 +202,7 @@ class FTLOCRBaseTests(TestCase):
         mocked_doc = Mock()
         mocked_doc.content_text = ''
 
-        base_ocr.process(mocked_doc)
+        base_ocr.process(mocked_doc, False)
 
         # Then OCR _extract_text method is called
         mocked_extract_text.assert_called_once()
@@ -161,7 +215,7 @@ class FTLOCRBaseTests(TestCase):
         mocked_doc = Mock()
         mocked_doc.content_text = original_doc_content
 
-        base_ocr.process(mocked_doc)
+        base_ocr.process(mocked_doc, False)
 
         # Then OCR _extract_text method is skipped
         mocked_extract_text.assert_not_called()
@@ -179,4 +233,4 @@ class FTLOCRBaseTests(TestCase):
 
         # Then PluginUnsupportedStorage is raised
         with self.assertRaises(PluginUnsupportedStorage):
-            base_ocr.process(mocked_doc)
+            base_ocr.process(mocked_doc, False)

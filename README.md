@@ -74,9 +74,7 @@ Run all tests
 _Or alternatively `npx vue-cli-service test:unit`_
 
 ### i18n
- 
- :warning: _Avoid raw editing of .po files, use poedit or equivalent instead_
- 
+  
  Add a new language or create new key to translate in .po files:
  
     python manage.py makemessages -l fr --ignore=requirements*.txt,__init__.py,ftest/*
