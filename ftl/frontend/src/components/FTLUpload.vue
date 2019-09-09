@@ -83,14 +83,12 @@
           }
           formData.append('json', JSON.stringify(jsonData));
 
-          // thumbnail generation (skipped on mobile)
-          if (!navigator.userAgent.toLowerCase().includes("mobi")){
-            try {
-              let thumb = await createThumbFromFile(file);
-              formData.append('thumbnail', thumb);
-            } catch (e) {
-              vi.mixinAlert("Error creating thumbnail", true);
-            }
+          // thumbnail generation
+          try {
+            let thumb = await createThumbFromFile(file);
+            formData.append('thumbnail', thumb);
+          } catch (e) {
+            vi.mixinAlert("Error creating thumbnail", true);
           }
 
           const updatedAxiosConfig = Object.assign({}, axiosConfig, {onUploadProgress: this.refreshUploadProgression});
