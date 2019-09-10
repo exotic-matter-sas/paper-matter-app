@@ -272,11 +272,6 @@
       },
 
       documentsSelected: function () {
-        // filter selected document with the current docs list (SLOW)
-        // it's avoid edge case like documents being selected while not being in the current folder
-        // cases such as: moved or deleted documents which were selected
-        // const flapDocs = this.docs.flatMap(x => x.pid);
-        // return this.$store.state.selectedDocumentsHome.filter(x => flapDocs.includes(x.pid));
         return this.$store.state.selectedDocumentsHome;
       }
     },
