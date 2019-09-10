@@ -12,7 +12,7 @@
           <span
             v-if="selectedMoveTargetFolder">{{this.$_('Selected folder: %s', [selectedMoveTargetFolder.name])}}</span>
           <span v-else>{{this.$_('No folder selected')}}</span>
-          <FTLTreeFolders :root="isRoot"/>
+          <FTLTreeFolders :root="false"/>
         </b-col>
       </b-row>
     </b-container>
@@ -48,25 +48,18 @@
     },
 
     computed: {
-      getFolder: function () {
-        // by default, we use the first document folder as we can only select documents in the same folder
-        if (this.docs[0].ftl_folder === null) {
-          return -1;
-        } else {
-          return this.docs[0].ftl_folder;
-        }
-      },
       selectedMoveTargetFolder: function () {
         return this.$store.state.selectedMoveTargetFolder;
-      },
-      isRoot: function () {
-        return this.docs[0].ftl_folder === null;
-      },
+      }
     },
 
     methods: {
       moveDocument: function () {
         for (const doc of this.docs) {
+          if (doc.ftl_folder === this.selectedMoveTargetFolder.id) {
+            continue;
+          }
+
           let body = {
             ftl_folder: this.selectedMoveTargetFolder.id
           };
