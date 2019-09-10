@@ -70,43 +70,6 @@ describe('Component template', () => {
 describe('FTLMoveDocuments computed', () => {
   let wrapper;
 
-  it('getFolder return -1 when doc prop has no parent', () => {
-    wrapper = shallowMount(FTLMoveDocuments, {
-      localVue,
-      propsData: {
-        docs: [documentProp]
-      },
-      computed: {
-        selectedMoveTargetFolder: mockedSelectedMoveTargetFolder
-      }
-    });
-    jest.clearAllMocks(); // Reset mock call count done by mounted
-
-    // when document props folder is null
-    let testedValue = wrapper.vm.getFolder;
-
-    // then
-    expect(testedValue).toBe(-1);
-  });
-
-  it('getFolder return parent ftl_folder id when doc prop has one', () => {
-    const doc = tv.DOCUMENT_PROPS_WITH_FOLDER;
-    wrapper = shallowMount(FTLMoveDocuments, {
-      localVue,
-      propsData: {docs: [doc]},
-      computed: {
-        selectedMoveTargetFolder: mockedSelectedMoveTargetFolder
-      }
-    });
-    jest.clearAllMocks(); // Reset mock call count done by mounted
-
-    // when document props folder is null
-    let testedValue = wrapper.vm.getFolder;
-
-    // then
-    expect(testedValue).toBe(doc.ftl_folder);
-  });
-
   it('selectedMoveTargetFolder return value from $store', () => {
     // TODO test call to vuex store here
   });
