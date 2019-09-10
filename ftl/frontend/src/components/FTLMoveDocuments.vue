@@ -12,7 +12,7 @@
           <span
             v-if="selectedMoveTargetFolder">{{this.$_('Selected folder: %s', [selectedMoveTargetFolder.name])}}</span>
           <span v-else>{{this.$_('No folder selected')}}</span>
-          <FTLTreeFolders :root="isRoot" :source-folder="getFolder"/>
+          <FTLTreeFolders :root="isRoot"/>
         </b-col>
       </b-row>
     </b-container>
