@@ -7,7 +7,7 @@ import uuid
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0015_auto_20190724_1341'),
+        ('core', '0016_ftldocument_count_pages'),
     ]
 
     operations = [

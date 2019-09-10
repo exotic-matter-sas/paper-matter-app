@@ -114,6 +114,7 @@ const mockedBreadcrumb = jest.fn();
 const mockedDocumentDeleted = jest.fn();
 const mockedDocumentUpdated = jest.fn();
 const mockedDocumentsSelected = jest.fn();
+const mockedDocumentsCreated = jest.fn();
 
 const mountedMocks = {
   updateDocuments: mockedUpdateDocuments,
@@ -733,6 +734,7 @@ describe('Home event handling', () => {
           navigateToFolder: mockedNavigateToFolder,
           folderCreated: mockedFolderCreated,
           navigateToDocument: mockedNavigateToDocument,
+          documentsCreated: mockedDocumentsCreated,
           updateFolders: mockedUpdateFolders,
           documentDeleted: mockedDocumentDeleted,
           documentUpdated: mockedDocumentUpdated
@@ -752,7 +754,7 @@ describe('Home event handling', () => {
     await flushPromises(); // wait all pending promises are resolved/rejected
 
     // then
-    expect(mockedUpdateDocuments).toHaveBeenCalledTimes(1);
+    expect(mockedDocumentsCreated).toHaveBeenCalledTimes(1);
   });
 
   it('event-change-folder call navigateToFolder', async () => {

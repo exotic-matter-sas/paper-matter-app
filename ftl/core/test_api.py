@@ -145,6 +145,12 @@ class DocumentsTests(APITestCase):
         self.assertIsNone(objects_get.ftl_folder)
 
     @patch.object(FTLDocumentProcessing, 'apply_processing')
+    def test_upload_document_wrong_format(self, mock_apply_processing):
+        with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'wrong-format.txt'), mode='rb') as fp:
+            client_post = self.client.post('/app/api/v1/documents/upload', {'json': '{}', 'file': fp})
+        self.assertEqual(client_post.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @patch.object(FTLDocumentProcessing, 'apply_processing')
     def test_upload_doc_trigger_document_processing(self, mock_apply_processing):
         with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'test.pdf'), 'rb') as f:
             body_post = {'json': '{}', 'file': f}
