@@ -12,8 +12,8 @@
         </b-button>
       </b-card-body>
       <b-card-footer :title="$moment(doc.created).format('LLLL')">
-          <b-form-checkbox v-model="storeSelected" :title="$_('Use CTRL + left click for quick selection')"/>
-          <small class="text-muted">{{ $moment(doc.created).fromNow() }}</small>
+        <b-form-checkbox v-model="storeSelected" :title="$_('Use CTRL + left click for quick selection')"/>
+        <small class="text-muted">{{ $moment(doc.created).fromNow() }}</small>
       </b-card-footer>
     </div>
   </b-col>
@@ -80,7 +80,7 @@
 
   .selected {
     border-color: transparent;
-    box-shadow: 0 0 0 2px  map_get($theme-colors, 'active');
+    box-shadow: 0 0 0 2px map_get($theme-colors, 'active');
 
     &:hover {
       border-color: transparent;
@@ -120,7 +120,7 @@
     font-style: italic;
 
     .custom-checkbox {
-      position:absolute;
+      position: absolute;
     }
   }
 </style>

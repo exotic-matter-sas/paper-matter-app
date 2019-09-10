@@ -19,7 +19,10 @@ export default new Vuex.Store({
     },
 
     selectDocument: function (state, document) {
-      state.selectedDocumentsHome.push(document);
+      const foundIndex = state.selectedDocumentsHome.findIndex(x => x.pid === document.pid);
+      if (foundIndex === -1) {
+        state.selectedDocumentsHome.push(document);
+      }
     },
 
     unselectDocument: function (state, document) {
