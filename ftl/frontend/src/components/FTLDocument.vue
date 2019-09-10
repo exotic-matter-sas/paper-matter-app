@@ -7,17 +7,13 @@
            @click.exact="$emit('event-open-doc', doc.pid)"></div>
       <b-card-body>
         <b-card-title class="text-truncate document-title">{{ doc.title }}</b-card-title>
-        <b-button class="m-1" variant="secondary" size="sm" :href="'uploads/' + doc.pid">
+        <b-button variant="secondary" size="sm" :href="'uploads/' + doc.pid">
           <font-awesome-icon icon="file-download" :alt="this.$_('Download')"/>
         </b-button>
       </b-card-body>
       <b-card-footer :title="$moment(doc.created).format('LLLL')">
-        <b-row align-h="between" align-v="center">
-          <b-col class="p-1">
-            <b-form-checkbox v-model="storeSelected" :title="$_('Use CTRL + left click for quick selection')"/>
-          </b-col>
-          <b-col cols="10" class="p-1"><small class="text-muted">{{ $moment(doc.created).fromNow() }}</small></b-col>
-        </b-row>
+          <b-form-checkbox v-model="storeSelected" :title="$_('Use CTRL + left click for quick selection')"/>
+          <small class="text-muted">{{ $moment(doc.created).fromNow() }}</small>
       </b-card-footer>
     </div>
   </b-col>
@@ -120,7 +116,11 @@
 
     text-align: center;
     font-size: 0.9em;
-    padding: 0.25rem 1.25rem;
+    padding: 0.5rem 1.25rem;
     font-style: italic;
+
+    .custom-checkbox {
+      position:absolute;
+    }
   }
 </style>
