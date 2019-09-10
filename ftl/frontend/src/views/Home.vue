@@ -31,7 +31,7 @@
         </b-col>
       </b-row>
 
-      <b-row v-if="documentsSelected.length" class="my-3" id="action-selected-documents" align-h="center">
+      <b-row v-show="documentsSelected.length" class="my-3" id="action-selected-documents" align-h="center">
         <b-col cols="*">
           <b-button variant="outline-primary" class="m-1" @click="$store.commit('unselectAllDocuments')">
             {{ $_('Deselect all %s documents', [documentsSelected.length])}}

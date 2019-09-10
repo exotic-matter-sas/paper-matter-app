@@ -75,15 +75,21 @@
 
   .card {
     border-color: rgba(0, 0, 0, 0.250);
+    border-radius: calc(0.25rem - 1px);
+
+    &:hover {
+      border-color: map_get($theme-colors, 'primary');
+    }
   }
 
   .selected {
-    border-width: 2px;
-    border-color: map_get($theme-colors, 'active');
-  }
+    border-color: transparent;
+    box-shadow: 0 0 0 2px  map_get($theme-colors, 'active');
 
-  .card:hover {
-    border-color: map_get($theme-colors, 'primary');
+    &:hover {
+      border-color: transparent;
+      box-shadow: 0 0 0 2px map_get($theme-colors, 'primary');
+    }
   }
 
   .card-img-top {
