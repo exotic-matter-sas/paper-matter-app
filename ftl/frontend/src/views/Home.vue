@@ -13,7 +13,7 @@
         </b-col>
       </b-row>
 
-      <b-row class="my-3" id="folders-list">
+      <b-row v-show="!documentsSelected.length" class="my-3" id="folders-list">
         <b-col>
           <b-button id="refresh-documents" :disabled="docsLoading" variant="primary" class="m-1" @click="refreshAll">
             <font-awesome-icon icon="sync" :spin="docsLoading" :class="{ 'stop-spin':!docsLoading }"
@@ -31,13 +31,13 @@
         </b-col>
       </b-row>
 
-      <b-row v-if="documentsSelected.length" id="action-selected-documents" align-h="center">
+      <b-row v-if="documentsSelected.length" class="my-3" id="action-selected-documents" align-h="center">
         <b-col cols="*">
-          <b-button variant="outline-primary" class="m-1" size="sm" @click="$store.commit('unselectAllDocuments')">
+          <b-button variant="outline-primary" class="m-1" @click="$store.commit('unselectAllDocuments')">
             {{ $_('Deselect all %s documents', [documentsSelected.length])}}
           </b-button>
-          <b-button variant="primary" class="m-1" size="sm" v-b-modal="'modal-move-documents'">Move</b-button>
-          <b-button variant="danger" class="m-1" size="sm" v-b-modal="'modal-delete-documents'">Delete</b-button>
+          <b-button variant="primary" class="m-1" v-b-modal="'modal-move-documents'">Move</b-button>
+          <b-button variant="danger" class="m-1" v-b-modal="'modal-delete-documents'">Delete</b-button>
         </b-col>
       </b-row>
 
@@ -504,9 +504,26 @@
     display: block;
   }
 
-  #folders-list button, #folders-list button {
+  #folders-list button, #action-selected-documents button {
     margin-left: 0 !important;
     margin-right: 0.5rem !important;
+  }
+
+  #action-selected-documents {
+    position: sticky;
+    top: 87px;
+    animation: slide-up 0.1s linear;
+    z-index: calc(#{$zindex-sticky} - 1); // to be under header dropdown menu (mobile)
+
+    .btn-outline-primary:not(:hover){
+      background: $light;
+    }
+  }
+
+  @include media-breakpoint-up(md) {
+      #action-selected-documents {
+        top: 67px;
+      }
   }
 
   .stop-spin {
@@ -516,6 +533,17 @@
   @keyframes unspin {
     to {
       transform: rotate(-0.5turn);
+    }
+  }
+
+  @keyframes slide-up {
+    from {
+      transform: translateY(30px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0px);
+      opacity: 1;
     }
   }
 </style>

@@ -14,7 +14,7 @@
       <b-card-footer :title="$moment(doc.created).format('LLLL')">
         <b-row align-h="between" align-v="center">
           <b-col class="p-1">
-            <b-form-checkbox v-model="storeSelected" :title="$_('Use CTRL to select multiple documents')"/>
+            <b-form-checkbox v-model="storeSelected" :title="$_('Use CTRL + left click for quick selection')"/>
           </b-col>
           <b-col cols="10" class="p-1"><small class="text-muted">{{ $moment(doc.created).fromNow() }}</small></b-col>
         </b-row>
@@ -39,7 +39,7 @@
     computed: {
       storeSelected: {
         get: function () {
-          // check the box if we found the document in the selected document list in vuex store
+          // tick the checkbox if we found the document in the selected document list in vuex store
           return this.$store.state.selectedDocumentsHome.findIndex(x => x.pid === this.doc.pid) > -1;
         },
 
