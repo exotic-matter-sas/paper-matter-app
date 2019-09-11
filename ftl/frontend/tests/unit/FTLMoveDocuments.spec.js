@@ -35,7 +35,6 @@ const mockedMoveDocumentResponse = {
 
 const mockedSelectedMoveTargetFolder = jest.fn();
 const mockedSelectedMoveTargetFolderResponse = {id: tv.FOLDER_PROPS.id, name: tv.FOLDER_PROPS.name};
-const mockedIsRoot = jest.fn();
 
 const documentProp = tv.DOCUMENT_PROPS;
 
@@ -50,7 +49,6 @@ describe('Component template', () => {
       },
       computed: {
         selectedMoveTargetFolder: mockedSelectedMoveTargetFolder,
-        isRoot: mockedIsRoot
       }
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
@@ -73,44 +71,6 @@ describe('FTLMoveDocuments computed', () => {
   it('selectedMoveTargetFolder return value from $store', () => {
     // TODO test call to vuex store here
   });
-
-  it('isRoot return true when doc props get no parent', () => {
-    wrapper = shallowMount(FTLMoveDocuments, {
-      localVue,
-      propsData: {
-        docs: [documentProp]
-      },
-      computed: {
-        selectedMoveTargetFolder: mockedSelectedMoveTargetFolder
-      }
-    });
-    jest.clearAllMocks(); // Reset mock call count done by mounted
-
-    // when document props folder is null
-    let testedValue = wrapper.vm.isRoot;
-
-    // then
-    expect(testedValue).toBe(true);
-  });
-
-  it('isRoot return false when doc props get parent', () => {
-    wrapper = shallowMount(FTLMoveDocuments, {
-      localVue,
-      propsData: {
-        docs: [tv.DOCUMENT_PROPS_WITH_FOLDER]
-      },
-      computed: {
-        selectedMoveTargetFolder: mockedSelectedMoveTargetFolder
-      }
-    });
-    jest.clearAllMocks(); // Reset mock call count done by mounted
-
-    // when document props folder is null
-    let testedValue = wrapper.vm.isRoot;
-
-    // then
-    expect(testedValue).toBe(false);
-  });
 });
 
 describe('Component methods call api', () => {
@@ -124,7 +84,6 @@ describe('Component methods call api', () => {
       propsData: {docs: [documentProp, tv.DOCUMENT_PROPS_WITH_FOLDER]},
       computed: {
         selectedMoveTargetFolder: mockedSelectedMoveTargetFolder,
-        isRoot: mockedIsRoot
       }
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
@@ -160,7 +119,6 @@ describe('Component methods error handling', () => {
       propsData: {docs: [documentProp]},
       computed: {
         selectedMoveTargetFolder: mockedSelectedMoveTargetFolder,
-        isRoot: mockedIsRoot
       }
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
@@ -190,7 +148,6 @@ describe('Event emitted by component', () => {
       propsData: {docs: [documentProp]},
       computed: {
         selectedMoveTargetFolder: mockedSelectedMoveTargetFolder,
-        isRoot: mockedIsRoot
       }
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
