@@ -6,7 +6,8 @@
            :style="{'background-image': 'url(' + doc.thumbnail_url + ')'}"
            @click.exact="$emit('event-open-doc', doc.pid)"></div>
       <b-card-body>
-        <b-card-title class="text-truncate document-title">{{ doc.title }}</b-card-title>
+        <b-card-title class="text-truncate document-title"
+        @click.exact="$emit('event-open-doc', doc.pid)">{{ doc.title }}</b-card-title>
         <b-button variant="secondary" size="sm" :href="'uploads/' + doc.pid">
           <font-awesome-icon icon="file-download" :alt="this.$_('Download')"/>
         </b-button>

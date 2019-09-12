@@ -33,11 +33,11 @@
 
       <b-row v-show="documentsSelected.length" class="my-3" id="action-selected-documents" align-h="center">
         <b-col cols="*">
-          <b-button variant="outline-primary" class="m-1" @click="$store.commit('unselectAllDocuments')">
+          <b-button id="unselect-all-documents" variant="outline-primary" class="m-1" @click="$store.commit('unselectAllDocuments')">
             {{ $_('Deselect all %s documents', [documentsSelected.length])}}
           </b-button>
-          <b-button variant="primary" class="m-1" v-b-modal="'modal-move-documents'">Move</b-button>
-          <b-button variant="danger" class="m-1" v-b-modal="'modal-delete-documents'">Delete</b-button>
+          <b-button id="move-documents" variant="primary" class="m-1" v-b-modal="'modal-move-documents'">Move</b-button>
+          <b-button id="delete-documents" variant="danger" class="m-1" v-b-modal="'modal-delete-documents'">Delete</b-button>
         </b-col>
       </b-row>
 
