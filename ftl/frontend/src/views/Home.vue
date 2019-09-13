@@ -83,15 +83,20 @@
                hide-footer
                centered
                @hidden="closeDocument">
-        <template slot="modal-title">
-          <b-row align-v="center">
-            <b-col><span>{{ currentOpenDoc.title }}</span></b-col>
-            <b-col>
-              <b-button id="rename-document" variant="link" v-b-modal="'modal-rename-document'">
-                <font-awesome-icon icon="edit" :title="$_('Rename document')"/>
-              </b-button>
-            </b-col>
-          </b-row>
+        <template slot="modal-header">
+          <b-container>
+            <b-row align-v="center">
+              <b-col>
+                <h5 class="d-inline modal-title">{{ currentOpenDoc.title }}</h5>
+                <b-button id="rename-document" v-b-modal="'modal-rename-document'" variant="link">
+                  <font-awesome-icon icon="edit" :title="$_('Rename document')"/>
+                </b-button>
+              </b-col>
+              <b-col>
+                <button @click="$bvModal.hide('document-viewer')" type="button" aria-label="Close" class="close">×</button>
+              </b-col>
+            </b-row>
+          </b-container>
         </template>
         <b-container class="h-100">
           <b-row class="h-100">
@@ -546,22 +551,5 @@
 
   .stop-spin {
     animation: unspin 0.5s 1 ease-out;
-  }
-
-  @keyframes unspin {
-    to {
-      transform: rotate(-0.5turn);
-    }
-  }
-
-  @keyframes slide-down {
-    from {
-      transform: translateY(-30px);
-      opacity: 0;
-    }
-    to {
-      transform: translateY(0px);
-      opacity: 1;
-    }
   }
 </style>
