@@ -15,14 +15,14 @@
 
       <b-row v-show="!documentsSelected.length" class="my-3" id="folders-list">
         <b-col>
-          <b-button id="refresh-documents" :disabled="docsLoading" variant="primary" class="m-1" @click="refreshAll">
+          <b-button id="refresh-documents" :disabled="docsLoading" variant="primary" @click="refreshAll">
             <font-awesome-icon icon="sync" :spin="docsLoading" :class="{ 'stop-spin':!docsLoading }"
                                :title="$_('Refresh documents list')"/>
           </b-button>
-          <b-button id="create-folder" class="m-1" variant="primary" v-b-modal="'modal-new-folder'">
+          <b-button id="create-folder" variant="primary" v-b-modal="'modal-new-folder'">
             <font-awesome-icon icon="folder-plus" :title="$_('Create new folder')"/>
           </b-button>
-          <b-button variant="primary" class="m-1" :disabled="!previousLevels.length"
+          <b-button variant="primary" :disabled="!previousLevels.length"
                     @click="changeToPreviousFolder">
             <font-awesome-icon icon="level-up-alt"/>
           </b-button>
@@ -31,13 +31,27 @@
         </b-col>
       </b-row>
 
-      <b-row v-show="documentsSelected.length" class="my-3" id="action-selected-documents" align-h="center">
-        <b-col cols="*">
-          <b-button id="unselect-all-documents" variant="outline-primary" class="m-1" @click="$store.commit('unselectAllDocuments')">
-            {{ $_('Deselect all %s documents', [documentsSelected.length])}}
+      <b-row v-show="documentsSelected.length" id="action-selected-documents">
+        <b-col>
+          <b-button id="select-all-documents" variant="outline-primary" title="Select all documents displayed"
+                    @click="$store.commit('unselectAllDocuments')">
+            {{ $_('Select all') }}
           </b-button>
-          <b-button id="move-documents" variant="primary" class="m-1" v-b-modal="'modal-move-documents'">Move</b-button>
-          <b-button id="delete-documents" variant="danger" class="m-1" v-b-modal="'modal-delete-documents'">Delete</b-button>
+        </b-col>
+        <b-col cols="8" class="text-right">
+          <span class="text-muted d-none d-sm-inline">{{ $_('%s documents:', [documentsSelected.length]) }}</span>
+          <b-button id="move-documents" variant="primary" v-b-modal="'modal-move-documents'" title="Move to folder">
+            <font-awesome-icon icon="folder-open" class="d-sm-none"/>
+            <span class="d-none d-sm-inline">{{ $_('Move') }}</span>
+          </b-button>
+          <b-button id="delete-documents" variant="danger" v-b-modal="'modal-delete-documents'" title="Delete documents">
+            <font-awesome-icon icon="trash" class="d-sm-none"/>
+            <span class="d-none d-sm-inline">{{ $_('Delete') }}</span>
+          </b-button>
+          <b-button id="unselect-all-documents" @click="$store.commit('unselectAllDocuments')" title="Unselect documents">
+            <font-awesome-icon icon="window-close" class="d-sm-none"/>
+            <span class="d-none d-sm-inline">{{ $_('Cancel') }}</span>
+          </b-button>
         </b-col>
       </b-row>
 
@@ -499,26 +513,31 @@
     display: block;
   }
 
-  #folders-list button, #action-selected-documents button {
+  #folders-list button, #action-selected-documents button, #action-selected-documents span {
     margin-left: 0 !important;
     margin-right: 0.5rem !important;
+
+    &:last-child{
+      margin-right: 0 !important;
+    }
   }
 
   #action-selected-documents {
     position: sticky;
-    top: 87px;
-    animation: slide-up 0.1s linear;
+    top: 72px;
+    animation: slide-down 0.1s linear;
     z-index: calc(#{$zindex-sticky} - 1); // to be under header dropdown menu (mobile)
-
-    .btn-outline-primary:not(:hover){
-      background: $light;
-    }
+    background: $light;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    margin-top: -0.5rem;
+    margin-bottom: -0.5rem;
   }
 
-  @include media-breakpoint-up(md) {
-      #action-selected-documents {
-        top: 67px;
-      }
+  @include media-breakpoint-up(sm) {
+    #action-selected-documents {
+      top: 56px;
+    }
   }
 
   .stop-spin {
@@ -531,9 +550,9 @@
     }
   }
 
-  @keyframes slide-up {
+  @keyframes slide-down {
     from {
-      transform: translateY(30px);
+      transform: translateY(-30px);
       opacity: 0;
     }
     to {
