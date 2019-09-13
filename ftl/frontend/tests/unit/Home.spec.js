@@ -210,6 +210,10 @@ describe('Home computed', () => {
     expect(mockedComputeFolderUrlPath).toHaveBeenNthCalledWith(2, fakeLevels[1].id);
     expect(mockedComputeFolderUrlPath).toHaveBeenCalledTimes(2);
   });
+
+  it('documentsSelected call Vuex store', () => {
+    // TODO vuex test
+  });
 });
 
 describe('Home mounted call proper methods with given props', () => {
@@ -390,6 +394,10 @@ describe('Home watchers call proper methods', () => {
     expect(mockedUpdateFoldersPath).not.toHaveBeenCalled();
     expect(mockedChangeFolder).not.toHaveBeenCalled();
   });
+
+  it('folder watcher call vuex store', async () => {
+    // TODO vuex test
+  });
 });
 
 describe('Home methods call proper methods', () => {
@@ -536,38 +544,21 @@ describe('Home methods call proper methods', () => {
     expect(mockedRefreshFolders).toHaveBeenCalledTimes(1);
   });
 
-  it('documentDeleted remove doc from list', () => {
-    // given
-    const documentToDelete = tv.DOCUMENT_NO_THUMB_PROPS_2;
-    const originalDocumentsList = [tv.DOCUMENT_NO_THUMB_PROPS, documentToDelete];
-    const originalDocumentsListLength = originalDocumentsList.length;
-    wrapper.setData({docs: originalDocumentsList});
+  it('documentDeleted call refreshDocumentWithSearch when needed', () => {
+    wrapper.setData({docs: [tv.DOCUMENT_PROPS, tv.DOCUMENT_PROPS_VARIANT]});
+    wrapper.setData({moreDocs: 'moaaarUrl'});
 
     // when
-    wrapper.vm.documentDeleted({doc: documentToDelete});
+    wrapper.vm.documentDeleted({doc: tv.DOCUMENT_PROPS_VARIANT});
 
     // then
-    expect(wrapper.vm.docs.length).toBe(originalDocumentsListLength - 1);
-  });
-
-  it('documentUpdated update doc in list', () => {
-    // given
-    wrapper.setMethods({documentUpdated: Home.methods.documentUpdated});
-    const documentToUpdate = tv.DOCUMENT_NO_THUMB_PROPS_2;
-    const originalDocumentsList = [tv.DOCUMENT_NO_THUMB_PROPS, documentToUpdate];
-    const originalDocumentsListLength = originalDocumentsList.length;
-    wrapper.setData({docs: originalDocumentsList});
+    expect(mockedRefreshDocumentWithSearch).toHaveBeenCalledTimes(0);
 
     // when
-    const documentUpdated = Object.assign({}, documentToUpdate); // shallow copy
-    const updatedTitle = 'bingo!';
-    documentUpdated.title = updatedTitle;
-    wrapper.vm.documentUpdated({doc: documentUpdated});
+    wrapper.vm.documentDeleted({doc: tv.DOCUMENT_PROPS});
 
     // then
-    expect(wrapper.vm.docs.length).toBe(originalDocumentsListLength);
-    expect(wrapper.vm.docs[1].title).not.toBe(documentToUpdate.title);
-    expect(wrapper.vm.docs[1].title).toBe(updatedTitle);
+    expect(mockedRefreshDocumentWithSearch).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -717,6 +708,102 @@ describe('Home methods call proper api', () => {
     expect(mockedChangeFolder).toHaveBeenCalledTimes(1);
     expect(mockedComputeFolderUrlPath).toHaveBeenCalledWith(tv.FOLDER_PROPS.id);
     expect(mockedComputeFolderUrlPath).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('Home methods update proper data', () => {
+  let wrapper;
+
+  beforeEach(() => {
+    mockedDocumentsSelected.mockReturnValue([]);
+    wrapper = shallowMount(Home, {
+      localVue,
+      methods: mountedMocks,
+      computed: {
+        documentsSelected: mockedDocumentsSelected
+      }
+    });
+    jest.clearAllMocks(); // Reset mock call count done by mounted
+  });
+
+  it('documentsCreated update docs data', () => {
+    let docsList = [tv.DOCUMENT_PROPS];
+    //given
+    wrapper.setData({docs: docsList});
+
+    // when
+    wrapper.vm.documentsCreated({doc : tv.DOCUMENT_PROPS_VARIANT});
+
+    expect(wrapper.vm.docs).toEqual([tv.DOCUMENT_PROPS_VARIANT, tv.DOCUMENT_PROPS]);
+  });
+
+  it('documentDeleted update docs data', () => {
+    // given
+    const documentToDelete = tv.DOCUMENT_NO_THUMB_PROPS_2;
+    const originalDocumentsList = [tv.DOCUMENT_NO_THUMB_PROPS, documentToDelete];
+    const originalDocumentsListLength = originalDocumentsList.length;
+    wrapper.setData({docs: originalDocumentsList});
+
+    // when
+    wrapper.vm.documentDeleted({doc: documentToDelete});
+
+    // then
+    expect(wrapper.vm.docs.length).toBe(originalDocumentsListLength - 1);
+  });
+
+  it('documentUpdated update docs data', () => {
+    // given
+    wrapper.setMethods({documentUpdated: Home.methods.documentUpdated});
+    const documentToUpdate = tv.DOCUMENT_NO_THUMB_PROPS_2;
+    const originalDocumentsList = [tv.DOCUMENT_NO_THUMB_PROPS, documentToUpdate];
+    const originalDocumentsListLength = originalDocumentsList.length;
+    wrapper.setData({docs: originalDocumentsList});
+
+    // when
+    const documentUpdated = Object.assign({}, documentToUpdate); // shallow copy
+    const updatedTitle = 'bingo!';
+    documentUpdated.title = updatedTitle;
+    wrapper.vm.documentUpdated({doc: documentUpdated});
+
+    // then
+    expect(wrapper.vm.docs.length).toBe(originalDocumentsListLength);
+    expect(wrapper.vm.docs[1].title).not.toBe(documentToUpdate.title);
+    expect(wrapper.vm.docs[1].title).toBe(updatedTitle);
+  });
+
+  it('documentUpdated update currentOpenDoc data if needed', () => {
+    // given
+    wrapper.setMethods({documentUpdated: Home.methods.documentUpdated});
+    const documentToUpdate = tv.DOCUMENT_PROPS;
+    const documentNotToUpdate = tv.DOCUMENT_PROPS_VARIANT;
+    const originalDocumentsList = [documentNotToUpdate, documentToUpdate];
+    wrapper.setData({docs: originalDocumentsList});
+    let documentUpdated = Object.assign({}, documentToUpdate); // shallow copy
+    documentUpdated.title = 'updated';
+
+    // when no document is open
+    wrapper.vm.documentUpdated({doc: documentUpdated});
+
+    // then open doc stay null
+    expect(wrapper.vm.currentOpenDoc).toEqual({});
+
+    // when another document is open
+    wrapper.setData({currentOpenDoc: documentNotToUpdate});
+    wrapper.vm.documentUpdated({doc: documentUpdated});
+
+    // then open doc is not updated
+    expect(wrapper.vm.currentOpenDoc).not.toEqual(documentUpdated);
+
+    // when the document to update is open
+    wrapper.setData({currentOpenDoc: documentToUpdate});
+    wrapper.vm.documentUpdated({doc: documentUpdated});
+
+    // then open doc is updated
+    expect(wrapper.vm.currentOpenDoc).toEqual(documentUpdated);
+  });
+
+  it('documentDeleted update vuex data', () => {
+    // TODO vuex test
   });
 });
 

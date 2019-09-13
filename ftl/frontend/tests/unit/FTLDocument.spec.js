@@ -54,9 +54,10 @@ describe('FTLDocument template', () => {
   });
 });
 
-describe('FTLDocument script', () => {
+describe('FTLDocument methods', () => {
   let wrapper;
   const testedDocument = tv.DOCUMENT_PROPS;
+  const defaultStoreSelectedValue = false;
 
   beforeEach(() => {
     // given
@@ -66,7 +67,7 @@ describe('FTLDocument script', () => {
       localVue,
       propsData: {doc: testedDocument},
       computed: {
-        storeSelected: false
+        storeSelected: defaultStoreSelectedValue
       }
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
@@ -85,52 +86,11 @@ describe('FTLDocument script', () => {
     expect(wrapper.emitted(testedEvent)[0]).toEqual([testedDocument.pid])
   });
 
-  // it('deleteDocument call api', async () => {
-  //   // when
-  //   wrapper.vm.deleteDocument();
-  //   await flushPromises();
-  //
-  //   // then
-  //   expect(axios.delete).toHaveBeenCalledWith(
-  //     '/app/api/v1/documents/' + testedDocument.pid,
-  //     axiosConfig
-  //   );
-  // });
-  //
-  // it('deleteDocument emit event-delete-doc', async () => {
-  //   // when
-  //   wrapper.vm.deleteDocument();
-  //   await flushPromises();
-  //
-  //   // then
-  //   expect(wrapper.emitted('event-delete-doc')).toBeTruthy();
-  // });
-  //
-  // it('deleteDocument ask user for confirmation with $bvModal.msgBoxConfirm', async () => {
-  //   // when
-  //   wrapper.vm.deleteDocument();
-  //   await flushPromises();
-  //
-  //   // then
-  //   expect(localVue.prototype.$bvModal.msgBoxConfirm).toHaveBeenCalledTimes(1);
-  //   const modalFirstArg = localVue.prototype.$bvModal.msgBoxConfirm.mock.calls[0][0]
-  //   expect(modalFirstArg).toContain('confirm');
-  //   expect(modalFirstArg).toContain('delete');
-  //   expect(modalFirstArg).toContain('document');
-  // });
-  //
-  // it('deleteDocument call mixinAlert in case of API error', async () => {
-  //   // force an error
-  //   axios.delete.mockRejectedValue('errorDescription');
-  //
-  //   // when
-  //   wrapper.vm.deleteDocument();
-  //   await flushPromises();
-  //
-  //   // then mixinAlert is called with proper message
-  //   expect(mockedMixinAlert).toHaveBeenCalledTimes(1);
-  //   const modalFirstArg = mockedMixinAlert.mock.calls[0][0];
-  //   expect(modalFirstArg).toContain('delete');
-  //   expect(modalFirstArg).toContain('document');
-  // });
+  it('clickDoc toggle storeSelected in store', () => {
+    // TODO vuex test
+  });
+});
+
+describe('FTLDocument computed', () => {
+    // TODO vuex test
 });

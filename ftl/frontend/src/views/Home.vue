@@ -486,9 +486,9 @@
         const doc = event.doc;
         const foundIndex = this.docs.findIndex(x => x.pid === doc.pid);
         this.docs.splice(foundIndex, 1);
-        // remove from selection if necessary
+        // remove from selection
         this.$store.commit('unselectDocument', doc);
-        // if last doc in the list have been removed and there is more docs to come, refresh list
+        // if last doc in the list has been removed and there is more docs to come, refresh list
         if (this.docs.length < 1 && this.moreDocs !== null){
             this.refreshDocumentWithSearch()
         }

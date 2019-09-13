@@ -39,8 +39,19 @@ describe('FTLDeleteDocuments template', () => {
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
 
-  it('renders properly FTLDeleteDocuments data', () => {
+  it('renders proper template', () => {
     expect(wrapper.html()).toContain('Delete documents');
+  });
+
+  it('renders properly FTLDeleteDocuments data for 1 document', () => {
+    // overwrite docs prop with only 1 doc
+    wrapper.setData({ docs: [docsProp[0]]});
+
+    expect(wrapper.html()).toContain(docsProp[0].title);
+  });
+
+  it('renders properly FTLDeleteDocuments data for several documents', () => {
+    expect(wrapper.html()).toContain(docsProp.length);
   });
 });
 
