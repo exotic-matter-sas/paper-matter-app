@@ -43,7 +43,7 @@
         set: function (value) {
           // update the store
           if (value === true) {
-            this.$store.commit("selectDocument", this.doc)
+            this.$store.commit("selectDocuments", [this.doc])
           } else {
             this.$store.commit("unselectDocument", this.doc)
           }
@@ -57,7 +57,7 @@
       },
 
       clickDoc: function () {
-        this.storeSelected = this.storeSelected !== true;
+        this.storeSelected = !this.storeSelected;
       }
     }
   }

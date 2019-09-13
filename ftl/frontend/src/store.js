@@ -18,10 +18,12 @@ export default new Vuex.Store({
       state.panelSelectedFolder = folder;
     },
 
-    selectDocument: function (state, document) {
-      const foundIndex = state.selectedDocumentsHome.findIndex(x => x.pid === document.pid);
-      if (foundIndex === -1) {
-        state.selectedDocumentsHome.push(document);
+    selectDocuments: function (state, documents) {
+      for (const document of documents){
+        const foundIndex = state.selectedDocumentsHome.findIndex(x => x.pid === document.pid);
+        if (foundIndex === -1) {
+          state.selectedDocumentsHome.push(document);
+        }
       }
     },
 

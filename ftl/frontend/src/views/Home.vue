@@ -34,7 +34,7 @@
       <b-row v-show="documentsSelected.length" id="action-selected-documents">
         <b-col>
           <b-button id="select-all-documents" variant="outline-primary" title="Select all documents displayed"
-                    @click="$store.commit('unselectAllDocuments')">
+                    @click="$store.commit('selectDocuments', docs)">
             {{ $_('Select all') }}
           </b-button>
         </b-col>
@@ -487,7 +487,11 @@
         const foundIndex = this.docs.findIndex(x => x.pid === doc.pid);
         this.docs.splice(foundIndex, 1);
         // remove from selection if necessary
-        this.$store.commit('unselectDocument', doc)
+        this.$store.commit('unselectDocument', doc);
+        // if last doc in the list have been removed and there is more docs to come, refresh list
+        if (this.docs.length < 1 && this.moreDocs !== null){
+            this.refreshDocumentWithSearch()
+        }
       },
 
       documentUpdated: function (event) {
