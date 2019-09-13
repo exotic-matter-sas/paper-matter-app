@@ -25,8 +25,15 @@ class HomePage(BasePage):
     folders_list_buttons = 'button.folder > span:not(.spinner-border):not(.d-none)'
     folders_list_loader = '#folder-list-loader'
 
-    documents_list = '#documents-list'
+    batch_toolbar = '#action-selected-documents'
+    unselect_all_docs_batch_button = '#unselect-all-documents'
+    move_docs_batch_button = '#move-documents'
+    delete_docs_batch_button = '#delete-documents'
+
+    documents_list_container = '#documents-list'
     documents_thumbnails = '.document-thumbnail'
+    documents_checkboxes = '.document-thumbnail .custom-checkbox'
+    documents_titles = '.document-thumbnail .card-title'
     first_document_title = '.document-thumbnail:first-child .card-title'
     last_document_title = '.document-thumbnail:last-child .card-title'
 
@@ -76,3 +83,9 @@ class HomePage(BasePage):
     def open_first_document(self):
         first_document_title = self.get_elem(self.first_document_title)
         first_document_title.click()
+
+    def select_documents(self, documents_names):
+        documents_list = self.get_elems(self.documents_thumbnails)
+        for document in documents_list:
+            if document.find_element_by_css_selector(self.documents_titles).text in documents_names:
+                document.find_element_by_css_selector(self.documents_checkboxes).click()

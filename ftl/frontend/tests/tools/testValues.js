@@ -46,6 +46,15 @@ export const DOCUMENT_PROPS = {
   ftl_folder: null
 };
 
+export const DOCUMENT_PROPS_VARIANT = {
+  pid: '5678',
+  title: 'Document title 2',
+  note: 'Document note 2',
+  created: new Date('2019-04-18T11:00:00').toString(),
+  thumbnail_available: true,
+  ftl_folder: null
+};
+
 export const DOCUMENT_PROPS_WITH_FOLDER = {
   pid: '1234',
   title: 'Document title',

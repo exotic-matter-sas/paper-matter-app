@@ -9,7 +9,7 @@
         <font-awesome-icon icon="folder" size="5x" class="text-secondary w-100"/>
       </b-col>
     </b-row>
-    <b-row align-h="left" no-gutters>
+    <b-row align-h="start" no-gutters>
       <b-col>
         <b-form-checkbox
           :id="'checkbox-folder-' + folder.id"

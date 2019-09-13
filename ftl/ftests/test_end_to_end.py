@@ -11,7 +11,7 @@ from core.processing.ftl_processing import FTLDocumentProcessing
 from ftests.pages.base_page import NODE_SERVER_RUNNING
 from ftests.pages.django_admin_home_page import AdminHomePage
 from ftests.pages.django_admin_login_page import AdminLoginPage
-from ftests.pages.document_viewer_page import DocumentViewPage
+from ftests.pages.document_viewer_modal import DocumentViewerModal
 from ftests.pages.home_page import HomePage
 from ftests.pages.setup_pages import SetupPages
 from ftests.pages.signup_pages import SignupPages
@@ -88,7 +88,7 @@ class SecondOrgSetup(AdminLoginPage, AdminHomePage, SignupPages, LoginPage, Home
         self.assertIn(username, self.get_elem(self.profile_name).text)
 
 
-class NewUserAddDocumentInsideFolder(SignupPages, LoginPage, HomePage, DocumentViewPage):
+class NewUserAddDocumentInsideFolder(SignupPages, LoginPage, HomePage, DocumentViewerModal):
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     @patch.object(FTLDocumentProcessing, 'apply_processing')
     def test_new_user_add_document_inside_folder(self,  mock_apply_processing):
@@ -118,7 +118,7 @@ class NewUserAddDocumentInsideFolder(SignupPages, LoginPage, HomePage, DocumentV
         self.assertEqual(pdf_viewer_iframe_title, 'PDF.js viewer')
 
 
-class TikaDocumentIndexationAndSearch(LoginPage, HomePage, DocumentViewPage):
+class TikaDocumentIndexationAndSearch(LoginPage, HomePage, DocumentViewerModal):
     def setUp(self, **kwargs):
         # first org, admin, user are already created, user is already logged on home page
         super().setUp()

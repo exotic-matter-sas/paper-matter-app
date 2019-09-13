@@ -8,6 +8,7 @@ import {
   faEdit,
   faFileDownload,
   faFolder,
+  faFolderOpen,
   faFolderPlus,
   faHome,
   faLevelUpAlt,
@@ -27,8 +28,8 @@ import axios from 'axios';
 Vue.config.productionTip = false;
 
 // Font Awesome icons definition
-library.add(faHome, faFolder, faSearch, faWindowClose, faTrash, faFileDownload, faFolderPlus, faSync, faLevelUpAlt,
-  faCrown, faEdit);
+library.add(faHome, faFolder, faFolderOpen, faSearch, faWindowClose, faTrash, faFileDownload, faFolderPlus, faSync,
+  faLevelUpAlt, faCrown, faEdit);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.use(BootstrapVue);
 

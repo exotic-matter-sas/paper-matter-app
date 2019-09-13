@@ -13,21 +13,45 @@
         </b-col>
       </b-row>
 
-      <b-row class="my-3" id="folders-list">
+      <b-row v-show="!documentsSelected.length" class="my-3" id="folders-list">
         <b-col>
-          <b-button id="refresh-documents" :disabled="docsLoading" variant="primary" class="m-1" @click="refreshAll">
+          <b-button id="refresh-documents" :disabled="docsLoading" variant="primary" @click="refreshAll">
             <font-awesome-icon icon="sync" :spin="docsLoading" :class="{ 'stop-spin':!docsLoading }"
                                :title="$_('Refresh documents list')"/>
           </b-button>
-          <b-button id="create-folder" class="m-1" variant="primary" v-b-modal="'modal-new-folder'">
+          <b-button id="create-folder" variant="primary" v-b-modal="'modal-new-folder'">
             <font-awesome-icon icon="folder-plus" :title="$_('Create new folder')"/>
           </b-button>
-          <b-button variant="primary" class="m-1" :disabled="!previousLevels.length"
+          <b-button variant="primary" :disabled="!previousLevels.length"
                     @click="changeToPreviousFolder">
             <font-awesome-icon icon="level-up-alt"/>
           </b-button>
           <FTLFolder v-for="folder in folders" :key="folder.id" :folder="folder"
                      @event-change-folder="navigateToFolder"/>
+        </b-col>
+      </b-row>
+
+      <b-row v-show="documentsSelected.length" id="action-selected-documents">
+        <b-col>
+          <b-button id="select-all-documents" variant="outline-primary" title="Select all documents displayed"
+                    @click="$store.commit('selectDocuments', docs)">
+            {{ $_('Select all') }}
+          </b-button>
+        </b-col>
+        <b-col cols="8" class="text-right">
+          <span class="text-muted d-none d-sm-inline">{{ $_('%s documents:', [documentsSelected.length]) }}</span>
+          <b-button id="move-documents" variant="primary" v-b-modal="'modal-move-documents'" title="Move to folder">
+            <font-awesome-icon icon="folder-open" class="d-sm-none"/>
+            <span class="d-none d-sm-inline">{{ $_('Move') }}</span>
+          </b-button>
+          <b-button id="delete-documents" variant="danger" v-b-modal="'modal-delete-documents'" title="Delete documents">
+            <font-awesome-icon icon="trash" class="d-sm-none"/>
+            <span class="d-none d-sm-inline">{{ $_('Delete') }}</span>
+          </b-button>
+          <b-button id="unselect-all-documents" @click="$store.commit('unselectAllDocuments')" title="Unselect documents">
+            <font-awesome-icon icon="window-close" class="d-sm-none"/>
+            <span class="d-none d-sm-inline">{{ $_('Cancel') }}</span>
+          </b-button>
         </b-col>
       </b-row>
 
@@ -59,13 +83,20 @@
                hide-footer
                centered
                @hidden="closeDocument">
-        <template slot="modal-title">
-          <span>{{ currentOpenDoc.title }}</span>
-          <span>
-            <b-button id="rename-document" variant="link" v-b-modal="'modal-rename-document'">
-              <font-awesome-icon icon="edit" :title="$_('Rename document')"/>
-            </b-button>
-          </span>
+        <template slot="modal-header">
+          <b-container>
+            <b-row align-v="center">
+              <b-col>
+                <h5 class="d-inline modal-title">{{ currentOpenDoc.title }}</h5>
+                <b-button id="rename-document" v-b-modal="'modal-rename-document'" variant="link">
+                  <font-awesome-icon icon="edit" :title="$_('Rename document')"/>
+                </b-button>
+              </b-col>
+              <b-col>
+                <button @click="$bvModal.hide('document-viewer')" type="button" aria-label="Close" class="close">×</button>
+              </b-col>
+            </b-row>
+          </b-container>
         </template>
         <b-container class="h-100">
           <b-row class="h-100">
@@ -93,14 +124,29 @@
         :parent="getCurrentFolder"
         @event-folder-created="folderCreated"/>
 
-      <FTLMoveDocument
-        :doc="currentOpenDoc"
+      <!-- For document panel Move button -->
+      <FTLMoveDocuments
+        v-if="currentOpenDoc"
+        id="modal-move-document"
+        :docs="[currentOpenDoc]"
+        @event-document-moved="documentDeleted"/>
+
+      <!-- For batch action move document -->
+      <FTLMoveDocuments
+        v-if="documentsSelected.length > 0"
+        id="modal-move-documents"
+        :docs="documentsSelected"
         @event-document-moved="documentDeleted"/>
 
       <FTLRenameDocument
         v-if="currentOpenDoc.pid"
         :doc="currentOpenDoc"
         @event-document-renamed="documentUpdated"/>
+
+      <FTLDeleteDocuments
+        v-if="documentsSelected.length > 0"
+        :docs="documentsSelected"
+        @event-document-deleted="documentDeleted"/>
     </b-col>
   </main>
 </template>
@@ -111,8 +157,9 @@
   import FTLDocument from '@/components/FTLDocument';
   import FTLUpload from '@/components/FTLUpload';
   import FTLNewFolder from "@/components/FTLNewFolder";
+  import FTLDeleteDocuments from "@/components/FTLDeleteDocuments";
   import FTLThumbnailGenMixin from "@/components/FTLThumbnailGenMixin";
-  import FTLMoveDocument from "@/components/FTLMoveDocument";
+  import FTLMoveDocuments from "@/components/FTLMoveDocuments";
   import FTLRenameDocument from "@/components/FTLRenameDocument";
   import axios from 'axios';
   import qs from 'qs';
@@ -122,7 +169,8 @@
     mixins: [FTLThumbnailGenMixin],
 
     components: {
-      FTLMoveDocument,
+      FTLDeleteDocuments,
+      FTLMoveDocuments,
       FTLRenameDocument,
       FTLNewFolder,
       FTLFolder,
@@ -204,6 +252,9 @@
         } else if (this.$route.name === 'home-search') {
           // Do something? Nothing for now
         }
+
+        // Clear the selected documents when moving between folders
+        this.$store.commit("unselectAllDocuments");
       }
     },
 
@@ -237,6 +288,10 @@
             }
           }
         }));
+      },
+
+      documentsSelected: function () {
+        return this.$store.state.selectedDocumentsHome;
       }
     },
 
@@ -436,13 +491,21 @@
         const doc = event.doc;
         const foundIndex = this.docs.findIndex(x => x.pid === doc.pid);
         this.docs.splice(foundIndex, 1);
+        // remove from selection
+        this.$store.commit('unselectDocument', doc);
+        // if last doc in the list has been removed and there is more docs to come, refresh list
+        if (this.docs.length < 1 && this.moreDocs !== null){
+            this.refreshDocumentWithSearch()
+        }
       },
 
       documentUpdated: function (event) {
-        if (this.currentOpenDoc.pid === event.doc.pid){
-          this.currentOpenDoc = event.doc; // update open doc
-        }
         const doc = event.doc;
+
+        if (this.currentOpenDoc.pid === doc.pid) {
+          this.currentOpenDoc = doc; // update open doc
+        }
+
         const foundIndex = this.docs.findIndex(x => x.pid === doc.pid);
         this.docs[foundIndex] = doc; // update doc in the list
       }
@@ -459,18 +522,34 @@
     display: block;
   }
 
-  #folders-list button, #folders-list button {
+  #folders-list button, #action-selected-documents button, #action-selected-documents span {
     margin-left: 0 !important;
     margin-right: 0.5rem !important;
+
+    &:last-child{
+      margin-right: 0 !important;
+    }
+  }
+
+  #action-selected-documents {
+    position: sticky;
+    top: 72px;
+    animation: slide-down 0.1s linear;
+    z-index: calc(#{$zindex-sticky} - 1); // to be under header dropdown menu (mobile)
+    background: $light;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    margin-top: -0.5rem;
+    margin-bottom: -0.5rem;
+  }
+
+  @include media-breakpoint-up(sm) {
+    #action-selected-documents {
+      top: 56px;
+    }
   }
 
   .stop-spin {
     animation: unspin 0.5s 1 ease-out;
-  }
-
-  @keyframes unspin {
-    to {
-      transform: rotate(-0.5turn);
-    }
   }
 </style>
