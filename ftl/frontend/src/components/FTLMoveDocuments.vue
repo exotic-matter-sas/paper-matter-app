@@ -3,7 +3,7 @@
            :ok-disabled="!selectedMoveTargetFolder"
            @ok="moveDocument">
     <template slot="modal-title">
-      <span v-if="docs.length > 1">{{ this.$_('Move documents to ...')}}</span>
+      <span v-if="docs.length > 1">{{ this.$_('Move %s documents to ...', [docs.length])}}</span>
       <span v-else>{{ this.$_('Move %s to ...', [docs[0].title])}}</span>
     </template>
     <b-container fluid>
