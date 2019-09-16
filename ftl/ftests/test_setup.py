@@ -65,7 +65,7 @@ class AdminLoginTests(AdminLoginPage):
         self.log_admin()
 
         # Django admin display properly
-        self.assertIn(f'welcome, {tv.ADMIN_USERNAME}', self.get_elem(self.django_admin_success_message).text.lower())
+        self.assertIn(f'welcome, {tv.ADMIN_EMAIL}', self.get_elem(self.django_admin_success_message).text.lower())
 
 
 class FirstUserSignupTest(SignupPages):

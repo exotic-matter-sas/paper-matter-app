@@ -1,9 +1,11 @@
 import pathlib
 import uuid
 
+from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import User, AbstractUser, Permission
 from django.contrib.postgres.fields.citext import CICharField
 from django.contrib.postgres.search import SearchVectorField
+from django.core.validators import EmailValidator
 from django.db import models
 from django.db.models import UniqueConstraint
 from django.utils import timezone
@@ -38,14 +40,67 @@ class FTLOrg(models.Model):
         return self.name
 
 
+# FTL users Manager
+class FTLUserManager(BaseUserManager):
+    use_in_migrations = True
+
+    def _create_user(self, email, password, is_staff, is_superuser, **extra_fields):
+        """
+        Create and save a user with the given username, email, and password.
+        """
+        if not email:
+            raise ValueError('The given email must be set')
+        email = self.normalize_email(email)
+        user = self.model(email=email, is_staff=is_staff, is_superuser=is_superuser, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, password, **extra_fields):
+        return self._create_user(email, password, True, True, **extra_fields)
+
+    def create_user(self, email=None, password=None, **extra_fields):
+        return self._create_user(email, password, False, False, **extra_fields)
+
+
 # FTL users
 class FTLUser(AbstractUser):
+    email_validator = EmailValidator()
+
     org = models.ForeignKey('FTLOrg', on_delete=models.CASCADE)
+    username = models.CharField(
+        _('username'),
+        max_length=150,
+        null=True,
+        blank=True,
+        unique=True,
+        help_text=_('Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.'),
+        validators=[AbstractUser.username_validator],
+        error_messages={
+            'unique': _("A user with that username already exists."),
+        },
+    )
     # override email field to set blank and unique constrains
-    email = models.EmailField(_('email address'), blank=False, unique=True)
+    email = models.EmailField(
+        _('email address'),
+        max_length=256,
+        blank=False,
+        unique=True,
+        help_text=_('Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.'),
+        validators=[email_validator],
+        error_messages={
+            'unique': _("A user with that email already exists."),
+        },
+    )
+
+    USERNAME_FIELD = 'email'
+    EMAIL_FIELD = 'email'
+    REQUIRED_FIELDS = ['org']
+
+    objects = FTLUserManager()
 
     def __str__(self):
-        return self.username
+        return self.email
 
 
 # FTL Documents

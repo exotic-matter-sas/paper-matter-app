@@ -23,7 +23,7 @@ class LoginPage(BasePage):
         submit_input = self.get_elem(self.login_submit_input)
 
         if not username:
-            username = getattr(tv, f'USER{user_num}_USERNAME')
+            username = getattr(tv, f'USER{user_num}_EMAIL')
         if not password:
             password = getattr(tv, f'USER{user_num}_PASS')
 

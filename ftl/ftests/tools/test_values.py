@@ -1,6 +1,5 @@
 APP_NAME = 'Paper Matter'
 
-ADMIN_USERNAME = 'admin'
 ADMIN_EMAIL = 'admin@localhost.com'
 ADMIN_PASS = 'a123456!'
 
@@ -9,11 +8,9 @@ ORG_SLUG_1 = 'exotic-matter'
 ORG_NAME_2 = 'Mozilla'
 ORG_SLUG_2 = 'mozilla'
 
-USER1_USERNAME = 'user1'
 USER1_EMAIL = 'user1@localhost.com'
 USER1_PASS = 'a123456!'
 
-USER2_USERNAME = 'user2'
 USER2_EMAIL = 'user2@localhost.com'
 USER2_PASS = 'a123456!'
 

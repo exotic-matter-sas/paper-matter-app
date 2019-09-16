@@ -16,12 +16,9 @@ class FtlPagesTests(TestCase):
     def test_index_redirects(self):
         """Index redirect to correct page according to setup state"""
         response = self.client.get('', follow=True)
-        self.assertRedirects(response, reverse_lazy('setup:create_first_org'))
-
-        org = setup_org()
-        response = self.client.get('', follow=True)
         self.assertRedirects(response, reverse_lazy('setup:create_admin'))
 
+        org = setup_org()
         setup_admin(org)
         response = self.client.get('', follow=True)
         self.assertRedirects(response, f"{reverse_lazy('login')}?next={reverse_lazy('home')}")
@@ -48,7 +45,6 @@ class FtlPagesTests(TestCase):
 
         response = self.client.post(f'/signup/{org.slug}/',
                                     {
-                                        'username': tv.USER1_USERNAME,
                                         'email': tv.USER1_EMAIL,
                                         'password1': tv.USER1_PASS,
                                         'password2': tv.USER1_PASS,
@@ -76,13 +72,12 @@ class FtlPagesTests(TestCase):
 
         self.client.post(f'/signup/{org.slug}/',
                          {
-                             'username': tv.USER1_USERNAME,
                              'email': tv.USER1_EMAIL,
                              'password1': tv.USER1_PASS,
                              'password2': tv.USER1_PASS,
                          })
 
-        user = FTLUser.objects.get(username=tv.USER1_USERNAME)
+        user = FTLUser.objects.get(email=tv.USER1_EMAIL)
         self.assertIsNotNone(user)
         self.assertTrue(user.has_perms(FTL_PERMISSIONS_USER))
 
