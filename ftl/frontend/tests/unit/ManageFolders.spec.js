@@ -31,7 +31,6 @@ jest.mock('axios', () => ({
   get: jest.fn(),
 }));
 
-// TODO store mocked response for tested api request here
 const mockedGetFoldersListResponse = {
   data: [tv.FOLDER_PROPS, tv.FOLDER_PROPS_VARIANT],
   status: 200,

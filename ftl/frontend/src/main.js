@@ -21,9 +21,10 @@ import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
 
 import {mixinAlert} from "./vueMixins";
 import router from './router';
-import store from './store'
 import moment from 'moment'
 import axios from 'axios';
+import Vuex from 'vuex'
+import storeConfig from "./store/storeConfig"
 
 Vue.config.productionTip = false;
 
@@ -81,6 +82,10 @@ Vue.mixin({
     mixinAlert
   }
 });
+
+// Vuex
+Vue.use(Vuex);
+const store = new Vuex.Store(storeConfig);
 
 new Vue({
   router,

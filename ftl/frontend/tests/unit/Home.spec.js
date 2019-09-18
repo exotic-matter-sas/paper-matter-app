@@ -78,24 +78,6 @@ const mockedGetDocumentsResponse = {
   status: 200,
   config: axiosConfig
 };
-const mockedGetDocumentFlat1Response = {
-  data: {
-    count: 2,
-    next: "http://localhost/next",
-    previous: null,
-    results: [tv.DOCUMENT_PROPS, tv.DOCUMENT_NO_THUMB_PROPS]
-  },
-  status: 200,
-};
-const mockedGetDocumentFlat2Response = {
-  data: Promise.resolve({
-    count: 1,
-    next: null,
-    previous: "http://localhost/previous",
-    results: [tv.DOCUMENT_NO_THUMB_PROPS_2]
-  }),
-  status: 200,
-};
 
 const mockedUpdateFolders = jest.fn();
 const mockedChangeFolder = jest.fn();
