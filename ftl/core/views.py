@@ -171,9 +171,12 @@ class FileUploadView(views.APIView):
         ftl_doc.org = self.request.user.org
         ftl_doc.title = file_obj.name
 
-        if 'thumbnail' in request.POST:
-            ftl_doc.thumbnail_binary = ContentFile(_extract_binary_from_data_uri(request.POST['thumbnail']),
-                                                   'thumb.png')
+        if 'thumbnail' in request.POST and request.POST['thumbnail']:
+            try:
+                ftl_doc.thumbnail_binary = ContentFile(_extract_binary_from_data_uri(request.POST['thumbnail']),
+                                                       'thumb.png')
+            except ValueError:
+                pass
 
         ftl_doc.save()
 
