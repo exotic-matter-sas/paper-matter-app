@@ -38,7 +38,7 @@ class LoginPageTests(LoginPage, HomePage, AdminLoginPage):
 
         # User stay on login page and an error message is displayed
         self.assertIn('login', self.head_title)
-        self.assertIn('Please enter a correct username and password', self.get_elem(self.login_failed_div).text)
+        self.assertIn('Please enter a correct email address and password', self.get_elem(self.login_failed_div).text)
 
     def test_login_page_redirect_logged_user(self):
         # User login

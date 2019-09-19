@@ -14,8 +14,8 @@ class I18nTests(SetupPages, LoginPage, HomePage):
 
     def test_i18n_are_working(self):
         self.visit(self.root_url)
-        self.assertIn('organisation', self.get_elem(self.breadcrumb).text,
-                      '"organization" should be translated to "organisation"')
+        self.assertIn('administrateur', self.head_title,
+                      '"administrator" should be translated to "administrateur"')
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_js_i18n_are_working(self):
