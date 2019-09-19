@@ -12,7 +12,7 @@ class SetupPagesTests(TestCase):
         setup_org()
 
         response = self.client.get('/setup/createadmin/')
-        self.assertContains(response, 'create the administrator')
+        self.assertContains(response, 'Create the administrator')
         self.assertTemplateUsed(response, 'setup/admin_creation_form.html')
 
     def test_create_admin_page_redirect_to_success_after_admin_creation(self):
