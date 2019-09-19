@@ -27,9 +27,6 @@ class InitialSetupTest(SetupPages, SignupPages, LoginPage, HomePage):
         # Admin have just install Paper Matter and display it for the first time
         self.visit(self.root_url)
 
-        # Admin fulfill the org creation form
-        self.create_first_organization()
-
         # Admin fulfill the admin creation form
         self.create_admin()
 
