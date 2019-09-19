@@ -31,7 +31,7 @@ class CreateAdmin(FormView):
             return redirect('login')
 
     def form_valid(self, form):
-        instance = form.save(commit=False)
+        instance = form.save(commit=True)
         instance.user_permissions.set(permissions_names_to_objects(FTL_PERMISSIONS_USER))
         instance.save()
 
