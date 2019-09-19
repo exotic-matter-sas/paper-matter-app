@@ -6,42 +6,43 @@
 
 {% block main_content_vcenter %}
     <form id="login-form" action="{{ app_path }}" method="post">
-                        <h1 class="text-primary">{% trans 'Login' %}</h1>
+        <h1 class="text-primary">{% trans 'Login' %}</h1>
 
-                        {% csrf_token %}
+        {% csrf_token %}
 
-                        <div class="form-label-group">
-                            <input type="text" name="username" id="id_username" class="form-control"
-                                   placeholder="{% trans 'Email' %}" required="" autofocus="">
-                            <label for="inputEmail">{% trans 'Email' %}</label>
-                        </div>
-                        {% if form.username.errors %}
-                            <div class="alert alert-danger">{{ form.username.errors }}</div>
-                        {% endif %}
+        <div class="form-label-group">
+            <input type="text" name="username" id="id_username" class="form-control"
+                   placeholder="{% trans 'Email' %}" required autofocus>
+            <label for="id_username">{% trans 'Email' %}</label>
+        </div>
+        {% if form.username.errors %}
+            <div class="alert alert-danger">{{ form.username.errors }}</div>
+        {% endif %}
 
-                        <div class="form-label-group">
-                            <input type="password" name="password" id="id_password" class="form-control"
-                                   placeholder="{% trans 'Password' %}" required="">
-                            <label for="inputPassword">{% trans 'Password' %}</label>
-                            <a class="mt-1 d-block" href="{% url 'password_reset' %}" id="password-reset">{% trans "Forgot password?" %}</a>
-                        </div>
+        <div class="form-label-group">
+            <input type="password" name="password" id="id_password" class="form-control"
+                   placeholder="{% trans 'Password' %}" required>
+            <label for="id_password">{% trans 'Password' %}</label>
+            <a class="mt-1 d-block" href="{% url 'password_reset' %}"
+               id="password-reset">{% trans "Forgot password?" %}</a>
+        </div>
 
-                        {% if form.password.errors %}
-                            <div class="alert alert-danger">{{ form.password.errors }}</div>
-                        {% endif %}
+        {% if form.password.errors %}
+            <div class="alert alert-danger">{{ form.password.errors }}</div>
+        {% endif %}
 
-                        <input class="btn btn-lg btn-primary btn-block mb-3" type="submit" value="{% trans 'Login' %}">
-                        {% if form.non_field_errors %}
-                            <div class="alert alert-danger">{{ form.non_field_errors }}</div>
-                        {% endif %}
-                        {% if messages %}
-                            <ul id="messages">
-                                {% for message in messages %}
-                                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                                {% endfor %}
-                            </ul>
-                        {% endif %}
-                    </form>
+        <input class="btn btn-lg btn-primary btn-block mb-3" type="submit" value="{% trans 'Login' %}">
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+        {% endif %}
+        {% if messages %}
+            <ul id="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </form>
 {% endblock %}
 
 {% block aside_illustration %}
