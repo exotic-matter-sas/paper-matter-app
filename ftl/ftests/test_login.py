@@ -29,7 +29,7 @@ class LoginPageTests(LoginPage, HomePage, AdminLoginPage):
 
         # He can see it's username on it
         self.assertIn('home', self.head_title)
-        self.assertIn(self.user.username, self.get_elem(self.profile_name).text)
+        self.assertIn(self.user.email, self.get_elem(self.profile_name).text)
 
     def test_login_failed(self):
         # User login and is redirect to the logged home page
@@ -59,7 +59,7 @@ class LoginPageTests(LoginPage, HomePage, AdminLoginPage):
         # He can access app and see it's username plus a little admin icon
         self.visit(HomePage.url)
         self.assertIn('home', self.head_title)
-        self.assertIn(self.admin.username, self.get_elem(self.profile_name).text)
+        self.assertIn(self.admin.email, self.get_elem(self.profile_name).text)
 
 
 class ForgotPasswordTests(LoginPage, ResetPasswordPages):
@@ -111,7 +111,7 @@ class ForgotPasswordTests(LoginPage, ResetPasswordPages):
         # User is not able to login using its old password
         self.visit(LoginPage.url)
         self.log_user()
-        self.assertIn('username and password', self.get_elem_text(self.login_failed_div),
+        self.assertIn('email address and password', self.get_elem_text(self.login_failed_div),
                       'User login should failed using its old password')
 
         # User is able to login using its new password
