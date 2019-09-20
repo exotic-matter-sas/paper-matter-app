@@ -1,5 +1,5 @@
-import getters from "@/store/getters";
 import mutations from "@/store/mutations";
+import getters from "@/store/getters";
 
 const state = {
     selectedMoveTargetFolder: null,

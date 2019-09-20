@@ -8,10 +8,14 @@ import * as tv from './../tools/testValues.js'
 import {axiosConfig} from "../../src/constants";
 
 import FTLTreeItem from "@/components/FTLTreeItem";
+import Vuex from "vuex";
+import storeConfig from "@/store/storeConfig";
+import cloneDeep from "lodash.clonedeep";
 
 const localVue = createLocalVue();
 
 localVue.use(BootstrapVue); // avoid bootstrap vue warnings
+localVue.use(Vuex);
 localVue.component('font-awesome-icon', jest.fn()); // avoid font awesome warnings
 
 localVue.prototype.$_ = (text, args='') => {return text + args};// i18n mock
@@ -32,6 +36,8 @@ const mockedGetFoldersListResponse = {
 
 const mockedUpdateMovingFolder = jest.fn();
 const mockedSelected = jest.fn();
+const mockedSelectMoveTargetFolder = jest.fn();
+const mockedFTLTreeItemSelected = jest.fn();
 
 const item = tv.FOLDER_TREE_ITEM;
 const itemWithDescendant = tv.FOLDER_TREE_ITEM_WITH_DESCENDANT;
@@ -39,10 +45,15 @@ const sourceFolder = 1;
 
 describe('FTLTreeItem template', () => {
   let wrapper;
+  let storeConfigCopy;
+  let store;
+
   beforeEach(() => {
-    // set mocked component methods return value before shallowMount
+    storeConfigCopy = cloneDeep(storeConfig);
+    store = new Vuex.Store(storeConfigCopy);
     wrapper = shallowMount(FTLTreeItem, {
       localVue,
+      store,
       computed: {
         selected: mockedSelected
       },
@@ -60,17 +71,31 @@ describe('FTLTreeItem template', () => {
   });
 });
 
-describe('FTLTreeItem computed selected', () => {
-  it('selected return proper format', () => {
-    // TODO Vuex test
-  });
-});
-
 describe('FTLTreeItem methods call proper methods', () => {
   let wrapper;
+  let storeConfigCopy;
+  let store;
   beforeEach(() => {
+    mockedFTLTreeItemSelected.mockReturnValue(false);
+    storeConfigCopy = cloneDeep(storeConfig);
+    store = new Vuex.Store(
+      Object.assign(
+        storeConfigCopy,
+        {
+          mutations :
+          {
+            selectMoveTargetFolder: mockedSelectMoveTargetFolder
+          },
+          getters :
+          {
+            FTLTreeItemSelected: () => mockedFTLTreeItemSelected
+          }
+        }
+      )
+    );
     wrapper = shallowMount(FTLTreeItem, {
       localVue,
+      store,
       computed: {
         selected: mockedSelected
       },
@@ -100,16 +125,37 @@ describe('FTLTreeItem methods call proper methods', () => {
     expect(mockedUpdateMovingFolder).toHaveBeenCalledTimes(1);
   });
   it('selectFolder commit to Vuex store', () => {
-    // TODO Vuex test
+    // when
+    wrapper.vm.selectFolder();
+
+    // then
+    expect(mockedSelectMoveTargetFolder).toBeCalledTimes(1);
+    expect(mockedSelectMoveTargetFolder).toHaveBeenNthCalledWith(
+      1,
+      storeConfigCopy.state,
+      {id: itemWithDescendant.id, name: itemWithDescendant.name}
+    );
+
+    // when
+    mockedFTLTreeItemSelected.mockReturnValue(true);
+    wrapper.vm.selectFolder();
+
+    // then
+    expect(mockedSelectMoveTargetFolder).toBeCalledTimes(2);
+    expect(mockedSelectMoveTargetFolder).toHaveBeenNthCalledWith(2, storeConfigCopy.state, null);
   });
 });
 
 describe('FTLTreeItem methods call api', () => {
   let wrapper;
+  let storeConfigCopy;
+  let store;
   beforeEach(() => {
-    // set mocked component methods return value before shallowMount
+    storeConfigCopy = cloneDeep(storeConfig);
+    store = new Vuex.Store(storeConfigCopy);
     wrapper = shallowMount(FTLTreeItem, {
       localVue,
+      store,
       computed: {
         selected: mockedSelected
       },
@@ -150,10 +196,14 @@ describe('FTLTreeItem methods call api', () => {
 
 describe('FTLTreeItem methods error handling', () => {
   let wrapper;
+  let storeConfigCopy;
+  let store;
   beforeEach(() => {
-    // set mocked component methods return value before shallowMount
+    storeConfigCopy = cloneDeep(storeConfig);
+    store = new Vuex.Store(storeConfigCopy);
     wrapper = shallowMount(FTLTreeItem, {
       localVue,
+      store,
       computed: {
         selected: mockedSelected
       },

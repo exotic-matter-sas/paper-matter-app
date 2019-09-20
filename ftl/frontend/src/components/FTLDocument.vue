@@ -1,7 +1,7 @@
 <template>
   <b-col cols="12" mb="4" sm="6" md="4" lg="3" xl="2" class="mb-3 document-thumbnail" :id="doc.pid"
-         @click.ctrl="clickDoc">
-    <div class="card" :class="{'selected': storeSelected}">
+         @click.ctrl="toggleSelection">
+    <div class="card" :class="{'selected': $store.getters.FTLDocumentSelected(doc.pid)}">
       <div class="card-img-top" slot="aside"
            :style="{'background-image': 'url(' + doc.thumbnail_url + ')'}"
            @click.exact="$emit('event-open-doc', doc.pid)"></div>
@@ -13,7 +13,7 @@
         </b-button>
       </b-card-body>
       <b-card-footer :title="$moment(doc.created).format('LLLL')">
-        <b-form-checkbox v-model="storeSelected" :title="$_('Use CTRL + left click for quick selection')"/>
+        <b-form-checkbox :checked="$store.getters.FTLDocumentSelected(doc.pid)" @change="toggleSelection" :title="$_('Use CTRL + left click for quick selection')"/>
         <small class="text-muted">{{ $moment(doc.created).fromNow() }}</small>
       </b-card-footer>
     </div>
@@ -33,31 +33,17 @@
       return {}
     },
 
-    computed: {
-      storeSelected: {
-        get: function () {
-          // tick the checkbox if we found the document in the selected document list in vuex store
-          return this.$store.state.selectedDocumentsHome.findIndex(x => x.pid === this.doc.pid) > -1;
-        },
-
-        set: function (value) {
-          // update the store
-          if (value === true) {
-            this.$store.commit("selectDocuments", [this.doc])
-          } else {
-            this.$store.commit("unselectDocument", this.doc)
-          }
-        }
-      }
-    },
-
     methods: {
       openDoc: function () {
         this.$emit('event-open-doc', this.doc.pid);
       },
 
-      clickDoc: function () {
-        this.storeSelected = !this.storeSelected;
+      toggleSelection: function () {
+        if (this.$store.getters.FTLDocumentSelected(this.doc.pid)) {
+          this.$store.commit("unselectDocument", this.doc)
+        } else {
+          this.$store.commit("selectDocuments", [this.doc])
+        }
       }
     }
   }

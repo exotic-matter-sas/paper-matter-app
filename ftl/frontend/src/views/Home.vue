@@ -13,7 +13,7 @@
         </b-col>
       </b-row>
 
-      <b-row v-show="!documentsSelected.length" class="my-3" id="folders-list">
+      <b-row v-show="!selectedDocumentsHome.length" class="my-3" id="folders-list">
         <b-col>
           <b-button id="refresh-documents" :disabled="docsLoading" variant="primary" @click="refreshAll">
             <font-awesome-icon icon="sync" :spin="docsLoading" :class="{ 'stop-spin':!docsLoading }"
@@ -31,7 +31,7 @@
         </b-col>
       </b-row>
 
-      <b-row v-show="documentsSelected.length" id="action-selected-documents">
+      <b-row v-show="selectedDocumentsHome.length" id="action-selected-documents">
         <b-col>
           <b-button id="select-all-documents" variant="outline-primary" title="Select all documents displayed"
                     @click="$store.commit('selectDocuments', docs)">
@@ -39,7 +39,7 @@
           </b-button>
         </b-col>
         <b-col cols="8" class="text-right">
-          <span class="text-muted d-none d-sm-inline">{{ $_('%s documents:', [documentsSelected.length]) }}</span>
+          <span class="text-muted d-none d-sm-inline">{{ $_('%s documents:', [selectedDocumentsHome.length]) }}</span>
           <b-button id="move-documents" variant="primary" v-b-modal="'modal-move-documents'" title="Move to folder">
             <font-awesome-icon icon="folder-open" class="d-sm-none"/>
             <span class="d-none d-sm-inline">{{ $_('Move') }}</span>
@@ -133,9 +133,9 @@
 
       <!-- For batch action move document -->
       <FTLMoveDocuments
-        v-if="documentsSelected.length > 0"
+        v-if="selectedDocumentsHome.length > 0"
         id="modal-move-documents"
-        :docs="documentsSelected"
+        :docs="selectedDocumentsHome"
         @event-document-moved="documentDeleted"/>
 
       <FTLRenameDocument
@@ -144,8 +144,8 @@
         @event-document-renamed="documentUpdated"/>
 
       <FTLDeleteDocuments
-        v-if="documentsSelected.length > 0"
-        :docs="documentsSelected"
+        v-if="selectedDocumentsHome.length > 0"
+        :docs="selectedDocumentsHome"
         @event-document-deleted="documentDeleted"/>
     </b-col>
   </main>
@@ -153,6 +153,8 @@
 
 <script>
   // @ is an alias to /src
+  import { mapState } from 'vuex'
+
   import FTLFolder from '@/components/FTLFolder.vue';
   import FTLDocument from '@/components/FTLDocument';
   import FTLUpload from '@/components/FTLUpload';
@@ -289,10 +291,7 @@
           }
         }));
       },
-
-      documentsSelected: function () {
-        return this.$store.state.selectedDocumentsHome;
-      }
+      ...mapState(['selectedDocumentsHome']) // generate vuex computed getter
     },
 
     methods: {

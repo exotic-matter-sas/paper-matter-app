@@ -24,6 +24,8 @@
 
 <script>
 
+  import {mapState} from "vuex";
+
   export default {
     name: "FTLSelectableFolder",
 
@@ -41,16 +43,13 @@
     },
 
     computed: {
-      globalSelected: function () {
-        // allow to watch the value
-        return this.$store.state.panelSelectedFolder;
-      }
+      ...mapState(['panelSelectedFolder']) // generate vuex computed getter
     },
 
     watch: {
-      globalSelected: function (newVal, oldVal) {
+      panelSelectedFolder: function (newVal, oldVal) {
         // Watch the global selected folder panel and deselect itself if any other folder is selected
-        if (this.globalSelected !== null && this.globalSelected.id !== this.folder.id) {
+        if (this.panelSelectedFolder !== null && this.panelSelectedFolder.id !== this.folder.id) {
           this.state = false;
         }
       },

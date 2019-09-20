@@ -1,7 +1,5 @@
-import axios from 'axios';
-import flushPromises from "flush-promises"; // needed for async tests
-
 import mutations from "@/store/mutations";
+import getters from "@/store/getters";
 import * as tv from './../tools/testValues.js'
 
 describe('mutations.js', () => {
@@ -48,5 +46,35 @@ describe('mutations.js', () => {
     mutations.unselectAllDocuments(state);
 
     expect(state.selectedDocumentsHome).toEqual([]);
+  });
+});
+
+describe('getters.js', () => {
+  it('FTLTreeItemSelected returns proper value', () => {
+    const selectedFolder = tv.FOLDER_PROPS;
+    const notSelectedFolder = tv.FOLDER_PROPS_VARIANT;
+    const state = {selectedMoveTargetFolder: selectedFolder};
+
+    let testedValue = getters.FTLTreeItemSelected(state)(notSelectedFolder.id);
+
+    expect(testedValue).toBe(false);
+
+    testedValue = getters.FTLTreeItemSelected(state)(selectedFolder.id);
+
+    expect(testedValue).toBe(true);
+  });
+
+  it('FTLDocumentSelected returns proper value', () => {
+    const selectedDocument = tv.DOCUMENT_PROPS;
+    const notSelectedDocument = tv.DOCUMENT_PROPS_VARIANT;
+    const state = {selectedDocumentsHome: [selectedDocument]};
+
+    let testedValue = getters.FTLDocumentSelected(state)(notSelectedDocument.pid);
+
+    expect(testedValue).toBe(false);
+
+    testedValue = getters.FTLDocumentSelected(state)(selectedDocument.pid);
+
+    expect(testedValue).toBe(true);
   });
 });
