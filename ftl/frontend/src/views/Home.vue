@@ -28,15 +28,15 @@
           </b-button>
           <FTLFolder v-for="folder in folders" :key="folder.id" :folder="folder"
                      @event-change-folder="navigateToFolder"/>
-        </b-col>
-      </b-row>
 
-      <b-row class="my-3" id="documents-sort" align-h="end">
-        <b-col cols="*">
-          <b-dropdown id="dropdown-right" size="sm" right variant="primary" class="m-2">
+          <b-dropdown id="documents-sort" right variant="link" class="m-1 text-decoration-none">
             <template slot="button-content">
               <font-awesome-icon icon="sort"/>
-              {{ $_('Sort')}}
+              {{ $_('Sort') }}
+              <span v-if="sort === 'az'">(a-z)</span>
+              <span v-else-if="sort === 'za'">(z-a)</span>
+              <span v-else-if="sort === 'recent'">({{ $_('recent') }})</span>
+              <span v-else-if="sort === 'older'">({{ $_('older') }})</span>
             </template>
             <b-dropdown-item-button href="#" @click.prevent="sort = 'az'">{{ $_('A-Z') }}&nbsp;
               <span v-if="sort === 'az'">&checkmark;</span></b-dropdown-item-button>
@@ -500,6 +500,19 @@
   @keyframes unspin {
     to {
       transform: rotate(-0.5turn);
+    }
+  }
+</style>
+
+<style lang="scss">
+  @import '../styles/customBootstrap.scss';
+
+  #documents-sort {
+    float: right;
+    margin-right: 0 !important;
+    .btn {
+      padding-right: 0  !important;
+      border-right: none  !important;
     }
   }
 </style>
