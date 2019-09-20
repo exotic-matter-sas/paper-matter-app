@@ -80,7 +80,8 @@ test-slow-python:
   script:
     - export DJANGO_SETTINGS_MODULE=ftl.settings_tests
     - source venv/bin/activate && cd ftl
-    - python3 manage.py test -v 2 --tag=slow --parallel
+    - python3 manage.py test -v 2 --tag=slow
+  allow_failure: false
   when: manual
 
 build-docker:

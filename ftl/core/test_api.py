@@ -12,7 +12,8 @@ import core
 from core.models import FTLDocument, FTLFolder
 from core.processing.ftl_processing import FTLDocumentProcessing
 from ftests.tools import test_values as tv
-from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_document, setup_folder
+from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_document, setup_folder, \
+    setup_temporary_file
 from ftl.enums import FTLStorages, FTLPlugins
 from ftl.settings import BASE_DIR
 
@@ -109,16 +110,12 @@ class DocumentsTests(APITestCase):
 
     @override_settings(DEFAULT_FILE_STORAGE=FTLStorages.FILE_SYSTEM)
     def test_delete_document(self):
-        # Create a custom document specific to this test because we don't want to delete the test pdf file.
-        binary_f = tempfile.NamedTemporaryFile(dir=os.path.join(BASE_DIR, 'ftests', 'tools'), delete=False)
-        binary_f.write(b'Hello world!')  # Actual content doesn't matter
-        binary_f.close()
-
+        binary_f = setup_temporary_file().name
         document_to_be_deleted = FTLDocument.objects.create(
             org=self.org,
             ftl_user=self.user,
             title="Test document to be deleted",
-            binary=binary_f.name,
+            binary=binary_f,  # We don't want to delete the test pdf file
         )
 
         client_delete = self.client.delete(f'/app/api/v1/documents/{str(document_to_be_deleted.pid)}')

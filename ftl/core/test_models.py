@@ -47,21 +47,16 @@ class FTLUserModelTest(TestCase):
         setup_admin(self.org)
         self.user = setup_user(self.org)
 
-        # Create a custom document specific to this test because we don't want to delete the test pdf file.
-        binary_f = tempfile.NamedTemporaryFile(dir=os.path.join(BASE_DIR, 'ftests', 'tools'), delete=False)
-        binary_f.write(b'Hello world!')  # Actual content doesn't matter
-        binary_f.close()
-
-        thumbnail_f = tempfile.NamedTemporaryFile(dir=os.path.join(BASE_DIR, 'ftests', 'tools'), delete=False)
-        thumbnail_f.write(b'Hello world!')  # Actual content doesn't matter
-        thumbnail_f.close()
+        # Create a custom document and thumbnail specific to this test because we don't want to delete test files
+        binary_f = setup_temporary_file().name
+        thumbnail_f = setup_temporary_file().name
 
         document_to_be_deleted = FTLDocument.objects.create(
             org=self.org,
             ftl_user=self.user,
             title="Test document to be deleted",
-            binary=binary_f.name,
-            thumbnail_binary=thumbnail_f.name
+            binary=binary_f,
+            thumbnail_binary=thumbnail_f
         )
 
         document_to_be_deleted.delete()
