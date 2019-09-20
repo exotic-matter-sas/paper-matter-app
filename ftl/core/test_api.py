@@ -125,7 +125,7 @@ class DocumentsTests(APITestCase):
             FTLDocument.objects.get(pid=document_to_be_deleted.pid)
 
         # File has been deleted.
-        self.assertTrue(not os.path.exists(binary_f.name))
+        self.assertTrue(not os.path.exists(binary_f))
 
     @patch.object(FTLDocumentProcessing, 'apply_processing')
     def test_upload_document(self, mock_apply_processing):

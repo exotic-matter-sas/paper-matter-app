@@ -65,8 +65,8 @@ class FTLUserModelTest(TestCase):
             FTLDocument.objects.get(pid=document_to_be_deleted.pid)
 
         # File has been deleted.
-        self.assertTrue(not os.path.exists(binary_f.name))
-        self.assertTrue(not os.path.exists(thumbnail_f.name))
+        self.assertTrue(not os.path.exists(binary_f))
+        self.assertTrue(not os.path.exists(thumbnail_f))
 
     def test_delete_folders(self):
         org = setup_org()
