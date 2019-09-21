@@ -79,6 +79,7 @@ test-slow-python:
     - compile-backend
   artifacts:
     name: "debug"
+    when: on_failure
     paths:
       - ftl/ftests/tools/test_documents
   script:
