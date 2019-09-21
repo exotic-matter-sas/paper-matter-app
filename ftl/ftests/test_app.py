@@ -60,6 +60,8 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
     def test_upload_documents_to_root(self, mock_apply_processing):
         # User upload several documents
         documents_to_upload = [
+            os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'test.pdf'),
+            os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'test.pdf'),
             os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'test.pdf')
         ]
         self.upload_documents(documents_to_upload)
