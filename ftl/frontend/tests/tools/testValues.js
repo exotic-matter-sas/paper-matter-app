@@ -38,7 +38,7 @@ export const FOLDER_TREE_ITEM_WITH_DESCENDANT = {
 };
 
 export const DOCUMENT_PROPS = {
-  pid: '1234',
+  pid: '1000',
   title: 'Document title',
   note: 'Document note',
   created: new Date('2019-04-18T10:59:00').toString(),
@@ -47,7 +47,7 @@ export const DOCUMENT_PROPS = {
 };
 
 export const DOCUMENT_PROPS_VARIANT = {
-  pid: '5678',
+  pid: '1001',
   title: 'Document title 2',
   note: 'Document note 2',
   created: new Date('2019-04-18T11:00:00').toString(),
@@ -56,7 +56,7 @@ export const DOCUMENT_PROPS_VARIANT = {
 };
 
 export const DOCUMENT_PROPS_WITH_FOLDER = {
-  pid: '1234',
+  pid: '2000',
   title: 'Document title',
   note: 'Document note',
   created: new Date('2019-04-18T10:59:00').toString(),
@@ -65,7 +65,7 @@ export const DOCUMENT_PROPS_WITH_FOLDER = {
 };
 
 export const DOCUMENT_NO_THUMB_PROPS = {
-  pid: '4321',
+  pid: '3000',
   title: 'Document title',
   note: 'Document note',
   created: new Date('2019-04-18T10:59:00').toString(),
@@ -73,7 +73,7 @@ export const DOCUMENT_NO_THUMB_PROPS = {
 };
 
 export const DOCUMENT_NO_THUMB_PROPS_2 = {
-  pid: '8765',
+  pid: '3001',
   title: 'Document title 2',
   note: 'Document note 2',
   created: new Date('2019-04-18T10:59:00').toString(),

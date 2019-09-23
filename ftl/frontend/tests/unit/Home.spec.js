@@ -5,15 +5,19 @@ import BootstrapVue from "bootstrap-vue";
 import flushPromises from "flush-promises"; // needed for async tests
 import * as tv from './../tools/testValues.js'
 import {axiosConfig} from "../../src/constants";
+import Vuex from 'vuex';
 
 import Home from "../../src/views/Home";
 import FTLUpload from "../../src/components/FTLUpload";
 import FTLFolder from "../../src/components/FTLFolder";
 import FTLDocument from "../../src/components/FTLDocument";
 import FTLNewFolder from "@/components/FTLNewFolder";
+import storeConfig from "@/store/storeConfig";
+import cloneDeep from "lodash.clonedeep";
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue); // to avoid warning on tests execution
+localVue.use(Vuex);
 localVue.component('font-awesome-icon', jest.fn()); // avoid font awesome warning
 localVue.prototype.$_ = (text) => {
   return text;
@@ -22,7 +26,6 @@ localVue.prototype.$moment = () => {
   return {fromNow: jest.fn()}
 };
 localVue.prototype.$router = {push: jest.fn()}; // router mock
-localVue.prototype.$store = {commit: jest.fn()}; // vuex mock
 const mockedRouteName = jest.fn();
 localVue.prototype.$route = {
   get name() {
@@ -78,24 +81,6 @@ const mockedGetDocumentsResponse = {
   status: 200,
   config: axiosConfig
 };
-const mockedGetDocumentFlat1Response = {
-  data: {
-    count: 2,
-    next: "http://localhost/next",
-    previous: null,
-    results: [tv.DOCUMENT_PROPS, tv.DOCUMENT_NO_THUMB_PROPS]
-  },
-  status: 200,
-};
-const mockedGetDocumentFlat2Response = {
-  data: Promise.resolve({
-    count: 1,
-    next: null,
-    previous: "http://localhost/previous",
-    results: [tv.DOCUMENT_NO_THUMB_PROPS_2]
-  }),
-  status: 200,
-};
 
 const mockedUpdateFolders = jest.fn();
 const mockedChangeFolder = jest.fn();
@@ -124,15 +109,15 @@ const mountedMocks = {
 
 describe('Home template', () => {
   let wrapper;
-
+  let storeConfigCopy;
+  let store;
   beforeEach(() => {
-    mockedDocumentsSelected.mockReturnValue([]);
+    storeConfigCopy = cloneDeep(storeConfig);
+    store = new Vuex.Store(storeConfigCopy);
     wrapper = shallowMount(Home, {
       localVue,
-      methods: mountedMocks,
-      computed: {
-        documentsSelected: mockedDocumentsSelected
-      }
+      store,
+      methods: mountedMocks
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
@@ -144,13 +129,18 @@ describe('Home template', () => {
 
 describe('Home computed', () => {
   let wrapper;
+  let storeConfigCopy; // deep copy storeConfig for tests not to pollute it
+  let store;
   const fakePath = 'fakeComputeFolderPath';
 
   beforeEach(() => {
     mockedComputeFolderUrlPath.mockReturnValue(fakePath);
     mockedDocumentsSelected.mockReturnValue([]);
+    storeConfigCopy = cloneDeep(storeConfig);
+    store = new Vuex.Store(storeConfigCopy);
     wrapper = shallowMount(Home, {
       localVue,
+      store,
       methods: Object.assign(
         {
           changeFolder: mockedChangeFolder,
@@ -210,15 +200,14 @@ describe('Home computed', () => {
     expect(mockedComputeFolderUrlPath).toHaveBeenNthCalledWith(2, fakeLevels[1].id);
     expect(mockedComputeFolderUrlPath).toHaveBeenCalledTimes(2);
   });
-
-  it('documentsSelected call Vuex store', () => {
-    // TODO vuex test
-  });
 });
 
 describe('Home mounted call proper methods with given props', () => {
-
+  let storeConfigCopy; // deep copy storeConfig for tests not to pollute it
+  let store;
   beforeEach(() => {
+    storeConfigCopy = cloneDeep(storeConfig);
+    store = new Vuex.Store(storeConfigCopy);
     jest.clearAllMocks();
   });
 
@@ -226,6 +215,7 @@ describe('Home mounted call proper methods with given props', () => {
     mockedDocumentsSelected.mockReturnValue([]);
     shallowMount(Home, {
       localVue,
+      store,
       methods: {
         refreshFolders: mockedRefreshFolders,
         updateDocuments: mockedUpdateDocuments,
@@ -244,6 +234,7 @@ describe('Home mounted call proper methods with given props', () => {
   it('mounted call proper methods with doc props ', () => {
     shallowMount(Home, {
       localVue,
+      store,
       methods: {
         refreshFolders: mockedRefreshFolders,
         updateDocuments: mockedUpdateDocuments,
@@ -266,6 +257,7 @@ describe('Home mounted call proper methods with given props', () => {
 
     shallowMount(Home, {
       localVue,
+      store,
       methods: {
         refreshFolders: mockedRefreshFolders,
         updateDocuments: mockedUpdateDocuments,
@@ -289,6 +281,7 @@ describe('Home mounted call proper methods with given props', () => {
 
     shallowMount(Home, {
       localVue,
+      store,
       methods: {
         refreshFolders: mockedRefreshFolders,
         updateDocuments: mockedUpdateDocuments,
@@ -311,11 +304,16 @@ describe('Home mounted call proper methods with given props', () => {
 
 describe('Home watchers call proper methods', () => {
   let wrapper;
+  let storeConfigCopy; // deep copy storeConfig for tests not to pollute it
+  let store;
 
   beforeEach(() => {
     mockedDocumentsSelected.mockReturnValue([]);
+    storeConfigCopy = cloneDeep(storeConfig);
+    store = new Vuex.Store(storeConfigCopy);
     wrapper = shallowMount(Home, {
       localVue,
+      store,
       methods: Object.assign(
         {
           refreshDocumentWithSearch: mockedRefreshDocumentWithSearch,
@@ -402,6 +400,8 @@ describe('Home watchers call proper methods', () => {
 
 describe('Home methods call proper methods', () => {
   let wrapper;
+  let storeConfigCopy; // deep copy storeConfig for tests not to pollute it
+  let store;
   const fakeCurrentFolder = tv.FOLDER_PROPS_WITH_PARENT;
   const fakePath =
     tv.FOLDER_PROPS.name + '/'
@@ -411,8 +411,11 @@ describe('Home methods call proper methods', () => {
     mockedGetCurrentFolder.mockReturnValue(fakeCurrentFolder);
     mockedComputeFolderUrlPath.mockReturnValue(fakePath);
     mockedDocumentsSelected.mockReturnValue([]);
+    storeConfigCopy = cloneDeep(storeConfig);
+    store = new Vuex.Store(storeConfigCopy);
     wrapper = shallowMount(Home, {
       localVue,
+      store,
       methods: Object.assign(
         {
           changeFolder: mockedChangeFolder,
@@ -564,11 +567,16 @@ describe('Home methods call proper methods', () => {
 
 describe('Home methods return proper value', () => {
   let wrapper;
+  let storeConfigCopy; // deep copy storeConfig for tests not to pollute it
+  let store;
 
   beforeEach(() => {
     mockedDocumentsSelected.mockReturnValue([]);
+    storeConfigCopy = cloneDeep(storeConfig);
+    store = new Vuex.Store(storeConfigCopy);
     wrapper = shallowMount(Home, {
       localVue,
+      store,
       methods: Object.assign(
         {
           changeFolder: mockedChangeFolder,
@@ -598,11 +606,16 @@ describe('Home methods return proper value', () => {
 
 describe('Home methods error handling', () => {
   let wrapper;
+  let storeConfigCopy; // deep copy storeConfig for tests not to pollute it
+  let store;
 
   beforeEach(() => {
     mockedDocumentsSelected.mockReturnValue([]);
+    storeConfigCopy = cloneDeep(storeConfig);
+    store = new Vuex.Store(storeConfigCopy);
     wrapper = shallowMount(Home, {
       localVue,
+      store,
       methods: Object.assign(
         {
           changeFolder: mockedChangeFolder,
@@ -634,11 +647,16 @@ describe('Home methods error handling', () => {
 
 describe('Home methods call proper api', () => {
   let wrapper;
+  let storeConfigCopy; // deep copy storeConfig for tests not to pollute it
+  let store;
 
   beforeEach(() => {
     mockedDocumentsSelected.mockReturnValue([]);
+    storeConfigCopy = cloneDeep(storeConfig);
+    store = new Vuex.Store(storeConfigCopy);
     wrapper = shallowMount(Home, {
         localVue,
+        store,
         methods: Object.assign(
           {
             changeFolder: mockedChangeFolder,
@@ -713,11 +731,16 @@ describe('Home methods call proper api', () => {
 
 describe('Home methods update proper data', () => {
   let wrapper;
+  let storeConfigCopy; // deep copy storeConfig for tests not to pollute it
+  let store;
 
   beforeEach(() => {
     mockedDocumentsSelected.mockReturnValue([]);
+    storeConfigCopy = cloneDeep(storeConfig);
+    store = new Vuex.Store(storeConfigCopy);
     wrapper = shallowMount(Home, {
       localVue,
+      store,
       methods: mountedMocks,
       computed: {
         documentsSelected: mockedDocumentsSelected
@@ -732,7 +755,7 @@ describe('Home methods update proper data', () => {
     wrapper.setData({docs: docsList});
 
     // when
-    wrapper.vm.documentsCreated({doc : tv.DOCUMENT_PROPS_VARIANT});
+    wrapper.vm.documentsCreated({doc: tv.DOCUMENT_PROPS_VARIANT});
 
     expect(wrapper.vm.docs).toEqual([tv.DOCUMENT_PROPS_VARIANT, tv.DOCUMENT_PROPS]);
   });
@@ -809,11 +832,16 @@ describe('Home methods update proper data', () => {
 
 describe('Home event handling', () => {
   let wrapper;
+  let storeConfigCopy; // deep copy storeConfig for tests not to pollute it
+  let store;
 
   beforeEach(() => {
     mockedDocumentsSelected.mockReturnValue([]);
+    storeConfigCopy = cloneDeep(storeConfig);
+    store = new Vuex.Store(storeConfigCopy);
     wrapper = shallowMount(Home, {
       localVue,
+      store,
       methods: Object.assign(
         {
           changeFolder: mockedChangeFolder,

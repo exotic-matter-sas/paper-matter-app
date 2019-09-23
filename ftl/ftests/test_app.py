@@ -1,5 +1,4 @@
 import os
-import tempfile
 from unittest import skip, skipIf
 from unittest.mock import patch
 
@@ -13,7 +12,8 @@ from ftests.pages.manage_folder_page import ManageFolderPage
 from ftests.pages.move_documents_modal import MoveDocumentsModal
 from ftests.pages.user_login_page import LoginPage
 from ftests.tools import test_values as tv
-from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_document, setup_folder
+from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_document, setup_folder, \
+    setup_temporary_file
 from ftl.settings import DEV_MODE, BASE_DIR
 
 
@@ -308,7 +308,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
     def test_document_list_pagination(self):
         # User has already added 21 documents
         for i in range(21):
-            setup_document(self.org, self.user, title=i+1)
+            setup_document(self.org, self.user, title=i + 1)
         self.refresh_document_list()
 
         # Only 10 documents are shown by default
@@ -349,12 +349,9 @@ class DocumentsBatchActionsTests(LoginPage, HomePage, MoveDocumentsModal):
         self.visit(LoginPage.url)
         self.log_user()
         # 3 documents, 1 folder already added/created
-        binary_f = tempfile.NamedTemporaryFile(dir=os.path.join(BASE_DIR, 'ftests', 'tools'), delete=False)
-        binary_f.write(b'Hello world!')
-        binary_f.close()
-        self.doc1 = setup_document(self.org, self.user, binary=binary_f.name, title='doc1')
-        self.doc2 = setup_document(self.org, self.user, binary=binary_f.name, title='doc2')
-        self.doc3 = setup_document(self.org, self.user, binary=binary_f.name, title='doc3')
+        self.doc1 = setup_document(self.org, self.user, binary=setup_temporary_file().name, title='doc1')
+        self.doc2 = setup_document(self.org, self.user, binary=setup_temporary_file().name, title='doc2')
+        self.doc3 = setup_document(self.org, self.user, binary=setup_temporary_file().name, title='doc3')
         self.folder = setup_folder(self.org)
         # refresh page to see documents
         self.visit(HomePage.url)
