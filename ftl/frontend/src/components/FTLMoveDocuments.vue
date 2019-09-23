@@ -23,6 +23,7 @@
   import FTLTreeFolders from "@/components/FTLTreeFolders";
   import axios from "axios";
   import {axiosConfig} from "@/constants";
+  import {mapState} from "vuex";
 
   export default {
     name: 'FTLMoveDocuments',
@@ -48,9 +49,7 @@
     },
 
     computed: {
-      selectedMoveTargetFolder: function () {
-        return this.$store.state.selectedMoveTargetFolder;
-      }
+      ...mapState(['selectedMoveTargetFolder']) // generate vuex computed getter
     },
 
     methods: {
