@@ -3,7 +3,6 @@ import {createLocalVue, shallowMount} from '@vue/test-utils';
 import axios from 'axios';
 import BootstrapVue from "bootstrap-vue";
 import flushPromises from "flush-promises"; // needed for async tests
-
 import * as tv from './../tools/testValues.js'
 import {axiosConfig} from "../../src/constants";
 
@@ -18,8 +17,12 @@ localVue.use(BootstrapVue); // avoid bootstrap vue warnings
 localVue.use(Vuex);
 localVue.component('font-awesome-icon', jest.fn()); // avoid font awesome warnings
 
-localVue.prototype.$_ = (text, args='') => {return text + args};// i18n mock
-localVue.prototype.$moment = () => {return {fromNow: jest.fn()}}; // moment mock
+localVue.prototype.$_ = (text, args = '') => {
+  return text + args
+};// i18n mock
+localVue.prototype.$moment = () => {
+  return {fromNow: jest.fn()}
+}; // moment mock
 localVue.prototype.$router = {push: jest.fn()}; // router mock
 const mockedMixinAlert = jest.fn();
 localVue.mixin({methods: {mixinAlert: mockedMixinAlert}}); // mixinAlert mock
@@ -57,13 +60,13 @@ describe('FTLTreeItem template', () => {
       computed: {
         selected: mockedSelected
       },
-      propsData: { item, sourceFolder },
+      propsData: {item, sourceFolder},
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
 
   it('renders properly FTLTreeItem template', () => {
-    const elementSelector= '.folder-tree-item';
+    const elementSelector = '.folder-tree-item';
     const elem = wrapper.find(elementSelector);
 
     expect(elem.is(elementSelector)).toBe(true);
@@ -82,14 +85,14 @@ describe('FTLTreeItem methods call proper methods', () => {
       Object.assign(
         storeConfigCopy,
         {
-          mutations :
-          {
-            selectMoveTargetFolder: mockedSelectMoveTargetFolder
-          },
-          getters :
-          {
-            FTLTreeItemSelected: () => mockedFTLTreeItemSelected
-          }
+          mutations:
+            {
+              selectMoveTargetFolder: mockedSelectMoveTargetFolder
+            },
+          getters:
+            {
+              FTLTreeItemSelected: () => mockedFTLTreeItemSelected
+            }
         }
       )
     );
@@ -102,7 +105,7 @@ describe('FTLTreeItem methods call proper methods', () => {
       methods: {
         updateMovingFolder: mockedUpdateMovingFolder
       },
-      propsData: { item: itemWithDescendant, sourceFolder },
+      propsData: {item: itemWithDescendant, sourceFolder},
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
@@ -159,7 +162,7 @@ describe('FTLTreeItem methods call api', () => {
       computed: {
         selected: mockedSelected
       },
-      propsData: { item, sourceFolder },
+      propsData: {item, sourceFolder},
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
@@ -181,14 +184,14 @@ describe('FTLTreeItem methods call api', () => {
     axios.get.mockResolvedValue(mockedGetFoldersListResponse);
     const level = 'level';
     const newSourceFolder = tv.FOLDER_PROPS_VARIANT.id;
-    wrapper.setProps({ sourceFolder : newSourceFolder });
+    wrapper.setProps({sourceFolder: newSourceFolder});
 
     // when
     wrapper.vm.updateMovingFolder(level);
     await flushPromises();
 
     // then
-    wrapper.vm.item.children.forEach(function(folder){
+    wrapper.vm.item.children.forEach(function (folder) {
       expect(folder.id).not.toBe(newSourceFolder);
     });
   });
@@ -207,7 +210,7 @@ describe('FTLTreeItem methods error handling', () => {
       computed: {
         selected: mockedSelected
       },
-      propsData: { item, sourceFolder },
+      propsData: {item, sourceFolder},
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });

@@ -7,13 +7,15 @@
            @click.exact="$emit('event-open-doc', doc.pid)"></div>
       <b-card-body>
         <b-card-title class="text-truncate document-title"
-        @click.exact="$emit('event-open-doc', doc.pid)">{{ doc.title }}</b-card-title>
+                      @click.exact="$emit('event-open-doc', doc.pid)">{{ doc.title }}
+        </b-card-title>
         <b-button variant="secondary" size="sm" :href="'uploads/' + doc.pid">
           <font-awesome-icon icon="file-download" :alt="this.$_('Download')"/>
         </b-button>
       </b-card-body>
       <b-card-footer :title="$moment(doc.created).format('LLLL')">
-        <b-form-checkbox :checked="$store.getters.FTLDocumentSelected(doc.pid)" @change="toggleSelection" :title="$_('Use CTRL + left click for quick selection')"/>
+        <b-form-checkbox :checked="$store.getters.FTLDocumentSelected(doc.pid)" @change="toggleSelection"
+                         :title="$_('Use CTRL + left click for quick selection')"/>
         <small class="text-muted">{{ $moment(doc.created).fromNow() }}</small>
       </b-card-footer>
     </div>

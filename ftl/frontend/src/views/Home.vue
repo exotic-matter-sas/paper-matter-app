@@ -44,11 +44,13 @@
             <font-awesome-icon icon="folder-open" class="d-sm-none"/>
             <span class="d-none d-sm-inline">{{ $_('Move') }}</span>
           </b-button>
-          <b-button id="delete-documents" variant="danger" v-b-modal="'modal-delete-documents'" title="Delete documents">
+          <b-button id="delete-documents" variant="danger" v-b-modal="'modal-delete-documents'"
+                    title="Delete documents">
             <font-awesome-icon icon="trash" class="d-sm-none"/>
             <span class="d-none d-sm-inline">{{ $_('Delete') }}</span>
           </b-button>
-          <b-button id="unselect-all-documents" @click="$store.commit('unselectAllDocuments')" title="Unselect documents">
+          <b-button id="unselect-all-documents" @click="$store.commit('unselectAllDocuments')"
+                    title="Unselect documents">
             <font-awesome-icon icon="window-close" class="d-sm-none"/>
             <span class="d-none d-sm-inline">{{ $_('Cancel') }}</span>
           </b-button>
@@ -93,7 +95,8 @@
                 </b-button>
               </b-col>
               <b-col>
-                <button @click="$bvModal.hide('document-viewer')" type="button" aria-label="Close" class="close">×</button>
+                <button @click="$bvModal.hide('document-viewer')" type="button" aria-label="Close" class="close">×
+                </button>
               </b-col>
             </b-row>
           </b-container>
@@ -153,7 +156,7 @@
 
 <script>
   // @ is an alias to /src
-  import { mapState } from 'vuex'
+  import {mapState} from 'vuex'
 
   import FTLFolder from '@/components/FTLFolder.vue';
   import FTLDocument from '@/components/FTLDocument';
@@ -493,8 +496,8 @@
         // remove from selection
         this.$store.commit('unselectDocument', doc);
         // if last doc in the list has been removed and there is more docs to come, refresh list
-        if (this.docs.length < 1 && this.moreDocs !== null){
-            this.refreshDocumentWithSearch()
+        if (this.docs.length < 1 && this.moreDocs !== null) {
+          this.refreshDocumentWithSearch()
         }
       },
 
@@ -525,7 +528,7 @@
     margin-left: 0 !important;
     margin-right: 0.5rem !important;
 
-    &:last-child{
+    &:last-child {
       margin-right: 0 !important;
     }
   }

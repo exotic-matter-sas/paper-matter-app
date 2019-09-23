@@ -755,7 +755,7 @@ describe('Home methods update proper data', () => {
     wrapper.setData({docs: docsList});
 
     // when
-    wrapper.vm.documentsCreated({doc : tv.DOCUMENT_PROPS_VARIANT});
+    wrapper.vm.documentsCreated({doc: tv.DOCUMENT_PROPS_VARIANT});
 
     expect(wrapper.vm.docs).toEqual([tv.DOCUMENT_PROPS_VARIANT, tv.DOCUMENT_PROPS]);
   });

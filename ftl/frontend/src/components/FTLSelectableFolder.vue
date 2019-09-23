@@ -79,7 +79,7 @@
   .folder {
     border: 3px solid transparent;
 
-    .icon{
+    .icon {
       cursor: pointer;
     }
   }
@@ -93,26 +93,26 @@
 <style lang="scss">
   @import '../styles/customBootstrap.scss';
 
-  .folder .custom-control{
-      margin-left: -1.5rem;
+  .folder .custom-control {
+    margin-left: -1.5rem;
 
-      label{
-        cursor: pointer;
+    label {
+      cursor: pointer;
 
-        span{
-          white-space: nowrap;
-          text-overflow: ellipsis;
-          display: block;
-          overflow: hidden;
-        }
+      span {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        display: block;
+        overflow: hidden;
       }
+    }
   }
 
   @include media-breakpoint-up(sm) {
-    .folder .custom-control label{
+    .folder .custom-control label {
       width: 100%;
 
-      span{
+      span {
         white-space: nowrap;
         text-overflow: ellipsis;
         width: 100%;

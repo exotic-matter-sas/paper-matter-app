@@ -1,6 +1,5 @@
 import json
 import os
-import tempfile
 from unittest.mock import patch
 
 from django.contrib import messages

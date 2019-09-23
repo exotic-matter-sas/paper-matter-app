@@ -1,9 +1,8 @@
-import {createLocalVue, shallowMount, mount} from '@vue/test-utils';
+import {createLocalVue, shallowMount} from '@vue/test-utils';
 
 import axios from 'axios';
 import BootstrapVue from "bootstrap-vue";
 import flushPromises from "flush-promises"; // needed for async tests
-
 import * as tv from './../tools/testValues.js'
 import {axiosConfig} from "../../src/constants";
 
@@ -19,8 +18,12 @@ const localVue = createLocalVue();
 localVue.use(BootstrapVue); // avoid bootstrap vue warnings
 localVue.component('font-awesome-icon', jest.fn()); // avoid font awesome warnings
 
-localVue.prototype.$_ = (text, args='') => {return text + args};// i18n mock
-localVue.prototype.$moment = () => {return {fromNow: jest.fn()}}; // moment mock
+localVue.prototype.$_ = (text, args = '') => {
+  return text + args
+};// i18n mock
+localVue.prototype.$moment = () => {
+  return {fromNow: jest.fn()}
+}; // moment mock
 const mockedRouterPush = jest.fn();
 localVue.prototype.$router = {push: mockedRouterPush}; // router mock
 const mockedMixinAlert = jest.fn();
@@ -73,7 +76,7 @@ describe('ManageFolders template', () => {
   });
 
   it('renders properly component template', () => {
-    const elementSelector= '#folders-mngt';
+    const elementSelector = '#folders-mngt';
     const elem = wrapper.find(elementSelector);
 
     expect(elem.is(elementSelector)).toBe(true);
@@ -91,7 +94,7 @@ describe('ManageFolders mounted call proper methods', () => {
     wrapper = shallowMount(ManageFolders, {
       localVue,
       methods: {
-        updateFolders : mockedUpdateFolders
+        updateFolders: mockedUpdateFolders
       }
     });
 
@@ -104,9 +107,9 @@ describe('ManageFolders mounted call proper methods', () => {
     //when mounted with folder props
     wrapper = shallowMount(ManageFolders, {
       localVue,
-      propsData: { folder },
+      propsData: {folder},
       methods: {
-        updateFoldersFromUrl : mockedUpdateFoldersFromUrl
+        updateFoldersFromUrl: mockedUpdateFoldersFromUrl
       }
     });
 
@@ -208,7 +211,7 @@ describe('ManageFolders methods', () => {
         },
         mountedMocks
       ),
-      propsData: { folder },
+      propsData: {folder},
       computed: {
         breadcrumb: mockedBreadcrumb,
         getCurrentFolder: mockedGetCurrentFolder
@@ -251,7 +254,7 @@ describe('ManageFolders methods', () => {
     expect(wrapper.vm.folderDetail).toBe(null);
   });
   it('navigateToFolder push data to router', () => {
-    wrapper.setData({ previousLevels: [tv.FOLDER_PROPS] });
+    wrapper.setData({previousLevels: [tv.FOLDER_PROPS]});
     // restore original method to test it
     wrapper.setMethods({navigateToFolder: ManageFolders.methods.navigateToFolder});
 
@@ -292,7 +295,7 @@ describe('ManageFolders methods call api', () => {
         },
         mountedMocks
       ),
-      propsData: { folder },
+      propsData: {folder},
       computed: {
         breadcrumb: mockedBreadcrumb,
         getCurrentFolder: mockedGetCurrentFolder
@@ -339,7 +342,7 @@ describe('ManageFolders methods call api', () => {
     wrapper.setMethods({updateFoldersFromUrl: ManageFolders.methods.updateFoldersFromUrl});
 
     // when folder in url is already the one selected
-    wrapper.setData({ folderDetail: folder });
+    wrapper.setData({folderDetail: folder});
     wrapper.vm.updateFoldersFromUrl(folder.id);
     await flushPromises();
 
@@ -370,7 +373,7 @@ describe('ManageFolders methods error handling', () => {
         },
         mountedMocks
       ),
-      propsData: { folder },
+      propsData: {folder},
       computed: {
         breadcrumb: mockedBreadcrumb,
         getCurrentFolder: mockedGetCurrentFolder
@@ -424,7 +427,7 @@ describe('ManageFolders methods error handling', () => {
     const folderToDelete = tv.FOLDER_PROPS_VARIANT;
     const originalFoldersList = [tv.FOLDER_PROPS, folderToDelete];
     const originalFoldersListLength = originalFoldersList.length;
-    wrapper.setData({folders : originalFoldersList});
+    wrapper.setData({folders: originalFoldersList});
 
     // when
     wrapper.vm.folderDeleted({folder: folderToDelete});
@@ -437,7 +440,7 @@ describe('ManageFolders methods error handling', () => {
     const folderToUpdate = tv.FOLDER_PROPS_VARIANT;
     const originalFoldersList = [tv.FOLDER_PROPS, folderToUpdate];
     const originalFoldersListLength = originalFoldersList.length;
-    wrapper.setData({folders : originalFoldersList});
+    wrapper.setData({folders: originalFoldersList});
 
     // when
     const folderUpdated = Object.assign({}, folderToUpdate); // shallow copy
@@ -468,7 +471,7 @@ describe('Event received and handled by component', () => {
         },
         mountedMocks
       ),
-      propsData: { folder },
+      propsData: {folder},
       computed: {
         breadcrumb: mockedBreadcrumb,
         getCurrentFolder: mockedGetCurrentFolder
@@ -479,7 +482,7 @@ describe('Event received and handled by component', () => {
 
   it('event-navigate-folder call navigateToFolder', async () => {
     // Need to defined some folders for FTLSelectableFolder to appears
-    wrapper.setData({ folders: mockedGetFoldersListResponse.data });
+    wrapper.setData({folders: mockedGetFoldersListResponse.data});
 
     // when
     wrapper.find(FTLSelectableFolder).vm.$emit('event-navigate-folder', folder);
@@ -491,7 +494,7 @@ describe('Event received and handled by component', () => {
   });
   it('event-select-folder call getFolderDetail', async () => {
     // Need to defined some folders for FTLSelectableFolder to appears
-    wrapper.setData({ folders: mockedGetFoldersListResponse.data });
+    wrapper.setData({folders: mockedGetFoldersListResponse.data});
 
     // when
     wrapper.find(FTLSelectableFolder).vm.$emit('event-select-folder', folder);
@@ -503,7 +506,7 @@ describe('Event received and handled by component', () => {
   });
   it('event-unselect-folder call unselectFolder', async () => {
     // Need to defined some folders for FTLSelectableFolder to appears
-    wrapper.setData({ folders: mockedGetFoldersListResponse.data });
+    wrapper.setData({folders: mockedGetFoldersListResponse.data});
 
     // when
     wrapper.find(FTLSelectableFolder).vm.$emit('event-unselect-folder', folder);
@@ -514,7 +517,7 @@ describe('Event received and handled by component', () => {
   });
   it('event-folder-renamed call refreshFolder', async () => {
     // Need to defined folderDetail for FTLRenameFolder to appears
-    wrapper.setData({ folderDetail: folder });
+    wrapper.setData({folderDetail: folder});
 
     // when
     wrapper.find(FTLRenameFolder).vm.$emit('event-folder-renamed', folder);
@@ -535,7 +538,7 @@ describe('Event received and handled by component', () => {
   });
   it('event-folder-deleted call folderDeleted', async () => {
     // Need to defined folderDetail for FTLRenameFolder to appears
-    wrapper.setData({ folderDetail: folder });
+    wrapper.setData({folderDetail: folder});
 
     // when
     wrapper.find(FTLDeleteFolder).vm.$emit('event-folder-deleted', {folder: folder});
@@ -546,7 +549,7 @@ describe('Event received and handled by component', () => {
   });
   it('event-folder-moved call folderDeleted', async () => {
     // Need to defined folderDetail for FTLRenameFolder to appears
-    wrapper.setData({ folderDetail: folder });
+    wrapper.setData({folderDetail: folder});
 
     // when
     wrapper.find(FTLMoveFolder).vm.$emit('event-folder-moved', {folder: folder, target_folder: targetFolder});

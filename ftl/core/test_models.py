@@ -1,5 +1,4 @@
 import os
-import tempfile
 
 from django.core.exceptions import ValidationError
 from django.test import TestCase
@@ -8,7 +7,6 @@ import core
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_folder, setup_document, \
     setup_temporary_file
-from ftl.settings import BASE_DIR
 from .models import FTLUser, FTLDocument, FTLFolder
 
 

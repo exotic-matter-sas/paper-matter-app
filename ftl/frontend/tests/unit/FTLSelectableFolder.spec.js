@@ -1,11 +1,7 @@
 import {createLocalVue, shallowMount} from '@vue/test-utils';
-
-import axios from 'axios';
 import BootstrapVue from "bootstrap-vue";
 import flushPromises from "flush-promises"; // needed for async tests
-
 import * as tv from './../tools/testValues.js'
-import {axiosConfig} from "../../src/constants";
 
 import FTLSelectableFolder from "../../src/components/FTLSelectableFolder";
 import Vuex from "vuex";
@@ -21,8 +17,12 @@ localVue.use(Vuex);
 localVue.component('font-awesome-icon', jest.fn()); // avoid font awesome warnings
 
 // Mock prototype and mixin bellow
-localVue.prototype.$_ = (text, args='') => {return text + args};// i18n mock
-localVue.prototype.$moment = () => {return {fromNow: jest.fn()}}; // moment mock
+localVue.prototype.$_ = (text, args = '') => {
+  return text + args
+};// i18n mock
+localVue.prototype.$moment = () => {
+  return {fromNow: jest.fn()}
+}; // moment mock
 localVue.prototype.$router = {push: jest.fn()}; // router mock
 localVue.prototype.$store = {commit: jest.fn()}; // vuex mock
 const mockedMixinAlert = jest.fn();
@@ -63,10 +63,10 @@ describe('watcher set data', () => {
       Object.assign(
         storeConfigCopy,
         {
-          mutations :
-          {
-            selectPanelFolder: mockedSelectPanelFolder,
-          }
+          mutations:
+            {
+              selectPanelFolder: mockedSelectPanelFolder,
+            }
         }
       )
     );

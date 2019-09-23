@@ -1,5 +1,4 @@
 import os
-import tempfile
 from unittest import skip, skipIf
 from unittest.mock import patch
 
@@ -309,7 +308,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
     def test_document_list_pagination(self):
         # User has already added 21 documents
         for i in range(21):
-            setup_document(self.org, self.user, title=i+1)
+            setup_document(self.org, self.user, title=i + 1)
         self.refresh_document_list()
 
         # Only 10 documents are shown by default

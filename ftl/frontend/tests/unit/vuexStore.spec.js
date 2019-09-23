@@ -4,14 +4,14 @@ import * as tv from './../tools/testValues.js'
 
 describe('mutations.js', () => {
   it('selectMoveTargetFolder is set', () => {
-    const state = { selectedMoveTargetFolder: null };
+    const state = {selectedMoveTargetFolder: null};
     const folder = tv.FOLDER_PROPS;
     mutations.selectMoveTargetFolder(state, folder);
 
     expect(state.selectedMoveTargetFolder).toBe(folder);
   });
   it('selectPanelFolder is set', () => {
-    const state = { panelSelectedFolder: null };
+    const state = {panelSelectedFolder: null};
     const folder = tv.FOLDER_PROPS;
     mutations.selectPanelFolder(state, folder);
 
@@ -21,7 +21,7 @@ describe('mutations.js', () => {
     const documentsAlreadySelected = [tv.DOCUMENT_PROPS];
     const documentsNotSelected = [tv.DOCUMENT_PROPS_VARIANT, tv.DOCUMENT_PROPS_WITH_FOLDER];
 
-    const state = { selectedDocumentsHome: documentsAlreadySelected };
+    const state = {selectedDocumentsHome: documentsAlreadySelected};
     let documentsToSelect = [];
     documentsToSelect = documentsToSelect.concat(documentsAlreadySelected, documentsNotSelected);
     mutations.selectDocuments(state, documentsToSelect);
@@ -32,7 +32,7 @@ describe('mutations.js', () => {
     const documentAlreadySelected = tv.DOCUMENT_PROPS;
     const documentNotSelected = tv.DOCUMENT_PROPS_VARIANT;
 
-    const state = { selectedDocumentsHome: [documentAlreadySelected] };
+    const state = {selectedDocumentsHome: [documentAlreadySelected]};
     mutations.unselectDocument(state, documentAlreadySelected);
 
     expect(state.selectedDocumentsHome).toEqual([]);
@@ -42,7 +42,7 @@ describe('mutations.js', () => {
     expect(state.selectedDocumentsHome).toEqual([]);
   });
   it('unselectAllDocuments unset all documents selected', () => {
-    const state = { selectedDocumentsHome: [tv.DOCUMENT_PROPS, tv.DOCUMENT_PROPS_VARIANT] };
+    const state = {selectedDocumentsHome: [tv.DOCUMENT_PROPS, tv.DOCUMENT_PROPS_VARIANT]};
     mutations.unselectAllDocuments(state);
 
     expect(state.selectedDocumentsHome).toEqual([]);

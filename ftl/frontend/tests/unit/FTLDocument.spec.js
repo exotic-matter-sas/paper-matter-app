@@ -77,11 +77,11 @@ describe('FTLDocument methods', () => {
       Object.assign(
         storeConfigCopy,
         {
-          mutations :
-          {
-            unselectDocument: mockedUnselectDocument,
-            selectDocuments: mockedSelectDocuments,
-          }
+          mutations:
+            {
+              unselectDocument: mockedUnselectDocument,
+              selectDocuments: mockedSelectDocuments,
+            }
         }
       )
     );
