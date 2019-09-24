@@ -1,6 +1,6 @@
 from django.urls import path, include
 from django.views.i18n import JavaScriptCatalog
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from . import views
 

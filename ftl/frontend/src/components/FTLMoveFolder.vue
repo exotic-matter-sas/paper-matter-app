@@ -25,6 +25,7 @@
   import FTLTreeFolders from "@/components/FTLTreeFolders";
   import axios from "axios";
   import {axiosConfig} from "@/constants";
+  import {mapState} from "vuex";
 
   export default {
     name: 'FTLMoveFolder',
@@ -41,12 +42,10 @@
     },
 
     computed: {
-      selectedMoveTargetFolder: function () {
-        return this.$store.state.selectedMoveTargetFolder;
-      },
       isRoot: function () {
         return this.folder.parent === null;
       },
+      ...mapState(['selectedMoveTargetFolder']) // generate vuex computed getter
     },
 
     methods: {

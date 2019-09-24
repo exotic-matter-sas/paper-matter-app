@@ -10,7 +10,7 @@
         id="fieldset-rename-document"
         :description="this.$_('The new name of the document')"
         :label="this.$_('The document will be renamed to %s.', [newDocumentName])"
-        label-for="rename-document-text">
+        label-for="rename-document-text" class="text-truncate">
         <b-form-input id="rename-document-text" autofocus onfocus="this.select()" v-model="newDocumentName" trim></b-form-input>
       </b-form-group>
     </b-container>

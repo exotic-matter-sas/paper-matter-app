@@ -1,7 +1,7 @@
 <template>
   <li class="folder-tree-item">
     <span
-      :class="{bold: item.has_descendant, selected: selected}">
+      :class="{bold: item.has_descendant, selected: $store.getters.FTLTreeItemSelected(item.id)}">
       <span class="target-folder-name" @click="selectFolder">{{ item.name }}&nbsp;</span>
       <span class="expand-folder-child" v-if="item.has_descendant && !loading" @click="toggle">[{{ isOpen ? '-' : '+' }}]</span>
       <b-spinner :class="{'d-none': !loading}" small></b-spinner>
@@ -43,13 +43,6 @@
       }
     },
 
-    computed: {
-      selected: function () {
-        return !!(this.$store.state.selectedMoveTargetFolder
-          && this.$store.state.selectedMoveTargetFolder.id === this.item.id);
-      }
-    },
-
     methods: {
       toggle: function () {
         this.isOpen = !this.isOpen;
@@ -64,7 +57,7 @@
       },
 
       selectFolder: function () {
-        if (this.selected) {
+        if (this.$store.getters.FTLTreeItemSelected(this.item.id)) {
           this.$store.commit('selectMoveTargetFolder', null);
         } else {
           this.$store.commit('selectMoveTargetFolder', {id: this.item.id, name: this.item.name})

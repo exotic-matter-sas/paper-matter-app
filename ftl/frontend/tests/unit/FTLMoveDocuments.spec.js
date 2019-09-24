@@ -6,7 +6,7 @@ import flushPromises from "flush-promises"; // needed for async tests
 import * as tv from './../tools/testValues.js'
 import {axiosConfig} from "../../src/constants";
 
-import FTLMoveDocument from "../../src/components/FTLMoveDocument";
+import FTLMoveDocuments from "../../src/components/FTLMoveDocuments";
 
 const localVue = createLocalVue();
 
@@ -35,7 +35,6 @@ const mockedMoveDocumentResponse = {
 
 const mockedSelectedMoveTargetFolder = jest.fn();
 const mockedSelectedMoveTargetFolderResponse = {id: tv.FOLDER_PROPS.id, name: tv.FOLDER_PROPS.name};
-const mockedIsRoot = jest.fn();
 
 const documentProp = tv.DOCUMENT_PROPS;
 
@@ -43,14 +42,13 @@ describe('Component template', () => {
   let wrapper;
   beforeEach(() => {
     // set mocked component methods return value before shallowMount
-    wrapper = shallowMount(FTLMoveDocument, {
+    wrapper = shallowMount(FTLMoveDocuments, {
       localVue,
       propsData: {
-        doc: documentProp
+        docs: [documentProp]
       },
       computed: {
         selectedMoveTargetFolder: mockedSelectedMoveTargetFolder,
-        isRoot: mockedIsRoot
       }
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
@@ -61,92 +59,29 @@ describe('Component template', () => {
   });
 
   it('renders properly html element', () => {
-    const elementSelector = '#modal-move-document';
+    const elementSelector = '#modal-move-documents';
     const elem = wrapper.find(elementSelector);
     expect(elem.is(elementSelector)).toBe(true);
   });
+
+  it('renders properly template data for 1 document', () => {
+    expect(wrapper.text()).toContain(documentProp.title);
+  });
+
+  it('renders properly template data for several documents', () => {
+    // overwrite docs prop with only 1 doc
+    const documentsList = [documentProp, tv.DOCUMENT_PROPS_VARIANT];
+    wrapper.setData({ docs: documentsList});
+
+    expect(wrapper.text()).toContain(documentsList.length);
+  });
 });
 
-describe('FTLMoveDocument computed', () => {
+describe('FTLMoveDocuments computed', () => {
   let wrapper;
-
-  it('getFolder return -1 when doc prop has no parent', () => {
-    wrapper = shallowMount(FTLMoveDocument, {
-      localVue,
-      propsData: {
-        doc: documentProp
-      },
-      computed: {
-        selectedMoveTargetFolder: mockedSelectedMoveTargetFolder
-      }
-    });
-    jest.clearAllMocks(); // Reset mock call count done by mounted
-
-    // when document props folder is null
-    let testedValue = wrapper.vm.getFolder;
-
-    // then
-    expect(testedValue).toBe(-1);
-  });
-
-  it('getFolder return parent ftl_folder id when doc prop has one', () => {
-    const doc = tv.DOCUMENT_PROPS_WITH_FOLDER;
-    wrapper = shallowMount(FTLMoveDocument, {
-      localVue,
-      propsData: {doc},
-      computed: {
-        selectedMoveTargetFolder: mockedSelectedMoveTargetFolder
-      }
-    });
-    jest.clearAllMocks(); // Reset mock call count done by mounted
-
-    // when document props folder is null
-    let testedValue = wrapper.vm.getFolder;
-
-    // then
-    expect(testedValue).toBe(doc.ftl_folder);
-  });
 
   it('selectedMoveTargetFolder return value from $store', () => {
     // TODO test call to vuex store here
-  });
-
-  it('isRoot return true when doc props get no parent', () => {
-    wrapper = shallowMount(FTLMoveDocument, {
-      localVue,
-      propsData: {
-        doc: documentProp
-      },
-      computed: {
-        selectedMoveTargetFolder: mockedSelectedMoveTargetFolder
-      }
-    });
-    jest.clearAllMocks(); // Reset mock call count done by mounted
-
-    // when document props folder is null
-    let testedValue = wrapper.vm.isRoot;
-
-    // then
-    expect(testedValue).toBe(true);
-  });
-
-  it('isRoot return false when doc props get parent', () => {
-    wrapper = shallowMount(FTLMoveDocument, {
-      localVue,
-      propsData: {
-        doc: tv.DOCUMENT_PROPS_WITH_FOLDER
-      },
-      computed: {
-        selectedMoveTargetFolder: mockedSelectedMoveTargetFolder
-      }
-    });
-    jest.clearAllMocks(); // Reset mock call count done by mounted
-
-    // when document props folder is null
-    let testedValue = wrapper.vm.isRoot;
-
-    // then
-    expect(testedValue).toBe(false);
   });
 });
 
@@ -156,12 +91,11 @@ describe('Component methods call api', () => {
     axios.patch.mockResolvedValue(mockedMoveDocumentResponse);
     mockedSelectedMoveTargetFolder.mockReturnValue(tv.FOLDER_PROPS_VARIANT);
 
-    wrapper = shallowMount(FTLMoveDocument, {
+    wrapper = shallowMount(FTLMoveDocuments, {
       localVue,
-      propsData: {doc: documentProp},
+      propsData: {docs: [documentProp, tv.DOCUMENT_PROPS_WITH_FOLDER]},
       computed: {
         selectedMoveTargetFolder: mockedSelectedMoveTargetFolder,
-        isRoot: mockedIsRoot
       }
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
@@ -177,7 +111,12 @@ describe('Component methods call api', () => {
       {ftl_folder: tv.FOLDER_PROPS_VARIANT.id},
       axiosConfig
     );
-    expect(axios.patch).toHaveBeenCalledTimes(1);
+    expect(axios.patch).toHaveBeenCalledWith(
+      '/app/api/v1/documents/' + tv.DOCUMENT_PROPS_WITH_FOLDER.pid,
+      {ftl_folder: tv.FOLDER_PROPS_VARIANT.id},
+      axiosConfig
+    );
+    expect(axios.patch).toHaveBeenCalledTimes(2);
   });
 });
 
@@ -187,12 +126,11 @@ describe('Component methods error handling', () => {
     axios.patch.mockRejectedValue('fakeError');
     mockedSelectedMoveTargetFolder.mockReturnValue(tv.FOLDER_PROPS_VARIANT);
 
-    wrapper = shallowMount(FTLMoveDocument, {
+    wrapper = shallowMount(FTLMoveDocuments, {
       localVue,
-      propsData: {doc: documentProp},
+      propsData: {docs: [documentProp]},
       computed: {
         selectedMoveTargetFolder: mockedSelectedMoveTargetFolder,
-        isRoot: mockedIsRoot
       }
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
@@ -217,12 +155,11 @@ describe('Event emitted by component', () => {
     axios.patch.mockResolvedValue(mockedMoveDocumentResponse);
     mockedSelectedMoveTargetFolder.mockReturnValue(mockedSelectedMoveTargetFolderResponse);
 
-    wrapper = shallowMount(FTLMoveDocument, {
+    wrapper = shallowMount(FTLMoveDocuments, {
       localVue,
-      propsData: {doc: documentProp},
+      propsData: {docs: [documentProp]},
       computed: {
         selectedMoveTargetFolder: mockedSelectedMoveTargetFolder,
-        isRoot: mockedIsRoot
       }
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted

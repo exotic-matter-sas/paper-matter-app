@@ -52,6 +52,10 @@ body {
     }
 }
 
+button svg {
+    vertical-align: -0.125em;
+}
+
 // LOGIN PAGE
 // ==========
 #login-form {
@@ -214,24 +218,46 @@ aside {
     }
 }
 
-// Home.vue document modal
-
+// Home document modal
 $document-viewer-padding: 2em;
 
 #document-viewer {
     .container {
-        max-width: none;
+      max-width: none;
     }
 
     .modal-dialog {
-        width: 100vw;
-        height: 100vh;
-        max-width: none;
-        padding: $document-viewer-padding;
-        margin: 0;
+      width: 100vw;
+      height: 100vh;
+      max-width: none;
+      padding: $document-viewer-padding;
+      margin: 0;
+    }
+
+    .modal-title {
+        vertical-align: middle;
     }
 
     .modal-content {
-        height: calc(100vh - (#{$document-viewer-padding} * 2));
+      height: calc(100vh - (#{$document-viewer-padding} * 2));
     }
 }
+
+// ANIMATIONS
+
+  @keyframes unspin {
+    to {
+      transform: rotate(-0.5turn);
+    }
+  }
+
+  @keyframes slide-down {
+    from {
+      transform: translateY(-30px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0px);
+      opacity: 1;
+    }
+  }
