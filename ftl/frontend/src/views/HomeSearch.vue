@@ -72,8 +72,7 @@
         </b-col>
         <b-col v-else-if="docs.length">
           <b-row tag="section">
-            <FTLDocument v-for="doc in docs" :key="doc.pid" :doc="doc" @event-delete-doc="documentDeleted"
-                         @event-open-doc="navigateToDocument"/>
+            <FTLDocument v-for="doc in docs" :key="doc.pid" :doc="doc" @event-open-doc="navigateToDocument"/>
           </b-row>
         </b-col>
         <b-col v-else class="text-center">{{ this.$_('No document yet') }}</b-col>
@@ -90,7 +89,6 @@
 
       <!-- Pdf viewer popup -->
       <FTLDocumentPanel v-if="docPid" :pid="docPid"
-                        @event-document-missing-thumb="updateMissingThumb"
                         @event-document-panel-closed="closeDocument"
                         @event-document-renamed="documentUpdated"
                         @event-document-moved="documentDeleted"/>

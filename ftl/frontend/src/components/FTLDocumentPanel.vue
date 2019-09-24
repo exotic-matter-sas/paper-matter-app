@@ -58,9 +58,11 @@
   import axios from 'axios';
   import FTLMoveDocuments from "@/components/FTLMoveDocuments";
   import FTLRenameDocument from "@/components/FTLRenameDocument";
+  import FTLThumbnailGenMixin from "@/components/FTLThumbnailGenMixin";
 
   export default {
     name: "FTLDocumentPanel",
+    mixins: [FTLThumbnailGenMixin],
 
     components: {
       FTLMoveDocuments,
@@ -94,7 +96,11 @@
             this.$bvModal.show('document-viewer');
 
             if (!response.data.thumbnail_available) {
-              this.$emit('event-document-missing-thumb', {doc: this.currentOpenDoc})
+              this.createThumbnailForDocument(this.currentOpenDoc)
+                .then(response => {
+                  this.mixinAlert("Thumbnail updated!");
+                })
+                .catch(error => this.mixinAlert("Unable to create thumbnail", true));
             }
           })
           .catch(error => {
@@ -112,7 +118,7 @@
         this.$bvModal.hide('document-viewer');
         this.$emit('event-document-panel-closed', {doc: this.currentOpenDoc});
         this.$router.push({path: this.$route.path});
-      },
+      }
     }
   }
 </script>

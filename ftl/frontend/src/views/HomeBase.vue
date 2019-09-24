@@ -4,7 +4,6 @@
   import FTLDocument from '@/components/FTLDocument';
   import FTLUpload from '@/components/FTLUpload';
   import FTLDeleteDocuments from "@/components/FTLDeleteDocuments";
-  import FTLThumbnailGenMixin from "@/components/FTLThumbnailGenMixin";
   import FTLMoveDocuments from "@/components/FTLMoveDocuments";
   import FTLRenameDocument from "@/components/FTLRenameDocument";
   import axios from 'axios';
@@ -12,7 +11,6 @@
 
   export default {
     name: 'home-base',
-    mixins: [FTLThumbnailGenMixin],
 
     components: {
       FTLDocumentPanel,
@@ -80,14 +78,6 @@
 
       openDocument: function (pid) {
         this.docPid = pid;
-      },
-
-      updateMissingThumb: function (doc) {
-        this.createThumbnailForDocument(doc)
-          .then(response => {
-            this.mixinAlert("Thumbnail updated!");
-          })
-          .catch(error => this.mixinAlert("Unable to create thumbnail", true));
       },
 
       closeDocument: function () {
