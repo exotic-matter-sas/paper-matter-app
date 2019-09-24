@@ -66,7 +66,7 @@
   import marked from "marked";
   import dompurify from "dompurify";
   import axios from "axios";
-  import {axiosConfig} from "@/constants";
+  import {axiosConfig, markedConfig} from "@/constants";
 
   export default {
     name: 'FTLNote',
@@ -87,7 +87,7 @@
 
     computed: {
       getNoteMarkdownSanitized: function () {
-        const markdownHtml = marked(this.text, {gfm: true, breaks: true});
+        const markdownHtml = marked(this.text, markedConfig);
         return dompurify.sanitize(markdownHtml);
       }
     },

@@ -5,8 +5,11 @@ import BootstrapVue from "bootstrap-vue";
 import flushPromises from "flush-promises"; // needed for async tests
 import * as tv from './../tools/testValues.js'
 import {axiosConfig} from "../../src/constants";
+import marked from "marked";
+import dompurify from "dompurify";
 
 import FTLNote from "../../src/components/FTLNote";
+import {markedConfig} from "@/constants";
 
 // Create clean Vue instance and set installed package to avoid warning
 const localVue = createLocalVue();
@@ -27,6 +30,13 @@ localVue.mixin({methods: {mixinAlert: mockedMixinAlert}}); // mixinAlert mock
 jest.mock('axios', () => ({
   patch: jest.fn(),
 }));
+// mock calls to markdown and html sanitize library
+jest.mock('marked', () => jest.fn());
+jest.mock('dompurify', () => ({
+  sanitize: jest.fn(),
+}));
+
+const mockedGetNoteMarkdownSanitized = jest.fn();
 
 const mockedPatchDocument = {
   data: tv.DOCUMENT_PROPS,
@@ -38,6 +48,27 @@ const docProp = tv.DOCUMENT_PROPS;
 describe('FTLNote template', () => {
   let wrapper;
   beforeEach(() => {
+    mockedGetNoteMarkdownSanitized.mockReturnValue(docProp.note);
+    wrapper = shallowMount(FTLNote, {
+      localVue,
+      computed: {getNoteMarkdownSanitized: mockedGetNoteMarkdownSanitized},
+      propsData: {doc: docProp}
+    });
+    jest.clearAllMocks(); // Reset mock call count done by mounted
+  });
+
+  it('renders properly FTLNote data', () => {
+    expect(wrapper.html()).toContain(docProp.note);
+  });
+});
+
+describe('FTLNote computed', () => {
+  let wrapper;
+  const mockedMarkdownToHtmlValue = '<h1>titre 1</h1>';
+  const mockedSanitizeValue = '<h1>titre 1 sanitized</h1>';
+  beforeEach(() => {
+    marked.mockReturnValue(mockedMarkdownToHtmlValue);
+    dompurify.sanitize.mockReturnValue(mockedSanitizeValue);
     wrapper = shallowMount(FTLNote, {
       localVue,
       propsData: {doc: docProp}
@@ -45,8 +76,16 @@ describe('FTLNote template', () => {
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
 
-  it('renders properly FTLNote data', () => {
-    expect(wrapper.html()).toContain(tv.DOCUMENT_PROPS.note);
+  it('getNoteMarkdownSanitized properly call markdown and html sanitize library', () => {
+    const markdownToConvertAndSanitize = '# titre 1';
+    wrapper.setData({text: markdownToConvertAndSanitize});
+
+    // when
+    const testedValue = wrapper.vm.getNoteMarkdownSanitized;
+
+    expect(marked).toBeCalledWith(markdownToConvertAndSanitize, markedConfig);
+    expect(dompurify.sanitize).toBeCalledWith(mockedMarkdownToHtmlValue);
+    expect(testedValue).toEqual(mockedSanitizeValue);
   });
 });
 
