@@ -1,6 +1,7 @@
 import json
 from base64 import b64decode
 
+import filetype
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.postgres.search import SearchQuery, SearchRank
@@ -97,17 +98,23 @@ class FTLDocumentDetail(generics.RetrieveUpdateDestroyAPIView):
         return FTLDocument.objects.filter(org=self.request.user.org)
 
     def perform_update(self, serializer):
+        need_processing = False
         force_processing = set()
         if serializer.initial_data and 'title' in serializer.initial_data:
             if serializer.instance.title != serializer.initial_data['title']:
+                need_processing = True
                 force_processing.add(FTLPlugins.SEARCH_ENGINE_PGSQL_TSVECTOR)
 
         if serializer.initial_data and 'note' in serializer.initial_data:
             if serializer.instance.title != serializer.initial_data['note']:
+                need_processing = True
                 force_processing.add(FTLPlugins.SEARCH_ENGINE_PGSQL_TSVECTOR)
 
         instance = serializer.save(org=self.request.user.org)
-        ftl_doc_processing.apply_processing(instance, list(force_processing))
+
+        if need_processing:
+            # only apply processing in case value changed, avoid processing when just moving document in folder
+            ftl_doc_processing.apply_processing(instance, list(force_processing))
 
 
 class FTLDocumentThumbnail(views.APIView):
@@ -143,6 +150,11 @@ class FileUploadView(views.APIView):
             return HttpResponseBadRequest()
 
         file_obj = request.FILES['file']
+
+        kind = filetype.guess(file_obj)
+        if not kind or kind.mime != "application/pdf":
+            return HttpResponseBadRequest()
+
         payload = json.loads(request.POST['json'])
 
         if 'ftl_folder' in payload and payload['ftl_folder']:

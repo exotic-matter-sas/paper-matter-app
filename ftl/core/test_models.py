@@ -1,5 +1,4 @@
 import os
-import tempfile
 
 from django.core.exceptions import ValidationError
 from django.test import TestCase
@@ -8,7 +7,6 @@ import core
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_folder, setup_document, \
     setup_temporary_file
-from ftl.settings import BASE_DIR
 from .models import FTLUser, FTLDocument, FTLFolder
 
 
@@ -47,21 +45,16 @@ class FTLUserModelTest(TestCase):
         setup_admin(self.org)
         self.user = setup_user(self.org)
 
-        # Create a custom document specific to this test because we don't want to delete the test pdf file.
-        binary_f = tempfile.NamedTemporaryFile(dir=os.path.join(BASE_DIR, 'ftests', 'tools'), delete=False)
-        binary_f.write(b'Hello world!')  # Actual content doesn't matter
-        binary_f.close()
-
-        thumbnail_f = tempfile.NamedTemporaryFile(dir=os.path.join(BASE_DIR, 'ftests', 'tools'), delete=False)
-        thumbnail_f.write(b'Hello world!')  # Actual content doesn't matter
-        thumbnail_f.close()
+        # Create a custom document and thumbnail specific to this test because we don't want to delete test files
+        binary_f = setup_temporary_file().name
+        thumbnail_f = setup_temporary_file().name
 
         document_to_be_deleted = FTLDocument.objects.create(
             org=self.org,
             ftl_user=self.user,
             title="Test document to be deleted",
-            binary=binary_f.name,
-            thumbnail_binary=thumbnail_f.name
+            binary=binary_f,
+            thumbnail_binary=thumbnail_f
         )
 
         document_to_be_deleted.delete()
@@ -70,8 +63,8 @@ class FTLUserModelTest(TestCase):
             FTLDocument.objects.get(pid=document_to_be_deleted.pid)
 
         # File has been deleted.
-        self.assertTrue(not os.path.exists(binary_f.name))
-        self.assertTrue(not os.path.exists(thumbnail_f.name))
+        self.assertTrue(not os.path.exists(binary_f))
+        self.assertTrue(not os.path.exists(thumbnail_f))
 
     def test_delete_folders(self):
         org = setup_org()

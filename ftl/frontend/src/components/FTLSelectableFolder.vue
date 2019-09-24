@@ -9,7 +9,7 @@
         <font-awesome-icon icon="folder" size="5x" class="text-secondary w-100"/>
       </b-col>
     </b-row>
-    <b-row align-h="left" no-gutters>
+    <b-row align-h="start" no-gutters>
       <b-col>
         <b-form-checkbox
           :id="'checkbox-folder-' + folder.id"
@@ -23,6 +23,8 @@
 </template>
 
 <script>
+
+  import {mapState} from "vuex";
 
   export default {
     name: "FTLSelectableFolder",
@@ -41,16 +43,13 @@
     },
 
     computed: {
-      globalSelected: function () {
-        // allow to watch the value
-        return this.$store.state.panelSelectedFolder;
-      }
+      ...mapState(['panelSelectedFolder']) // generate vuex computed getter
     },
 
     watch: {
-      globalSelected: function (newVal, oldVal) {
+      panelSelectedFolder: function (newVal, oldVal) {
         // Watch the global selected folder panel and deselect itself if any other folder is selected
-        if (this.globalSelected !== null && this.globalSelected.id !== this.folder.id) {
+        if (this.panelSelectedFolder !== null && this.panelSelectedFolder.id !== this.folder.id) {
           this.state = false;
         }
       },
@@ -80,7 +79,7 @@
   .folder {
     border: 3px solid transparent;
 
-    .icon{
+    .icon {
       cursor: pointer;
     }
   }
@@ -94,26 +93,26 @@
 <style lang="scss">
   @import '../styles/customBootstrap.scss';
 
-  .folder .custom-control{
-      margin-left: -1.5rem;
+  .folder .custom-control {
+    margin-left: -1.5rem;
 
-      label{
-        cursor: pointer;
+    label {
+      cursor: pointer;
 
-        span{
-          white-space: nowrap;
-          text-overflow: ellipsis;
-          display: block;
-          overflow: hidden;
-        }
+      span {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        display: block;
+        overflow: hidden;
       }
+    }
   }
 
   @include media-breakpoint-up(sm) {
-    .folder .custom-control label{
+    .folder .custom-control label {
       width: 100%;
 
-      span{
+      span {
         white-space: nowrap;
         text-overflow: ellipsis;
         width: 100%;

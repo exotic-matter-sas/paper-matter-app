@@ -40,7 +40,7 @@ NODE_SERVER_RUNNING = is_node_server_running()
 red_message = '\x1b[1;31m{}\033[0m'
 if DEV_MODE and not is_node_server_running():
     print(red_message.
-          format('WARNING: Node server NOT running: all tests relative to JS frontend will be skipped.'))
+          format('WARNING: Node server NOT running: all tests related to JS frontend will be skipped.'))
     input("Run Node server now if you want to run all tests, press Enter to continue...")
     NODE_SERVER_RUNNING = is_node_server_running()  # refresh value in case user hae just run Node
     print(f'Continue with NODE_SERVER_RUNNING: {NODE_SERVER_RUNNING}')
@@ -241,9 +241,11 @@ class BasePage(LIVE_SERVER):
         validator = lambda text: True if text != elem_text else False
         self.wait_for_elem_text_to_be_valid(css_selector, validator, timeout)
 
-    def close_last_notification(self):
+    def close_all_notifications(self):
         self.wait_for_elem_to_show(self.close_notification)
-        self.get_elem(self.close_notification).click()
+        notification_to_close = self.get_elems(self.close_notification)
+        for notification in notification_to_close:
+            notification.click()
         self.wait_for_elem_to_disappear(self.notification)
 
     def _finish_test_reminder(self, message='Finish test!', pause_test=False):

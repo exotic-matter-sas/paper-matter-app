@@ -1,6 +1,5 @@
 import json
 import os
-import tempfile
 from unittest.mock import patch
 
 from django.contrib import messages
@@ -12,7 +11,8 @@ import core
 from core.models import FTLDocument, FTLFolder
 from core.processing.ftl_processing import FTLDocumentProcessing
 from ftests.tools import test_values as tv
-from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_document, setup_folder
+from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_document, setup_folder, \
+    setup_temporary_file
 from ftl.enums import FTLStorages, FTLPlugins
 from ftl.settings import BASE_DIR
 
@@ -174,16 +174,12 @@ class DocumentsTests(APITestCase):
 
     @override_settings(DEFAULT_FILE_STORAGE=FTLStorages.FILE_SYSTEM)
     def test_delete_document(self):
-        # Create a custom document specific to this test because we don't want to delete the test pdf file.
-        binary_f = tempfile.NamedTemporaryFile(dir=os.path.join(BASE_DIR, 'ftests', 'tools'), delete=False)
-        binary_f.write(b'Hello world!')  # Actual content doesn't matter
-        binary_f.close()
-
+        binary_f = setup_temporary_file().name
         document_to_be_deleted = FTLDocument.objects.create(
             org=self.org,
             ftl_user=self.user,
             title="Test document to be deleted",
-            binary=binary_f.name,
+            binary=binary_f,  # We don't want to delete the test pdf file
         )
 
         client_delete = self.client.delete(f'/app/api/v1/documents/{str(document_to_be_deleted.pid)}')
@@ -193,7 +189,7 @@ class DocumentsTests(APITestCase):
             FTLDocument.objects.get(pid=document_to_be_deleted.pid)
 
         # File has been deleted.
-        self.assertTrue(not os.path.exists(binary_f.name))
+        self.assertTrue(not os.path.exists(binary_f))
 
     @patch.object(FTLDocumentProcessing, 'apply_processing')
     def test_upload_document(self, mock_apply_processing):
@@ -208,6 +204,12 @@ class DocumentsTests(APITestCase):
         self.assertEqual(objects_get.title, client_doc['title'])
         self.assertEqual(objects_get.note, client_doc['note'])
         self.assertIsNone(objects_get.ftl_folder)
+
+    @patch.object(FTLDocumentProcessing, 'apply_processing')
+    def test_upload_document_wrong_format(self, mock_apply_processing):
+        with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'wrong-format.txt'), mode='rb') as fp:
+            client_post = self.client.post('/app/api/v1/documents/upload', {'json': '{}', 'file': fp})
+        self.assertEqual(client_post.status_code, status.HTTP_400_BAD_REQUEST)
 
     @patch.object(FTLDocumentProcessing, 'apply_processing')
     def test_upload_doc_trigger_document_processing(self, mock_apply_processing):
