@@ -1,5 +1,6 @@
 <script>
   import {mapState} from 'vuex'
+  import FTLDocumentPanel from "@/components/FTLDocumentPanel";
   import FTLDocument from '@/components/FTLDocument';
   import FTLUpload from '@/components/FTLUpload';
   import FTLDeleteDocuments from "@/components/FTLDeleteDocuments";
@@ -14,6 +15,7 @@
     mixins: [FTLThumbnailGenMixin],
 
     components: {
+      FTLDocumentPanel,
       FTLDeleteDocuments,
       FTLMoveDocuments,
       FTLRenameDocument,
@@ -28,8 +30,6 @@
         // Documents list
         docs: [],
         docPid: null,
-        docModal: false,
-        lastRefresh: Date.now(),
         docsLoading: false,
         moreDocsLoading: false,
         moreDocs: null,
@@ -79,35 +79,19 @@
       },
 
       openDocument: function (pid) {
-        const vi = this;
-
         this.docPid = pid;
-        this.docModal = true;
+      },
 
-        this.$bvModal.show('document-viewer');
-
-        axios
-          .get('/app/api/v1/documents/' + pid)
+      updateMissingThumb: function (doc) {
+        this.createThumbnailForDocument(doc)
           .then(response => {
-            vi.currentOpenDoc = response.data;
-
-            if (!response.data.thumbnail_available) {
-              vi.createThumbnailForDocument(response.data)
-                .then(response => {
-                  vi.mixinAlert("Thumbnail updated!");
-                })
-                .catch(error => vi.mixinAlert("Unable to create thumbnail", true));
-            }
+            this.mixinAlert("Thumbnail updated!");
           })
-          .catch(error => {
-            vi.mixinAlert("Unable to show document.", true)
-          });
+          .catch(error => this.mixinAlert("Unable to create thumbnail", true));
       },
 
       closeDocument: function () {
-        this.docModal = false;
         this.docPid = null;
-        this.currentOpenDoc = {};
         this.$router.push({path: this.$route.path});
       },
 
@@ -140,7 +124,7 @@
           queryString['ordering'] = '-created';
         }
 
-        let strQueryString = '?' + qs.stringify({query, ...qs});
+        let strQueryString = '?' + qs.stringify({...query, ...queryString});
 
         this.docsLoading = true;
 

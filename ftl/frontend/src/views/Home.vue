@@ -101,58 +101,15 @@
       </b-row>
 
       <!-- Pdf viewer popup -->
-      <b-modal id="document-viewer"
-               hide-footer
-               centered
-               @hidden="closeDocument">
-        <template slot="modal-header">
-          <b-container>
-            <b-row align-v="center">
-              <b-col>
-                <h5 class="d-inline modal-title">{{ currentOpenDoc.title }}</h5>
-                <b-button id="rename-document" v-b-modal="'modal-rename-document'" variant="link">
-                  <font-awesome-icon icon="edit" :title="$_('Rename document')"/>
-                </b-button>
-              </b-col>
-              <b-col>
-                <button @click="$bvModal.hide('document-viewer')" type="button" aria-label="Close" class="close">×
-                </button>
-              </b-col>
-            </b-row>
-          </b-container>
-        </template>
-        <b-container class="h-100">
-          <b-row class="h-100">
-            <b-col md="8">
-              <div class="h-100 embed-responsive doc-pdf ">
-                <iframe v-if="currentOpenDoc.pid" class="embed-responsive-item"
-                        :src="`/assets/pdfjs/web/viewer.html?file=/app/uploads/` + currentOpenDoc.pid">
-                </iframe>
-              </div>
-            </b-col>
-            <b-col md="4" class="d-none d-md-block">
-              <b-row>BBB</b-row>
-              <b-row>CCC</b-row>
-              <b-row>
-                <b-col>
-                  <b-button id="move-document" variant="secondary" v-b-modal="'modal-move-document'">Move</b-button>
-                </b-col>
-              </b-row>
-            </b-col>
-          </b-row>
-        </b-container>
-      </b-modal>
+      <FTLDocumentPanel v-if="docPid" :pid="docPid"
+                        @event-document-missing-thumb="updateMissingThumb"
+                        @event-document-panel-closed="closeDocument"
+                        @event-document-renamed="documentUpdated"
+                        @event-document-moved="documentDeleted"/>
 
       <FTLNewFolder
         :parent="getCurrentFolder"
         @event-folder-created="folderCreated"/>
-
-      <!-- For document panel Move button -->
-      <FTLMoveDocuments
-        v-if="currentOpenDoc"
-        id="modal-move-document"
-        :docs="[currentOpenDoc]"
-        @event-document-moved="documentDeleted"/>
 
       <!-- For batch action move document -->
       <FTLMoveDocuments
@@ -160,11 +117,6 @@
         id="modal-move-documents"
         :docs="selectedDocumentsHome"
         @event-document-moved="documentDeleted"/>
-
-      <FTLRenameDocument
-        v-if="currentOpenDoc.pid"
-        :doc="currentOpenDoc"
-        @event-document-renamed="documentUpdated"/>
 
       <FTLDeleteDocuments
         v-if="selectedDocumentsHome.length > 0"
@@ -195,6 +147,8 @@
 
     data() {
       return {
+        sort: 'recent',
+
         // Folders list and breadcrumb
         folders: [],
         previousLevels: [],
@@ -220,7 +174,7 @@
         } else if (this.$route.name === 'home-folder') {
           // This is navigation between folders
           if (newVal !== oldVal) {
-            this.updateFoldersPath(newVal, true);
+            this.updateFoldersPath(newVal);
           }
         }
 
@@ -318,13 +272,15 @@
             // Allow refresh of the current URL in address bar to take into account folders paths changes
             if (this.docPid) {
               this.$router.push({
-                path: '/home/' + this.computeFolderUrlPath(folderId),
+                path: '/home/' + this.computeFolderUrlPath(folderId).catch(err => {
+                }),
                 query: {
                   doc: this.docPid
                 }
               });
             } else {
-              this.$router.push({path: '/home/' + this.computeFolderUrlPath(folderId)});
+              this.$router.push({path: '/home/' + this.computeFolderUrlPath(folderId)}).catch(err => {
+              });
             }
           })
           .catch(() => {
