@@ -3,13 +3,7 @@
     <b-col>
       <b-row class="my-3">
         <b-col>
-          <FTLUpload :currentFolder="getCurrentFolder" @event-new-upload="documentsCreated"/>
-        </b-col>
-      </b-row>
-
-      <b-row class="my-3" id="breadcrumb" no-gutter>
-        <b-col>
-          <b-breadcrumb class="m-0" :items="breadcrumb"/>
+          <FTLUpload @event-new-upload="documentsCreated"/>
         </b-col>
       </b-row>
 
@@ -19,15 +13,6 @@
             <font-awesome-icon icon="sync" :spin="docsLoading" :class="{ 'stop-spin':!docsLoading }"
                                :title="$_('Refresh documents list')"/>
           </b-button>
-          <b-button id="create-folder" variant="primary" v-b-modal="'modal-new-folder'">
-            <font-awesome-icon icon="folder-plus" :title="$_('Create new folder')"/>
-          </b-button>
-          <b-button variant="primary" :disabled="!previousLevels.length"
-                    @click="changeToPreviousFolder">
-            <font-awesome-icon icon="level-up-alt"/>
-          </b-button>
-          <FTLFolder v-for="folder in folders" :key="folder.id" :folder="folder"
-                     @event-change-folder="navigateToFolder"/>
 
           <b-dropdown id="documents-sort" right variant="link" class="m-1 text-decoration-none">
             <template slot="button-content">
@@ -37,6 +22,7 @@
               <span v-else-if="sort === 'za'">(z-a)</span>
               <span v-else-if="sort === 'recent'">({{ $_('recent') }})</span>
               <span v-else-if="sort === 'older'">({{ $_('older') }})</span>
+              <span v-else-if="sort === 'relevance'">({{ $_('relevance') }})</span>
             </template>
             <b-dropdown-item-button href="#" @click.prevent="sort = 'az'">{{ $_('A-Z') }}&nbsp;
               <span v-if="sort === 'az'">&checkmark;</span></b-dropdown-item-button>
@@ -47,6 +33,8 @@
               <span v-if="sort === 'recent'">&checkmark;</span></b-dropdown-item-button>
             <b-dropdown-item-button href="#" @click.prevent="sort = 'older'">{{ $_('Older first') }}&nbsp;
               <span v-if="sort === 'older'">&checkmark;</span></b-dropdown-item-button>
+            <b-dropdown-item-button href="#" @click.prevent="sort = 'relevance'">{{ $_('Relevance') }}&nbsp;
+              <span v-if="sort === 'relevance'">&checkmark;</span></b-dropdown-item-button>
           </b-dropdown>
         </b-col>
       </b-row>
@@ -126,7 +114,7 @@
             <b-col md="8">
               <div class="h-100 embed-responsive doc-pdf ">
                 <iframe v-if="currentOpenDoc.pid" class="embed-responsive-item"
-                        :src="`/assets/pdfjs/web/viewer.html?file=/app/uploads/` + currentOpenDoc.pid">
+                        :src="`/assets/pdfjs/web/viewer.html?file=/app/uploads/` + currentOpenDoc.pid + `#search=` + currentSearch">
                 </iframe>
               </div>
             </b-col>
@@ -142,10 +130,6 @@
           </b-row>
         </b-container>
       </b-modal>
-
-      <FTLNewFolder
-        :parent="getCurrentFolder"
-        @event-folder-created="folderCreated"/>
 
       <!-- For document panel Move button -->
       <FTLMoveDocuments
@@ -178,190 +162,57 @@
   // @ is an alias to /src
   import {mapState} from 'vuex'
   import HomeBase from "@/views/HomeBase";
-  import FTLFolder from '@/components/FTLFolder.vue';
-  import FTLNewFolder from "@/components/FTLNewFolder";
-  import axios from 'axios';
 
   export default {
-    name: 'home',
+    name: 'home-search',
     extends: HomeBase,
 
-    components: {
-      FTLNewFolder,
-      FTLFolder,
-    },
-
-    props: ['doc', 'folder'],
+    props: ['searchQuery', 'doc'],
 
     data() {
       return {
-        // Folders list and breadcrumb
-        folders: [],
-        previousLevels: [],
+        // Documents list
+        currentSearch: "",
+        sort: "relevance"
       }
     },
 
     mounted() {
-      if (this.folder) {
-        // Open folder directly from loading an URL with folder (don't reset URL if opening a document)
-        this.updateFoldersPath(this.folder);
+      if (this.searchQuery) {
+        // search docs
+        this.refreshDocumentWithSearch(this.searchQuery);
       } else {
-        // Or just show the current folders
-        this.refreshFolders();
+        // all docs
         this.updateDocuments();
       }
     },
 
     watch: {
-      folder: function (newVal, oldVal) {
-        if (this.$route.name === 'home') {
-          // Coming back to home so clear everything and reload from root folder
-          this.changeFolder();
-        } else if (this.$route.name === 'home-folder') {
-          // This is navigation between folders
-          if (newVal !== oldVal) {
-            this.updateFoldersPath(newVal, true);
-          }
+      searchQuery: function (newVal, oldVal) {
+        if (newVal !== oldVal) {
+          this.refreshDocumentWithSearch(newVal);
         }
-
-        // Clear the selected documents when moving between folders
-        this.$store.commit("unselectAllDocuments");
       }
     },
 
     computed: {
-      getCurrentFolder: function () {
-        if (this.previousLevels.length) {
-          return this.previousLevels[this.previousLevels.length - 1];
-        } else {
-          return null;
-        }
-      },
-
-      breadcrumb: function () {
-        const vi = this;
-        let paths = [];
-
-        paths.push({
-          text: this.$_('Root'),
-          to: {name: 'home'}
-        });
-
-        return paths.concat(this.previousLevels.map((e) => {
-          return {
-            text: e.name,
-            to: {
-              path: '/home/' + vi.computeFolderUrlPath(e.id)
-            }
-          }
-        }));
-      },
       ...mapState(['selectedDocumentsHome']) // generate vuex computed getter
     },
 
     methods: {
-      computeFolderUrlPath: function (id = null) {
-        if (this.previousLevels.length > 0) {
-          let s = this.previousLevels.map(e => e.name);
-
-          if (id) {
-            s.push(id);
-          } else {
-            s.push(this.previousLevels[this.previousLevels.length - 1].id);
-          }
-
-          return s.join('/');
-        } else {
-          return '';
-        }
-      },
-
-      refreshFolders: function () {
-        this.updateFolders(this.getCurrentFolder);
-      },
-
-      refreshAll: function () {
-        this.refreshFolders();
+      refreshDocumentWithSearch: function (text) {
+        this.currentSearch = text;
         this.updateDocuments();
-      },
-
-      changeFolder: function (folder = null) {
-        if (folder === null) {
-          this.previousLevels = [];
-        }
-        this.updateFolders(folder);
-        this.updateDocuments();
-      },
-
-      navigateToFolder: function (folder) {
-        if (folder) this.previousLevels.push(folder);
-        this.$router.push({path: '/home/' + this.computeFolderUrlPath(folder.id)})
-      },
-
-      changeToPreviousFolder: function () {
-        this.previousLevels.pop(); // Remove current level
-        let level = this.getCurrentFolder;
-
-        if (level === null) {
-          this.$router.push({name: 'home'});
-        } else {
-          this.$router.push({path: '/home/' + this.computeFolderUrlPath(level.parent)})
-        }
-      },
-
-      updateFoldersPath: function (folderId) {
-        axios
-          .get('/app/api/v1/folders/' + folderId)
-          .then(response => {
-            this.previousLevels = response.data.paths;
-            this.changeFolder(response.data);
-            // Allow refresh of the current URL in address bar to take into account folders paths changes
-            if (this.docPid) {
-              this.$router.push({
-                path: '/home/' + this.computeFolderUrlPath(folderId),
-                query: {
-                  doc: this.docPid
-                }
-              });
-            } else {
-              this.$router.push({path: '/home/' + this.computeFolderUrlPath(folderId)});
-            }
-          })
-          .catch(() => {
-            this.mixinAlert("Could not open this folder", true);
-          });
       },
 
       updateDocuments: function () {
         let queryString = {};
 
-        if (this.previousLevels.length > 0) {
-          queryString['level'] = this.getCurrentFolder.id;
+        if (this.currentSearch !== null && this.currentSearch !== "") {
+          queryString['search'] = this.currentSearch;
         }
 
         return this._updateDocuments(queryString);
-      },
-
-      updateFolders: function (level = null) {
-        const vi = this;
-        let qs = '';
-
-        // While loading folders, clear folders to avoid showing current sets of folders intermittently
-        // vi.folders = [];
-
-        if (level) {
-          qs = '?level=' + level.id;
-        }
-
-        axios
-          .get("/app/api/v1/folders" + qs)
-          .then(response => {
-            vi.folders = response.data;
-          }).catch(error => vi.mixinAlert("Unable to refresh folders list", true));
-      },
-
-      folderCreated: function (folder) {
-        this.refreshFolders();
       }
     }
   }

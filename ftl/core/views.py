@@ -74,7 +74,7 @@ class FTLDocumentList(generics.ListAPIView):
         flat_mode = True if self.request.query_params.get('flat', False) is not False else False
         text_search = self.request.query_params.get('search', None)
 
-        queryset = FTLDocument.objects.filter(org=self.request.user.org).order_by('-created')
+        queryset = FTLDocument.objects.filter(org=self.request.user.org)
 
         if not flat_mode:
             if text_search:
