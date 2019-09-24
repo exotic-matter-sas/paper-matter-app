@@ -14,7 +14,8 @@ import {
   faSearch,
   faSync,
   faTrash,
-  faWindowClose
+  faWindowClose,
+  faExclamationCircle
 } from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
 
@@ -28,7 +29,7 @@ Vue.config.productionTip = false;
 
 // Font Awesome icons definition
 library.add(faHome, faFolder, faSearch, faWindowClose, faTrash, faFileDownload, faFolderPlus, faSync, faLevelUpAlt,
-  faCrown, faEdit);
+  faCrown, faEdit, faExclamationCircle);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.use(BootstrapVue);
 

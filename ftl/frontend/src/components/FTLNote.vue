@@ -1,12 +1,18 @@
 <template>
-  <b-row class="my-1">
+  <b-row>
+    <b-col cols="12" class="mb-1">
+      <h6 class="d-inline font-weight-bold">{{ $_('Note') }}</h6>
+      <b-button v-if="!editing" id="edit-note" variant="link" size="sm">
+        <font-awesome-icon icon="edit" :title="$_('Edit note')" @click.prevent="editing = true"/>
+      </b-button>
+    </b-col>
+
     <b-col v-if="editing">
       <b-row>
         <b-col>
-          <b-tabs content-class="mt-3" small lazy>
-            <b-tab :title="$_('Note')" active>
+          <b-tabs content-class="mt-2" small lazy>
+            <b-tab :title="$_('Edition')" active>
               <b-form-textarea
-                id="edit-note"
                 v-model="text"
                 :placeholder="$_('Document note ...')"
                 class="note"
@@ -19,27 +25,32 @@
           </b-tabs>
         </b-col>
       </b-row>
-      <b-row class="my-1" align-v="center">
+      <b-row id="note-toolbar" class="mt-2" align-v="center">
         <b-col>
-          <b-button class="m-1" variant="link" size="sm" :disabled="editing === false"
+          <span id="note-save-status" class="highlight" :class="{'d-none': doc.note === text}">
+            <font-awesome-icon icon="exclamation-circle"/>
+            {{$_('unsaved note')}}
+          </span>
+        </b-col>
+        <b-col class="text-right">
+          <b-button variant="link" size="sm" :disabled="editing === false"
                     @click.prevent="editing = false">
-            {{$_('Close')}}
+            {{$_('Cancel')}}
           </b-button>
-          <b-button class="m-1" variant="primary" size="sm" :disabled="doc.note === text"
+          <b-button variant="primary" size="sm" :disabled="doc.note === text"
                     @click.prevent="updateNote">
             {{$_('Save')}}
           </b-button>
-          <span class="font-weight-bold" :class="{'d-none': doc.note === text}">{{$_('Unsaved note!')}}</span>
         </b-col>
       </b-row>
     </b-col>
 
     <b-col v-else-if="doc.note">
-      <div class="note" @click.prevent="editing = true"><span v-html="getNoteMarkdownSanitized"></span></div>
+      <div class="note"><span v-html="getNoteMarkdownSanitized"></span></div>
     </b-col>
 
     <b-col v-else>
-      <b-button variant="primary" @click.prevent="editing = true">{{ $_('Add a note...') }}</b-button>
+      <span class="text-muted font-italic">{{$_('No note set')}}</span>
     </b-col>
   </b-row>
 </template>
@@ -100,6 +111,10 @@
   .note {
     overflow: auto;
     max-height: 50vh;
+  }
+
+  #note-save-status{
+    font-size: 0.8rem;
   }
 </style>
 

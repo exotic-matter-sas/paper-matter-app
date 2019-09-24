@@ -80,13 +80,14 @@
             <b-col>
               <b-row>
                 <b-col>
-                  <FTLNote v-if="currentOpenDoc.pid" :doc="currentOpenDoc"
-                           @event-document-note-edited="documentUpdated"/>
+                  <b-button id="move-document" variant="secondary" v-b-modal="'modal-move-document'">Move</b-button>
                 </b-col>
               </b-row>
               <b-row>
                 <b-col>
-                  <b-button id="move-document" variant="secondary" v-b-modal="'modal-move-document'">Move</b-button>
+                  <hr/>
+                  <FTLNote v-if="currentOpenDoc.pid" :doc="currentOpenDoc"
+                           @event-document-note-edited="documentUpdated"/>
                 </b-col>
               </b-row>
             </b-col>
