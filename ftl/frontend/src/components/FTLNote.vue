@@ -27,10 +27,17 @@
       </b-row>
       <b-row id="note-toolbar" class="mt-2" align-v="center">
         <b-col>
-          <span id="note-save-status" class="highlight" :class="{'d-none': doc.note === text}">
-            <font-awesome-icon icon="exclamation-circle"/>
-            {{$_('unsaved note')}}
-          </span>
+          <div id="note-tip">
+            <a v-if="doc.note === text" class="text-muted" :title="$_('Markdown syntax supported')"
+               href="https://guides.github.com/features/mastering-markdown/#examples" target="_blank">
+              <font-awesome-icon :icon="['fab', 'markdown']" rel="Markdown logo"/>
+              {{ $_(' syntax supported') }}
+            </a>
+            <span v-else class="highlight">
+              <font-awesome-icon icon="exclamation-circle"/>
+              {{$_('unsaved note')}}
+            </span>
+          </div>
         </b-col>
         <b-col class="text-right">
           <b-button variant="link" size="sm" :disabled="editing === false"
@@ -113,8 +120,8 @@
     max-height: 50vh;
   }
 
-  #note-save-status{
-    font-size: 0.8rem;
+  #note-tip{
+    font-size: 0.9rem;
   }
 </style>
 

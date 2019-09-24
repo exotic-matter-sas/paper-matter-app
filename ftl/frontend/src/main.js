@@ -17,6 +17,9 @@ import {
   faWindowClose,
   faExclamationCircle
 } from '@fortawesome/free-solid-svg-icons';
+import {
+  faMarkdown
+} from '@fortawesome/free-brands-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
 
 import {mixinAlert} from "./vueMixins";
@@ -29,7 +32,7 @@ Vue.config.productionTip = false;
 
 // Font Awesome icons definition
 library.add(faHome, faFolder, faSearch, faWindowClose, faTrash, faFileDownload, faFolderPlus, faSync, faLevelUpAlt,
-  faCrown, faEdit, faExclamationCircle);
+  faCrown, faEdit, faExclamationCircle, faMarkdown);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.use(BootstrapVue);
 
