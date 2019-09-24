@@ -1,25 +1,13 @@
+<template>
+  <div></div>
+</template>
 <script>
   import {mapState} from 'vuex'
-  import FTLDocumentPanel from "@/components/FTLDocumentPanel";
-  import FTLDocument from '@/components/FTLDocument';
-  import FTLUpload from '@/components/FTLUpload';
-  import FTLDeleteDocuments from "@/components/FTLDeleteDocuments";
-  import FTLMoveDocuments from "@/components/FTLMoveDocuments";
-  import FTLRenameDocument from "@/components/FTLRenameDocument";
   import axios from 'axios';
   import qs from 'qs';
 
   export default {
     name: 'home-base',
-
-    components: {
-      FTLDocumentPanel,
-      FTLDeleteDocuments,
-      FTLMoveDocuments,
-      FTLRenameDocument,
-      FTLDocument,
-      FTLUpload
-    },
 
     props: ['doc'],
 

@@ -130,6 +130,11 @@
   import HomeBase from "@/views/HomeBase";
   import FTLFolder from '@/components/FTLFolder.vue';
   import FTLNewFolder from "@/components/FTLNewFolder";
+  import FTLDocumentPanel from "@/components/FTLDocumentPanel";
+  import FTLDeleteDocuments from "@/components/FTLDeleteDocuments";
+  import FTLMoveDocuments from "@/components/FTLMoveDocuments";
+  import FTLDocument from "@/components/FTLDocument";
+  import FTLUpload from "@/components/FTLUpload";
   import axios from 'axios';
 
   export default {
@@ -139,6 +144,11 @@
     components: {
       FTLNewFolder,
       FTLFolder,
+      FTLDocumentPanel,
+      FTLDeleteDocuments,
+      FTLMoveDocuments,
+      FTLDocument,
+      FTLUpload
     },
 
     props: ['doc', 'folder'],
@@ -269,19 +279,18 @@
             this.changeFolder(response.data);
             // Allow refresh of the current URL in address bar to take into account folders paths changes
             if (this.docPid) {
-              this.$router.push({
-                path: '/home/' + this.computeFolderUrlPath(folderId).catch(err => {
-                }),
-                query: {
-                  doc: this.docPid
-                }
-              });
+              this.$router
+                .push({
+                  path: '/home/' + this.computeFolderUrlPath(folderId),
+                  query: {
+                    doc: this.docPid
+                  }
+                });
             } else {
-              this.$router.push({path: '/home/' + this.computeFolderUrlPath(folderId)}).catch(err => {
-              });
+              this.$router.push({path: '/home/' + this.computeFolderUrlPath(folderId)});
             }
           })
-          .catch(() => {
+          .catch((error) => {
             this.mixinAlert("Could not open this folder", true);
           });
       },

@@ -7,12 +7,10 @@ import * as tv from './../tools/testValues.js'
 import {axiosConfig} from "../../src/constants";
 import Vuex from 'vuex';
 
-import Home from "../../src/views/Home";
+import HomeSearch from "../../src/views/HomeSearch";
 import HomeBase from "../../src/views/HomeBase";
 import FTLUpload from "../../src/components/FTLUpload";
-import FTLFolder from "../../src/components/FTLFolder";
 import FTLDocument from "../../src/components/FTLDocument";
-import FTLNewFolder from "@/components/FTLNewFolder";
 import storeConfig from "@/store/storeConfig";
 import cloneDeep from "lodash.clonedeep";
 
@@ -115,7 +113,7 @@ describe('Home template', () => {
   beforeEach(() => {
     storeConfigCopy = cloneDeep(storeConfig);
     store = new Vuex.Store(storeConfigCopy);
-    wrapper = shallowMount(Home, {
+    wrapper = shallowMount(HomeSearch, {
       localVue,
       store,
       methods: mountedMocks
@@ -139,7 +137,7 @@ describe('Home computed', () => {
     mockedDocumentsSelected.mockReturnValue([]);
     storeConfigCopy = cloneDeep(storeConfig);
     store = new Vuex.Store(storeConfigCopy);
-    wrapper = shallowMount(Home, {
+    wrapper = shallowMount(HomeSearch, {
       localVue,
       store,
       methods: Object.assign(
@@ -156,43 +154,6 @@ describe('Home computed', () => {
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
-
-  it('getCurrentFolder return proper format', () => {
-    // when
-    wrapper.setData({previousLevels: [tv.FOLDER_PROPS, tv.FOLDER_PROPS_VARIANT]});
-    let getCurrentFolderValue = wrapper.vm.getCurrentFolder;
-
-    // then
-    expect(getCurrentFolderValue).toBe(tv.FOLDER_PROPS_VARIANT);
-  });
-
-  it('breadcrumb return proper format', () => {
-    const fakeLevels = [tv.FOLDER_PROPS, tv.FOLDER_PROPS_VARIANT];
-    wrapper.setData({previousLevels: fakeLevels});
-
-    // when
-    const breadcrumbData = wrapper.vm.breadcrumb;
-
-    // then
-    const expectedFormat = [
-      {
-        text: 'Root',
-        to: {name: 'home'}
-      },
-      {
-        text: fakeLevels[0].name,
-        to: {path: '/home/' + fakePath}
-      },
-      {
-        text: fakeLevels[1].name,
-        to: {path: '/home/' + fakePath}
-      },
-    ];
-    expect(breadcrumbData).toEqual(expectedFormat);
-    expect(mockedComputeFolderUrlPath).toHaveBeenNthCalledWith(1, fakeLevels[0].id);
-    expect(mockedComputeFolderUrlPath).toHaveBeenNthCalledWith(2, fakeLevels[1].id);
-    expect(mockedComputeFolderUrlPath).toHaveBeenCalledTimes(2);
-  });
 });
 
 describe('Home mounted call proper methods with given props', () => {
@@ -206,7 +167,7 @@ describe('Home mounted call proper methods with given props', () => {
 
   it('mounted call proper methods without props', () => {
     mockedDocumentsSelected.mockReturnValue([]);
-    shallowMount(Home, {
+    shallowMount(HomeSearch, {
       localVue,
       store,
       methods: {
@@ -219,13 +180,12 @@ describe('Home mounted call proper methods with given props', () => {
     });
 
     // then
-    expect(mockedRefreshFolders).toHaveBeenCalledTimes(1);
     expect(mockedUpdateDocuments).toHaveBeenCalledTimes(1);
     expect(mockedOpenDocument).not.toHaveBeenCalled();
   });
 
   it('mounted call proper methods with doc props ', () => {
-    shallowMount(Home, {
+    shallowMount(HomeSearch, {
       localVue,
       store,
       methods: {
@@ -240,33 +200,32 @@ describe('Home mounted call proper methods with given props', () => {
     });
 
     // then
-    expect(mockedRefreshFolders).toHaveBeenCalledTimes(1);
     expect(mockedUpdateDocuments).toHaveBeenCalledTimes(1);
     expect(mockedOpenDocument).toHaveBeenCalledTimes(1);
   });
 
-  it('mounted call proper methods with folder props ', () => {
-    const current_folder = tv.FOLDER_PROPS;
+  it('mounted call proper methods with searchQuery props', () => {
+    const search_query = 'coucou!';
 
-    shallowMount(HomeBase, {
+    shallowMount(HomeSearch, {
       localVue,
       store,
       methods: {
         refreshFolders: mockedRefreshFolders,
         updateDocuments: mockedUpdateDocuments,
-        updateFoldersPath: mockedUpdateFoldersPath
+        refreshDocumentWithSearch: mockedRefreshDocumentWithSearch
       },
       computed: {
         documentsSelected: mockedDocumentsSelected
       },
-      propsData: {folder: current_folder}
+      propsData: {searchQuery: search_query}
     });
 
     // then
-    expect(mockedRefreshFolders).not.toHaveBeenCalled();
     expect(mockedUpdateDocuments).not.toHaveBeenCalled();
-    expect(mockedUpdateFoldersPath).toHaveBeenCalledTimes(1);
-    expect(mockedUpdateFoldersPath).toHaveBeenCalledWith(current_folder);
+    expect(mockedUpdateFoldersPath).not.toHaveBeenCalled();
+    expect(mockedRefreshDocumentWithSearch).toHaveBeenCalledTimes(1);
+    expect(mockedRefreshDocumentWithSearch).toHaveBeenCalledWith(search_query);
   });
 });
 
@@ -279,7 +238,7 @@ describe('Home watchers call proper methods', () => {
     mockedDocumentsSelected.mockReturnValue([]);
     storeConfigCopy = cloneDeep(storeConfig);
     store = new Vuex.Store(storeConfigCopy);
-    wrapper = shallowMount(Home, {
+    wrapper = shallowMount(HomeSearch, {
       localVue,
       store,
       methods: Object.assign(
@@ -296,6 +255,17 @@ describe('Home watchers call proper methods', () => {
       }
     });
     jest.clearAllMocks();
+  });
+
+  it('searchQuery watcher call refreshDocumentWithSearch', () => {
+    const searchQuery = 'key words';
+
+    //when
+    wrapper.setData({searchQuery});
+
+    // then
+    expect(mockedRefreshDocumentWithSearch).toHaveBeenCalledTimes(1);
+    expect(mockedRefreshDocumentWithSearch).toHaveBeenCalledWith(searchQuery);
   });
 
   it('doc watcher call openDocument if doc value not undefined', () => {
@@ -315,39 +285,6 @@ describe('Home watchers call proper methods', () => {
     // then
     expect(wrapper.vm.docModal).toBe(false);
     expect(mockedOpenDocument).not.toHaveBeenCalled();
-  });
-
-  it('folder watcher call proper methods based on route name', async () => {
-    const folder = tv.FOLDER_PROPS.id;
-    const folderVariant = tv.FOLDER_PROPS_VARIANT.id;
-    //when route is home
-    mockedRouteName.mockReturnValue('home');
-    wrapper.setData({folder});
-    await flushPromises();
-
-    // then
-    expect(mockedChangeFolder).toHaveBeenCalledTimes(1);
-    expect(mockedChangeFolder).toHaveBeenCalledWith();
-    expect(mockedUpdateFoldersPath).not.toHaveBeenCalled();
-
-    //when route is home-folder and folder change
-    jest.clearAllMocks();
-    mockedRouteName.mockReturnValue('home-folder');
-    wrapper.setData({folder: folderVariant});
-
-    // then
-    expect(mockedChangeFolder).not.toHaveBeenCalled();
-    expect(mockedUpdateFoldersPath).toHaveBeenCalledTimes(1);
-    expect(mockedUpdateFoldersPath).toHaveBeenCalledWith(folderVariant);
-
-    //when route is home-search
-    jest.clearAllMocks();
-    mockedRouteName.mockReturnValue('home-search');
-    wrapper.setData({folder});
-
-    // then
-    expect(mockedUpdateFoldersPath).not.toHaveBeenCalled();
-    expect(mockedChangeFolder).not.toHaveBeenCalled();
   });
 
   it('folder watcher call vuex store', async () => {
@@ -370,7 +307,7 @@ describe('Home methods call proper methods', () => {
     mockedDocumentsSelected.mockReturnValue([]);
     storeConfigCopy = cloneDeep(storeConfig);
     store = new Vuex.Store(storeConfigCopy);
-    wrapper = shallowMount(Home, {
+    wrapper = shallowMount(HomeSearch, {
       localVue,
       store,
       methods: Object.assign(
@@ -391,91 +328,24 @@ describe('Home methods call proper methods', () => {
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
 
-  it('changeFolder call proper methods', () => {
-    // restore original method to test it
-    wrapper.setMethods({changeFolder: Home.methods.changeFolder});
-
-    // when
-    wrapper.vm.changeFolder(fakeCurrentFolder);
-
-    // then
-    expect(mockedUpdateFolders).toHaveBeenCalledTimes(1);
-    expect(mockedUpdateFolders).toHaveBeenCalledWith(fakeCurrentFolder);
-    expect(mockedUpdateDocuments).toHaveBeenCalledTimes(1);
-  });
-
-  it('changeToPreviousFolder call proper methods', () => {
-    const fakePreviousLevels = [tv.FOLDER_PROPS, tv.FOLDER_PROPS_VARIANT];
-    wrapper.setData({previousLevels: Array.from(fakePreviousLevels)});
-
-    // when
-    wrapper.vm.changeToPreviousFolder();
-
-    // then
-    expect(wrapper.vm.previousLevels.length).toBe(fakePreviousLevels.length - 1);
-    expect(wrapper.vm.$router.push).toHaveBeenCalledWith({path: '/home/' + fakePath});
-    expect(wrapper.vm.$router.push).toHaveBeenCalledTimes(1);
-  });
-
-  it('refreshFolders call proper methods', () => {
-    // restore original method to test it
-    wrapper.setMethods({refreshFolders: Home.methods.refreshFolders});
-
-    // when
-    wrapper.vm.refreshFolders();
-
-    // then
-    expect(mockedUpdateFolders).toHaveBeenCalledTimes(1);
-    expect(mockedUpdateFolders).toHaveBeenNthCalledWith(1, fakeCurrentFolder);
-  });
-
   it('refreshAll call proper methods', () => {
     // when
     wrapper.vm.refreshAll();
 
     // then
-    expect(mockedRefreshFolders).toHaveBeenCalledTimes(1);
     expect(mockedUpdateDocuments).toHaveBeenCalledTimes(1);
   });
 
-  it('navigateToFolder call router push', () => {
-    // when
-    wrapper.vm.navigateToFolder(tv.FOLDER_PROPS);
-
-    // then
-    expect(wrapper.vm.$router.push).toHaveBeenNthCalledWith(1, {path: '/home/' + fakePath});
-  });
-
-  it('closeDocument call router push', () => {
-    // when
-    wrapper.vm.navigateToFolder(tv.FOLDER_PROPS);
-
-    // then
-    expect(wrapper.vm.$router.push).toHaveBeenNthCalledWith(1, {path: '/home/' + fakePath});
-  });
-
-  it('folderCreated call refreshFolders', () => {
-    // when
-    wrapper.vm.folderCreated('');
-
-    // then
-    expect(mockedRefreshFolders).toHaveBeenCalledTimes(1);
-  });
-
-  it('documentDeleted call updateDocuments when needed', () => {
-    wrapper.setData({docs: [tv.DOCUMENT_PROPS, tv.DOCUMENT_PROPS_VARIANT]});
-    wrapper.setData({moreDocs: 'moaaarUrl'});
+  it('refreshDocumentWithSearch call updateDocuments and set currentSearch', () => {
+    // restore original method to test it
+    wrapper.setMethods({refreshDocumentWithSearch: HomeSearch.methods.refreshDocumentWithSearch});
 
     // when
-    wrapper.vm.documentDeleted({doc: tv.DOCUMENT_PROPS_VARIANT});
+    const searchQuery = 'coucou !';
+    wrapper.vm.refreshDocumentWithSearch(searchQuery);
 
     // then
-    expect(mockedUpdateDocuments).toHaveBeenCalledTimes(0);
-
-    // when
-    wrapper.vm.documentDeleted({doc: tv.DOCUMENT_PROPS});
-
-    // then
+    expect(wrapper.vm.currentSearch).toBe(searchQuery);
     expect(mockedUpdateDocuments).toHaveBeenCalledTimes(1);
   });
 });
@@ -489,7 +359,7 @@ describe('Home methods return proper value', () => {
     mockedDocumentsSelected.mockReturnValue([]);
     storeConfigCopy = cloneDeep(storeConfig);
     store = new Vuex.Store(storeConfigCopy);
-    wrapper = shallowMount(Home, {
+    wrapper = shallowMount(HomeSearch, {
       localVue,
       store,
       methods: Object.assign(
@@ -506,17 +376,6 @@ describe('Home methods return proper value', () => {
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
-
-  it('computeFolderUrlPath return proper value', () => {
-    wrapper.setData({previousLevels: [tv.FOLDER_PROPS, tv.FOLDER_PROPS_VARIANT]});
-
-    let computeFolderUrlPathReturn = wrapper.vm.computeFolderUrlPath(tv.FOLDER_PROPS_VARIANT.id);
-
-    expect(computeFolderUrlPathReturn).toBe(
-      tv.FOLDER_PROPS.name + '/'
-      + tv.FOLDER_PROPS_VARIANT.name + '/'
-      + tv.FOLDER_PROPS_VARIANT.id);
-  });
 });
 
 describe('Home methods error handling', () => {
@@ -528,7 +387,7 @@ describe('Home methods error handling', () => {
     mockedDocumentsSelected.mockReturnValue([]);
     storeConfigCopy = cloneDeep(storeConfig);
     store = new Vuex.Store(storeConfigCopy);
-    wrapper = shallowMount(Home, {
+    wrapper = shallowMount(HomeSearch, {
       localVue,
       store,
       methods: Object.assign(
@@ -547,10 +406,7 @@ describe('Home methods error handling', () => {
 
   it('updateDocuments call mixinAlert in case of api error', async () => {
     // restore original method to test it
-    wrapper.setMethods({
-      updateDocuments: Home.methods.updateDocuments,
-      _updateDocuments: HomeBase.methods._updateDocuments,
-    });
+    wrapper.setMethods({updateDocuments: HomeSearch.methods.updateDocuments});
     axios.get.mockRejectedValue('error');
     wrapper.setData({previousLevels: [tv.FOLDER_PROPS, tv.FOLDER_PROPS_VARIANT]});
 
@@ -572,7 +428,7 @@ describe('Home methods call proper api', () => {
     mockedDocumentsSelected.mockReturnValue([]);
     storeConfigCopy = cloneDeep(storeConfig);
     store = new Vuex.Store(storeConfigCopy);
-    wrapper = shallowMount(Home, {
+    wrapper = shallowMount(HomeSearch, {
         localVue,
         store,
         methods: Object.assign(
@@ -596,26 +452,26 @@ describe('Home methods call proper api', () => {
   it('updateDocuments call api', () => {
     // restore original method to test it
     wrapper.setMethods({
-      updateDocuments: Home.methods.updateDocuments,
-      _updateDocuments: HomeBase.methods._updateDocuments
+      updateDocuments: HomeSearch.methods.updateDocuments,
+      _updateDocuments: HomeBase.methods._updateDocuments,
     });
 
     axios.get.mockResolvedValue(mockedGetDocumentsResponse);
-    let currentFolder = tv.FOLDER_PROPS_VARIANT;
-    wrapper.setData({previousLevels: [tv.FOLDER_PROPS, currentFolder]});
+
+    wrapper.setData({currentSearch: "coucou"});
 
     // when
     wrapper.vm.updateDocuments();
 
     // then
-    expect(axios.get).toHaveBeenCalledWith('/app/api/v1/documents?level=' + currentFolder.id + '&ordering=-created');
+    expect(axios.get).toHaveBeenCalledWith('/app/api/v1/documents?search=coucou');
     expect(axios.get).toHaveBeenCalledTimes(1);
   });
 
   it('updateDocuments call api with sorting older', () => {
     wrapper.setData({sort: 'older'});
     // restore original method to test it
-    wrapper.setMethods({updateDocuments: Home.methods.updateDocuments});
+    wrapper.setMethods({updateDocuments: HomeSearch.methods.updateDocuments});
 
     axios.get.mockResolvedValue(mockedGetDocumentsResponse);
 
@@ -630,7 +486,7 @@ describe('Home methods call proper api', () => {
   it('updateDocuments call api with sorting az', () => {
     wrapper.setData({sort: 'az'});
     // restore original method to test it
-    wrapper.setMethods({updateDocuments: Home.methods.updateDocuments});
+    wrapper.setMethods({updateDocuments: HomeSearch.methods.updateDocuments});
 
     axios.get.mockResolvedValue(mockedGetDocumentsResponse);
 
@@ -645,7 +501,7 @@ describe('Home methods call proper api', () => {
   it('updateDocuments call api with sorting za', () => {
     wrapper.setData({sort: 'za'});
     // restore original method to test it
-    wrapper.setMethods({updateDocuments: Home.methods.updateDocuments});
+    wrapper.setMethods({updateDocuments: HomeSearch.methods.updateDocuments});
 
     axios.get.mockResolvedValue(mockedGetDocumentsResponse);
 
@@ -655,31 +511,6 @@ describe('Home methods call proper api', () => {
     // then
     expect(axios.get).toHaveBeenCalledWith('/app/api/v1/documents?ordering=-title');
     expect(axios.get).toHaveBeenCalledTimes(1);
-  });
-
-  it('updateFolders call api', () => {
-    axios.get.mockResolvedValue(mockedGetFoldersResponse);
-    let currentFolder = tv.FOLDER_PROPS_VARIANT;
-
-    // when
-    wrapper.vm.updateFolders(currentFolder);
-
-    // then
-    expect(axios.get).toHaveBeenCalledWith('/app/api/v1/folders?level=' + currentFolder.id);
-    expect(axios.get).toHaveBeenCalledTimes(1);
-  });
-
-  it('updateFoldersPath call api', async () => {
-    axios.get.mockResolvedValueOnce(mockedGetFolderResponse);
-    wrapper.vm.updateFoldersPath(tv.FOLDER_PROPS.id);
-    await flushPromises();
-
-    expect(axios.get).toHaveBeenCalledWith('/app/api/v1/folders/' + tv.FOLDER_PROPS.id);
-    expect(axios.get).toHaveBeenCalledTimes(1);
-    expect(mockedChangeFolder).toHaveBeenCalledWith(mockedGetFolderResponse.data);
-    expect(mockedChangeFolder).toHaveBeenCalledTimes(1);
-    expect(mockedComputeFolderUrlPath).toHaveBeenCalledWith(tv.FOLDER_PROPS.id);
-    expect(mockedComputeFolderUrlPath).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -692,7 +523,7 @@ describe('Home methods update proper data', () => {
     mockedDocumentsSelected.mockReturnValue([]);
     storeConfigCopy = cloneDeep(storeConfig);
     store = new Vuex.Store(storeConfigCopy);
-    wrapper = shallowMount(Home, {
+    wrapper = shallowMount(HomeSearch, {
       localVue,
       store,
       methods: mountedMocks,
@@ -742,7 +573,7 @@ describe('Home event handling', () => {
     mockedDocumentsSelected.mockReturnValue([]);
     storeConfigCopy = cloneDeep(storeConfig);
     store = new Vuex.Store(storeConfigCopy);
-    wrapper = shallowMount(Home, {
+    wrapper = shallowMount(HomeSearch, {
       localVue,
       store,
       methods: Object.assign(
@@ -775,20 +606,6 @@ describe('Home event handling', () => {
     expect(mockedDocumentsCreated).toHaveBeenCalledTimes(1);
   });
 
-  it('event-change-folder call navigateToFolder', async () => {
-    // Need to define at least one folder in order FTLFolder component is instantiated
-    wrapper.setData({folders: [tv.FOLDER_PROPS]});
-    let next_folder = tv.FOLDER_PROPS_VARIANT;
-
-    // when
-    wrapper.find(FTLFolder).vm.$emit('event-change-folder', next_folder);
-    await flushPromises(); // wait all pending promises are resolved/rejected
-
-    // then
-    expect(mockedNavigateToFolder).toHaveBeenCalledWith(next_folder);
-    expect(mockedNavigateToFolder).toHaveBeenCalledTimes(1);
-  });
-
   it('event-open-doc call openDocument', async () => {
     // Need to define at least one document in order FTLDocument component is instantiated
     wrapper.setData({docs: [tv.DOCUMENT_PROPS]});
@@ -801,14 +618,5 @@ describe('Home event handling', () => {
     // then
     expect(mockedNavigateToDocument).toHaveBeenCalledWith(documentPid);
     expect(mockedNavigateToDocument).toHaveBeenCalledTimes(1);
-  });
-
-  it('event-folder-created call folderCreated', async () => {
-    // when
-    wrapper.find(FTLNewFolder).vm.$emit('event-folder-created');
-    await flushPromises(); // wait all pending promises are resolved/rejected
-
-    // then
-    expect(mockedFolderCreated).toHaveBeenCalledTimes(1);
   });
 });

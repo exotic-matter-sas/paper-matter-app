@@ -117,10 +117,25 @@
   // @ is an alias to /src
   import {mapState} from 'vuex'
   import HomeBase from "@/views/HomeBase";
+  import FTLDocumentPanel from "@/components/FTLDocumentPanel";
+  import FTLDeleteDocuments from "@/components/FTLDeleteDocuments";
+  import FTLMoveDocuments from "@/components/FTLMoveDocuments";
+  import FTLDocument from "@/components/FTLDocument";
+  import FTLUpload from "@/components/FTLUpload";
+  import FTLRenameDocument from "@/components/FTLRenameDocument";
 
   export default {
     name: 'home-search',
     extends: HomeBase,
+
+    components: {
+      FTLDocumentPanel,
+      FTLDeleteDocuments,
+      FTLMoveDocuments,
+      FTLDocument,
+      FTLUpload,
+      FTLRenameDocument
+    },
 
     props: ['searchQuery', 'doc'],
 
