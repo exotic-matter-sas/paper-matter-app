@@ -80,7 +80,7 @@
 
     computed: {
       getNoteMarkdownSanitized: function () {
-        const markdownHtml = marked(this.text, {gfm: true});
+        const markdownHtml = marked(this.text, {gfm: true, breaks: true});
         return dompurify.sanitize(markdownHtml);
       }
     },
