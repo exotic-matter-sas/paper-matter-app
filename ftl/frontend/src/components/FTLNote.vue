@@ -2,8 +2,8 @@
   <b-row>
     <b-col cols="12" class="mb-1">
       <h6 class="d-inline font-weight-bold">{{ $_('Note') }}</h6>
-      <b-button v-if="!editing" id="edit-note" variant="link" size="sm">
-        <font-awesome-icon icon="edit" :title="$_('Edit note')" @click.prevent="editing = true"/>
+      <b-button v-if="!editing" id="edit-note" variant="link" size="sm" @click.prevent="editing = true">
+        <font-awesome-icon icon="edit" :title="$_('Edit note')"/>
       </b-button>
     </b-col>
 
@@ -13,14 +13,14 @@
           <b-tabs content-class="mt-2" small lazy>
             <b-tab :title="$_('Edition')" active>
               <b-form-textarea
+                id="note-textarea"
                 v-model="text"
                 :placeholder="$_('Document note ...')"
-                class="note"
                 max-rows="10">
               </b-form-textarea>
             </b-tab>
             <b-tab :title="$_('Preview')">
-              <div class="note"><span v-html="getNoteMarkdownSanitized"></span></div>
+              <div id="note-preview"><span v-html="getNoteMarkdownSanitized"></span></div>
             </b-tab>
           </b-tabs>
         </b-col>
@@ -31,7 +31,7 @@
             <a v-if="doc.note === text" class="text-muted" :title="$_('Markdown syntax supported')"
                href="https://guides.github.com/features/mastering-markdown/#examples" target="_blank">
               <font-awesome-icon :icon="['fab', 'markdown']" rel="Markdown logo"/>
-              {{ $_(' syntax supported') }}
+              {{ $_(' supported') }}
             </a>
             <span v-else class="highlight">
               <font-awesome-icon icon="exclamation-circle"/>
@@ -41,10 +41,10 @@
         </b-col>
         <b-col class="text-right">
           <b-button variant="link" size="sm" :disabled="editing === false"
-                    @click.prevent="editing = false">
+                    @click.prevent="cancelUpdate">
             {{$_('Cancel')}}
           </b-button>
-          <b-button variant="primary" size="sm" :disabled="doc.note === text"
+          <b-button id="save-note" variant="primary" size="sm" :disabled="doc.note === text"
                     @click.prevent="updateNote">
             {{$_('Save')}}
           </b-button>
@@ -53,7 +53,7 @@
     </b-col>
 
     <b-col v-else-if="doc.note">
-      <div class="note"><span v-html="getNoteMarkdownSanitized"></span></div>
+      <div id="note"><span v-html="getNoteMarkdownSanitized"></span></div>
     </b-col>
 
     <b-col v-else>
@@ -109,13 +109,18 @@
           .catch(error => {
             this.mixinAlert(this.$_('Could not save note!'), true)
           });
+      },
+
+      cancelUpdate: function () {
+        this.editing = false;
+        this.text = this.doc.note;
       }
     }
   }
 </script>
 
 <style scoped>
-  .note {
+  #note {
     overflow: auto;
     max-height: 50vh;
   }

@@ -134,4 +134,18 @@ describe('FTLNote methods', () => {
     expect(mockedMixinAlert).toHaveBeenCalledTimes(1);
     expect(mockedMixinAlert.mock.calls[0][0]).toContain('Could not save note!');
   });
+
+  it('cancelUpdate set values', () => {
+    wrapper.setData({
+      editing: true,
+      text: 'updated note'
+    });
+
+    // when
+    wrapper.vm.cancelUpdate();
+
+    // then
+    expect(wrapper.vm.editing).toBe(false);
+    expect(wrapper.vm.text).toEqual(docProp.note);
+  });
 });
