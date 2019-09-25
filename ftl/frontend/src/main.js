@@ -8,27 +8,33 @@ import {
   faEdit,
   faFileDownload,
   faFolder,
+  faFolderOpen,
   faFolderPlus,
   faHome,
   faLevelUpAlt,
   faSearch,
   faSync,
   faTrash,
-  faWindowClose
+  faWindowClose,
+  faExclamationCircle
 } from '@fortawesome/free-solid-svg-icons';
+import {
+  faMarkdown
+} from '@fortawesome/free-brands-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
 
 import {mixinAlert} from "./vueMixins";
 import router from './router';
-import store from './store'
 import moment from 'moment'
 import axios from 'axios';
+import Vuex from 'vuex'
+import storeConfig from "./store/storeConfig"
 
 Vue.config.productionTip = false;
 
 // Font Awesome icons definition
-library.add(faHome, faFolder, faSearch, faWindowClose, faTrash, faFileDownload, faFolderPlus, faSync, faLevelUpAlt,
-  faCrown, faEdit);
+library.add(faHome, faFolder, faFolderOpen, faSearch, faWindowClose, faTrash, faFileDownload, faFolderPlus, faSync,
+  faLevelUpAlt, faCrown, faEdit, faExclamationCircle, faMarkdown);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.use(BootstrapVue);
 
@@ -80,6 +86,10 @@ Vue.mixin({
     mixinAlert
   }
 });
+
+// Vuex
+Vue.use(Vuex);
+const store = new Vuex.Store(storeConfig);
 
 new Vue({
   router,

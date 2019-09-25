@@ -1,5 +1,5 @@
 <template>
-  <b-button class="folder m-1" :disabled="navigating" @click="navigate">
+  <b-button class="folder" :disabled="navigating" @click="navigate">
     <b-spinner id ="folder-list-loader" :class="{'d-none': !navigating}" small></b-spinner>
     <span :class="{'d-none': navigating}">{{ folder.name }}</span>
   </b-button>

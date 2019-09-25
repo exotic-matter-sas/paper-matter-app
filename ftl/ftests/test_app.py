@@ -6,16 +6,18 @@ from selenium.common.exceptions import NoSuchElementException
 
 from core.processing.ftl_processing import FTLDocumentProcessing
 from ftests.pages.base_page import NODE_SERVER_RUNNING
-from ftests.pages.document_viewer_page import DocumentViewPage
+from ftests.pages.document_viewer_modal import DocumentViewerModal
 from ftests.pages.home_page import HomePage
 from ftests.pages.manage_folder_page import ManageFolderPage
+from ftests.pages.move_documents_modal import MoveDocumentsModal
 from ftests.pages.user_login_page import LoginPage
 from ftests.tools import test_values as tv
-from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_document, setup_folder
+from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_document, setup_folder, \
+    setup_temporary_file
 from ftl.settings import DEV_MODE, BASE_DIR
 
 
-class HomePageTests(LoginPage, HomePage, DocumentViewPage):
+class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
     def setUp(self, **kwargs):
         # first org, admin, user are already created, user is already logged on home page
         super().setUp()
@@ -145,9 +147,20 @@ class HomePageTests(LoginPage, HomePage, DocumentViewPage):
         self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
         self.assertEqual(second_document_title, self.get_elem_text(self.first_document_title))
 
-    @skip('TODO when document note implemented in UI')  # TODO
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_search_document_by_its_note(self):
-        pass
+        # User have already added 2 documents
+        setup_document(self.org, self.user)
+        second_document_note = 'bingo!'
+        second_document_title = 'second document'
+        setup_document(self.org, self.user, title=second_document_title, note=second_document_note)
+
+        # User search last uploaded document
+        self.search_document(second_document_note)
+
+        # Only the second document appears in search results
+        self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
+        self.assertEqual(second_document_title, self.get_elem_text(self.first_document_title))
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_search_apply_to_all_folders(self):
@@ -202,7 +215,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewPage):
         with self.assertRaises(NoSuchElementException, msg='No document should be found by this search query'):
             self.get_elems(self.documents_thumbnails)
 
-        self.assertIn('No document', self.get_elem_text(self.documents_list),
+        self.assertIn('No document', self.get_elem_text(self.documents_list_container),
                       'A message should indicate no documents were found')
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
@@ -221,7 +234,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewPage):
         with self.assertRaises(NoSuchElementException, msg='No document should be found by this search query'):
             self.get_elems(self.documents_thumbnails)
 
-        self.assertIn('No document', self.get_elem_text(self.documents_list),
+        self.assertIn('No document', self.get_elem_text(self.documents_list_container),
                       'A message should indicate no documents were found')
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
@@ -306,7 +319,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewPage):
     def test_document_list_pagination(self):
         # User has already added 21 documents
         for i in range(21):
-            setup_document(self.org, self.user, title=i+1)
+            setup_document(self.org, self.user, title=i + 1)
         self.refresh_document_list()
 
         # Only 10 documents are shown by default
@@ -337,7 +350,74 @@ class HomePageTests(LoginPage, HomePage, DocumentViewPage):
             self.get_elem(self.more_documents_button)
 
 
-class DocumentViewPageTests(LoginPage, HomePage, DocumentViewPage):
+class DocumentsBatchActionsTests(LoginPage, HomePage, MoveDocumentsModal):
+    def setUp(self, **kwargs):
+        # first org, admin, user are already created, user is already logged on home page
+        super().setUp()
+        self.org = setup_org()
+        setup_admin(self.org)
+        self.user = setup_user(self.org)
+        self.visit(LoginPage.url)
+        self.log_user()
+        # 3 documents, 1 folder already added/created
+        self.doc1 = setup_document(self.org, self.user, binary=setup_temporary_file().name, title='doc1')
+        self.doc2 = setup_document(self.org, self.user, binary=setup_temporary_file().name, title='doc2')
+        self.doc3 = setup_document(self.org, self.user, binary=setup_temporary_file().name, title='doc3')
+        self.folder = setup_folder(self.org)
+        # refresh page to see documents
+        self.visit(HomePage.url)
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_select_documents(self):
+        # User select doc1 and doc2
+        docs_to_select = ['doc1', 'doc2']
+        self.select_documents(docs_to_select)
+
+        # User see in the batch actions toolbar that 2 documents are selected
+        self.assertIn('2 documents', self.get_elem_text(self.batch_toolbar))
+
+        # User unselect documents and the toolbar disappear
+        self.get_elem(self.unselect_all_docs_batch_button).click()
+        with self.assertRaises(NoSuchElementException):
+            self.get_elem(self.batch_toolbar)
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_move_documents(self):
+        # User select doc1 and doc2
+        docs_to_move = ['doc1', 'doc2']
+        self.select_documents(docs_to_move)
+
+        # User click on move button and select the target folder
+        self.get_elem(self.move_docs_batch_button).click()
+        self.move_documents(self.folder.name)
+
+        # User see the documents to move have disappear from the current folder
+        self.assertCountEqual([self.doc3.title], self.get_elems_text(self.documents_titles))
+
+        # User see the documents in the proper folder
+        self.get_elem(self.folders_list_buttons).click()
+        self.wait_document_list_loaded()
+        self.assertCountEqual(docs_to_move, self.get_elems_text(self.documents_titles))
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_delete_documents(self):
+        # User select doc1 and doc2
+        docs_to_delete = ['doc1', 'doc2']
+        self.select_documents(docs_to_delete)
+
+        # User click on delete button
+        self.get_elem(self.delete_docs_batch_button).click()
+        self.get_elem(self.modal_accept_button).click()
+
+        # User see the documents to delete have disappear from the current folder
+        self.assertCountEqual([self.doc3.title], self.get_elems_text(self.documents_titles))
+
+        # User refresh the page and observe that documents are really gone
+        self.visit(HomePage.url)
+        self.assertCountEqual([self.doc3.title], self.get_elems_text(self.documents_titles))
+
+
+class DocumentViewerModalTests(LoginPage, HomePage, DocumentViewerModal):
     def setUp(self, **kwargs):
         # first org, admin, user are already created, user is already logged on home page
         super().setUp()
@@ -355,7 +435,7 @@ class DocumentViewPageTests(LoginPage, HomePage, DocumentViewPage):
         second_document = setup_document(self.org, self.user, title=second_document_title)
 
         # User open second document through url
-        self.visit(DocumentViewPage.url.format(second_document.pid))
+        self.visit(DocumentViewerModal.url.format(second_document.pid))
         self.wait_for_elem_to_show(self.document_title)
 
         self.assertIn(second_document_title,
@@ -401,6 +481,22 @@ class DocumentViewPageTests(LoginPage, HomePage, DocumentViewPage):
         self.assertEqual(self.get_elem_text(self.document_title), new_doc_title)
         self.close_document()
         self.assertEqual(self.get_elem_text(self.first_document_title), new_doc_title)
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @patch.object(FTLDocumentProcessing, 'apply_processing')
+    def test_annotate_document(self, mock_apply_processing):
+        # User has already added and opened a document
+        setup_document(self.org, self.user)
+        self.refresh_document_list()
+        self.open_first_document()
+        self.wait_for_elem_to_show(self.pdf_viewer)
+
+        # User annotate the document
+        new_doc_note = 'New note'
+        self.annotate_document(new_doc_note)
+
+        # Document note is properly updated in pdf viewer
+        self.assertEqual(self.get_elem_text(self.note_text), new_doc_note)
 
 
 class ManageFoldersPageTests(LoginPage, ManageFolderPage):
