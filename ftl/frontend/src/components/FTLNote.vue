@@ -1,13 +1,13 @@
 <template>
   <b-row>
-    <b-col cols="12" class="mb-1">
+    <b-col id="note-title" cols="12" class="mb-1">
       <h6 class="d-inline font-weight-bold">{{ $_('Note') }}</h6>
       <b-button v-if="!editing" id="edit-note" variant="link" size="sm" @click.prevent="editing = true">
         <font-awesome-icon icon="edit" :title="$_('Edit note')"/>
       </b-button>
     </b-col>
 
-    <b-col v-if="editing">
+    <b-col v-if="editing" id='note-form'>
       <b-row>
         <b-col>
           <b-tabs content-class="mt-2" small lazy>
@@ -119,14 +119,30 @@
   }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+  @import '../styles/customBootstrap.scss';
+
+  #note-title { // to avoid #note-form visible behind title during animation
+    background: white;
+    z-index: $zindex-dropdown;
+
+    .btn { // to avoid wobbly UI when button disappear
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+  }
+
   #note {
     overflow: auto;
     max-height: 50vh;
   }
 
-  #note-tip{
+  #note-tip {
     font-size: 0.9rem;
+  }
+
+  #note-form {
+    animation: slide-down 0.2s linear;
   }
 </style>
 
