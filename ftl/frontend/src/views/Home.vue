@@ -13,7 +13,7 @@
         </b-col>
       </b-row>
 
-      <b-row v-show="!selectedDocumentsHome.length" class="my-3" id="folders-list">
+      <b-row v-show="!selectedDocumentsHome.length" class="mt-3" id="folders-list">
         <b-col>
           <b-button id="refresh-documents" :disabled="docsLoading" variant="primary" @click="refreshAll">
             <font-awesome-icon icon="sync" :spin="docsLoading" :class="{ 'stop-spin':!docsLoading }"
@@ -51,7 +51,7 @@
         </b-col>
       </b-row>
 
-      <b-row v-show="selectedDocumentsHome.length" id="action-selected-documents">
+      <b-row v-show="selectedDocumentsHome.length" class="mb-3" id="action-selected-documents">
         <b-col>
           <b-button id="select-all-documents" variant="outline-primary" title="Select all documents displayed"
                     @click="$store.commit('selectDocuments', docs)">
@@ -60,6 +60,11 @@
         </b-col>
         <b-col cols="8" class="text-right">
           <span class="text-muted d-none d-sm-inline">{{ $_('%s documents:', [selectedDocumentsHome.length]) }}</span>
+          <b-button id="unselect-all-documents" @click="$store.commit('unselectAllDocuments')"
+                    title="Unselect documents">
+            <font-awesome-icon icon="window-close" class="d-sm-none"/>
+            <span class="d-none d-sm-inline">{{ $_('Cancel') }}</span>
+          </b-button>
           <b-button id="move-documents" variant="primary" v-b-modal="'modal-move-documents'" title="Move to folder">
             <font-awesome-icon icon="folder-open" class="d-sm-none"/>
             <span class="d-none d-sm-inline">{{ $_('Move') }}</span>
@@ -69,15 +74,10 @@
             <font-awesome-icon icon="trash" class="d-sm-none"/>
             <span class="d-none d-sm-inline">{{ $_('Delete') }}</span>
           </b-button>
-          <b-button id="unselect-all-documents" @click="$store.commit('unselectAllDocuments')"
-                    title="Unselect documents">
-            <font-awesome-icon icon="window-close" class="d-sm-none"/>
-            <span class="d-none d-sm-inline">{{ $_('Cancel') }}</span>
-          </b-button>
         </b-col>
       </b-row>
 
-      <b-row class="my-3" id="documents-list">
+      <b-row class="mt-2 mb-3" id="documents-list">
         <b-col v-if="docsLoading">
           <b-spinner class="mx-auto" id="documents-list-loader"
                      label="Loading..."></b-spinner>
@@ -339,10 +339,19 @@
     display: block;
   }
 
-  #folders-list button, #action-selected-documents button, #action-selected-documents span {
+  #folders-list button {
     margin-left: 0 !important;
     margin-right: 0.5rem !important;
     margin-bottom: 0.5rem !important;
+  }
+
+  #action-selected-documents button, #action-selected-documents span {
+    margin-left: 0 !important;
+    margin-right: 0.5rem !important;
+
+    &:last-child {
+      margin-right:0 !important;
+    }
   }
 
   #action-selected-documents {
@@ -351,10 +360,6 @@
     animation: slide-down 0.1s linear;
     z-index: calc(#{$zindex-sticky} - 1); // to be under header dropdown menu (mobile)
     background: $light;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-    margin-top: -0.5rem;
-    margin-bottom: -0.5rem;
   }
 
   @include media-breakpoint-up(sm) {
