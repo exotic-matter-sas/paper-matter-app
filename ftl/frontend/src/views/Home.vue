@@ -342,10 +342,7 @@
   #folders-list button, #action-selected-documents button, #action-selected-documents span {
     margin-left: 0 !important;
     margin-right: 0.5rem !important;
-
-    &:last-child {
-      margin-right: 0 !important;
-    }
+    margin-bottom: 0.5rem !important;
   }
 
   #action-selected-documents {
@@ -376,6 +373,7 @@
 
   #documents-sort {
     float: right;
+    margin-top: 0 !important;
     margin-right: 0 !important;
 
     .btn {
