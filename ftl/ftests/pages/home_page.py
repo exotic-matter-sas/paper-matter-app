@@ -8,6 +8,9 @@ from ftl.settings import BASE_DIR
 class HomePage(BasePage):
     url = '/app/'
 
+    home_page_link = '.navbar-nav .fa-home'
+    manage_folder_page_link = '.navbar-nav .fa-home'
+
     search_input = '#search-input'
     search_button = '#search-button'
     document_list_loader = '#document-list-loader'
@@ -24,6 +27,13 @@ class HomePage(BasePage):
     create_folder_button = '#create-folder'
     folders_list_buttons = 'button.folder > span:not(.spinner-border):not(.d-none)'
     folders_list_loader = '#folder-list-loader'
+
+    sort_dropdown_button = '#documents-sort'
+    az_sort_item = '#az-sort'
+    za_sort_item = '#za-sort'
+    recent_sort_item = '#recent-recent'
+    older_sort_item = '#older-sort'
+    relevance_sort_item = '#relevance-sort'
 
     batch_toolbar = '#action-selected-documents'
     unselect_all_docs_batch_button = '#unselect-all-documents'

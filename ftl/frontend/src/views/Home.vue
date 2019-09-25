@@ -38,14 +38,14 @@
               <span v-else-if="sort === 'recent'">({{ $_('recent') }})</span>
               <span v-else-if="sort === 'older'">({{ $_('older') }})</span>
             </template>
-            <b-dropdown-item-button href="#" @click.prevent="sort = 'az'">{{ $_('A-Z') }}&nbsp;
+            <b-dropdown-item-button id="az-sort" href="#" @click.prevent="sort = 'az'">{{ $_('A-Z') }}&nbsp;
               <span v-if="sort === 'az'">&checkmark;</span></b-dropdown-item-button>
-            <b-dropdown-item-button href="#" @click.prevent="sort = 'za'">{{ $_('Z-A') }}&nbsp;
+            <b-dropdown-item-button id="za-sort" href="#" @click.prevent="sort = 'za'">{{ $_('Z-A') }}&nbsp;
               <span v-if="sort === 'za'">&checkmark;</span></b-dropdown-item-button>
             <b-dropdown-divider/>
-            <b-dropdown-item-button href="#" @click.prevent="sort = 'recent'">{{ $_('Recent first') }}&nbsp;
+            <b-dropdown-item-button id="recent-sort" href="#" @click.prevent="sort = 'recent'">{{ $_('Recent first') }}&nbsp;
               <span v-if="sort === 'recent'">&checkmark;</span></b-dropdown-item-button>
-            <b-dropdown-item-button href="#" @click.prevent="sort = 'older'">{{ $_('Older first') }}&nbsp;
+            <b-dropdown-item-button id="older-sort" href="#" @click.prevent="sort = 'older'">{{ $_('Older first') }}&nbsp;
               <span v-if="sort === 'older'">&checkmark;</span></b-dropdown-item-button>
           </b-dropdown>
         </b-col>
