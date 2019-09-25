@@ -79,6 +79,7 @@ class HomePage(BasePage):
     def refresh_document_list(self):
         refresh_button = self.get_elem(self.refresh_documents_button)
         refresh_button.click()
+        self.wait_document_list_loaded()
 
     def open_first_document(self):
         first_document_title = self.get_elem(self.first_document_title)
