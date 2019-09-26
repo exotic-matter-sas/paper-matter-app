@@ -15,6 +15,8 @@ DATABASES = {
     }
 }
 
+DEFAULT_TEST_BROWSER = 'chrome'
+
 DEV_MODE = True
 
 EMAIL_SUBJECT_PREFIX = '[TESTS] '
