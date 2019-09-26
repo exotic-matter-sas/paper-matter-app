@@ -58,6 +58,7 @@ EMAIL_USE_SSL = False
 DEFAULT_TEST_BROWSER = 'firefox'  # or 'chrome'
 TEST_BROWSER_HEADLESS = True
 #  TEST_BROWSER_HEADLESS = False
+# BROWSER_BINARY_PATH = '' # to test a specific browser version which is not installed at the default path
 
 # TODO default should be fine unless your dev is related to remote storage and/or OCR
 """

@@ -68,7 +68,7 @@ test-fast-python:
   script:
     - export DJANGO_SETTINGS_MODULE=ftl.settings_tests
     - source venv/bin/activate && cd ftl
-    - python3 manage.py test -v 2 --exclude-tag=slow --parallel
+    - python3 manage.py test -v 2 --exclude-tag=slow
 
 test-slow-python:
   stage: test
@@ -77,11 +77,6 @@ test-slow-python:
     - postgres:10.7-alpine
   dependencies:
     - compile-backend
-  artifacts:
-    name: "debug"
-    when: on_failure
-    paths:
-      - ftl/ftests/tools/test_documents
   script:
     - export DJANGO_SETTINGS_MODULE=ftl.settings_tests
     - source venv/bin/activate && cd ftl
