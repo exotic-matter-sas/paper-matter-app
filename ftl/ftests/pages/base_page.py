@@ -101,6 +101,8 @@ class BasePage(LIVE_SERVER):
 
             if TEST_BROWSER_HEADLESS:
                 options.add_argument('--headless')
+                options.add_argument('--no-sandbox')
+                options.add_argument('--disable-dev-shm-usage')
                 if platform.system() == 'Windows':  # Needed due to Chrome bug
                     options.add_argument('--disable-gpu')
             if BROWSER_BINARY_PATH:
