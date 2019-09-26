@@ -33,7 +33,8 @@
               <span v-if="sort === 'recent'">&checkmark;</span></b-dropdown-item-button>
             <b-dropdown-item-button id="older-sort" href="#" @click.prevent="sort = 'older'">{{ $_('Older first') }}&nbsp;
               <span v-if="sort === 'older'">&checkmark;</span></b-dropdown-item-button>
-            <b-dropdown-item-button id="relevance-sort" href="#" @click.prevent="sort = 'relevance'">{{ $_('Relevance') }}&nbsp;
+            <b-dropdown-item-button id="relevance-sort" href="#" @click.prevent="sort = 'relevance'">{{ $_('Relevance')
+              }}&nbsp;
               <span v-if="sort === 'relevance'">&checkmark;</span></b-dropdown-item-button>
           </b-dropdown>
         </b-col>
@@ -172,6 +173,7 @@
     methods: {
       refreshDocumentWithSearch: function (text) {
         this.currentSearch = text;
+        this.sort = "relevance"; // reset sort to relevance for new search
         this.updateDocuments();
       },
 

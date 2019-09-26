@@ -164,6 +164,8 @@
     },
 
     mounted() {
+      this.sort = this.sortHome;
+
       if (this.folder) {
         // Open folder directly from loading an URL with folder (don't reset URL if opening a document)
         this.updateFoldersPath(this.folder);
@@ -188,6 +190,11 @@
 
         // Clear the selected documents when moving between folders
         this.$store.commit("unselectAllDocuments");
+      },
+      sort: function (newVal, oldVal) {
+        if (newVal !== oldVal) {
+          this.$store.commit("changeSortHome", newVal);
+        }
       }
     },
 
@@ -218,7 +225,7 @@
           }
         }));
       },
-      ...mapState(['selectedDocumentsHome']) // generate vuex computed getter
+      ...mapState(['selectedDocumentsHome', 'sortHome']) // generate vuex computed getter
     },
 
     methods: {
@@ -350,7 +357,7 @@
     margin-right: 0.5rem !important;
 
     &:last-child {
-      margin-right:0 !important;
+      margin-right: 0 !important;
     }
   }
 
