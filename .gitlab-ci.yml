@@ -68,7 +68,7 @@ test-fast-python:
   script:
     - export DJANGO_SETTINGS_MODULE=ftl.settings_tests
     - source venv/bin/activate && cd ftl
-    - python manage.py test ftests.test_app.HomePageTests.test_upload_documents_to_root
+    - python3 manage.py test -v 2 --exclude-tag=slow
 
 test-slow-python:
   stage: test
