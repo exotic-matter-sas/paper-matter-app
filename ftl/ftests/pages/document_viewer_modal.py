@@ -18,7 +18,7 @@ class DocumentViewerModal(BasePage):
         self.get_elem(self.rename_document_button).click()
         self.wait_for_elem_to_show(self.modal_input)
         self.get_elem(self.modal_input).send_keys(document_name)
-        self.get_elem(self.modal_accept_button).click()
+        self.accept_modal()
 
     def close_document(self):
         self.get_elem(self.close_document_button).click()

@@ -72,7 +72,7 @@ class HomePage(BasePage):
         self.get_elem(self.create_folder_button).click()
         self.wait_for_elem_to_show(self.modal_input)
         self.get_elem(self.modal_input).send_keys(folder_name)
-        self.get_elem(self.modal_accept_button).click()
+        self.accept_modal()
         if close_notification:
             self.close_all_notifications()
 
@@ -89,3 +89,4 @@ class HomePage(BasePage):
         for document in documents_list:
             if document.find_element_by_css_selector(self.documents_titles).text in documents_names:
                 document.find_element_by_css_selector(self.documents_checkboxes).click()
+        self.wait_for_elem_to_show(self.batch_toolbar)

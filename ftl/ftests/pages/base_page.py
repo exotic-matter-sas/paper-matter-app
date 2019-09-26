@@ -261,3 +261,8 @@ class BasePage(LIVE_SERVER):
         if pause_test:
             input(f'Test paused for debugging, press Enter to terminate')
         self.fail(message)
+
+    def accept_modal(self):
+        self.wait_for_elem_to_show(self.modal_accept_button)
+        self.get_elem(self.modal_accept_button).click()
+        self.wait_for_elem_to_disappear(self.modal_accept_button)

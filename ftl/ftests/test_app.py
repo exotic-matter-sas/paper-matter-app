@@ -396,7 +396,7 @@ class DocumentsBatchActionsTests(LoginPage, HomePage, MoveDocumentsModal):
 
         # User click on delete button
         self.get_elem(self.delete_docs_batch_button).click()
-        self.get_elem(self.modal_accept_button).click()
+        self.accept_modal()
 
         # User see the documents to delete have disappear from the current folder
         self.assertCountEqual([self.doc3.title], self.get_elems_text(self.documents_titles))
