@@ -55,7 +55,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
             self.get_elem(self.first_document_title)
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
-    @skipIf('CI' in os.environ, 'this test is bugged on CI, see ')
+    #@skipIf('CI' in os.environ, 'this test is bugged on CI, see ')
     @patch.object(FTLDocumentProcessing, 'apply_processing')
     def test_upload_documents_to_root(self, mock_apply_processing):
         # User upload several documents
