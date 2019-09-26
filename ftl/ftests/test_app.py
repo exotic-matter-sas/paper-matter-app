@@ -61,7 +61,8 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         # User upload several documents
         documents_to_upload = [
             os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'test.pdf'),
-            os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'green.pdf')
+            os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'test.pdf'),
+            os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'test.pdf')
         ]
         self.upload_documents(documents_to_upload)
 

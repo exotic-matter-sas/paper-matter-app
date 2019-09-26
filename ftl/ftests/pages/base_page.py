@@ -14,7 +14,7 @@ from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.support import expected_conditions as Ec
 from selenium.webdriver.support.wait import WebDriverWait
 
-from ftl.settings import BASE_DIR, DEFAULT_TEST_BROWSER, TEST_BROWSER_HEADLESS, DEV_MODE
+from ftl.settings import BASE_DIR, DEFAULT_TEST_BROWSER, TEST_BROWSER_HEADLESS, DEV_MODE, BROWSER_BINARY_PATH
 
 if 'CI' in os.environ:
     LIVE_SERVER = LiveServerTestCase
@@ -81,6 +81,8 @@ class BasePage(LIVE_SERVER):
 
             if TEST_BROWSER_HEADLESS:
                 options.headless = True
+            if BROWSER_BINARY_PATH:
+                options.binary_location = BROWSER_BINARY_PATH
 
             self.browser = webdriver.Firefox(executable_path=os.path.join(BASE_DIR, executable_path),
                                              firefox_profile=profile, firefox_options=options)
@@ -101,6 +103,8 @@ class BasePage(LIVE_SERVER):
                 options.add_argument('--headless')
                 if platform.system() == 'Windows':  # Needed due to Chrome bug
                     options.add_argument('--disable-gpu')
+            if BROWSER_BINARY_PATH:
+                options.binary_location = BROWSER_BINARY_PATH
 
             self.browser = webdriver.Chrome(executable_path=os.path.join(BASE_DIR, chrome_driver_path),
                                             chrome_options=options)
