@@ -146,12 +146,11 @@ describe('Home mounted call proper methods with given props', () => {
     jest.clearAllMocks();
   });
 
-  it('mounted call proper methods with doc props ', () => {
+  it('mounted call proper methods with doc props', () => {
     shallowMount(HomeBase, {
       localVue,
       store,
       methods: {
-        updateDocuments: mockedUpdateDocuments,
         openDocument: mockedOpenDocument
       },
       computed: {
@@ -161,7 +160,6 @@ describe('Home mounted call proper methods with given props', () => {
     });
 
     // then
-    expect(mockedUpdateDocuments).toHaveBeenCalledTimes(1);
     expect(mockedOpenDocument).toHaveBeenCalledTimes(1);
   });
 });
