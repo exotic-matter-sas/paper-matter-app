@@ -9,9 +9,7 @@ import Vuex from 'vuex';
 
 import HomeBase from "../../src/views/HomeBase";
 import FTLUpload from "../../src/components/FTLUpload";
-import FTLFolder from "../../src/components/FTLFolder";
 import FTLDocument from "../../src/components/FTLDocument";
-import FTLNewFolder from "@/components/FTLNewFolder";
 import storeConfig from "@/store/storeConfig";
 import cloneDeep from "lodash.clonedeep";
 
@@ -252,58 +250,16 @@ describe('Home methods call proper methods', () => {
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
 
-
-
-  it('refreshFolders call proper methods', () => {
-    // restore original method to test it
-    wrapper.setMethods({refreshFolders: HomeBase.methods.refreshFolders});
-
-    // when
-    wrapper.vm.refreshFolders();
-
-    // then
-    expect(mockedUpdateFolders).toHaveBeenCalledTimes(1);
-    expect(mockedUpdateFolders).toHaveBeenNthCalledWith(1, fakeCurrentFolder);
-  });
-
-  it('refreshAll call proper methods', () => {
-    // when
-    wrapper.vm.refreshAll();
-
-    // then
-    expect(mockedRefreshFolders).toHaveBeenCalledTimes(1);
-    expect(mockedUpdateDocuments).toHaveBeenCalledTimes(1);
-  });
-
-  it('openDocument call createThumbnailForDocument if needed', async () => {
-    axios.get.mockResolvedValueOnce(mockedGetDocumentDetailWithThumbResponse);
-    axios.get.mockResolvedValueOnce(mockedGetDocumentDetailWithoutThumbResponse);
-
-    // when open document is called for a document with thumbnail
-    wrapper.vm.openDocument(tv.DOCUMENT_PROPS.pid);
-    await flushPromises();
-
-    // then thumbnail generation isn't needed
-    expect(mockedCreateThumbnailForDocument).not.toHaveBeenCalled();
-
-    // when open document is called for a document without thumbnail
-    wrapper.vm.openDocument(tv.DOCUMENT_NO_THUMB_PROPS.pid);
-    await flushPromises();
-
-    // then thumbnail generation is needed
-    expect(mockedCreateThumbnailForDocument).toHaveBeenCalledTimes(1);
-    expect(mockedCreateThumbnailForDocument).toHaveBeenCalledWith(tv.DOCUMENT_NO_THUMB_PROPS);
-  });
-
   it('closeDocument call router push', () => {
     // when
-    wrapper.vm.navigateToFolder(tv.FOLDER_PROPS);
+    wrapper.vm.closeDocument();
 
     // then
+    expect(wrapper.vm.docPid).toBe(null);
     expect(wrapper.vm.$router.push).toHaveBeenNthCalledWith(1, {path: '/home/' + fakePath});
   });
 
-  it('documentDeleted call refreshDocumentWithSearch when needed', () => {
+  it('documentDeleted call updateDocuments when needed', () => {
     wrapper.setData({docs: [tv.DOCUMENT_PROPS, tv.DOCUMENT_PROPS_VARIANT]});
     wrapper.setData({moreDocs: 'moaaarUrl'});
 
@@ -311,13 +267,13 @@ describe('Home methods call proper methods', () => {
     wrapper.vm.documentDeleted({doc: tv.DOCUMENT_PROPS_VARIANT});
 
     // then
-    expect(mockedRefreshDocumentWithSearch).toHaveBeenCalledTimes(0);
+    expect(mockedUpdateDocuments).toHaveBeenCalledTimes(0);
 
     // when
     wrapper.vm.documentDeleted({doc: tv.DOCUMENT_PROPS});
 
     // then
-    expect(mockedRefreshDocumentWithSearch).toHaveBeenCalledTimes(1);
+    expect(mockedUpdateDocuments).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -377,12 +333,12 @@ describe('Home methods error handling', () => {
 
   it('updateDocuments call mixinAlert in case of api error', async () => {
     // restore original method to test it
-    wrapper.setMethods({updateDocuments: HomeBase.methods.updateDocuments});
+    wrapper.setMethods({_updateDocuments: HomeBase.methods._updateDocuments});
     axios.get.mockRejectedValue('error');
     wrapper.setData({previousLevels: [tv.FOLDER_PROPS, tv.FOLDER_PROPS_VARIANT]});
 
     // when
-    wrapper.vm.updateDocuments();
+    wrapper.vm._updateDocuments();
     await flushPromises(); // wait all pending promises are resolved/rejected
 
     // then
@@ -428,8 +384,7 @@ describe('Home methods call proper api', () => {
     wrapper.vm.openDocument(opened_document_pid);
 
     // then
-    expect(axios.get).toHaveBeenCalledWith('/app/api/v1/documents/' + opened_document_pid);
-    expect(axios.get).toHaveBeenCalledTimes(1);
+    expect(wrapper.vm.docPid).toBe(opened_document_pid);
   });
 
   it('updateDocuments call api with sorting older', () => {
@@ -440,7 +395,7 @@ describe('Home methods call proper api', () => {
     axios.get.mockResolvedValue(mockedGetDocumentsResponse);
 
     // when
-    wrapper.vm.updateDocuments();
+    wrapper.vm._updateDocuments();
 
     // then
     expect(axios.get).toHaveBeenCalledWith('/app/api/v1/documents?ordering=created');
@@ -450,12 +405,12 @@ describe('Home methods call proper api', () => {
   it('updateDocuments call api with sorting az', () => {
     wrapper.setData({sort: 'az'});
     // restore original method to test it
-    wrapper.setMethods({updateDocuments: HomeBase.methods.updateDocuments});
+    wrapper.setMethods({_updateDocuments: HomeBase.methods._updateDocuments});
 
     axios.get.mockResolvedValue(mockedGetDocumentsResponse);
 
     // when
-    wrapper.vm.updateDocuments();
+    wrapper.vm._updateDocuments();
 
     // then
     expect(axios.get).toHaveBeenCalledWith('/app/api/v1/documents?ordering=title');
@@ -465,12 +420,12 @@ describe('Home methods call proper api', () => {
   it('updateDocuments call api with sorting za', () => {
     wrapper.setData({sort: 'za'});
     // restore original method to test it
-    wrapper.setMethods({updateDocuments: HomeBase.methods.updateDocuments});
+    wrapper.setMethods({_updateDocuments: HomeBase.methods._updateDocuments});
 
     axios.get.mockResolvedValue(mockedGetDocumentsResponse);
 
     // when
-    wrapper.vm.updateDocuments();
+    wrapper.vm._updateDocuments();
 
     // then
     expect(axios.get).toHaveBeenCalledWith('/app/api/v1/documents?ordering=-title');
