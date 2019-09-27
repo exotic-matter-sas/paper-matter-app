@@ -79,7 +79,7 @@
 
       <b-row class="mt-2 mb-3" id="documents-list">
         <b-col v-if="docsLoading">
-          <b-spinner class="mx-auto" id="documents-list-loader"
+          <b-spinner class="mx-auto loader" id="documents-list-loader"
                      label="Loading..."></b-spinner>
         </b-col>
         <b-col v-else-if="docs.length">

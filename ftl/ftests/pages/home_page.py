@@ -9,7 +9,7 @@ class HomePage(BasePage):
     url = '/app/'
 
     home_page_link = '.navbar-nav .fa-home'
-    manage_folder_page_link = '.navbar-nav .fa-home'
+    manage_folder_page_link = '.navbar-nav .fa-folder'
 
     search_input = '#search-input'
     search_button = '#search-button'
@@ -87,8 +87,8 @@ class HomePage(BasePage):
             self.close_all_notifications()
 
     def refresh_document_list(self):
-        refresh_button = self.get_elem(self.refresh_documents_button)
-        refresh_button.click()
+        self.get_elem(self.refresh_documents_button).click()
+        self.wait_document_list_loaded()
 
     def open_first_document(self):
         first_document_title = self.get_elem(self.first_document_title)

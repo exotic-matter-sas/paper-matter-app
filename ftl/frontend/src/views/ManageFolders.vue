@@ -11,7 +11,7 @@
           </b-row>
           <b-row v-if="foldersLoading">
             <b-col>
-              <b-spinner style="width: 3rem; height: 3rem;" class="m-5"
+              <b-spinner style="width: 3rem; height: 3rem;" class="m-5 loader"
                          label="Loading..."></b-spinner>
             </b-col>
           </b-row>

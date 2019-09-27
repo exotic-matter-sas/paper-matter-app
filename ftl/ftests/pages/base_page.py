@@ -57,6 +57,8 @@ class BasePage(LIVE_SERVER):
     error_notification = '.b-toaster-slot .b-toast-danger'
     close_notification = '.b-toaster-slot .b-toast .close'
 
+    loader = '.loader'
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.root_url = ''
