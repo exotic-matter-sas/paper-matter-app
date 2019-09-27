@@ -245,10 +245,10 @@ describe('Home mounted call proper methods with given props', () => {
     expect(mockedOpenDocument).toHaveBeenCalledTimes(1);
   });
 
-  it('mounted call proper methods with folder props ', () => {
+  it('mounted call proper methods with folder props', () => {
     const current_folder = tv.FOLDER_PROPS;
 
-    shallowMount(HomeBase, {
+    shallowMount(Home, {
       localVue,
       store,
       methods: {
