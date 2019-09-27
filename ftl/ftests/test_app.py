@@ -387,6 +387,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         self.assertIn('relevance', self.get_elem_text(self.sort_dropdown_button))
         self.assertEqual(self.get_elems_text(self.documents_titles), relevance_order)
 
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_sort_doc_cache_policy(self):
         # User has already added 21 docs to root and 21 docs to a sub_folder
         document_title_to_create = list(ascii_lowercase) \
