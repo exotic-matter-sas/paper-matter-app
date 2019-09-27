@@ -14,4 +14,4 @@ class MoveDocumentsModal(BasePage):
                 target.click()
                 break
 
-        self.get_elem(self.modal_accept_button).click()
+        self.accept_modal()

@@ -166,8 +166,9 @@ LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = '/app'
 
 # Default settings for browser used for functional tests
-DEFAULT_TEST_BROWSER = 'firefox'
+DEFAULT_TEST_BROWSER = 'chrome'
 TEST_BROWSER_HEADLESS = True
+BROWSER_BINARY_PATH = None  # leave to none to use default path
 
 # Django Rest Framework settings
 REST_FRAMEWORK = {
