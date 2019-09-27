@@ -54,6 +54,8 @@ Second terminal
 
 #### Python
 
+_To run functional tests: make sure your `settings.DEFAULT_TEST_BROWSER` is properly set, download the proper webdriver for your version of [Chrome](https://chromedriver.chromium.org/) or [Firefox](https://github.com/mozilla/geckodriver/releases), make sure `chrome`/`firefox` and `chromedriver`/`geckodriver` are registered in your OS path (or alternatively set absolute path for them in settings `BROWSER_BINARY_PATH`, `DEFAULT_CHROMEDRIVER_PATH`/`DEFAULT_GECKODRIVER_PATH`)._
+
 Run all tests
 
     python manage.py test --parallel

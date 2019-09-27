@@ -54,11 +54,14 @@ EMAIL_HOST_PASSWORD = ''
 EMAIL_PORT = 25
 EMAIL_USE_SSL = False
 
-# TODO set preferences to run functional tests
-DEFAULT_TEST_BROWSER = 'firefox'  # or 'chrome'
+# TODO set preferences for functionnal tests
+DEFAULT_TEST_BROWSER = 'chrome'
 TEST_BROWSER_HEADLESS = True
-#  TEST_BROWSER_HEADLESS = False
-# BROWSER_BINARY_PATH = '' # to test a specific browser version which is not installed at the default path
+
+# Update lines below if you don't want to use the default paths for browser and driver
+BROWSER_BINARY_PATH = None
+DEFAULT_CHROMEDRIVER_PATH = 'chromedriver'
+DEFAULT_GECKODRIVER_PATH = 'geckodriver'
 
 # TODO default should be fine unless your dev is related to remote storage and/or OCR
 """
