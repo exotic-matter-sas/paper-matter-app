@@ -25,7 +25,7 @@
         <b-col md="8">
           <div class="h-100 embed-responsive doc-pdf ">
             <iframe v-if="currentOpenDoc.pid" class="embed-responsive-item"
-                    :src="`/assets/pdfjs/web/viewer.html?file=/app/uploads/` + currentOpenDoc.pid + `#search=` + currentSearch">
+                    :src="`/assets/pdfjs/web/viewer.html?file=/app/uploads/` + currentOpenDoc.pid + `#search=` + search">
             </iframe>
           </div>
         </b-col>
@@ -39,13 +39,12 @@
             <b-col>
               <hr/>
               <FTLNote v-if="currentOpenDoc.pid" :doc="currentOpenDoc"
-                       @event-document-note-edited="documentUpdated"/>
+                       @event-document-note-edited="documentNoteUpdated"/>
             </b-col>
           </b-row>
         </b-col>
       </b-row>
     </b-container>
-
 
     <FTLMoveDocuments
       v-if="currentOpenDoc"
@@ -80,6 +79,10 @@
       pid: {
         type: String,
         required: true
+      },
+      search: {
+        type: String,
+        required: false
       }
     },
 
@@ -118,6 +121,10 @@
       documentRenamed: function (event) {
         this.currentOpenDoc = event.doc;
         this.$emit('event-document-renamed', event)
+      },
+
+      documentNoteUpdated: function (event) {
+        this.currentOpenDoc = event.doc;
       },
 
       closeDocument: function () {

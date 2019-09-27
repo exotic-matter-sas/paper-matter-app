@@ -151,7 +151,7 @@
       FTLUpload
     },
 
-    props: ['doc', 'folder'],
+    props: ['folder'],
 
     data() {
       return {

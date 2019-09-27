@@ -89,7 +89,7 @@
       </b-row>
 
       <!-- Pdf viewer popup -->
-      <FTLDocumentPanel v-if="docPid" :pid="docPid"
+      <FTLDocumentPanel v-if="docPid" :pid="docPid" :search="currentSearch"
                         @event-document-panel-closed="closeDocument"
                         @event-document-renamed="documentUpdated"
                         @event-document-moved="documentDeleted"/>
@@ -100,11 +100,6 @@
         id="modal-move-documents"
         :docs="selectedDocumentsHome"
         @event-document-moved="documentDeleted"/>
-
-      <FTLRenameDocument
-        v-if="currentOpenDoc.pid"
-        :doc="currentOpenDoc"
-        @event-document-renamed="documentUpdated"/>
 
       <FTLDeleteDocuments
         v-if="selectedDocumentsHome.length > 0"
@@ -123,7 +118,6 @@
   import FTLMoveDocuments from "@/components/FTLMoveDocuments";
   import FTLDocument from "@/components/FTLDocument";
   import FTLUpload from "@/components/FTLUpload";
-  import FTLRenameDocument from "@/components/FTLRenameDocument";
 
   export default {
     name: 'home-search',
@@ -134,11 +128,10 @@
       FTLDeleteDocuments,
       FTLMoveDocuments,
       FTLDocument,
-      FTLUpload,
-      FTLRenameDocument
+      FTLUpload
     },
 
-    props: ['searchQuery', 'doc'],
+    props: ['searchQuery'],
 
     data() {
       return {

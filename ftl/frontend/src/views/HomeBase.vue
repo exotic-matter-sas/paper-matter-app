@@ -20,10 +20,6 @@
         moreDocsLoading: false,
         moreDocs: null,
         sort: null,
-
-        // PDF viewer
-        currentOpenDoc: {},
-        publicPath: process.env.BASE_URL
       }
     },
 
@@ -82,7 +78,6 @@
             this.moreDocsLoading = false;
             vi.docs = vi.docs.concat(response.data['results']);
             vi.moreDocs = response.data['next'];
-            vi.lastRefresh = Date.now();
           }).catch(error => {
           this.moreDocsLoading = false;
           vi.mixinAlert("Unable to load more document.", true);
@@ -112,7 +107,6 @@
             this.docsLoading = false;
             this.docs = response.data['results'];
             this.moreDocs = response.data['next'];
-            this.lastRefresh = Date.now();
           }).catch(error => {
           this.docsLoading = false;
           this.mixinAlert("Unable to refresh documents list.", true);
@@ -138,10 +132,6 @@
 
       documentUpdated: function (event) {
         const doc = event.doc;
-
-        if (this.currentOpenDoc.pid === doc.pid) {
-          this.currentOpenDoc = doc; // update open doc
-        }
 
         const foundIndex = this.docs.findIndex(x => x.pid === doc.pid);
         this.docs[foundIndex] = doc; // update doc in the list
