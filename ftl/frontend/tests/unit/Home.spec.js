@@ -775,6 +775,20 @@ describe('Home event handling', () => {
     expect(mockedDocumentsCreated).toHaveBeenCalledTimes(1);
   });
 
+  it('event-open-doc call openDocument', async () => {
+    // Need to define at least one document in order FTLDocument component is instantiated
+    wrapper.setData({docs: [tv.DOCUMENT_PROPS]});
+    let documentPid = tv.DOCUMENT_PROPS.pid;
+
+    // when
+    wrapper.find(FTLDocument).vm.$emit('event-open-doc', documentPid);
+    await flushPromises(); // wait all pending promises are resolved/rejected
+
+    // then
+    expect(mockedNavigateToDocument).toHaveBeenCalledWith(documentPid);
+    expect(mockedNavigateToDocument).toHaveBeenCalledTimes(1);
+  });
+
   it('event-change-folder call navigateToFolder', async () => {
     // Need to define at least one folder in order FTLFolder component is instantiated
     wrapper.setData({folders: [tv.FOLDER_PROPS]});

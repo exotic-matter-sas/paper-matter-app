@@ -8,8 +8,6 @@ import {axiosConfig} from "../../src/constants";
 import Vuex from 'vuex';
 
 import HomeBase from "../../src/views/HomeBase";
-import FTLUpload from "../../src/components/FTLUpload";
-import FTLDocument from "../../src/components/FTLDocument";
 import storeConfig from "@/store/storeConfig";
 import cloneDeep from "lodash.clonedeep";
 
@@ -565,40 +563,5 @@ describe('Home event handling', () => {
       }
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
-  });
-
-  it('event-new-upload call updateDocuments', async () => {
-    // when
-    wrapper.find(FTLUpload).vm.$emit('event-new-upload');
-    await flushPromises(); // wait all pending promises are resolved/rejected
-
-    // then
-    expect(mockedDocumentsCreated).toHaveBeenCalledTimes(1);
-  });
-
-  it('event-open-doc call openDocument', async () => {
-    // Need to define at least one document in order FTLDocument component is instantiated
-    wrapper.setData({docs: [tv.DOCUMENT_PROPS]});
-    let documentPid = tv.DOCUMENT_PROPS.pid;
-
-    // when
-    wrapper.find(FTLDocument).vm.$emit('event-open-doc', documentPid);
-    await flushPromises(); // wait all pending promises are resolved/rejected
-
-    // then
-    expect(mockedNavigateToDocument).toHaveBeenCalledWith(documentPid);
-    expect(mockedNavigateToDocument).toHaveBeenCalledTimes(1);
-  });
-
-  it('event-delete-doc call documentDeleted', async () => {
-    // Need to define at least one document in order FTLDocument component is instantiated
-    wrapper.setData({docs: [tv.DOCUMENT_PROPS]});
-
-    // when
-    wrapper.find(FTLDocument).vm.$emit('event-delete-doc');
-    await flushPromises(); // wait all pending promises are resolved/rejected
-
-    // then
-    expect(mockedDocumentDeleted).toHaveBeenCalledTimes(1);
   });
 });
