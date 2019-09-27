@@ -14,7 +14,8 @@ from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.support import expected_conditions as Ec
 from selenium.webdriver.support.wait import WebDriverWait
 
-from ftl.settings import DEFAULT_TEST_BROWSER, TEST_BROWSER_HEADLESS, DEV_MODE, BROWSER_BINARY_PATH
+from ftl.settings import DEFAULT_TEST_BROWSER, TEST_BROWSER_HEADLESS, DEV_MODE, BROWSER_BINARY_PATH, \
+    DEFAULT_GECKODRIVER, DEFAULT_CHROMEDRIVER
 
 if 'CI' in os.environ:
     LIVE_SERVER = LiveServerTestCase
@@ -84,7 +85,8 @@ class BasePage(LIVE_SERVER):
             if BROWSER_BINARY_PATH:
                 options.binary_location = BROWSER_BINARY_PATH
 
-            self.browser = webdriver.Firefox(firefox_profile=profile, firefox_options=options)
+            self.browser = webdriver.Firefox(executable_path=DEFAULT_GECKODRIVER, firefox_profile=profile,
+                                             firefox_options=options)
         elif browser == 'chrome':
             # if platform_system.startswith('Linux'):
             #     chrome_driver_path = 'ftests/drivers/chromedriver/chromedriver_linux64'
@@ -107,7 +109,7 @@ class BasePage(LIVE_SERVER):
             if BROWSER_BINARY_PATH:
                 options.binary_location = BROWSER_BINARY_PATH
 
-            self.browser = webdriver.Chrome(chrome_options=options)
+            self.browser = webdriver.Chrome(executable_path=DEFAULT_CHROMEDRIVER, chrome_options=options)
         else:
             raise ValueError('Unsupported browser, allowed: firefox, chrome')
 
