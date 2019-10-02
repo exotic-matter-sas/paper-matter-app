@@ -1,0 +1,5 @@
+{{ activation_key }}
+{{ expiration_days }}
+
+{% url 'django_registration_activate' activation_key %}
+

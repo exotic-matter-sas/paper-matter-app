@@ -1,19 +1,19 @@
 from django.contrib import messages
 from django.shortcuts import render, get_object_or_404
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import FormView, RedirectView
+from django.views.generic import RedirectView
+from django_registration.backends.activation.views import RegistrationView
 
 from core.models import FTLOrg, permissions_names_to_objects, FTL_PERMISSIONS_USER
 from ftl.forms import FTLUserCreationForm
 
 
-class CreateFTLUserFormView(FormView):
+class CreateFTLUserFormView(RegistrationView):
     template_name = 'ftl/registration/signup.html'
     form_class = FTLUserCreationForm
 
-    def get_success_url(self):
-        # We redefine the method instead of the field because the success url is dynamic (org slug)
+    def get_success_url(self, user=None):
         return reverse('signup_success', kwargs=self.kwargs)
 
     def get_context_data(self, **kwargs):

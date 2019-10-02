@@ -1,14 +1,14 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm
 from django.forms import EmailField
+from django_registration.forms import RegistrationForm
 
 from core.models import FTLUser
 
 
-class FTLUserCreationForm(UserCreationForm):
-    class Meta(UserCreationForm.Meta):
+class FTLUserCreationForm(RegistrationForm):
+    class Meta(RegistrationForm.Meta):
         model = FTLUser
-        fields = ("email",)
 
 
 class FTLAuthenticationForm(AuthenticationForm):

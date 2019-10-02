@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.postgres',
+    'django_registration',
     'mptt',
     'rest_framework',
     'webpack_loader',
@@ -168,6 +169,9 @@ LOGIN_REDIRECT_URL = '/app'
 # Default settings for browser used for functional tests
 DEFAULT_TEST_BROWSER = 'firefox'
 TEST_BROWSER_HEADLESS = True
+
+# Email activation settings
+ACCOUNT_ACTIVATION_DAYS = 7  # One-week activation window
 
 # Django Rest Framework settings
 REST_FRAMEWORK = {
