@@ -105,15 +105,19 @@
         <b-container class="h-100" fluid>
           <b-row class="h-100">
             <b-col md="8">
-              <div class="h-100 embed-responsive doc-pdf">
-                <iframe v-if="currentOpenDoc.pid" class="embed-responsive-item"
-                        :src="`/assets/pdfjs/web/viewer.html?file=/app/uploads/` + currentOpenDoc.pid + `#search=` + currentSearch">
-                </iframe>
+              <div v-if="supportInlinePDF" class="h-100 embed-responsive doc-pdf">
+                <!--PDF.js viewer-->
+              </div>
+              <div v-else>
+                {{ $_('Viewer not available on this device, open the document instead')}}
               </div>
             </b-col>
-            <b-col>
+            <b-col class="my-3">
               <b-row>
                 <b-col>
+                  <b-button class="mx-2" variant="primary" :href="`/app/uploads/` + currentOpenDoc.pid + `/doc.pdf`">
+                    {{ $_('Open PDF')}}
+                  </b-button>
                   <b-button id="move-document" variant="secondary" v-b-modal="'modal-move-document'">Move</b-button>
                 </b-col>
               </b-row>
@@ -173,6 +177,7 @@
   import FTLMoveDocuments from "@/components/FTLMoveDocuments";
   import FTLRenameDocument from "@/components/FTLRenameDocument";
   import FTLNote from "@/components/FTLNote";
+  import PDFObject from "pdfobject";
   import axios from 'axios';
   import qs from 'qs';
 
@@ -211,7 +216,8 @@
 
         // PDF viewer
         currentOpenDoc: {},
-        publicPath: process.env.BASE_URL
+        publicPath: process.env.BASE_URL,
+        supportInlinePDF: PDFObject.supportsPDFs
       }
     },
 
@@ -386,6 +392,10 @@
 
       openDocument: function (pid) {
         const vi = this;
+        const pdf_options = {
+          forcePDFJS: true,
+          PDFJS_URL: "/assets/pdfjs/web/viewer.html"
+        };
 
         this.docPid = pid;
         this.docModal = true;
@@ -396,6 +406,20 @@
           .get('/app/api/v1/documents/' + pid)
           .then(response => {
             vi.currentOpenDoc = response.data;
+
+            if (vi.supportInlinePDF) {
+              PDFObject.embed('/app/uploads/' + vi.currentOpenDoc.pid + '/doc.pdf',
+                "div.doc-pdf",
+                {
+                  ...pdf_options, ...{
+                    pdfOpenParams: {
+                      pagemode: "none",
+                      search: vi.currentSearch
+                    },
+                  }
+                }
+              );
+            }
 
             if (!response.data.thumbnail_available) {
               vi.createThumbnailForDocument(response.data)
