@@ -109,7 +109,7 @@
                 <!--PDF.js viewer-->
               </div>
               <div v-else>
-                {{ $_('Viewer not available on this device, open the document instead')}}
+                {{ $_('Viewer not available on this device, open the document instead.')}}
               </div>
             </b-col>
             <b-col class="my-3">
@@ -394,6 +394,7 @@
         const vi = this;
         const pdf_options = {
           forcePDFJS: true,
+          assumptionMode: false,
           PDFJS_URL: "/assets/pdfjs/web/viewer.html"
         };
 
