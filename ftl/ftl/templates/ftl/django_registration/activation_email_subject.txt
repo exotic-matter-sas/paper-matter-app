@@ -1,1 +1,2 @@
-[FTL] Email activation
+{% load i18n %}
+Paper Matter - {% blocktrans %}Activate your account{% endblocktrans %}

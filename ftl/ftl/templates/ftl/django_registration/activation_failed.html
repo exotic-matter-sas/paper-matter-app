@@ -1,1 +1,14 @@
-Activation failed, TODO
+{% extends "ftl/main_vcenter_with_aside.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{% trans 'Account could not be activated' %}{% endblock %}
+
+{% block main_content_vcenter %}
+    <h1 class="text-primary">{% trans "We could not activate the account..." %}</h1>
+    <p>{% trans "An error occured while activating the account, please try again." %}</p>
+{% endblock %}
+
+{% block aside_illustration %}
+    <img src="{% static "activation_email.svg" %}" alt="Email received illustration">
+{% endblock %}
