@@ -52,13 +52,13 @@ urlpatterns = [
     path('reset/done/', PasswordResetDone.as_view(), name='password_reset_complete'),
 
     # Account activation
-    url(r'^activate/complete/$',
+    path('accounts/activate/complete/',
         TemplateView.as_view(template_name='django_registration/activation_complete.html'),
         name='django_registration_activation_complete'),
 
     # The activation key can make use of any character from the
     # URL-safe base64 alphabet, plus the colon as a separator.
-    url(r'^activate/(?P<activation_key>[-:\w]+)/$', ActivationView.as_view(), name='django_registration_activate'),
+    url(r'^accounts/activate/(?P<activation_key>[-:\w]+)/$', ActivationView.as_view(), name='django_registration_activate'),
 ]
 
 if settings.DEBUG and settings.DEV_MODE:

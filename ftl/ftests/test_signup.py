@@ -50,7 +50,7 @@ class SignupPageTests(SignupPages):
         self.assertEqual(len(mail.outbox), 1)
         self.assertIn(tv.USER1_EMAIL, mail.outbox[0].to)
         self.assertIn('activate your account', mail.outbox[0].subject.lower())
-        self.assertRegex(mail.outbox[0].body, 'https?://.+/activate/.+/')
+        self.assertRegex(mail.outbox[0].body, 'https?://.+/accounts/activate/.+/')
 
     def test_signup_activate_account(self):
         # User create an account in the first org
@@ -58,6 +58,6 @@ class SignupPageTests(SignupPages):
         self.create_user(user_num=1)
 
         self.assertEqual(len(mail.outbox), 1)
-        activate_link = re.search(r'(https?://.+/activate/.+/)', mail.outbox[0].body)
+        activate_link = re.search(r'(https?://.+/accounts/activate/.+/)', mail.outbox[0].body)
         self.visit(activate_link.group(1), absolute_url=True)
         self.assertIn('account activated', self.head_title.lower())

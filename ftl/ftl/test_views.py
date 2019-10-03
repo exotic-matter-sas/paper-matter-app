@@ -84,7 +84,7 @@ class FtlPagesTests(TestCase):
 
         # To test permission, we need an account activated otherwise the permissions are not set
         self.assertEqual(len(mail.outbox), 1)
-        activate_link = re.search(r'(https?://.+/activate/.+/)', mail.outbox[0].body)
+        activate_link = re.search(r'(https?://.+/accounts/activate/.+/)', mail.outbox[0].body)
         response = self.client.get(activate_link.group(1), follow=True)
         self.assertEqual(response.status_code, 200)
         user = FTLUser.objects.get(email=tv.USER1_EMAIL)
