@@ -82,6 +82,7 @@
 
       <!-- Pdf viewer popup -->
       <b-modal id="document-viewer"
+               v-if="currentOpenDoc"
                hide-footer
                centered
                @hidden="closeDocument">
@@ -101,21 +102,26 @@
             </b-row>
           </b-container>
         </template>
-        <b-container class="h-100">
+        <b-container class="h-100" fluid>
           <b-row class="h-100">
             <b-col md="8">
-              <div class="h-100 embed-responsive doc-pdf ">
+              <div class="h-100 embed-responsive doc-pdf">
                 <iframe v-if="currentOpenDoc.pid" class="embed-responsive-item"
                         :src="`/assets/pdfjs/web/viewer.html?file=/app/uploads/` + currentOpenDoc.pid + `#search=` + currentSearch">
                 </iframe>
               </div>
             </b-col>
-            <b-col md="4" class="d-none d-md-block">
-              <b-row>BBB</b-row>
-              <b-row>CCC</b-row>
+            <b-col>
               <b-row>
                 <b-col>
                   <b-button id="move-document" variant="secondary" v-b-modal="'modal-move-document'">Move</b-button>
+                </b-col>
+              </b-row>
+              <b-row>
+                <b-col>
+                  <hr/>
+                  <FTLNote v-if="currentOpenDoc.pid" :doc="currentOpenDoc"
+                           @event-document-note-edited="documentUpdated"/>
                 </b-col>
               </b-row>
             </b-col>
@@ -166,6 +172,7 @@
   import FTLThumbnailGenMixin from "@/components/FTLThumbnailGenMixin";
   import FTLMoveDocuments from "@/components/FTLMoveDocuments";
   import FTLRenameDocument from "@/components/FTLRenameDocument";
+  import FTLNote from "@/components/FTLNote";
   import axios from 'axios';
   import qs from 'qs';
 
@@ -176,6 +183,7 @@
     components: {
       FTLDeleteDocuments,
       FTLMoveDocuments,
+      FTLNote,
       FTLRenameDocument,
       FTLNewFolder,
       FTLFolder,

@@ -192,7 +192,3 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage, DocumentViewerModal):
         # the second uploaded document appears in search results
         self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
         self.assertEqual(new_title, self.get_elem_text(self.first_document_title))
-
-    @skip('TODO when document note implemented in UI')  # TODO
-    def test_search_re_annotted_doc(self):
-        pass

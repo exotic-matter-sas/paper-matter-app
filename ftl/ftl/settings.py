@@ -167,8 +167,13 @@ LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = '/app'
 
 # Default settings for browser used for functional tests
-DEFAULT_TEST_BROWSER = 'firefox'
+DEFAULT_TEST_BROWSER = 'chrome'
 TEST_BROWSER_HEADLESS = True
+
+# Update lines below if you don't want to use the default paths for browser and driver
+BROWSER_BINARY_PATH = None
+DEFAULT_CHROMEDRIVER_PATH = 'chromedriver'
+DEFAULT_GECKODRIVER_PATH = 'geckodriver'
 
 # Email activation settings
 ACCOUNT_ACTIVATION_DAYS = 7  # One-week activation window

@@ -147,9 +147,20 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
         self.assertEqual(second_document_title, self.get_elem_text(self.first_document_title))
 
-    @skip('TODO when document note implemented in UI')  # TODO
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_search_document_by_its_note(self):
-        pass
+        # User have already added 2 documents
+        setup_document(self.org, self.user)
+        second_document_note = 'bingo!'
+        second_document_title = 'second document'
+        setup_document(self.org, self.user, title=second_document_title, note=second_document_note)
+
+        # User search last uploaded document
+        self.search_document(second_document_note)
+
+        # Only the second document appears in search results
+        self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
+        self.assertEqual(second_document_title, self.get_elem_text(self.first_document_title))
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_search_apply_to_all_folders(self):
@@ -396,7 +407,7 @@ class DocumentsBatchActionsTests(LoginPage, HomePage, MoveDocumentsModal):
 
         # User click on delete button
         self.get_elem(self.delete_docs_batch_button).click()
-        self.get_elem(self.modal_accept_button).click()
+        self.accept_modal()
 
         # User see the documents to delete have disappear from the current folder
         self.assertCountEqual([self.doc3.title], self.get_elems_text(self.documents_titles))
@@ -470,6 +481,22 @@ class DocumentViewerModalTests(LoginPage, HomePage, DocumentViewerModal):
         self.assertEqual(self.get_elem_text(self.document_title), new_doc_title)
         self.close_document()
         self.assertEqual(self.get_elem_text(self.first_document_title), new_doc_title)
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @patch.object(FTLDocumentProcessing, 'apply_processing')
+    def test_annotate_document(self, mock_apply_processing):
+        # User has already added and opened a document
+        setup_document(self.org, self.user)
+        self.refresh_document_list()
+        self.open_first_document()
+        self.wait_for_elem_to_show(self.pdf_viewer)
+
+        # User annotate the document
+        new_doc_note = 'New note'
+        self.annotate_document(new_doc_note)
+
+        # Document note is properly updated in pdf viewer
+        self.assertEqual(self.get_elem_text(self.note_text), new_doc_note)
 
 
 class ManageFoldersPageTests(LoginPage, ManageFolderPage):

@@ -1,8 +1,8 @@
 import os
 import platform
 import time
-import urllib.request
 import urllib.error
+import urllib.request
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.test import LiveServerTestCase, tag
@@ -14,7 +14,8 @@ from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.support import expected_conditions as Ec
 from selenium.webdriver.support.wait import WebDriverWait
 
-from ftl.settings import BASE_DIR, DEFAULT_TEST_BROWSER, TEST_BROWSER_HEADLESS, DEV_MODE
+from ftl.settings import DEFAULT_TEST_BROWSER, TEST_BROWSER_HEADLESS, DEV_MODE, BROWSER_BINARY_PATH, \
+    DEFAULT_GECKODRIVER_PATH, DEFAULT_CHROMEDRIVER_PATH
 
 if 'CI' in os.environ:
     LIVE_SERVER = LiveServerTestCase
@@ -65,15 +66,6 @@ class BasePage(LIVE_SERVER):
         platform_system = platform.system()
 
         if browser == 'firefox':
-            if platform_system.startswith('Linux'):
-                executable_path = 'ftests/drivers/geckodriver/geckodriver64_linux'
-            elif platform_system.startswith('Windows'):
-                executable_path = 'ftests/drivers/geckodriver/geckodriver64.exe'
-            elif platform_system.startswith('Darwin'):
-                executable_path = 'ftests/drivers/geckodriver/geckodriver64_macosx'
-            else:
-                raise EnvironmentError(f'Platform "{platform_system}" not supported')
-
             profile = webdriver.FirefoxProfile()
             profile.set_preference('intl.accept_languages', browser_locale)
 
@@ -81,29 +73,25 @@ class BasePage(LIVE_SERVER):
 
             if TEST_BROWSER_HEADLESS:
                 options.headless = True
+            if BROWSER_BINARY_PATH:
+                options.binary_location = BROWSER_BINARY_PATH
 
-            self.browser = webdriver.Firefox(executable_path=os.path.join(BASE_DIR, executable_path),
-                                             firefox_profile=profile, firefox_options=options)
+            self.browser = webdriver.Firefox(executable_path=DEFAULT_GECKODRIVER_PATH, firefox_profile=profile,
+                                             firefox_options=options)
         elif browser == 'chrome':
-            if platform_system.startswith('Linux'):
-                chrome_driver_path = 'ftests/drivers/chromedriver/chromedriver_linux64'
-            elif platform_system.startswith('Windows'):
-                chrome_driver_path = 'ftests/drivers/chromedriver/chromedriver_win32.exe'
-            elif platform_system.startswith('Darwin'):
-                chrome_driver_path = 'ftests/drivers/chromedriver/chromedriver_mac64'
-            else:
-                raise EnvironmentError(f'Platform "{platform_system}" not supported')
-
             options = ChromeOptions()
             options.add_argument(f'--lang={browser_locale}')
 
             if TEST_BROWSER_HEADLESS:
                 options.add_argument('--headless')
+                options.add_argument('--no-sandbox')
+                options.add_argument('--disable-dev-shm-usage')
                 if platform.system() == 'Windows':  # Needed due to Chrome bug
                     options.add_argument('--disable-gpu')
+            if BROWSER_BINARY_PATH:
+                options.binary_location = BROWSER_BINARY_PATH
 
-            self.browser = webdriver.Chrome(executable_path=os.path.join(BASE_DIR, chrome_driver_path),
-                                            chrome_options=options)
+            self.browser = webdriver.Chrome(executable_path=DEFAULT_CHROMEDRIVER_PATH, chrome_options=options)
         else:
             raise ValueError('Unsupported browser, allowed: firefox, chrome')
 
@@ -255,3 +243,8 @@ class BasePage(LIVE_SERVER):
         if pause_test:
             input(f'Test paused for debugging, press Enter to terminate')
         self.fail(message)
+
+    def accept_modal(self):
+        self.wait_for_elem_to_show(self.modal_accept_button)
+        self.get_elem(self.modal_accept_button).click()
+        self.wait_for_elem_to_disappear(self.modal_accept_button)
