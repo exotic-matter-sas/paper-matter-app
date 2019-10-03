@@ -64,13 +64,13 @@ urlpatterns = [
 if settings.DEBUG and settings.DEV_MODE:
     import debug_toolbar
 
-urlpatterns += [
-    path('__debug__/', include(debug_toolbar.urls)),
-]
+    urlpatterns += [
+        path('__debug__/', include(debug_toolbar.urls)),
+    ]
 
 if settings.DEV_MODE:
     from ftl import view_local_proxy
 
-urlpatterns += [
-    re_path(r'^local/(?P<url>.*)$', view_local_proxy.LocalProxy.as_view())
-]
+    urlpatterns += [
+        re_path(r'^local/(?P<url>.*)$', view_local_proxy.LocalProxy.as_view())
+    ]
