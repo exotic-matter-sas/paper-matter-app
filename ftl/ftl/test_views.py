@@ -1,9 +1,11 @@
+import re
 from unittest.mock import patch, Mock
 
 from django.contrib import messages
+from django.contrib.auth.signals import user_logged_out
+from django.core import mail
 from django.test import TestCase
 from django.urls import reverse_lazy
-from django.contrib.auth.signals import user_logged_out
 
 from core.models import FTLUser, FTL_PERMISSIONS_USER
 from ftests.tools import test_values as tv
@@ -79,6 +81,13 @@ class FtlPagesTests(TestCase):
 
         user = FTLUser.objects.get(email=tv.USER1_EMAIL)
         self.assertIsNotNone(user)
+
+        # To test permission, we need an account activated otherwise the permissions are not set
+        self.assertEqual(len(mail.outbox), 1)
+        activate_link = re.search(r'(https?://.+/activate/.+/)', mail.outbox[0].body)
+        response = self.client.get(activate_link.group(1), follow=True)
+        self.assertEqual(response.status_code, 200)
+        user = FTLUser.objects.get(email=tv.USER1_EMAIL)
         self.assertTrue(user.has_perms(FTL_PERMISSIONS_USER))
 
     @patch.object(user_logged_out, 'send')

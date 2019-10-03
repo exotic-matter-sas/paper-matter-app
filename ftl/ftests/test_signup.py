@@ -1,5 +1,9 @@
-from ftests.tools import test_values as tv
+import re
+
+from django.core import mail
+
 from ftests.pages.signup_pages import SignupPages
+from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import setup_org, setup_admin
 
 
@@ -37,3 +41,23 @@ class SignupPageTests(SignupPages):
         # The browser refused form submission as all fields are set to required
         self.assertIn('signup', self.head_title)
         self.assertIn('Create your account', self.get_elem(self.page_title).text)
+
+    def test_signup_receive_activation_email(self):
+        # User create an account in the first org
+        self.visit_signup_page(self.org_1.slug)
+        self.create_user(user_num=1)
+
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn(tv.USER1_EMAIL, mail.outbox[0].to)
+        self.assertIn('activate your account', mail.outbox[0].subject.lower())
+        self.assertRegex(mail.outbox[0].body, 'https?://.+/activate/.+/')
+
+    def test_signup_activate_account(self):
+        # User create an account in the first org
+        self.visit_signup_page(self.org_1.slug)
+        self.create_user(user_num=1)
+
+        self.assertEqual(len(mail.outbox), 1)
+        activate_link = re.search(r'(https?://.+/activate/.+/)', mail.outbox[0].body)
+        self.visit(activate_link.group(1), absolute_url=True)
+        self.assertIn('account activated', self.head_title.lower())
