@@ -19,7 +19,6 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path, include, re_path, reverse_lazy
 from django.views.generic import RedirectView
-from django.views.generic.base import TemplateView
 from django_registration.backends.activation.views import ActivationView
 
 from ftl import views
@@ -35,8 +34,10 @@ urlpatterns = [
     path('setup/', include('setup.urls')),
     path('app/', include('core.urls')),
 
-    path('signup/<slug:org_slug>/', views.CreateFTLUserFormView.as_view(), name='signup'),
-    path('signup/<slug:org_slug>/success/', views.signup_success, name='signup_success'),
+    path('signup', views.CreateOrgAndUser.as_view(), name='signup_org_user'),
+    path('signup/success', views.CreateOrgAndUserSuccess.as_view(), name='signup_success'),
+    path('signup/<slug:org_slug>/', views.CreateFTLUserFormView.as_view(), name='signup_user'),
+    # path('signup/<slug:org_slug>/success/', views.signup_success, name='signup_success'),
 
     path('login/',
          auth_views.LoginView.as_view(authentication_form=FTLAuthenticationForm, redirect_authenticated_user=True),
@@ -52,13 +53,12 @@ urlpatterns = [
     path('reset/done/', PasswordResetDone.as_view(), name='password_reset_complete'),
 
     # Account activation
-    path('accounts/activate/complete/',
-        TemplateView.as_view(template_name='django_registration/activation_complete.html'),
-        name='django_registration_activation_complete'),
+    path('accounts/activate/complete/', views.AccountActivationSuccess.as_view(),
+         name='django_registration_activation_complete'),
 
-    # The activation key can make use of any character from the
-    # URL-safe base64 alphabet, plus the colon as a separator.
-    url(r'^accounts/activate/(?P<activation_key>[-:\w]+)/$', ActivationView.as_view(), name='django_registration_activate'),
+    # The activation key can make use of any character from the URL-safe base64 alphabet, plus the colon as a separator.
+    url(r'^accounts/activate/(?P<activation_key>[-:\w]+)/$', ActivationView.as_view(),
+        name='django_registration_activate'),
 ]
 
 if settings.DEBUG and settings.DEV_MODE:

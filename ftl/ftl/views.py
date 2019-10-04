@@ -1,20 +1,18 @@
 from django.contrib import messages
 from django.shortcuts import render, get_object_or_404
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import RedirectView
 from django_registration.backends.activation.views import RegistrationView
 
 from core.models import FTLOrg, permissions_names_to_objects, FTL_PERMISSIONS_USER
-from ftl.forms import FTLUserCreationForm
+from ftl.forms import FTLUserCreationForm, FTLCreateOrgAndUser
 
 
 class CreateFTLUserFormView(RegistrationView):
     template_name = 'ftl/registration/signup.html'
     form_class = FTLUserCreationForm
-
-    def get_success_url(self, user=None):
-        return reverse('signup_success', kwargs=self.kwargs)
+    success_url = reverse_lazy('signup_success')
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
@@ -65,3 +63,19 @@ class PasswordResetAsked(SetMessageAndRedirectView):
 class PasswordResetDone(SetMessageAndRedirectView):
     url = reverse_lazy('login')
     message = _('Your password has been set. You may go ahead and log in now.')
+
+
+class CreateOrgAndUser(RegistrationView):
+    template_name = 'ftl/registration/create_org.html'
+    form_class = FTLCreateOrgAndUser
+    success_url = reverse_lazy('signup_success')
+
+
+class CreateOrgAndUserSuccess(SetMessageAndRedirectView):
+    url = reverse_lazy('login')
+    message = _('Your account was successfully created. You should receive an activation email very soon.')
+
+
+class AccountActivationSuccess(SetMessageAndRedirectView):
+    url = reverse_lazy('login')
+    message = _('Your email has been verified, thank you! You may go ahead and log in now.')
