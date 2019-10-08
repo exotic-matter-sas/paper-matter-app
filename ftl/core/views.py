@@ -3,15 +3,17 @@ from base64 import b64decode
 
 import filetype
 from django.conf import settings
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.core.files.base import ContentFile
 from django.db import IntegrityError
 from django.db.models import F
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound, HttpResponseRedirect, Http404
 from django.shortcuts import render, get_object_or_404
+from django.utils.decorators import method_decorator
 from django.utils.http import http_date
 from django.views import View
+from django_otp.decorators import otp_required
 from mptt.exceptions import InvalidMove
 from rest_framework import generics, views, serializers
 from rest_framework.parsers import MultiPartParser
@@ -31,8 +33,9 @@ def _extract_binary_from_data_uri(data_uri):
     return b64decode(encoded)
 
 
-class HomeView(LoginRequiredMixin, View):
-
+@method_decorator(login_required, name='dispatch')
+@method_decorator(otp_required(if_configured=True), name='dispatch')
+class HomeView(View):
     def get(self, request, *args, **kwargs):
         context = {
             'org_name': request.session['org_name'],

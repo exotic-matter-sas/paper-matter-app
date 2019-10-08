@@ -22,6 +22,7 @@ from django.views.generic import RedirectView
 from ftl import views
 from ftl.ftl_setup_middleware import SetupState
 from ftl.views import PasswordResetAsked, PasswordResetDone
+from ftl.views_auth import OTPCheckView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -45,6 +46,9 @@ urlpatterns = [
     path('password_reset/done/', PasswordResetAsked.as_view(), name='password_reset_done'),
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('reset/done/', PasswordResetDone.as_view(), name='password_reset_complete'),
+
+    path('accounts/2fa/check', OTPCheckView.as_view(), name="otp_check"),
+    path('accounts/2fa/fido2/', include('ftl.otp_plugins.otp_webauthn.urls')),
 ]
 
 if settings.DEBUG and settings.DEV_MODE:

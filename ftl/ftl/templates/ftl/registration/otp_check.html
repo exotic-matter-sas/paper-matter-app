@@ -1,0 +1,29 @@
+{% extends "ftl/main_with_aside.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{% trans '2FA' %}{% endblock %}
+{% block head %}
+    <script type="application/javascript" src="{% static 'cbor.js' %}"></script>
+{% endblock %}
+
+{% block main_content %}
+    <form method="post" id="user-form">
+        <h1 class="text-primary">
+            {% blocktrans %}
+                2FA check
+            {% endblocktrans %}
+        </h1>
+        {% csrf_token %}
+        {{ form }}
+        <input class="btn btn-lg btn-primary btn-block" type="submit" value="{% trans "Verify" %}">
+    </form>
+{% endblock %}
+
+{% block aside_illustration %}
+    <img src="{% static "user_setup.svg" %}" alt="Signup steps illustration">
+{% endblock %}
+
+{% block footer %}
+    <script type="application/javascript" src="{% static 'fido2_form.js' %}"></script>
+{% endblock %}

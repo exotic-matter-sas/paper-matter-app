@@ -48,6 +48,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.postgres',
+    'django_otp',
+    'django_otp.plugins.otp_totp',
+    'django_otp.plugins.otp_static',
+    'ftl.otp_plugins.otp_webauthn',
     'mptt',
     'rest_framework',
     'webpack_loader',
@@ -60,6 +64,7 @@ INSTALLED_APPS = [
 if DEBUG and DEV_MODE:
     INSTALLED_APPS += [
         'debug_toolbar',
+        'sslserver'
     ]
 
 MIDDLEWARE = [
@@ -69,6 +74,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django_otp.middleware.OTPMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'ftl.ftl_setup_middleware.FTLSetupMiddleware'
@@ -164,6 +170,9 @@ LOGIN_URL = 'login'
 
 # Redirect user to this url after login by default
 LOGIN_REDIRECT_URL = '/app'
+
+# Redirect when 2fa is needed
+OTP_LOGIN_URL = '/accounts/2fa/check'
 
 # Default settings for browser used for functional tests
 DEFAULT_TEST_BROWSER = 'chrome'
