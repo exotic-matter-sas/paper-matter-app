@@ -130,7 +130,7 @@
       closeDocument: function () {
         this.currentOpenDoc = {};
         this.$bvModal.hide('document-viewer');
-        this.$emit('event-document-panel-closed', {doc: this.currentOpenDoc});
+        this.$emit('event-document-panel-closed');
         this.$router.push({path: this.$route.path});
       }
     }

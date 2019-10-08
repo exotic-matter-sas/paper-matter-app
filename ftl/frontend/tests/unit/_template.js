@@ -186,7 +186,13 @@ describe('Event emitted by component', () => {
 });
 
 describe('Event received and handled by component', () => {
-  it('event-b call methodB', async () => {});
+  it('event-b call methodB', async () => {
+    // when (called by event)
+    wrapper.find(EventsComponent).vm.$emit('tested-event', argEvent);
+
+    // then method called
+    expect(mockedMethodA).toHaveBeenCalledWith(argEvent);
+  });
 });
 
 // VUEX
