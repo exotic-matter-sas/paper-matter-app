@@ -25,7 +25,7 @@ localVue.prototype.$_ = (text, args='') => {return text + args};// i18n mock
 localVue.prototype.$moment = () => {return {fromNow: jest.fn(), format: jest.fn()}}; // moment mock
 localVue.prototype.$router = {push: jest.fn()}; // router mock
 const mockedRouteName = jest.fn();
-localVue.prototype.$route = {get name() { return mockedRouteName()}}; // router mock
+localVue.prototype.$route = {get name() { return mockedRouteName()}}; // router attribute mock
 const mockedMixinAlert = jest.fn();
 localVue.mixin({methods: {mixinAlert: mockedMixinAlert}}); // mixinAlert mock
 
