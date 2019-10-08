@@ -159,7 +159,7 @@ class BasePage(LIVE_SERVER):
         else:
             raise NoSuchElementException()
 
-    def get_elem_text(self, css_selector, is_visible=True, lower_text=True, web_element_instead_of_css_selector=False):
+    def get_elem_text(self, css_selector, is_visible=True, lower_text=False, web_element_instead_of_css_selector=False):
         elem = css_selector if web_element_instead_of_css_selector else self.get_elem(css_selector, is_visible)
 
         if elem.tag_name == 'input':
@@ -170,7 +170,7 @@ class BasePage(LIVE_SERVER):
         else:
             return elem.text.lower() if lower_text else elem.text
 
-    def get_elems_text(self, css_selector, is_visible=True, lower_text=True):
+    def get_elems_text(self, css_selector, is_visible=True, lower_text=False):
         elems_text = []
         elems = self.browser.find_elements_by_css_selector(css_selector)
 
