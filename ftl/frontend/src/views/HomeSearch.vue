@@ -9,7 +9,7 @@
 
       <b-row v-show="!selectedDocumentsHome.length" class="my-3" id="folders-list">
         <b-col>
-          <b-button id="refresh-documents" :disabled="docsLoading" variant="primary" @click="refreshAll">
+          <b-button id="refresh-documents" :disabled="docsLoading" variant="primary" @click="updateDocuments">
             <font-awesome-icon icon="sync" :spin="docsLoading" :class="{ 'stop-spin':!docsLoading }"
                                :title="$_('Refresh documents list')"/>
           </b-button>
@@ -135,9 +135,10 @@
 
     data() {
       return {
+        sort: "relevance",
+
         // Documents list
-        currentSearch: "",
-        sort: "relevance"
+        currentSearch: ""
       }
     },
 
@@ -156,11 +157,16 @@
         if (newVal !== oldVal) {
           this.refreshDocumentWithSearch(newVal);
         }
+      },
+      sort: function (newVal, oldVal) {
+        if (newVal !== oldVal) {
+          this.updateDocuments();
+        }
       }
     },
 
     computed: {
-      ...mapState(['selectedDocumentsHome']) // generate vuex computed getter
+      ...mapState(['selectedDocumentsHome']) // generate computed for vuex getters
     },
 
     methods: {

@@ -164,7 +164,7 @@
     },
 
     mounted() {
-      this.sort = this.sortHome;
+      this.sort = String(this.sortHome); // copy value for sortHome mutations not to call sort watcher
 
       if (this.folder) {
         // Open folder directly from loading an URL with folder (don't reset URL if opening a document)
@@ -193,6 +193,7 @@
       },
       sort: function (newVal, oldVal) {
         if (newVal !== oldVal) {
+          this.updateDocuments();
           this.$store.commit("changeSortHome", newVal);
         }
       }
@@ -315,9 +316,6 @@
       updateFolders: function (level = null) {
         const vi = this;
         let qs = '';
-
-        // While loading folders, clear folders to avoid showing current sets of folders intermittently
-        // vi.folders = [];
 
         if (level) {
           qs = '?level=' + level.id;

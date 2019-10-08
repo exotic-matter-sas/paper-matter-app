@@ -40,11 +40,6 @@
           }
         }
       },
-      sort: function (newVal, oldVal) {
-        if (newVal !== oldVal) {
-          this.updateDocuments()
-        }
-      }
     },
 
     computed: {
@@ -52,10 +47,6 @@
     },
 
     methods: {
-      refreshAll: function () {
-        this.updateDocuments();
-      },
-
       navigateToDocument: function (pid) {
         this.$router.push({query: {doc: pid}});
       },

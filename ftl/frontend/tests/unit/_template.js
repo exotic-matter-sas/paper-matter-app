@@ -192,21 +192,19 @@ describe('Event received and handled by component', () => {
 // VUEX
 describe('Vuex tests', () => {
   let wrapper;
-  let storeConfigCopy; // deep copy storeConfig for tests not to pollute it
+  let storeConfigCopy;
   let store;
 
   beforeEach(() => {
-    storeConfigCopy = cloneDeep(storeConfig);
+    storeConfigCopy = cloneDeep(storeConfig); // deep copy storeConfig for tests not to pollute it
     store = new Vuex.Store(
       Object.assign( // overwrite some mutations and getter to replace them with mocks
         storeConfigCopy,
         {
-          mutations :
-          {
+          mutations: {
             mutationA: mockedMutationA
           },
-          getters :
-          {
+          getters: {
             getterWithParamA: () => mockedGetterWithParamA, // see https://vuex.vuejs.org/guide/getters.html#method-style-access
             getterWithoutParamA: mockedGetterWithoutParamA
           }
@@ -220,13 +218,13 @@ describe('Vuex tests', () => {
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
 
-  it('methodA commit change to store', async () => {
+  it('methodA commit change to store', () => {
     // when
     mockedGetterWithParamA.mockReturnValue(true);
     wrapper.vm.methodA();
 
     // then
     expect(mockedMutationA).toBeCalledTimes(1);
-    expect(mockedMutationA).toBeCalledWith(storeConfigCopy.state, 'mutationParam1');
+    expect(mockedMutationA).toBeCalledWith(storeConfigCopy.state, 'mutationParam1'); // set mutationParam1 as undefined if there is no params
   });
 });
