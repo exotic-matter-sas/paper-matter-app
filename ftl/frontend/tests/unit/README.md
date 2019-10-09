@@ -99,7 +99,7 @@ expect(testedReturn).toBe('properValue');
 await flushPromises(); // test have to be async to use await
 expect(wrapper.emitted('proper-event')).toBeTruthy();
 expect(wrapper.emitted('proper-event').length).toBe(1);
-expect(wrapper.emitted('proper-event')[0]).toEqual(['eventArg1', 'eventArg2'])
+expect(wrapper.emitted('proper-event')[0]).toEqual(['eventArg1', 'eventArg2']);
 
 // ----------------------
 // when (called by event)
@@ -175,3 +175,6 @@ To avoid common pitfalls (listed in next section), respect the structure used in
 ## Known issues
  - `wrapper.setData` cause "[Vue warn]: Avoid mutating a prop directly" warning during test run (no clean solution found to hide this warning for now)
  - `wrapper.setComputed` have been removed from vue-test-utils, it prevent us from restoring original computed at the start of the test (like was is done with methods), forcing us to shallowMount component in each test. But there could be better ways to do it, as described here: https://github.com/vuejs/vue-test-utils/issues/331#issuecomment-403087709
+ - `watcher` seems non mocue warn]: Avoid mutating a prop directly" warning during test run (no clean solution found to hide this warning for now)
+ - `wrapper.setComputed` have been removed from vue-test-utils, it prevent us from restoring original computed at the start of the test (like was is done with methods), forcing us to shallowMount component in each test. But there could be better ways to do it, as described here: https://github.com/vuejs/vue-test-utils/issues/331#issuecomment-403087709
+ - `watcher` seems non mockable (when mocked using [the classic shallowMount options](https://vue-test-utils.vuejs.org/api/options.html#other-options), the way used for `methods`, it has no effect: mock functions aren't called)

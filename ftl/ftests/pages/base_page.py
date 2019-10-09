@@ -58,6 +58,8 @@ class BasePage(LIVE_SERVER):
     error_notification = '.b-toaster-slot .b-toast-danger'
     close_notification = '.b-toaster-slot .b-toast .close'
 
+    loader = '.loader'
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.root_url = ''
@@ -139,28 +141,26 @@ class BasePage(LIVE_SERVER):
         else:
             raise NoSuchElementException()
 
-    def get_elem_text(self, css_selector, is_visible=True):
-        elem = self.get_elem(css_selector, is_visible)
+    def get_elem_text(self, css_selector, is_visible=True, lower_text=False, web_element_instead_of_css_selector=False):
+        elem = css_selector if web_element_instead_of_css_selector else self.get_elem(css_selector, is_visible)
 
         if elem.tag_name == 'input':
-            return elem.get_attribute('value')
+            return elem.get_attribute('value').lower() if lower_text else elem.get_attribute('value')
         elif elem.tag_name == 'select':
-            return elem.find_element_by_css_selector('option:checked').text
+            return elem.find_element_by_css_selector('option:checked').text.lower() if lower_text else \
+                elem.find_element_by_css_selector('option:checked').text
         else:
-            return elem.text
+            return elem.text.lower() if lower_text else elem.text
 
-    def get_elems_text(self, css_selector, is_visible=True):
+    def get_elems_text(self, css_selector, is_visible=True, lower_text=False):
         elems_text = []
         elems = self.browser.find_elements_by_css_selector(css_selector)
 
         if elems and elems[0].is_displayed() == is_visible:
             for elem in elems:
-                if elem.tag_name == 'input':
-                    elems_text.append(elem.get_attribute('value'))
-                elif elem.tag_name == 'select':
-                    elems_text.append(elem.find_element_by_css_selector('option:checked').text)
-                else:
-                    elems_text.append(elem.text)
+                elems_text.append(
+                    self.get_elem_text(elem, is_visible, lower_text, web_element_instead_of_css_selector=True)
+                )
             return elems_text
         else:
             raise NoSuchElementException()
