@@ -34,7 +34,7 @@ urlpatterns = [
     path('setup/', include('setup.urls')),
     path('app/', include('core.urls')),
 
-    path('signup', views.CreateOrgAndUser.as_view(), name='signup_org_user'),
+    path('signup', views.CreateOrgAndFTLUser.as_view(), name='signup_org_user'),
     path('signup/success', views.CreateOrgAndUserSuccess.as_view(), name='signup_success'),
     path('signup/<slug:org_slug>/', views.CreateFTLUserFormView.as_view(), name='signup_user'),
     # path('signup/<slug:org_slug>/success/', views.signup_success, name='signup_success'),

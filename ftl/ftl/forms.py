@@ -17,11 +17,17 @@ class FTLUserCreationForm(RegistrationForm):
         model = FTLUser
 
 
-class FTLCreateOrgAndUser(RegistrationForm):
+class FTLCreateOrgAndFTLUser(RegistrationForm):
     """
     Form for org creation with first user
     """
-    org_name = forms.CharField(label=_('Organization name'), max_length=100)
+    org_name = forms.CharField(label=_('Organization name'), max_length=100,
+                               widget=forms.TextInput(attrs={'autofocus': ''}))
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # remove default autofocus on email field
+        del self.fields['email'].widget.attrs['autofocus']
 
     class Meta(RegistrationForm.Meta):
         model = FTLUser

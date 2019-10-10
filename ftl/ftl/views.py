@@ -6,7 +6,7 @@ from django.views.generic import RedirectView
 from django_registration.backends.activation.views import RegistrationView
 
 from core.models import FTLOrg, permissions_names_to_objects, FTL_PERMISSIONS_USER
-from ftl.forms import FTLUserCreationForm, FTLCreateOrgAndUser
+from ftl.forms import FTLUserCreationForm, FTLCreateOrgAndFTLUser
 
 
 class CreateFTLUserFormView(RegistrationView):
@@ -65,9 +65,9 @@ class PasswordResetDone(SetMessageAndRedirectView):
     message = _('Your password has been set. You may go ahead and log in now.')
 
 
-class CreateOrgAndUser(RegistrationView):
-    template_name = 'ftl/registration/create_org.html'
-    form_class = FTLCreateOrgAndUser
+class CreateOrgAndFTLUser(RegistrationView):
+    template_name = 'ftl/registration/create_org_and_ftluser.html'
+    form_class = FTLCreateOrgAndFTLUser
     success_url = reverse_lazy('signup_success')
 
 
