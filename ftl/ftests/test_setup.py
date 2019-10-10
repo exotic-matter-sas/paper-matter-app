@@ -63,7 +63,7 @@ class FirstUserSignupTest(SignupPages):
         self.create_user()
 
         # Success message appears when account creation is complete
-        self.assertIn('account have been created', self.get_elem(self.main_panel).text)
+        self.assertIn('account was successfully created', self.get_elem(self.main_panel).text)
 
 
 class FirstUserLoginTest(LoginPage):

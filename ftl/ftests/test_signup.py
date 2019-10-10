@@ -21,8 +21,7 @@ class SignupPageTests(SignupPages):
         self.create_user(user_num=1)
 
         # Success page appears
-        self.assertIn('succeed', self.head_title)
-        self.assertIn('account have been created', self.get_elem(self.main_panel).text)
+        self.assertIn('account was successfully created', self.get_elem(self.main_panel).text)
 
     def test_signup_to_second_org(self):
         # User create an account in the second org
@@ -30,8 +29,7 @@ class SignupPageTests(SignupPages):
         self.create_user(user_num=2)
 
         # Success page appears
-        self.assertIn('succeed', self.head_title)
-        self.assertIn('account have been created', self.get_elem(self.main_panel).text)
+        self.assertIn('account was successfully created', self.get_elem(self.main_panel).text)
 
     def test_signup_failed(self):
         # User try to create an account without filling fields
@@ -60,4 +58,5 @@ class SignupPageTests(SignupPages):
         self.assertEqual(len(mail.outbox), 1)
         activate_link = re.search(r'(https?://.+/accounts/activate/.+/)', mail.outbox[0].body)
         self.visit(activate_link.group(1), absolute_url=True)
-        self.assertIn('account activated', self.head_title.lower())
+        self.assertIn('Your email has been verified, thank you! You may go ahead and log in now.',
+                      self.get_elem_text(self.main_panel))
