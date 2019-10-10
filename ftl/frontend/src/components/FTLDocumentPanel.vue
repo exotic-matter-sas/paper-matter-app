@@ -136,4 +136,28 @@
     }
   }
 </script>
-<style></style>
+<style lang="scss">
+$document-viewer-padding: 2em;
+
+#document-viewer {
+    .container {
+      max-width: none;
+    }
+
+    .modal-dialog {
+      width: 100vw;
+      height: 100vh;
+      max-width: none;
+      padding: $document-viewer-padding;
+      margin: 0;
+    }
+
+    .modal-title {
+        vertical-align: middle;
+    }
+
+    .modal-content {
+      height: calc(100vh - (#{$document-viewer-padding} * 2));
+    }
+}
+</style>
