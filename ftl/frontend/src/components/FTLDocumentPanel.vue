@@ -23,15 +23,21 @@
     <b-container class="h-100" fluid>
       <b-row class="h-100">
         <b-col md="8">
-          <div class="h-100 embed-responsive doc-pdf ">
-            <iframe v-if="currentOpenDoc.pid" class="embed-responsive-item"
-                    :src="`/assets/pdfjs/web/viewer.html?file=/app/uploads/` + currentOpenDoc.pid + `#search=` + search">
-            </iframe>
+          <div v-if="supportInlinePDF" class="h-100 embed-responsive doc-pdf" id="pdfviewer">
+            <!--PDF.js viewer-->
+          </div>
+          <div v-else>
+            <span class="text-muted">
+              {{ $_('Viewer not available on this device, open the document instead.') }}
+            </span>
           </div>
         </b-col>
         <b-col>
           <b-row>
-            <b-col>
+            <b-col class="my-3">
+              <b-button class="mx-2" variant="primary" :href="`/app/uploads/` + currentOpenDoc.pid + `/doc.pdf`">
+                {{ $_('Open PDF')}}
+              </b-button>
               <b-button id="move-document" variant="secondary" v-b-modal="'modal-move-document'">Move</b-button>
             </b-col>
           </b-row>
@@ -60,6 +66,7 @@
 </template>
 <script>
   import axios from 'axios';
+  import PDFObject from "pdfobject";
   import FTLMoveDocuments from "@/components/FTLMoveDocuments";
   import FTLRenameDocument from "@/components/FTLRenameDocument";
   import FTLThumbnailGenMixin from "@/components/FTLThumbnailGenMixin";
@@ -89,7 +96,8 @@
     data() {
       return {
         currentOpenDoc: {},
-        publicPath: process.env.BASE_URL
+        publicPath: process.env.BASE_URL,
+        supportInlinePDF: PDFObject.supportsPDFs
       }
     },
 
@@ -99,11 +107,32 @@
 
     methods: {
       openDocument: function () {
+        const pdf_options = {
+          forcePDFJS: true,
+          assumptionMode: false,
+          PDFJS_URL: "/assets/pdfjs/web/viewer.html"
+        };
+
+        this.$bvModal.show('document-viewer');
+
         axios
           .get('/app/api/v1/documents/' + this.pid)
           .then(response => {
             this.currentOpenDoc = response.data;
-            this.$bvModal.show('document-viewer');
+
+            if (this.supportInlinePDF) {
+              PDFObject.embed('/app/uploads/' + this.currentOpenDoc.pid + '/doc.pdf',
+                "#pdfviewer",
+                {
+                  ...pdf_options, ...{
+                    pdfOpenParams: {
+                      pagemode: "none",
+                      search: this.search
+                    },
+                  }
+                }
+              );
+            }
 
             if (!response.data.thumbnail_available) {
               this.createThumbnailForDocument(this.currentOpenDoc)
@@ -137,9 +166,9 @@
   }
 </script>
 <style lang="scss">
-$document-viewer-padding: 2em;
+  $document-viewer-padding: 2em;
 
-#document-viewer {
+  #document-viewer {
     .container {
       max-width: none;
     }
@@ -153,11 +182,11 @@ $document-viewer-padding: 2em;
     }
 
     .modal-title {
-        vertical-align: middle;
+      vertical-align: middle;
     }
 
     .modal-content {
       height: calc(100vh - (#{$document-viewer-padding} * 2));
     }
-}
+  }
 </style>
