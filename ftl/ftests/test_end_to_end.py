@@ -1,8 +1,10 @@
 import os
+import re
 from unittest import skipIf, skip
 from unittest.mock import patch
 
 from django import db
+from django.core import mail
 from django.db.models import Func, F
 
 from core import views
@@ -43,8 +45,11 @@ class InitialSetupTest(SetupPages, SignupPages, LoginPage, HomePage):
         # First user fulfill the user creation form
         username = self.create_user()
 
+        self.assertEqual(len(mail.outbox), 1)
+        activate_link = re.search(r'(https?://.+/accounts/activate/.+/)', mail.outbox[0].body)
+        self.visit(activate_link.group(1), absolute_url=True)
+
         # First user login to the first organization
-        self.get_elem(self.user_login_link).click()
         self.log_user()
 
         # First user is properly logged
