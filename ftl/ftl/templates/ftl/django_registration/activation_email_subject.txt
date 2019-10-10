@@ -1,2 +1,5 @@
+{% extends "ftl/base_email_subject.txt" %}
 {% load i18n %}
-Paper Matter - {% blocktrans %}Activate your account{% endblocktrans %}
+{% block content %}
+{% blocktrans %}Activate your account{% endblocktrans %}
+{% endblock %}
