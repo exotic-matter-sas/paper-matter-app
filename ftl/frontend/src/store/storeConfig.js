@@ -4,7 +4,8 @@ import getters from "@/store/getters";
 const state = {
   selectedMoveTargetFolder: null,
   panelSelectedFolder: null,
-  selectedDocumentsHome: []
+  selectedDocumentsHome: [],
+  sortHome: 'recent'
 };
 
 export default {
