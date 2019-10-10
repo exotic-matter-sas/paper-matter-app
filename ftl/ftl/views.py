@@ -33,12 +33,8 @@ class CreateFTLUserFormView(RegistrationView):
         return super().form_valid(form)
 
 
-def signup_success(request, org_slug):
-    context = {
-        'org_slug': org_slug,
-    }
-
-    return render(request, 'ftl/registration/signup_success.html', context)
+def signup_success(request):
+    return render(request, 'ftl/registration/signup_success.html')
 
 
 class SetMessageAndRedirectView(RedirectView):
@@ -69,11 +65,6 @@ class CreateOrgAndFTLUser(RegistrationView):
     template_name = 'ftl/registration/create_org_and_ftluser.html'
     form_class = FTLCreateOrgAndFTLUser
     success_url = reverse_lazy('signup_success')
-
-
-class CreateOrgAndUserSuccess(SetMessageAndRedirectView):
-    url = reverse_lazy('login')
-    message = _('Your account was successfully created. You should receive an activation email very soon.')
 
 
 class AccountActivationSuccess(SetMessageAndRedirectView):
