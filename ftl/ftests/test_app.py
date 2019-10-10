@@ -239,6 +239,25 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
                       'A message should indicate no documents were found')
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_search_open_close_document(self):
+        # User have already added 2 documents inside sub folder
+        sub_folder = setup_folder(self.org)
+        doc_first_result = setup_document(self.org, self.user, ftl_folder=sub_folder, title='pop pop')
+        doc_second_result = setup_document(self.org, self.user, ftl_folder=sub_folder, title='pop')
+        self.refresh_document_list()
+
+        # User search for document
+        self.search_document('pop')
+
+        # User open first document of search result and close it
+        self.open_first_document()
+        self.wait_for_elem_to_show(self.pdf_viewer)
+        self.close_document()
+
+        # The search result is still displayed after closing the first document
+        self.assertEqual(self.get_elems_text(self.documents_titles), [doc_first_result.title, doc_second_result.title])
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_visit_url_with_search_query(self):
         # User have already added 2 documents
         setup_document(self.org, self.user)
