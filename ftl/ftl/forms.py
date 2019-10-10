@@ -25,6 +25,7 @@ class FTLCreateOrgAndUser(RegistrationForm):
 
     class Meta(RegistrationForm.Meta):
         model = FTLUser
+        fields = ("org_name", "email",)
 
     def clean_org_name(self):
         name_ = self.cleaned_data['org_name']
