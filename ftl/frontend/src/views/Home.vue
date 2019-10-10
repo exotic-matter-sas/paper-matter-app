@@ -109,7 +109,9 @@
                 <!--PDF.js viewer-->
               </div>
               <div v-else>
-                {{ $_('Viewer not available on this device, open the document instead.')}}
+                <span class="text-muted">
+                  {{ $_('Viewer not available on this device, open the document instead.')}}
+                </span>
               </div>
             </b-col>
             <b-col class="my-3">
