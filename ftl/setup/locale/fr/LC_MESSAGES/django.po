@@ -26,31 +26,9 @@ msgstr "Étape 2/2 : création de l'administrateur"
 msgid "One more thing..."
 msgstr "Une dernière chose..."
 
-#: setup/templates/setup/admin_creation_form.html:11
-#: setup/templates/setup/first_organization_creation_form.html:11
-msgid "Create first organization"
-msgstr "Créer la première organisation"
-
-#: setup/templates/setup/admin_creation_form.html:12
-#: setup/templates/setup/first_organization_creation_form.html:12
-msgid "Create administrator"
-msgstr "Créer l'administrateur"
-
 #: setup/templates/setup/admin_creation_form.html:16
 msgid "Finish"
 msgstr "Terminer"
-
-#: setup/templates/setup/first_organization_creation_form.html:5
-msgid "Step 1/2: create first organization"
-msgstr "Étape 1/2 : Création de la première organisation"
-
-#: setup/templates/setup/first_organization_creation_form.html:9
-msgid "Welcome!"
-msgstr "Bienvenue !"
-
-#: setup/templates/setup/first_organization_creation_form.html:16
-msgid "Next >"
-msgstr "Suivant >"
 
 #: setup/templates/setup/success.html:5
 msgid "Setup completed"

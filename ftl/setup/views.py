@@ -3,25 +3,12 @@ from django.urls import reverse_lazy
 from django.views.generic import FormView
 
 from core.models import FTLOrg, FTL_PERMISSIONS_USER, permissions_names_to_objects
-from setup.forms import AdminCreationForm
+from setup.forms import FirstOrgAndAdminCreationForm
 
 
-# class CreateOrg(CreateView):
-#     model = FTLOrg
-#     fields = ('name', 'slug')
-#     template_name = 'setup/first_organization_creation_form.html'
-#     success_url = reverse_lazy('setup:create_admin')
-#
-#     def get(self, request, *args, **kwargs):
-#         if 'ftl_setup_middleware' in request.session:
-#             return super().get(request, *args, **kwargs)
-#         else:
-#             return redirect('login')
-
-
-class CreateAdmin(FormView):
-    template_name = 'setup/admin_creation_form.html'
-    form_class = AdminCreationForm  # Custom form for enabling admin flag
+class CreateFirstOrgAndAdmin(FormView):
+    template_name = 'setup/first_org_and_admin_creation_form.html'
+    form_class = FirstOrgAndAdminCreationForm  # Custom form for enabling admin flag
     success_url = reverse_lazy('setup:success')
 
     def get(self, request, *args, **kwargs):

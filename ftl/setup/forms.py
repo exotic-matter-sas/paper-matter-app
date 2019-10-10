@@ -6,8 +6,14 @@ from django.utils.translation import gettext_lazy as _
 from core.models import FTLUser, FTLOrg
 
 
-class AdminCreationForm(UserCreationForm):
-    org_name = forms.CharField(label=_('Organization name'), max_length=100)
+class FirstOrgAndAdminCreationForm(UserCreationForm):
+    org_name = forms.CharField(label=_('Organization name'), max_length=100,
+                               widget=forms.TextInput(attrs={'autofocus': ''}))
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # remove default autofocus on email field
+        del self.fields['email'].widget.attrs['autofocus']
 
     class Meta(UserCreationForm.Meta):
         model = FTLUser

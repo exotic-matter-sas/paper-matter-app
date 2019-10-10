@@ -2,15 +2,11 @@
 {% load i18n %}
 {% load static %}
 
-{% block title %}{% trans 'Create administrator' %}{% endblock %}
+{% block title %}{% trans 'Create first organization and administrator' %}{% endblock %}
 
 {% block main_content %}
     <form method="post" id="admin-form">
         <h1 class="text-primary">{% trans "Welcome!" %}</h1>
-        {#        <div class="breadcrumb">#}
-        {#            <li class="breadcrumb-item">{% trans "Create first organization" %}</li>#}
-        {#            <li class="breadcrumb-item active">{% trans "Create administrator" %}</li>#}
-        {#        </div>#}
         {% csrf_token %}
         {{ form }}
         <input class="btn btn-lg btn-primary btn-block" type="submit" value="{% trans "Finish" %}">

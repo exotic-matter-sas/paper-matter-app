@@ -80,7 +80,7 @@ class FTLUser(AbstractUser):
             'unique': _("A user with that username already exists."),
         },
     )
-    # override email field to set blank and unique constrains
+    # override email field to set non blank and unique constrains
     email = models.EmailField(
         _('email address'),
         max_length=256,

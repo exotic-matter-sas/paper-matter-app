@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.urls import reverse_lazy
 
 from ftests.tools.setup_helpers import setup_org, setup_admin
-from .views import CreateAdmin
+from .views import CreateFirstOrgAndAdmin
 
 
 class SetupPagesTests(TestCase):
@@ -13,7 +13,7 @@ class SetupPagesTests(TestCase):
 
         response = self.client.get('/setup/createadmin/')
         self.assertContains(response, 'Create administrator')
-        self.assertTemplateUsed(response, 'setup/admin_creation_form.html')
+        self.assertTemplateUsed(response, 'setup/first_org_and_admin_creation_form.html')
 
     def test_create_admin_page_redirect_to_success_after_admin_creation(self):
         """create_admin page redirect to success page once admin created"""
@@ -27,7 +27,7 @@ class SetupPagesTests(TestCase):
         setup_org()
 
         response = self.client.get('/setup/createadmin/')
-        self.assertIsInstance(response.context['form'], CreateAdmin.form_class)
+        self.assertIsInstance(response.context['form'], CreateFirstOrgAndAdmin.form_class)
 
     def test_success_page_returns_correct_html(self):
         """success page return correct html"""
