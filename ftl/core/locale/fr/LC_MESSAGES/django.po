@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-11 16:15+0000\n"
+"POT-Creation-Date: 2019-10-11 17:32+0000\n"
 "PO-Revision-Date: 2019-03-05 16:56+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -43,6 +43,7 @@ msgid "Specified ftl_folder doesn't exist"
 msgstr "Le ftl_folder spécifié n'existe pas"
 
 #: core/management/commands/import_docs.py:27
+#, python-format
 msgid "Starting mass import for %(email)s from %(path)s"
 msgstr "Début de l'import de masse pour %(email)s depuis %(path)s"
 
@@ -92,7 +93,8 @@ msgstr "nom d'utilisateur"
 
 #: core/models.py:77 core/models.py:89
 msgid "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only."
-msgstr "Requis. 150 caractères ou moins. Lettres, chiffres et @/./+/-/_ seulement."
+msgstr ""
+"Requis. 150 caractères ou moins. Lettres, chiffres et @/./+/-/_ seulement."
 
 #: core/models.py:80
 msgid "A user with that username already exists."

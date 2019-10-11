@@ -8,9 +8,11 @@
     <form method="post" id="admin-form">
         <h1 class="text-primary">{% trans "Welcome to your Paper Matter instance!" %}</h1>
         <p class="text-muted">
-            {% trans "Create the first organization of your instance along with the Administrator user.
-            Administrator is able to administrate the whole instance via the Admin portal, but when it come to use the
-            service he can only access to this first organisation via the Login page." %}
+            {% blocktrans %}
+                Create the first organization of your instance along with the Administrator user.
+                Administrator is able to administrate the whole instance via the Admin portal, but when it come to use
+                the application he can only access to this first organisation via the Login page.
+            {% endblocktrans %}
         </p>
         {% csrf_token %}
         {{ form }}
