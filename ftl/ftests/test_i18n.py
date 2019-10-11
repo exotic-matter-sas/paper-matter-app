@@ -10,7 +10,7 @@ from ftl.settings import DEV_MODE
 
 class I18nTests(SetupPages, LoginPage, HomePage):
     def setUp(self, browser=None, browser_locale='fr'):
-        super().setUp(browser_locale='fr')
+        super().setUp(browser_locale=browser_locale)
 
     def test_i18n_are_working(self):
         self.visit(self.root_url)

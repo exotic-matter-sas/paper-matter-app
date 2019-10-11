@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-11 17:45+0000\n"
+"POT-Creation-Date: 2019-10-11 20:13+0000\n"
 "PO-Revision-Date: 2019-03-05 17:05+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -35,18 +35,48 @@ msgid "Welcome to your Paper Matter instance!"
 msgstr "Bienvenue sur votre instance Paper Matter !"
 
 #: setup/templates/setup/first_org_and_admin_creation_form.html:11
+msgid "Some concepts to get started:"
+msgstr "Quelques notions pour bien débuter :"
+
+#: setup/templates/setup/first_org_and_admin_creation_form.html:12
+msgid "Administrator > Instance > Organization > User"
+msgstr "Administrateur > Instance > Organisation > Utilisateur"
+
+#: setup/templates/setup/first_org_and_admin_creation_form.html:14
 msgid ""
-"Create the first organization of your instance along with the Administrator "
-"user. Administrator is able to administrate the whole instance via the Admin "
-"portal, but when it come to use the application he can only access to this "
-"first organisation via the Login page."
+"The <b>administrator</b> can administrate the whole instance via the Admin "
+"portal"
 msgstr ""
-"Créez la première organisation de votre instance et son Administrateur.\n"
-"L'Administrateur peut administrer l'ensemble de l'instance via le portail "
-"Admin, mais pour ce qui concerne l'utilisation de l'application il peut "
-"uniquement accéder à cette premièreorganisation via la page de Connexion."
+"L'<b>administrateur</b> peut administrer l'instance entière à partir du "
+"portail admin"
 
 #: setup/templates/setup/first_org_and_admin_creation_form.html:15
+msgid ""
+"This <b>instance</b> can host multiple <b>organizations</b>, each "
+"<b>organization</b> can have multiple <b>users</b>."
+msgstr ""
+"Cette <b>instance</b> peut héberger plusieures <b>organisations</b>, chaque "
+"<b>organisation</b> peut avoir plusieurs <b>utilisateurs</b>."
+
+#: setup/templates/setup/first_org_and_admin_creation_form.html:16
+msgid ""
+"A <b>user</b> can only access data and documents of its <b>organisation</b>."
+msgstr ""
+"Un <b>utilisateur</b> peut seulement accéder aux données et documents de son <b>organisation</b>."
+
+#: setup/templates/setup/first_org_and_admin_creation_form.html:17
+msgid ""
+"Finally, the <b>administrator</b> is an <b>user</b> of the first "
+"<b>organization</b>."
+msgstr ""
+"Enfin, l'<b>administrateur</b> est un <b>utilisateur</b> de la première "
+"<b>organisation</b>."
+
+#: setup/templates/setup/first_org_and_admin_creation_form.html:21
+msgid "Create the first organization of your instance and its administrator:"
+msgstr "Créez la première organistion de votre instance et son administrateur :"
+
+#: setup/templates/setup/first_org_and_admin_creation_form.html:24
 msgid "Finish"
 msgstr "Terminer"
 
