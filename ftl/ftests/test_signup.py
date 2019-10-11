@@ -43,7 +43,7 @@ class SignupPageTests(SignupPages):
     def test_signup_receive_activation_email(self):
         # User create an account in the first org
         self.visit_signup_page(self.org_1.slug)
-        self.create_user(user_num=1)
+        self.create_user()
 
         self.assertEqual(len(mail.outbox), 1)
         self.assertIn(tv.USER1_EMAIL, mail.outbox[0].to)
@@ -53,10 +53,22 @@ class SignupPageTests(SignupPages):
     def test_signup_activate_account(self):
         # User create an account in the first org
         self.visit_signup_page(self.org_1.slug)
-        self.create_user(user_num=1)
+        self.create_user()
 
         self.assertEqual(len(mail.outbox), 1)
         activate_link = re.search(r'(https?://.+/accounts/activate/.+/)', mail.outbox[0].body)
         self.visit(activate_link.group(1), absolute_url=True)
         self.assertIn('Your email has been verified, thank you! You may go ahead and log in now.',
+                      self.get_elem_text(self.main_panel))
+
+    def test_signup_activate_account_failed(self):
+        # User create an account in the first org
+        self.visit_signup_page(self.org_1.slug)
+        self.create_user()
+
+        # User use a bad activation link
+        bad_activation_link = '/accounts/activate/B4dT0k3n/'
+
+        self.visit(bad_activation_link)
+        self.assertIn('could not activate the account',
                       self.get_elem_text(self.main_panel))
