@@ -21,7 +21,7 @@ class SignupPageTests(SignupPages):
         self.create_user(user_num=1)
 
         # Success page appears
-        self.assertIn('account was successfully created', self.get_elem(self.main_panel).text)
+        self.assertIn('verify your email to activate your account', self.get_elem(self.main_panel).text)
 
     def test_signup_to_second_org(self):
         # User create an account in the second org
@@ -29,7 +29,7 @@ class SignupPageTests(SignupPages):
         self.create_user(user_num=2)
 
         # Success page appears
-        self.assertIn('account was successfully created', self.get_elem(self.main_panel).text)
+        self.assertIn('verify your email to activate your account', self.get_elem(self.main_panel).text)
 
     def test_signup_failed(self):
         # User try to create an account without filling fields
