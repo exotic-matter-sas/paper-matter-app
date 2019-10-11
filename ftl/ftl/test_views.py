@@ -54,20 +54,12 @@ class FtlPagesTests(TestCase):
 
         self.assertRedirects(response, reverse_lazy('signup_success'), fetch_redirect_response=False)
 
-    # def test_signup_success_returns_correct_html(self):
-    #     """Signup success page returns correct html"""
-    #     org = setup_org()
-    #
-    #     response = self.client.get(f'/signup/{org.slug}/success/')
-    #     self.assertContains(response, 'verify your email')
-    #     self.assertTemplateUsed(response, 'ftl/registration/signup_success.html')
+    def test_signup_success_returns_correct_html(self):
+        """Signup success page returns correct html"""
 
-    # def test_signup_success_get_proper_context(self):
-    #     """Signup success page get proper context"""
-    #     org = setup_org()
-    #
-    #     response = self.client.get(f'/signup/{org.slug}/success/')
-    #     self.assertEqual(response.context['org_slug'], org.slug)
+        response = self.client.get(f'/signup/success/')
+        self.assertContains(response, 'verify your email')
+        self.assertTemplateUsed(response, 'ftl/registration/signup_success.html')
 
     def test_user_permissions_signup(self):
         org = setup_org()
