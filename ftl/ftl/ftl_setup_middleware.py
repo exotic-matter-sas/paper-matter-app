@@ -32,7 +32,7 @@ class FTLSetupMiddleware:
         # Code to be executed for each request before
         # the view (and later middleware) are called.
 
-        # Put a session flag to indicate that the ftp_setup_middleware is enabled on the current django instance.
+        # Put a session flag to indicate that the ftl_setup_middleware is enabled on the current django instance.
         # The setup views will only allow setup if the following flag is present.
         # As such, when the setup is completed, the middleware will not load and the setup views will not have the flag
         # and will denied access to setup views.

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-08 21:12+0000\n"
+"POT-Creation-Date: 2019-10-11 16:15+0000\n"
 "PO-Revision-Date: 2019-03-05 17:05+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,15 +18,23 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.0.6\n"
 
-#: setup/templates/setup/admin_creation_form.html:5
-msgid "Step 2/2: create the administrator"
-msgstr "Étape 2/2 : création de l'administrateur"
+#: setup/forms.py:10
+msgid "Organization name"
+msgstr "Nom de l'organisation"
 
-#: setup/templates/setup/admin_creation_form.html:9
-msgid "One more thing..."
-msgstr "Une dernière chose..."
+#: setup/forms.py:31
+msgid "Organization already exists"
+msgstr "L'organisation existe déjà"
 
-#: setup/templates/setup/admin_creation_form.html:16
+#: setup/templates/setup/first_org_and_admin_creation_form.html:5
+msgid "Create first organization and administrator"
+msgstr "Créez la première organistion et l'administrateur"
+
+#: setup/templates/setup/first_org_and_admin_creation_form.html:9
+msgid "Welcome to your Paper Matter instance!"
+msgstr "Bienvenue sur votre instance Paper Matter !"
+
+#: setup/templates/setup/first_org_and_admin_creation_form.html:17
 msgid "Finish"
 msgstr "Terminer"
 
@@ -66,10 +74,14 @@ msgstr "page de création des utilisateurs"
 msgid "Connect to admin pannel here:"
 msgstr "Vous connecter à l'interface d'administration ici :"
 
-#: setup/templates/setup/success.html:19 setup/templates/setup/success.html:24
+#: setup/templates/setup/success.html:19
 msgid "admin login page"
 msgstr "page de connexion pour les administrateurs"
 
 #: setup/templates/setup/success.html:22
 msgid "Connect as a user to first organization here:"
 msgstr "Connectez-vous à la première organisation en tant qu'utilisateur :"
+
+#: setup/templates/setup/success.html:24
+msgid "user login page"
+msgstr "page de connexion"

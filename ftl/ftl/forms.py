@@ -38,7 +38,7 @@ class FTLCreateOrgAndFTLUser(RegistrationForm):
         slug = slugify(name_)
         org_exists = FTLOrg.objects.filter(slug=slug)
         if org_exists:
-            raise forms.ValidationError(_("Org already exists"))
+            raise forms.ValidationError(_("Organization already exists"))
         return name_
 
     def save(self, commit=True):

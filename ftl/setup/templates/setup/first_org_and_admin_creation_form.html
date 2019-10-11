@@ -6,7 +6,12 @@
 
 {% block main_content %}
     <form method="post" id="admin-form">
-        <h1 class="text-primary">{% trans "Welcome!" %}</h1>
+        <h1 class="text-primary">{% trans "Welcome to your Paper Matter instance!" %}</h1>
+        <p class="text-muted">
+            {% trans "Create the first organization of your instance along with the Administrator user.
+            Administrator is able to administrate the whole instance via the Admin portal, but when it come to use the
+            service he can only access to this first organisation via the Login page." %}
+        </p>
         {% csrf_token %}
         {{ form }}
         <input class="btn btn-lg btn-primary btn-block" type="submit" value="{% trans "Finish" %}">
