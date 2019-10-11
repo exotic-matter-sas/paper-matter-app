@@ -7,7 +7,7 @@ class LoginPage(BasePage):
 
     page_title = 'h1'
 
-    login_email_input = '#login-form #id_username'
+    login_email_input = '#login-form #id_email'
     login_password_input = '#login-form #id_password'
     login_submit_input = '#login-form [type="submit"]'
 
