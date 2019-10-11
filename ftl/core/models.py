@@ -40,7 +40,7 @@ class FTLOrg(models.Model):
         return self.name
 
 
-# FTL users Manager (no username required)
+# custom FTL users Manager (no more username required)
 class FTLUserManager(BaseUserManager):
     use_in_migrations = True
 

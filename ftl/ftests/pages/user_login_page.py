@@ -7,7 +7,7 @@ class LoginPage(BasePage):
 
     page_title = 'h1'
 
-    login_username_input = '#login-form #id_username'
+    login_email_input = '#login-form #id_username'
     login_password_input = '#login-form #id_password'
     login_submit_input = '#login-form [type="submit"]'
 
@@ -17,16 +17,16 @@ class LoginPage(BasePage):
 
     password_reset_link = '#password-reset'
 
-    def log_user(self,  user_num=1, username=None, password=None):
-        username_input = self.get_elem(self.login_username_input)
+    def log_user(self,  user_num=1, email=None, password=None):
+        email_input = self.get_elem(self.login_email_input)
         password_input = self.get_elem(self.login_password_input)
         submit_input = self.get_elem(self.login_submit_input)
 
-        if not username:
-            username = getattr(tv, f'USER{user_num}_EMAIL')
+        if not email:
+            email = getattr(tv, f'USER{user_num}_EMAIL')
         if not password:
             password = getattr(tv, f'USER{user_num}_PASS')
 
-        username_input.send_keys(username)
+        email_input.send_keys(email)
         password_input.send_keys(password)
         submit_input.click()

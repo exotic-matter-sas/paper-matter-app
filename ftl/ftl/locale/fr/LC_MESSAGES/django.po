@@ -65,11 +65,6 @@ msgstr "page de connexion"
 msgid "Login"
 msgstr "Se connecter"
 
-#: ftl/templates/registration/login.html:15
-#: ftl/templates/registration/login.html:16
-msgid "Username"
-msgstr "Nom d'utilisateur"
-
 #: ftl/templates/registration/login.html:24
 #: ftl/templates/registration/login.html:25
 msgid "Password"

@@ -68,7 +68,7 @@
           <!-- Using 'button-content' slot -->
           <template slot="button-content">
             <font-awesome-icon v-if="account.isSuperUser" icon="crown" class="super-user" title="Super User"/>
-            <em id="username">{{ account.name }}</em>
+            <em id="email">{{ account.name }}</em>
           </template>
           <b-dropdown-item href="/account">{{this.$_('Profile')}}</b-dropdown-item>
           <b-dropdown-item href="/logout">{{this.$_('Sign Out')}}</b-dropdown-item>

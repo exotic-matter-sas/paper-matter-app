@@ -27,7 +27,7 @@ class LoginPageTests(LoginPage, HomePage, AdminLoginPage):
         self.visit(LoginPage.url)
         self.log_user()
 
-        # He can see it's username on it
+        # He can see it's email on it
         self.assertIn('home', self.head_title)
         self.assertIn(self.user.email, self.get_elem(self.profile_name).text)
 
@@ -56,7 +56,7 @@ class LoginPageTests(LoginPage, HomePage, AdminLoginPage):
         self.visit(AdminLoginPage.url)
         self.log_admin()
 
-        # He can access app and see it's username plus a little admin icon
+        # He can access app and see it's email plus a little admin icon
         self.visit(HomePage.url)
         self.assertIn('home', self.head_title)
         self.assertIn(self.admin.email, self.get_elem(self.profile_name).text)
