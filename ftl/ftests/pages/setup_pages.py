@@ -19,9 +19,8 @@ class SetupPages(BasePage):
     admin_login_link = '#admin-login'
     user_signup_link = '#user-signup'
 
-    def create_admin(self):
+    def create_first_org_and_admin(self):
         org_name_input = self.get_elem(self.admin_org_name_input)
-        # username_input = self.get_elem(self.admin_username_input)
         email_address_input = self.get_elem(self.admin_email_address_input)
         password_input = self.get_elem(self.admin_password_input)
         password_confirmation_input = self.get_elem(self.admin_password_confirmation_input)

@@ -30,7 +30,7 @@ class InitialSetupTest(SetupPages, SignupPages, LoginPage, HomePage):
         self.visit(self.root_url)
 
         # Admin fulfill the admin creation form
-        self.create_admin()
+        self.create_first_org_and_admin()
 
         # Admin copy the link for user signup and send it to the first user
         user_signup_link = self.get_elem(self.user_signup_link).get_attribute('href')

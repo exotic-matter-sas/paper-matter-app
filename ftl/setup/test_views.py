@@ -7,7 +7,7 @@ from .views import CreateFirstOrgAndAdmin
 
 class SetupPagesTests(TestCase):
 
-    def test_create_admin_page_returns_correct_html(self):
+    def test_create_first_org_and_admin_page_returns_correct_html(self):
         """create_admin page return correct html"""
         setup_org()
 
@@ -15,14 +15,14 @@ class SetupPagesTests(TestCase):
         self.assertContains(response, 'Create first organization and administrator')
         self.assertTemplateUsed(response, 'setup/first_org_and_admin_creation_form.html')
 
-    def test_create_admin_page_redirect_to_success_after_admin_creation(self):
+    def test_create_first_org_and_admin_page_redirect_to_success_after_admin_creation(self):
         """create_admin page redirect to success page once admin created"""
         setup_admin(setup_org())
 
         response = self.client.get(reverse_lazy('setup:create_admin'))
         self.assertRedirects(response, reverse_lazy('login'))
 
-    def test_create_admin_page_get_proper_context(self):
+    def test_create_first_org_and_admin_page_get_proper_context(self):
         """create-admin page get proper context"""
         setup_org()
 

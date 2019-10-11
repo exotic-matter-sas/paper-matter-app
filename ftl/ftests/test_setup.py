@@ -7,7 +7,7 @@ from ftests.tools.setup_helpers import setup_admin, setup_org, setup_user
 
 
 class LandingPageTests(SetupPages):
-    def test_index_redirect_to_first_admin_creation_on_first_visit(self):
+    def test_index_redirect_to_first_org_and_admin_creation_on_first_visit(self):
         """Index page redirect to first organization creation page on first visit"""
         # Admin user have just install app and display it for the first time
         self.visit(self.root_url)
@@ -21,7 +21,7 @@ class LandingPageTests(SetupPages):
         self.visit(self.root_url)
 
         # He fulfill the admin creation form
-        self.create_admin()
+        self.create_first_org_and_admin()
 
         # A success page appears mentioning the urls for admin login page and user signup page
         self.assertIn('setup completed', self.head_title)

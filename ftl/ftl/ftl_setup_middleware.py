@@ -10,7 +10,7 @@ class SetupState:
 
 
 def _redirect_to_setup_step_to_complete(admin_state):
-    """Logic to redirect user to appropriate view if required setup state isn't meet"""
+    """Logic to redirect user to appropriate view if required setup state isn't met"""
     if admin_state:
         return redirect('login')
     else:

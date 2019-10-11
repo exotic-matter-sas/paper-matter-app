@@ -15,7 +15,7 @@ class I18nTests(SetupPages, LoginPage, HomePage):
     def test_i18n_are_working(self):
         self.visit(self.root_url)
         self.assertIn('administrateur', self.head_title,
-                      '"administrator" should be translated to "administrateur"')
+                      '"administrator" should be translated as "administrateur"')
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_js_i18n_are_working(self):
@@ -28,4 +28,4 @@ class I18nTests(SetupPages, LoginPage, HomePage):
 
         self.visit(self.root_url)
         self.assertIn('Ajouter un document', self.get_elem(self.document_upload_label).text,
-                      '"Upload document" should be translated to "Ajouter un document"')
+                      '"Upload document" should be translated as "Ajouter un document"')
