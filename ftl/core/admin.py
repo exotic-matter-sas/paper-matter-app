@@ -26,5 +26,5 @@ class UserAdmin(BaseUserAdmin):
         }),
     )
     list_display = ('org', 'email', 'first_name', 'last_name', 'is_staff')
-    search_fields = ('org', 'email', 'first_name', 'last_name')
+    search_fields = ('org__name', 'email', 'first_name', 'last_name')
     ordering = ('email',)
