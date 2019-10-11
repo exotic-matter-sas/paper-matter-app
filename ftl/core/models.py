@@ -40,13 +40,13 @@ class FTLOrg(models.Model):
         return self.name
 
 
-# FTL users Manager
+# FTL users Manager (no username required)
 class FTLUserManager(BaseUserManager):
     use_in_migrations = True
 
     def _create_user(self, email, password, is_staff, is_superuser, **extra_fields):
         """
-        Create and save a user with the given username, email, and password.
+        Create and save a user with the given email, and password.
         """
         if not email:
             raise ValueError('The given email must be set')
