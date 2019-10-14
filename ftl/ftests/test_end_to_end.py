@@ -79,10 +79,9 @@ class SecondOrgSetup(AdminLoginPage, AdminHomePage, SignupPages, LoginPage, Home
         self.visit_signup_page(org2_slug)
 
         # Second user fulfill the user creation form
-        email = self.create_user(user_num=2)
+        email = self.create_user(user_num=2, activate_user=True)
 
         # Second user login to the second organization
-        self.get_elem(self.user_login_link).click()
         self.log_user(user_num=2)
 
         # Second user is properly logged
@@ -100,8 +99,7 @@ class NewUserAddDocumentInsideFolder(SignupPages, LoginPage, HomePage, DocumentV
 
         # First user create its account and login
         self.visit_signup_page(org.slug)
-        self.create_user()
-        self.get_elem(self.user_login_link).click()
+        self.create_user(activate_user=True)
         self.log_user()
 
         # First user add a folder, a document inside it and display document

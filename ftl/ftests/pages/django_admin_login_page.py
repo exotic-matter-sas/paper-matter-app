@@ -7,7 +7,7 @@ class AdminLoginPage(BasePage):
 
     page_title = 'h2'
 
-    admin_login_email_input = '#login-form #id_email'
+    admin_login_email_input = '#login-form #id_username'
     admin_login_password_input = '#login-form #id_password'
     admin_login_submit_input = '#login-form [type="submit"]'
 
