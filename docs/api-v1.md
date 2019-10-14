@@ -250,6 +250,8 @@ Content-Disposition: form-data; name="json"
 
 **Query strings params**
 
+------------------------------------------------------------------------------------------------------------
+
 - _**flat** (optional): if present (no matter its value), all documents of the organization will be display_
 
 OR
@@ -260,7 +262,16 @@ OR
 
 - _**level** (optional): the id of the folder to list (if omitted root folder is listed)_
 
+------------------------------------------------------------------------------------------------------------
 
+- _**ordering** (optional): specify the sort to apply to the documents list (if omitted AND **search** also omitted default value is `-created`, if omitted AND **search** present default value is `-rank`)._
+
+    _Supported values are:_
+  - _`created`: sort documents on their creation date, older first_
+  - _`-created`: sort documents on their creation date, recent first_
+  - _`title`: sort documents on their title by alphabetical order_
+  - _`-title`: sort documents on their title by reverse alphabetical order_
+  - _`-rank`: sort documents on their title, note and full text content by relevance against current **search** query_
 
 **Response** `200`
 
