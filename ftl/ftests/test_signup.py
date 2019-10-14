@@ -53,11 +53,8 @@ class SignupPageTests(SignupPages):
     def test_signup_activate_account(self):
         # User create an account in the first org
         self.visit_signup_page(self.org_1.slug)
-        self.create_user()
+        self.create_user(activate_user=True)
 
-        self.assertEqual(len(mail.outbox), 1)
-        activate_link = re.search(r'(https?://.+/accounts/activate/.+/)', mail.outbox[0].body)
-        self.visit(activate_link.group(1), absolute_url=True)
         self.assertIn('Your email has been verified, thank you! You may go ahead and log in now.',
                       self.get_elem_text(self.main_panel))
 

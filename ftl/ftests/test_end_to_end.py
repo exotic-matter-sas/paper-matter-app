@@ -43,11 +43,9 @@ class InitialSetupTest(SetupPages, SignupPages, LoginPage, HomePage):
         self.visit(user_signup_link, absolute_url=True)
 
         # First user fulfill the user creation form
-        email = self.create_user()
+        email = self.create_user(activate_user=True)
 
         self.assertEqual(len(mail.outbox), 1)
-        activate_link = re.search(r'(https?://.+/accounts/activate/.+/)', mail.outbox[0].body)
-        self.visit(activate_link.group(1), absolute_url=True)
 
         # First user login to the first organization
         self.log_user()
