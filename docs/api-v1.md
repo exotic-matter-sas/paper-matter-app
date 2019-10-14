@@ -9,12 +9,12 @@ Generate an access and refresh token that follow the [JSON Web Token standard](h
 
 **Request body**
 
-- **username** (used to login to your Paper Matter organization)
+- **email** (used to login to your Paper Matter organization)
 - **password** (used to login to your Paper Matter organization)
 
 ```json
 {
-    "username":"jon",
+    "email":"jon",
     "password": "KingInTheNorth!"
 }
 ```
@@ -343,4 +343,4 @@ Rename, annotate, move a document (or set its thumbnail).
 
 3. Open **Manage Environments** window using main dropdown menu (or **ctrl + E**)
 
-4. Set `base_url`, `username` and `password` values in **Base Environment** (or create a private **Sub Environment** to override the default values, and **activate it** through the top left secondary dropdown menu)
+4. Set `base_url`, `email` and `password` values in **Base Environment** (or create a private **Sub Environment** to override the default values, and **activate it** through the top left secondary dropdown menu)

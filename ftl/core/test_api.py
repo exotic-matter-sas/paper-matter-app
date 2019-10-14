@@ -31,7 +31,7 @@ class DocumentsTests(APITestCase):
         self.doc_in_folder = setup_document(self.org, self.user, title='Document in folder',
                                             ftl_folder=self.first_level_folder)
 
-        self.client.login(username=tv.USER1_USERNAME, password=tv.USER1_PASS)
+        self.client.login(email=tv.USER1_EMAIL, password=tv.USER1_PASS)
 
     def test_list_documents(self):
         ftl_document = FTLDocument.objects.get(pid=self.doc.pid)
@@ -135,8 +135,8 @@ class DocumentsTests(APITestCase):
     def test_list_documents_added_by_another_user_of_same_org(self, messages_mocked):
         # First user logout and a second user of the same org login
         self.client.logout()
-        setup_user(self.org, tv.USER2_EMAIL, tv.USER2_USERNAME, tv.USER2_PASS)
-        self.client.login(username=tv.USER2_USERNAME, password=tv.USER2_PASS)
+        setup_user(self.org, tv.USER2_EMAIL, tv.USER2_PASS)
+        self.client.login(email=tv.USER2_EMAIL, password=tv.USER2_PASS)
 
         client_get = self.client.get('/app/api/v1/documents', format='json')
         self.assertEqual(client_get.status_code, status.HTTP_200_OK)
@@ -149,8 +149,8 @@ class DocumentsTests(APITestCase):
         # First user logout and a second user of the another org login
         self.client.logout()
         org2 = setup_org(tv.ORG_NAME_2, tv.ORG_SLUG_2)
-        setup_user(org2, tv.USER2_EMAIL, tv.USER2_USERNAME, tv.USER2_PASS)
-        self.client.login(username=tv.USER2_USERNAME, password=tv.USER2_PASS)
+        setup_user(org2, tv.USER2_EMAIL, tv.USER2_PASS)
+        self.client.login(email=tv.USER2_EMAIL, password=tv.USER2_PASS)
 
         client_get = self.client.get('/app/api/v1/documents', format='json')
         self.assertEqual(client_get.status_code, status.HTTP_200_OK)
@@ -298,7 +298,7 @@ class DocumentsSearchTests(APITestCase):
         setup_admin(self.org)
         self.user = setup_user(self.org)
 
-        self.client.login(username=tv.USER1_USERNAME, password=tv.USER1_PASS)
+        self.client.login(email=tv.USER1_EMAIL, password=tv.USER1_PASS)
 
     def test_list_documents_search_title(self):
         doc_to_search = setup_document(self.org, self.user, note='bingo!')
@@ -341,7 +341,7 @@ class FoldersTests(APITestCase):
 
         self.folder_root_subfolder = setup_folder(self.org, name='Second level folder', parent=self.folder_root)
 
-        self.client.login(username=tv.USER1_USERNAME, password=tv.USER1_PASS)
+        self.client.login(email=tv.USER1_EMAIL, password=tv.USER1_PASS)
 
     def test_folder_tree_root_level(self):
         client_get = self.client.get('/app/api/v1/folders', format='json')
@@ -420,7 +420,7 @@ class JWTAuthenticationTests(APITestCase):
 
     def test_get_token(self):
         response = self.client.post('/app/api/token',
-                                    {'username': tv.USER1_USERNAME, 'password': tv.USER1_PASS},
+                                    {'email': tv.USER1_EMAIL, 'password': tv.USER1_PASS},
                                     format='json')
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -429,7 +429,7 @@ class JWTAuthenticationTests(APITestCase):
 
     def test_refresh_token(self):
         response_token = self.client.post('/app/api/token',
-                                          {'username': tv.USER1_USERNAME, 'password': tv.USER1_PASS},
+                                          {'email': tv.USER1_EMAIL, 'password': tv.USER1_PASS},
                                           format='json')
 
         response = self.client.post('/app/api/token/refresh',
@@ -441,7 +441,7 @@ class JWTAuthenticationTests(APITestCase):
 
     def test_use_token(self):
         response_token = self.client.post('/app/api/token',
-                                          {'username': tv.USER1_USERNAME, 'password': tv.USER1_PASS},
+                                          {'email': tv.USER1_EMAIL, 'password': tv.USER1_PASS},
                                           format='json')
 
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {response_token.data["access"]}')

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-19 20:30+0000\n"
+"POT-Creation-Date: 2019-10-11 17:32+0000\n"
 "PO-Revision-Date: 2019-03-05 16:56+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -17,6 +17,18 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.0.6\n"
+
+#: core/admin.py:17
+msgid "Personal info"
+msgstr "Info personnelles"
+
+#: core/admin.py:18
+msgid "Permissions"
+msgstr "Permissions"
+
+#: core/admin.py:20
+msgid "Important dates"
+msgstr "Dates importantes"
 
 #: core/errors.py:12
 msgid "A folder with this name already exist"
@@ -32,8 +44,8 @@ msgstr "Le ftl_folder spécifié n'existe pas"
 
 #: core/management/commands/import_docs.py:27
 #, python-format
-msgid "Starting mass import for %(username)s from %(path)s"
-msgstr "Début de l'import de masse pour %(username)s depuis %(path)s"
+msgid "Starting mass import for %(email)s from %(path)s"
+msgstr "Début de l'import de masse pour %(email)s depuis %(path)s"
 
 #: core/management/commands/import_docs.py:44
 #, python-format
@@ -75,9 +87,26 @@ msgid_plural "%(count)s documents successfully reindexed in %(time)s seconds"
 msgstr[0] "Réindexation d'un document réussie en %(time)s secondes"
 msgstr[1] "Réindexation de %(count)s documents réussie en %(time)s secondes"
 
-#: core/models.py:46
+#: core/models.py:72
+msgid "username"
+msgstr "nom d'utilisateur"
+
+#: core/models.py:77 core/models.py:89
+msgid "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only."
+msgstr ""
+"Requis. 150 caractères ou moins. Lettres, chiffres et @/./+/-/_ seulement."
+
+#: core/models.py:80
+msgid "A user with that username already exists."
+msgstr "Un utilisateur avec ce nom existe déjà."
+
+#: core/models.py:85
 msgid "email address"
 msgstr "addresse email"
+
+#: core/models.py:92
+msgid "A user with that email already exists."
+msgstr "Un utilisateur avec cet email existe déjà."
 
 #: core/templates/core/home.html:5
 msgid "Home"

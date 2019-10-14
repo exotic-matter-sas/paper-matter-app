@@ -31,6 +31,7 @@ class DocumentViewerModal(BasePage):
 
     def annotate_document(self, note):
         self.get_elem(self.edit_note_button).click()
+        self.wait_for_elem_to_show(self.note_textarea)
         self.get_elem(self.note_textarea).clear()
         self.get_elem(self.note_textarea).send_keys(note)
         self.get_elem(self.save_note_button).click()

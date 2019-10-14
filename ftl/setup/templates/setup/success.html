@@ -10,8 +10,8 @@
     <p>{% trans "You can now:" %}</p>
     <ul>
         <li>{% trans "Send this link to first organization users for them to create an account:" %}<br/>
-            <a href="{% url 'signup' org_slug %}" id="user-signup">
-                {% trans "user signup page" %} ({% url 'signup' org_slug %})
+            <a href="{% url 'signup_user' org_slug %}" id="user-signup">
+                {% trans "user signup page" %} ({% url 'signup_user' org_slug %})
             </a>
         </li>
         <li>{% trans "Connect to admin pannel here:" %}  <br/>

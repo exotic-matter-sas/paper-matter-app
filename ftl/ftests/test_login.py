@@ -27,9 +27,9 @@ class LoginPageTests(LoginPage, HomePage, AdminLoginPage):
         self.visit(LoginPage.url)
         self.log_user()
 
-        # He can see it's username on it
+        # He can see it's email on it
         self.assertIn('home', self.head_title)
-        self.assertIn(self.user.username, self.get_elem(self.profile_name).text)
+        self.assertIn(self.user.email, self.get_elem(self.profile_name).text)
 
     def test_login_failed(self):
         # User login and is redirect to the logged home page
@@ -38,7 +38,7 @@ class LoginPageTests(LoginPage, HomePage, AdminLoginPage):
 
         # User stay on login page and an error message is displayed
         self.assertIn('login', self.head_title)
-        self.assertIn('Please enter a correct username and password', self.get_elem(self.login_failed_div).text)
+        self.assertIn('Please enter a correct email address and password', self.get_elem(self.login_failed_div).text)
 
     def test_login_page_redirect_logged_user(self):
         # User login
@@ -56,10 +56,10 @@ class LoginPageTests(LoginPage, HomePage, AdminLoginPage):
         self.visit(AdminLoginPage.url)
         self.log_admin()
 
-        # He can access app and see it's username plus a little admin icon
+        # He can access app and see it's email plus a little admin icon
         self.visit(HomePage.url)
         self.assertIn('home', self.head_title)
-        self.assertIn(self.admin.username, self.get_elem(self.profile_name).text)
+        self.assertIn(self.admin.email, self.get_elem(self.profile_name).text)
 
 
 class ForgotPasswordTests(LoginPage, ResetPasswordPages):
@@ -111,7 +111,7 @@ class ForgotPasswordTests(LoginPage, ResetPasswordPages):
         # User is not able to login using its old password
         self.visit(LoginPage.url)
         self.log_user()
-        self.assertIn('username and password', self.get_elem_text(self.login_failed_div),
+        self.assertIn('email address and password', self.get_elem_text(self.login_failed_div),
                       'User login should failed using its old password')
 
         # User is able to login using its new password
