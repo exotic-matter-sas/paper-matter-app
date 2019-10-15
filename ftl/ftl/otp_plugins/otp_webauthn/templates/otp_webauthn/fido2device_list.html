@@ -3,8 +3,8 @@
 {% block main %}
     <h2>Fido 2 keys</h2>
     <ul>
-        {% for publisher in object_list %}
-            <li>{{ publisher.persistent_id }} - (<a href="{% url "otp_webauthn_delete"  publisher.id %}">X</a>)</li>
+        {% for fido in object_list %}
+            <li>{{ fido.persistent_id }} - (<a href="{% url "otp_webauthn_delete"  fido.id %}">X</a>)</li>
         {% endfor %}
     </ul>
 

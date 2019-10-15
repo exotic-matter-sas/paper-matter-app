@@ -16,8 +16,8 @@
         "clientDataJSON": new Uint8Array(assertion.response.clientDataJSON),
         "signature": new Uint8Array(assertion.response.signature)
       });
-      let otp_otken = document.getElementById("id_otp_token");
-      otp_otken.value = btoa(String.fromCharCode.apply(null, new Uint8Array(response)));
+      let otp_token = document.getElementById("id_otp_token");
+      otp_token.value = btoa(String.fromCharCode.apply(null, new Uint8Array(response)));
       let form = document.getElementById("user-form");
       form.submit();
     });

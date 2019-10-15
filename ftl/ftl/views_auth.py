@@ -3,7 +3,7 @@ from django.urls import reverse_lazy
 from django_otp.forms import OTPTokenForm
 
 
-class OTPCheckView(LoginViewFTL):
+class OTPCheckView(LoginView):
     template_name = 'ftl/registration/otp_check.html'
     form_class = OTPTokenForm
     success_url = reverse_lazy('home')
