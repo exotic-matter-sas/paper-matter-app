@@ -1,0 +1,18 @@
+{% extends "ftl/main_with_aside.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{% trans "Signup" %}{% endblock %}
+
+{% block main_content %}
+    <form method="post" id="organization-form">
+        <h1 class="text-primary">{% trans "Create your account" %}</h1>
+        {% csrf_token %}
+        {{ form }}
+        <input class="btn btn-lg btn-primary btn-block" type="submit" value="{% trans "Create account" %}">
+    </form>
+{% endblock %}
+
+{% block aside_illustration %}
+    <img src="{% static "user_setup.svg" %}" alt="Woman checking setup steps illustration">
+{% endblock %}

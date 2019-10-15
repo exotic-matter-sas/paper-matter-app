@@ -5,6 +5,7 @@ import urllib.error
 import urllib.request
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from django.core import mail
 from django.test import LiveServerTestCase, tag
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException, NoSuchElementException, StaleElementReferenceException
@@ -58,12 +59,13 @@ class BasePage(LIVE_SERVER):
     error_notification = '.b-toaster-slot .b-toast-danger'
     close_notification = '.b-toaster-slot .b-toast .close'
 
+    loader = '.loader'
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.root_url = ''
 
     def setUp(self, browser=DEFAULT_TEST_BROWSER, browser_locale='en'):
-        platform_system = platform.system()
 
         if browser == 'firefox':
             profile = webdriver.FirefoxProfile()
@@ -139,28 +141,26 @@ class BasePage(LIVE_SERVER):
         else:
             raise NoSuchElementException()
 
-    def get_elem_text(self, css_selector, is_visible=True):
-        elem = self.get_elem(css_selector, is_visible)
+    def get_elem_text(self, css_selector, is_visible=True, lower_text=False, web_element_instead_of_css_selector=False):
+        elem = css_selector if web_element_instead_of_css_selector else self.get_elem(css_selector, is_visible)
 
         if elem.tag_name == 'input':
-            return elem.get_attribute('value')
+            return elem.get_attribute('value').lower() if lower_text else elem.get_attribute('value')
         elif elem.tag_name == 'select':
-            return elem.find_element_by_css_selector('option:checked').text
+            return elem.find_element_by_css_selector('option:checked').text.lower() if lower_text else \
+                elem.find_element_by_css_selector('option:checked').text
         else:
-            return elem.text
+            return elem.text.lower() if lower_text else elem.text
 
-    def get_elems_text(self, css_selector, is_visible=True):
+    def get_elems_text(self, css_selector, is_visible=True, lower_text=False):
         elems_text = []
         elems = self.browser.find_elements_by_css_selector(css_selector)
 
         if elems and elems[0].is_displayed() == is_visible:
             for elem in elems:
-                if elem.tag_name == 'input':
-                    elems_text.append(elem.get_attribute('value'))
-                elif elem.tag_name == 'select':
-                    elems_text.append(elem.find_element_by_css_selector('option:checked').text)
-                else:
-                    elems_text.append(elem.text)
+                elems_text.append(
+                    self.get_elem_text(elem, is_visible, lower_text, web_element_instead_of_css_selector=True)
+                )
             return elems_text
         else:
             raise NoSuchElementException()
@@ -248,3 +248,7 @@ class BasePage(LIVE_SERVER):
         self.wait_for_elem_to_show(self.modal_accept_button)
         self.get_elem(self.modal_accept_button).click()
         self.wait_for_elem_to_disappear(self.modal_accept_button)
+
+    @staticmethod
+    def get_last_email():
+        return mail.outbox[-1]

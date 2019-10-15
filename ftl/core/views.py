@@ -15,7 +15,7 @@ from django.utils.http import http_date
 from django.views import View
 from django_otp.decorators import otp_required
 from mptt.exceptions import InvalidMove
-from rest_framework import generics, views, serializers
+from rest_framework import generics, views, serializers, filters
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 
@@ -40,7 +40,7 @@ class HomeView(View):
         context = {
             'org_name': request.session['org_name'],
             # ftl_account is exposed to javascript through json_script filter in home.html template
-            'ftl_account': {'name': request.user.get_username(),
+            'ftl_account': {'name': request.user.get_username(),  # get_username now return email
                             'isSuperUser': request.user.is_superuser},
         }
         return render(request, 'core/home.html', context)
@@ -69,6 +69,8 @@ class DownloadView(views.APIView):
 
 class FTLDocumentList(generics.ListAPIView):
     serializer_class = FTLDocumentSerializer
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['created', 'title']
 
     def get_queryset(self):
         current_folder = self.request.query_params.get('level', None)

@@ -14,12 +14,15 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.conf import settings
+from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path, include, re_path, reverse_lazy
 from django.views.generic import RedirectView
+from django_registration.backends.activation.views import ActivationView
 
 from ftl import views
+from ftl.forms import FTLAuthenticationForm
 from ftl.ftl_setup_middleware import SetupState
 from ftl.views import PasswordResetAsked, PasswordResetDone
 from ftl.views_auth import OTPCheckView
@@ -32,10 +35,12 @@ urlpatterns = [
     path('setup/', include('setup.urls')),
     path('app/', include('core.urls')),
 
-    path('signup/<slug:org_slug>/', views.CreateFTLUserFormView.as_view(), name='signup'),
-    path('signup/<slug:org_slug>/success/', views.signup_success, name='signup_success'),
+    path('signup/', views.CreateOrgAndFTLUser.as_view(), name='signup_org_user'),
+    path('signup/success/', views.signup_success, name='signup_success'),
+    path('signup/<slug:org_slug>/', views.CreateFTLUserFormView.as_view(), name='signup_user'),
 
-    path('login/', auth_views.LoginView.as_view(redirect_authenticated_user=True),
+    path('login/',
+         auth_views.LoginView.as_view(authentication_form=FTLAuthenticationForm, redirect_authenticated_user=True),
          kwargs={"ftl_setup_state": SetupState.admin_created}, name='login'),
     path('logout/', auth_views.logout_then_login, name='logout'),
 
@@ -47,6 +52,15 @@ urlpatterns = [
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('reset/done/', PasswordResetDone.as_view(), name='password_reset_complete'),
 
+    # Account activation
+    path('accounts/activate/complete/', views.AccountActivationSuccess.as_view(),
+         name='django_registration_activation_complete'),
+
+    # The activation key can make use of any character from the URL-safe base64 alphabet, plus the colon as a separator.
+    url(r'^accounts/activate/(?P<activation_key>[-:\w]+)/$', ActivationView.as_view(),
+        name='django_registration_activate'),
+
+    # OTP
     path('accounts/2fa/check', OTPCheckView.as_view(), name="otp_check"),
     path('accounts/2fa/fido2/', include('ftl.otp_plugins.otp_webauthn.urls')),
 ]

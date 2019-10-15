@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-24 10:14+0000\n"
+"POT-Creation-Date: 2019-10-11 16:19+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,95 +17,245 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: frontend/dist/js/app.bfaafaef.js:8
-msgid "aria-rowcount"
-msgstr ""
+#: frontend/dist/js/app.06180c37.js:23
+msgid "Home"
+msgstr "Accueil"
 
-#: frontend/dist/js/app.bfaafaef.js:24
+#: frontend/dist/js/app.06180c37.js:23
+msgid "Folders management"
+msgstr "Gestion des dossiers"
+
+#: frontend/dist/js/app.06180c37.js:23
 msgid "Key words..."
 msgstr "Mots clés..."
 
-#: frontend/dist/js/app.bfaafaef.js:24
+#: frontend/dist/js/app.06180c37.js:23
 msgid "Search"
 msgstr "Chercher"
 
-#: frontend/dist/js/app.bfaafaef.js:24
+#: frontend/dist/js/app.06180c37.js:23
 msgid "Profile"
 msgstr "Mon compte"
 
-#: frontend/dist/js/app.bfaafaef.js:24
+#: frontend/dist/js/app.06180c37.js:23
 msgid "Sign Out"
 msgstr "Se déconnecter"
 
-#: frontend/dist/js/app.bfaafaef.js:24
+#: frontend/dist/js/app.06180c37.js:23
 msgid "Paper Matter, open source software. Made with ❤ by "
 msgstr "Paper Matter, logiciel open source. Fait avec ❤ par "
 
-#: frontend/dist/js/app.bfaafaef.js:24
-msgid "Generate missing thumb"
-msgstr "Générer les miniatures manquantes"
-
-#: frontend/dist/js/app.bfaafaef.js:24
+#: frontend/dist/js/app.06180c37.js:23
 msgid "Refresh documents list"
 msgstr "Rafraichir la liste des documents"
 
-#: frontend/dist/js/app.bfaafaef.js:24
-msgid "Last refresh"
-msgstr "Dernier rafraichissement"
-
-#: frontend/dist/js/app.bfaafaef.js:24
+#: frontend/dist/js/app.06180c37.js:23 frontend/dist/js/folders.ecf12e7c.js:1
 msgid "Create new folder"
 msgstr "Créer un nouveau dossier"
 
-#: frontend/dist/js/app.bfaafaef.js:24
-msgid "No document yet"
-msgstr "Aucun document"
+#: frontend/dist/js/app.06180c37.js:23
+msgid "Select all"
+msgstr "Tout sélectionner"
 
-#: frontend/dist/js/app.bfaafaef.js:24
+#: frontend/dist/js/app.06180c37.js:23
+msgid "%s documents:"
+msgstr "%s documents:"
+
+#: frontend/dist/js/app.06180c37.js:23
+msgid "Move"
+msgstr "Déplacer"
+
+#: frontend/dist/js/app.06180c37.js:23 frontend/dist/js/folders.ecf12e7c.js:1
+msgid "Delete"
+msgstr "Supprimer"
+
+#: frontend/dist/js/app.06180c37.js:23 frontend/dist/js/folders.ecf12e7c.js:1
 msgid "Cancel"
 msgstr "Annuler"
 
-#: frontend/dist/js/app.bfaafaef.js:24
-msgid "Create"
-msgstr "Créer"
+#: frontend/dist/js/app.06180c37.js:23
+msgid "No document yet"
+msgstr "Aucun document"
 
-#: frontend/dist/js/app.bfaafaef.js:24
-msgid "Create a new folder"
-msgstr "Créer un nouveau dossier"
+#: frontend/dist/js/app.06180c37.js:23
+msgid "Load more"
+msgstr "Plus de résultats"
 
-#: frontend/dist/js/app.bfaafaef.js:24
-msgid "The name of the folder"
-msgstr "Le nom du dossier"
+#: frontend/dist/js/app.06180c37.js:23
+msgid "Rename document"
+msgstr "Renommer le document"
 
-#: frontend/dist/js/app.bfaafaef.js:24
-msgid "The folder will be created in the current folder."
-msgstr "Le dossier sera créé dans le dossier courant"
-
-#: frontend/dist/js/app.bfaafaef.js:24
+#: frontend/dist/js/app.06180c37.js:23
 msgid "Download"
 msgstr "Télécharger"
 
-#: frontend/dist/js/app.bfaafaef.js:24
-msgid "!! Delete doc (no warn) !!"
-msgstr "!! Supprimer (définitif) !!"
+#: frontend/dist/js/app.06180c37.js:23
+msgid "Use CTRL + left click for quick selection"
+msgstr "Utiliser CTRL + clic gauche pour une sélection rapide"
 
-#: frontend/dist/js/app.bfaafaef.js:24
+#: frontend/dist/js/app.06180c37.js:23
 msgid "Upload document"
 msgstr "Ajouter un document"
 
-#: frontend/dist/js/app.bfaafaef.js:24
+#: frontend/dist/js/app.06180c37.js:23
 msgid "Drop file here..."
 msgstr "Déposer un fichier ici..."
 
-#: frontend/dist/js/app.bfaafaef.js:24
+#: frontend/dist/js/app.06180c37.js:23
 msgid "Browse"
 msgstr "Parcourir"
 
-#: frontend/dist/js/app.bfaafaef.js:24
+#: frontend/dist/js/app.06180c37.js:23
 msgid "Upload"
 msgstr "Envoyer"
 
-#: frontend/dist/js/app.bfaafaef.js:24
+#: frontend/dist/js/app.06180c37.js:23
+msgid "Delete documents"
+msgstr "Supprimer les documents"
+
+#: frontend/dist/js/app.06180c37.js:23
 #, javascript-format
-msgid "Folder %s created"
-msgstr "Dossier %s créé"
+msgid "Please confirm that you want to delete %s documents"
+msgstr "Êtes-vous sûr de vouloir supprimer %s documents ?"
+
+#: frontend/dist/js/app.06180c37.js:23
+#, javascript-format
+msgid "Please confirm that you want to delete %s"
+msgstr "Êtes-vous sûr de vouloir supprimer %s ?"
+
+#: frontend/dist/js/app.06180c37.js:23
+msgid "Could not delete document"
+msgstr "Le document n'a pu être supprimé"
+
+#: frontend/dist/js/app.06180c37.js:23
+msgid "Move %s documents to ..."
+msgstr "Déplacer %s documents vers..."
+
+#: frontend/dist/js/app.06180c37.js:23 frontend/dist/js/folders.ecf12e7c.js:1
+#, javascript-format
+msgid "Move %s to ..."
+msgstr "Déplacer %s vers..."
+
+#: frontend/dist/js/app.06180c37.js:23 frontend/dist/js/folders.ecf12e7c.js:1
+#, javascript-format
+msgid "Selected folder: %s"
+msgstr "Dossier sélectionné: %s"
+
+#: frontend/dist/js/app.06180c37.js:23 frontend/dist/js/folders.ecf12e7c.js:1
+msgid "No folder selected"
+msgstr "Aucun dossier sélectionné"
+
+#: frontend/dist/js/app.06180c37.js:23
+msgid "Could not move document"
+msgstr "Le document n'a pu être déplacé"
+
+#: frontend/dist/js/app.06180c37.js:23
+msgid "The new name of the document"
+msgstr "Le nouveau nom du document"
+
+#: frontend/dist/js/app.06180c37.js:23
+#, javascript-format
+msgid "The document will be renamed to %s."
+msgstr "Le document sera renommé %s"
+
+#: frontend/dist/js/app.06180c37.js:23
+msgid "Note"
+msgstr "Note"
+
+#: frontend/dist/js/app.06180c37.js:23
+msgid "Edit note"
+msgstr "Modifier la note"
+
+#: frontend/dist/js/app.06180c37.js:23
+msgid "Edition"
+msgstr "Édition"
+
+#: frontend/dist/js/app.06180c37.js:23
+msgid "Document note ..."
+msgstr "Note du document..."
+
+#: frontend/dist/js/app.06180c37.js:23
+msgid "Preview"
+msgstr "Prévisualisation"
+
+#: frontend/dist/js/app.06180c37.js:23
+msgid "Markdown syntax supported"
+msgstr "Syntaxe Markdown supportée"
+
+#: frontend/dist/js/app.06180c37.js:23
+msgid " supported"
+msgstr " supportée"
+
+#: frontend/dist/js/app.06180c37.js:23
+msgid "unsaved note"
+msgstr "note non sauvegardée"
+
+#: frontend/dist/js/app.06180c37.js:23
+msgid "Save"
+msgstr "Sauvegarder"
+
+#: frontend/dist/js/app.06180c37.js:23
+msgid "No note set"
+msgstr "Pas de note définie"
+
+#: frontend/dist/js/app.06180c37.js:23
+msgid "Could not save note"
+msgstr "La note n'a pu être sauvegardée"
+
+#: frontend/dist/js/app.06180c37.js:23 frontend/dist/js/folders.ecf12e7c.js:1
+msgid "Root"
+msgstr "Racine"
+
+#: frontend/dist/js/app.06180c37.js:23
+msgid "No other folder."
+msgstr "Pas d'autres dossiers."
+
+#: frontend/dist/js/app.06180c37.js:23 frontend/dist/js/folders.ecf12e7c.js:1
+msgid "Unable to refresh folders list"
+msgstr "La liste des dossiers n'a pu être raffraichie"
+
+#: frontend/dist/js/folders.ecf12e7c.js:1
+msgid "Loading"
+msgstr "Chargement"
+
+#: frontend/dist/js/folders.ecf12e7c.js:1
+msgid "The new name of the folder"
+msgstr "Le nouveau nom du dossier"
+
+#: frontend/dist/js/folders.ecf12e7c.js:1
+msgid "The folder will be renamed."
+msgstr "Le dossier sera renommé"
+
+#: frontend/dist/js/folders.ecf12e7c.js:1
+#, javascript-format
+msgid "Deletion of folder \"%s\" and its contents"
+msgstr "Suppression du dossier \"%s\" et de son contenu"
+
+#: frontend/dist/js/folders.ecf12e7c.js:1
+msgid "Type the name of the folder to validate."
+msgstr "Saisissez le nom du dossier pour valider."
+
+#: frontend/dist/js/folders.ecf12e7c.js:1
+msgid ""
+"Please confirm that you want to delete the folder and everything inside. "
+"This action is not reversible."
+msgstr ""
+"Veuillez confirmer que vous voulez supprimer le dossier et tout ce qu'il contient. "
+"Cette action est irréversible."
+
+#: frontend/dist/js/folders.ecf12e7c.js:1
+msgid "Unable to delete folder"
+msgstr "Le dossier n'a pu être supprimé"
+
+#: frontend/dist/js/folders.ecf12e7c.js:1
+#, javascript-format
+msgid "Move %s to %s"
+msgstr "Déplacer %s vers %s"
+
+#: frontend/dist/js/folders.ecf12e7c.js:1
+msgid "Could not move folder"
+msgstr "Le dossier n'a pu être déplacé"
+
+#: frontend/dist/js/folders.ecf12e7c.js:1
+msgid "Unable to get folder details"
+msgstr "Les détails du dossier n'ont pu être récupérés"

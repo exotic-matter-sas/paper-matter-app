@@ -1,0 +1,10 @@
+{% extends "ftl/base_email_body.txt" %}
+{% load i18n %}
+{% block body %}
+{% blocktrans %}An account on Paper Matter has been created with this email. Follow the link below to
+activate your account:{% endblocktrans %}
+
+{{ scheme }}://{{ site.domain }}{% url 'django_registration_activate' activation_key %}
+
+{% blocktrans %}The link will expire in {{ expiration_days }} days {% endblocktrans %}
+{% endblock %}

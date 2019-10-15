@@ -9,12 +9,12 @@ Generate an access and refresh token that follow the [JSON Web Token standard](h
 
 **Request body**
 
-- **username** (used to login to your Paper Matter organization)
+- **email** (used to login to your Paper Matter organization)
 - **password** (used to login to your Paper Matter organization)
 
 ```json
 {
-    "username":"jon",
+    "email":"jon",
     "password": "KingInTheNorth!"
 }
 ```
@@ -250,6 +250,8 @@ Content-Disposition: form-data; name="json"
 
 **Query strings params**
 
+------------------------------------------------------------------------------------------------------------
+
 - _**flat** (optional): if present (no matter its value), all documents of the organization will be display_
 
 OR
@@ -260,7 +262,16 @@ OR
 
 - _**level** (optional): the id of the folder to list (if omitted root folder is listed)_
 
+------------------------------------------------------------------------------------------------------------
 
+- _**ordering** (optional): specify the sort to apply to the documents list (if omitted AND **search** also omitted default value is `-created`, if omitted AND **search** present default value is `-rank`)._
+
+    _Supported values are:_
+  - _`created`: sort documents on their creation date, older first_
+  - _`-created`: sort documents on their creation date, recent first_
+  - _`title`: sort documents on their title by alphabetical order_
+  - _`-title`: sort documents on their title by reverse alphabetical order_
+  - _`-rank`: sort documents on their title, note and full text content by relevance against current **search** query_
 
 **Response** `200`
 
@@ -332,4 +343,4 @@ Rename, annotate, move a document (or set its thumbnail).
 
 3. Open **Manage Environments** window using main dropdown menu (or **ctrl + E**)
 
-4. Set `base_url`, `username` and `password` values in **Base Environment** (or create a private **Sub Environment** to override the default values, and **activate it** through the top left secondary dropdown menu)
+4. Set `base_url`, `email` and `password` values in **Base Environment** (or create a private **Sub Environment** to override the default values, and **activate it** through the top left secondary dropdown menu)

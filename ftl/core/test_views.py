@@ -19,7 +19,7 @@ class CorePagesTests(TestCase):
         response = self.client.get('/app/')
         self.assertContains(
             response,
-            f'<script id="ftlAccount" type="application/json">{{"name": "{self.user.username}", "isSuperUser": false}}'
+            f'<script id="ftlAccount" type="application/json">{{"name": "{self.user.email}", "isSuperUser": false}}'
             f'</script>')
         self.assertContains(response, '<div id="app">')
         self.assertTemplateUsed(response, 'core/home.html')
@@ -27,7 +27,7 @@ class CorePagesTests(TestCase):
     def test_home_get_proper_context(self):
         response = self.client.get('/app/')
         self.assertEqual(response.context['org_name'], self.org.name)
-        self.assertEqual(response.context['ftl_account'], {'name': self.user.username, 'isSuperUser': False})
+        self.assertEqual(response.context['ftl_account'], {'name': self.user.email, 'isSuperUser': False})
 
 
 class DownloadDocumentTests(TestCase):
@@ -63,7 +63,7 @@ class DownloadDocumentTests(TestCase):
 
         # Create a second org and user, log the second user
         org_2 = setup_org(tv.ORG_NAME_2, tv.ORG_SLUG_2)
-        user_2 = setup_user(org_2, tv.USER2_EMAIL, tv.USER2_USERNAME, tv.USER2_PASS)
+        user_2 = setup_user(org_2, tv.USER2_EMAIL, tv.USER2_PASS)
         setup_authenticated_session(self.client, org_2, user_2)
 
         # Trying to download the document of first org with a user of second org returns a 404

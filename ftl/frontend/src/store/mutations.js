@@ -25,5 +25,9 @@ export default {
 
   unselectAllDocuments: function (state) {
     state.selectedDocumentsHome = [];
+  },
+
+  changeSortHome: function (state, value) {
+    state.sortHome = value;
   }
 }
