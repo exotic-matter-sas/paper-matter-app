@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-08 21:12+0000\n"
+"POT-Creation-Date: 2019-10-11 20:13+0000\n"
 "PO-Revision-Date: 2019-03-05 17:05+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,39 +18,67 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.0.6\n"
 
-#: setup/templates/setup/admin_creation_form.html:5
-msgid "Step 2/2: create the administrator"
-msgstr "Étape 2/2 : création de l'administrateur"
+#: setup/forms.py:10
+msgid "Organization name"
+msgstr "Nom de l'organisation"
 
-#: setup/templates/setup/admin_creation_form.html:9
-msgid "One more thing..."
-msgstr "Une dernière chose..."
+#: setup/forms.py:31
+msgid "Organization already exists"
+msgstr "L'organisation existe déjà"
 
-#: setup/templates/setup/admin_creation_form.html:11
-#: setup/templates/setup/first_organization_creation_form.html:11
-msgid "Create first organization"
-msgstr "Créer la première organisation"
+#: setup/templates/setup/first_org_and_admin_creation_form.html:5
+msgid "Create first organization and administrator"
+msgstr "Créez la première organistion et l'administrateur"
 
-#: setup/templates/setup/admin_creation_form.html:12
-#: setup/templates/setup/first_organization_creation_form.html:12
-msgid "Create administrator"
-msgstr "Créer l'administrateur"
+#: setup/templates/setup/first_org_and_admin_creation_form.html:9
+msgid "Welcome to your Paper Matter instance!"
+msgstr "Bienvenue sur votre instance Paper Matter !"
 
-#: setup/templates/setup/admin_creation_form.html:16
+#: setup/templates/setup/first_org_and_admin_creation_form.html:11
+msgid "Some concepts to get started:"
+msgstr "Quelques notions pour bien débuter :"
+
+#: setup/templates/setup/first_org_and_admin_creation_form.html:12
+msgid "Administrator > Instance > Organization > User"
+msgstr "Administrateur > Instance > Organisation > Utilisateur"
+
+#: setup/templates/setup/first_org_and_admin_creation_form.html:14
+msgid ""
+"The <b>administrator</b> can administrate the whole instance via the Admin "
+"portal"
+msgstr ""
+"L'<b>administrateur</b> peut administrer l'instance entière à partir du "
+"portail admin"
+
+#: setup/templates/setup/first_org_and_admin_creation_form.html:15
+msgid ""
+"This <b>instance</b> can host multiple <b>organizations</b>, each "
+"<b>organization</b> can have multiple <b>users</b>."
+msgstr ""
+"Cette <b>instance</b> peut héberger plusieures <b>organisations</b>, chaque "
+"<b>organisation</b> peut avoir plusieurs <b>utilisateurs</b>."
+
+#: setup/templates/setup/first_org_and_admin_creation_form.html:16
+msgid ""
+"A <b>user</b> can only access data and documents of its <b>organisation</b>."
+msgstr ""
+"Un <b>utilisateur</b> peut seulement accéder aux données et documents de son <b>organisation</b>."
+
+#: setup/templates/setup/first_org_and_admin_creation_form.html:17
+msgid ""
+"Finally, the <b>administrator</b> is an <b>user</b> of the first "
+"<b>organization</b>."
+msgstr ""
+"Enfin, l'<b>administrateur</b> est un <b>utilisateur</b> de la première "
+"<b>organisation</b>."
+
+#: setup/templates/setup/first_org_and_admin_creation_form.html:21
+msgid "Create the first organization of your instance and its administrator:"
+msgstr "Créez la première organistion de votre instance et son administrateur :"
+
+#: setup/templates/setup/first_org_and_admin_creation_form.html:24
 msgid "Finish"
 msgstr "Terminer"
-
-#: setup/templates/setup/first_organization_creation_form.html:5
-msgid "Step 1/2: create first organization"
-msgstr "Étape 1/2 : Création de la première organisation"
-
-#: setup/templates/setup/first_organization_creation_form.html:9
-msgid "Welcome!"
-msgstr "Bienvenue !"
-
-#: setup/templates/setup/first_organization_creation_form.html:16
-msgid "Next >"
-msgstr "Suivant >"
 
 #: setup/templates/setup/success.html:5
 msgid "Setup completed"
@@ -88,10 +116,14 @@ msgstr "page de création des utilisateurs"
 msgid "Connect to admin pannel here:"
 msgstr "Vous connecter à l'interface d'administration ici :"
 
-#: setup/templates/setup/success.html:19 setup/templates/setup/success.html:24
+#: setup/templates/setup/success.html:19
 msgid "admin login page"
 msgstr "page de connexion pour les administrateurs"
 
 #: setup/templates/setup/success.html:22
 msgid "Connect as a user to first organization here:"
 msgstr "Connectez-vous à la première organisation en tant qu'utilisateur :"
+
+#: setup/templates/setup/success.html:24
+msgid "user login page"
+msgstr "page de connexion"

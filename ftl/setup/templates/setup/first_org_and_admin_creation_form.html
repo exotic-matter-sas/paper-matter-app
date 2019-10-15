@@ -1,0 +1,30 @@
+{% extends "ftl/main_with_aside.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{% trans 'Create first organization and administrator' %}{% endblock %}
+
+{% block main_content %}
+    <form method="post" id="admin-form">
+        <h1 class="text-primary">{% trans "Welcome to your Paper Matter instance!" %}</h1>
+        <div class="alert alert-primary" role="alert">
+            <p><b>{% trans "Some concepts to get started:" %}</b></p>
+            <p>{% trans "Administrator > Instance > Organization > User"%}</p>
+            <ul>
+                <li>{% trans "The <b>administrator</b> can administrate the whole instance via the Admin portal" %}</li>
+                <li>{% trans "This <b>instance</b> can host multiple <b>organizations</b>, each <b>organization</b> can have multiple <b>users</b>." %}</li>
+                <li>{% trans "A <b>user</b> can only access data and documents of its <b>organization</b>." %}</li>
+                <li>{% trans "Finally, the <b>administrator</b> is an <b>user</b> of the first <b>organization</b>." %}</li>
+            </ul>
+            </p>
+        </div>
+        <h3 class="text-primary">{% trans "Create the first organization of your instance and its administrator:" %}</h3>
+        {% csrf_token %}
+        {{ form }}
+        <input class="btn btn-lg btn-primary btn-block" type="submit" value="{% trans "Finish" %}">
+    </form>
+{% endblock %}
+
+{% block aside_illustration %}
+    <img src="{% static "instance_setup.svg" %}" alt="Woman checking setup steps illustration">
+{% endblock %}

@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.postgres',
+    'django_registration',
     'mptt',
     'rest_framework',
     'webpack_loader',
@@ -173,6 +174,9 @@ TEST_BROWSER_HEADLESS = True
 BROWSER_BINARY_PATH = None
 DEFAULT_CHROMEDRIVER_PATH = 'chromedriver'
 DEFAULT_GECKODRIVER_PATH = 'geckodriver'
+
+# Email activation settings
+ACCOUNT_ACTIVATION_DAYS = 7  # One-week activation window
 
 # Django Rest Framework settings
 REST_FRAMEWORK = {

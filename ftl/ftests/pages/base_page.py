@@ -5,6 +5,7 @@ import urllib.error
 import urllib.request
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from django.core import mail
 from django.test import LiveServerTestCase, tag
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException, NoSuchElementException, StaleElementReferenceException
@@ -65,7 +66,6 @@ class BasePage(LIVE_SERVER):
         self.root_url = ''
 
     def setUp(self, browser=DEFAULT_TEST_BROWSER, browser_locale='en'):
-        platform_system = platform.system()
 
         if browser == 'firefox':
             profile = webdriver.FirefoxProfile()
@@ -248,3 +248,7 @@ class BasePage(LIVE_SERVER):
         self.wait_for_elem_to_show(self.modal_accept_button)
         self.get_elem(self.modal_accept_button).click()
         self.wait_for_elem_to_disappear(self.modal_accept_button)
+
+    @staticmethod
+    def get_last_email():
+        return mail.outbox[-1]

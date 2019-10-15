@@ -1,8 +1,10 @@
 import os
+import re
 from unittest import skipIf, skip
 from unittest.mock import patch
 
 from django import db
+from django.core import mail
 from django.db.models import Func, F
 
 from core import views
@@ -27,11 +29,8 @@ class InitialSetupTest(SetupPages, SignupPages, LoginPage, HomePage):
         # Admin have just install Paper Matter and display it for the first time
         self.visit(self.root_url)
 
-        # Admin fulfill the org creation form
-        self.create_first_organization()
-
         # Admin fulfill the admin creation form
-        self.create_admin()
+        self.create_first_org_and_admin()
 
         # Admin copy the link for user signup and send it to the first user
         user_signup_link = self.get_elem(self.user_signup_link).get_attribute('href')
@@ -44,15 +43,16 @@ class InitialSetupTest(SetupPages, SignupPages, LoginPage, HomePage):
         self.visit(user_signup_link, absolute_url=True)
 
         # First user fulfill the user creation form
-        username = self.create_user()
+        email = self.create_user(activate_user=True)
+
+        self.assertEqual(len(mail.outbox), 1)
 
         # First user login to the first organization
-        self.get_elem(self.user_login_link).click()
         self.log_user()
 
         # First user is properly logged
         self.assertIn('home', self.head_title)
-        self.assertIn(username, self.get_elem(self.profile_name).text)
+        self.assertIn(email, self.get_elem(self.profile_name).text)
 
 
 class SecondOrgSetup(AdminLoginPage, AdminHomePage, SignupPages, LoginPage, HomePage):
@@ -77,15 +77,14 @@ class SecondOrgSetup(AdminLoginPage, AdminHomePage, SignupPages, LoginPage, Home
         self.visit_signup_page(org2_slug)
 
         # Second user fulfill the user creation form
-        username = self.create_user(user_num=2)
+        email = self.create_user(user_num=2, activate_user=True)
 
         # Second user login to the second organization
-        self.get_elem(self.user_login_link).click()
         self.log_user(user_num=2)
 
         # Second user is properly logged
         self.assertIn('home', self.head_title)
-        self.assertIn(username, self.get_elem(self.profile_name).text)
+        self.assertIn(email, self.get_elem(self.profile_name).text)
 
 
 class NewUserAddDocumentInsideFolder(SignupPages, LoginPage, HomePage, DocumentViewerModal):
@@ -98,8 +97,7 @@ class NewUserAddDocumentInsideFolder(SignupPages, LoginPage, HomePage, DocumentV
 
         # First user create its account and login
         self.visit_signup_page(org.slug)
-        self.create_user()
-        self.get_elem(self.user_login_link).click()
+        self.create_user(activate_user=True)
         self.log_user()
 
         # First user add a folder, a document inside it and display document

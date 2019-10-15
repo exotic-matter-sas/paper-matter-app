@@ -15,7 +15,7 @@ class HomePage(BasePage):
     search_button = '#search-button'
     document_list_loader = '#document-list-loader'
 
-    profile_name = '#username'
+    profile_name = '#email'
 
     document_upload_input = 'input[type="file"]'
     document_upload_label = '.custom-file-label'

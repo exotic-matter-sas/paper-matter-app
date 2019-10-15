@@ -1,27 +1,14 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, FormView
+from django.views.generic import FormView
 
-from core.models import FTLOrg
-from setup.forms import AdminCreationForm
-
-
-class CreateOrg(CreateView):
-    model = FTLOrg
-    fields = ('name', 'slug')
-    template_name = 'setup/first_organization_creation_form.html'
-    success_url = reverse_lazy('setup:create_admin')
-
-    def get(self, request, *args, **kwargs):
-        if 'ftl_setup_middleware' in request.session:
-            return super().get(request, *args, **kwargs)
-        else:
-            return redirect('login')
+from core.models import FTLOrg, FTL_PERMISSIONS_USER, permissions_names_to_objects
+from setup.forms import FirstOrgAndAdminCreationForm
 
 
-class CreateAdmin(FormView):
-    template_name = 'setup/admin_creation_form.html'
-    form_class = AdminCreationForm  # Custom form for enabling admin flag
+class CreateFirstOrgAndAdmin(FormView):
+    template_name = 'setup/first_org_and_admin_creation_form.html'
+    form_class = FirstOrgAndAdminCreationForm  # Custom form for enabling admin flag
     success_url = reverse_lazy('setup:success')
 
     def get(self, request, *args, **kwargs):
@@ -31,7 +18,10 @@ class CreateAdmin(FormView):
             return redirect('login')
 
     def form_valid(self, form):
-        form.save()  # save admin user
+        instance = form.save(commit=True)
+        instance.user_permissions.set(permissions_names_to_objects(FTL_PERMISSIONS_USER))
+        instance.save()
+
         return super().form_valid(form)
 
 

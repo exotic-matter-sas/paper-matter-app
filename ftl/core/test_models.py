@@ -15,7 +15,7 @@ class FTLUserModelTest(TestCase):
         """FTLUser must have and org set"""
         with self.assertRaises(ValidationError):
             try:
-                FTLUser(username=tv.USER1_USERNAME,
+                FTLUser(email=tv.USER1_EMAIL,
                         password=tv.USER1_PASS).full_clean()
             except ValidationError as e:
                 self.assertIn('org', str(e))
@@ -25,7 +25,7 @@ class FTLUserModelTest(TestCase):
         """FTLDocument must have an user and org set"""
         with self.assertRaises(ValidationError):
             try:
-                FTLDocument(title=tv.USER1_USERNAME).full_clean()
+                FTLDocument(title=tv.DOCUMENT1_TITLE).full_clean()
             except ValidationError as e:
                 self.assertIn('user', str(e))
                 self.assertIn('org', str(e))
