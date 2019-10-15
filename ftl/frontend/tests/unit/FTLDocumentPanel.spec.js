@@ -29,6 +29,12 @@ localVue.prototype.$route = {get path() { return mockedRoutePath()}}; // router 
 const mockedMixinAlert = jest.fn();
 localVue.mixin({methods: {mixinAlert: mockedMixinAlert}}); // mixinAlert mock
 
+// mock PDFObject
+jest.mock('pdfobject', () => ({
+  supportsPDFs: jest.fn(),
+  embed: jest.fn()
+}));
+
 // mock calls to api requests
 jest.mock('axios', () => ({
   get: jest.fn(),
