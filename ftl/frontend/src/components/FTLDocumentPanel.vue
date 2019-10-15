@@ -35,7 +35,8 @@
         <b-col>
           <b-row>
             <b-col class="my-3">
-              <b-button class="mx-2" variant="primary" :href="`/app/uploads/` + currentOpenDoc.pid + `/doc.pdf`">
+              <b-button class="mx-2" variant="primary" :href="`/app/uploads/` + currentOpenDoc.pid + `/doc.pdf`"
+                        target="_blank">
                 {{ $_('Open PDF')}}
               </b-button>
               <b-button id="move-document" variant="secondary" v-b-modal="'modal-move-document'">Move</b-button>
