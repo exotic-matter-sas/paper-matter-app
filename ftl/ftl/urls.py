@@ -63,6 +63,7 @@ urlpatterns = [
     # OTP
     path('accounts/2fa/check', OTPCheckView.as_view(), name="otp_check"),
     path('accounts/2fa/fido2/', include('ftl.otp_plugins.otp_webauthn.urls')),
+    path('accounts/2fa/static/', include('ftl.otp_plugins.otp_management.urls')),
 ]
 
 if settings.DEBUG and settings.DEV_MODE:

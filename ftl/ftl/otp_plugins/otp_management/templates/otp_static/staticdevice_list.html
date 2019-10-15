@@ -1,0 +1,12 @@
+{% extends 'ftl/django_app_base.html' %}
+
+{% block main %}
+    <h2>Static OTP keys</h2>
+    <ul>
+        {% for static in object_list %}
+            <li>{{ static.persistent_id }} - (<a href="{% url "otp_staticdevice_delete"  static.id %}">X</a>)</li>
+        {% endfor %}
+    </ul>
+
+    <p><a href="{% url "otp_staticdevice_create" %}">Add a key</a></p>
+{% endblock %}

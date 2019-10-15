@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'django_otp.plugins.otp_totp',
     'django_otp.plugins.otp_static',
     'ftl.otp_plugins.otp_webauthn',
+    'ftl.otp_plugins.otp_management',
     'mptt',
     'rest_framework',
     'webpack_loader',
