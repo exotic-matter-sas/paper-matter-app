@@ -29,12 +29,6 @@ localVue.prototype.$route = {get path() { return mockedRoutePath()}}; // router 
 const mockedMixinAlert = jest.fn();
 localVue.mixin({methods: {mixinAlert: mockedMixinAlert}}); // mixinAlert mock
 
-// mock PDFObject
-jest.mock('pdfobject', () => ({
-  supportsPDFs: jest.fn(),
-  embed: jest.fn()
-}));
-
 // mock calls to api requests
 jest.mock('axios', () => ({
   get: jest.fn(),
@@ -101,6 +95,24 @@ describe('FTLDocumentPanel mounted', () => {
     });
 
     expect(mockedOpenDocument).toBeCalledTimes(1);
+  });
+});
+
+// COMPUTED
+describe('FTLDocumentPanel computed', () => {
+  let wrapper;
+  // defined const specific to this describe here
+  beforeEach(() => {
+    wrapper = shallowMount(FTLDocumentPanel, {
+      localVue,
+      methods: mountedMocks,
+      propsData: {pid: docProps.pid},
+    });
+    jest.clearAllMocks(); // Reset mock call count done by mounted
+  });
+
+  it('isIOS return proper value', async () => {
+    // TODO test main iOS user agent device here when we will be able to force recompute of computed
   });
 });
 

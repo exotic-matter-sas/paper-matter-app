@@ -46,12 +46,6 @@ jest.mock('../../src/thumbnailGenerator', () => ({
   createThumbFromUrl: jest.fn()
 }));
 
-// mock PDFObject
-jest.mock('pdfobject', () => ({
-  supportsPDFs: jest.fn(),
-  embed: jest.fn()
-}));
-
 jest.mock('axios', () => ({
   get: jest.fn(),
   post: jest.fn(),

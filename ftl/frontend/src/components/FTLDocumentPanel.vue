@@ -23,8 +23,10 @@
     <b-container class="h-100" fluid>
       <b-row class="h-100">
         <b-col md="8">
-          <div v-if="supportInlinePDF" class="h-100 embed-responsive doc-pdf" id="pdfviewer">
-            <!--PDF.js viewer-->
+          <div v-if="!isIOS" class="h-100 embed-responsive doc-pdf" id="pdfviewer">
+            <iframe v-if="currentOpenDoc.pid" class="embed-responsive-item"
+                    :src="`/assets/pdfjs/web/viewer.html?file=/app/uploads/` + currentOpenDoc.pid + `#search=` + search">
+            </iframe>
           </div>
           <div v-else>
             <span class="text-muted">
@@ -67,7 +69,6 @@
 </template>
 <script>
   import axios from 'axios';
-  import PDFObject from "pdfobject";
   import FTLMoveDocuments from "@/components/FTLMoveDocuments";
   import FTLRenameDocument from "@/components/FTLRenameDocument";
   import FTLThumbnailGenMixin from "@/components/FTLThumbnailGenMixin";
@@ -98,7 +99,6 @@
       return {
         currentOpenDoc: {},
         publicPath: process.env.BASE_URL,
-        supportInlinePDF: PDFObject.supportsPDFs
       }
     },
 
@@ -106,34 +106,20 @@
       this.openDocument();
     },
 
+    computed: {
+      isIOS: function () {
+          return (/iphone|ipad|ipod/i.test(window.navigator.userAgent.toLowerCase()));
+      }
+    },
+
     methods: {
       openDocument: function () {
-        const pdf_options = {
-          forcePDFJS: true,
-          assumptionMode: false,
-          PDFJS_URL: "/assets/pdfjs/web/viewer.html"
-        };
-
         this.$bvModal.show('document-viewer');
 
         axios
           .get('/app/api/v1/documents/' + this.pid)
           .then(response => {
             this.currentOpenDoc = response.data;
-
-            if (this.supportInlinePDF) {
-              PDFObject.embed('/app/uploads/' + this.currentOpenDoc.pid + '/doc.pdf',
-                "#pdfviewer",
-                {
-                  ...pdf_options, ...{
-                    pdfOpenParams: {
-                      pagemode: "none",
-                      search: this.search
-                    },
-                  }
-                }
-              );
-            }
 
             if (!response.data.thumbnail_available) {
               this.createThumbnailForDocument(this.currentOpenDoc)

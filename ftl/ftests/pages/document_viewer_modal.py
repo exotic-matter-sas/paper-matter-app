@@ -16,7 +16,8 @@ class DocumentViewerModal(BasePage):
     note_text = '#note'
     save_note_button = '#save-note'
 
-    pdf_viewer = '#document-viewer iframe'
+    pdf_viewer_iframe = '#document-viewer iframe'
+    document_viewer_panel = '#document-viewer'
 
     def rename_document(self, document_name):
         self.wait_for_elem_to_show(self.rename_document_button)
