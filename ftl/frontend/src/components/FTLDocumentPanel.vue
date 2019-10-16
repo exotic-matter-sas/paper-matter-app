@@ -23,15 +23,24 @@
     <b-container class="h-100" fluid>
       <b-row class="h-100">
         <b-col md="8">
-          <div class="h-100 embed-responsive doc-pdf ">
+          <div v-if="!isIOS" class="h-100 embed-responsive doc-pdf" id="pdfviewer">
             <iframe v-if="currentOpenDoc.pid" class="embed-responsive-item"
                     :src="`/assets/pdfjs/web/viewer.html?file=/app/uploads/` + currentOpenDoc.pid + `#search=` + search">
             </iframe>
           </div>
+          <div v-else>
+            <span class="text-muted">
+              {{ $_('Viewer not available on this device, open the document instead.') }}
+            </span>
+          </div>
         </b-col>
         <b-col>
           <b-row>
-            <b-col>
+            <b-col class="my-3">
+              <b-button class="mx-2" variant="primary" :href="`/app/uploads/` + currentOpenDoc.pid + `/doc.pdf`"
+                        target="_blank">
+                {{ $_('Open PDF')}}
+              </b-button>
               <b-button id="move-document" variant="secondary" v-b-modal="'modal-move-document'">Move</b-button>
             </b-col>
           </b-row>
@@ -89,7 +98,7 @@
     data() {
       return {
         currentOpenDoc: {},
-        publicPath: process.env.BASE_URL
+        publicPath: process.env.BASE_URL,
       }
     },
 
@@ -97,13 +106,20 @@
       this.openDocument();
     },
 
+    computed: {
+      isIOS: function () {
+          return (/iphone|ipad|ipod/i.test(window.navigator.userAgent.toLowerCase()));
+      }
+    },
+
     methods: {
       openDocument: function () {
+        this.$bvModal.show('document-viewer');
+
         axios
           .get('/app/api/v1/documents/' + this.pid)
           .then(response => {
             this.currentOpenDoc = response.data;
-            this.$bvModal.show('document-viewer');
 
             if (!response.data.thumbnail_available) {
               this.createThumbnailForDocument(this.currentOpenDoc)
@@ -137,9 +153,9 @@
   }
 </script>
 <style lang="scss">
-$document-viewer-padding: 2em;
+  $document-viewer-padding: 2em;
 
-#document-viewer {
+  #document-viewer {
     .container {
       max-width: none;
     }
@@ -153,11 +169,11 @@ $document-viewer-padding: 2em;
     }
 
     .modal-title {
-        vertical-align: middle;
+      vertical-align: middle;
     }
 
     .modal-content {
       height: calc(100vh - (#{$document-viewer-padding} * 2));
     }
-}
+  }
 </style>

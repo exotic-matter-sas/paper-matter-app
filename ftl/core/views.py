@@ -60,8 +60,16 @@ class DownloadView(views.APIView):
         else:
             response = HttpResponse(doc.binary, 'application/octet')
             response['Last-Modified'] = http_date(doc.edited.timestamp())
-            response['Content-Disposition'] = 'attachment; filename="%s"' % doc.binary.name
+            response['Content-Disposition'] = f'attachment; filename="{doc.binary.name}"'
             return response
+
+
+class ViewPDF(DownloadView):
+    def get(self, request, *args, **kwargs):
+        response = super().get(request, *args, **kwargs)
+        response['Content-Type'] = 'application/pdf'
+        response['Content-Disposition'] = 'inline'
+        return response
 
 
 class FTLDocumentList(generics.ListAPIView):

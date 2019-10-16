@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-11 20:13+0000\n"
+"POT-Creation-Date: 2019-10-15 15:30+0000\n"
 "PO-Revision-Date: 2019-03-05 17:05+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -28,7 +28,7 @@ msgstr "L'organisation existe déjà"
 
 #: setup/templates/setup/first_org_and_admin_creation_form.html:5
 msgid "Create first organization and administrator"
-msgstr "Créez la première organistion et l'administrateur"
+msgstr "Créez la première organisation et l'administrateur"
 
 #: setup/templates/setup/first_org_and_admin_creation_form.html:9
 msgid "Welcome to your Paper Matter instance!"
@@ -60,9 +60,10 @@ msgstr ""
 
 #: setup/templates/setup/first_org_and_admin_creation_form.html:16
 msgid ""
-"A <b>user</b> can only access data and documents of its <b>organisation</b>."
+"A <b>user</b> can only access data and documents of its <b>organization</b>."
 msgstr ""
-"Un <b>utilisateur</b> peut seulement accéder aux données et documents de son <b>organisation</b>."
+"Un <b>utilisateur</b> peut seulement accéder aux données et documents de son "
+"<b>organisation</b>."
 
 #: setup/templates/setup/first_org_and_admin_creation_form.html:17
 msgid ""
@@ -74,7 +75,8 @@ msgstr ""
 
 #: setup/templates/setup/first_org_and_admin_creation_form.html:21
 msgid "Create the first organization of your instance and its administrator:"
-msgstr "Créez la première organistion de votre instance et son administrateur :"
+msgstr ""
+"Créez la première organisation de votre instance et son administrateur :"
 
 #: setup/templates/setup/first_org_and_admin_creation_form.html:24
 msgid "Finish"

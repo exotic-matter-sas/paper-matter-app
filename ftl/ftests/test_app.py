@@ -78,8 +78,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         # User click on the first listed document
         self.open_first_document()
         # User can see the pdf inside the pdf viewer
-        self.wait_for_elem_to_show(self.pdf_viewer)
-        pdf_viewer_iframe = self.get_elem(self.pdf_viewer)
+        pdf_viewer_iframe = self.get_elem(self.pdf_viewer_iframe)
         self.browser.switch_to_frame(pdf_viewer_iframe)
         pdf_viewer_iframe_title = self.get_elem('title', False).get_attribute("innerHTML")
 
@@ -251,7 +250,6 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
 
         # User open first document of search result and close it
         self.open_first_document()
-        self.wait_for_elem_to_show(self.pdf_viewer)
         self.close_document()
 
         # The search result is still displayed after closing the first document
@@ -605,7 +603,6 @@ class DocumentViewerModalTests(LoginPage, HomePage, DocumentViewerModal):
         setup_document(self.org, self.user)
         self.refresh_document_list()
         self.open_first_document()
-        self.wait_for_elem_to_show(self.pdf_viewer)
 
         # User rename the document
         new_doc_title = 'Renamed doc'
@@ -623,7 +620,6 @@ class DocumentViewerModalTests(LoginPage, HomePage, DocumentViewerModal):
         setup_document(self.org, self.user)
         self.refresh_document_list()
         self.open_first_document()
-        self.wait_for_elem_to_show(self.pdf_viewer)
 
         # User annotate the document
         new_doc_note = 'New note'

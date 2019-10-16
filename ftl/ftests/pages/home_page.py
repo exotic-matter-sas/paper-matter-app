@@ -93,6 +93,7 @@ class HomePage(BasePage):
     def open_first_document(self):
         first_document_title = self.get_elem(self.first_document_title)
         first_document_title.click()
+        self.wait_for_elem_to_show(self.document_viewer_panel)
 
     def select_documents(self, documents_names):
         documents_list = self.get_elems(self.documents_thumbnails)

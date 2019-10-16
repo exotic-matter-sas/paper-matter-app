@@ -1,6 +1,5 @@
 import os
-import re
-from unittest import skipIf, skip
+from unittest import skipIf
 from unittest.mock import patch
 
 from django import db
@@ -108,8 +107,8 @@ class NewUserAddDocumentInsideFolder(SignupPages, LoginPage, HomePage, DocumentV
 
         # User can see the uploaded document inside the viewer
         # User can see the pdf inside the pdf viewer
-        self.wait_for_elem_to_show(self.pdf_viewer)
-        pdf_viewer_iframe = self.get_elem(self.pdf_viewer)
+        self.wait_for_elem_to_show(self.pdf_viewer_iframe)
+        pdf_viewer_iframe = self.get_elem(self.pdf_viewer_iframe)
         self.browser.switch_to_frame(pdf_viewer_iframe)
         pdf_viewer_iframe_title = self.get_elem('title', False).get_attribute("innerHTML")
 
