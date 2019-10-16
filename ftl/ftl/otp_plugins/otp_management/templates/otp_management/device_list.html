@@ -1,0 +1,46 @@
+{% extends 'ftl/django_app_base.html' %}
+{% load static %}
+
+{% block header %}
+    <script type="application/javascript" src="{% static 'qrcode.js' %}"></script>
+{% endblock %}
+{% block main %}
+    <h1>Current OTP device registered with this account</h1>
+    <h2>Static OTP keys</h2>
+    <ul>
+        {% for static in static_device %}
+            <li>{{ static.persistent_id }} ({{ static.name }}) - (<a
+                    href="{% url "otp_static_delete"  static.id %}">X</a>)
+            </li>
+
+            <ul>
+                {% for code in static.token_set.all %}
+                    <li>{{ code.token }}</li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
+    </ul>
+    <a href="{% url "otp_static_add" %}">Add OTP keys</a>
+
+    <h2>TOTP Devices</h2>
+    <ul>
+        {% for totp in totp_device %}
+            <li>{{ totp.persistent_id }} ({{ totp.name }})- (<a
+                    href="{% url "otp_totp_delete"  totp.id %}">X</a>)
+
+                <img src="{% url 'otp_totp_qrcode' totp.id %}">
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="{% url "otp_totp_add" %}">Add TOTP device</a>
+
+    <h2>FIDO2 Devices</h2>
+    <ul>
+        {% for fido in fido2_device %}
+            <li>{{ fido.persistent_id }} ({{ fido.name }})- (<a
+                    href="{% url "otp_fido2_delete"  fido.id %}">X</a>)
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="{% url "otp_webauthn_register" %}">Add FIDO key</a>
+{% endblock %}
