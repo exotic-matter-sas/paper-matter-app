@@ -6,10 +6,11 @@ from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.core.files.base import ContentFile
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 from django.db.models import F
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound, HttpResponseRedirect, Http404
 from django.shortcuts import render, get_object_or_404
+from django.utils.decorators import method_decorator
 from django.utils.http import http_date
 from django.views import View
 from mptt.exceptions import InvalidMove
@@ -147,6 +148,7 @@ class FTLDocumentThumbnail(views.APIView):
             return response
 
 
+@method_decorator(transaction.non_atomic_requests, name='dispatch')
 class FileUploadView(views.APIView):
     parser_classes = (MultiPartParser,)
     serializer_class = FTLDocumentSerializer
@@ -174,18 +176,18 @@ class FileUploadView(views.APIView):
         else:
             ftl_folder = None
 
-        ftl_doc = FTLDocument()
-        ftl_doc.ftl_folder = ftl_folder
-        ftl_doc.ftl_user = self.request.user
-        ftl_doc.binary = file_obj
-        ftl_doc.org = self.request.user.org
-        ftl_doc.title = file_obj.name
+        with transaction.atomic():
+            ftl_doc = FTLDocument()
+            ftl_doc.ftl_folder = ftl_folder
+            ftl_doc.ftl_user = self.request.user
+            ftl_doc.binary = file_obj
+            ftl_doc.org = self.request.user.org
+            ftl_doc.title = file_obj.name
 
-        if 'thumbnail' in request.POST:
-            ftl_doc.thumbnail_binary = ContentFile(_extract_binary_from_data_uri(request.POST['thumbnail']),
-                                                   'thumb.png')
-
-        ftl_doc.save()
+            if 'thumbnail' in request.POST:
+                ftl_doc.thumbnail_binary = ContentFile(_extract_binary_from_data_uri(request.POST['thumbnail']),
+                                                       'thumb.png')
+            ftl_doc.save()
 
         ftl_doc_processing.apply_processing(ftl_doc)
 
