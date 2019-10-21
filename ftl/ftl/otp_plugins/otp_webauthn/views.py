@@ -1,15 +1,19 @@
 import cbor2
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import LoginView
 from django.http import HttpResponse
 from django.shortcuts import render
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import ListView, DeleteView
+from django_otp.decorators import otp_required
 from fido2.client import ClientData
 from fido2.ctap2 import AttestationObject, AttestedCredentialData
 from fido2.server import RelyingParty, Fido2Server
 
+from ftl.otp_plugins.otp_webauthn.forms import OTPTokenFormFido2
 from ftl.otp_plugins.otp_webauthn.models import Fido2Device, Fido2State
 
 FIDO2_REGISTER_STATE = 'fido2_register_state'
@@ -19,18 +23,23 @@ rp = RelyingParty(settings.FIDO2_RP_ID, "FTL")
 fido2 = Fido2Server(rp)
 
 
+@method_decorator(login_required, name='dispatch')
+class Fido2Check(LoginView):
+    template_name = 'otp_webauthn/fido2device_check.html'
+    form_class = OTPTokenFormFido2
+    success_url = reverse_lazy('home')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(otp_required(if_configured=True), name='dispatch')
 class Fido2Register(View):
     def get(self, request, *args, **kwargs):
         return render(request, 'otp_webauthn/register.html')
-
-
-class Fido2DeviceList(ListView):
-    model = Fido2Device
-
-
-class Fido2DeviceDelete(DeleteView):
-    model = Fido2Device
-    success_url = reverse_lazy("otp_webauthn_list")
 
 
 @csrf_exempt
