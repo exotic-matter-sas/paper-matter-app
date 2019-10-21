@@ -189,11 +189,12 @@ class FileUploadView(views.APIView):
                     ftl_doc.thumbnail_binary = ContentFile(_extract_binary_from_data_uri(request.POST['thumbnail']),
                                                            'thumb.png')
                 except ValueError as e:
-                    if 'ignore_thumbnail_generation_error' in payload and not payload[
-                        'ignore_thumbnail_generation_error']:
+                    if 'ignore_thumbnail_generation_error' in payload and \
+                        not payload['ignore_thumbnail_generation_error']:
                         raise e
                     else:
                         pass
+
             ftl_doc.save()
 
         ftl_doc_processing.apply_processing(ftl_doc)
