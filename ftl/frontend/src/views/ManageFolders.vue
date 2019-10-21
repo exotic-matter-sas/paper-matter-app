@@ -264,6 +264,8 @@
         const folder = event.folder;
         const foundIndex = this.folders.findIndex(x => x.id === folder.id);
         this.folders.splice(foundIndex, 1);
+
+        this.unselectFolder();
       },
 
       folderUpdated: function (event) {
