@@ -37,11 +37,14 @@
         <b-col>
           <b-row>
             <b-col class="my-3">
-              <b-button class="mx-2" variant="primary" :href="`/app/uploads/` + currentOpenDoc.pid + `/doc.pdf`"
+              <b-button class="mx-1" variant="primary" :href="`/app/uploads/` + currentOpenDoc.pid + `/doc.pdf`"
                         target="_blank">
                 {{ $_('Open PDF')}}
               </b-button>
-              <b-button id="move-document" variant="secondary" v-b-modal="'modal-move-document'">Move</b-button>
+              <b-button id="move-document" class="mx-1" variant="secondary" v-b-modal="'modal-move-document'">Move
+              </b-button>
+              <b-button id="delete-document" class="mx-1" variant="danger" v-b-modal="'modal-delete-document'">Delete
+              </b-button>
             </b-col>
           </b-row>
           <b-row>
@@ -65,12 +68,19 @@
       v-if="currentOpenDoc.pid"
       :doc="currentOpenDoc"
       @event-document-renamed="documentRenamed"/>
+
+    <FTLDeleteDocuments
+      v-if="currentOpenDoc.pid"
+      id="modal-delete-document"
+      :docs="[currentOpenDoc]"
+      @event-document-deleted="documentDeleted"/>
   </b-modal>
 </template>
 <script>
   import axios from 'axios';
   import FTLMoveDocuments from "@/components/FTLMoveDocuments";
   import FTLRenameDocument from "@/components/FTLRenameDocument";
+  import FTLDeleteDocuments from "@/components/FTLDeleteDocuments";
   import FTLThumbnailGenMixin from "@/components/FTLThumbnailGenMixin";
   import FTLNote from "@/components/FTLNote";
 
@@ -81,6 +91,7 @@
     components: {
       FTLMoveDocuments,
       FTLRenameDocument,
+      FTLDeleteDocuments,
       FTLNote
     },
 
@@ -108,7 +119,7 @@
 
     computed: {
       isIOS: function () {
-          return (/iphone|ipad|ipod/i.test(window.navigator.userAgent.toLowerCase()));
+        return (/iphone|ipad|ipod/i.test(window.navigator.userAgent.toLowerCase()));
       }
     },
 
@@ -141,6 +152,10 @@
 
       documentNoteUpdated: function (event) {
         this.currentOpenDoc = event.doc;
+      },
+
+      documentDeleted: function (event) {
+        this.closeDocument();
       },
 
       closeDocument: function () {
