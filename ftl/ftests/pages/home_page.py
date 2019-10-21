@@ -8,11 +8,14 @@ from ftl.settings import BASE_DIR
 class HomePage(BasePage):
     url = '/app/'
 
+    home_page_link = '.navbar-nav .fa-home'
+    manage_folder_page_link = '.navbar-nav .fa-folder'
+
     search_input = '#search-input'
     search_button = '#search-button'
     document_list_loader = '#document-list-loader'
 
-    profile_name = '#username'
+    profile_name = '#email'
 
     document_upload_input = 'input[type="file"]'
     document_upload_label = '.custom-file-label'
@@ -24,6 +27,13 @@ class HomePage(BasePage):
     create_folder_button = '#create-folder'
     folders_list_buttons = 'button.folder > span:not(.spinner-border):not(.d-none)'
     folders_list_loader = '#folder-list-loader'
+
+    sort_dropdown_button = '#documents-sort'
+    az_sort_item = '#az-sort'
+    za_sort_item = '#za-sort'
+    recent_sort_item = '#recent-recent'
+    older_sort_item = '#older-sort'
+    relevance_sort_item = '#relevance-sort'
 
     batch_toolbar = '#action-selected-documents'
     unselect_all_docs_batch_button = '#unselect-all-documents'
@@ -72,20 +82,22 @@ class HomePage(BasePage):
         self.get_elem(self.create_folder_button).click()
         self.wait_for_elem_to_show(self.modal_input)
         self.get_elem(self.modal_input).send_keys(folder_name)
-        self.get_elem(self.modal_accept_button).click()
+        self.accept_modal()
         if close_notification:
             self.close_all_notifications()
 
     def refresh_document_list(self):
-        refresh_button = self.get_elem(self.refresh_documents_button)
-        refresh_button.click()
+        self.get_elem(self.refresh_documents_button).click()
+        self.wait_document_list_loaded()
 
     def open_first_document(self):
         first_document_title = self.get_elem(self.first_document_title)
         first_document_title.click()
+        self.wait_for_elem_to_show(self.document_viewer_panel)
 
     def select_documents(self, documents_names):
         documents_list = self.get_elems(self.documents_thumbnails)
         for document in documents_list:
             if document.find_element_by_css_selector(self.documents_titles).text in documents_names:
                 document.find_element_by_css_selector(self.documents_checkboxes).click()
+        self.wait_for_elem_to_show(self.batch_toolbar)

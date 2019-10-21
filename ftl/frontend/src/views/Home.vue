@@ -13,7 +13,7 @@
         </b-col>
       </b-row>
 
-      <b-row v-show="!documentsSelected.length" class="my-3" id="folders-list">
+      <b-row v-show="!selectedDocumentsHome.length" class="mt-3" id="folders-list">
         <b-col>
           <b-button id="refresh-documents" :disabled="docsLoading" variant="primary" @click="refreshAll">
             <font-awesome-icon icon="sync" :spin="docsLoading" :class="{ 'stop-spin':!docsLoading }"
@@ -28,10 +28,30 @@
           </b-button>
           <FTLFolder v-for="folder in folders" :key="folder.id" :folder="folder"
                      @event-change-folder="navigateToFolder"/>
+
+          <b-dropdown id="documents-sort" right variant="link" class="m-1 text-decoration-none">
+            <template slot="button-content">
+              <font-awesome-icon icon="sort"/>
+              {{ $_('Sort') }}
+              <span v-if="sort === 'az'">(a-z)</span>
+              <span v-else-if="sort === 'za'">(z-a)</span>
+              <span v-else-if="sort === 'recent'">({{ $_('recent') }})</span>
+              <span v-else-if="sort === 'older'">({{ $_('older') }})</span>
+            </template>
+            <b-dropdown-item-button id="az-sort" href="#" @click.prevent="sort = 'az'">{{ $_('A-Z') }}&nbsp;
+              <span v-if="sort === 'az'">&checkmark;</span></b-dropdown-item-button>
+            <b-dropdown-item-button id="za-sort" href="#" @click.prevent="sort = 'za'">{{ $_('Z-A') }}&nbsp;
+              <span v-if="sort === 'za'">&checkmark;</span></b-dropdown-item-button>
+            <b-dropdown-divider/>
+            <b-dropdown-item-button id="recent-sort" href="#" @click.prevent="sort = 'recent'">{{ $_('Recent first') }}&nbsp;
+              <span v-if="sort === 'recent'">&checkmark;</span></b-dropdown-item-button>
+            <b-dropdown-item-button id="older-sort" href="#" @click.prevent="sort = 'older'">{{ $_('Older first') }}&nbsp;
+              <span v-if="sort === 'older'">&checkmark;</span></b-dropdown-item-button>
+          </b-dropdown>
         </b-col>
       </b-row>
 
-      <b-row v-show="documentsSelected.length" id="action-selected-documents">
+      <b-row v-show="selectedDocumentsHome.length" class="mb-3" id="action-selected-documents">
         <b-col>
           <b-button id="select-all-documents" variant="outline-primary" title="Select all documents displayed"
                     @click="$store.commit('selectDocuments', docs)">
@@ -39,31 +59,32 @@
           </b-button>
         </b-col>
         <b-col cols="8" class="text-right">
-          <span class="text-muted d-none d-sm-inline">{{ $_('%s documents:', [documentsSelected.length]) }}</span>
+          <span class="text-muted d-none d-sm-inline">{{ $_('%s documents:', [selectedDocumentsHome.length]) }}</span>
+          <b-button id="unselect-all-documents" @click="$store.commit('unselectAllDocuments')"
+                    title="Unselect documents">
+            <font-awesome-icon icon="window-close" class="d-sm-none"/>
+            <span class="d-none d-sm-inline">{{ $_('Cancel') }}</span>
+          </b-button>
           <b-button id="move-documents" variant="primary" v-b-modal="'modal-move-documents'" title="Move to folder">
             <font-awesome-icon icon="folder-open" class="d-sm-none"/>
             <span class="d-none d-sm-inline">{{ $_('Move') }}</span>
           </b-button>
-          <b-button id="delete-documents" variant="danger" v-b-modal="'modal-delete-documents'" title="Delete documents">
+          <b-button id="delete-documents" variant="danger" v-b-modal="'modal-delete-documents'"
+                    title="Delete documents">
             <font-awesome-icon icon="trash" class="d-sm-none"/>
             <span class="d-none d-sm-inline">{{ $_('Delete') }}</span>
-          </b-button>
-          <b-button id="unselect-all-documents" @click="$store.commit('unselectAllDocuments')" title="Unselect documents">
-            <font-awesome-icon icon="window-close" class="d-sm-none"/>
-            <span class="d-none d-sm-inline">{{ $_('Cancel') }}</span>
           </b-button>
         </b-col>
       </b-row>
 
-      <b-row class="my-3" id="documents-list">
+      <b-row class="mt-2 mb-3" id="documents-list">
         <b-col v-if="docsLoading">
-          <b-spinner class="mx-auto" id="documents-list-loader"
+          <b-spinner class="mx-auto loader" id="documents-list-loader"
                      label="Loading..."></b-spinner>
         </b-col>
         <b-col v-else-if="docs.length">
           <b-row tag="section">
-            <FTLDocument v-for="doc in docs" :key="doc.pid" :doc="doc" @event-delete-doc="documentDeleted"
-                         @event-open-doc="navigateToDocument"/>
+            <FTLDocument v-for="doc in docs" :key="doc.pid" :doc="doc" @event-open-doc="navigateToDocument"/>
           </b-row>
         </b-col>
         <b-col v-else class="text-center">{{ this.$_('No document yet') }}</b-col>
@@ -79,73 +100,25 @@
       </b-row>
 
       <!-- Pdf viewer popup -->
-      <b-modal id="document-viewer"
-               hide-footer
-               centered
-               @hidden="closeDocument">
-        <template slot="modal-header">
-          <b-container>
-            <b-row align-v="center">
-              <b-col>
-                <h5 class="d-inline modal-title">{{ currentOpenDoc.title }}</h5>
-                <b-button id="rename-document" v-b-modal="'modal-rename-document'" variant="link">
-                  <font-awesome-icon icon="edit" :title="$_('Rename document')"/>
-                </b-button>
-              </b-col>
-              <b-col>
-                <button @click="$bvModal.hide('document-viewer')" type="button" aria-label="Close" class="close">×</button>
-              </b-col>
-            </b-row>
-          </b-container>
-        </template>
-        <b-container class="h-100">
-          <b-row class="h-100">
-            <b-col md="8">
-              <div class="h-100 embed-responsive doc-pdf ">
-                <iframe v-if="currentOpenDoc.pid" class="embed-responsive-item"
-                        :src="`/assets/pdfjs/web/viewer.html?file=/app/uploads/` + currentOpenDoc.pid + `#search=` + currentSearch">
-                </iframe>
-              </div>
-            </b-col>
-            <b-col md="4" class="d-none d-md-block">
-              <b-row>BBB</b-row>
-              <b-row>CCC</b-row>
-              <b-row>
-                <b-col>
-                  <b-button id="move-document" variant="secondary" v-b-modal="'modal-move-document'">Move</b-button>
-                </b-col>
-              </b-row>
-            </b-col>
-          </b-row>
-        </b-container>
-      </b-modal>
+      <FTLDocumentPanel v-if="docPid" :pid="docPid"
+                        @event-document-panel-closed="closeDocument"
+                        @event-document-renamed="documentUpdated"
+                        @event-document-moved="documentDeleted"/>
 
       <FTLNewFolder
         :parent="getCurrentFolder"
         @event-folder-created="folderCreated"/>
 
-      <!-- For document panel Move button -->
-      <FTLMoveDocuments
-        v-if="currentOpenDoc"
-        id="modal-move-document"
-        :docs="[currentOpenDoc]"
-        @event-document-moved="documentDeleted"/>
-
       <!-- For batch action move document -->
       <FTLMoveDocuments
-        v-if="documentsSelected.length > 0"
+        v-if="selectedDocumentsHome.length > 0"
         id="modal-move-documents"
-        :docs="documentsSelected"
+        :docs="selectedDocumentsHome"
         @event-document-moved="documentDeleted"/>
 
-      <FTLRenameDocument
-        v-if="currentOpenDoc.pid"
-        :doc="currentOpenDoc"
-        @event-document-renamed="documentUpdated"/>
-
       <FTLDeleteDocuments
-        v-if="documentsSelected.length > 0"
-        :docs="documentsSelected"
+        v-if="selectedDocumentsHome.length > 0"
+        :docs="selectedDocumentsHome"
         @event-document-deleted="documentDeleted"/>
     </b-col>
   </main>
@@ -153,60 +126,45 @@
 
 <script>
   // @ is an alias to /src
+  import {mapState} from 'vuex'
+  import HomeBase from "@/views/HomeBase";
   import FTLFolder from '@/components/FTLFolder.vue';
-  import FTLDocument from '@/components/FTLDocument';
-  import FTLUpload from '@/components/FTLUpload';
   import FTLNewFolder from "@/components/FTLNewFolder";
+  import FTLDocumentPanel from "@/components/FTLDocumentPanel";
   import FTLDeleteDocuments from "@/components/FTLDeleteDocuments";
-  import FTLThumbnailGenMixin from "@/components/FTLThumbnailGenMixin";
   import FTLMoveDocuments from "@/components/FTLMoveDocuments";
-  import FTLRenameDocument from "@/components/FTLRenameDocument";
+  import FTLDocument from "@/components/FTLDocument";
+  import FTLUpload from "@/components/FTLUpload";
   import axios from 'axios';
-  import qs from 'qs';
 
   export default {
     name: 'home',
-    mixins: [FTLThumbnailGenMixin],
+    extends: HomeBase,
 
     components: {
-      FTLDeleteDocuments,
-      FTLMoveDocuments,
-      FTLRenameDocument,
       FTLNewFolder,
       FTLFolder,
+      FTLDocumentPanel,
+      FTLDeleteDocuments,
+      FTLMoveDocuments,
       FTLDocument,
       FTLUpload
     },
 
-    props: ['searchQuery', 'doc', 'folder'],
+    props: ['folder'],
 
     data() {
       return {
-        // Documents list
-        docs: [],
-        docPid: null,
-        docModal: false,
-        lastRefresh: Date.now(),
-        currentSearch: "",
-        docsLoading: false,
-        moreDocsLoading: false,
-        moreDocs: null,
+        sort: 'recent',
 
         // Folders list and breadcrumb
         folders: [],
         previousLevels: [],
-
-        // PDF viewer
-        currentOpenDoc: {},
-        publicPath: process.env.BASE_URL
       }
     },
 
     mounted() {
-      if (this.doc) {
-        // Open document directly from loading an URL with document
-        this.openDocument(this.doc);
-      }
+      this.sort = String(this.sortHome); // copy value for sortHome mutations not to call sort watcher
 
       if (this.folder) {
         // Open folder directly from loading an URL with folder (don't reset URL if opening a document)
@@ -214,32 +172,11 @@
       } else {
         // Or just show the current folders
         this.refreshFolders();
-
-        if (this.searchQuery) {
-          // search docs
-          this.refreshDocumentWithSearch(this.searchQuery);
-        } else {
-          // all docs
-          this.updateDocuments();
-        }
+        this.updateDocuments();
       }
     },
 
     watch: {
-      searchQuery: function (newVal, oldVal) {
-        if (newVal !== oldVal) {
-          this.refreshDocumentWithSearch(newVal);
-        }
-      },
-      doc: function (newVal, oldVal) {
-        if (newVal === undefined) {
-          this.docModal = false;
-        } else {
-          if (newVal !== oldVal) {
-            this.openDocument(newVal);
-          }
-        }
-      },
       folder: function (newVal, oldVal) {
         if (this.$route.name === 'home') {
           // Coming back to home so clear everything and reload from root folder
@@ -247,22 +184,22 @@
         } else if (this.$route.name === 'home-folder') {
           // This is navigation between folders
           if (newVal !== oldVal) {
-            this.updateFoldersPath(newVal, true);
+            this.updateFoldersPath(newVal);
           }
-        } else if (this.$route.name === 'home-search') {
-          // Do something? Nothing for now
         }
 
         // Clear the selected documents when moving between folders
         this.$store.commit("unselectAllDocuments");
+      },
+      sort: function (newVal, oldVal) {
+        if (newVal !== oldVal) {
+          this.updateDocuments();
+          this.$store.commit("changeSortHome", newVal);
+        }
       }
     },
 
     computed: {
-      lastRefreshFormatted: function () {
-        return new Date(this.lastRefresh);
-      },
-
       getCurrentFolder: function () {
         if (this.previousLevels.length) {
           return this.previousLevels[this.previousLevels.length - 1];
@@ -289,10 +226,7 @@
           }
         }));
       },
-
-      documentsSelected: function () {
-        return this.$store.state.selectedDocumentsHome;
-      }
+      ...mapState(['selectedDocumentsHome', 'sortHome']) // generate vuex computed getter
     },
 
     methods: {
@@ -322,7 +256,6 @@
       },
 
       changeFolder: function (folder = null) {
-        this.currentSearch = "";
         if (folder === null) {
           this.previousLevels = [];
         }
@@ -332,7 +265,6 @@
 
       navigateToFolder: function (folder) {
         if (folder) this.previousLevels.push(folder);
-        this.currentSearch = "";
         this.$router.push({path: '/home/' + this.computeFolderUrlPath(folder.id)})
       },
 
@@ -355,117 +287,35 @@
             this.changeFolder(response.data);
             // Allow refresh of the current URL in address bar to take into account folders paths changes
             if (this.docPid) {
-              this.$router.push({
-                path: '/home/' + this.computeFolderUrlPath(folderId),
-                query: {
-                  doc: this.docPid
-                }
-              });
+              this.$router
+                .push({
+                  path: '/home/' + this.computeFolderUrlPath(folderId),
+                  query: {
+                    doc: this.docPid
+                  }
+                });
             } else {
               this.$router.push({path: '/home/' + this.computeFolderUrlPath(folderId)});
             }
           })
-          .catch(() => {
+          .catch((error) => {
             this.mixinAlert("Could not open this folder", true);
           });
-      },
-
-      navigateToDocument: function (pid) {
-        this.$router.push({query: {doc: pid}});
-      },
-
-      openDocument: function (pid) {
-        const vi = this;
-
-        this.docPid = pid;
-        this.docModal = true;
-
-        this.$bvModal.show('document-viewer');
-
-        axios
-          .get('/app/api/v1/documents/' + pid)
-          .then(response => {
-            vi.currentOpenDoc = response.data;
-
-            if (!response.data.thumbnail_available) {
-              vi.createThumbnailForDocument(response.data)
-                .then(response => {
-                  vi.mixinAlert("Thumbnail updated!");
-                })
-                .catch(error => vi.mixinAlert("Unable to create thumbnail", true));
-            }
-          })
-          .catch(error => {
-            vi.mixinAlert("Unable to show document.", true)
-          });
-      },
-
-      closeDocument: function () {
-        this.docModal = false;
-        this.docPid = null;
-        this.currentOpenDoc = {};
-        this.$router.push({path: this.$route.path});
-      },
-
-      refreshDocumentWithSearch: function (text) {
-        this.currentSearch = text;
-        this.updateDocuments();
-      },
-
-      clearSearch: function () {
-        this.refreshDocumentWithSearch("");
-      },
-
-      loadMoreDocuments: function () {
-        const vi = this;
-        this.moreDocsLoading = true;
-        axios
-          .get(this.moreDocs)
-          .then(response => {
-            this.moreDocsLoading = false;
-            vi.docs = vi.docs.concat(response.data['results']);
-            vi.moreDocs = response.data['next'];
-            vi.lastRefresh = Date.now();
-          }).catch(error => {
-          this.moreDocsLoading = false;
-          vi.mixinAlert("Unable to load more document.", true);
-        });
       },
 
       updateDocuments: function () {
         let queryString = {};
 
-        if (this.currentSearch !== null && this.currentSearch !== "") {
-          queryString['search'] = this.currentSearch;
-        } else {
-          if (this.previousLevels.length > 0) {
-            queryString['level'] = this.getCurrentFolder.id;
-          }
+        if (this.previousLevels.length > 0) {
+          queryString['level'] = this.getCurrentFolder.id;
         }
 
-        let strQueryString = '?' + qs.stringify(queryString);
-
-        this.docsLoading = true;
-
-        axios
-          .get('/app/api/v1/documents' + strQueryString)
-          .then(response => {
-            this.docsLoading = false;
-            this.docs = response.data['results'];
-            this.moreDocs = response.data['next'];
-            this.lastRefresh = Date.now();
-          }).catch(error => {
-          this.docsLoading = false;
-          this.mixinAlert("Unable to refresh documents list.", true);
-        });
+        return this._updateDocuments(queryString);
       },
 
       updateFolders: function (level = null) {
         const vi = this;
         let qs = '';
-
-        // While loading folders, clear folders to avoid showing current sets of folders intermittently
-        // vi.folders = [];
 
         if (level) {
           qs = '?level=' + level.id;
@@ -480,34 +330,6 @@
 
       folderCreated: function (folder) {
         this.refreshFolders();
-      },
-
-      documentsCreated: function (event) {
-        const doc = event.doc;
-        this.docs.unshift(doc);
-      },
-
-      documentDeleted: function (event) {
-        const doc = event.doc;
-        const foundIndex = this.docs.findIndex(x => x.pid === doc.pid);
-        this.docs.splice(foundIndex, 1);
-        // remove from selection
-        this.$store.commit('unselectDocument', doc);
-        // if last doc in the list has been removed and there is more docs to come, refresh list
-        if (this.docs.length < 1 && this.moreDocs !== null){
-            this.refreshDocumentWithSearch()
-        }
-      },
-
-      documentUpdated: function (event) {
-        const doc = event.doc;
-
-        if (this.currentOpenDoc.pid === doc.pid) {
-          this.currentOpenDoc = doc; // update open doc
-        }
-
-        const foundIndex = this.docs.findIndex(x => x.pid === doc.pid);
-        this.docs[foundIndex] = doc; // update doc in the list
       }
     }
   }
@@ -522,11 +344,17 @@
     display: block;
   }
 
-  #folders-list button, #action-selected-documents button, #action-selected-documents span {
+  #folders-list button {
+    margin-left: 0 !important;
+    margin-right: 0.5rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  #action-selected-documents button, #action-selected-documents span {
     margin-left: 0 !important;
     margin-right: 0.5rem !important;
 
-    &:last-child{
+    &:last-child {
       margin-right: 0 !important;
     }
   }
@@ -537,10 +365,6 @@
     animation: slide-down 0.1s linear;
     z-index: calc(#{$zindex-sticky} - 1); // to be under header dropdown menu (mobile)
     background: $light;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-    margin-top: -0.5rem;
-    margin-bottom: -0.5rem;
   }
 
   @include media-breakpoint-up(sm) {
@@ -551,5 +375,20 @@
 
   .stop-spin {
     animation: unspin 0.5s 1 ease-out;
+  }
+</style>
+
+<style lang="scss">
+  @import '../styles/customBootstrap.scss';
+
+  #documents-sort {
+    float: right;
+    margin-top: 0 !important;
+    margin-right: 0 !important;
+
+    .btn {
+      padding-right: 0 !important;
+      border-right: none !important;
+    }
   }
 </style>

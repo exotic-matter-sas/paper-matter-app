@@ -1,9 +1,11 @@
+import re
 from unittest.mock import patch, Mock
 
 from django.contrib import messages
+from django.contrib.auth.signals import user_logged_out
+from django.core import mail
 from django.test import TestCase
 from django.urls import reverse_lazy
-from django.contrib.auth.signals import user_logged_out
 
 from core.models import FTLUser, FTL_PERMISSIONS_USER
 from ftests.tools import test_values as tv
@@ -16,12 +18,9 @@ class FtlPagesTests(TestCase):
     def test_index_redirects(self):
         """Index redirect to correct page according to setup state"""
         response = self.client.get('', follow=True)
-        self.assertRedirects(response, reverse_lazy('setup:create_first_org'))
-
-        org = setup_org()
-        response = self.client.get('', follow=True)
         self.assertRedirects(response, reverse_lazy('setup:create_admin'))
 
+        org = setup_org()
         setup_admin(org)
         response = self.client.get('', follow=True)
         self.assertRedirects(response, f"{reverse_lazy('login')}?next={reverse_lazy('home')}")
@@ -48,42 +47,39 @@ class FtlPagesTests(TestCase):
 
         response = self.client.post(f'/signup/{org.slug}/',
                                     {
-                                        'username': tv.USER1_USERNAME,
                                         'email': tv.USER1_EMAIL,
                                         'password1': tv.USER1_PASS,
                                         'password2': tv.USER1_PASS,
                                     })
 
-        self.assertRedirects(response, reverse_lazy('signup_success', kwargs={'org_slug': org.slug}))
+        self.assertRedirects(response, reverse_lazy('signup_success'), fetch_redirect_response=False)
 
     def test_signup_success_returns_correct_html(self):
         """Signup success page returns correct html"""
-        org = setup_org()
 
-        response = self.client.get(f'/signup/{org.slug}/success/')
+        response = self.client.get(f'/signup/success/')
         self.assertContains(response, 'verify your email')
         self.assertTemplateUsed(response, 'ftl/registration/signup_success.html')
-
-    def test_signup_success_get_proper_context(self):
-        """Signup success page get proper context"""
-        org = setup_org()
-
-        response = self.client.get(f'/signup/{org.slug}/success/')
-        self.assertEqual(response.context['org_slug'], org.slug)
 
     def test_user_permissions_signup(self):
         org = setup_org()
 
         self.client.post(f'/signup/{org.slug}/',
                          {
-                             'username': tv.USER1_USERNAME,
                              'email': tv.USER1_EMAIL,
                              'password1': tv.USER1_PASS,
                              'password2': tv.USER1_PASS,
                          })
 
-        user = FTLUser.objects.get(username=tv.USER1_USERNAME)
+        user = FTLUser.objects.get(email=tv.USER1_EMAIL)
         self.assertIsNotNone(user)
+
+        # To test permission, we need an account activated otherwise the permissions are not set
+        self.assertEqual(len(mail.outbox), 1)
+        activate_link = re.search(r'(https?://.+/accounts/activate/.+/)', mail.outbox[0].body)
+        response = self.client.get(activate_link.group(1), follow=True)
+        self.assertEqual(response.status_code, 200)
+        user = FTLUser.objects.get(email=tv.USER1_EMAIL)
         self.assertTrue(user.has_perms(FTL_PERMISSIONS_USER))
 
     @patch.object(user_logged_out, 'send')

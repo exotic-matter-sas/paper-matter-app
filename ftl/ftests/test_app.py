@@ -1,5 +1,5 @@
 import os
-import tempfile
+from string import ascii_lowercase
 from unittest import skip, skipIf
 from unittest.mock import patch
 
@@ -13,7 +13,8 @@ from ftests.pages.manage_folder_page import ManageFolderPage
 from ftests.pages.move_documents_modal import MoveDocumentsModal
 from ftests.pages.user_login_page import LoginPage
 from ftests.tools import test_values as tv
-from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_document, setup_folder
+from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_document, setup_folder, \
+    setup_temporary_file
 from ftl.settings import DEV_MODE, BASE_DIR
 
 
@@ -77,8 +78,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         # User click on the first listed document
         self.open_first_document()
         # User can see the pdf inside the pdf viewer
-        self.wait_for_elem_to_show(self.pdf_viewer)
-        pdf_viewer_iframe = self.get_elem(self.pdf_viewer)
+        pdf_viewer_iframe = self.get_elem(self.pdf_viewer_iframe)
         self.browser.switch_to_frame(pdf_viewer_iframe)
         pdf_viewer_iframe_title = self.get_elem('title', False).get_attribute("innerHTML")
 
@@ -147,9 +147,20 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
         self.assertEqual(second_document_title, self.get_elem_text(self.first_document_title))
 
-    @skip('TODO when document note implemented in UI')  # TODO
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_search_document_by_its_note(self):
-        pass
+        # User have already added 2 documents
+        setup_document(self.org, self.user)
+        second_document_note = 'bingo!'
+        second_document_title = 'second document'
+        setup_document(self.org, self.user, title=second_document_title, note=second_document_note)
+
+        # User search last uploaded document
+        self.search_document(second_document_note)
+
+        # Only the second document appears in search results
+        self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
+        self.assertEqual(second_document_title, self.get_elem_text(self.first_document_title))
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_search_apply_to_all_folders(self):
@@ -225,6 +236,24 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
 
         self.assertIn('No document', self.get_elem_text(self.documents_list_container),
                       'A message should indicate no documents were found')
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_search_open_close_document(self):
+        # User have already added 2 documents inside sub folder
+        sub_folder = setup_folder(self.org)
+        doc_first_result = setup_document(self.org, self.user, ftl_folder=sub_folder, title='pop pop')
+        doc_second_result = setup_document(self.org, self.user, ftl_folder=sub_folder, title='pop')
+        self.refresh_document_list()
+
+        # User search for document
+        self.search_document('pop')
+
+        # User open first document of search result and close it
+        self.open_first_document()
+        self.close_document()
+
+        # The search result is still displayed after closing the first document
+        self.assertEqual(self.get_elems_text(self.documents_titles), [doc_first_result.title, doc_second_result.title])
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_visit_url_with_search_query(self):
@@ -305,10 +334,10 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
                          'Setup document title should appears in folder c')
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
-    def test_document_list_pagination(self):
+    def test_documents_list_pagination(self):
         # User has already added 21 documents
         for i in range(21):
-            setup_document(self.org, self.user, title=i+1)
+            setup_document(self.org, self.user, title=i + 1)
         self.refresh_document_list()
 
         # Only 10 documents are shown by default
@@ -338,6 +367,120 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         with self.assertRaises(NoSuchElementException):
             self.get_elem(self.more_documents_button)
 
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_sort_documents_list(self):
+        # append 1 at the end to not have the same order for date and alphabetical
+        document_title_to_create = list(ascii_lowercase) + ['1']
+        # User has already added 21 documents
+        for i, title in enumerate(document_title_to_create, 1):
+            if i <= 5:  # for the first 5 docs we add a note to test search and relevance sort later
+                note = 'bingo ' * i  # doc 5 will get max relevance on "bingo" search
+            else:
+                note = ''
+            setup_document(self.org, self.user, title=title, note=note)
+        self.refresh_document_list()
+
+        # Documents are sort by recent first by default
+        recent_first_order = list(reversed(document_title_to_create))
+        self.assertIn('recent', self.get_elem_text(self.sort_dropdown_button))
+        self.assertEqual(self.get_elems_text(self.documents_titles), recent_first_order[:10])
+
+        # User change sort to older
+        self.get_elem(self.sort_dropdown_button).click()
+        self.get_elem(self.older_sort_item).click()
+
+        self.assertIn('older', self.get_elem_text(self.sort_dropdown_button))
+        self.assertEqual(self.get_elems_text(self.documents_titles), list(reversed(recent_first_order))[:10])
+
+        # User change sort to a-z
+        self.get_elem(self.sort_dropdown_button).click()
+        self.get_elem(self.az_sort_item).click()
+
+        az_order = (['1'] + list(ascii_lowercase))
+        self.assertIn('a-z', self.get_elem_text(self.sort_dropdown_button))
+        self.assertEqual(self.get_elems_text(self.documents_titles), az_order[:10])
+
+        # User change sort to z-a
+        self.get_elem(self.sort_dropdown_button).click()
+        self.get_elem(self.za_sort_item).click()
+
+        self.assertIn('z-a', self.get_elem_text(self.sort_dropdown_button))
+        self.assertEqual(self.get_elems_text(self.documents_titles), list(reversed(az_order))[:10])
+
+        # User make a search
+        self.search_document('bingo')
+
+        # Default sort for search is always relevance
+        relevance_order = list(reversed(document_title_to_create[:5]))
+        self.assertIn('relevance', self.get_elem_text(self.sort_dropdown_button))
+        self.assertEqual(self.get_elems_text(self.documents_titles), relevance_order)
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_sort_doc_cache_policy(self):
+        # User has already added 21 docs to root and 21 docs to a sub_folder
+        document_title_to_create = list(ascii_lowercase) \
+                                   + ['1']  # append 1 at the end to not have the same order for date and alphabetical
+        # add docs to root
+        for title in document_title_to_create:
+            setup_document(self.org, self.user, title=title)
+        sub_folder = setup_folder(org=self.org)
+        document_title_to_create = list(ascii_lowercase) + ['1']
+        # add docs to sub_folder
+        for i, title in enumerate(document_title_to_create, 1):
+            setup_document(self.org, self.user, sub_folder, title)
+        self.refresh_document_list()
+
+        # Default sort in root is recent
+        self.assertIn('recent', self.get_elem_text(self.sort_dropdown_button))
+
+        # User open subfolder
+        self.get_elem(self.folders_list_buttons).click()
+
+        # Default sort is also recent
+        self.assertIn('recent', self.get_elem_text(self.sort_dropdown_button))
+
+        # User update sort to a-z
+        self.get_elem(self.sort_dropdown_button).click()
+        self.get_elem(self.az_sort_item).click()
+
+        # Sort properly updated
+        self.assertIn('a-z', self.get_elem_text(self.sort_dropdown_button))
+
+        # User come back to root
+        self.get_elem(self.home_page_link).click()
+
+        # Default sort is now a-z
+        self.assertIn('a-z', self.get_elem_text(self.sort_dropdown_button))
+
+        # User make a search
+        self.search_document('note')
+
+        # Default sort for search is always relevance
+        self.assertIn('relevance', self.get_elem_text(self.sort_dropdown_button))
+
+        # User update sort to z-a
+        self.get_elem(self.sort_dropdown_button).click()
+        self.get_elem(self.za_sort_item).click()
+
+        # Sort properly updated
+        self.assertIn('z-a', self.get_elem_text(self.sort_dropdown_button))
+
+        # User display the page to manage folder
+        self.get_elem(self.manage_folder_page_link).click()
+
+        # User come back to home
+        self.get_elem(self.home_page_link).click()
+
+        # Default sort is still a-z
+        self.assertIn('a-z', self.get_elem_text(self.sort_dropdown_button),
+                      'user custom sort should have been saved')
+
+        # User make an F5
+        self.visit(HomePage.url)
+
+        # Default sort is back to recent first
+        self.assertIn('recent', self.get_elem_text(self.sort_dropdown_button))
+
 
 class DocumentsBatchActionsTests(LoginPage, HomePage, MoveDocumentsModal):
     def setUp(self, **kwargs):
@@ -349,12 +492,9 @@ class DocumentsBatchActionsTests(LoginPage, HomePage, MoveDocumentsModal):
         self.visit(LoginPage.url)
         self.log_user()
         # 3 documents, 1 folder already added/created
-        binary_f = tempfile.NamedTemporaryFile(dir=os.path.join(BASE_DIR, 'ftests', 'tools'), delete=False)
-        binary_f.write(b'Hello world!')
-        binary_f.close()
-        self.doc1 = setup_document(self.org, self.user, binary=binary_f.name, title='doc1')
-        self.doc2 = setup_document(self.org, self.user, binary=binary_f.name, title='doc2')
-        self.doc3 = setup_document(self.org, self.user, binary=binary_f.name, title='doc3')
+        self.doc1 = setup_document(self.org, self.user, binary=setup_temporary_file().name, title='doc1')
+        self.doc2 = setup_document(self.org, self.user, binary=setup_temporary_file().name, title='doc2')
+        self.doc3 = setup_document(self.org, self.user, binary=setup_temporary_file().name, title='doc3')
         self.folder = setup_folder(self.org)
         # refresh page to see documents
         self.visit(HomePage.url)
@@ -399,7 +539,7 @@ class DocumentsBatchActionsTests(LoginPage, HomePage, MoveDocumentsModal):
 
         # User click on delete button
         self.get_elem(self.delete_docs_batch_button).click()
-        self.get_elem(self.modal_accept_button).click()
+        self.accept_modal()
 
         # User see the documents to delete have disappear from the current folder
         self.assertCountEqual([self.doc3.title], self.get_elems_text(self.documents_titles))
@@ -463,7 +603,6 @@ class DocumentViewerModalTests(LoginPage, HomePage, DocumentViewerModal):
         setup_document(self.org, self.user)
         self.refresh_document_list()
         self.open_first_document()
-        self.wait_for_elem_to_show(self.pdf_viewer)
 
         # User rename the document
         new_doc_title = 'Renamed doc'
@@ -473,6 +612,21 @@ class DocumentViewerModalTests(LoginPage, HomePage, DocumentViewerModal):
         self.assertEqual(self.get_elem_text(self.document_title), new_doc_title)
         self.close_document()
         self.assertEqual(self.get_elem_text(self.first_document_title), new_doc_title)
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @patch.object(FTLDocumentProcessing, 'apply_processing')
+    def test_annotate_document(self, mock_apply_processing):
+        # User has already added and opened a document
+        setup_document(self.org, self.user)
+        self.refresh_document_list()
+        self.open_first_document()
+
+        # User annotate the document
+        new_doc_note = 'New note'
+        self.annotate_document(new_doc_note)
+
+        # Document note is properly updated in pdf viewer
+        self.assertEqual(self.get_elem_text(self.note_text), new_doc_note)
 
 
 class ManageFoldersPageTests(LoginPage, ManageFolderPage):

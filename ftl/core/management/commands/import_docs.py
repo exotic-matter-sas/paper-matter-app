@@ -18,21 +18,21 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('-p', '--path', nargs='?', type=str, required=True)
-        parser.add_argument('-u', '--username', nargs='?', type=str, required=True)
+        parser.add_argument('-u', '--email', nargs='?', type=str, required=True)
 
     def handle(self, *args, **options):
         self.stdout.write(
             self.style.MIGRATE_HEADING(
                 _(
-                    'Starting mass import for %(username)s from %(path)s'
+                    'Starting mass import for %(email)s from %(path)s'
                 ) % {
-                    'username': options['username'],
+                    'email': options['email'],
                     'path': options['path']
                 }
             )
         )
 
-        self.user = FTLUser.objects.get(username=options['username'])
+        self.user = FTLUser.objects.get(email=options['email'])
 
         start_time = time.time()
         count = self._explore_and_import(options['path'])

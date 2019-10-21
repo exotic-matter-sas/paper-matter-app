@@ -7,11 +7,15 @@ import * as tv from './../tools/testValues.js'
 import {axiosConfig} from "../../src/constants";
 
 import FTLDocument from "../../src/components/FTLDocument";
+import Vuex from "vuex";
+import storeConfig from "@/store/storeConfig";
+import cloneDeep from "lodash.clonedeep";
 
 const localVue = createLocalVue();
 // mock BootstrapVue Modal method, need to be before use BootstrapVue line
 localVue.prototype.$bvModal = {msgBoxConfirm: jest.fn()};
 localVue.use(BootstrapVue); // avoid bootstrap vue warnings
+localVue.use(Vuex);
 
 localVue.component('font-awesome-icon', jest.fn()); // avoid font awesome warnings
 
@@ -28,6 +32,9 @@ jest.mock('axios', () => ({
   delete: jest.fn()
 }));
 
+const mockedUnselectDocument = jest.fn();
+const mockedSelectDocuments = jest.fn();
+
 const mockedDeleteResponse = {
   data: {},
   status: 204,
@@ -35,12 +42,13 @@ const mockedDeleteResponse = {
 };
 
 describe('FTLDocument template', () => {
+  let storeConfigCopy = cloneDeep(storeConfig);
+  let store = new Vuex.Store(storeConfigCopy);
+
   const wrapper = shallowMount(FTLDocument, {
     localVue,
+    store,
     propsData: {doc: tv.DOCUMENT_PROPS},
-    computed: {
-      storeSelected: false
-    }
   });
 
   it('renders properly document data', () => {
@@ -56,19 +64,31 @@ describe('FTLDocument template', () => {
 
 describe('FTLDocument methods', () => {
   let wrapper;
+  let storeConfigCopy;
+  let store;
   const testedDocument = tv.DOCUMENT_PROPS;
-  const defaultStoreSelectedValue = false;
 
   beforeEach(() => {
     // given
     axios.delete.mockResolvedValue(mockedDeleteResponse);
     localVue.prototype.$bvModal.msgBoxConfirm.mockResolvedValue(true);
+    storeConfigCopy = cloneDeep(storeConfig);
+    store = new Vuex.Store(
+      Object.assign(
+        storeConfigCopy,
+        {
+          mutations:
+            {
+              unselectDocument: mockedUnselectDocument,
+              selectDocuments: mockedSelectDocuments,
+            }
+        }
+      )
+    );
     wrapper = shallowMount(FTLDocument, {
       localVue,
+      store,
       propsData: {doc: testedDocument},
-      computed: {
-        storeSelected: defaultStoreSelectedValue
-      }
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
@@ -86,11 +106,20 @@ describe('FTLDocument methods', () => {
     expect(wrapper.emitted(testedEvent)[0]).toEqual([testedDocument.pid])
   });
 
-  it('clickDoc toggle storeSelected in store', () => {
-    // TODO vuex test
-  });
-});
+  it('toggleSelection commit changes to store', () => {
+    // when
+    wrapper.vm.toggleSelection();
 
-describe('FTLDocument computed', () => {
-    // TODO vuex test
+    // then
+    expect(mockedSelectDocuments).toBeCalledTimes(1);
+    expect(mockedSelectDocuments).toBeCalledWith(storeConfigCopy.state, [testedDocument]);
+
+    // when
+    storeConfigCopy.state.selectedDocumentsHome.push(testedDocument);
+    wrapper.vm.toggleSelection();
+
+    // then
+    expect(mockedUnselectDocument).toBeCalledTimes(1);
+    expect(mockedUnselectDocument).toBeCalledWith(storeConfigCopy.state, testedDocument);
+  });
 });

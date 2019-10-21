@@ -3,6 +3,8 @@ import {createLocalVue, shallowMount} from '@vue/test-utils';
 import axios from 'axios';
 import BootstrapVue from "bootstrap-vue";
 import flushPromises from "flush-promises"; // needed for async tests
+import Vuex from 'vuex'; // TODO import Vuex if needed
+import cloneDeep from "lodash.clonedeep"; // TODO import cloneDeep util if Vuex needed
 
 import * as tv from './../tools/testValues.js'
 import {axiosConfig} from "../../src/constants";
@@ -15,6 +17,7 @@ const localVue = createLocalVue();
 
 // Mock BootstrapVue prototypes here (eg. localVue.prototype.$bvModal = {msgBoxConfirm: jest.fn()}; )
 localVue.use(BootstrapVue); // avoid bootstrap vue warnings
+localVue.use(Vuex); // TODO use Vuex store if needed
 localVue.component('font-awesome-icon', jest.fn()); // avoid font awesome warnings
 
 // Mock prototype and mixin bellow
@@ -22,12 +25,13 @@ localVue.prototype.$_ = (text, args='') => {return text + args};// i18n mock
 localVue.prototype.$moment = () => {return {fromNow: jest.fn(), format: jest.fn()}}; // moment mock
 localVue.prototype.$router = {push: jest.fn()}; // router mock
 const mockedRouteName = jest.fn();
-localVue.prototype.$route = {get name() { return mockedRouteName()}}; // router mock
+localVue.prototype.$route = {get name() { return mockedRouteName()}}; // router attribute mock
 const mockedMixinAlert = jest.fn();
 localVue.mixin({methods: {mixinAlert: mockedMixinAlert}}); // mixinAlert mock
 
 // TODO mock thumbnail generation if needed (when test add documents)
 import {createThumbFromUrl} from '../../src/thumbnailGenerator';
+import storeConfig from "@/store/storeConfig";
 jest.mock('../../src/thumbnailGenerator', () => ({
   __esModule: true,
   createThumbFromUrl: jest.fn()
@@ -46,11 +50,14 @@ const mockedGetResponseA = {
   config: axiosConfig
 };
 
-// TODO mock tested component methods and computed here
+// TODO mock tested component methods, computed, getters, mutations here
 const mockedMethodA = jest.fn();
 const mockedMethodB = jest.fn();
 const mockedMethodC = jest.fn();
 const mockedComputedA = jest.fn();
+const mockedMutationA = jest.fn();
+const mockedGetterWithParamA = jest.fn();
+const mockedGetterWithoutParamA = jest.fn();
 
 // TODO list method call in Component.mounted here
 const mountedMocks = {
@@ -100,7 +107,7 @@ describe('Component first type of test', () => {
   });
 });
 
-// TODO add as many describe block and tests as needed to group tests by type, commons ones below
+// TODO add as many additional describe block and tests as needed to group tests by type, commons ones below
 // TEMPLATE
 describe('Component template', () => {
   it('renders properly text', () => {
@@ -114,7 +121,7 @@ describe('Component template', () => {
   });
   // or
   it('renders properly component data', async () => {
-    delete tv.DOCUMENT_PROPS.note // remove unwanted data here
+    delete tv.DOCUMENT_PROPS.note;// remove unwanted data here
     Object.values(tv.DOCUMENT_PROPS).forEach(function(documentData){ expect(wrapper.html()).toContain(documentData) });
   });
 });
@@ -179,5 +186,51 @@ describe('Event emitted by component', () => {
 });
 
 describe('Event received and handled by component', () => {
-  it('event-b call methodB', async () => {});
+  it('event-b call methodB', async () => {
+    // when (called by event)
+    wrapper.find(EventsComponent).vm.$emit('tested-event', argEvent);
+
+    // then method called
+    expect(mockedMethodA).toHaveBeenCalledWith(argEvent);
+  });
+});
+
+// VUEX
+describe('Vuex tests', () => {
+  let wrapper;
+  let storeConfigCopy;
+  let store;
+
+  beforeEach(() => {
+    storeConfigCopy = cloneDeep(storeConfig); // deep copy storeConfig for tests not to pollute it
+    store = new Vuex.Store(
+      Object.assign( // overwrite some mutations and getter to replace them with mocks
+        storeConfigCopy,
+        {
+          mutations: {
+            mutationA: mockedMutationA
+          },
+          getters: {
+            getterWithParamA: () => mockedGetterWithParamA, // see https://vuex.vuejs.org/guide/getters.html#method-style-access
+            getterWithoutParamA: mockedGetterWithoutParamA
+          }
+        }
+      )
+    );
+    wrapper = shallowMount(Home, {
+      localVue,
+      store,
+    });
+    jest.clearAllMocks(); // Reset mock call count done by mounted
+  });
+
+  it('methodA commit change to store', () => {
+    // when
+    mockedGetterWithParamA.mockReturnValue(true);
+    wrapper.vm.methodA();
+
+    // then
+    expect(mockedMutationA).toBeCalledTimes(1);
+    expect(mockedMutationA).toBeCalledWith(storeConfigCopy.state, 'mutationParam1'); // set mutationParam1 as undefined if there is no params
+  });
 });

@@ -8,6 +8,7 @@ urlpatterns = [
     path('', views.HomeView.as_view(), name='home'),
     path('jsi18n/', JavaScriptCatalog.as_view(), name='javascript-catalog'),
     path('uploads/<str:uuid>', views.DownloadView.as_view()),
+    path('uploads/<str:uuid>/<str:name>.pdf', views.ViewPDF.as_view()),
     path('api/v1/folders', views.FTLFolderList.as_view()),
     path('api/v1/folders/<int:id>', views.FTLFolderDetail.as_view()),
     path('api/v1/documents', views.FTLDocumentList.as_view()),

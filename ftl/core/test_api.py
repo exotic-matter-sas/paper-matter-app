@@ -1,6 +1,5 @@
 import json
 import os
-import tempfile
 from unittest.mock import patch
 
 from django.contrib import messages
@@ -12,7 +11,8 @@ import core
 from core.models import FTLDocument, FTLFolder
 from core.processing.ftl_processing import FTLDocumentProcessing
 from ftests.tools import test_values as tv
-from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_document, setup_folder
+from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_document, setup_folder, \
+    setup_temporary_file
 from ftl.enums import FTLStorages, FTLPlugins
 from ftl.settings import BASE_DIR
 
@@ -31,7 +31,7 @@ class DocumentsTests(APITestCase):
         self.doc_in_folder = setup_document(self.org, self.user, title='Document in folder',
                                             ftl_folder=self.first_level_folder)
 
-        self.client.login(username=tv.USER1_USERNAME, password=tv.USER1_PASS)
+        self.client.login(email=tv.USER1_EMAIL, password=tv.USER1_PASS)
 
     def test_list_documents(self):
         ftl_document = FTLDocument.objects.get(pid=self.doc.pid)
@@ -46,7 +46,7 @@ class DocumentsTests(APITestCase):
         self.assertEqual(client_get.data['count'], 2)
         self.assertEqual(len(client_get.data['results']), 2)
 
-    def test_list_documents_order(self):
+    def test_list_documents_order_recent(self):
         ftl_document_first = FTLDocument.objects.get(pid=self.doc.pid)
         ftl_document_second = FTLDocument.objects.get(pid=self.doc_bis.pid)
 
@@ -66,12 +66,77 @@ class DocumentsTests(APITestCase):
         self.assertEqual(client_doc_2['note'], ftl_document_first.note)
         self.assertEqual(client_doc_2['ftl_folder'], ftl_document_first.ftl_folder)
 
+    def test_list_documents_order_older(self):
+        ftl_document_first = FTLDocument.objects.get(pid=self.doc.pid)
+        ftl_document_second = FTLDocument.objects.get(pid=self.doc_bis.pid)
+
+        client_get = self.client.get('/app/api/v1/documents?ordering=created', format='json')
+        self.assertEqual(client_get.status_code, status.HTTP_200_OK)
+
+        client_doc_1 = client_get.data['results'][0]
+        self.assertEqual(client_doc_1['pid'], str(ftl_document_first.pid))
+
+        client_doc_2 = client_get.data['results'][1]
+        self.assertEqual(client_doc_2['pid'], str(ftl_document_second.pid))
+
+    def test_list_documents_order_az(self):
+        FTLDocument.objects.all().delete()
+
+        doc_efg = setup_document(self.org, self.user, title='EFG')
+        doc_bcd = setup_document(self.org, self.user, title='BCD')
+        doc_abc = setup_document(self.org, self.user, title='ABC')
+
+        ftl_document_first = FTLDocument.objects.get(pid=doc_abc.pid)
+        ftl_document_second = FTLDocument.objects.get(pid=doc_bcd.pid)
+        ftl_document_third = FTLDocument.objects.get(pid=doc_efg.pid)
+
+        client_get = self.client.get('/app/api/v1/documents?ordering=title', format='json')
+        self.assertEqual(client_get.status_code, status.HTTP_200_OK)
+
+        client_doc_1 = client_get.data['results'][0]
+        self.assertEqual(client_doc_1['pid'], str(ftl_document_first.pid))
+        self.assertEqual(client_doc_1['title'], ftl_document_first.title)
+
+        client_doc_2 = client_get.data['results'][1]
+        self.assertEqual(client_doc_2['pid'], str(ftl_document_second.pid))
+        self.assertEqual(client_doc_2['title'], ftl_document_second.title)
+
+        client_doc_3 = client_get.data['results'][2]
+        self.assertEqual(client_doc_3['pid'], str(ftl_document_third.pid))
+        self.assertEqual(client_doc_3['title'], ftl_document_third.title)
+
+    def test_list_documents_order_za(self):
+        FTLDocument.objects.all().delete()
+
+        doc_efg = setup_document(self.org, self.user, title='EFG')
+        doc_bcd = setup_document(self.org, self.user, title='BCD')
+        doc_abc = setup_document(self.org, self.user, title='ABC')
+
+        ftl_document_first = FTLDocument.objects.get(pid=doc_efg.pid)
+        ftl_document_second = FTLDocument.objects.get(pid=doc_bcd.pid)
+        ftl_document_third = FTLDocument.objects.get(pid=doc_abc.pid)
+
+        client_get = self.client.get('/app/api/v1/documents?ordering=-title', format='json')
+        self.assertEqual(client_get.status_code, status.HTTP_200_OK)
+
+        client_doc_1 = client_get.data['results'][0]
+        self.assertEqual(client_doc_1['pid'], str(ftl_document_first.pid))
+        self.assertEqual(client_doc_1['title'], ftl_document_first.title)
+
+        client_doc_2 = client_get.data['results'][1]
+        self.assertEqual(client_doc_2['pid'], str(ftl_document_second.pid))
+        self.assertEqual(client_doc_2['title'], ftl_document_second.title)
+
+        client_doc_3 = client_get.data['results'][2]
+        self.assertEqual(client_doc_3['pid'], str(ftl_document_third.pid))
+        self.assertEqual(client_doc_3['title'], ftl_document_third.title)
+
     @patch.object(messages, 'success')
     def test_list_documents_added_by_another_user_of_same_org(self, messages_mocked):
         # First user logout and a second user of the same org login
         self.client.logout()
-        setup_user(self.org, tv.USER2_EMAIL, tv.USER2_USERNAME, tv.USER2_PASS)
-        self.client.login(username=tv.USER2_USERNAME, password=tv.USER2_PASS)
+        setup_user(self.org, tv.USER2_EMAIL, tv.USER2_PASS)
+        self.client.login(email=tv.USER2_EMAIL, password=tv.USER2_PASS)
 
         client_get = self.client.get('/app/api/v1/documents', format='json')
         self.assertEqual(client_get.status_code, status.HTTP_200_OK)
@@ -84,8 +149,8 @@ class DocumentsTests(APITestCase):
         # First user logout and a second user of the another org login
         self.client.logout()
         org2 = setup_org(tv.ORG_NAME_2, tv.ORG_SLUG_2)
-        setup_user(org2, tv.USER2_EMAIL, tv.USER2_USERNAME, tv.USER2_PASS)
-        self.client.login(username=tv.USER2_USERNAME, password=tv.USER2_PASS)
+        setup_user(org2, tv.USER2_EMAIL, tv.USER2_PASS)
+        self.client.login(email=tv.USER2_EMAIL, password=tv.USER2_PASS)
 
         client_get = self.client.get('/app/api/v1/documents', format='json')
         self.assertEqual(client_get.status_code, status.HTTP_200_OK)
@@ -109,16 +174,12 @@ class DocumentsTests(APITestCase):
 
     @override_settings(DEFAULT_FILE_STORAGE=FTLStorages.FILE_SYSTEM)
     def test_delete_document(self):
-        # Create a custom document specific to this test because we don't want to delete the test pdf file.
-        binary_f = tempfile.NamedTemporaryFile(dir=os.path.join(BASE_DIR, 'ftests', 'tools'), delete=False)
-        binary_f.write(b'Hello world!')  # Actual content doesn't matter
-        binary_f.close()
-
+        binary_f = setup_temporary_file().name
         document_to_be_deleted = FTLDocument.objects.create(
             org=self.org,
             ftl_user=self.user,
             title="Test document to be deleted",
-            binary=binary_f.name,
+            binary=binary_f,  # We don't want to delete the test pdf file
         )
 
         client_delete = self.client.delete(f'/app/api/v1/documents/{str(document_to_be_deleted.pid)}')
@@ -128,7 +189,7 @@ class DocumentsTests(APITestCase):
             FTLDocument.objects.get(pid=document_to_be_deleted.pid)
 
         # File has been deleted.
-        self.assertTrue(not os.path.exists(binary_f.name))
+        self.assertTrue(not os.path.exists(binary_f))
 
     @patch.object(FTLDocumentProcessing, 'apply_processing')
     def test_upload_document(self, mock_apply_processing):
@@ -237,7 +298,7 @@ class DocumentsSearchTests(APITestCase):
         setup_admin(self.org)
         self.user = setup_user(self.org)
 
-        self.client.login(username=tv.USER1_USERNAME, password=tv.USER1_PASS)
+        self.client.login(email=tv.USER1_EMAIL, password=tv.USER1_PASS)
 
     def test_list_documents_search_title(self):
         doc_to_search = setup_document(self.org, self.user, note='bingo!')
@@ -280,7 +341,7 @@ class FoldersTests(APITestCase):
 
         self.folder_root_subfolder = setup_folder(self.org, name='Second level folder', parent=self.folder_root)
 
-        self.client.login(username=tv.USER1_USERNAME, password=tv.USER1_PASS)
+        self.client.login(email=tv.USER1_EMAIL, password=tv.USER1_PASS)
 
     def test_folder_tree_root_level(self):
         client_get = self.client.get('/app/api/v1/folders', format='json')
@@ -359,7 +420,7 @@ class JWTAuthenticationTests(APITestCase):
 
     def test_get_token(self):
         response = self.client.post('/app/api/token',
-                                    {'username': tv.USER1_USERNAME, 'password': tv.USER1_PASS},
+                                    {'email': tv.USER1_EMAIL, 'password': tv.USER1_PASS},
                                     format='json')
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -368,7 +429,7 @@ class JWTAuthenticationTests(APITestCase):
 
     def test_refresh_token(self):
         response_token = self.client.post('/app/api/token',
-                                          {'username': tv.USER1_USERNAME, 'password': tv.USER1_PASS},
+                                          {'email': tv.USER1_EMAIL, 'password': tv.USER1_PASS},
                                           format='json')
 
         response = self.client.post('/app/api/token/refresh',
@@ -380,7 +441,7 @@ class JWTAuthenticationTests(APITestCase):
 
     def test_use_token(self):
         response_token = self.client.post('/app/api/token',
-                                          {'username': tv.USER1_USERNAME, 'password': tv.USER1_PASS},
+                                          {'email': tv.USER1_EMAIL, 'password': tv.USER1_PASS},
                                           format='json')
 
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {response_token.data["access"]}')
