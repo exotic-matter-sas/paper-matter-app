@@ -9,6 +9,9 @@ from fido2.client import ClientData
 from fido2.ctap2 import AuthenticatorData, AttestedCredentialData
 from fido2.server import RelyingParty, Fido2Server
 
+rp = RelyingParty(settings.FIDO2_RP_ID, settings.FIDO2_RP_NAME)
+fido2 = Fido2Server(rp)
+
 
 class Fido2State(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT)
@@ -17,9 +20,6 @@ class Fido2State(models.Model):
 
 
 class Fido2Device(Device):
-    rp = RelyingParty(settings.FIDO2_RP_ID, "FTL")
-    fido2 = Fido2Server(rp)
-
     authenticator_data = models.BinaryField()
 
     def verify_token(self, token):
@@ -36,7 +36,7 @@ class Fido2Device(Device):
         credentials_query = Fido2Device.objects.filter(user=self.user)
         credentials = [AttestedCredentialData(cbor2.loads(c.authenticator_data)) for c in credentials_query]
 
-        self.fido2.authenticate_complete(
+        fido2.authenticate_complete(
             state_decode,
             credentials,
             credential_id,

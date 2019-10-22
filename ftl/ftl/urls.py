@@ -25,7 +25,6 @@ from ftl import views
 from ftl.forms import FTLAuthenticationForm
 from ftl.ftl_setup_middleware import SetupState
 from ftl.views import PasswordResetAsked, PasswordResetDone
-from ftl.views_auth import OTPCheckView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -61,9 +60,7 @@ urlpatterns = [
         name='django_registration_activate'),
 
     # OTP
-    path('accounts/2fa/check', OTPCheckView.as_view(), name="otp_check"),
-    path('accounts/2fa/fido2/', include('ftl.otp_plugins.otp_webauthn.urls')),
-    path('accounts/2fa/', include('ftl.otp_plugins.otp_management.urls')),
+    path('accounts/2fa/', include('ftl.otp_plugins.otp_ftl.urls')),
 ]
 
 if settings.DEBUG and settings.DEV_MODE:

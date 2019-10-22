@@ -4,8 +4,10 @@ from django_otp.forms import OTPTokenForm
 from django_otp.plugins.otp_static.models import StaticDevice, StaticToken
 from django_otp.plugins.otp_totp.models import TOTPDevice
 
-
 # Forms for checking
+from ftl.otp_plugins.otp_ftl.models import Fido2Device
+
+
 class StaticDeviceCheckForm(OTPTokenForm):
     otp_challenge = None
 
@@ -13,7 +15,7 @@ class StaticDeviceCheckForm(OTPTokenForm):
         super(OTPTokenForm, self).__init__(*args, **kwargs)
 
         self.user = user
-        self.fields['otp_device'].choices = [d for d in self.device_choices(user) if 'otp_static' in d[0]]
+        self.fields['otp_device'].choices = [d for d in self.device_choices(user) if StaticDevice.model_label() in d[0]]
 
 
 class TOTPDeviceCheckForm(OTPTokenForm):
@@ -23,7 +25,19 @@ class TOTPDeviceCheckForm(OTPTokenForm):
         super(OTPTokenForm, self).__init__(*args, **kwargs)
 
         self.user = user
-        self.fields['otp_device'].choices = [d for d in self.device_choices(user) if 'otp_totp' in d[0]]
+        self.fields['otp_device'].choices = [d for d in self.device_choices(user) if TOTPDevice.model_label() in d[0]]
+
+
+class Fido2DeviceCheckForm(OTPTokenForm):
+    otp_device = forms.ChoiceField(choices=[])
+    otp_token = forms.CharField(required=True, widget=forms.HiddenInput())
+    otp_challenge = None
+
+    def __init__(self, user, request=None, *args, **kwargs):
+        super(OTPTokenForm, self).__init__(*args, **kwargs)
+
+        self.user = user
+        self.fields['otp_device'].choices = [d for d in self.device_choices(user) if Fido2Device.model_label() in d[0]]
 
 
 # Forms for registering a new device

@@ -52,8 +52,7 @@ INSTALLED_APPS = [
     'django_otp',
     'django_otp.plugins.otp_totp',
     'django_otp.plugins.otp_static',
-    'ftl.otp_plugins.otp_webauthn',
-    'ftl.otp_plugins.otp_management',
+    'ftl.otp_plugins.otp_ftl',
     'mptt',
     'rest_framework',
     'webpack_loader',
@@ -175,6 +174,8 @@ LOGIN_REDIRECT_URL = '/app'
 
 # Redirect when 2fa is needed
 OTP_LOGIN_URL = '/accounts/2fa/check'
+FIDO2_RP_ID = 'localhost'
+FIDO2_RP_NAME = "Paper Matter"
 
 # Default settings for browser used for functional tests
 DEFAULT_TEST_BROWSER = 'chrome'

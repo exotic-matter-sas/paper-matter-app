@@ -8,25 +8,26 @@ from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import DeleteView
 from django_otp.decorators import otp_required
 from fido2.client import ClientData
 from fido2.ctap2 import AttestationObject, AttestedCredentialData
 from fido2.server import RelyingParty, Fido2Server
 
-from ftl.otp_plugins.otp_webauthn.forms import OTPTokenFormFido2
-from ftl.otp_plugins.otp_webauthn.models import Fido2Device, Fido2State
+from ftl.otp_plugins.otp_ftl.forms import Fido2DeviceCheckForm
+from ftl.otp_plugins.otp_ftl.models import Fido2Device, Fido2State
 
 FIDO2_REGISTER_STATE = 'fido2_register_state'
 FIDO2_LOGIN_STATE = 'fido2_login_state'
 
-rp = RelyingParty(settings.FIDO2_RP_ID, "FTL")
+rp = RelyingParty(settings.FIDO2_RP_ID, settings.FIDO2_RP_NAME)
 fido2 = Fido2Server(rp)
 
 
 @method_decorator(login_required, name='dispatch')
 class Fido2Check(LoginView):
-    template_name = 'otp_webauthn/fido2device_check.html'
-    form_class = OTPTokenFormFido2
+    template_name = 'otp_management/fido2device_check.html'
+    form_class = Fido2DeviceCheckForm
     success_url = reverse_lazy('home')
 
     def get_form_kwargs(self):
@@ -37,12 +38,21 @@ class Fido2Check(LoginView):
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(otp_required(if_configured=True), name='dispatch')
-class Fido2Register(View):
+class Fido2DeviceAdd(View):
     def get(self, request, *args, **kwargs):
-        return render(request, 'otp_webauthn/register.html')
+        return render(request, 'otp_management/fido2device_form.html')
+
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(otp_required(if_configured=True), name='dispatch')
+class Fido2DeviceDelete(DeleteView):
+    template_name = 'otp_management/fido2device_confirm_delete.html'
+    model = Fido2Device
+    success_url = reverse_lazy("otp_list")
 
 
 @csrf_exempt
+@login_required
 def fido2_api_register_begin(request):
     registration_data, state = fido2.register_begin({
         "id": b'request.user.id',
@@ -57,6 +67,7 @@ def fido2_api_register_begin(request):
 
 
 @csrf_exempt
+@login_required
 def fido2_api_register_finish(request):
     data = cbor2.loads(request.body)
     client_data = ClientData(data["clientDataJSON"])
@@ -74,6 +85,7 @@ def fido2_api_register_finish(request):
 
 
 @csrf_exempt
+@login_required
 def fido2_api_login_begin(request):
     user = request.user
     credentials_query = Fido2Device.objects.filter(user=user)
