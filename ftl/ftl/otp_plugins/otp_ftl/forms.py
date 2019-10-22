@@ -49,7 +49,7 @@ class StaticDeviceForm(Form):
         static_device.save()
 
         for i in range(10):
-            code = StaticToken(token=StaticToken.random_token())
+            code = StaticToken(token=StaticToken.random_token().upper())
             code.device = static_device
             code.save()
 
