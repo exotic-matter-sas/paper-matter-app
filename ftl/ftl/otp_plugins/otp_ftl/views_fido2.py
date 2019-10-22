@@ -26,7 +26,7 @@ fido2 = Fido2Server(rp)
 
 @method_decorator(login_required, name='dispatch')
 class Fido2Check(LoginView):
-    template_name = 'otp_management/fido2device_check.html'
+    template_name = 'otp_ftl/fido2device_check.html'
     form_class = Fido2DeviceCheckForm
     success_url = reverse_lazy('home')
 
@@ -40,13 +40,13 @@ class Fido2Check(LoginView):
 @method_decorator(otp_required(if_configured=True), name='dispatch')
 class Fido2DeviceAdd(View):
     def get(self, request, *args, **kwargs):
-        return render(request, 'otp_management/fido2device_form.html')
+        return render(request, 'otp_ftl/fido2device_form.html')
 
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(otp_required(if_configured=True), name='dispatch')
 class Fido2DeviceDelete(DeleteView):
-    template_name = 'otp_management/fido2device_confirm_delete.html'
+    template_name = 'otp_ftl/fido2device_confirm_delete.html'
     model = Fido2Device
     success_url = reverse_lazy("otp_list")
 

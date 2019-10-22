@@ -53,18 +53,15 @@ class StaticDeviceForm(Form):
             code.device = static_device
             code.save()
 
+        return static_device
+
 
 class TOTPDeviceForm(Form):
     name = forms.CharField(label="Name", initial='App authenticator')
 
     def save(self, user):
         totp_device = TOTPDevice(name=self.cleaned_data['name'], user=user)
+        totp_device.confirmed = False
         totp_device.save()
 
-
-class Fido2DeviceForm(Form):
-    name = forms.CharField(label="Name", initial='App authenticator')
-
-    def save(self, user):
-        totp_device = TOTPDevice(name=self.cleaned_data['name'], user=user)
-        totp_device.save()
+        return totp_device

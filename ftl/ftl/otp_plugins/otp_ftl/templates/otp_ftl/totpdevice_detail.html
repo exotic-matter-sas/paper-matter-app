@@ -1,0 +1,9 @@
+{% extends 'ftl/django_app_base.html' %}
+
+{% block main %}
+    {{ object }}
+
+    <img src="{% url 'otp_totp_qrcode' object.id %}" alt="qrcode"/>
+
+    <a href="{% url 'otp_list' %}">Return to 2FA list</a>
+{% endblock %}

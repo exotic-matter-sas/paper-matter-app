@@ -28,7 +28,7 @@
             <li>{{ totp.persistent_id }} ({{ totp.name }})- (<a
                     href="{% url "otp_totp_delete"  totp.id %}">X</a>)
 
-                <img src="{% url 'otp_totp_qrcode' totp.id %}">
+                <img src="{% url 'otp_totp_qrcode' totp.id %}" alt="qrcode"/>
             </li>
         {% endfor %}
     </ul>

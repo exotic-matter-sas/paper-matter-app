@@ -1,0 +1,12 @@
+{% extends 'ftl/django_app_base.html' %}
+
+{% block main %}
+    <h2>Your emergency two factor codes (one use only!)</h2>
+    <ul>
+        {% for code in object.token_set.all %}
+            <li><code>{{ code.token }}</code></li>
+        {% endfor %}
+    </ul>
+
+    <a href="{% url 'otp_list' %}">Return to 2FA list</a>
+{% endblock %}

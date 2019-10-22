@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views import View
-from django.views.generic import FormView, DeleteView
+from django.views.generic import FormView, DeleteView, DetailView
 from django_otp.decorators import otp_required
 from django_otp.plugins.otp_totp.models import TOTPDevice
 
@@ -15,7 +15,7 @@ from ftl.otp_plugins.otp_ftl.forms import TOTPDeviceForm, TOTPDeviceCheckForm
 
 @method_decorator(login_required, name='dispatch')
 class TOTPDeviceCheck(LoginView):
-    template_name = 'otp_management/totpdevice_check.html'
+    template_name = 'otp_ftl/totpdevice_check.html'
     form_class = TOTPDeviceCheckForm
     success_url = reverse_lazy('home')
 
@@ -27,13 +27,22 @@ class TOTPDeviceCheck(LoginView):
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(otp_required(if_configured=True), name='dispatch')
+class TOTPDeviceDetail(DetailView):
+    template_name = 'otp_ftl/totpdevice_detail.html'
+    model = TOTPDevice
+
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(otp_required(if_configured=True), name='dispatch')
 class TOTPDeviceAdd(FormView):
-    template_name = 'otp_management/totpdevice_form.html'
+    template_name = 'otp_ftl/totpdevice_form.html'
     form_class = TOTPDeviceForm
-    success_url = reverse_lazy('otp_list')
+
+    def get_success_url(self):
+        return reverse_lazy('otp_totp_detail', kwargs={'pk': self.instance.id})
 
     def form_valid(self, form):
-        form.save(self.request.user)
+        self.instance = form.save(self.request.user)
         return super().form_valid(form)
 
 
@@ -53,6 +62,6 @@ class TOPTDeviceViewQRCode(View):
 @method_decorator(login_required, name='dispatch')
 @method_decorator(otp_required(if_configured=True), name='dispatch')
 class TOTPDeviceDelete(DeleteView):
-    template_name = 'otp_management/totpdevice_confirm_delete.html'
+    template_name = 'otp_ftl/totpdevice_confirm_delete.html'
     model = TOTPDevice
     success_url = reverse_lazy('otp_list')

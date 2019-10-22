@@ -29,7 +29,7 @@ class ListOTPDevice(View):
             'totp_device': totp_device,
             'fido2_device': fido2_device,
         }
-        return render(request, 'otp_management/device_list.html', context)
+        return render(request, 'otp_ftl/device_list.html', context)
 
 
 @method_decorator(login_required, name='dispatch')
