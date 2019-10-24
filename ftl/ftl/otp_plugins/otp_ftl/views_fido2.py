@@ -53,6 +53,7 @@ class Fido2DeviceDelete(DeleteView):
 
 @csrf_exempt
 @login_required
+@otp_required(if_configured=True)
 def fido2_api_register_begin(request):
     registration_data, state = fido2.register_begin({
         "id": b'request.user.id',
@@ -68,6 +69,7 @@ def fido2_api_register_begin(request):
 
 @csrf_exempt
 @login_required
+@otp_required(if_configured=True)
 def fido2_api_register_finish(request):
     data = cbor2.loads(request.body)
     client_data = ClientData(data["clientDataJSON"])
