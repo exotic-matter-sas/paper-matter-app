@@ -9,13 +9,11 @@ from fido2.client import ClientData
 from fido2.ctap2 import AuthenticatorData, AttestedCredentialData
 from fido2.server import RelyingParty, Fido2Server
 
-rp = RelyingParty(settings.FIDO2_RP_ID, settings.FIDO2_RP_NAME)
-fido2 = Fido2Server(rp)
-
 
 class Fido2State(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT)
     state = models.BinaryField()
+    domain = models.CharField(max_length=256)
     created = models.DateTimeField(auto_now_add=True)
 
 
@@ -35,6 +33,9 @@ class Fido2Device(Device):
 
         credentials_query = Fido2Device.objects.filter(user=self.user)
         credentials = [AttestedCredentialData(cbor2.loads(c.authenticator_data)) for c in credentials_query]
+
+        rp = RelyingParty(state.domain, settings.FIDO2_RP_NAME)
+        fido2 = Fido2Server(rp)
 
         fido2.authenticate_complete(
             state_decode,

@@ -20,9 +20,6 @@ from ftl.otp_plugins.otp_ftl.models import Fido2Device, Fido2State
 FIDO2_REGISTER_STATE = 'fido2_register_state'
 FIDO2_LOGIN_STATE = 'fido2_login_state'
 
-rp = RelyingParty(settings.FIDO2_RP_ID, settings.FIDO2_RP_NAME)
-fido2 = Fido2Server(rp)
-
 
 @method_decorator(login_required, name='dispatch')
 class Fido2Check(LoginView):
@@ -55,8 +52,11 @@ class Fido2DeviceDelete(DeleteView):
 @login_required
 @otp_required(if_configured=True)
 def fido2_api_register_begin(request):
+    rp = RelyingParty(get_domain(request), settings.FIDO2_RP_NAME)
+    fido2 = Fido2Server(rp)
+
     registration_data, state = fido2.register_begin({
-        "id": b'request.user.id',
+        "id": request.user.email.encode(),
         "name": request.user.email,
         "displayName": request.user.email,
         "icon": ""
@@ -75,6 +75,8 @@ def fido2_api_register_finish(request):
     client_data = ClientData(data["clientDataJSON"])
     att_obj = AttestationObject(data["attestationObject"])
 
+    rp = RelyingParty(get_domain(request), settings.FIDO2_RP_NAME)
+    fido2 = Fido2Server(rp)
     auth_data = fido2.register_complete(request.session[FIDO2_REGISTER_STATE], client_data, att_obj)
 
     device = Fido2Device(authenticator_data=cbor2.dumps(auth_data.credential_data))
@@ -92,7 +94,14 @@ def fido2_api_login_begin(request):
     user = request.user
     credentials_query = Fido2Device.objects.filter(user=user)
     credentials = [AttestedCredentialData(cbor2.loads(c.authenticator_data)) for c in credentials_query]
+
+    rp = RelyingParty(get_domain(request), settings.FIDO2_RP_NAME)
+    fido2 = Fido2Server(rp)
     auth_data, state = fido2.authenticate_begin(credentials)
 
-    Fido2State(user=user, state=cbor2.dumps(state)).save()
+    Fido2State(user=user, state=cbor2.dumps(state), domain=get_domain(request)).save()
     return HttpResponse(cbor2.dumps(auth_data), content_type='application/cbor')
+
+
+def get_domain(request):
+    return request.get_host().split(":", 1)[0]

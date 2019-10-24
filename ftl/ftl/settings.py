@@ -174,7 +174,6 @@ LOGIN_REDIRECT_URL = '/app'
 
 # Redirect when 2fa is needed
 OTP_LOGIN_URL = '/accounts/2fa/check'
-FIDO2_RP_ID = 'localhost'
 FIDO2_RP_NAME = "Paper Matter"
 
 # Default settings for browser used for functional tests
