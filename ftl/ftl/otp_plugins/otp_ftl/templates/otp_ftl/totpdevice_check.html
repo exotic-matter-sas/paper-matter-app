@@ -2,19 +2,27 @@
 {% load i18n %}
 {% load static %}
 
-{% block title %}{% trans '2FA' %}{% endblock %}
+{% block title %}{% trans "Two-step Verification" %}{% endblock %}
 
 {% block main_content %}
+    <h1 class="text-primary">
+        {% trans "Two-step Verification" %}
+    </h1>
+
+    <p>{% trans "This extra step shows that it’s really you trying to sign in" %}</p>
+
     <form method="post" id="user-form">
-        <h1 class="text-primary">
-            {% blocktrans %}
-                2FA check
-            {% endblocktrans %}
-        </h1>
         {% csrf_token %}
         {{ form }}
+
         <input class="btn btn-lg btn-primary btn-block" type="submit" value="{% trans "Verify" %}">
     </form>
+
+    <p>{% trans "Try another way" %}</p>
+    <ul>
+        <li><a href="{% url "otp_fido2_check" %}">{% trans "Use your security key" %}</a></li>
+        <li><a href="{% url "otp_static_check" %}">{% trans "Use a one time unique emergency code" %}</a></li>
+    </ul>
 {% endblock %}
 
 {% block aside_illustration %}
