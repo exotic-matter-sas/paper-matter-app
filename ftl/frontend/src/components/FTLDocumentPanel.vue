@@ -147,7 +147,7 @@
 
       documentRenamed: function (event) {
         this.currentOpenDoc = event.doc;
-        this.$emit('event-document-renamed', event)
+        this.$emit('event-document-renamed', event);
       },
 
       documentNoteUpdated: function (event) {
@@ -156,6 +156,7 @@
 
       documentDeleted: function (event) {
         this.closeDocument();
+        this.$emit('event-document-deleted', event);
       },
 
       closeDocument: function () {

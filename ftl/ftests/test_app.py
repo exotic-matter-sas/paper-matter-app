@@ -628,6 +628,26 @@ class DocumentViewerModalTests(LoginPage, HomePage, DocumentViewerModal):
         # Document note is properly updated in pdf viewer
         self.assertEqual(self.get_elem_text(self.note_text), new_doc_note)
 
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @patch.object(FTLDocumentProcessing, 'apply_processing')
+    def test_delete_document(self, mock_apply_processing):
+        # User has already added and opened a document
+        setup_document(self.org, self.user, binary=setup_temporary_file().name)
+        self.refresh_document_list()
+        self.open_first_document()
+
+        # User delete the document
+        self.delete_document()
+
+        # User see there is no more document in the list
+        with self.assertRaises(NoSuchElementException):
+            self.get_elem(self.first_document_title)
+
+        # User refresh the page and observe document is really gone
+        self.visit(HomePage.url)
+        with self.assertRaises(NoSuchElementException):
+            self.get_elem(self.first_document_title)
+
 
 class ManageFoldersPageTests(LoginPage, ManageFolderPage):
     def setUp(self, **kwargs):
