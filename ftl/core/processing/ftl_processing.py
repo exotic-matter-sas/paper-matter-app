@@ -43,10 +43,9 @@ class FTLDocumentProcessing:
         # for each registered processing plugin, apply processing
         for plugin in self.plugins:
             try:
-                with transaction.atomic():
-                    logger.debug(f'Executing plugin {plugin.__class__.__name__} on {ftl_doc.pid}')
-                    plugin.process(ftl_doc, plugins_all or ".".join(
-                        [plugin.__class__.__module__, plugin.__class__.__qualname__]) in plugins_forced)
+                logger.debug(f'Executing plugin {plugin.__class__.__name__} on {ftl_doc.pid}')
+                plugin.process(ftl_doc, plugins_all or ".".join(
+                    [plugin.__class__.__module__, plugin.__class__.__qualname__]) in plugins_forced)
             except Exception:
                 errors.append(plugin.__class__.__name__)
                 logger.exception(f'Error while processing {ftl_doc.pid} with plugin {plugin.__class__.__name__}')
