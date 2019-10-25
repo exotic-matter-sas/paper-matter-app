@@ -16,7 +16,7 @@
 
     <form method="post" id="user-form">
         {% csrf_token %}
-        {{ form }}
+        {{ form.as_p }}
 
         <input class="btn btn-lg btn-primary btn-block" type="submit" value="{% trans "Verify" %}">
     </form>

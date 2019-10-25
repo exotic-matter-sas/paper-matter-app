@@ -2,15 +2,16 @@ import qrcode
 import qrcode.image.svg
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.generic import FormView, DeleteView, DetailView
+from django.views.generic.detail import SingleObjectMixin
 from django_otp.decorators import otp_required
 from django_otp.plugins.otp_totp.models import TOTPDevice
 
-from ftl.otp_plugins.otp_ftl.forms import TOTPDeviceForm, TOTPDeviceCheckForm
+from ftl.otp_plugins.otp_ftl.forms import TOTPDeviceForm, TOTPDeviceCheckForm, TOTPDeviceConfirmForm
 
 
 @method_decorator(login_required, name='dispatch')
@@ -27,9 +28,53 @@ class TOTPDeviceCheck(LoginView):
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(otp_required(if_configured=True), name='dispatch')
-class TOTPDeviceDetail(DetailView):
+class TOTPDeviceDisplay(DetailView):
     template_name = 'otp_ftl/totpdevice_detail.html'
     model = TOTPDevice
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = TOTPDeviceConfirmForm(None, None)
+        return context
+
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(otp_required(if_configured=True), name='dispatch')
+class TOTPDeviceConfirm(SingleObjectMixin, FormView):
+    template_name = 'otp_ftl/totpdevice_detail.html'
+    form_class = TOTPDeviceConfirmForm
+    success_url = reverse_lazy('otp_list')
+    model = TOTPDevice
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        kwargs['obj'] = self.object
+        return kwargs
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return HttpResponseForbidden()
+        self.object = self.get_object()
+        return super().post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        self.object.confirmed = True
+        self.object.save()
+
+        return super().form_valid(form)
+
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(otp_required(if_configured=True), name='dispatch')
+class TOTPDeviceDetail(View):
+    def get(self, request, *args, **kwargs):
+        view = TOTPDeviceDisplay.as_view()
+        return view(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        view = TOTPDeviceConfirm.as_view()
+        return view(request, *args, **kwargs)
 
 
 @method_decorator(login_required, name='dispatch')

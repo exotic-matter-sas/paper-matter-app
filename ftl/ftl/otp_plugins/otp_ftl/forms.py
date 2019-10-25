@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import Form
-from django_otp.forms import OTPTokenForm
+from django_otp.forms import OTPTokenForm, OTPAuthenticationFormMixin
 from django_otp.plugins.otp_static.models import StaticDevice, StaticToken
 from django_otp.plugins.otp_totp.models import TOTPDevice
 
@@ -26,6 +26,19 @@ class TOTPDeviceCheckForm(OTPTokenForm):
 
         self.user = user
         self.fields['otp_device'].choices = [d for d in self.device_choices(user) if TOTPDevice.model_label() in d[0]]
+
+
+class TOTPDeviceConfirmForm(OTPAuthenticationFormMixin, Form):
+    otp_token = forms.CharField(required=True)
+
+    def __init__(self, user, obj, request=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.user = user
+        self.obj = obj
+
+    def clean(self):
+        self._verify_token(self.user, self.cleaned_data.get('otp_token'), device=self.obj)
+        return self.cleaned_data
 
 
 class Fido2DeviceCheckForm(OTPTokenForm):
