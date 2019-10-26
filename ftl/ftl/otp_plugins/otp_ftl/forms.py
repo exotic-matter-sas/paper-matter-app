@@ -1,6 +1,7 @@
 from django import forms
 from django.forms import Form
-from django_otp.forms import OTPTokenForm, OTPAuthenticationFormMixin
+from django.utils.translation import gettext_lazy as _
+from django_otp.forms import OTPTokenForm
 from django_otp.plugins.otp_static.models import StaticDevice, StaticToken
 from django_otp.plugins.otp_totp.models import TOTPDevice
 
@@ -9,6 +10,16 @@ from ftl.otp_plugins.otp_ftl.models import Fido2Device
 
 
 class StaticDeviceCheckForm(OTPTokenForm):
+    otp_device = forms.ChoiceField(
+        label=_("Two factor"),
+        help_text=_('Select two factor'),
+        choices=[])
+    otp_token = forms.CharField(
+        required=True,
+        label=_("Code"),
+        strip=True,
+        help_text=_('Emergency code (one time use)')
+    )
     otp_challenge = None
 
     def __init__(self, user, request=None, *args, **kwargs):
@@ -19,6 +30,16 @@ class StaticDeviceCheckForm(OTPTokenForm):
 
 
 class TOTPDeviceCheckForm(OTPTokenForm):
+    otp_device = forms.ChoiceField(
+        label=_("Two factor"),
+        help_text=_('Select two factor'),
+        choices=[])
+    otp_token = forms.CharField(
+        required=True,
+        label=_("Code"),
+        strip=True,
+        help_text=_('Two factor code shown in your app authenticator')
+    )
     otp_challenge = None
 
     def __init__(self, user, request=None, *args, **kwargs):
@@ -28,17 +49,24 @@ class TOTPDeviceCheckForm(OTPTokenForm):
         self.fields['otp_device'].choices = [d for d in self.device_choices(user) if TOTPDevice.model_label() in d[0]]
 
 
-class TOTPDeviceConfirmForm(OTPAuthenticationFormMixin, Form):
-    otp_token = forms.CharField(required=True)
+class TOTPDeviceConfirmForm(OTPTokenForm):
+    otp_device = None
+    otp_token = forms.CharField(
+        required=True,
+        label=_("Code"),
+        strip=True,
+        help_text=_('Two factor code shown in your app authenticator')
+    )
+    otp_challenge = None
 
-    def __init__(self, user, obj, request=None, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, user, device, request=None, *args, **kwargs):
+        super(OTPTokenForm, self).__init__(*args, **kwargs)
         self.user = user
-        self.obj = obj
+        self.device = device
 
     def clean(self):
-        self._verify_token(self.user, self.cleaned_data.get('otp_token'), device=self.obj)
-        return self.cleaned_data
+        self.cleaned_data['otp_device'] = self.device.persistent_id
+        return super().clean()
 
 
 class Fido2DeviceCheckForm(OTPTokenForm):
@@ -70,7 +98,12 @@ class StaticDeviceForm(Form):
 
 
 class TOTPDeviceForm(Form):
-    name = forms.CharField(label="Name", initial='App authenticator')
+    name = forms.CharField(
+        label="Name",
+        strip=True,
+        initial=_('App authenticator'),
+        help_text=_('Indicate a name to recognize your two factor device')
+    )
 
     def save(self, user):
         totp_device = TOTPDevice(name=self.cleaned_data['name'], user=user)

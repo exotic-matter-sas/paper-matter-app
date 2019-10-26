@@ -1,46 +1,63 @@
 {% extends 'ftl/django_app_base.html' %}
 {% load static %}
+{% load i18n %}
 
 {% block header %}
     <script type="application/javascript" src="{% static 'qrcode.js' %}"></script>
 {% endblock %}
 {% block main %}
-    <h1>Current OTP device registered with this account</h1>
-    <h2>Static OTP keys</h2>
-    <ul>
-        {% for static in static_device %}
-            <li>{{ static.persistent_id }} ({{ static.name }}) - (<a
-                    href="{% url "otp_static_delete"  static.id %}">X</a>)
-            </li>
+    {% if static_device or totp_device or fido2_device %}
+        <h1>Current OTP device registered with this account</h1>
+        <h2>Static OTP keys</h2>
+        <ul>
+            {% for static in static_device %}
+                <li>{{ static.persistent_id }} ({{ static.name }}) - (<a
+                        href="{% url "otp_static_delete"  static.id %}">X</a>)
+                </li>
 
-            <ul>
-                {% for code in static.token_set.all %}
-                    <li>{{ code.token }}</li>
-                {% endfor %}
-            </ul>
-        {% endfor %}
-    </ul>
-    <a href="{% url "otp_static_add" %}">Add OTP keys</a>
+                <ul>
+                    {% for code in static.token_set.all %}
+                        <li>{{ code.token }}</li>
+                    {% endfor %}
+                </ul>
+            {% endfor %}
+        </ul>
+        <a href="{% url "otp_static_add" %}">Add OTP keys</a>
 
-    <h2>TOTP Devices</h2>
-    <ul>
-        {% for totp in totp_device %}
-            <li>{{ totp.persistent_id }} ({{ totp.name }})- (<a
-                    href="{% url "otp_totp_delete"  totp.id %}">X</a>)
+        <h2>TOTP Devices</h2>
+        <ul>
+            {% for totp in totp_device %}
+                <li>{{ totp.persistent_id }} ({{ totp.name }})- (<a
+                        href="{% url "otp_totp_delete"  totp.id %}">X</a>)
 
-                <img src="{% url 'otp_totp_qrcode' totp.id %}" alt="qrcode"/>
-            </li>
-        {% endfor %}
-    </ul>
-    <a href="{% url "otp_totp_add" %}">Add TOTP device</a>
+                    <img src="{% url 'otp_totp_qrcode' totp.id %}" alt="qrcode"/>
+                </li>
+            {% endfor %}
+        </ul>
+        <a href="{% url "otp_totp_add" %}">Add TOTP device</a>
 
-    <h2>FIDO2 Devices</h2>
-    <ul>
-        {% for fido in fido2_device %}
-            <li>{{ fido.persistent_id }} ({{ fido.name }})- (<a
-                    href="{% url "otp_fido2_delete"  fido.id %}">X</a>)
-            </li>
-        {% endfor %}
-    </ul>
-    <a href="{% url "otp_fido2_add" %}">Add FIDO key</a>
+        <h2>FIDO2 Devices</h2>
+        <ul>
+            {% for fido in fido2_device %}
+                <li>{{ fido.persistent_id }} ({{ fido.name }})- (<a
+                        href="{% url "otp_fido2_delete"  fido.id %}">X</a>)
+                </li>
+            {% endfor %}
+        </ul>
+        <a href="{% url "otp_fido2_add" %}">Add FIDO key</a>
+    {% else %}
+        <h1>{% trans "Protect your Paper Matter account with two factors verification" %}</h1>
+        <p>
+            {% blocktrans %}
+                Each time you signin into your Paper Matter account, you will need your usual password and a
+                validatation
+                code that will be available via your phone.
+            {% endblocktrans %}
+        </p>
+        <p>{% trans "There is no two factor device registered with this account" %}</p>
+        <ul>
+            <li><a href="{% url "otp_totp_add" %}">Add a second factor using an app (recommended)</a></li>
+            <li><a href="{% url "otp_fido2_add" %}">Add a security key (FIDO2)</a></li>
+        </ul>
+    {% endif %}
 {% endblock %}

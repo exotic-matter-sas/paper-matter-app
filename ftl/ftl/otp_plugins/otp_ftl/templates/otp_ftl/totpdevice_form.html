@@ -1,10 +1,29 @@
 {% extends 'ftl/django_app_base.html' %}
+{% load i18n %}
 
 {% block main %}
-    <h2>Add a TOTP 2FA token</h2>
+    <h2>{% trans "Add an app authenticator" %}</h2>
+    <p>
+        {% blocktrans %}
+            Use an app on your phone to generate validation code. In the app, scan the QR code that will be shown next
+            page.
+        {% endblocktrans %}
+    </p>
+    <div>
+        <a href='https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2'>
+            <img alt='Get it on Google Play' width="135"
+                 src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png'/>
+        </a>
+        <a href="https://apps.apple.com/us/app/google-authenticator/id388497605?mt=8">
+            <img alt="Get it on iOS App Store"
+                 src="https://linkmaker.itunes.apple.com/fr-fr/badge-lrg.svg?releaseDate=2010-09-20&kind=iossoftware&bubble=ios_apps"
+                 width="135"/>
+        </a>
+    </div>
+
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <input type="submit" value="Save">
+        <input type="submit" value="{% trans "Next" %}">
     </form>
 {% endblock %}

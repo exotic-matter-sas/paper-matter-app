@@ -3,12 +3,13 @@ import qrcode.image.svg
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.http import HttpResponse, HttpResponseForbidden
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.generic import FormView, DeleteView, DetailView
 from django.views.generic.detail import SingleObjectMixin
 from django_otp.decorators import otp_required
+from django_otp.plugins.otp_static.models import StaticDevice
 from django_otp.plugins.otp_totp.models import TOTPDevice
 
 from ftl.otp_plugins.otp_ftl.forms import TOTPDeviceForm, TOTPDeviceCheckForm, TOTPDeviceConfirmForm
@@ -34,7 +35,7 @@ class TOTPDeviceDisplay(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['form'] = TOTPDeviceConfirmForm(None, None)
+        context['form'] = TOTPDeviceConfirmForm(self.request.user, None)
         return context
 
 
@@ -43,24 +44,28 @@ class TOTPDeviceDisplay(DetailView):
 class TOTPDeviceConfirm(SingleObjectMixin, FormView):
     template_name = 'otp_ftl/totpdevice_detail.html'
     form_class = TOTPDeviceConfirmForm
-    success_url = reverse_lazy('otp_list')
     model = TOTPDevice
+
+    def get_success_url(self):
+        count = StaticDevice.objects.filter(user=self.request.user).count()
+        if count > 0:
+            return reverse('otp_list')
+        else:
+            return reverse('otp_static_add')
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
-        kwargs['obj'] = self.object
+        kwargs['device'] = self.device
         return kwargs
 
     def post(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            return HttpResponseForbidden()
-        self.object = self.get_object()
+        self.device = self.get_object()
         return super().post(request, *args, **kwargs)
 
     def form_valid(self, form):
-        self.object.confirmed = True
-        self.object.save()
+        self.device.confirmed = True
+        self.device.save()
 
         return super().form_valid(form)
 
