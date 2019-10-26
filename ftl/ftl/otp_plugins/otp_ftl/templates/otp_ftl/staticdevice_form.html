@@ -1,9 +1,23 @@
 {% extends 'ftl/django_app_base.html' %}
+{% load i18n %}
 
 {% block main %}
-    <h2>Add emergency 2FA codes</h2>
+    <h2>{% trans "Add emergency two factor codes" %}</h2>
+
+    <p>
+        {% blocktrans %}
+            We highly recommend you generate a set of emergency code in case you have lost your mobile phone or security
+            key. These codes are one-time use code, namely each code will only work one (1) time.
+        {% endblocktrans %}
+    </p>
+    <p>
+        {% blocktrans %}
+            Please keep those codes in a safe place.
+        {% endblocktrans %}
+    </p>
+
     <form method="post">{% csrf_token %}
         {{ form.as_p }}
-        <input type="submit" value="Save">
+        <input type="submit" value="Generate code">
     </form>
 {% endblock %}

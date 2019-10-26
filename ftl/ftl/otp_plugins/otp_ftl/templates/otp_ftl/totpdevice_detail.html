@@ -2,23 +2,25 @@
 {% load i18n %}
 {% block main %}
     <h2>{% trans "Confirm your app authenticator" %}</h2>
-    <p>
-        {% blocktrans %}
-            Confirm that you have successfully configured your app authenticator by writting the current code in the
-            form below.
-        {% endblocktrans %}
-    </p>
-
     <p>{{ object }}</p>
 
-    <p>{% trans "Scan the following QR code with the app authenticator" %}</p>
-    <p><img src="{% url 'otp_totp_qrcode' object.id %}" alt="qrcode"/></p>
+    {% if not object.confirmed %}
+        <p>
+            {% blocktrans %}
+                Confirm that you have successfully configured your app authenticator by writting the current code in the
+                form below.
+            {% endblocktrans %}
+        </p>
 
-    <form action="" method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="{% trans "Validate" %}">
-    </form>
+        <p>{% trans "Scan the following QR code with the app authenticator" %}</p>
+        <p><img src="{% url 'otp_totp_qrcode' object.id %}" alt="qrcode"/></p>
+
+        <form action="" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="{% trans "Validate" %}">
+        </form>
+    {% endif %}
 
     <p><a href="{% url 'otp_list' %}">Return to 2FA list</a></p>
 {% endblock %}

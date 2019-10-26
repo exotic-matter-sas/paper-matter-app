@@ -83,7 +83,12 @@ class Fido2DeviceCheckForm(OTPTokenForm):
 
 # Forms for registering a new device
 class StaticDeviceForm(Form):
-    name = forms.CharField(label="Name", initial='ER Code')
+    name = forms.CharField(
+        label="Name",
+        strip=True,
+        initial=_('Emergency codes'),
+        help_text=_('Indicate a name to recognize your two factor device')
+    )
 
     def save(self, user):
         static_device = StaticDevice(name=self.cleaned_data['name'], user=user)

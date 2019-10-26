@@ -2,7 +2,7 @@ import qrcode
 import qrcode.image.svg
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
-from django.http import HttpResponse, HttpResponseForbidden
+from django.http import HttpResponse
 from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
 from django.views import View
@@ -41,7 +41,7 @@ class TOTPDeviceDisplay(DetailView):
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(otp_required(if_configured=True), name='dispatch')
-class TOTPDeviceConfirm(SingleObjectMixin, FormView):
+class TOTPDeviceConfirm(SingleObjectMixin, LoginView):
     template_name = 'otp_ftl/totpdevice_detail.html'
     form_class = TOTPDeviceConfirmForm
     model = TOTPDevice
@@ -56,16 +56,17 @@ class TOTPDeviceConfirm(SingleObjectMixin, FormView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
-        kwargs['device'] = self.device
+        kwargs['request'] = self.request
+        kwargs['device'] = self.object
         return kwargs
 
     def post(self, request, *args, **kwargs):
-        self.device = self.get_object()
+        self.object = self.get_object()
         return super().post(request, *args, **kwargs)
 
     def form_valid(self, form):
-        self.device.confirmed = True
-        self.device.save()
+        self.object.confirmed = True
+        self.object.save()
 
         return super().form_valid(form)
 
