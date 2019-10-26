@@ -1,0 +1,12 @@
+{% extends 'ftl/django_app_base.html' %}
+{% load i18n %}
+
+{% block main %}
+    <h2>{% trans "Your security has been added!" %}</h2>
+
+    <ul>
+        <li><a href="{% url 'otp_static_add' %}">Generate emergency two factor codes</a></li>
+        <li><a href="{% url 'otp_list' %}">Return to 2FA list</a></li>
+    </ul>
+
+{% endblock %}

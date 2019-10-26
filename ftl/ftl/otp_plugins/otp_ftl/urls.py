@@ -19,7 +19,8 @@ urlpatterns = [
 
     path('fido2/', views_fido2.Fido2DeviceAdd.as_view(), name='otp_fido2_add'),
     path('fido2/check', views_fido2.Fido2Check.as_view(), name='otp_fido2_check'),
-    path('fido2/<str:pk>', views_fido2.Fido2DeviceDelete.as_view(), name='otp_fido2_delete'),
+    path('fido2/success', views_fido2.Fido2DeviceSuccess.as_view(), name='otp_fido2_success'),
+    path('fido2/<str:pk>/delete', views_fido2.Fido2DeviceDelete.as_view(), name='otp_fido2_delete'),
     path('fido2/api/register_begin', views_fido2.fido2_api_register_begin, name='otp_fido2_api_register_begin'),
     path('fido2/api/register_finish', views_fido2.fido2_api_register_finish, name='otp_fido2_api_register_finish'),
     path('fido2/api/login_begin', views_fido2.fido2_api_login_begin, name='otp_fido2_api_login_begin'),

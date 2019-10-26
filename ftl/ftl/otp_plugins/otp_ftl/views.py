@@ -36,12 +36,15 @@ class ListOTPDevice(View):
 class OTPCheckView(View):
     def get(self, request, *args, **kwargs):
         devices = list((d.persistent_id, d.name) for d in devices_for_user(request.user))
+        next = request.GET.get('next', None)
+        if next:
+            request.session['next'] = next
 
         if [d for d in devices if Fido2Device.model_label() in d[0]]:
-            return redirect('otp_fido2_check')
+            return redirect('otp_fido2_check', *args, **kwargs)
 
         if [d for d in devices if TOTPDevice.model_label() in d[0]]:
-            return redirect('otp_totp_check')
+            return redirect('otp_totp_check', *args, **kwargs)
 
         if [d for d in devices if StaticDevice.model_label() in d[0]]:
-            return redirect('otp_static_check')
+            return redirect('otp_static_check', *args, **kwargs)

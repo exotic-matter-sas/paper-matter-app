@@ -1,26 +1,37 @@
 {% extends 'ftl/django_app_base.html' %}
 {% load static %}
+{% load i18n %}
 
 {% block head %}
     <script type="application/javascript" src="{% static 'cbor.js' %}"></script>
-    <script type="application/json" id="registration_data">
-    {{ registration_data|safe }}
-    </script>
 {% endblock %}
 
 {% block main %}
-    <h2>Add a FIDO2 device</h2>
-    <form method="post">{% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Save">
-    </form>
+    <h2>{% trans "Add a security key" %}</h2>
+
+    <p>
+        {% blocktrans %}
+            A security key dongle is a small device that you can buy to help prove it’s you signing in. When we need to
+            make sure it’s you, you can simply connect the key to your phone, tablet, or computer.
+        {% endblocktrans %}
+    </p>
+    <p>
+        {% blocktrans %}
+            Such keys are the ones that are compatible with the U2F or FIDO2 protocol
+            (Yubikey, Google Titan Security Key, etc.).<br/>
+            Only recent browsers are compatible with these keys such as Google Chrome, Mozilla Firefox,
+            Microsoft Edge.
+        {% endblocktrans %}
+    </p>
+
+    <input id="fido2-next" type="submit" value="Next">
 {% endblock %}
 
 {% block footer %}
     <script type="application/javascript">
       'use strict';
 
-      fetch('/accounts/2fa/fido2/api/register_begin', {
+      fetch('{% url 'otp_fido2_api_register_begin' %}', {
         method: 'POST',
       }).then(function (response) {
         if (response.ok) return response.arrayBuffer();
@@ -28,7 +39,7 @@
       }).then(CBOR.decode).then(function (options) {
         return navigator.credentials.create(options);
       }).then(function (attestation) {
-        return fetch('/accounts/2fa/fido2/api/register_finish', {
+        return fetch('{% url 'otp_fido2_api_register_finish' %}', {
           method: 'POST',
           headers: {'Content-Type': 'application/cbor'},
           body: CBOR.encode({
@@ -37,12 +48,12 @@
           })
         });
       }).then(function (response) {
-        var stat = response.ok ? 'successful' : 'unsuccessful';
-        alert('Registration ' + stat + ' More details in server log...');
+        if (response.ok) {
+          window.location = '{% url 'otp_fido2_success'  %}';
+        }
       }, function (reason) {
         alert(reason);
-      }).then(function () {
-        window.location = '/';
+        window.location = '{% url 'otp_list' %}';
       });
     </script>
 {% endblock %}

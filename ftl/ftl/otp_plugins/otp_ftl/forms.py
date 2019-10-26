@@ -70,7 +70,12 @@ class TOTPDeviceConfirmForm(OTPTokenForm):
 
 
 class Fido2DeviceCheckForm(OTPTokenForm):
-    otp_device = forms.ChoiceField(choices=[])
+    otp_device = forms.ChoiceField(
+        choices=[],
+        required=True,
+        label=_("Security key"),
+        help_text=_('Choose the security key you are using')
+    )
     otp_token = forms.CharField(required=True, widget=forms.HiddenInput())
     otp_challenge = None
 

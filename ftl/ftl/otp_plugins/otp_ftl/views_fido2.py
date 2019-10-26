@@ -6,9 +6,10 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
+from django.utils.http import is_safe_url
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import DeleteView
+from django.views.generic import DeleteView, TemplateView
 from django_otp.decorators import otp_required
 from fido2.client import ClientData
 from fido2.ctap2 import AttestationObject, AttestedCredentialData
@@ -27,10 +28,29 @@ class Fido2Check(LoginView):
     form_class = Fido2DeviceCheckForm
     success_url = reverse_lazy('home')
 
+    def get_success_url(self):
+        url = self.request.session.get('next', None)
+        if url:
+            del self.request.session['next']
+            url_is_safe = is_safe_url(
+                url=url,
+                allowed_hosts=self.get_success_url_allowed_hosts(),
+                require_https=self.request.is_secure(),
+            )
+            return url if url_is_safe else self.success_url
+
+        return self.success_url
+
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
+
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(otp_required(if_configured=True), name='dispatch')
+class Fido2DeviceSuccess(TemplateView):
+    template_name = 'otp_ftl/fido2device_detail.html'
 
 
 @method_decorator(login_required, name='dispatch')

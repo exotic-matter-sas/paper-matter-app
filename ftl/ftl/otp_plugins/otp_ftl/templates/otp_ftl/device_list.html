@@ -27,8 +27,9 @@
         <h2>TOTP Devices</h2>
         <ul>
             {% for totp in totp_device %}
-                <li>{{ totp.persistent_id }} ({{ totp.name }})- (<a
-                        href="{% url "otp_totp_delete"  totp.id %}">X</a>)
+                <li>{{ totp.persistent_id }} ({{ totp.name }}) - {% if not totp.confirmed %} NOT VALIDATED {% endif %}
+                    [<a
+                            href="{% url "otp_totp_delete"  totp.id %}">Delete</a>]
 
                     <img src="{% url 'otp_totp_qrcode' totp.id %}" alt="qrcode"/>
                 </li>

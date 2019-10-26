@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
+from django.utils.http import is_safe_url
 from django.views.generic import FormView, DeleteView, DetailView
 from django_otp.decorators import otp_required
 from django_otp.plugins.otp_static.models import StaticDevice
@@ -14,6 +15,19 @@ class StaticDeviceCheck(LoginView):
     template_name = 'otp_ftl/staticdevice_check.html'
     form_class = StaticDeviceCheckForm
     success_url = reverse_lazy('home')
+
+    def get_success_url(self):
+        url = self.request.session.get('next', None)
+        if url:
+            del self.request.session['next']
+            url_is_safe = is_safe_url(
+                url=url,
+                allowed_hosts=self.get_success_url_allowed_hosts(),
+                require_https=self.request.is_secure(),
+            )
+            return url if url_is_safe else self.success_url
+
+        return self.success_url
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
