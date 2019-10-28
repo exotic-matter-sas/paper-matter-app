@@ -2,9 +2,6 @@
 {% load static %}
 {% load i18n %}
 
-{% block header %}
-    <script type="application/javascript" src="{% static 'qrcode.js' %}"></script>
-{% endblock %}
 {% block main %}
     {% if static_device or totp_device or fido2_device %}
         <h1>Current OTP device registered with this account</h1>

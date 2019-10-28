@@ -5,20 +5,20 @@ from django_otp.forms import OTPTokenForm
 from django_otp.plugins.otp_static.models import StaticDevice, StaticToken
 from django_otp.plugins.otp_totp.models import TOTPDevice
 
-# Forms for checking
+# Forms for checking 2FA
 from ftl.otp_plugins.otp_ftl.models import Fido2Device
 
 
 class StaticDeviceCheckForm(OTPTokenForm):
     otp_device = forms.ChoiceField(
-        label=_("Two factor"),
-        help_text=_('Select two factor'),
+        label=_("Set of emergency codes"),
+        help_text=_('Select your set of codes'),
         choices=[])
     otp_token = forms.CharField(
         required=True,
         label=_("Code"),
         strip=True,
-        help_text=_('Emergency code (one time use)')
+        help_text=_('One emergency code from your set (the code will be consumed after validating)')
     )
     otp_challenge = None
 
@@ -31,8 +31,8 @@ class StaticDeviceCheckForm(OTPTokenForm):
 
 class TOTPDeviceCheckForm(OTPTokenForm):
     otp_device = forms.ChoiceField(
-        label=_("Two factor"),
-        help_text=_('Select two factor'),
+        label=_("Authenticator app"),
+        help_text=_('Select the authenticator app you wish to use'),
         choices=[])
     otp_token = forms.CharField(
         required=True,
@@ -70,20 +70,18 @@ class TOTPDeviceConfirmForm(OTPTokenForm):
 
 
 class Fido2DeviceCheckForm(OTPTokenForm):
-    otp_device = forms.ChoiceField(
-        choices=[],
-        required=True,
-        label=_("Security key"),
-        help_text=_('Choose the security key you are using')
-    )
+    otp_device = None
     otp_token = forms.CharField(required=True, widget=forms.HiddenInput())
     otp_challenge = None
 
     def __init__(self, user, request=None, *args, **kwargs):
         super(OTPTokenForm, self).__init__(*args, **kwargs)
-
         self.user = user
-        self.fields['otp_device'].choices = [d for d in self.device_choices(user) if Fido2Device.model_label() in d[0]]
+
+    def clean(self):
+        fido2_devices = [d for d in self.device_choices(self.user) if Fido2Device.model_label() in d[0]]
+        self.cleaned_data['otp_device'] = fido2_devices[0][0]
+        return super().clean()
 
 
 # Forms for registering a new device
