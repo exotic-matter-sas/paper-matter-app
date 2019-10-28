@@ -9,7 +9,7 @@
         <ul>
             {% for static in static_device %}
                 <li><a href="{% url 'otp_static_update' static.id %}">{{ static.name }} ({{ static.persistent_id }})</a>
-                    - [<a href="{% url "otp_static_delete"  static.id %}">{% trans 'Delete' %}</a>]
+                    - [<a href="{% url "otp_static_delete" static.id %}">{% trans 'Delete' %}</a>]
                 </li>
 
                 <ul>

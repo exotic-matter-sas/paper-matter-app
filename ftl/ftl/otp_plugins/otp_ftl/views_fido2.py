@@ -1,12 +1,10 @@
 import cbor2
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.views import LoginView
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
-from django.utils.http import is_safe_url
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import DeleteView, TemplateView, UpdateView
@@ -17,34 +15,17 @@ from fido2.server import RelyingParty, Fido2Server
 
 from ftl.otp_plugins.otp_ftl.forms import Fido2DeviceCheckForm
 from ftl.otp_plugins.otp_ftl.models import Fido2Device, Fido2State
+from ftl.otp_plugins.otp_ftl.views import FTLBaseCheckView
 
 FIDO2_REGISTER_STATE = 'fido2_register_state'
 FIDO2_LOGIN_STATE = 'fido2_login_state'
 
 
 @method_decorator(login_required, name='dispatch')
-class Fido2Check(LoginView):
+class Fido2Check(FTLBaseCheckView):
     template_name = 'otp_ftl/fido2device_check.html'
     form_class = Fido2DeviceCheckForm
     success_url = reverse_lazy('home')
-
-    def get_success_url(self):
-        url = self.request.session.get('next', None)
-        if url:
-            del self.request.session['next']
-            url_is_safe = is_safe_url(
-                url=url,
-                allowed_hosts=self.get_success_url_allowed_hosts(),
-                require_https=self.request.is_secure(),
-            )
-            return url if url_is_safe else self.success_url
-
-        return self.success_url
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user
-        return kwargs
 
 
 @method_decorator(login_required, name='dispatch')

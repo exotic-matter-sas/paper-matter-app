@@ -1,6 +1,8 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import LoginView
 from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
+from django.utils.http import is_safe_url
 from django.views import View
 from django_otp import devices_for_user
 from django_otp.decorators import otp_required
@@ -48,3 +50,23 @@ class OTPCheckView(View):
 
         if [d for d in devices if StaticDevice.model_label() in d[0]]:
             return redirect('otp_static_check', *args, **kwargs)
+
+
+class FTLBaseCheckView(LoginView):
+    def get_success_url(self):
+        url = self.request.session.get('next', None)
+        if url:
+            del self.request.session['next']
+            url_is_safe = is_safe_url(
+                url=url,
+                allowed_hosts=self.get_success_url_allowed_hosts(),
+                require_https=self.request.is_secure(),
+            )
+            return url if url_is_safe else self.success_url
+
+        return self.success_url
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs

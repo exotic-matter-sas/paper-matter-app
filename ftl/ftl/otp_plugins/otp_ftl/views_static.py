@@ -8,31 +8,14 @@ from django_otp.decorators import otp_required
 from django_otp.plugins.otp_static.models import StaticDevice
 
 from ftl.otp_plugins.otp_ftl.forms import StaticDeviceForm, StaticDeviceCheckForm
+from ftl.otp_plugins.otp_ftl.views import FTLBaseCheckView
 
 
 @method_decorator(login_required, name='dispatch')
-class StaticDeviceCheck(LoginView):
+class StaticDeviceCheck(FTLBaseCheckView):
     template_name = 'otp_ftl/staticdevice_check.html'
     form_class = StaticDeviceCheckForm
     success_url = reverse_lazy('home')
-
-    def get_success_url(self):
-        url = self.request.session.get('next', None)
-        if url:
-            del self.request.session['next']
-            url_is_safe = is_safe_url(
-                url=url,
-                allowed_hosts=self.get_success_url_allowed_hosts(),
-                require_https=self.request.is_secure(),
-            )
-            return url if url_is_safe else self.success_url
-
-        return self.success_url
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user
-        return kwargs
 
 
 @method_decorator(login_required, name='dispatch')

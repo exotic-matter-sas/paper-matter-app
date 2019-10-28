@@ -5,7 +5,6 @@ from django.contrib.auth.views import LoginView
 from django.http import HttpResponse
 from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
-from django.utils.http import is_safe_url
 from django.views import View
 from django.views.generic import FormView, DeleteView, DetailView, UpdateView
 from django.views.generic.detail import SingleObjectMixin
@@ -14,31 +13,14 @@ from django_otp.plugins.otp_static.models import StaticDevice
 from django_otp.plugins.otp_totp.models import TOTPDevice
 
 from ftl.otp_plugins.otp_ftl.forms import TOTPDeviceForm, TOTPDeviceCheckForm, TOTPDeviceConfirmForm
+from ftl.otp_plugins.otp_ftl.views import FTLBaseCheckView
 
 
 @method_decorator(login_required, name='dispatch')
-class TOTPDeviceCheck(LoginView):
+class TOTPDeviceCheck(FTLBaseCheckView):
     template_name = 'otp_ftl/totpdevice_check.html'
     form_class = TOTPDeviceCheckForm
     success_url = reverse_lazy('home')
-
-    def get_success_url(self):
-        url = self.request.session.get('next', None)
-        if url:
-            del self.request.session['next']
-            url_is_safe = is_safe_url(
-                url=url,
-                allowed_hosts=self.get_success_url_allowed_hosts(),
-                require_https=self.request.is_secure(),
-            )
-            return url if url_is_safe else self.success_url
-
-        return self.success_url
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user
-        return kwargs
 
 
 @method_decorator(login_required, name='dispatch')

@@ -11,12 +11,16 @@
 
     <p>{% trans "This extra step shows that it’s really you trying to sign in" %}</p>
 
-    <form method="post" id="user-form">
-        {% csrf_token %}
-        {{ form.as_p }}
+    {% if form.otp_device.field.choices %}
+        <form method="post" id="user-form">
+            {% csrf_token %}
+            {{ form.as_p }}
 
-        <input class="btn btn-lg btn-primary btn-block" type="submit" value="{% trans "Verify" %}">
-    </form>
+            <input class="btn btn-lg btn-primary btn-block" type="submit" value="{% trans "Verify" %}">
+        </form>
+    {% else %}
+        <p>{% trans "Error: you can't use emergency code on this account" %}</p>
+    {% endif %}
 
     <p>{% trans "Try another way" %}</p>
     <ul>
