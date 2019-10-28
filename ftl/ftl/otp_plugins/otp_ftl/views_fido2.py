@@ -9,7 +9,7 @@ from django.utils.decorators import method_decorator
 from django.utils.http import is_safe_url
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import DeleteView, TemplateView
+from django.views.generic import DeleteView, TemplateView, UpdateView
 from django_otp.decorators import otp_required
 from fido2.client import ClientData
 from fido2.ctap2 import AttestationObject, AttestedCredentialData
@@ -51,6 +51,15 @@ class Fido2Check(LoginView):
 @method_decorator(otp_required(if_configured=True), name='dispatch')
 class Fido2DeviceSuccess(TemplateView):
     template_name = 'otp_ftl/fido2device_detail.html'
+
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(otp_required(if_configured=True), name='dispatch')
+class Fido2DeviceUpdate(UpdateView):
+    model = Fido2Device
+    fields = ['name']
+    template_name = 'otp_ftl/device_update.html'
+    success_url = reverse_lazy('otp_list')
 
 
 @method_decorator(login_required, name='dispatch')

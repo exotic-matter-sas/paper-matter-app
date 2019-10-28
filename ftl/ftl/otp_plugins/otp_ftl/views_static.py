@@ -3,7 +3,7 @@ from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.http import is_safe_url
-from django.views.generic import FormView, DeleteView, DetailView
+from django.views.generic import FormView, DeleteView, DetailView, UpdateView
 from django_otp.decorators import otp_required
 from django_otp.plugins.otp_static.models import StaticDevice
 
@@ -40,6 +40,15 @@ class StaticDeviceCheck(LoginView):
 class StaticDeviceDetail(DetailView):
     template_name = 'otp_ftl/staticdevice_detail.html'
     model = StaticDevice
+
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(otp_required(if_configured=True), name='dispatch')
+class StaticDeviceUpdate(UpdateView):
+    model = StaticDevice
+    fields = ['name']
+    template_name = 'otp_ftl/device_update.html'
+    success_url = reverse_lazy('otp_list')
 
 
 @method_decorator(login_required, name='dispatch')

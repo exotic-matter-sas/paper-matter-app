@@ -1,0 +1,18 @@
+{% extends 'ftl/django_app_base.html' %}
+{% load i18n %}
+
+{% block main %}
+    <h2>Change name of OTP device</h2>
+
+    You can update the name
+
+    <form method="post">{% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Update">
+    </form>
+
+    <ul>
+        <li><a href="{% url 'otp_list' %}">Return to 2FA list</a></li>
+    </ul>
+
+{% endblock %}

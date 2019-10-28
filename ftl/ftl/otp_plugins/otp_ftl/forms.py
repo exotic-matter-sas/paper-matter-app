@@ -5,10 +5,10 @@ from django_otp.forms import OTPTokenForm
 from django_otp.plugins.otp_static.models import StaticDevice, StaticToken
 from django_otp.plugins.otp_totp.models import TOTPDevice
 
-# Forms for checking 2FA
 from ftl.otp_plugins.otp_ftl.models import Fido2Device
 
 
+# Forms for checking 2FA
 class StaticDeviceCheckForm(OTPTokenForm):
     otp_device = forms.ChoiceField(
         label=_("Set of emergency codes"),

@@ -7,7 +7,7 @@ from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
 from django.utils.http import is_safe_url
 from django.views import View
-from django.views.generic import FormView, DeleteView, DetailView
+from django.views.generic import FormView, DeleteView, DetailView, UpdateView
 from django.views.generic.detail import SingleObjectMixin
 from django_otp.decorators import otp_required
 from django_otp.plugins.otp_static.models import StaticDevice
@@ -95,6 +95,15 @@ class TOTPDeviceDetail(View):
     def post(self, request, *args, **kwargs):
         view = TOTPDeviceConfirm.as_view()
         return view(request, *args, **kwargs)
+
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(otp_required(if_configured=True), name='dispatch')
+class TOTPDeviceUpdate(UpdateView):
+    model = TOTPDevice
+    fields = ['name']
+    template_name = 'otp_ftl/device_update.html'
+    success_url = reverse_lazy('otp_list')
 
 
 @method_decorator(login_required, name='dispatch')
