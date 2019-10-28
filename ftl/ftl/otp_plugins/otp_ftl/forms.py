@@ -28,6 +28,13 @@ class StaticDeviceCheckForm(OTPTokenForm):
         self.user = user
         self.fields['otp_device'].choices = [d for d in self.device_choices(user) if StaticDevice.model_label() in d[0]]
 
+    def _update_form(self, user):
+        super()._update_form(user)
+
+        if 'otp_device' in self.fields:
+            self.fields['otp_device'].widget.choices = [d for d in self.device_choices(user) if
+                                                        StaticDevice.model_label() in d[0]]
+
 
 class TOTPDeviceCheckForm(OTPTokenForm):
     otp_device = forms.ChoiceField(
@@ -47,6 +54,13 @@ class TOTPDeviceCheckForm(OTPTokenForm):
 
         self.user = user
         self.fields['otp_device'].choices = [d for d in self.device_choices(user) if TOTPDevice.model_label() in d[0]]
+
+    def _update_form(self, user):
+        super()._update_form(user)
+
+        if 'otp_device' in self.fields:
+            self.fields['otp_device'].widget.choices = [d for d in self.device_choices(user) if
+                                                        TOTPDevice.model_label() in d[0]]
 
 
 class TOTPDeviceConfirmForm(OTPTokenForm):
