@@ -101,7 +101,7 @@ describe('FTLRenameFolder methods', () => {
     expect(mockedMixinAlert.mock.calls[0][0]).toContain('rename folder');
   });
 
-  it('event-folder-renamed when calling renameFolder', async () => {
+  it('event-folder-renamed emit when calling renameFolder', async () => {
     axios.patch.mockResolvedValue(mockedRenameFolderResponse);
     const testedEvent = 'event-folder-renamed';
 
@@ -112,6 +112,6 @@ describe('FTLRenameFolder methods', () => {
     // then
     expect(wrapper.emitted(testedEvent)).toBeTruthy();
     expect(wrapper.emitted(testedEvent).length).toBe(1);
-    expect(wrapper.emitted(testedEvent)[0]).toEqual([mockedRenameFolderResponse.data]);
+    expect(wrapper.emitted(testedEvent)[0]).toEqual([{folder: mockedRenameFolderResponse.data}]);
   });
 });

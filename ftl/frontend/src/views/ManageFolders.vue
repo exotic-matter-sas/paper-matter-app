@@ -16,7 +16,7 @@
             </b-col>
           </b-row>
           <b-row align-h="center" v-else>
-            <FTLSelectableFolder v-for="folder in folders" :key="folder.id" :folder="folder"
+            <FTLSelectableFolder v-for="_folder in folders" :key="_folder.id" :folder="_folder"
                                  @event-navigate-folder="navigateToFolder"
                                  @event-select-folder="getFolderDetail"
                                  @event-unselect-folder="unselectFolder"
@@ -80,7 +80,7 @@
       <FTLRenameFolder
         v-if="folderDetail"
         :folder="folderDetail"
-        @event-folder-renamed="refreshFolder"/>
+        @event-folder-renamed="folderUpdated"/>
 
       <FTLNewFolder
         :parent="getCurrentFolder"
@@ -184,7 +184,6 @@
 
     methods: {
       refreshFolder: function () {
-        this.unselectFolder();
 
         if (this.folder) {
           this.updateFoldersFromUrl(this.folder);
@@ -215,6 +214,7 @@
       },
 
       navigateToFolder: function (folder) {
+        this.unselectFolder();
         if (folder) this.previousLevels.push(folder);
         this.$router.push({name: 'folders', params: {folder: folder.id}});
       },
@@ -233,7 +233,6 @@
           .get("/app/api/v1/folders" + qs)
           .then(response => {
             vi.folders = response.data;
-            vi.unselectFolder();
           })
           .catch(error => vi.mixinAlert(vi.$_('Unable to refresh folders list'), true))
           .finally(() => vi.foldersLoading = false);
@@ -271,7 +270,10 @@
       folderUpdated: function (event) {
         const folder = event.folder;
         const foundIndex = this.folders.findIndex(x => x.id === folder.id);
-        this.folders[foundIndex] = folder;
+        this.$set(this.folders, foundIndex, folder); // to be reactive, see https://vuejs.org/v2/guide/list.html#Caveats
+        if (this.folderDetail && this.folderDetail.id === folder.id) {
+            this.folderDetail = folder;
+        }
       }
     }
   }
