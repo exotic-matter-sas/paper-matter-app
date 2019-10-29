@@ -54,6 +54,7 @@ const mockedUpdateFoldersFromUrl = jest.fn();
 const mockedBreadcrumb = jest.fn();
 const mockedGetCurrentFolder = jest.fn();
 const mockedFolderDeleted = jest.fn();
+const mockedFolderUpdated = jest.fn();
 
 const mountedMocks = {
   updateFolders: mockedUpdateFolders,
@@ -228,7 +229,6 @@ describe('ManageFolders methods', () => {
     wrapper.vm.refreshFolder();
 
     //then
-    expect(mockedUnselectFolder).toHaveBeenCalledTimes(1);
     expect(mockedUpdateFolders).not.toHaveBeenCalled();
     expect(mockedUpdateFoldersFromUrl).toHaveBeenCalledWith(folder);
 
@@ -238,7 +238,6 @@ describe('ManageFolders methods', () => {
     wrapper.vm.refreshFolder();
 
     //then
-    expect(mockedUnselectFolder).toHaveBeenCalledTimes(1);
     expect(mockedUpdateFolders).toHaveBeenCalledTimes(1 + 1); //+1 for the call inside watch folder which isn't mockable
     expect(mockedUpdateFoldersFromUrl).not.toHaveBeenCalled();
   });
@@ -467,7 +466,8 @@ describe('Event received and handled by component', () => {
           refreshFolder: mockedRefreshFolder,
           navigateToFolder: mockedNavigateToFolder,
           getFolderDetail: mockedGetFolderDetail,
-          folderDeleted: mockedFolderDeleted
+          folderDeleted: mockedFolderDeleted,
+          folderUpdated: mockedFolderUpdated
         },
         mountedMocks
       ),
@@ -515,7 +515,7 @@ describe('Event received and handled by component', () => {
     // then
     expect(mockedUnselectFolder).toHaveBeenCalledTimes(1);
   });
-  it('event-folder-renamed call refreshFolder', async () => {
+  it('event-folder-renamed call folderUpdated', async () => {
     // Need to defined folderDetail for FTLRenameFolder to appears
     wrapper.setData({folderDetail: folder});
 
@@ -524,8 +524,8 @@ describe('Event received and handled by component', () => {
     await flushPromises();
 
     // then
-    expect(mockedRefreshFolder).toHaveBeenCalledTimes(1);
-    expect(mockedRefreshFolder).toHaveBeenCalledWith(folder);
+    expect(mockedFolderUpdated).toHaveBeenCalledTimes(1);
+    expect(mockedFolderUpdated).toHaveBeenCalledWith(folder);
   });
   it('event-folder-created call refreshFolder', async () => {
     // when

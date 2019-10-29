@@ -714,6 +714,9 @@ class ManageFoldersPageTests(LoginPage, ManageFolderPage):
                       'The not renamed folder should have kept its name')
         self.assertIn(folder_renamed_name, folder_title_list,
                       'New folder name should be present')
+        # Side panel remain opened
+        self.assertEqual(folder_renamed_name, self.get_elem_text(self.selected_folder_name),
+                         'The selected folder name should be still visible and updated')
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_move_selected_folder(self):
@@ -733,6 +736,9 @@ class ManageFoldersPageTests(LoginPage, ManageFolderPage):
                          'Moved folder should not appears at root anymore')
         self.assertIn(folder_not_to_move_name, folder_title_list,
                       'Unmoved folder appears at root')
+        # Side panel has been closed
+        with self.assertRaises(NoSuchElementException):
+            self.get_elem(self.selected_folder_name)
 
         self.navigate_to_folder(folder_not_to_move_name)
         folder_title_list = self.get_elems_text(self.folders_title)
@@ -757,3 +763,7 @@ class ManageFoldersPageTests(LoginPage, ManageFolderPage):
                          'Delete folder should not appears anymore')
         self.assertIn(folder_not_to_delete_name, folder_title_list,
                       'Undeleted folder should appears')
+
+        # Side panel has been closed
+        with self.assertRaises(NoSuchElementException):
+            self.get_elem(self.selected_folder_name)
