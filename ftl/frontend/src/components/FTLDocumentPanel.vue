@@ -25,7 +25,8 @@
         <b-col md="8">
           <div v-if="!isIOS" class="h-100 embed-responsive doc-pdf" id="pdfviewer">
             <iframe v-if="currentOpenDoc.pid" class="embed-responsive-item"
-                    :src="`/assets/pdfjs/web/viewer.html?file=/app/uploads/` + currentOpenDoc.pid + `#search=` + search">
+                    :src="`/assets/pdfjs/web/viewer.html?file=/app/uploads/` + currentOpenDoc.pid
+                    + `#pagemode=none&search=` + search">
             </iframe>
           </div>
           <div v-else>
