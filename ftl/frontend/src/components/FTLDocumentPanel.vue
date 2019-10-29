@@ -14,7 +14,7 @@
             </b-button>
           </b-col>
           <b-col>
-            <button @click="$bvModal.hide('document-viewer')" type="button" aria-label="Close" class="close">×
+            <button @click.prevent="$bvModal.hide('document-viewer')" type="button" aria-label="Close" class="close">×
             </button>
           </b-col>
         </b-row>
