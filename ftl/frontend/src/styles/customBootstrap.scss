@@ -56,6 +56,11 @@ button svg {
     vertical-align: -0.125em;
 }
 
+.b-form-file label{
+    white-space: nowrap;
+    overflow: hidden;
+}
+
 // LOGIN PAGE
 // ==========
 #login-form {

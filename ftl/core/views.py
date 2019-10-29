@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.core.files.base import ContentFile
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 from django.db.models import F
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound, HttpResponseRedirect, Http404
 from django.shortcuts import render, get_object_or_404
@@ -63,8 +63,16 @@ class DownloadView(views.APIView):
         else:
             response = HttpResponse(doc.binary, 'application/octet')
             response['Last-Modified'] = http_date(doc.edited.timestamp())
-            response['Content-Disposition'] = 'attachment; filename="%s"' % doc.binary.name
+            response['Content-Disposition'] = f'attachment; filename="{doc.binary.name}"'
             return response
+
+
+class ViewPDF(DownloadView):
+    def get(self, request, *args, **kwargs):
+        response = super().get(request, *args, **kwargs)
+        response['Content-Type'] = 'application/pdf'
+        response['Content-Disposition'] = 'inline'
+        return response
 
 
 class FTLDocumentList(generics.ListAPIView):
@@ -142,6 +150,7 @@ class FTLDocumentThumbnail(views.APIView):
             return response
 
 
+@method_decorator(transaction.non_atomic_requests, name='dispatch')
 class FileUploadView(views.APIView):
     parser_classes = (MultiPartParser,)
     serializer_class = FTLDocumentSerializer
@@ -169,18 +178,26 @@ class FileUploadView(views.APIView):
         else:
             ftl_folder = None
 
-        ftl_doc = FTLDocument()
-        ftl_doc.ftl_folder = ftl_folder
-        ftl_doc.ftl_user = self.request.user
-        ftl_doc.binary = file_obj
-        ftl_doc.org = self.request.user.org
-        ftl_doc.title = file_obj.name
+        with transaction.atomic():
+            ftl_doc = FTLDocument()
+            ftl_doc.ftl_folder = ftl_folder
+            ftl_doc.ftl_user = self.request.user
+            ftl_doc.binary = file_obj
+            ftl_doc.org = self.request.user.org
+            ftl_doc.title = file_obj.name
 
-        if 'thumbnail' in request.POST:
-            ftl_doc.thumbnail_binary = ContentFile(_extract_binary_from_data_uri(request.POST['thumbnail']),
-                                                   'thumb.png')
+            if 'thumbnail' in request.POST and request.POST['thumbnail']:
+                try:
+                    ftl_doc.thumbnail_binary = ContentFile(_extract_binary_from_data_uri(request.POST['thumbnail']),
+                                                           'thumb.png')
+                except ValueError as e:
+                    if 'ignore_thumbnail_generation_error' in payload and \
+                        not payload['ignore_thumbnail_generation_error']:
+                        raise e
+                    else:
+                        pass
 
-        ftl_doc.save()
+            ftl_doc.save()
 
         ftl_doc_processing.apply_processing(ftl_doc)
 

@@ -10,20 +10,24 @@ export const createThumbFromFile = function (file) {
 
 export const createThumbFromUrl = function (url) {
   return new Promise((resolve, reject) => {
-    pdfjsLib.getDocument(url).then(function (pdf) {
+
+    let loadingTask = pdfjsLib.getDocument(url);
+    loadingTask.promise.then(function (pdf) {
       pdf.getPage(1).then(function (page) {
         const canvas = document.createElement("canvas");
         const context = canvas.getContext('2d');
 
-        let viewport = page.getViewport(0.5);
+        let viewport = page.getViewport({scale: 0.5});
 
         canvas.height = viewport.height;
         canvas.width = viewport.width;
 
-        page.render({
+        let render = page.render({
           canvasContext: context,
           viewport: viewport
-        }).then(function () {
+        });
+
+        render.promise.then(function () {
           resolve(canvas.toDataURL());
         });
       }).catch(function () {

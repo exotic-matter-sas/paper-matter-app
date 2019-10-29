@@ -98,6 +98,24 @@ describe('FTLDocumentPanel mounted', () => {
   });
 });
 
+// COMPUTED
+describe('FTLDocumentPanel computed', () => {
+  let wrapper;
+  // defined const specific to this describe here
+  beforeEach(() => {
+    wrapper = shallowMount(FTLDocumentPanel, {
+      localVue,
+      methods: mountedMocks,
+      propsData: {pid: docProps.pid},
+    });
+    jest.clearAllMocks(); // Reset mock call count done by mounted
+  });
+
+  it('isIOS return proper value', async () => {
+    // TODO test main iOS user agent device here when we will be able to force recompute of computed
+  });
+});
+
 // METHODS
 describe('FTLDocumentPanel methods', () => {
   let wrapper;
