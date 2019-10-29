@@ -103,7 +103,8 @@
       <FTLDocumentPanel v-if="docPid" :pid="docPid"
                         @event-document-panel-closed="closeDocument"
                         @event-document-renamed="documentUpdated"
-                        @event-document-moved="documentDeleted"/>
+                        @event-document-moved="documentDeleted"
+                        @event-document-deleted="documentDeleted"/>
 
       <FTLNewFolder
         :parent="getCurrentFolder"

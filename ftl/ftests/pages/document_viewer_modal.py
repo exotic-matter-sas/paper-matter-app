@@ -10,6 +10,7 @@ class DocumentViewerModal(BasePage):
     rename_document_button = '#rename-document'
     close_document_button = '#document-viewer .close'
     move_document_button = '#move-document'
+    delete_document_button = '#delete-document'
 
     edit_note_button = '#edit-note'
     note_textarea = '#note-textarea'
@@ -36,3 +37,8 @@ class DocumentViewerModal(BasePage):
         self.get_elem(self.note_textarea).clear()
         self.get_elem(self.note_textarea).send_keys(note)
         self.get_elem(self.save_note_button).click()
+
+    def delete_document(self):
+        self.get_elem(self.delete_document_button).click()
+        self.accept_modal()
+        self.wait_for_elem_to_disappear(self.page_body)
