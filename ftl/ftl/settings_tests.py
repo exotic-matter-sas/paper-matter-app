@@ -11,7 +11,9 @@ DATABASES = {
         'PASSWORD': 'bleubleu',
         'HOST': 'postgres',
         'PORT': '5432',
-        'ATOMIC_REQUESTS': True
+        'ATOMIC_REQUESTS': True,
+        'CONN_MAX_AGE': 0,
+        'DISABLE_SERVER_SIDE_CURSORS': True,
     }
 }
 
