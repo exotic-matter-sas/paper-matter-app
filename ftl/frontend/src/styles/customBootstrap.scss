@@ -56,6 +56,11 @@ button svg {
     vertical-align: -0.125em;
 }
 
+.b-form-file label{
+    white-space: nowrap;
+    overflow: hidden;
+}
+
 // LOGIN PAGE
 // ==========
 #login-form {
@@ -215,31 +220,6 @@ aside {
 
     input {
         background: $light;
-    }
-}
-
-// Home document modal
-$document-viewer-padding: 2em;
-
-#document-viewer {
-    .container {
-      max-width: none;
-    }
-
-    .modal-dialog {
-      width: 100vw;
-      height: 100vh;
-      max-width: none;
-      padding: $document-viewer-padding;
-      margin: 0;
-    }
-
-    .modal-title {
-        vertical-align: middle;
-    }
-
-    .modal-content {
-      height: calc(100vh - (#{$document-viewer-padding} * 2));
     }
 }
 

@@ -25,7 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'q-2%l!knv+331nqu&ypc+gv&85nd$9*1g1max3692uxfu_!7w8'
+SECRET_KEY = 'NOT SECURE'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.postgres',
+    'django_registration',
     'mptt',
     'rest_framework',
     'webpack_loader',
@@ -106,7 +107,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'postgres',
         'USER': 'postgres',
-        'PASSWORD': 'bleubleu',
+        'PASSWORD': 'NOT SECURE',
         'HOST': '127.0.0.1',
         'PORT': '5432',
         'ATOMIC_REQUESTS': True
@@ -166,8 +167,16 @@ LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = '/app'
 
 # Default settings for browser used for functional tests
-DEFAULT_TEST_BROWSER = 'firefox'
+DEFAULT_TEST_BROWSER = 'chrome'
 TEST_BROWSER_HEADLESS = True
+
+# Update lines below if you don't want to use the default paths for browser and driver
+BROWSER_BINARY_PATH = None
+DEFAULT_CHROMEDRIVER_PATH = 'chromedriver'
+DEFAULT_GECKODRIVER_PATH = 'geckodriver'
+
+# Email activation settings
+ACCOUNT_ACTIVATION_DAYS = 7  # One-week activation window
 
 # Django Rest Framework settings
 REST_FRAMEWORK = {

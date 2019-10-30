@@ -43,7 +43,7 @@
         axios
           .patch('/app/api/v1/folders/' + this.folder.id, body, axiosConfig)
           .then(response => {
-            this.$emit('event-folder-renamed', response.data);
+            this.$emit('event-folder-renamed', {folder: response.data});
             this.mixinAlert('Folder successfully renamed');
           })
           .catch(error => {

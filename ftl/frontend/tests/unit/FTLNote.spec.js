@@ -132,7 +132,7 @@ describe('FTLNote methods', () => {
 
     // then
     expect(mockedMixinAlert).toHaveBeenCalledTimes(1);
-    expect(mockedMixinAlert.mock.calls[0][0]).toContain('Could not save note!');
+    expect(mockedMixinAlert.mock.calls[0][0]).toContain('Could not save note');
   });
 
   it('cancelUpdate set values', () => {

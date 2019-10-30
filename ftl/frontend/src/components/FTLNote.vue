@@ -107,7 +107,7 @@
             this.mixinAlert('Document note saved!');
           })
           .catch(error => {
-            this.mixinAlert(this.$_('Could not save note!'), true)
+            this.mixinAlert(this.$_('Could not save note'), true)
           });
       },
 

@@ -1,20 +1,18 @@
 from django.contrib import messages
 from django.shortcuts import render, get_object_or_404
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import FormView, RedirectView
+from django.views.generic import RedirectView
+from django_registration.backends.activation.views import RegistrationView
 
 from core.models import FTLOrg, permissions_names_to_objects, FTL_PERMISSIONS_USER
-from ftl.forms import FTLUserCreationForm
+from ftl.forms import FTLUserCreationForm, FTLCreateOrgAndFTLUser
 
 
-class CreateFTLUserFormView(FormView):
+class CreateFTLUserFormView(RegistrationView):
     template_name = 'ftl/registration/signup.html'
     form_class = FTLUserCreationForm
-
-    def get_success_url(self):
-        # We redefine the method instead of the field because the success url is dynamic (org slug)
-        return reverse('signup_success', kwargs=self.kwargs)
+    success_url = reverse_lazy('signup_success')
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
@@ -35,12 +33,8 @@ class CreateFTLUserFormView(FormView):
         return super().form_valid(form)
 
 
-def signup_success(request, org_slug):
-    context = {
-        'org_slug': org_slug,
-    }
-
-    return render(request, 'ftl/registration/signup_success.html', context)
+def signup_success(request):
+    return render(request, 'ftl/registration/signup_success.html')
 
 
 class SetMessageAndRedirectView(RedirectView):
@@ -65,3 +59,14 @@ class PasswordResetAsked(SetMessageAndRedirectView):
 class PasswordResetDone(SetMessageAndRedirectView):
     url = reverse_lazy('login')
     message = _('Your password has been set. You may go ahead and log in now.')
+
+
+class CreateOrgAndFTLUser(RegistrationView):
+    template_name = 'ftl/registration/create_org_and_ftluser.html'
+    form_class = FTLCreateOrgAndFTLUser
+    success_url = reverse_lazy('signup_success')
+
+
+class AccountActivationSuccess(SetMessageAndRedirectView):
+    url = reverse_lazy('login')
+    message = _('Your email has been verified, thank you! You may go ahead and log in now.')

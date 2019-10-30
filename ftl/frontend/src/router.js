@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import Home from './views/Home.vue';
+import HomeSearch from "@/views/HomeSearch";
 
 Vue.use(Router);
 
@@ -32,7 +33,7 @@ export default new Router({
     {
       path: '/home/search/:search',
       name: 'home-search',
-      component: Home,
+      component: HomeSearch,
       props: (route) => ({
         searchQuery: route.params.search,
         doc: route.query.doc,

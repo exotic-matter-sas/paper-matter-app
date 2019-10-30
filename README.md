@@ -21,7 +21,6 @@ Archiving documents solution
  * Python 3.7
  * PostgreSQL 11
  * Firefox or Chrome (to run functional tests)
- * Poedit or equivalent (to add/update i18n)
  * Node.js LTS
  * Java 8+ (for documents indexing)
 
@@ -54,6 +53,8 @@ Second terminal
 
 #### Python
 
+_To run functional tests: make sure your `settings.DEFAULT_TEST_BROWSER` is properly set, download the proper webdriver for your version of [Chrome](https://chromedriver.chromium.org/) or [Firefox](https://github.com/mozilla/geckodriver/releases), make sure `chrome`/`firefox` and `chromedriver`/`geckodriver` are registered in your OS path (or alternatively set absolute path for them in settings `BROWSER_BINARY_PATH`, `DEFAULT_CHROMEDRIVER_PATH`/`DEFAULT_GECKODRIVER_PATH`)._
+
 Run all tests
 
     python manage.py test --parallel
@@ -75,22 +76,26 @@ _Or alternatively `npx vue-cli-service test:unit`_
 
 ### i18n
   
- Add a new language or create new key to translate in .po files:
- 
-    python manage.py makemessages -l fr --ignore=requirements*.txt,__init__.py,ftest/*
-    # Following lines needed for frontend i18n
-    npm run build
-    python manage.py makemessages -l fr --ignore=node_modules -d djangojs
+ 1 - Add missing keys to translate into .po files (or add a new language ):
 
- Update existing i18n key in .po files:
+
+     python manage.py makemessages -l fr --ignore=requirements*.txt,__init__.py,ftest/*
+     # Following lines needed for frontend i18n
+     npm run build
+     python manage.py makemessages -l fr --ignore=node_modules -d djangojs
+
+ 2 - Update existing translations in .po files:
  
-    python manage.py makemessages --all
+ 
+     python manage.py makemessages --all
     
- Compile .mo files:
+ 3 - Update/complete translations in .po files
+    
+ 4 -  Compile .mo files:
+  
  
     python manage.py compilemessages
-    
- _note: generated .mo files aren't versioned and should be regenerated locally after each .po files update._
+ _generated .mo files aren't versioned and should be regenerated locally after each .po files update._
     
 ### Django settings
 

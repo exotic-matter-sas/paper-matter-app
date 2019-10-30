@@ -40,7 +40,7 @@ class ManageFolderPage(BasePage):
         self.get_elem(self.create_folder_button).click()
         self.wait_for_elem_to_show(self.modal_input)
         self.get_elem(self.modal_input).send_keys(folder_name)
-        self.get_elem(self.modal_accept_button).click()
+        self.accept_modal()
         self.wait_folder_list_loaded()
 
     def navigate_to_folder(self, folder_name):
@@ -63,7 +63,7 @@ class ManageFolderPage(BasePage):
         self.get_elem(self.rename_selected_folder_button).click()
         self.wait_for_elem_to_show(self.modal_input)
         self.get_elem(self.modal_input).send_keys(folder_name)
-        self.get_elem(self.modal_accept_button).click()
+        self.accept_modal()
 
     def move_selected_folder(self, target_folder_name):
         self.get_elem(self.move_selected_folder_button).click()
@@ -75,7 +75,7 @@ class ManageFolderPage(BasePage):
                 target.click()
                 break
 
-        self.get_elem(self.modal_accept_button).click()
+        self.accept_modal()
         self.wait_folder_list_loaded()
 
     def delete_selected_folder(self):
@@ -85,5 +85,5 @@ class ManageFolderPage(BasePage):
         self.wait_for_elem_to_show(self.modal_input)
 
         self.get_elem(self.modal_input).send_keys(selected_folder_name)
-        self.get_elem(self.modal_accept_button).click()
+        self.accept_modal()
         self.wait_folder_list_loaded()

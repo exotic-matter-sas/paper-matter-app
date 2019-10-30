@@ -1,47 +1,27 @@
 from ftests.pages.django_admin_login_page import AdminLoginPage
+from ftests.pages.setup_pages import SetupPages
 from ftests.pages.signup_pages import SignupPages
 from ftests.pages.user_login_page import LoginPage
 from ftests.tools import test_values as tv
-
-from ftests.pages.setup_pages import SetupPages
 from ftests.tools.setup_helpers import setup_admin, setup_org, setup_user
 
 
 class LandingPageTests(SetupPages):
-    def test_index_redirect_to_first_org_creation_on_first_visit(self):
+    def test_index_redirect_to_first_org_and_admin_creation_on_first_visit(self):
         """Index page redirect to first organization creation page on first visit"""
         # Admin user have just install app and display it for the first time
         self.visit(self.root_url)
 
         # The user is welcomed and asked to complete 1st setup step: org creation
         self.assertIn(tv.APP_NAME.lower(), self.head_title)
-        self.assertIn('organization', self.get_elem(self.active_breadcrumb_item).text)
-
-    def test_landing_page_display_properly_after_admin_creation(self):
-        """Landing page display properly after admin creation"""
-        # Admin user have just install app and display it for the first time
-        self.visit(self.root_url)
-
-        # He fulfill the org creation form and close his browser
-        self.create_first_organization()
-        self.browser.quit()
-
-        # He come back later and display app again
-        self.setUp()
-        self.visit(self.root_url)
-
-        # The landing page welcome the user and ask him to complete 2nd step: admin creation
-        self.assertIn(tv.APP_NAME.lower(), self.head_title)
-        self.assertIn('administrator', self.get_elem(self.active_breadcrumb_item).text)
+        self.assertIn('create first organization and administrator', self.head_title)
 
     def test_landing_page_redirect_to_user_login_when_setup_complete(self):
         """Landing page redirect to user login page when setup complete"""
-        # Admin user have already setup org
-        setup_org()
         self.visit(self.root_url)
 
         # He fulfill the admin creation form
-        self.create_admin()
+        self.create_first_org_and_admin()
 
         # A success page appears mentioning the urls for admin login page and user signup page
         self.assertIn('setup completed', self.head_title)
@@ -65,7 +45,7 @@ class AdminLoginTests(AdminLoginPage):
         self.log_admin()
 
         # Django admin display properly
-        self.assertIn(f'welcome, {tv.ADMIN_USERNAME}', self.get_elem(self.django_admin_success_message).text.lower())
+        self.assertIn(f'welcome, {tv.ADMIN_EMAIL}', self.get_elem(self.django_admin_success_message).text.lower())
 
 
 class FirstUserSignupTest(SignupPages):
@@ -83,7 +63,7 @@ class FirstUserSignupTest(SignupPages):
         self.create_user()
 
         # Success message appears when account creation is complete
-        self.assertIn('account have been created', self.get_elem(self.main_panel).text)
+        self.assertIn('verify your email to activate your account', self.get_elem(self.main_panel).text)
 
 
 class FirstUserLoginTest(LoginPage):
