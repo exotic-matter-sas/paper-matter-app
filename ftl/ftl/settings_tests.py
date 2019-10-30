@@ -23,15 +23,7 @@ DEV_MODE = True
 
 EMAIL_SUBJECT_PREFIX = '[TESTS] '
 
-# Disable API rate limit during tests
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ],
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'DEFAULT_PERMISSION_CLASSES': (
-        'core.models.FTLModelPermissions',
-    ),
-    'PAGE_SIZE': 10,
-}
+# Monkey patch REST_FRAMEWORK settings to disable rate limit during tests
+from .settings import REST_FRAMEWORK
+del REST_FRAMEWORK['DEFAULT_THROTTLE_CLASSES']
+del REST_FRAMEWORK['DEFAULT_THROTTLE_RATES']

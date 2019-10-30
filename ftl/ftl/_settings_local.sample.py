@@ -115,15 +115,7 @@ if DEFAULT_FILE_STORAGE == FTLStorages.GCS or \
     if DEFAULT_FILE_STORAGE == FTLStorages.GCS:
         GS_BUCKET_NAME = ''
 
-# Disable API rate limit during tests
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ],
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'DEFAULT_PERMISSION_CLASSES': (
-        'core.models.FTLModelPermissions',
-    ),
-    'PAGE_SIZE': 10,
-}
+# Monkey patch REST_FRAMEWORK settings to disable rate limit during dev
+from .settings import REST_FRAMEWORK
+del REST_FRAMEWORK['DEFAULT_THROTTLE_CLASSES']
+del REST_FRAMEWORK['DEFAULT_THROTTLE_RATES']

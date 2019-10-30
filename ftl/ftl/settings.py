@@ -180,6 +180,9 @@ ACCOUNT_ACTIVATION_DAYS = 7  # One-week activation window
 
 # Django Rest Framework settings
 REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
