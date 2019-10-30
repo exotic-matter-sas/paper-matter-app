@@ -386,24 +386,20 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         self.assertEqual(self.get_elems_text(self.documents_titles), recent_first_order[:10])
 
         # User change sort to older
-        self.get_elem(self.sort_dropdown_button).click()
-        self.wait_for_elem_to_show(self.older_sort_item)
-        self.get_elem(self.older_sort_item).click()
+        self.sort_documents_list('older')
 
         self.assertIn('older', self.get_elem_text(self.sort_dropdown_button))
         self.assertEqual(self.get_elems_text(self.documents_titles), list(reversed(recent_first_order))[:10])
 
         # User change sort to a-z
-        self.get_elem(self.sort_dropdown_button).click()
-        self.get_elem(self.az_sort_item).click()
+        self.sort_documents_list('az')
 
         az_order = (['1'] + list(ascii_lowercase))
         self.assertIn('a-z', self.get_elem_text(self.sort_dropdown_button))
         self.assertEqual(self.get_elems_text(self.documents_titles), az_order[:10])
 
         # User change sort to z-a
-        self.get_elem(self.sort_dropdown_button).click()
-        self.get_elem(self.za_sort_item).click()
+        self.sort_documents_list('za')
 
         self.assertIn('z-a', self.get_elem_text(self.sort_dropdown_button))
         self.assertEqual(self.get_elems_text(self.documents_titles), list(reversed(az_order))[:10])
@@ -441,8 +437,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         self.assertIn('recent', self.get_elem_text(self.sort_dropdown_button))
 
         # User update sort to a-z
-        self.get_elem(self.sort_dropdown_button).click()
-        self.get_elem(self.az_sort_item).click()
+        self.sort_documents_list('az')
 
         # Sort properly updated
         self.assertIn('a-z', self.get_elem_text(self.sort_dropdown_button))
@@ -460,8 +455,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         self.assertIn('relevance', self.get_elem_text(self.sort_dropdown_button))
 
         # User update sort to z-a
-        self.get_elem(self.sort_dropdown_button).click()
-        self.get_elem(self.za_sort_item).click()
+        self.sort_documents_list('za')
 
         # Sort properly updated
         self.assertIn('z-a', self.get_elem_text(self.sort_dropdown_button))

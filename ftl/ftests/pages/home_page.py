@@ -31,7 +31,7 @@ class HomePage(BasePage):
     sort_dropdown_button = '#documents-sort'
     az_sort_item = '#az-sort'
     za_sort_item = '#za-sort'
-    recent_sort_item = '#recent-recent'
+    recent_sort_item = '#recent-sort'
     older_sort_item = '#older-sort'
     relevance_sort_item = '#relevance-sort'
 
@@ -101,3 +101,16 @@ class HomePage(BasePage):
             if document.find_element_by_css_selector(self.documents_titles).text in documents_names:
                 document.find_element_by_css_selector(self.documents_checkboxes).click()
         self.wait_for_elem_to_show(self.batch_toolbar)
+
+    def sort_documents_list(self, sort_type):
+        allowed_sort_type = ['az', 'za', 'recent', 'older', 'relevance']
+        if sort_type not in allowed_sort_type:
+            raise ValueError(f'Invalid value for sort_type, allowed values are {allowed_sort_type}')
+
+        self.get_elem(self.sort_dropdown_button).click()
+
+        sort_item = getattr(self, f'{sort_type}_sort_item')
+        self.wait_for_elem_to_show(sort_item)
+        self.get_elem(sort_item).click()
+
+        self.wait_documents_list_loaded()
