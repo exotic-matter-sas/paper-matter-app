@@ -190,6 +190,9 @@ ACCOUNT_ACTIVATION_DAYS = 7  # One-week activation window
 
 # Django Rest Framework settings
 REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'ftl.otp_plugins.otp_ftl.middleware.FTLSessionAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
