@@ -50,7 +50,7 @@ class HomePage(BasePage):
     more_documents_button = '#more-documents'
     more_documents_loader = '#more-documents .loader'
 
-    def wait_document_list_loaded(self):
+    def wait_documents_list_loaded(self):
         self.wait_for_elem_to_disappear(self.document_list_loader)
 
     def wait_folder_list_loaded(self):
@@ -59,10 +59,10 @@ class HomePage(BasePage):
     def wait_more_documents_loaded(self):
         self.wait_for_elem_to_disappear(self.more_documents_loader)
 
-    def search_document(self, search_text):
+    def search_documents(self, search_text):
         self.get_elem(self.search_input).send_keys(search_text)
         self.get_elem(self.search_button).click()
-        self.wait_document_list_loaded()
+        self.wait_documents_list_loaded()
 
     def upload_documents(self, absolute_paths=None):
         if not absolute_paths:
@@ -86,9 +86,9 @@ class HomePage(BasePage):
         if close_notification:
             self.close_all_notifications()
 
-    def refresh_document_list(self):
+    def refresh_documents_list(self):
         self.get_elem(self.refresh_documents_button).click()
-        self.wait_document_list_loaded()
+        self.wait_documents_list_loaded()
 
     def open_first_document(self):
         first_document_title = self.get_elem(self.first_document_title)
