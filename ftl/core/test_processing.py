@@ -9,7 +9,8 @@ from core.errors import PluginUnsupportedStorage
 from core.processing import ftl_processing
 from core.processing.ftl_processing import FTLDocumentProcessing, FTLDocProcessingBase, FTLOCRBase
 from core.processing.proc_lang import FTLLangDetectorLangId
-from core.processing.proc_pgsql_tsvector import FTLSearchEnginePgSQLTSVector, SEARCH_VECTOR
+from core.processing.proc_pgsql_tsvector import FTLSearchEnginePgSQLTSVector, DEFAULT_SEARCH_VECTOR, \
+    FALLBACK_SEARCH_VECTOR
 from core.processing.proc_tika import FTLTextExtractionTika
 from ftl.settings import DEFAULT_FILE_STORAGE
 
@@ -133,6 +134,28 @@ class ProcLangTests(TestCase):
         doc.save.assert_called_once()
 
     @patch.object(langid, 'classify')
+    def test_process_unsupported_lang(self, mocked_classify):
+        mocked_classify.return_value = ['zz']
+
+        lang = FTLLangDetectorLangId()
+        doc = Mock()
+        lang.process(doc, True)
+
+        mocked_classify.assert_called_once_with(doc.content_text)
+        doc.save.assert_not_called()
+
+    @patch.object(langid, 'classify')
+    def test_process_langid_crash(self, mocked_classify):
+        mocked_classify.side_effect = Exception('Boom!')
+
+        lang = FTLLangDetectorLangId()
+        doc = Mock()
+        lang.process(doc, True)
+
+        mocked_classify.assert_called_once_with(doc.content_text)
+        doc.save.assert_not_called()
+
+    @patch.object(langid, 'classify')
     def test_process_value_exists(self, mocked_classify):
         lang = FTLLangDetectorLangId()
         doc = Mock()
@@ -185,7 +208,17 @@ class ProcPGsqlTests(TestCase):
         doc.tsvector = None
         pgsql.process(doc, False)
 
-        self.assertEqual(doc.tsvector, SEARCH_VECTOR)
+        self.assertEqual(doc.tsvector, DEFAULT_SEARCH_VECTOR)
+        doc.save.assert_called_once()
+
+    def test_process_without_lang(self):
+        pgsql = FTLSearchEnginePgSQLTSVector()
+        doc = Mock()
+        doc.tsvector = None
+        doc.language = None
+        pgsql.process(doc, False)
+
+        self.assertEqual(doc.tsvector, FALLBACK_SEARCH_VECTOR)
         doc.save.assert_called_once()
 
 

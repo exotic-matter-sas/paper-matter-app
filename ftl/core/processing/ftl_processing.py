@@ -2,8 +2,6 @@ import logging
 from concurrent.futures.thread import ThreadPoolExecutor
 from pydoc import locate
 
-from django.db import transaction
-
 from core.errors import PluginUnsupportedStorage
 from ftl.settings import DEFAULT_FILE_STORAGE
 
