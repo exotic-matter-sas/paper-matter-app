@@ -151,7 +151,7 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage, DocumentViewerModal):
                                         tsvector_length__gt=0)
 
         # User search last uploaded document
-        self.search_document(second_document_title)
+        self.search_documents(second_document_title)
 
         # Only the second document appears in search results
         self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
@@ -187,7 +187,7 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage, DocumentViewerModal):
         self.close_document()
 
         # user search for document using its new title
-        self.search_document(new_title)
+        self.search_documents(new_title)
 
         # the second uploaded document appears in search results
         self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)

@@ -73,7 +73,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
     def test_display_document(self):
         # User has already added a document
         setup_document(self.org, self.user)
-        self.refresh_document_list()
+        self.refresh_documents_list()
 
         # User click on the first listed document
         self.open_first_document()
@@ -141,7 +141,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         setup_document(self.org, self.user, title=second_document_title)
 
         # User search last uploaded document
-        self.search_document(second_document_title)
+        self.search_documents(second_document_title)
 
         # Only the second document appears in search results
         self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
@@ -156,7 +156,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         setup_document(self.org, self.user, title=second_document_title, note=second_document_note)
 
         # User search last uploaded document
-        self.search_document(second_document_note)
+        self.search_documents(second_document_note)
 
         # Only the second document appears in search results
         self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
@@ -182,8 +182,8 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         self.wait_folder_list_loaded()
         self.get_elem(self.folders_list_buttons).click()  # open folder B
         self.wait_folder_list_loaded()
-        self.search_document('bingo!')
-        self.wait_document_list_loaded()
+        self.search_documents('bingo!')
+        self.wait_documents_list_loaded()
 
         # Search apply to all folders, thus the 4 documents are return
         self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 4,
@@ -198,7 +198,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         setup_document(self.org, self.user, title=second_document_title, text_content=second_document_text_content)
 
         # User search last uploaded document
-        self.search_document(second_document_text_content)
+        self.search_documents(second_document_text_content)
 
         # Only the second document appears in search results
         self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
@@ -210,7 +210,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         setup_document(self.org, self.user)
 
         # User search something that isn't present in his document
-        self.search_document('this text doesn\'t exist')
+        self.search_documents('this text doesn\'t exist')
 
         with self.assertRaises(NoSuchElementException, msg='No document should be found by this search query'):
             self.get_elems(self.documents_thumbnails)
@@ -229,7 +229,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         # User open the folder and then search something that isn't present in its document
         self.get_elem(self.folders_list_buttons).click()
         self.wait_folder_list_loaded()
-        self.search_document('this text doesn\'t exist')
+        self.search_documents('this text doesn\'t exist')
 
         with self.assertRaises(NoSuchElementException, msg='No document should be found by this search query'):
             self.get_elems(self.documents_thumbnails)
@@ -243,10 +243,10 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         sub_folder = setup_folder(self.org)
         doc_first_result = setup_document(self.org, self.user, ftl_folder=sub_folder, title='pop pop')
         doc_second_result = setup_document(self.org, self.user, ftl_folder=sub_folder, title='pop')
-        self.refresh_document_list()
+        self.refresh_documents_list()
 
         # User search for document
-        self.search_document('pop')
+        self.search_documents('pop')
 
         # User open first document of search result and close it
         self.open_first_document()
@@ -264,7 +264,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
 
         # User search last uploaded document
         self.visit(f'/app/#/home/search/{second_document_title}')
-        self.wait_document_list_loaded()
+        self.wait_documents_list_loaded()
 
         self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1,
                          'Only second document should appears in the search result')
@@ -284,7 +284,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
 
         # User open folder c through url
         self.visit(f'/app/#/home/folderFakePath/{folder_c.id}')
-        self.wait_document_list_loaded()
+        self.wait_documents_list_loaded()
 
         self.assertEqual(document.title, self.get_elem_text(self.first_document_title),
                          'Setup document title should appears in folder C')
@@ -303,7 +303,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         self.visit(HomePage.url)
 
         # User browse to folder c
-        self.wait_document_list_loaded()
+        self.wait_documents_list_loaded()
         self.get_elem(self.folders_list_buttons).click()
         self.wait_folder_list_loaded()
         self.get_elem(self.folders_list_buttons).click()
@@ -313,23 +313,23 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
 
         # User use the browser previous button to come back to root
         self.previous_page()
-        self.wait_document_list_loaded()
+        self.wait_documents_list_loaded()
         self.assertEqual(document_b.title, self.get_elem_text(self.first_document_title),
                          'Setup document title should appears in folder b')
         self.previous_page()
-        self.wait_document_list_loaded()
+        self.wait_documents_list_loaded()
         self.assertEqual(document_a.title, self.get_elem_text(self.first_document_title),
                          'Setup document title should appears in folder a')
         self.previous_page()
-        self.wait_document_list_loaded()
+        self.wait_documents_list_loaded()
         self.assertEqual(document_root.title, self.get_elem_text(self.first_document_title),
                          'Setup document title should appears in root folder')
         self.next_page()
-        self.wait_document_list_loaded()
+        self.wait_documents_list_loaded()
         self.next_page()
-        self.wait_document_list_loaded()
+        self.wait_documents_list_loaded()
         self.next_page()
-        self.wait_document_list_loaded()
+        self.wait_documents_list_loaded()
         self.assertEqual(document_c.title, self.get_elem_text(self.first_document_title),
                          'Setup document title should appears in folder c')
 
@@ -338,10 +338,10 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         # User has already added 21 documents
         for i in range(21):
             setup_document(self.org, self.user, title=i + 1)
-        self.refresh_document_list()
+        self.refresh_documents_list()
 
         # Only 10 documents are shown by default
-        self.wait_document_list_loaded()
+        self.wait_documents_list_loaded()
 
         self.assertEqual(self.get_elem_text(self.first_document_title), '21')
         self.assertEqual(self.get_elem_text(self.last_document_title), '12')
@@ -378,7 +378,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
             else:
                 note = ''
             setup_document(self.org, self.user, title=title, note=note)
-        self.refresh_document_list()
+        self.refresh_documents_list()
 
         # Documents are sort by recent first by default
         recent_first_order = list(reversed(document_title_to_create))
@@ -386,29 +386,26 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         self.assertEqual(self.get_elems_text(self.documents_titles), recent_first_order[:10])
 
         # User change sort to older
-        self.get_elem(self.sort_dropdown_button).click()
-        self.get_elem(self.older_sort_item).click()
+        self.sort_documents_list('older')
 
         self.assertIn('older', self.get_elem_text(self.sort_dropdown_button))
         self.assertEqual(self.get_elems_text(self.documents_titles), list(reversed(recent_first_order))[:10])
 
         # User change sort to a-z
-        self.get_elem(self.sort_dropdown_button).click()
-        self.get_elem(self.az_sort_item).click()
+        self.sort_documents_list('az')
 
         az_order = (['1'] + list(ascii_lowercase))
         self.assertIn('a-z', self.get_elem_text(self.sort_dropdown_button))
         self.assertEqual(self.get_elems_text(self.documents_titles), az_order[:10])
 
         # User change sort to z-a
-        self.get_elem(self.sort_dropdown_button).click()
-        self.get_elem(self.za_sort_item).click()
+        self.sort_documents_list('za')
 
         self.assertIn('z-a', self.get_elem_text(self.sort_dropdown_button))
         self.assertEqual(self.get_elems_text(self.documents_titles), list(reversed(az_order))[:10])
 
         # User make a search
-        self.search_document('bingo')
+        self.search_documents('bingo')
 
         # Default sort for search is always relevance
         relevance_order = list(reversed(document_title_to_create[:5]))
@@ -428,7 +425,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         # add docs to sub_folder
         for i, title in enumerate(document_title_to_create, 1):
             setup_document(self.org, self.user, sub_folder, title)
-        self.refresh_document_list()
+        self.refresh_documents_list()
 
         # Default sort in root is recent
         self.assertIn('recent', self.get_elem_text(self.sort_dropdown_button))
@@ -440,8 +437,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         self.assertIn('recent', self.get_elem_text(self.sort_dropdown_button))
 
         # User update sort to a-z
-        self.get_elem(self.sort_dropdown_button).click()
-        self.get_elem(self.az_sort_item).click()
+        self.sort_documents_list('az')
 
         # Sort properly updated
         self.assertIn('a-z', self.get_elem_text(self.sort_dropdown_button))
@@ -453,14 +449,13 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         self.assertIn('a-z', self.get_elem_text(self.sort_dropdown_button))
 
         # User make a search
-        self.search_document('note')
+        self.search_documents('note')
 
         # Default sort for search is always relevance
         self.assertIn('relevance', self.get_elem_text(self.sort_dropdown_button))
 
         # User update sort to z-a
-        self.get_elem(self.sort_dropdown_button).click()
-        self.get_elem(self.za_sort_item).click()
+        self.sort_documents_list('za')
 
         # Sort properly updated
         self.assertIn('z-a', self.get_elem_text(self.sort_dropdown_button))
@@ -528,7 +523,7 @@ class DocumentsBatchActionsTests(LoginPage, HomePage, MoveDocumentsModal):
 
         # User see the documents in the proper folder
         self.get_elem(self.folders_list_buttons).click()
-        self.wait_document_list_loaded()
+        self.wait_documents_list_loaded()
         self.assertCountEqual(docs_to_move, self.get_elems_text(self.documents_titles))
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
@@ -601,7 +596,7 @@ class DocumentViewerModalTests(LoginPage, HomePage, DocumentViewerModal):
     def test_rename_document(self, mock_apply_processing):
         # User has already added and opened a document
         setup_document(self.org, self.user)
-        self.refresh_document_list()
+        self.refresh_documents_list()
         self.open_first_document()
 
         # User rename the document
@@ -618,7 +613,7 @@ class DocumentViewerModalTests(LoginPage, HomePage, DocumentViewerModal):
     def test_annotate_document(self, mock_apply_processing):
         # User has already added and opened a document
         setup_document(self.org, self.user)
-        self.refresh_document_list()
+        self.refresh_documents_list()
         self.open_first_document()
 
         # User annotate the document
@@ -633,7 +628,7 @@ class DocumentViewerModalTests(LoginPage, HomePage, DocumentViewerModal):
     def test_delete_document(self, mock_apply_processing):
         # User has already added and opened a document
         setup_document(self.org, self.user, binary=setup_temporary_file().name)
-        self.refresh_document_list()
+        self.refresh_documents_list()
         self.open_first_document()
 
         # User delete the document
