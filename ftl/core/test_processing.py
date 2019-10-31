@@ -10,8 +10,7 @@ from core.errors import PluginUnsupportedStorage
 from core.processing import ftl_processing
 from core.processing.ftl_processing import FTLDocumentProcessing, FTLDocProcessingBase, FTLOCRBase
 from core.processing.proc_lang import FTLLangDetectorLangId
-from core.processing.proc_pgsql_tsvector import FTLSearchEnginePgSQLTSVector, DEFAULT_SEARCH_VECTOR, \
-    FALLBACK_SEARCH_VECTOR
+from core.processing.proc_pgsql_tsvector import FTLSearchEnginePgSQLTSVector, SEARCH_VECTOR
 from core.processing.proc_tika import FTLTextExtractionTika
 from ftl.settings import DEFAULT_FILE_STORAGE
 
@@ -225,7 +224,7 @@ class ProcPGsqlTests(TestCase):
         doc.tsvector = None
         pgsql.process(doc, False)
 
-        self.assertEqual(doc.tsvector, DEFAULT_SEARCH_VECTOR)
+        self.assertEqual(doc.tsvector, SEARCH_VECTOR)
         doc.save.assert_called_once()
 
     def test_process_without_lang(self):
@@ -235,7 +234,7 @@ class ProcPGsqlTests(TestCase):
         doc.language = None
         pgsql.process(doc, False)
 
-        self.assertEqual(doc.tsvector, FALLBACK_SEARCH_VECTOR)
+        self.assertEqual(doc.tsvector, SEARCH_VECTOR)
         doc.save.assert_called_once()
 
 
