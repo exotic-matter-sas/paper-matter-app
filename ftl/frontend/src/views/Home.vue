@@ -296,7 +296,7 @@
                   }
                 });
             } else {
-              this.$router.push({path: '/home/' + this.computeFolderUrlPath(folderId)});
+              this.$router.push({path: '/home/' + this.computeFolderUrlPath(folderId)}, () => {});
             }
           })
           .catch((error) => {
