@@ -13,14 +13,13 @@ class FTLDocumentProcessing:
     A generic document processing class, to be used for adding processing to document such as OCR,
     text extraction, etc.
     """
-    executor = None
-    plugins = list()
 
     def __init__(self, configured_plugins, max_workers=1):
         self.executor = ThreadPoolExecutor(
             max_workers=max_workers,
             thread_name_prefix="ftl_doc_processing_worker"
         )
+        self.plugins = list()
 
         for configured_plugin in configured_plugins:
             my_class = locate(configured_plugin)
