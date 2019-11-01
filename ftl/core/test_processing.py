@@ -143,19 +143,7 @@ class ProcLangTests(TestCase):
         lang.process(doc, True)
 
         mocked_classify.assert_called_once_with(doc.content_text)
-        doc.save.assert_not_called()
-
-    @patch.object(LanguageIdentifier, 'from_modelstring')
-    def test_process_langid_crash(self, mocked_from_modelstring):
-        lang = FTLLangDetectorLangId()
-        mocked_classify = lang.identifier.classify
-        mocked_classify.side_effect = Exception('Boom!')
-
-        doc = Mock()
-        lang.process(doc, True)
-
-        mocked_classify.assert_called_once_with(doc.content_text)
-        doc.save.assert_not_called()
+        doc.save.assert_called_once()
 
     @patch.object(LanguageIdentifier, 'from_modelstring')
     def test_process_langid_confidence_too_low(self, mocked_from_modelstring):
@@ -167,7 +155,7 @@ class ProcLangTests(TestCase):
         lang.process(doc, True)
 
         mocked_classify.assert_called_once_with(doc.content_text)
-        doc.save.assert_not_called()
+        doc.save.assert_called_once()
 
     @patch.object(LanguageIdentifier, 'from_modelstring')
     def test_process_value_exists(self, mocked_from_modelstring):
