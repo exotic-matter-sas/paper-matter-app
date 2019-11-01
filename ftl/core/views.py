@@ -93,9 +93,12 @@ class FTLDocumentList(generics.ListAPIView):
         if not flat_mode:
             if text_search:
                 search_query = WebSearchQuery(text_search.strip(), config=F('language'), search_type='web')
+
                 queryset = queryset.annotate(rank=SearchRank(F('tsvector'), search_query)) \
-                    .filter(rank__gte=0.1) \
+                    .filter(tsvector=search_query) \
+                    .filter(rank__gt=0) \
                     .order_by('-rank')
+
             elif current_folder is not None and int(current_folder) > 0:
                 queryset = queryset.filter(ftl_folder__id=current_folder)
             else:
