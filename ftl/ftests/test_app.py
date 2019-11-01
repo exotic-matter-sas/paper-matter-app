@@ -487,6 +487,46 @@ class SearchTests(LoginPage, HomePage, DocumentViewerModal):
         # The search result is still displayed after closing the first document
         self.assertEqual(self.get_elems_text(self.documents_titles), [doc_first_result.title, doc_second_result.title])
 
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_search_advanced_syntax(self):
+        # See https://www.postgresql.org/docs/11/textsearch-controls.html#id-1.5.11.6.4.11 for advanced search syntax
+        # User have already added 2 documents inside sub folder
+        red_doc = setup_document(self.org, self.user, title='red')
+        purple_doc = setup_document(self.org, self.user, title='purple 1', note='red blue')
+        purple_doc_2 = setup_document(self.org, self.user, title='purple 2', note='blue red')
+        orange_doc = setup_document(self.org, self.user, title='orange', note='red yellow')
+        self.refresh_documents_list()
+
+        # User search for documents containing red and yellow key word
+        self.search_documents('red yellow')
+
+        # 1 document is found: orange
+        self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
+        self.assertIn(orange_doc.title, self.get_elems_text(self.documents_titles))
+
+        # User search for documents containing blue or yellow key word
+        self.search_documents('blue OR yellow')
+
+        # 3 documents are found: purple, purple 2 and orange
+        self.assertEqual(len(self.get_elems(self.documents_titles)), 3)
+        self.assertIn(purple_doc.title, self.get_elems_text(self.documents_titles))
+        self.assertIn(purple_doc_2.title, self.get_elems_text(self.documents_titles))
+        self.assertIn(orange_doc.title, self.get_elems_text(self.documents_titles))
+
+        # User search for documents containing red but not yellow and blue
+        self.search_documents('red -yellow -blue')
+
+        # 1 documents is found: red
+        self.assertEqual(len(self.get_elems(self.documents_titles)), 1)
+        self.assertIn(red_doc.title, self.get_elems_text(self.documents_titles))
+
+        # User search for documents containing the phrase "blue red"
+        self.search_documents('"blue red"')
+
+        # 1 documents is found: purple2
+        self.assertEqual(len(self.get_elems(self.documents_titles)), 1)
+        self.assertIn(purple_doc_2.title, self.get_elems_text(self.documents_titles))
+
 
 class DocumentsBatchActionsTests(LoginPage, HomePage, MoveDocumentsModal):
     def setUp(self, **kwargs):
