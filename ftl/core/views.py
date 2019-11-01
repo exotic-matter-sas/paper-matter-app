@@ -197,7 +197,7 @@ class FileUploadView(views.APIView):
 
             ftl_doc.save()
 
-        ftl_doc_processing.apply_processing(ftl_doc)
+        ftl_doc_processing.apply_processing(ftl_doc, force=[FTLPlugins.LANG_DETECTOR_LANGID])
 
         return Response(self.serializer_class(ftl_doc).data, status=201)
 

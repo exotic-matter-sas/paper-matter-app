@@ -118,7 +118,7 @@ class FTLDocument(models.Model):
     created = models.DateTimeField(default=timezone.now)
     edited = models.DateTimeField(auto_now=True)
     tsvector = SearchVectorField(blank=True)
-    language = models.CharField(max_length=64, default="english")
+    language = models.CharField(max_length=64, default='simple')
     thumbnail_binary = models.FileField(upload_to=_get_name_binary, max_length=256, null=True)
 
     class Meta:
