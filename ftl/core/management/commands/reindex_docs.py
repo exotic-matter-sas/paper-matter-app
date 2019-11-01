@@ -7,12 +7,25 @@ from django.utils.translation import ngettext
 
 from core.models import FTLDocument
 from core.processing.ftl_processing import FTLDocumentProcessing
+from ftl.enums import FTLPlugins
 
 
 class Command(BaseCommand):
     help = 'Reindex all documents'
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--force',
+            action='append',
+            help='Force processing for the indicated plugins (plugin1,plugin2,plugin3)',
+        )
+
     def handle(self, *args, **options):
+        plugins_forced = list()
+        if options['force']:
+            for plugin in options['force']:
+                plugins_forced.append(FTLPlugins.get_value(plugin))
+
         processing = FTLDocumentProcessing(settings.FTL_DOC_PROCESSING_PLUGINS)
         docs = FTLDocument.objects.all()
 
@@ -36,7 +49,7 @@ class Command(BaseCommand):
                 _('Reindexing %(title)s') % {'title': doc.title}
             )
 
-            processing.apply_processing(doc)
+            processing.apply_processing(doc, plugins_forced)
 
             self.stdout.write(
                 self.style.SUCCESS(

@@ -35,3 +35,14 @@ class FTLPlugins:
 
     LANG_DETECTOR_LANGID = 'core.processing.proc_lang.FTLLangDetectorLangId'
     SEARCH_ENGINE_PGSQL_TSVECTOR = 'core.processing.proc_pgsql_tsvector.FTLSearchEnginePgSQLTSVector'
+
+    @staticmethod
+    def get_value(name):
+        try:
+            value = getattr(FTLPlugins, name.upper())
+            if not callable(value):
+                return value
+            else:
+                return None
+        except AttributeError:
+            return None
