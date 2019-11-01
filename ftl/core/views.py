@@ -4,7 +4,8 @@ from base64 import b64decode
 import filetype
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.postgres.search import SearchQuery, SearchRank
+from django.contrib.postgres.search import SearchQuery
+from django.contrib.postgres.search import SearchRank
 from django.core.files.base import ContentFile
 from django.db import IntegrityError, transaction
 from django.db.models import F
@@ -30,6 +31,10 @@ ftl_doc_processing = FTLDocumentProcessing(settings.FTL_DOC_PROCESSING_PLUGINS)
 def _extract_binary_from_data_uri(data_uri):
     header, encoded = data_uri.split(",", 1)
     return b64decode(encoded)
+
+
+class WebSearchQuery(SearchQuery):
+    SEARCH_TYPES = {**SearchQuery.SEARCH_TYPES, 'web': 'websearch_to_tsquery'}
 
 
 class HomeView(LoginRequiredMixin, View):
@@ -87,10 +92,13 @@ class FTLDocumentList(generics.ListAPIView):
 
         if not flat_mode:
             if text_search:
-                search_query = SearchQuery(text_search.strip(), config=F('language'))
+                search_query = WebSearchQuery(text_search.strip(), config=F('language'), search_type='web')
+
                 queryset = queryset.annotate(rank=SearchRank(F('tsvector'), search_query)) \
-                    .filter(rank__gte=0.1) \
+                    .filter(tsvector=search_query) \
+                    .filter(rank__gt=0) \
                     .order_by('-rank')
+
             elif current_folder is not None and int(current_folder) > 0:
                 queryset = queryset.filter(ftl_folder__id=current_folder)
             else:

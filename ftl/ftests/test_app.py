@@ -134,128 +134,6 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         self.get_elem(self.folders_list_buttons).click()
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
-    def test_search_document_by_its_title(self):
-        # User have already added 2 documents
-        setup_document(self.org, self.user)
-        second_document_title = 'bingo!'
-        setup_document(self.org, self.user, title=second_document_title)
-
-        # User search last uploaded document
-        self.search_documents(second_document_title)
-
-        # Only the second document appears in search results
-        self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
-        self.assertEqual(second_document_title, self.get_elem_text(self.first_document_title))
-
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
-    def test_search_document_by_its_note(self):
-        # User have already added 2 documents
-        setup_document(self.org, self.user)
-        second_document_note = 'bingo!'
-        second_document_title = 'second document'
-        setup_document(self.org, self.user, title=second_document_title, note=second_document_note)
-
-        # User search last uploaded document
-        self.search_documents(second_document_note)
-
-        # Only the second document appears in search results
-        self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
-        self.assertEqual(second_document_title, self.get_elem_text(self.first_document_title))
-
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
-    def test_search_apply_to_all_folders(self):
-        # User have added 3 documents in 3 different folders
-        folder_a = setup_folder(self.org)
-        folder_a_1 = setup_folder(self.org, name=tv.FOLDER2_NAME, parent=folder_a)
-        folder_b = setup_folder(self.org, name=tv.FOLDER3_NAME)
-
-        setup_document(self.org, self.user, title='bingo!')
-        setup_document(self.org, self.user, folder_a, title='bingo!')
-        setup_document(self.org, self.user, folder_a_1, title='bingo!')
-        setup_document(self.org, self.user, folder_b, title='bingo!')
-
-        self.visit(HomePage.url)  # Refresh page for folder list to be displayed
-        self.wait_folder_list_loaded()
-
-        # User go in folder_a_1 and search for 'bingo!'
-        self.get_elem(self.folders_list_buttons).click()  # open folder A
-        self.wait_folder_list_loaded()
-        self.get_elem(self.folders_list_buttons).click()  # open folder B
-        self.wait_folder_list_loaded()
-        self.search_documents('bingo!')
-        self.wait_documents_list_loaded()
-
-        # Search apply to all folders, thus the 4 documents are return
-        self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 4,
-                         'Search should apply to all folders')
-
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
-    def test_search_document_by_its_content(self):
-        # User have already added 2 documents
-        setup_document(self.org, self.user)
-        second_document_title = 'bingo!'
-        second_document_text_content = 'Yellow Blue'
-        setup_document(self.org, self.user, title=second_document_title, text_content=second_document_text_content)
-
-        # User search last uploaded document
-        self.search_documents(second_document_text_content)
-
-        # Only the second document appears in search results
-        self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
-        self.assertEqual(second_document_title, self.get_elem_text(self.first_document_title))
-
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
-    def test_search_not_found(self):
-        # User have already added 1 document
-        setup_document(self.org, self.user)
-
-        # User search something that isn't present in his document
-        self.search_documents('this text doesn\'t exist')
-
-        with self.assertRaises(NoSuchElementException, msg='No document should be found by this search query'):
-            self.get_elems(self.documents_thumbnails)
-
-        self.assertIn('No document', self.get_elem_text(self.documents_list_container),
-                      'A message should indicate no documents were found')
-
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
-    def test_search_not_found_from_a_folder(self):
-        # User have already added 1 document and 1 folder
-        setup_document(self.org, self.user)
-        setup_folder(self.org)
-        self.visit(HomePage.url)  # Refresh page for folder list to be displayed
-        self.wait_folder_list_loaded()
-
-        # User open the folder and then search something that isn't present in its document
-        self.get_elem(self.folders_list_buttons).click()
-        self.wait_folder_list_loaded()
-        self.search_documents('this text doesn\'t exist')
-
-        with self.assertRaises(NoSuchElementException, msg='No document should be found by this search query'):
-            self.get_elems(self.documents_thumbnails)
-
-        self.assertIn('No document', self.get_elem_text(self.documents_list_container),
-                      'A message should indicate no documents were found')
-
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
-    def test_search_open_close_document(self):
-        # User have already added 2 documents inside sub folder
-        sub_folder = setup_folder(self.org)
-        doc_first_result = setup_document(self.org, self.user, ftl_folder=sub_folder, title='pop pop')
-        doc_second_result = setup_document(self.org, self.user, ftl_folder=sub_folder, title='pop')
-        self.refresh_documents_list()
-
-        # User search for document
-        self.search_documents('pop')
-
-        # User open first document of search result and close it
-        self.open_first_document()
-        self.close_document()
-
-        # The search result is still displayed after closing the first document
-        self.assertEqual(self.get_elems_text(self.documents_titles), [doc_first_result.title, doc_second_result.title])
-
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_visit_url_with_search_query(self):
         # User have already added 2 documents
         setup_document(self.org, self.user)
@@ -475,6 +353,179 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
 
         # Default sort is back to recent first
         self.assertIn('recent', self.get_elem_text(self.sort_dropdown_button))
+
+
+class SearchTests(LoginPage, HomePage, DocumentViewerModal):
+    def setUp(self, **kwargs):
+        # first org, admin, user are already created, user is already logged on home page
+        super().setUp()
+        self.org = setup_org()
+        setup_admin(self.org)
+        self.user = setup_user(self.org)
+        self.visit(LoginPage.url)
+        self.log_user()
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_search_document_by_its_title(self):
+        # User have already added 2 documents
+        setup_document(self.org, self.user)
+        second_document_title = 'bingo!'
+        setup_document(self.org, self.user, title=second_document_title)
+
+        # User search last uploaded document
+        self.search_documents(second_document_title)
+
+        # Only the second document appears in search results
+        self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
+        self.assertEqual(second_document_title, self.get_elem_text(self.first_document_title))
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_search_document_by_its_note(self):
+        # User have already added 2 documents
+        setup_document(self.org, self.user)
+        second_document_note = 'bingo!'
+        second_document_title = 'second document'
+        setup_document(self.org, self.user, title=second_document_title, note=second_document_note)
+
+        # User search last uploaded document
+        self.search_documents(second_document_note)
+
+        # Only the second document appears in search results
+        self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
+        self.assertEqual(second_document_title, self.get_elem_text(self.first_document_title))
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_search_apply_to_all_folders(self):
+        # User have added 3 documents in 3 different folders
+        folder_a = setup_folder(self.org)
+        folder_a_1 = setup_folder(self.org, name=tv.FOLDER2_NAME, parent=folder_a)
+        folder_b = setup_folder(self.org, name=tv.FOLDER3_NAME)
+
+        setup_document(self.org, self.user, title='bingo!')
+        setup_document(self.org, self.user, folder_a, title='bingo!')
+        setup_document(self.org, self.user, folder_a_1, title='bingo!')
+        setup_document(self.org, self.user, folder_b, title='bingo!')
+
+        self.visit(HomePage.url)  # Refresh page for folder list to be displayed
+        self.wait_folder_list_loaded()
+
+        # User go in folder_a_1 and search for 'bingo!'
+        self.get_elem(self.folders_list_buttons).click()  # open folder A
+        self.wait_folder_list_loaded()
+        self.get_elem(self.folders_list_buttons).click()  # open folder B
+        self.wait_folder_list_loaded()
+        self.search_documents('bingo!')
+        self.wait_documents_list_loaded()
+
+        # Search apply to all folders, thus the 4 documents are return
+        self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 4,
+                         'Search should apply to all folders')
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_search_document_by_its_content(self):
+        # User have already added 2 documents
+        setup_document(self.org, self.user)
+        second_document_title = 'bingo!'
+        second_document_text_content = 'Yellow Blue'
+        setup_document(self.org, self.user, title=second_document_title, text_content=second_document_text_content)
+
+        # User search last uploaded document
+        self.search_documents(second_document_text_content)
+
+        # Only the second document appears in search results
+        self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
+        self.assertEqual(second_document_title, self.get_elem_text(self.first_document_title))
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_search_not_found(self):
+        # User have already added 1 document
+        setup_document(self.org, self.user)
+
+        # User search something that isn't present in his document
+        self.search_documents('this text doesn\'t exist')
+
+        with self.assertRaises(NoSuchElementException, msg='No document should be found by this search query'):
+            self.get_elems(self.documents_thumbnails)
+
+        self.assertIn('No document', self.get_elem_text(self.documents_list_container),
+                      'A message should indicate no documents were found')
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_search_not_found_from_a_folder(self):
+        # User have already added 1 document and 1 folder
+        setup_document(self.org, self.user)
+        setup_folder(self.org)
+        self.visit(HomePage.url)  # Refresh page for folder list to be displayed
+        self.wait_folder_list_loaded()
+
+        # User open the folder and then search something that isn't present in its document
+        self.get_elem(self.folders_list_buttons).click()
+        self.wait_folder_list_loaded()
+        self.search_documents('this text doesn\'t exist')
+
+        with self.assertRaises(NoSuchElementException, msg='No document should be found by this search query'):
+            self.get_elems(self.documents_thumbnails)
+
+        self.assertIn('No document', self.get_elem_text(self.documents_list_container),
+                      'A message should indicate no documents were found')
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_search_open_close_document(self):
+        # User have already added 2 documents inside sub folder
+        sub_folder = setup_folder(self.org)
+        doc_first_result = setup_document(self.org, self.user, ftl_folder=sub_folder, title='pop pop')
+        doc_second_result = setup_document(self.org, self.user, ftl_folder=sub_folder, title='pop')
+        self.refresh_documents_list()
+
+        # User search for document
+        self.search_documents('pop')
+
+        # User open first document of search result and close it
+        self.open_first_document()
+        self.close_document()
+
+        # The search result is still displayed after closing the first document
+        self.assertEqual(self.get_elems_text(self.documents_titles), [doc_first_result.title, doc_second_result.title])
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_search_advanced_syntax(self):
+        # See https://www.postgresql.org/docs/11/textsearch-controls.html#id-1.5.11.6.4.11 for advanced search syntax
+        # User have already added 2 documents inside sub folder
+        red_doc = setup_document(self.org, self.user, title='red')
+        purple_doc = setup_document(self.org, self.user, title='purple 1', note='red blue')
+        purple_doc_2 = setup_document(self.org, self.user, title='purple 2', note='blue red')
+        orange_doc = setup_document(self.org, self.user, title='orange', note='red yellow')
+        self.refresh_documents_list()
+
+        # User search for documents containing red and yellow key word
+        self.search_documents('red yellow')
+
+        # 1 document is found: orange
+        self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
+        self.assertIn(orange_doc.title, self.get_elems_text(self.documents_titles))
+
+        # User search for documents containing blue or yellow key word
+        self.search_documents('blue OR yellow')
+
+        # 3 documents are found: purple, purple 2 and orange
+        self.assertEqual(len(self.get_elems(self.documents_titles)), 3)
+        self.assertIn(purple_doc.title, self.get_elems_text(self.documents_titles))
+        self.assertIn(purple_doc_2.title, self.get_elems_text(self.documents_titles))
+        self.assertIn(orange_doc.title, self.get_elems_text(self.documents_titles))
+
+        # User search for documents containing red but not yellow and blue
+        self.search_documents('red -yellow -blue')
+
+        # 1 documents is found: red
+        self.assertEqual(len(self.get_elems(self.documents_titles)), 1)
+        self.assertIn(red_doc.title, self.get_elems_text(self.documents_titles))
+
+        # User search for documents containing the phrase "blue red"
+        self.search_documents('"blue red"')
+
+        # 1 documents is found: purple2
+        self.assertEqual(len(self.get_elems(self.documents_titles)), 1)
+        self.assertIn(purple_doc_2.title, self.get_elems_text(self.documents_titles))
 
 
 class DocumentsBatchActionsTests(LoginPage, HomePage, MoveDocumentsModal):
