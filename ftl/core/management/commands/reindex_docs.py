@@ -17,14 +17,22 @@ class Command(BaseCommand):
         parser.add_argument(
             '--force',
             action='append',
-            help='Force processing for the indicated plugins (plugin1,plugin2,plugin3)',
+            help='Force processing for the indicated plugin (can be specified multiple times, plugins list available in'
+                 ' ftl.enums.FTLPlugins',
         )
 
     def handle(self, *args, **options):
         plugins_forced = list()
         if options['force']:
             for plugin in options['force']:
-                plugins_forced.append(FTLPlugins.get_value(plugin))
+                value = FTLPlugins.get_value(plugin)
+                if value:
+                    self.stdout.write(
+                        self.style.MIGRATE_HEADING(
+                            _('Forcing plugin %(value)s') % {'value': value}
+                        )
+                    )
+                    plugins_forced.append(value)
 
         processing = FTLDocumentProcessing(settings.FTL_DOC_PROCESSING_PLUGINS)
         docs = FTLDocument.objects.all()
