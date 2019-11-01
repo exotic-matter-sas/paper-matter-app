@@ -37,25 +37,19 @@ class FTLLangDetectorLangId(FTLDocProcessingBase):
 
     def process(self, ftl_doc, force):
         if force or not ftl_doc.language:
-            try:
-                detected_lang, confidence = self.identifier.classify(ftl_doc.content_text)
-                if confidence > 0.5:
-                    try:
-                        ftl_doc.language = COUNTRY_CODE_INDEX[detected_lang]
-                    # Lang not supported by PgSQL (see COUNTRY_CODE_INDEX)
-                    except KeyError:
-                        logger.warning(f'{self.log_prefix} {ftl_doc.pid} Lang {detected_lang} not registered as '
-                                       f'supported PgSQL lang, search will fallback to "simple" lang for this document')
-                        ftl_doc.language = self.default_language
-                else:
-                    logger.warning(f'{self.log_prefix} {ftl_doc.pid} Lang detection confidence too low, search will'
-                                   f' fallback to "simple" lang for this document')
+            detected_lang, confidence = self.identifier.classify(ftl_doc.content_text)
+            if confidence > 0.5:
+                try:
+                    ftl_doc.language = COUNTRY_CODE_INDEX[detected_lang]
+                # Lang not supported by PgSQL (see COUNTRY_CODE_INDEX)
+                except KeyError:
+                    logger.warning(f'{self.log_prefix} {ftl_doc.pid} Lang {detected_lang} not registered as '
+                                   f'supported PgSQL lang, search will fallback to "simple" lang for this document')
                     ftl_doc.language = self.default_language
-            except Exception:
-                logger.error(f'{self.log_prefix} {ftl_doc.pid} Unknown error during lang detection, search will'
-                             f' fallback to "simple" lang for this document')
+            else:
+                logger.warning(f'{self.log_prefix} {ftl_doc.pid} Lang detection confidence too low, search will'
+                               f' fallback to "simple" lang for this document')
                 ftl_doc.language = self.default_language
-            finally:
-                ftl_doc.save()
+            ftl_doc.save()
         else:
             logger.debug(f'{self.log_prefix} Skipping lang detection for document {ftl_doc.pid}')
