@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'ftl',
     'setup.apps.SetupConfig',
     'core.apps.CoreConfig',
+    'account.apps.AccountConfig',
     'frontend'
 ]
 

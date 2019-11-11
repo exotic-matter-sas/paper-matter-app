@@ -51,6 +51,9 @@ urlpatterns = [
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('reset/done/', PasswordResetDone.as_view(), name='password_reset_complete'),
 
+    # Account management
+    path('accounts/', include('account.urls')),
+
     # Account activation
     path('accounts/activate/complete/', views.AccountActivationSuccess.as_view(),
          name='django_registration_activation_complete'),

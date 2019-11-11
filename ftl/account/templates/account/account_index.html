@@ -1,0 +1,23 @@
+{% extends "account/account_base.html" %}
+{% load i18n %}
+
+
+{% block account %}
+    {% if messages %}
+        <div class="row alert alert-success">
+            <div class="col text-center">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col">
+            <p>Manage your account</p>
+
+            <p>FIXME Maybe nice bootstrap card linking to section?</p>
+        </div>
+    </div>
+{% endblock %}

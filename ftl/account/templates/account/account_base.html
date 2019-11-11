@@ -1,0 +1,53 @@
+{% extends "ftl/base.html" %}
+{% load render_bundle from webpack_loader %}
+{% load i18n %}
+
+{% block title %}{% trans 'Home' %}{% endblock %}
+{% block head %}
+    {{ ftl_account|json_script:"ftlAccount" }}
+    {{ request.LANGUAGE_CODE|json_script:"locale" }}
+{% endblock %}
+
+{% block body %}
+    <body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="{% url "home" %}">Paper Matter</a>
+        </nav>
+    </header>
+    <div class="my-5 d-flex flex-column">
+        <main class="flex-grow-1">
+            <div class="container">
+                <div class="row mb-5">
+                    <div class="col">
+                        <h3 class="text-center"><a href="{% url "account_index" %}">Account management</a></h3>
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col col-3">
+                        <h5>{{ ftl_account.name }}</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="{% url 'account_email' %}" class="">
+                                Email
+                            </a></li>
+                            <li><a href="{% url 'account_password' %}" class="">
+                                Password
+                            </a></li>
+                            <li><a href="{% url 'home' %}" class="">
+                                Two factor authentication
+                            </a></li>
+                            <li><a href="{% url 'home' %}" class="">
+                                Export
+                            </a></li>
+                        </ul>
+                    </div>
+                    <div class="col col-9">
+                        {% block account %}{% endblock %}
+                    </div>
+                </div>
+            </div>
+        </main>
+        <footer></footer>
+    </div>
+    </body>
+{% endblock %}
