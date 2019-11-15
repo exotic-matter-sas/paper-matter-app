@@ -201,6 +201,7 @@ Rename or move an existing folder.
 
 - **file**: PDF file binary
 - _**json** (optional): additional data to set for document uploaded_
+    - **created**: creation date following ISO 8601 format (if omitted or `null` current date will be set)
     - **ftl_folder**: parent folder id (if omitted or `null`, folder is created inside root folder)
     - **ignore_thumbnail_generation_error**: if set to `false` and sent **thumbnail** is corrupt or not properly formatted upload request will fail (if omitted or `true`, error will be ignored and document will be uploaded without thumbnail, it's the default behavior as some browsers may not support thumbnail generation using canvas)
 - _**thumbnail** (optional): thumbnail to display in the documents list, thumbnail should be a PNG image encoded as data uri `data:image/png;base64,...` (if omitted thumbnail will be generated on next document display from web interface, recommended format is half the size of the original document)_
