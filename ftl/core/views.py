@@ -184,9 +184,6 @@ class FileUploadView(views.APIView):
         else:
             ftl_folder = None
 
-        if 'created' in payload and payload['created']:
-            ftl_created = payload['created']
-
         with transaction.atomic():
             ftl_doc = FTLDocument()
             ftl_doc.ftl_folder = ftl_folder
@@ -194,7 +191,9 @@ class FileUploadView(views.APIView):
             ftl_doc.binary = file_obj
             ftl_doc.org = self.request.user.org
             ftl_doc.title = file_obj.name
-            ftl_doc.created = ftl_created
+
+            if 'created' in payload and payload['created']:
+                ftl_doc.created = payload['created']
 
             if 'thumbnail' in request.POST and request.POST['thumbnail']:
                 try:
