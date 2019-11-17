@@ -12,8 +12,8 @@ $theme-colors: (
 
 $breadcrumb-divider: quote(">");
 
-@import '../../node_modules/bootstrap/scss/bootstrap';
-@import '../../node_modules/bootstrap-vue/src/index';
+@import '~bootstrap/scss/bootstrap';
+@import '~bootstrap-vue/src/index';
 
 body {
     background: $light;

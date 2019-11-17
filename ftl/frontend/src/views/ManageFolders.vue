@@ -280,8 +280,6 @@
 </script>
 
 <style scoped lang="scss">
-  @import '../styles/customBootstrap.scss';
-
   #create-folder {
     cursor: pointer;
     border: 3px solid transparent;

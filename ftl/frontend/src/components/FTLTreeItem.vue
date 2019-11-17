@@ -94,8 +94,6 @@
 
 
 <style scoped lang="scss">
-  @import '../styles/customBootstrap.scss';
-
   .bold {
     font-weight: bold;
   }

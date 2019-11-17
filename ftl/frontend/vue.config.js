@@ -9,12 +9,17 @@ module.exports = {
     // Needed to render css bundle in Django base template when in development
     // Unfortunately it disable css hot reloading
     extract: true,
+    loaderOptions: {
+      sass: {
+        prependData: `@import "@/styles/customBootstrap.scss";`
+      }
+    }
   },
 
   chainWebpack: config => {
 
     config.entry('app')
-      .add('./src/styles/customBootstrap.scss');
+      .add('@/styles/customBootstrap.scss');
 
     // Built app broken if omitted
     config.optimization

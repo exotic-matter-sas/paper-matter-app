@@ -120,8 +120,6 @@
 </script>
 
 <style scoped lang="scss">
-  @import '../styles/customBootstrap.scss';
-
   #note-title { // to avoid #note-form visible behind title during animation
     background: white;
     z-index: $zindex-dropdown;

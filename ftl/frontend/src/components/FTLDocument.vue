@@ -52,8 +52,6 @@
 </script>
 
 <style scoped lang="scss">
-  @import '../styles/customBootstrap.scss';
-
   .document-title {
     color: map_get($theme-colors, 'primary');
   }
