@@ -33,7 +33,7 @@ Generate an access and refresh token that follow the [JSON Web Token standard](h
 
 **HTTP error status**
 
-| Status | detail |
+| Status | details |
 | ----- | ----- |
 | 401 | No active account found with the given credentials |
 
@@ -68,7 +68,7 @@ Eventually the refresh token will also expire (after a longer period), if you're
 
 **HTTP error status**
 
-| Status | detail | code |
+| Status | details | code |
 | ----- | ----- | ----- |
 | 401 | Token is invalid or expired | token_not_valid |
 
@@ -109,7 +109,7 @@ Eventually the refresh token will also expire (after a longer period), if you're
 
 **Specific error status**
 
-| Status | detail | code |
+| Status | details | code |
 | ----- | ----- | ----- |
 | 400 | A folder with this name already exist | folder_name_unique_for_org_level |
 
@@ -183,7 +183,7 @@ Rename or move an existing folder.
 
 **Specific error status**
 
-| Status | detail | code |
+| Status | details | code |
 | ----- | ----- | ----- |
 | 400 | A folder can't be move inside one of its children | folder_parent_invalid |
 
@@ -201,7 +201,7 @@ Rename or move an existing folder.
 
 - **file**: PDF file binary
 - _**json** (optional): additional data to set for document uploaded_
-    - **created**: creation date following ISO 8601 format (if omitted or `null` current date will be set)
+    - **created**: creation date following ISO 8601 format, eg. `2019-11-18T00:42:42.242424Z` (if omitted or `null` current date will be set)
     - **ftl_folder**: parent folder id (if omitted or `null`, folder is created inside root folder)
     - **ignore_thumbnail_generation_error**: if set to `false` and sent **thumbnail** is corrupt or not properly formatted upload request will fail (if omitted or `true`, error will be ignored and document will be uploaded without thumbnail, it's the default behavior as some browsers may not support thumbnail generation using canvas)
 - _**thumbnail** (optional): thumbnail to display in the documents list, thumbnail should be a PNG image encoded as data uri `data:image/png;base64,...` (if omitted thumbnail will be generated on next document display from web interface, recommended format is half the size of the original document)_
@@ -243,7 +243,7 @@ Content-Disposition: form-data; name="json"
 
 **Specific error status**
 
-| Status | detail | code |
+| Status | details | code |
 | ----- | ----- | ----- |
 | 400 | Specified ftl_folder doesn't exist | ftl_folder_not_found |
 
