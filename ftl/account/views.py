@@ -1,6 +1,8 @@
 from datetime import timedelta
 
+from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
@@ -11,10 +13,12 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
+from django.utils.translation import ugettext_lazy as _
 from django.views import View
 from django.views.generic import FormView
 
 from account.forms import EmailSendForm
+from core.models import FTLUser
 
 
 class AccountView(LoginRequiredMixin, View):
@@ -29,10 +33,12 @@ class AccountView(LoginRequiredMixin, View):
 class AccountEmailChangeView(LoginRequiredMixin, SuccessMessageMixin, FormView):
     template_name = "account/account_email.html"
     email_change_subject = "account/account_email_change_subject.txt"
+    email_warn_subject = "account/account_email_warn_subject.txt"
     email_change_body = "account/account_email_change_body.txt"
+    email_warn_body = "account/account_email_warn_body.txt"
     form_class = EmailSendForm
     success_url = reverse_lazy('account_index')
-    success_message = "A confirmation email has been sent to your new email."
+    success_message = _("A confirmation email has been sent.")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -52,31 +58,50 @@ class AccountEmailChangeView(LoginRequiredMixin, SuccessMessageMixin, FormView):
     def form_valid(self, form):
         email_ = form.cleaned_data['email']
 
+        if FTLUser.objects.filter(email=email_).exists():
+            form.add_error('email', _("Email is already used by someone else."))
+            return super().form_invalid(form)
+
         activation_key = signing.dumps(
             obj=email_,
             salt='email_change'
         )
 
-        subject = render_to_string(
+        # Email sent to the new address for validation
+        subject_change = render_to_string(
             template_name=self.email_change_subject,
             context=self.get_email_context(activation_key),
             request=self.request
         )
-
-        subject = ''.join(subject.splitlines())
-        message = render_to_string(
+        subject_change = ''.join(subject_change.splitlines())
+        message_change = render_to_string(
             template_name=self.email_change_body,
             context=self.get_email_context(activation_key),
             request=self.request
         )
 
-        send_mail(subject, message, None, [email_])
+        # Email sent to the current address for notification
+        subject_warn = render_to_string(
+            template_name=self.email_warn_subject,
+            context={},
+            request=self.request
+        )
+
+        subject_warn = ''.join(subject_warn.splitlines())
+        message_warn = render_to_string(
+            template_name=self.email_warn_body,
+            context={},
+            request=self.request
+        )
+
+        self.request.user.email_user(subject_warn, message_warn, settings.DEFAULT_FROM_EMAIL)
+        send_mail(subject_change, message_change, settings.DEFAULT_FROM_EMAIL, [email_])
 
         return super().form_valid(form)
 
 
 class AccountEmailChangeValidateView(LoginRequiredMixin, View):
-    success_message = "Email successfully updated"
+    success_message = _("Email successfully updated")
 
     def get(self, request, *args, **kwargs):
         if 'token' in kwargs:
@@ -99,6 +124,7 @@ class AccountPasswordView(LoginRequiredMixin, FormView):
     template_name = "account/account_password.html"
     form_class = PasswordChangeForm
     success_url = reverse_lazy('account_index')
+    success_message = _("Password updated!")
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -110,3 +136,9 @@ class AccountPasswordView(LoginRequiredMixin, FormView):
         context['ftl_account'] = {'name': self.request.user.get_username(),
                                   'isSuperUser': self.request.user.is_superuser}
         return context
+
+    def form_valid(self, form):
+        form.save()
+        update_session_auth_hash(self.request, form.user)
+        messages.success(self.request, self.success_message)
+        return super().form_valid(form)
