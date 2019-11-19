@@ -21,6 +21,8 @@ from account.forms import EmailSendForm
 from core.models import FTLUser
 
 
+# FIXME secure these pages with 2FA when available
+
 class AccountView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         context = {
