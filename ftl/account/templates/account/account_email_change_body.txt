@@ -1,0 +1,9 @@
+{% extends "ftl/base_email_body.txt" %}
+{% load i18n %}
+{% block body %}
+{% blocktrans %}An request has been made to change your email linked to your Paper Matter account:{% endblocktrans %}
+
+{{ scheme }}://{{ site.domain }}{% url 'account_email_validate' activation_key %}
+
+{% blocktrans %}The link will expire in {{ expiration_minutes }} minutes {% endblocktrans %}
+{% endblock %}
