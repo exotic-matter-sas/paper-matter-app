@@ -62,6 +62,7 @@ class AccountEmailChangeView(LoginRequiredMixin, SuccessMessageMixin, FormView):
             form.add_error('email', _("Email is already used by someone else."))
             return super().form_invalid(form)
 
+        # Encode new email and sign it
         activation_key = signing.dumps(
             obj=email_,
             salt='email_change'
@@ -86,7 +87,6 @@ class AccountEmailChangeView(LoginRequiredMixin, SuccessMessageMixin, FormView):
             context={},
             request=self.request
         )
-
         subject_warn = ''.join(subject_warn.splitlines())
         message_warn = render_to_string(
             template_name=self.email_warn_body,
@@ -105,6 +105,7 @@ class AccountEmailChangeValidateView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         if 'token' in kwargs:
+            # Unsign and check for validity
             email = signing.loads(
                 kwargs['token'],
                 salt='email_change',
@@ -139,6 +140,7 @@ class AccountPasswordView(LoginRequiredMixin, FormView):
 
     def form_valid(self, form):
         form.save()
+        # Force update session data
         update_session_auth_hash(self.request, form.user)
         messages.success(self.request, self.success_message)
         return super().form_valid(form)

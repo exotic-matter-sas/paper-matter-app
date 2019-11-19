@@ -2,7 +2,7 @@
 {% load render_bundle from webpack_loader %}
 {% load i18n %}
 
-{% block title %}{% trans 'Home' %}{% endblock %}
+{% block title %}{% trans 'Account management' %}{% endblock %}
 {% block head %}
     {{ ftl_account|json_script:"ftlAccount" }}
     {{ request.LANGUAGE_CODE|json_script:"locale" }}
