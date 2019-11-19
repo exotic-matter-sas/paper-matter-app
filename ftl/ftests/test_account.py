@@ -1,4 +1,7 @@
+import re
 from unittest import skipIf
+
+from django.core import mail
 
 from ftests.pages.base_page import NODE_SERVER_RUNNING
 from ftests.pages.user_login_page import LoginPage
@@ -16,6 +19,40 @@ class AccountPageTests(LoginPage):
         self.user = setup_user(self.org)
         self.visit(LoginPage.url)
         self.log_user()
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_change_email(self):
+        # Go to account management / password change
+        self.visit("/accounts/email")
+
+        # Enter form data
+        new_email_input = self.get_elem("#id_email")
+        submit_input = self.get_elem("form [type=submit]")
+
+        new_email_input.send_keys(tv.USER2_EMAIL)
+        submit_input.click()
+
+        self.assertIn('A confirmation email has been sent', self.get_elem_text("div.text-center"))
+
+        # Two emails should have been sent
+        self.assertEqual(len(mail.outbox), 2)
+
+        # Check notice email
+        self.assertIn(self.user.email, mail.outbox[0].to)
+        self.assertIn('notice of email change', mail.outbox[0].subject.lower())
+        self.assertIn('Someone requested to change the email address', mail.outbox[0].body)
+
+        # Check validation email
+        self.assertIn(tv.USER2_EMAIL, mail.outbox[1].to)
+        self.assertIn('validate your new email', mail.outbox[1].subject.lower())
+        self.assertRegex(mail.outbox[1].body, 'https?://.+/accounts/email/.+')
+
+        # Check link
+        validate_email_link = re.search(r'(https?://.+/accounts/email/.+)', mail.outbox[1].body)
+        self.assertIsNotNone(validate_email_link)
+
+        self.visit(validate_email_link.group(1), absolute_url=True)
+        self.assertIn('Email successfully updated', self.get_elem_text("div.text-center"))
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_change_password(self):
