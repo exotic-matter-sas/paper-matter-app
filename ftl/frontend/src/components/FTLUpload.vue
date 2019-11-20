@@ -1,7 +1,7 @@
 <template>
   <section>
     <b-row>
-      <b-col cols="12" md="10">
+      <b-col cols="12" md="8">
         <b-form-file
           multiple
           ref="fileUploadField"
@@ -19,6 +19,12 @@
                   @click="uploadDocument">
           {{this.$_('Upload')}}
         </b-button>
+      </b-col>
+      <b-col class="d-none d-md-flex align-items-center" md="2">
+        <a class="text-center" href="https://welcome.papermatter.app/import-export"
+           :title="this.$_('Import a folder or a large amount of documents using the local import client')">
+          {{this.$_('Import a folder')}}
+        </a>
       </b-col>
     </b-row>
     <b-row>

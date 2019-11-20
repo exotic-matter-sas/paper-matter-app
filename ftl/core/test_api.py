@@ -1,5 +1,6 @@
 import json
 import os
+from datetime import datetime
 from unittest.mock import patch
 
 from django.contrib import messages
@@ -204,6 +205,18 @@ class DocumentsTests(APITestCase):
         self.assertEqual(objects_get.title, client_doc['title'])
         self.assertEqual(objects_get.note, client_doc['note'])
         self.assertIsNone(objects_get.ftl_folder)
+
+    @patch.object(FTLDocumentProcessing, 'apply_processing')
+    def test_upload_doc_with_creation_date(self, mock_apply_processing):
+        creation_date = '2019-11-15T08:54:33.361913+00:00'
+        with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'test.pdf'), 'rb') as f:
+            data = {'created': creation_date}
+            body_post = {'json': json.dumps(data), 'file': f}
+            response = self.client.post('/app/api/v1/documents/upload', body_post)
+
+        upload_doc = response.data
+        objects_get = FTLDocument.objects.get(pid=upload_doc['pid'])
+        self.assertEqual(creation_date, objects_get.created.isoformat())
 
     @patch.object(FTLDocumentProcessing, 'apply_processing')
     def test_upload_document_wrong_format(self, mock_apply_processing):

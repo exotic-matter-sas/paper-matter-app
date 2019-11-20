@@ -164,7 +164,8 @@
         this.currentOpenDoc = {};
         this.$bvModal.hide('document-viewer');
         this.$emit('event-document-panel-closed');
-        this.$router.push({path: this.$route.path});
+        this.$router.push({path: this.$route.path}, () => {
+        });
       }
     }
   }

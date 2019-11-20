@@ -269,7 +269,7 @@ describe('FTLDocumentPanel methods', () => {
 
     // then
     expect(wrapper.vm.$router.push).toHaveBeenCalledTimes(1);
-    expect(wrapper.vm.$router.push).toHaveBeenCalledWith({path: previousPathValue});
+    expect(wrapper.vm.$router.push).toHaveBeenCalledWith({path: previousPathValue}, expect.any(Function));
   });
 });
 

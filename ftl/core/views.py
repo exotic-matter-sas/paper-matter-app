@@ -192,6 +192,9 @@ class FileUploadView(views.APIView):
             ftl_doc.org = self.request.user.org
             ftl_doc.title = file_obj.name
 
+            if 'created' in payload and payload['created']:
+                ftl_doc.created = payload['created']
+
             if 'thumbnail' in request.POST and request.POST['thumbnail']:
                 try:
                     ftl_doc.thumbnail_binary = ContentFile(_extract_binary_from_data_uri(request.POST['thumbnail']),
