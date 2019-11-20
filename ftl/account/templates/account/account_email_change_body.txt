@@ -1,9 +1,15 @@
 {% extends "ftl/base_email_body.txt" %}
 {% load i18n %}
+
 {% block body %}
-{% blocktrans %}An request has been made to change your email linked to your Paper Matter account:{% endblocktrans %}
+    {% blocktrans %}
+        An request has been made to change your email linked to your Paper Matter account. Please click the
+        following link to validate your new email.
+    {% endblocktrans %}
 
-{{ scheme }}://{{ site.domain }}{% url 'account_email_validate' activation_key %}
+    {{ scheme }}://{{ site.domain }}{% url 'account_email_validate' activation_key %}
 
-{% blocktrans %}The link will expire in {{ expiration_minutes }} minutes {% endblocktrans %}
+    {% blocktrans %}
+        The link will expire in {{ expiration_minutes }} minutes.
+    {% endblocktrans %}
 {% endblock %}

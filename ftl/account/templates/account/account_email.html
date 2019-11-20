@@ -5,14 +5,17 @@
 {% block account %}
     <h5>Change your email</h5>
     <p>
-        <strong>An confirmation email will be sent to your new address. Please click on the link contained in it to
-            validate your new email. The link will expire in 10 minutes.</strong>
+        Keep your email updated. You might receive important notice about your account.
+    </p>
+    <p class="highlight">
+        An confirmation email will be sent to your new address. Please click on the link contained in it to
+        validate your new email. The link will expire in 10 minutes.
     </p>
     <form action="" method="post">
         {% csrf_token %}
 
         <div class="row my-4">
-            <div class="col-md-auto">
+            <div class="col">
                 <input id="id_email" name="email" type="text" class="form-control" placeholder="New email">
             </div>
         </div>
@@ -33,7 +36,7 @@
 
         <div class="row">
             <div class="col">
-                <button type="submit" class="btn btn-primary">Update</button>
+                <button type="submit" class="btn btn-primary">Next</button>
             </div>
         </div>
     </form>

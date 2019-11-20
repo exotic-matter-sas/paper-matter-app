@@ -9,45 +9,46 @@
 {% endblock %}
 
 {% block body %}
-    <body>
+    <body class="d-flex flex-column min-vh-100">
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <a class="navbar-brand" href="{% url "home" %}">Paper Matter</a>
+            <a class="navbar-brand" href="{% url "home" %}">Return to Paper Matter</a>
         </nav>
     </header>
-    <div class="my-5 d-flex flex-column">
-        <main class="flex-grow-1">
-            <div class="container">
-                <div class="row mb-5">
-                    <div class="col">
-                        <h3 class="text-center"><a href="{% url "account_index" %}">Account management</a></h3>
-                    </div>
-                </div>
-                <div class="row justify-content-center">
-                    <div class="col col-3">
-                        <h5>{{ ftl_account.name }}</h5>
-                        <ul class="list-unstyled">
-                            <li><a href="{% url 'account_email' %}" class="">
-                                Email
-                            </a></li>
-                            <li><a href="{% url 'account_password' %}" class="">
-                                Password
-                            </a></li>
-                            <li><a href="{% url 'home' %}" class="">
-                                Two factor authentication
-                            </a></li>
-                            <li><a href="{% url 'home' %}" class="">
-                                Export
-                            </a></li>
-                        </ul>
-                    </div>
-                    <div class="col col-9">
-                        {% block account %}{% endblock %}
-                    </div>
+    <main class="my-5 flex-grow-1">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col">
+                    <h3 class="text-center"><a href="{% url "account_index" %}">Account management</a></h3>
                 </div>
             </div>
-        </main>
-        <footer></footer>
-    </div>
+            <div class="row justify-content-center p-3">
+                <div class="col col-sm-3 border-right">
+                    <h5 class="text-center">{{ ftl_account.name }}</h5>
+                    <div class="list-group">
+                        <a href="{% url 'account_email' %}" class="list-group-item list-group-item-action">Email</a>
+                        <a href="{% url 'account_password' %}"
+                           class="list-group-item list-group-item-action">Password</a>
+                        <a href="{% url 'account_index' %}" class="list-group-item list-group-item-action disabled">Two
+                            factor authentication</a>
+                        <a href="{% url 'account_index' %}" class="list-group-item list-group-item-action disabled">Date
+                            export (GDPR)</a>
+                        <a href="{% url 'account_index' %}" class="list-group-item list-group-item-action disabled">Delete
+                            account</a>
+                        <a href="{% url 'account_index' %}" class="list-group-item list-group-item-action disabled">Paper
+                            Matter settings</a>
+                    </div>
+                </div>
+                <div class="col col-9 p-4">
+                    {% block account %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer class="footer mt-auto py-3 text-muted text-center">
+        {% blocktrans %}
+            Paper Matter, open source software. Made with ❤ by Exotic Matter
+        {% endblocktrans %}
+    </footer>
     </body>
 {% endblock %}

@@ -1,6 +1,6 @@
 {% extends "account/account_base.html" %}
 {% load i18n %}
-
+{% load static %}
 
 {% block account %}
     {% if messages %}
@@ -13,11 +13,24 @@
         </div>
     {% endif %}
 
-    <div class="row">
-        <div class="col">
-            <p>Manage your account</p>
+    <div class="d-flex flex-row">
+        <div class="card m-1 p-2" style="width: 50%;">
+            <img src="{% static 'profile.svg' %}" style="height: 13rem;" class="card-img-top" alt="...">
 
-            <p>FIXME Maybe nice bootstrap card linking to section?</p>
+            <div class="card-body">
+                <p class="card-text"><a href="{% url 'account_email' %}">Update your email or profile information</a>
+                </p>
+            </div>
+        </div>
+
+        <div class="card m-1 p-2" style="width: 50%;">
+            <img src="{% static 'security.svg' %}" style="height: 13rem;" class="card-img-top" alt="...">
+
+            <div class="card-body">
+                <p class="card-text"><a href="{% url "account_password" %}">Update your password regularly or enable
+                    2FA</a>
+                </p>
+            </div>
         </div>
     </div>
 {% endblock %}

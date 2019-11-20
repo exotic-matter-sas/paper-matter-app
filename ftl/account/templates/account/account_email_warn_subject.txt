@@ -1,5 +1,6 @@
 {% extends "ftl/base_email_subject.txt" %}
 {% load i18n %}
+
 {% block content %}
-{% blocktrans %}Account security: notice of email change{% endblocktrans %}
+    {% blocktrans %}Account security: notice of email change{% endblocktrans %}
 {% endblock %}

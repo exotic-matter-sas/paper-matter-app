@@ -155,6 +155,7 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'frontend', 'dist'),  # Webpack final bundle
     os.path.join(BASE_DIR, 'frontend', 'pdfjs'),
     os.path.join(BASE_DIR, 'frontend', 'src', 'assets'),
+    os.path.join(BASE_DIR, 'account', 'static'),
     os.path.join(BASE_DIR, 'ftl', 'static'),
 )
 
