@@ -1,3 +1,5 @@
+from unittest import skip
+
 from ftests.pages.django_admin_login_page import AdminLoginPage
 from ftests.pages.setup_pages import SetupPages
 from ftests.pages.signup_pages import SignupPages
@@ -49,6 +51,7 @@ class AdminLoginTests(AdminLoginPage):
 
 
 class FirstUserSignupTest(SignupPages):
+    @skip("Multi users feature disabled")
     def test_user_can_signup_to_first_organization(self):
         """User can signup to first organization"""
         # Admin user have already setup org and admin
