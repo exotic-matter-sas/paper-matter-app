@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-11 17:32+0000\n"
+"POT-Creation-Date: 2019-11-21 17:35+0000\n"
 "PO-Revision-Date: 2019-03-05 17:20+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -22,7 +22,15 @@ msgstr ""
 msgid "Organization name"
 msgstr "Nom de l'organisation"
 
-#: ftl/forms.py:41
+#: ftl/forms.py:26
+msgid ""
+"It's the name of your Paper Matter secure area, it will be visible to people "
+"joining your organization."
+msgstr ""
+"C'est le nom de votre espace sécurisé Paper Matter, il sera visible par les personnes "
+"rejoignant votre organisation."
+
+#: ftl/forms.py:43
 msgid "Organization already exists"
 msgstr "L'organisation existe déjà"
 
