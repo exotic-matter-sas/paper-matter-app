@@ -1,4 +1,5 @@
 import re
+from unittest import skip
 from unittest.mock import patch, Mock
 
 from django.contrib import messages
@@ -25,6 +26,7 @@ class FtlPagesTests(TestCase):
         response = self.client.get('', follow=True)
         self.assertRedirects(response, f"{reverse_lazy('login')}?next={reverse_lazy('home')}")
 
+    @skip("Multi users feature disabled")
     def test_signup_returns_correct_html(self):
         """Signup page returns correct html"""
         org = setup_org()
@@ -33,6 +35,7 @@ class FtlPagesTests(TestCase):
         self.assertContains(response, 'Create your account')
         self.assertTemplateUsed(response, 'ftl/registration/signup.html')
 
+    @skip("Multi users feature disabled")
     def test_signup_context(self):
         """Signup page get proper context"""
         org = setup_org()
@@ -41,6 +44,7 @@ class FtlPagesTests(TestCase):
         self.assertEqual(response.context['org_name'], org.name)
         self.assertIsInstance(response.context['form'], FTLUserCreationForm)
 
+    @skip("Multi users feature disabled")
     def test_signup_get_success_url(self):
         """Signup get_success_url working properly"""
         org = setup_org()
@@ -61,6 +65,7 @@ class FtlPagesTests(TestCase):
         self.assertContains(response, 'verify your email')
         self.assertTemplateUsed(response, 'ftl/registration/signup_success.html')
 
+    @skip("Multi users feature disabled")
     def test_user_permissions_signup(self):
         org = setup_org()
 
