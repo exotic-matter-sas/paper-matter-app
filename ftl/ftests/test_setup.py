@@ -29,7 +29,8 @@ class LandingPageTests(SetupPages):
         self.assertIn('setup completed', self.head_title)
         self.assertIn('/admin', self.get_elem(self.admin_login_link).get_attribute('href'))
 
-        self.assertIn('/signup', self.get_elem(self.user_signup_link).get_attribute('href'))
+        # Multi users feature disabled
+        # self.assertIn('/signup', self.get_elem(self.user_signup_link).get_attribute('href'))
 
         # Display app again now redirect to user login page
         self.visit(self.root_url)
