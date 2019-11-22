@@ -9,11 +9,11 @@
     <p>{% blocktrans %}<span class="highlight">{{ org_name }}</span> organization was created along admin user.{% endblocktrans %}</p>
     <p>{% trans "You can now:" %}</p>
     <ul>
-        <li>{% trans "Send this link to first organization users for them to create an account:" %}<br/>
-            <a href="{% url 'signup_user' org_slug %}" id="user-signup">
-                {% trans "user signup page" %} ({% url 'signup_user' org_slug %})
-            </a>
-        </li>
+{#        <li>{% trans "Send this link to first organization users for them to create an account:" %}<br/>#}
+{#            <a href="{% url 'signup_user' org_slug %}" id="user-signup">#}
+{#                {% trans "user signup page" %} ({% url 'signup_user' org_slug %})#}
+{#            </a>#}
+{#        </li>#}
         <li>{% trans "Connect to admin pannel here:" %}  <br/>
             <a href="{% url 'admin:index' %}" id="admin-login">
                 {% trans "admin login page" %} ({% url 'admin:index' %})
