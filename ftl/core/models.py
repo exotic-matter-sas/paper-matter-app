@@ -10,6 +10,7 @@ from django.db import models
 from django.db.models import UniqueConstraint
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from google.cloud.exceptions import NotFound
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 from rest_framework.permissions import DjangoModelPermissions
@@ -139,10 +140,16 @@ class FTLDocument(models.Model):
         thumbnail_binary = self.thumbnail_binary
 
         if binary:
-            binary.delete(False)
+            try:
+                binary.delete(False)
+            except NotFound:
+                pass
 
         if thumbnail_binary:
-            thumbnail_binary.delete(False)
+            try:
+                thumbnail_binary.delete(False)
+            except NotFound:
+                pass
 
         super().delete(*args, **kwargs)
 
