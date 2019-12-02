@@ -129,6 +129,7 @@ class FTLDocument(models.Model):
     tsvector = SearchVectorField(blank=True)
     language = models.CharField(max_length=64, default='simple')
     thumbnail_binary = models.FileField(upload_to=_get_name_binary, max_length=256, null=True)
+    deleted = models.BooleanField(default=False)
 
     class Meta:
         indexes = [
@@ -140,6 +141,11 @@ class FTLDocument(models.Model):
 
     def __str__(self):
         return self.title
+
+    def mark_delete(self, *args, **kwargs):
+        self.deleted = True
+        self.ftl_folder = None
+        self.save()
 
     def delete(self, *args, **kwargs):
         """Override to ensure document file is deleted"""
@@ -181,7 +187,7 @@ class FTLDocument(models.Model):
                 else:
                     raise
 
-        super().delete(*args, **kwargs)
+        return super().delete(*args, **kwargs)
 
 
 # FTL Folders
@@ -196,16 +202,16 @@ class FTLFolder(MPTTModel):
 
     def delete(self, *args, **kwargs):
         # Delete documents in this folder
-        documents = FTLDocument.objects.filter(ftl_folder=self)
+        documents = FTLDocument.objects.filter(ftl_folder=self, deleted=False)
         for document in documents:
-            document.delete()
+            document.mark_delete()
 
         # Delete descendants folders recursively
-        descendants = self.get_descendants()[::-1]  # slice syntax for reversing
+        descendants = self.get_descendants()[:1]  # slice syntax for reversing
         for descendant in descendants:
             descendant.delete()
 
-        super().delete(*args, **kwargs)
+        return super().delete(*args, **kwargs)
 
     class MPTTMeta:
         order_insertion_by = ['name']
