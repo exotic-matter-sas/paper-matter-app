@@ -92,7 +92,8 @@
       <FTLDocumentPanel v-if="docPid" :pid="docPid" :search="currentSearch"
                         @event-document-panel-closed="closeDocument"
                         @event-document-renamed="documentUpdated"
-                        @event-document-moved="documentDeleted"/>
+                        @event-document-moved="documentDeleted"
+                        @event-document-deleted="documentDeleted"/>
 
       <!-- For batch action move document -->
       <FTLMoveDocuments
