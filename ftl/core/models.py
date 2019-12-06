@@ -175,7 +175,7 @@ class FTLFolder(MPTTModel):
 
     class Meta:
         constraints = [
-            UniqueConstraint(fields=['name', 'level', 'org_id'], name='folder_name_unique_for_org_level'),
+            UniqueConstraint(fields=['name', 'parent_id', 'org_id'], name='folder_name_unique_for_org_level'),
         ]
 
 
