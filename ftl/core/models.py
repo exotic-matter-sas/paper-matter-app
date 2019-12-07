@@ -7,7 +7,7 @@ from django.contrib.postgres.fields.citext import CICharField
 from django.contrib.postgres.search import SearchVectorField
 from django.core.validators import EmailValidator
 from django.db import models
-from django.db.models import UniqueConstraint
+from django.db.models import UniqueConstraint, Q
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from mptt.fields import TreeForeignKey
@@ -176,6 +176,8 @@ class FTLFolder(MPTTModel):
     class Meta:
         constraints = [
             UniqueConstraint(fields=['name', 'parent_id', 'org_id'], name='folder_name_unique_for_org_level'),
+            UniqueConstraint(fields=['name', 'org_id'], condition=Q(parent_id__isnull=True),
+                             name='folder_name_unique_for_org_level_at_root'),
         ]
 
 
