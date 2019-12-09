@@ -3,7 +3,6 @@
 
 import json
 import os
-from datetime import datetime
 from unittest.mock import patch
 
 from django.contrib import messages
@@ -418,6 +417,29 @@ class FoldersTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['code'], 'folder_name_unique_for_org_level')
+
+    def test_create_same_folder_name_at_same_level(self):
+        # Specific test for an issue where a sub folder at the same level but not the same parent can be created
+        # A
+        # *  X
+        # B
+        # *  X
+
+        folder_a = setup_folder(self.org, name='A')
+        folder_a_x = setup_folder(self.org, name='X', parent=folder_a)
+        folder_b = setup_folder(self.org, name='B')
+
+        # A `X` folders can be created below `B`
+        response = self.client.post('/app/api/v1/folders',
+                                    {'name': 'X', 'parent': folder_b.id}, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # But not created below `A`
+        response = self.client.post('/app/api/v1/folders',
+                                    {'name': 'X', 'parent': folder_a.id}, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
 class JWTAuthenticationTests(APITestCase):
