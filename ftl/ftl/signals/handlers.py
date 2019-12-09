@@ -1,3 +1,6 @@
+#  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+#  Licensed under the BSL License. See LICENSE in the project root for license information.
+
 from django.contrib import messages
 from django.contrib.auth.signals import user_logged_out, user_logged_in
 from django.utils.translation import gettext as _

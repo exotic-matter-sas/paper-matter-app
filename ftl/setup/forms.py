@@ -1,3 +1,6 @@
+#  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+#  Licensed under the BSL License. See LICENSE in the project root for license information.
+
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.utils.text import slugify
