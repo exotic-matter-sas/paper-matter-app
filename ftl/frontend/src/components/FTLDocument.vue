@@ -1,3 +1,8 @@
+<!--
+  - Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+  - Licensed under the BSL License. See LICENSE in the project root for license information.
+  -->
+
 <template>
   <b-col cols="12" mb="4" sm="6" md="4" lg="3" xl="2" class="mb-3 document-thumbnail" :id="doc.pid"
          @click.ctrl="toggleSelection">
