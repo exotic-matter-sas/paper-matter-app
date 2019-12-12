@@ -13,6 +13,9 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+#  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+#  Licensed under the BSL License. See LICENSE in the project root for license information.
+
 from django.conf import settings
 from django.conf.urls import url
 from django.contrib import admin
@@ -36,7 +39,8 @@ urlpatterns = [
 
     path('signup/', views.CreateOrgAndFTLUser.as_view(), name='signup_org_user'),
     path('signup/success/', views.signup_success, name='signup_success'),
-    path('signup/<slug:org_slug>/', views.CreateFTLUserFormView.as_view(), name='signup_user'),
+    # Disabled until multi users feature is ready
+    # path('signup/<slug:org_slug>/', views.CreateFTLUserFormView.as_view(), name='signup_user'),
 
     path('login/',
          auth_views.LoginView.as_view(authentication_form=FTLAuthenticationForm, redirect_authenticated_user=True),

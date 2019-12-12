@@ -1,5 +1,8 @@
+#  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+#  Licensed under the BSL License. See LICENSE in the project root for license information.
+
 import os
-from unittest import skipIf
+from unittest import skipIf, skip
 from unittest.mock import patch
 
 from django import db
@@ -24,6 +27,7 @@ from ftl.settings import BASE_DIR, DEV_MODE
 
 class InitialSetupTest(SetupPages, SignupPages, LoginPage, HomePage):
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skip("Multi users feature disabled")
     def test_end_to_end_setup(self):
         # Admin have just install Paper Matter and display it for the first time
         self.visit(self.root_url)
@@ -56,6 +60,7 @@ class InitialSetupTest(SetupPages, SignupPages, LoginPage, HomePage):
 
 class SecondOrgSetup(AdminLoginPage, AdminHomePage, SignupPages, LoginPage, HomePage):
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skip("Multi users feature disabled")
     def test_second_org_setup(self):
         # first org, admin, first user are already created
         org1 = setup_org()
@@ -89,6 +94,7 @@ class SecondOrgSetup(AdminLoginPage, AdminHomePage, SignupPages, LoginPage, Home
 class NewUserAddDocumentInsideFolder(SignupPages, LoginPage, HomePage, DocumentViewerModal):
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     @patch.object(FTLDocumentProcessing, 'apply_processing')
+    @skip("Multi users feature disabled")
     def test_new_user_add_document_inside_folder(self,  mock_apply_processing):
         # first org, admin, are already created
         org = setup_org()

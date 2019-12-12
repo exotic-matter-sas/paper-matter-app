@@ -1,3 +1,6 @@
+#  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+#  Licensed under the BSL License. See LICENSE in the project root for license information.
+
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import FormView
