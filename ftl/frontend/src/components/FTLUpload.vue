@@ -25,7 +25,7 @@
           {{this.$_('Upload')}}
         </b-button>
       </b-col>
-      <b-col class="d-none d-md-flex align-items-center" md="2">
+      <b-col class="d-none d-md-flex align-items-center justify-content-center" md="2">
         <a class="text-center" href="https://welcome.papermatter.app/import-export"
            :title="this.$_('Import a folder or a large amount of documents using the local import client')">
           {{this.$_('Import a folder')}}
