@@ -196,8 +196,6 @@
 </script>
 
 <style scoped lang="scss">
-  @import '../styles/customBootstrap.scss';
-
   #documents-list-loader {
     width: 3em;
     height: 3em;
@@ -237,8 +235,6 @@
 </style>
 
 <style lang="scss">
-  @import '../styles/customBootstrap.scss';
-
   #documents-sort {
     float: right;
     margin-right: 0 !important;

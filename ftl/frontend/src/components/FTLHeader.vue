@@ -146,8 +146,6 @@
 </script>
 
 <style scoped lang="scss">
-  @import '../styles/customBootstrap.scss';
-
   .navbar-brand {
     padding: 0 0.5rem 0 0;
     border-right: 1px solid rgba(255, 255, 255, 0.1);
