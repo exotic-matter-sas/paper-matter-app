@@ -25,6 +25,7 @@
         moreDocsLoading: false,
         moreDocs: null,
         sort: null,
+        count: 0,
       }
     },
 
@@ -73,6 +74,7 @@
           .then(response => {
             this.moreDocsLoading = false;
             vi.docs = vi.docs.concat(response.data['results']);
+            vi.count = response.data['count'];
             vi.moreDocs = response.data['next'];
           }).catch(error => {
           this.moreDocsLoading = false;
@@ -102,6 +104,7 @@
           .then(response => {
             this.docsLoading = false;
             this.docs = response.data['results'];
+            this.count = response.data['count'];
             this.moreDocs = response.data['next'];
           }).catch(error => {
           this.docsLoading = false;

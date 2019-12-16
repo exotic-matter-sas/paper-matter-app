@@ -12,6 +12,12 @@
         </b-col>
       </b-row>
 
+      <b-row v-if="count > 0" class="my-3">
+        <b-col>
+          <p class="text-center">{{ this.$_('%s results found', [count])}}</p>
+        </b-col>
+      </b-row>
+
       <b-row v-show="!selectedDocumentsHome.length" class="my-3" id="folders-list">
         <b-col>
           <b-button id="refresh-documents" :disabled="docsLoading" variant="primary" @click="updateDocuments">
@@ -81,14 +87,14 @@
             <FTLDocument v-for="doc in docs" :key="doc.pid" :doc="doc" @event-open-doc="navigateToDocument"/>
           </b-row>
         </b-col>
-        <b-col v-else class="text-center">{{ this.$_('No document yet') }}</b-col>
+        <b-col v-else class="text-center">{{ this.$_('No result found') }}</b-col>
       </b-row>
 
       <b-row v-if="moreDocs" align-h="center" class="my-3">
         <b-col>
           <b-button id="more-documents" block variant="secondary" @click.prevent="loadMoreDocuments">
             <b-spinner class="loader" :class="{'d-none': !moreDocsLoading}" small></b-spinner>
-            <span :class="{'d-none': moreDocsLoading}">{{ this.$_('Load more') }}</span>
+            <span :class="{'d-none': moreDocsLoading}">{{ this.$_('Show more results (%s remaining)', [count - docs.length]) }}</span>
           </b-button>
         </b-col>
       </b-row>
