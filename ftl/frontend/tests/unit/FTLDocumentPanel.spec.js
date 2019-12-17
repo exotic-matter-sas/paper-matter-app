@@ -8,7 +8,6 @@ import {createLocalVue, shallowMount} from '@vue/test-utils';
 import axios from 'axios';
 import BootstrapVue from "bootstrap-vue";
 import flushPromises from "flush-promises"; // needed for async tests
-
 import * as tv from './../tools/testValues.js'
 import {axiosConfig} from "../../src/constants";
 
@@ -26,11 +25,19 @@ localVue.use(BootstrapVue); // avoid bootstrap vue warnings
 localVue.component('font-awesome-icon', jest.fn()); // avoid font awesome warnings
 
 // Mock prototype and mixin bellow
-localVue.prototype.$_ = (text, args='') => {return text + args};// i18n mock
-localVue.prototype.$moment = () => {return {fromNow: jest.fn(), format: jest.fn()}}; // moment mock
+localVue.prototype.$_ = (text, args = '') => {
+  return text + args
+};// i18n mock
+localVue.prototype.$moment = () => {
+  return {fromNow: jest.fn(), format: jest.fn()}
+}; // moment mock
 localVue.prototype.$router = {push: jest.fn()}; // router mock
 const mockedRoutePath = jest.fn();
-localVue.prototype.$route = {get path() { return mockedRoutePath()}}; // router mock
+localVue.prototype.$route = {
+  get path() {
+    return mockedRoutePath()
+  }
+}; // router mock
 const mockedMixinAlert = jest.fn();
 localVue.mixin({methods: {mixinAlert: mockedMixinAlert}}); // mixinAlert mock
 
@@ -71,13 +78,13 @@ describe('FTLDocumentPanel template', () => {
     wrapper = shallowMount(FTLDocumentPanel, {
       localVue,
       methods: mountedMocks,
-      propsData: { pid: docProps.pid},
+      propsData: {pid: docProps.pid},
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
 
   it('renders properly html element', () => {
-    const elementSelector= '#document-viewer';
+    const elementSelector = '#document-viewer';
     const elem = wrapper.find(elementSelector);
     expect(elem.is(elementSelector)).toBe(true);
   });
@@ -96,7 +103,7 @@ describe('FTLDocumentPanel mounted', () => {
     wrapper = shallowMount(FTLDocumentPanel, {
       localVue,
       methods: mountedMocks,
-      propsData: { pid: docProps.pid},
+      propsData: {pid: docProps.pid},
     });
 
     expect(mockedOpenDocument).toBeCalledTimes(1);
@@ -111,7 +118,7 @@ describe('FTLDocumentPanel computed', () => {
     wrapper = shallowMount(FTLDocumentPanel, {
       localVue,
       methods: mountedMocks,
-      propsData: {pid: docProps.pid},
+      propsData: {pid: docProps.pid, search: "my search"},
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
@@ -119,6 +126,22 @@ describe('FTLDocumentPanel computed', () => {
   it('isIOS return proper value', async () => {
     // TODO test main iOS user agent device here when we will be able to force recompute of computed
   });
+
+  it('viewer url returns proper value', () => {
+    const search_text = 'my search';
+    const document_pid = docProps.pid;
+    wrapper.setData({currentOpenDoc: docProps});
+
+    // when (no search)
+    const testedValue = wrapper.vm.viewerUrl;
+    expect(testedValue).toContain(document_pid + '#pagemode=none&search=');
+
+    // when (with search)
+    wrapper.setProps({pid: document_pid, search: search_text});
+    const testedValue_2 = wrapper.vm.viewerUrl;
+
+    expect(testedValue_2).toContain(document_pid + '#pagemode=none&search=' + search_text);
+  })
 });
 
 // METHODS
@@ -133,7 +156,7 @@ describe('FTLDocumentPanel methods', () => {
         {createThumbnailForDocument: mockedCreateThumbnailForDocument},
         mountedMocks
       ),
-      propsData: { pid: docProps.pid},
+      propsData: {pid: docProps.pid},
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
@@ -293,7 +316,7 @@ describe('Event received and handled by component', () => {
         },
         mountedMocks
       ),
-      propsData: { pid: docProps.pid},
+      propsData: {pid: docProps.pid},
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
