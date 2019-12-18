@@ -26,17 +26,24 @@
                 <div class="col col-sm-3 border-right">
                     <h5 class="text-center">{{ ftl_account.name }}</h5>
                     <div class="list-group">
-                        <a href="{% url 'account_email' %}" class="list-group-item list-group-item-action">Email</a>
-                        <a href="{% url 'account_password' %}"
-                           class="list-group-item list-group-item-action">Password</a>
-                        <a href="{% url 'account_index' %}" class="list-group-item list-group-item-action disabled">Two
-                            factor authentication (soon)</a>
-                        <a href="{% url 'account_index' %}" class="list-group-item list-group-item-action disabled">Data
-                            export (soon)</a>
-                        <a href="{% url 'account_index' %}" class="list-group-item list-group-item-action disabled">Delete
-                            account (soon)</a>
-                        <a href="{% url 'account_index' %}" class="list-group-item list-group-item-action disabled">Paper
-                            Matter settings (soon)</a>
+                        {% with request.resolver_match.view_name as view_name %}
+                            <a href="{% url 'account_email' %}"
+                               class="{% if view_name == 'account_email' %}active {% endif %}list-group-item list-group-item-action">Email</a>
+                            <a href="{% url 'account_password' %}"
+                               class="{% if view_name == 'account_password' %}active {% endif %}list-group-item list-group-item-action">Password</a>
+                            <a href="{% url 'account_index' %}"
+                               class="{% if view_name == 'XXX' %}active {% endif %}list-group-item list-group-item-action disabled">Two
+                                factor authentication (soon)</a>
+                            <a href="{% url 'account_index' %}"
+                               class="{% if view_name == 'XXX' %}active {% endif %}list-group-item list-group-item-action disabled">Data
+                                export (soon)</a>
+                            <a href="{% url 'account_index' %}"
+                               class="{% if view_name == 'XXX' %}active {% endif %}list-group-item list-group-item-action disabled">Delete
+                                account (soon)</a>
+                            <a href="{% url 'account_index' %}"
+                               class="{% if view_name == 'XXX' %}active {% endif %}list-group-item list-group-item-action disabled">Paper
+                                Matter settings (soon)</a>
+                        {% endwith %}
                     </div>
                 </div>
                 <div class="col col-9 p-4">
