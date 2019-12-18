@@ -4,10 +4,12 @@
 
 {% block account %}
     {% if messages %}
-        <div class="row alert alert-success">
-            <div class="col text-center">
+        <div class="row">
+            <div class="col">
                 {% for message in messages %}
-                    {{ message }}
+                    <div class="{{ message.tags }}" role="alert">
+                        {{ message }}
+                    </div>
                 {% endfor %}
             </div>
         </div>
