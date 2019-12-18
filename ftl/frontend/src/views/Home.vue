@@ -64,7 +64,8 @@
           </b-button>
         </b-col>
         <b-col cols="8" class="text-right">
-          <span class="text-muted d-none d-sm-inline">{{ $_('%s documents selected', [selectedDocumentsHome.length]) }}</span>
+          <span
+            class="text-muted d-none d-sm-inline">{{ $_('%s documents selected', [selectedDocumentsHome.length]) }}</span>
           <b-button id="unselect-all-documents" @click="$store.commit('unselectAllDocuments')"
                     title="Unselect documents">
             <font-awesome-icon icon="window-close" class="d-sm-none"/>
@@ -100,7 +101,7 @@
           <b-button id="more-documents" block variant="secondary" @click.prevent="loadMoreDocuments">
             <b-spinner class="loader" :class="{'d-none': !moreDocsLoading}" small></b-spinner>
             <span :class="{'d-none': moreDocsLoading}">
-              {{ this.$_('Show more documents (%s remaining of all %s)', [count - docs.length, count]) }}
+              {{ this.$_('Show more documents (%s left from %s)', [count - docs.length, count]) }}
             </span>
           </b-button>
         </b-col>
@@ -309,7 +310,8 @@
                   }
                 });
             } else {
-              this.$router.push({path: '/home/' + this.computeFolderUrlPath(folderId)}, () => {});
+              this.$router.push({path: '/home/' + this.computeFolderUrlPath(folderId)}, () => {
+              });
             }
           })
           .catch((error) => {
