@@ -9,6 +9,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.sites.shortcuts import get_current_site
 from django.core import signing
 from django.core.mail import send_mail
+from django.core.signing import SignatureExpired, BadSignature
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.template.loader import render_to_string
@@ -104,21 +105,27 @@ class AccountEmailChangeView(LoginRequiredMixin, SuccessMessageMixin, FormView):
 
 class AccountEmailChangeValidateView(LoginRequiredMixin, View):
     success_message = _("Email successfully updated")
+    expired_message = _("The link expired. Please try again.")
+    incorrect_signature = _("Could not validate your email. Please try again.")
 
     def get(self, request, *args, **kwargs):
         if 'token' in kwargs:
-            # Unsign and check for validity
-            email = signing.loads(
-                kwargs['token'],
-                salt='email_change',
-                max_age=timedelta(minutes=10)
-            )
+            # check for validity
+            try:
+                email = signing.loads(
+                    kwargs['token'],
+                    salt='email_change',
+                    max_age=timedelta(minutes=10)
+                )
 
-            user = self.request.user
-            user.email = email
-            user.save()
-
-            messages.success(self.request, self.success_message)
+                user = self.request.user
+                user.email = email
+                user.save()
+                messages.success(self.request, self.success_message)
+            except SignatureExpired:
+                messages.error(self.request, self.expired_message)
+            except BadSignature:
+                messages.error(self.request, self.incorrect_signature)
 
         return HttpResponseRedirect(reverse_lazy('account_index'))
 
