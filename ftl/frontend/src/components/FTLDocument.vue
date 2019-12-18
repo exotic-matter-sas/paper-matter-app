@@ -18,10 +18,16 @@
           <font-awesome-icon icon="file-download" :alt="this.$_('Download')"/>
         </b-button>
       </b-card-body>
-      <b-card-footer :title="$moment(doc.created).format('LLLL')">
-        <b-form-checkbox :checked="$store.getters.FTLDocumentSelected(doc.pid)" @change="toggleSelection"
-                         :title="$_('Use CTRL + left click for quick selection')"/>
-        <small class="text-muted">{{ $moment(doc.created).fromNow() }}</small>
+      <b-card-footer class="px-2 py-1">
+        <div class="d-flex flex-row align-items-center">
+          <b-form-checkbox :checked="$store.getters.FTLDocumentSelected(doc.pid)" @change="toggleSelection"
+                           :title="$_('Use CTRL + left click for quick selection')"/>
+          <small class="doc-timestamp text-muted text-wrap" :title="$moment(doc.created).format('LLLL')">
+            {{ $moment(doc.created).fromNow() }}
+          </small>
+          <div v-if="!doc.is_processed" class="spinner-border spinner-border-sm text-primary ml-auto" role="status"
+               aria-hidden="true"></div>
+        </div>
       </b-card-footer>
     </div>
   </b-col>
@@ -101,18 +107,9 @@
     box-shadow: inset 0 10px 30px -30px #0A0A0A;
   }
 
-  .card-footer {
+  .doc-timestamp {
     &:first-letter {
       text-transform: capitalize;
-    }
-
-    text-align: center;
-    font-size: 0.9em;
-    padding: 0.5rem 1.25rem;
-    font-style: italic;
-
-    .custom-checkbox {
-      position: absolute;
     }
   }
 </style>
