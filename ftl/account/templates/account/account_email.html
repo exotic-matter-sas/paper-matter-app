@@ -4,8 +4,8 @@
 
 {% block account %}
     <div class="row no-gutters">
-        <div class="col-md-12">
-            <h5>{% trans 'Change your email' %}</h5>
+        <div class="col text-justify">
+            <h3 class="text-primary">{% trans 'Change your email' %}</h3>
             <p class="font-italic">
                 {% trans 'Keep your email updated. You might receive important notice about your account.' %}
             </p>
@@ -15,7 +15,7 @@
                     validate your new email. The link will expire in 10 minutes.
                 {% endblocktrans %}
             </p>
-            <form action="" method="post" class="col">
+            <form id="email-update-form" action="" method="post">
                 {% csrf_token %}
 
                 <input id="id_email" name="email" type="text" class="form-control" placeholder="{% trans 'New email' %}">

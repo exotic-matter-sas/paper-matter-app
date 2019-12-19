@@ -119,5 +119,4 @@ class ForgotPasswordTests(LoginPage, ResetPasswordPages):
 
         # User is able to login using its new password
         self.log_user(password=new_password)
-        self.assertIsNotNone(self.login_success_div,
-                             'User login should success using new password')
+        self.assertIn('home', self.head_title)
