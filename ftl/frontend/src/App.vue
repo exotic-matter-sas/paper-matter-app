@@ -39,7 +39,7 @@
   }
 </script>
 
-<style>
+<style lang="scss">
   #app {
     min-height: 100vh;
     font-family: 'Avenir', Helvetica, Arial, sans-serif;

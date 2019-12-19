@@ -79,8 +79,6 @@
 </script>
 
 <style scoped lang="scss">
-  @import '../styles/customBootstrap.scss';
-
   .folder {
     border: 3px solid transparent;
 
@@ -96,8 +94,6 @@
 </style>
 
 <style lang="scss">
-  @import '../styles/customBootstrap.scss';
-
   .folder .custom-control {
     margin-left: -1.5rem;
 

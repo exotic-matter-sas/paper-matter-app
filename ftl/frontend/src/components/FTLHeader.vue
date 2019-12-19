@@ -138,8 +138,6 @@
 </script>
 
 <style scoped lang="scss">
-  @import '../styles/customBootstrap.scss';
-
   #search-input {
     width: 150px;
     transition: width 0.5s cubic-bezier(.77, 0, .18, 1);
