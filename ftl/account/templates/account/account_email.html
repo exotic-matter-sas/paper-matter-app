@@ -4,30 +4,34 @@
 
 {% block account %}
     <div class="row no-gutters">
-        <h5>Change your email</h5>
-        <p class="font-italic">
-            Keep your email updated. You might receive important notice about your account.
-        </p>
-        <p class="highlight">
-            An confirmation email will be sent to your new address. Please click on the link contained in it to
-            validate your new email. The link will expire in 10 minutes.
-        </p>
-        <form action="" method="post" class="col">
-            {% csrf_token %}
+        <div class="col-md-12">
+            <h5>{% trans 'Change your email' %}</h5>
+            <p class="font-italic">
+                {% trans 'Keep your email updated. You might receive important notice about your account.' %}
+            </p>
+            <p class="highlight">
+                {% blocktrans %}
+                    An confirmation email will be sent to your new address. Please click on the link contained in it to
+                    validate your new email. The link will expire in 10 minutes.
+                {% endblocktrans %}
+            </p>
+            <form action="" method="post" class="col">
+                {% csrf_token %}
 
-            <input id="id_email" name="email" type="text" class="form-control" placeholder="New email">
+                <input id="id_email" name="email" type="text" class="form-control" placeholder="New email">
 
-            {% if form.email.errors %}
-                <div class="my-4 alert alert-danger">
-                    {% if form.email.errors %}
-                        {% for error in form.email.errors %}
-                            <span>{{ error|escape }}</span>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-            {% endif %}
+                {% if form.email.errors %}
+                    <div class="my-4 alert alert-danger">
+                        {% if form.email.errors %}
+                            {% for error in form.email.errors %}
+                                <span>{{ error|escape }}</span>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                {% endif %}
 
-            <button type="submit" class="btn btn-primary my-4 float-right">Next</button>
-        </form>
+                <button type="submit" class="btn btn-primary my-4 float-right">Next</button>
+            </form>
+        </div>
     </div>
 {% endblock %}

@@ -53,11 +53,13 @@
                         <path class="logo-tertiary-color" d="m16.817 26.858h-4.2495l1.5554-2.694 2.694 2.694"/>
                     </g>
                 </svg>
-                <span>Return to app</span>
+                <span>{% trans 'Return to app' %}</span>
             </a>
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link font-weight-bold" href="{% url "account_index" %}">Account Management</a>
+                    <a class="nav-link font-weight-bold" href="{% url "account_index" %}">
+                        {% trans 'Account management' %}
+                    </a>
                 </li>
             </ul>
             <div class="collapse navbar-collapse">
@@ -81,21 +83,27 @@
                     <div class="list-group">
                         {% with request.resolver_match.view_name as view_name %}
                             <a href="{% url 'account_email' %}"
-                               class="{% if view_name == 'account_email' %}active {% endif %}list-group-item list-group-item-action">Email</a>
+                               class="{% if view_name == 'account_email' %}active {% endif %}list-group-item list-group-item-action">
+                                {% trans 'Email' %}
+                            </a>
                             <a href="{% url 'account_password' %}"
-                               class="{% if view_name == 'account_password' %}active {% endif %}list-group-item list-group-item-action">Password</a>
+                               class="{% if view_name == 'account_password' %}active {% endif %}list-group-item list-group-item-action">
+                                {% trans 'Password' %}
+                            </a>
                             <a href="{% url 'account_index' %}"
-                               class="{% if view_name == 'XXX' %}active {% endif %}list-group-item list-group-item-action disabled">Two
-                                factor authentication (soon)</a>
+                               class="{% if view_name == 'XXX' %}active {% endif %}list-group-item list-group-item-action disabled">
+                                {% trans 'Two factor authentication' %}
+                            </a>
                             <a href="{% url 'account_index' %}"
-                               class="{% if view_name == 'XXX' %}active {% endif %}list-group-item list-group-item-action disabled">Data
-                                export (soon)</a>
+                               class="{% if view_name == 'XXX' %}active {% endif %}list-group-item list-group-item-action disabled">
+                                {% trans 'Data export' %}</a>
                             <a href="{% url 'account_index' %}"
-                               class="{% if view_name == 'XXX' %}active {% endif %}list-group-item list-group-item-action disabled">Delete
-                                account (soon)</a>
+                               class="{% if view_name == 'XXX' %}active {% endif %}list-group-item list-group-item-action disabled">
+                                {% trans 'Delete account' %}
+                            </a>
                             <a href="{% url 'account_index' %}"
-                               class="{% if view_name == 'XXX' %}active {% endif %}list-group-item list-group-item-action disabled">Paper
-                                Matter settings (soon)</a>
+                               class="{% if view_name == 'XXX' %}active {% endif %}list-group-item list-group-item-action disabled">
+                                {% trans 'Paper Matter settings' %}</a>
                         {% endwith %}
                     </div>
                 </div>
@@ -108,7 +116,7 @@
     <footer class="footer mt-auto text-muted text-center">
         {% blocktrans %}
             Paper Matter, open source software. Made with ❤ by
-            <a data-v-621d3019="" id="em-link" target="_blank" href="https://www.exotic-matter.fr">Exotic <span
+            <a id="em-link" target="_blank" href="https://www.exotic-matter.fr">Exotic <span
                     class="highlight">Matter</span></a>
         {% endblocktrans %}
     </footer>

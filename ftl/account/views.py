@@ -104,7 +104,7 @@ class AccountEmailChangeView(LoginRequiredMixin, SuccessMessageMixin, FormView):
 
 
 class AccountEmailChangeValidateView(LoginRequiredMixin, View):
-    success_message = _("Email successfully updated")
+    success_message = _("Email successfully updated.")
     expired_message = _("The link expired. Please try again.")
     incorrect_signature = _("Could not validate your email. Please try again.")
 
