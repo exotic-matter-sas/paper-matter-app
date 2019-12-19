@@ -81,7 +81,7 @@
             <font-awesome-icon v-if="account.isSuperUser" icon="crown" class="super-user" title="Super User"/>
             <em id="email">{{ account.name }}</em>
           </template>
-          <b-dropdown-item href="/accounts">{{this.$_('Profile')}}</b-dropdown-item>
+          <b-dropdown-item href="/accounts">{{this.$_('Settings')}}</b-dropdown-item>
           <b-dropdown-item href="/logout">{{this.$_('Sign Out')}}</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
