@@ -3,16 +3,16 @@
 
 
 {% block account %}
-    <h5>Change your email</h5>
-    <p class="font-italic">
-        Keep your email updated. You might receive important notice about your account.
-    </p>
-    <p class="highlight">
-        An confirmation email will be sent to your new address. Please click on the link contained in it to
-        validate your new email. The link will expire in 10 minutes.
-    </p>
-    <div class="d-flex flex-column">
-        <form action="" method="post">
+    <div class="row no-gutters">
+        <h5>Change your email</h5>
+        <p class="font-italic">
+            Keep your email updated. You might receive important notice about your account.
+        </p>
+        <p class="highlight">
+            An confirmation email will be sent to your new address. Please click on the link contained in it to
+            validate your new email. The link will expire in 10 minutes.
+        </p>
+        <form action="" method="post" class="col">
             {% csrf_token %}
 
             <input id="id_email" name="email" type="text" class="form-control" placeholder="New email">
@@ -27,7 +27,7 @@
                 </div>
             {% endif %}
 
-            <button type="submit" class="btn btn-primary my-4">Next</button>
+            <button type="submit" class="btn btn-primary my-4 float-right">Next</button>
         </form>
     </div>
 {% endblock %}
