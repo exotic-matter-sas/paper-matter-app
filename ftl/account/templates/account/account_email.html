@@ -18,7 +18,7 @@
             <form action="" method="post" class="col">
                 {% csrf_token %}
 
-                <input id="id_email" name="email" type="text" class="form-control" placeholder="New email">
+                <input id="id_email" name="email" type="text" class="form-control" placeholder="{% trans 'New email' %}">
 
                 {% if form.email.errors %}
                     <div class="my-4 alert alert-danger">
@@ -30,7 +30,7 @@
                     </div>
                 {% endif %}
 
-                <button type="submit" class="btn btn-primary my-4 float-right">Next</button>
+                <button type="submit" class="btn btn-primary my-4 float-right">{% trans 'Next' %}</button>
             </form>
         </div>
     </div>

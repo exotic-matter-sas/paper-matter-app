@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-19 16:21+0100\n"
-"PO-Revision-Date: 2019-12-19 16:20+0100\n"
+"POT-Creation-Date: 2019-12-19 16:30+0100\n"
+"PO-Revision-Date: 2019-12-19 16:30+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -89,6 +89,14 @@ msgstr ""
 "cliquer sur le lien contenu dans l'email pour valider votre nouvelle "
 "adresse. Attention, ce lien expire dans 10 minutes."
 
+#: .\account\templates\account\account_email.html:21
+msgid "New email"
+msgstr "Nouvelle adresse email"
+
+#: .\account\templates\account\account_email.html:33
+msgid "Next"
+msgstr "Suivant"
+
 #: .\account\templates\account\account_email_change_body.txt:5
 msgid ""
 "\n"
@@ -164,11 +172,29 @@ msgid ""
 "\n"
 "                    Use a strong password for your account. Multiple random "
 "characters including special ones (!#%%?) or\n"
-"                    a simple\n"
-"                    passphrase composed of 5 or 6 words separated by a "
-"whitespace is enough.\n"
+"                    a simple passphrase composed of 5 or 6 words separated "
+"by a whitespace is enough.\n"
 "                "
 msgstr ""
+"Utiliser un mot de passe complexe pour votre compte. Plusieurs caractères "
+"aléatoires en incluant des caractères spéciaux (!#%%?) ou une phrase "
+"comprenant 5 ou 6 mots séparés par un espace est suffisant."
+
+#: .\account\templates\account\account_password.html:26
+msgid "Old password"
+msgstr "Ancien mot de passe"
+
+#: .\account\templates\account\account_password.html:38
+msgid "New password"
+msgstr "Nouveau mot de passe"
+
+#: .\account\templates\account\account_password.html:50
+msgid "Confirm new password"
+msgstr "Confirmer nouveau mot de passe"
+
+#: .\account\templates\account\account_password.html:60
+msgid "Update my password"
+msgstr "Modifier votre mot de passe"
 
 #: .\account\views.py:44
 msgid "A confirmation email has been sent."
