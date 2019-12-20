@@ -1,0 +1,44 @@
+{% extends "account/account_base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block account %}
+    {% if messages %}
+        <div class="row mx-auto">
+            <div class="col">
+                {% for message in messages %}
+                    <div class="{{ message.tags }}" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col">
+            <a href="{% url 'account_email' %}" class="card p-2">
+                <img src="{% static 'profile.svg' %}" style="height: 13rem;" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <p class="card-text text-center">
+                        {% blocktrans %}
+                            Update your email or profile information
+                        {% endblocktrans %}
+                    </p>
+                </div>
+            </a>
+        </div>
+        <div class="col">
+            <a href="{% url 'account_password' %}" class="card p-2">
+                <img src="{% static 'security.svg' %}" style="height: 13rem;" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <p class="card-text text-center">
+                        {% blocktrans %}
+                            Update your password regularly or enable 2FA
+                        {% endblocktrans %}
+                    </p>
+                </div>
+            </a>
+        </div>
+    </div>
+{% endblock %}

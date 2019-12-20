@@ -81,7 +81,9 @@ _Or alternatively `npx vue-cli-service test:unit`_
 
      python manage.py makemessages -l fr --ignore=requirements*.txt,__init__.py,ftest/*
      # Following lines needed for frontend i18n
+     cd frontend
      npm run build
+     cd ..
      python manage.py makemessages -l fr --ignore=node_modules -d djangojs
 
  2 - Update existing translations in .po files:
