@@ -1,3 +1,6 @@
+#  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+#  Licensed under the BSL License. See LICENSE in the project root for license information.
+
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.forms import EmailField
@@ -22,7 +25,9 @@ class FTLCreateOrgAndFTLUser(RegistrationForm):
     Form for org creation with first user
     """
     org_name = forms.CharField(label=_('Organization name'), max_length=100,
-                               widget=forms.TextInput(attrs={'autofocus': ''}))
+                               widget=forms.TextInput(attrs={'autofocus': ''}),
+                               help_text=_('It\'s the name of your Paper Matter personal workspace, try to choose '
+                                           'something unique (eg. based on your first and last name or company name).'))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

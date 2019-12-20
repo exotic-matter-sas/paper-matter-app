@@ -23,6 +23,9 @@ DEV_MODE = True
 
 EMAIL_SUBJECT_PREFIX = '[TESTS] '
 
+#  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+#  Licensed under the BSL License. See LICENSE in the project root for license information.
+
 # Monkey patch REST_FRAMEWORK settings to disable rate limit during tests
 from .settings import REST_FRAMEWORK
 del REST_FRAMEWORK['DEFAULT_THROTTLE_CLASSES']

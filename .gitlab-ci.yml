@@ -62,7 +62,7 @@ test-fast-python:
   stage: test
   image: registry.gitlab.com/exotic-matter/ftl-base-image-ci:latest
   services:
-    - postgres:10.7-alpine
+    - postgres:11-alpine
   dependencies:
     - compile-backend
   script:
@@ -74,7 +74,7 @@ test-slow-python:
   stage: test
   image: registry.gitlab.com/exotic-matter/ftl-base-image-ci:latest
   services:
-    - postgres:10.7-alpine
+    - postgres:11-alpine
   dependencies:
     - compile-backend
   script:

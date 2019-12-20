@@ -1,3 +1,8 @@
+<!--
+  - Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+  - Licensed under the BSL License. See LICENSE in the project root for license information.
+  -->
+
 <template>
   <footer class="footer mt-auto py-3 text-muted text-center">
     {{ this.$_('Paper Matter, open source software. Made with ❤ by ') }} <a id="em-link" target="_blank"

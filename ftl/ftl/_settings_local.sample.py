@@ -1,9 +1,12 @@
+#  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+#  Licensed under the BSL License. See LICENSE in the project root for license information.
 """
 Template for setting_local.py file, useful for new contributors
 
 1. Copy file and rename it without the starting underscore => `settings_local.py`
 2. Read the to-do comments bellow to set proper value for local settings
 """
+
 from ftl.enums import FTLStorages, FTLPlugins
 
 DEV_MODE = True
@@ -80,7 +83,7 @@ DOCUMENT PROCESSING PLUGINS (order is important)
 - Edit lines below to change enabled plugins
     - Optional plugins required to install additional Python modules
     - Most OCR plugins required a specific DEFAULT_FILE_STORAGE
-    - Check ftl.constants.FTLplugins docstring to know what's required for the desired plugin 
+    - Check ftl.constants.FTLplugins docstring to know what's required for the desired plugin
 - Only one plugin of each type should be enable at a time
 """
 FTL_DOC_PROCESSING_PLUGINS = [
@@ -95,7 +98,7 @@ FTL_DOC_PROCESSING_PLUGINS = [
 ]
 
 """
-EXTRA SETTINGS FOR REMOTE STORAGE OR OCR_GOOGLE_VISION_SYNC 
+EXTRA SETTINGS FOR REMOTE STORAGE OR OCR_GOOGLE_VISION_SYNC
 """
 if DEFAULT_FILE_STORAGE == FTLStorages.AWS_S3:
     AWS_ACCESS_KEY_ID = ''

@@ -1,3 +1,8 @@
+<!--
+  - Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+  - Licensed under the BSL License. See LICENSE in the project root for license information.
+  -->
+
 <template>
   <div id="app" class="d-flex flex-column">
     <FTLHeader :account="account"/>
@@ -34,7 +39,7 @@
   }
 </script>
 
-<style>
+<style lang="scss">
   #app {
     min-height: 100vh;
     font-family: 'Avenir', Helvetica, Arial, sans-serif;

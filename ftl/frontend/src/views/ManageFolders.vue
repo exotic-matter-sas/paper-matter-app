@@ -1,3 +1,8 @@
+<!--
+  - Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+  - Licensed under the BSL License. See LICENSE in the project root for license information.
+  -->
+
 <template>
   <main id="folders-mngt" class="flex-grow">
     <b-container fluid class="p-3 text-center">
@@ -280,8 +285,6 @@
 </script>
 
 <style scoped lang="scss">
-  @import '../styles/customBootstrap.scss';
-
   #create-folder {
     cursor: pointer;
     border: 3px solid transparent;

@@ -1,3 +1,8 @@
+<!--
+  - Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+  - Licensed under the BSL License. See LICENSE in the project root for license information.
+  -->
+
 <template>
   <!-- Pdf viewer popup -->
   <b-modal id="document-viewer"
@@ -25,8 +30,7 @@
         <b-col md="8">
           <div v-if="!isIOS" class="h-100 embed-responsive doc-pdf" id="pdfviewer">
             <iframe v-if="currentOpenDoc.pid" class="embed-responsive-item"
-                    :src="`/assets/pdfjs/web/viewer.html?file=/app/uploads/` + currentOpenDoc.pid
-                    + `#pagemode=none&search=` + search">
+                    :src="viewerUrl">
             </iframe>
           </div>
           <div v-else>
@@ -103,7 +107,8 @@
       },
       search: {
         type: String,
-        required: false
+        required: false,
+        default: ""
       }
     },
 
@@ -121,6 +126,10 @@
     computed: {
       isIOS: function () {
         return (/iphone|ipad|ipod/i.test(window.navigator.userAgent.toLowerCase()));
+      },
+      viewerUrl: function () {
+        return `/assets/pdfjs/web/viewer.html?file=/app/uploads/` + this.currentOpenDoc.pid + `#pagemode=none&search=`
+          + this.search
       }
     },
 
@@ -164,7 +173,8 @@
         this.currentOpenDoc = {};
         this.$bvModal.hide('document-viewer');
         this.$emit('event-document-panel-closed');
-        this.$router.push({path: this.$route.path});
+        this.$router.push({path: this.$route.path}, () => {
+        });
       }
     }
   }

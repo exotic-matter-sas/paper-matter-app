@@ -1,3 +1,8 @@
+<!--
+  - Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+  - Licensed under the BSL License. See LICENSE in the project root for license information.
+  -->
+
 <template>
   <li class="folder-tree-item">
     <span
@@ -94,8 +99,6 @@
 
 
 <style scoped lang="scss">
-  @import '../styles/customBootstrap.scss';
-
   .bold {
     font-weight: bold;
   }

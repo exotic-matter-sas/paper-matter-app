@@ -1,3 +1,6 @@
+#  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+#  Licensed under the BSL License. See LICENSE in the project root for license information.
+
 import json
 import os
 from unittest.mock import patch
@@ -206,6 +209,18 @@ class DocumentsTests(APITestCase):
         self.assertIsNone(objects_get.ftl_folder)
 
     @patch.object(FTLDocumentProcessing, 'apply_processing')
+    def test_upload_doc_with_creation_date(self, mock_apply_processing):
+        creation_date = '2019-11-15T08:54:33.361913+00:00'
+        with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'test.pdf'), 'rb') as f:
+            data = {'created': creation_date}
+            body_post = {'json': json.dumps(data), 'file': f}
+            response = self.client.post('/app/api/v1/documents/upload', body_post)
+
+        upload_doc = response.data
+        objects_get = FTLDocument.objects.get(pid=upload_doc['pid'])
+        self.assertEqual(creation_date, objects_get.created.isoformat())
+
+    @patch.object(FTLDocumentProcessing, 'apply_processing')
     def test_upload_document_wrong_format(self, mock_apply_processing):
         with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'wrong-format.txt'), mode='rb') as fp:
             client_post = self.client.post('/app/api/v1/documents/upload', {'json': '{}', 'file': fp})
@@ -402,6 +417,29 @@ class FoldersTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['code'], 'folder_name_unique_for_org_level')
+
+    def test_create_same_folder_name_at_same_level(self):
+        # Specific test for an issue where a sub folder at the same level but not the same parent can be created
+        # A
+        # *  X
+        # B
+        # *  X
+
+        folder_a = setup_folder(self.org, name='A')
+        folder_a_x = setup_folder(self.org, name='X', parent=folder_a)
+        folder_b = setup_folder(self.org, name='B')
+
+        # A `X` folders can be created below `B`
+        response = self.client.post('/app/api/v1/folders',
+                                    {'name': 'X', 'parent': folder_b.id}, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # But not created below `A`
+        response = self.client.post('/app/api/v1/folders',
+                                    {'name': 'X', 'parent': folder_a.id}, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
 class JWTAuthenticationTests(APITestCase):

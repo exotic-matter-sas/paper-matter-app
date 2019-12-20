@@ -1,3 +1,6 @@
+#  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+#  Licensed under the BSL License. See LICENSE in the project root for license information.
+
 import json
 from base64 import b64decode
 
@@ -33,9 +36,13 @@ def _extract_binary_from_data_uri(data_uri):
     return b64decode(encoded)
 
 
+class WebSearchQuery(SearchQuery):
+    SEARCH_TYPES = {**SearchQuery.SEARCH_TYPES, 'web': 'websearch_to_tsquery'}
+
 @method_decorator(login_required, name='dispatch')
 @method_decorator(otp_required(if_configured=True), name='dispatch')
 class HomeView(View):
+
     def get(self, request, *args, **kwargs):
         context = {
             'org_name': request.session['org_name'],
@@ -89,10 +96,13 @@ class FTLDocumentList(generics.ListAPIView):
 
         if not flat_mode:
             if text_search:
-                search_query = SearchQuery(text_search.strip(), config=F('language'))
+                search_query = WebSearchQuery(text_search.strip(), config=F('language'), search_type='web')
+
                 queryset = queryset.annotate(rank=SearchRank(F('tsvector'), search_query)) \
-                    .filter(rank__gte=0.1) \
+                    .filter(tsvector=search_query) \
+                    .filter(rank__gt=0) \
                     .order_by('-rank')
+
             elif current_folder is not None and int(current_folder) > 0:
                 queryset = queryset.filter(ftl_folder__id=current_folder)
             else:
@@ -186,6 +196,9 @@ class FileUploadView(views.APIView):
             ftl_doc.org = self.request.user.org
             ftl_doc.title = file_obj.name
 
+            if 'created' in payload and payload['created']:
+                ftl_doc.created = payload['created']
+
             if 'thumbnail' in request.POST and request.POST['thumbnail']:
                 try:
                     ftl_doc.thumbnail_binary = ContentFile(_extract_binary_from_data_uri(request.POST['thumbnail']),
@@ -199,7 +212,7 @@ class FileUploadView(views.APIView):
 
             ftl_doc.save()
 
-        ftl_doc_processing.apply_processing(ftl_doc)
+        ftl_doc_processing.apply_processing(ftl_doc, force=[FTLPlugins.LANG_DETECTOR_LANGID])
 
         return Response(self.serializer_class(ftl_doc).data, status=201)
 

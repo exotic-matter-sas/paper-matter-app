@@ -1,3 +1,8 @@
+<!--
+  - Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+  - Licensed under the BSL License. See LICENSE in the project root for license information.
+  -->
+
 <template>
   <main class="flex-grow">
     <b-col>
@@ -337,8 +342,6 @@
 </script>
 
 <style scoped lang="scss">
-  @import '../styles/customBootstrap.scss';
-
   #documents-list-loader {
     width: 3em;
     height: 3em;
@@ -380,8 +383,6 @@
 </style>
 
 <style lang="scss">
-  @import '../styles/customBootstrap.scss';
-
   #documents-sort {
     float: right;
     margin-top: 0 !important;

@@ -1,3 +1,8 @@
+/*!
+ * Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+ * Licensed under the BSL License. See LICENSE in the project root for license information.
+ */
+
 $em-purple: #313851;
 $em-orange: #f99947;
 
@@ -12,8 +17,8 @@ $theme-colors: (
 
 $breadcrumb-divider: quote(">");
 
-@import '../../node_modules/bootstrap/scss/bootstrap';
-@import '../../node_modules/bootstrap-vue/src/index';
+@import '~bootstrap/scss/bootstrap';
+@import '~bootstrap-vue/src/index';
 
 body {
     background: $light;
@@ -204,6 +209,75 @@ aside {
     }
 }
 
+// LOGGED HEADER
+
+  .navbar-brand {
+    padding: 0 0.5rem 0 0;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    margin-right: 0.5rem;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.5)!important;
+
+    &:hover {
+    filter: brightness(150%);
+    color: rgba(255, 255, 255, 0.75)!important;
+    }
+
+    #app-logo {
+      width: 1em;
+      height: 2em;
+      margin-right: 0.5rem;
+      font-size: 1.25rem;
+
+      .logo-text {
+        display: none;
+      }
+
+      .logo-primary-color {
+        fill: #d0d8d9;
+      }
+
+      .logo-secondary-color {
+        fill: #8596a6;
+      }
+
+      .logo-tertiary-color {
+        fill: #4f5f73;
+      }
+    }
+  }
+
+  @include media-breakpoint-up(sm) {
+    #app-logo {
+      width: auto !important;
+
+      .logo-text {
+        display: block !important;
+      }
+    }
+  }
+
+  .navbar > .navbar-nav, .navbar > .navbar-collapse {
+    padding-right: 0.5rem;
+    margin-right: 0.5rem;
+    flex-direction: row;
+
+    .nav-item {
+      padding: 0.5rem 1rem;
+      color: rgba(255, 255, 255, 0.5)!important;
+    }
+  }
+
+  @include media-breakpoint-up(sm) {
+    .navbar > .navbar-nav {
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-item {
+      padding: 0 !important;
+    }
+  }
+
 // HOME PAGE
 // ==========
 
@@ -241,3 +315,18 @@ aside {
       opacity: 1;
     }
   }
+
+
+// ACCOUNT PAGES
+
+#account-side-menu{
+    border-bottom: 1px solid #dee2e6;
+}
+
+@include media-breakpoint-up(md) {
+    #account-side-menu{
+        border-right: 1px solid #dee2e6;
+        border-bottom: 0;
+        margin-bottom: 0;
+    }
+}

@@ -1,3 +1,8 @@
+<!--
+  - Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+  - Licensed under the BSL License. See LICENSE in the project root for license information.
+  -->
+
 <template>
   <b-col
     sm="2"
@@ -74,8 +79,6 @@
 </script>
 
 <style scoped lang="scss">
-  @import '../styles/customBootstrap.scss';
-
   .folder {
     border: 3px solid transparent;
 
@@ -91,8 +94,6 @@
 </style>
 
 <style lang="scss">
-  @import '../styles/customBootstrap.scss';
-
   .folder .custom-control {
     margin-left: -1.5rem;
 

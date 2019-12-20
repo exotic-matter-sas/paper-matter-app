@@ -1,7 +1,12 @@
+<!--
+  - Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+  - Licensed under the BSL License. See LICENSE in the project root for license information.
+  -->
+
 <template>
   <section>
     <b-row>
-      <b-col cols="12" md="10">
+      <b-col cols="12" md="8">
         <b-form-file
           multiple
           ref="fileUploadField"
@@ -19,6 +24,12 @@
                   @click="uploadDocument">
           {{this.$_('Upload')}}
         </b-button>
+      </b-col>
+      <b-col class="d-none d-md-flex align-items-center justify-content-center" md="2">
+        <a class="text-center" href="https://welcome.papermatter.app/import-export"
+           :title="this.$_('Import a folder or a large amount of documents using the local import client')">
+          {{this.$_('Import a folder')}}
+        </a>
       </b-col>
     </b-row>
     <b-row>

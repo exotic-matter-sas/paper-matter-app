@@ -1,3 +1,6 @@
+#  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+#  Licensed under the BSL License. See LICENSE in the project root for license information.
+
 import os
 
 from ftests.pages.base_page import BasePage
@@ -60,6 +63,7 @@ class HomePage(BasePage):
         self.wait_for_elem_to_disappear(self.more_documents_loader)
 
     def search_documents(self, search_text):
+        self.get_elem(self.search_input).clear()
         self.get_elem(self.search_input).send_keys(search_text)
         self.get_elem(self.search_button).click()
         self.wait_documents_list_loaded()

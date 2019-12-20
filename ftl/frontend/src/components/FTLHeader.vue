@@ -1,3 +1,8 @@
+<!--
+  - Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+  - Licensed under the BSL License. See LICENSE in the project root for license information.
+  -->
+
 <template>
   <b-navbar tag="header" toggleable="sm" type="dark" variant="dark">
     <b-navbar-brand href="/app">
@@ -65,18 +70,10 @@
                       @click.prevent="doSearch">
               {{this.$_('Search')}}
             </b-button>
-            <!--
-            <b-button size="sm" class="m-1" type="button" variant="secondary"
-                      @click="clear">
-              {{this.$_('X')}}
-            </b-button> -->
           </b-input-group-append>
         </b-input-group>
       </b-nav-form>
 
-      <b-nav-form class="mt-3 mt-sm-0">
-
-      </b-nav-form>
       <b-navbar-nav class="ml-auto">
         <b-nav-item-dropdown right>
           <!-- Using 'button-content' slot -->
@@ -84,7 +81,7 @@
             <font-awesome-icon v-if="account.isSuperUser" icon="crown" class="super-user" title="Super User"/>
             <em id="email">{{ account.name }}</em>
           </template>
-          <b-dropdown-item href="/account">{{this.$_('Profile')}}</b-dropdown-item>
+          <b-dropdown-item href="/accounts">{{this.$_('Settings')}}</b-dropdown-item>
           <b-dropdown-item href="/logout">{{this.$_('Sign Out')}}</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
@@ -141,70 +138,6 @@
 </script>
 
 <style scoped lang="scss">
-  @import '../styles/customBootstrap.scss';
-
-  .navbar-brand {
-    padding: 0 0.5rem 0 0;
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
-    margin-right: 0.5rem;
-
-    #app-logo {
-      width: 1em;
-      height: 2em;
-      margin-right: 0.5rem;
-
-      &:hover {
-        filter: brightness(150%);
-      }
-
-      .logo-text {
-        display: none;
-      }
-
-      .logo-primary-color {
-        fill: #d0d8d9;
-      }
-
-      .logo-secondary-color {
-        fill: #8596a6;
-      }
-
-      .logo-tertiary-color {
-        fill: #4f5f73;
-      }
-    }
-  }
-
-  @include media-breakpoint-up(sm) {
-    #app-logo {
-      width: auto !important;
-
-      .logo-text {
-        display: block !important;
-      }
-    }
-  }
-
-  .navbar > .navbar-nav {
-    padding-right: 0.5rem;
-    margin-right: 0.5rem;
-    flex-direction: row;
-
-    .nav-item {
-      padding: 0.5rem 1rem;
-    }
-  }
-
-  @include media-breakpoint-up(sm) {
-    .navbar > .navbar-nav {
-      border-right: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .nav-item {
-      padding: 0 !important;
-    }
-  }
-
   #search-input {
     width: 150px;
     transition: width 0.5s cubic-bezier(.77, 0, .18, 1);

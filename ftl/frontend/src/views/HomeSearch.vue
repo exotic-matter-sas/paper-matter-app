@@ -1,3 +1,8 @@
+<!--
+  - Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+  - Licensed under the BSL License. See LICENSE in the project root for license information.
+  -->
+
 <template>
   <main class="flex-grow">
     <b-col>
@@ -92,7 +97,8 @@
       <FTLDocumentPanel v-if="docPid" :pid="docPid" :search="currentSearch"
                         @event-document-panel-closed="closeDocument"
                         @event-document-renamed="documentUpdated"
-                        @event-document-moved="documentDeleted"/>
+                        @event-document-moved="documentDeleted"
+                        @event-document-deleted="documentDeleted"/>
 
       <!-- For batch action move document -->
       <FTLMoveDocuments
@@ -190,8 +196,6 @@
 </script>
 
 <style scoped lang="scss">
-  @import '../styles/customBootstrap.scss';
-
   #documents-list-loader {
     width: 3em;
     height: 3em;
@@ -231,8 +235,6 @@
 </style>
 
 <style lang="scss">
-  @import '../styles/customBootstrap.scss';
-
   #documents-sort {
     float: right;
     margin-right: 0 !important;

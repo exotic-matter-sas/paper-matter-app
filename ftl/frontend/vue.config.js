@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+ * Licensed under the BSL License. See LICENSE in the project root for license information.
+ */
+
 // Use `vue-cli-service inspect` to display output webpack.config.js
 const BundleTracker = require("webpack-bundle-tracker");
 
@@ -9,12 +14,17 @@ module.exports = {
     // Needed to render css bundle in Django base template when in development
     // Unfortunately it disable css hot reloading
     extract: true,
+    loaderOptions: {
+      sass: {
+        prependData: `@import "@/styles/customBootstrap.scss";`
+      }
+    }
   },
 
   chainWebpack: config => {
 
     config.entry('app')
-      .add('./src/styles/customBootstrap.scss');
+      .add('@/styles/customBootstrap.scss');
 
     // Built app broken if omitted
     config.optimization

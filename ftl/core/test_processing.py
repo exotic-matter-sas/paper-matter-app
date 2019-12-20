@@ -1,8 +1,12 @@
+#  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+#  Licensed under the BSL License. See LICENSE in the project root for license information.
+
 from concurrent.futures import wait as wait_futures
 from unittest.mock import Mock, patch
 
 import langid
 from django.test import TestCase
+from langid.langid import LanguageIdentifier
 from tika import parser
 
 from core.errors import PluginUnsupportedStorage
@@ -119,12 +123,12 @@ class DocumentProcessingTests(TestCase):
 
 
 class ProcLangTests(TestCase):
-
-    @patch.object(langid, 'classify')
-    def test_process(self, mocked_classify):
-        mocked_classify.return_value = ['fr']
-
+    @patch.object(LanguageIdentifier, 'from_modelstring')
+    def test_process(self, mocked_from_modelstring):
         lang = FTLLangDetectorLangId()
+        mocked_classify = lang.identifier.classify
+        mocked_classify.return_value = ('fr', 1.0)
+
         doc = Mock()
         lang.process(doc, True)
 
@@ -132,9 +136,35 @@ class ProcLangTests(TestCase):
         self.assertEqual('french', doc.language)
         doc.save.assert_called_once()
 
-    @patch.object(langid, 'classify')
-    def test_process_value_exists(self, mocked_classify):
+    @patch.object(LanguageIdentifier, 'from_modelstring')
+    def test_process_unsupported_lang(self, mocked_from_modelstring):
         lang = FTLLangDetectorLangId()
+        mocked_classify = lang.identifier.classify
+        mocked_classify.return_value = ('zz', 1.0)
+
+        doc = Mock()
+        lang.process(doc, True)
+
+        mocked_classify.assert_called_once_with(doc.content_text)
+        doc.save.assert_called_once()
+
+    @patch.object(LanguageIdentifier, 'from_modelstring')
+    def test_process_langid_confidence_too_low(self, mocked_from_modelstring):
+        lang = FTLLangDetectorLangId()
+        mocked_classify = lang.identifier.classify
+        mocked_classify.return_value = ('en', 0.1)
+
+        doc = Mock()
+        lang.process(doc, True)
+
+        mocked_classify.assert_called_once_with(doc.content_text)
+        doc.save.assert_called_once()
+
+    @patch.object(LanguageIdentifier, 'from_modelstring')
+    def test_process_value_exists(self, mocked_from_modelstring):
+        lang = FTLLangDetectorLangId()
+        mocked_classify = lang.identifier.classify
+
         doc = Mock()
         doc.language = 'french'
         lang.process(doc, False)
@@ -183,6 +213,16 @@ class ProcPGsqlTests(TestCase):
         pgsql = FTLSearchEnginePgSQLTSVector()
         doc = Mock()
         doc.tsvector = None
+        pgsql.process(doc, False)
+
+        self.assertEqual(doc.tsvector, SEARCH_VECTOR)
+        doc.save.assert_called_once()
+
+    def test_process_without_lang(self):
+        pgsql = FTLSearchEnginePgSQLTSVector()
+        doc = Mock()
+        doc.tsvector = None
+        doc.language = None
         pgsql.process(doc, False)
 
         self.assertEqual(doc.tsvector, SEARCH_VECTOR)

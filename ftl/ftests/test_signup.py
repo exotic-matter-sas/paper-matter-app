@@ -1,4 +1,8 @@
+#  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+#  Licensed under the BSL License. See LICENSE in the project root for license information.
+
 import re
+from unittest import skip
 
 from django.core import mail
 
@@ -15,6 +19,7 @@ class SignupPageTests(SignupPages):
         setup_admin(org=self.org_1)
         self.org_2 = setup_org(tv.ORG_NAME_2, tv.ORG_SLUG_2)
 
+    @skip("Multi users feature disabled")
     def test_signup_to_first_org(self):
         # User create an account in the first org
         self.visit_signup_page(self.org_1.slug)
@@ -23,6 +28,7 @@ class SignupPageTests(SignupPages):
         # Success page appears
         self.assertIn('verify your email to activate your account', self.get_elem(self.main_panel).text)
 
+    @skip("Multi users feature disabled")
     def test_signup_to_second_org(self):
         # User create an account in the second org
         self.visit_signup_page(self.org_2.slug)
@@ -31,6 +37,7 @@ class SignupPageTests(SignupPages):
         # Success page appears
         self.assertIn('verify your email to activate your account', self.get_elem(self.main_panel).text)
 
+    @skip("Multi users feature disabled")
     def test_signup_failed(self):
         # User try to create an account without filling fields
         self.visit_signup_page(self.org_1.slug)
@@ -40,6 +47,7 @@ class SignupPageTests(SignupPages):
         self.assertIn('signup', self.head_title)
         self.assertIn('Create your account', self.get_elem(self.page_title).text)
 
+    @skip("Multi users feature disabled")
     def test_signup_receive_activation_email(self):
         # User create an account in the first org
         self.visit_signup_page(self.org_1.slug)
@@ -50,6 +58,7 @@ class SignupPageTests(SignupPages):
         self.assertIn('activate your account', mail.outbox[0].subject.lower())
         self.assertRegex(mail.outbox[0].body, 'https?://.+/accounts/activate/.+/')
 
+    @skip("Multi users feature disabled")
     def test_signup_activate_account(self):
         # User create an account in the first org
         self.visit_signup_page(self.org_1.slug)
@@ -58,6 +67,7 @@ class SignupPageTests(SignupPages):
         self.assertIn('Your email has been verified, thank you! You may go ahead and log in now.',
                       self.get_elem_text(self.main_panel))
 
+    @skip("Multi users feature disabled")
     def test_signup_activate_account_failed(self):
         # User create an account in the first org
         self.visit_signup_page(self.org_1.slug)

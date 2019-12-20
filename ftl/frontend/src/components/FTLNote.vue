@@ -1,3 +1,8 @@
+<!--
+  - Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+  - Licensed under the BSL License. See LICENSE in the project root for license information.
+  -->
+
 <template>
   <b-row>
     <b-col id="note-title" cols="12" class="mb-1">
@@ -120,8 +125,6 @@
 </script>
 
 <style scoped lang="scss">
-  @import '../styles/customBootstrap.scss';
-
   #note-title { // to avoid #note-form visible behind title during animation
     background: white;
     z-index: $zindex-dropdown;

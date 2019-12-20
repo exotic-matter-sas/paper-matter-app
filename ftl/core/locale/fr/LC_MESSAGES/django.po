@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-11 17:32+0000\n"
+"POT-Creation-Date: 2019-11-21 17:35+0000\n"
 "PO-Revision-Date: 2019-03-05 16:56+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -64,23 +64,28 @@ msgstr "Dossier %(name)s créé"
 msgid "Imported document %(name)s"
 msgstr "Document %(name)s importé"
 
-#: core/management/commands/reindex_docs.py:25
+#: core/management/commands/reindex_docs.py:32
+#, python-format
+msgid "Forcing plugin %(value)s"
+msgstr "Plugin %(value)s forcé"
+
+#: core/management/commands/reindex_docs.py:46
 #, python-format
 msgid "Starting to reindex one document"
 msgid_plural "Starting to reindex %(count)s documents"
 msgstr[0] "Réindexation d'un document lancée"
 msgstr[1] "Réindexation de %(count)s documents lancée"
 
-#: core/management/commands/reindex_docs.py:36
+#: core/management/commands/reindex_docs.py:57
 #, python-format
 msgid "Reindexing %(title)s"
 msgstr "Réindexation de %(title)s"
 
-#: core/management/commands/reindex_docs.py:43
+#: core/management/commands/reindex_docs.py:64
 msgid "OK"
 msgstr "OK"
 
-#: core/management/commands/reindex_docs.py:55
+#: core/management/commands/reindex_docs.py:76
 #, python-format
 msgid "One document successfully reindexed in %(time)s seconds"
 msgid_plural "%(count)s documents successfully reindexed in %(time)s seconds"

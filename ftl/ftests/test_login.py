@@ -1,3 +1,6 @@
+#  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+#  Licensed under the BSL License. See LICENSE in the project root for license information.
+
 import re
 from unittest import skipIf
 
@@ -116,5 +119,4 @@ class ForgotPasswordTests(LoginPage, ResetPasswordPages):
 
         # User is able to login using its new password
         self.log_user(password=new_password)
-        self.assertIsNotNone(self.login_success_div,
-                             'User login should success using new password')
+        self.assertIn('home', self.head_title)

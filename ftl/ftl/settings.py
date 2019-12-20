@@ -10,6 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
+#  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+#  Licensed under the BSL License. See LICENSE in the project root for license information.
+
 import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import pathlib
@@ -59,6 +62,7 @@ INSTALLED_APPS = [
     'ftl',
     'setup.apps.SetupConfig',
     'core.apps.CoreConfig',
+    'account.apps.AccountConfig',
     'frontend'
 ]
 
@@ -160,6 +164,7 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'frontend', 'dist'),  # Webpack final bundle
     os.path.join(BASE_DIR, 'frontend', 'pdfjs'),
     os.path.join(BASE_DIR, 'frontend', 'src', 'assets'),
+    os.path.join(BASE_DIR, 'account', 'static'),
     os.path.join(BASE_DIR, 'ftl', 'static'),
 )
 
@@ -262,7 +267,7 @@ DOCUMENT PROCESSING PLUGINS (order is important)
 - Edit lines below to change enabled plugins
     - Optional plugins required to install additional Python modules
     - Most OCR plugins required a specific DEFAULT_FILE_STORAGE
-    - Check ftl.constants.FTLplugins docstring to know what's required for the desired plugin 
+    - Check ftl.constants.FTLplugins docstring to know what's required for the desired plugin
 - Only one plugin of each type should be enable at a time
 """
 FTL_DOC_PROCESSING_PLUGINS = [
@@ -277,7 +282,7 @@ FTL_DOC_PROCESSING_PLUGINS = [
 ]
 
 """
-EXTRA SETTINGS FOR REMOTE STORAGE OR OCR_GOOGLE_VISION_SYNC 
+EXTRA SETTINGS FOR REMOTE STORAGE OR OCR_GOOGLE_VISION_SYNC
 """
 # Additional settings required if you chose a remote storage
 if DEFAULT_FILE_STORAGE == FTLStorages.AWS_S3:  # Amazon S3 storage

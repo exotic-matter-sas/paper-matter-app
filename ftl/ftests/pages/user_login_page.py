@@ -1,9 +1,13 @@
+#  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+#  Licensed under the BSL License. See LICENSE in the project root for license information.
+
 from ftests.pages.base_page import BasePage
 from ftests.tools import test_values as tv
 
 
 class LoginPage(BasePage):
     url = '/login/'
+    logout_url = '/logout/'
 
     page_title = 'h1'
 
@@ -11,7 +15,6 @@ class LoginPage(BasePage):
     login_password_input = '#login-form #id_password'
     login_submit_input = '#login-form [type="submit"]'
 
-    login_success_div = '#app'
     login_failed_div = '#login-form .errorlist'
     login_messages = '#messages'
 

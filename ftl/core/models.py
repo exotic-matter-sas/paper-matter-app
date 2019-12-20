@@ -1,18 +1,27 @@
+#  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+#  Licensed under the BSL License. See LICENSE in the project root for license information.
+
+import logging
 import pathlib
 import uuid
 
+from django.conf import settings
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import User, AbstractUser, Permission
 from django.contrib.postgres.fields.citext import CICharField
 from django.contrib.postgres.search import SearchVectorField
 from django.core.validators import EmailValidator
 from django.db import models
-from django.db.models import UniqueConstraint
+from django.db.models import UniqueConstraint, Q
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 from rest_framework.permissions import DjangoModelPermissions
+
+from ftl.enums import FTLStorages
+
+logger = logging.getLogger(__name__)
 
 FTL_PERMISSIONS_USER = [
     'core.add_ftldocument',
@@ -118,7 +127,7 @@ class FTLDocument(models.Model):
     created = models.DateTimeField(default=timezone.now)
     edited = models.DateTimeField(auto_now=True)
     tsvector = SearchVectorField(blank=True)
-    language = models.CharField(max_length=64, default="english")
+    language = models.CharField(max_length=64, default='simple')
     thumbnail_binary = models.FileField(upload_to=_get_name_binary, max_length=256, null=True)
 
     class Meta:
@@ -139,10 +148,38 @@ class FTLDocument(models.Model):
         thumbnail_binary = self.thumbnail_binary
 
         if binary:
-            binary.delete(False)
+            try:
+                binary.delete(False)
+            except Exception as e:
+                # ex is very broad but it can be anything depending of the storage backend
+
+                # Django FILE_SYSTEM storage doesn't raise an exception if file doesn't exist
+                # https://docs.djangoproject.com/en/3.0/ref/files/storage/#django.core.files.storage.FileSystemStorage.directory_permissions_mode
+                # AWS_S3 storage doesn't raise an exception if file doesn't exist
+                # https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/s3.html#S3.Object.delete
+                if settings.DEFAULT_FILE_STORAGE == FTLStorages.GCS:
+                    from google.cloud.exceptions import NotFound
+                    if isinstance(e, NotFound):
+                        logger.warning('Missing binary in storage backend', e)
+                        pass
+                    else:
+                        raise
+                else:
+                    raise
 
         if thumbnail_binary:
-            thumbnail_binary.delete(False)
+            try:
+                thumbnail_binary.delete(False)
+            except Exception as e:
+                if settings.DEFAULT_FILE_STORAGE == FTLStorages.GCS:
+                    from google.cloud.exceptions import NotFound
+                    if isinstance(e, NotFound):
+                        logger.warning('Missing binary in storage backend', e)
+                        pass
+                    else:
+                        raise
+                else:
+                    raise
 
         super().delete(*args, **kwargs)
 
@@ -175,7 +212,9 @@ class FTLFolder(MPTTModel):
 
     class Meta:
         constraints = [
-            UniqueConstraint(fields=['name', 'level', 'org_id'], name='folder_name_unique_for_org_level'),
+            UniqueConstraint(fields=['name', 'parent_id', 'org_id'], name='folder_name_unique_for_org_level'),
+            UniqueConstraint(fields=['name', 'org_id'], condition=Q(parent_id__isnull=True),
+                             name='folder_name_unique_for_org_level_at_root'),
         ]
 
 

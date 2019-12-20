@@ -1,3 +1,8 @@
+#  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+#  Licensed under the BSL License. See LICENSE in the project root for license information.
+
+from unittest import skip
+
 from ftests.pages.django_admin_login_page import AdminLoginPage
 from ftests.pages.setup_pages import SetupPages
 from ftests.pages.signup_pages import SignupPages
@@ -27,7 +32,8 @@ class LandingPageTests(SetupPages):
         self.assertIn('setup completed', self.head_title)
         self.assertIn('/admin', self.get_elem(self.admin_login_link).get_attribute('href'))
 
-        self.assertIn('/signup', self.get_elem(self.user_signup_link).get_attribute('href'))
+        # Multi users feature disabled
+        # self.assertIn('/signup', self.get_elem(self.user_signup_link).get_attribute('href'))
 
         # Display app again now redirect to user login page
         self.visit(self.root_url)
@@ -49,6 +55,7 @@ class AdminLoginTests(AdminLoginPage):
 
 
 class FirstUserSignupTest(SignupPages):
+    @skip("Multi users feature disabled")
     def test_user_can_signup_to_first_organization(self):
         """User can signup to first organization"""
         # Admin user have already setup org and admin

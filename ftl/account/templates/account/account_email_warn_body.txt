@@ -1,0 +1,9 @@
+{% extends "ftl/base_email_body.txt" %}
+{% load i18n %}
+
+{% block body %}
+{% blocktrans %}
+Someone requested to change the email address linked to your Paper Matter account. If you did not request
+this change, please IMMEDIATELY change your account password.
+{% endblocktrans %}
+{% endblock %}
