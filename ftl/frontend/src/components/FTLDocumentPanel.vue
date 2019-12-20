@@ -149,6 +149,7 @@
                 })
                 .catch(error => this.mixinAlert("Unable to create thumbnail", true));
             }
+            this.$emit('event-document-updated', {doc: this.currentOpenDoc});
           })
           .catch(error => {
             this.mixinAlert("Unable to show document.", true)
