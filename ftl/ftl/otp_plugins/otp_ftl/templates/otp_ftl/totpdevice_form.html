@@ -1,8 +1,8 @@
-{% extends 'ftl/django_app_base.html' %}
+{% extends 'account/account_base.html' %}
 {% load i18n %}
 
-{% block main %}
-    <h2>{% trans "Add an app authenticator" %}</h2>
+{% block account %}
+    <h3 class="text-primary">{% trans "Add an app authenticator" %}</h3>
     <p>
         {% blocktrans %}
             Use an app on your phone to generate validation code. In the app, scan the QR code that will be shown next
@@ -24,6 +24,6 @@
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <input type="submit" value="{% trans "Next" %}">
+        <input class="btn btn-primary" type="submit" value="{% trans "Next" %}">
     </form>
 {% endblock %}

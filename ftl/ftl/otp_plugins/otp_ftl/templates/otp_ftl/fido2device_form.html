@@ -1,4 +1,4 @@
-{% extends 'ftl/django_app_base.html' %}
+{% extends 'account/account_base.html' %}
 {% load static %}
 {% load i18n %}
 
@@ -6,8 +6,8 @@
     <script type="application/javascript" src="{% static 'cbor.js' %}"></script>
 {% endblock %}
 
-{% block main %}
-    <h2>{% trans "Add a security key" %}</h2>
+{% block account %}
+    <h3 class="text-primary">{% trans "Add a security key" %}</h3>
 
     <p>
         {% blocktrans %}
@@ -24,7 +24,7 @@
         {% endblocktrans %}
     </p>
 
-    <input id="fido2-next" type="submit" value="Next">
+    <input id="fido2-next" class="btn btn-primary" type="submit" value="Next">
 {% endblock %}
 
 {% block footer %}

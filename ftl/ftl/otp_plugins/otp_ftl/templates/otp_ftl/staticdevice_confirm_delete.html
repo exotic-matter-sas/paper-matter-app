@@ -1,6 +1,6 @@
-{% extends 'ftl/django_app_base.html' %}
+{% extends 'account/account_base.html' %}
 
-{% block main %}
+{% block account %}
     <form method="post">{% csrf_token %}
         <p>Are you sure you want to delete "{{ object.persistent_id }}"?</p>
         <input type="submit" value="Confirm">

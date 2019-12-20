@@ -90,8 +90,8 @@
                                class="{% if view_name == 'account_password' %}active {% endif %}list-group-item list-group-item-action">
                                 {% trans 'Password' %}
                             </a>
-                            <a href="{% url 'account_index' %}"
-                               class="{% if view_name == 'XXX' %}active {% endif %}list-group-item list-group-item-action disabled">
+                            <a href="{% url 'otp_list' %}"
+                               class="{% if 'otp' in view_name %}active {% endif %}list-group-item list-group-item-action">
                                 {% trans 'Two factor authentication' %}
                             </a>
                             <a href="{% url 'account_index' %}"
@@ -113,6 +113,7 @@
             </div>
         </div>
     </main>
+    {% block footer %}{% endblock %}
     <footer class="footer mt-auto text-muted text-center">
         {% blocktrans %}
             Paper Matter, open source software. Made with ❤ by

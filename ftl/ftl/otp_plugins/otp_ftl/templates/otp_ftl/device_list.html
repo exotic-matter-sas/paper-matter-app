@@ -1,10 +1,10 @@
-{% extends 'ftl/django_app_base.html' %}
+{% extends 'account/account_base.html' %}
 {% load static %}
 {% load i18n %}
 
-{% block main %}
+{% block account %}
     {% if static_device or totp_device or fido2_device %}
-        <h1>Current OTP device registered with this account</h1>
+        <h3 class="text-primary">Current OTP device registered with this account</h3>
         <h2>Emergency codes</h2>
         <ul>
             {% for static in static_device %}
@@ -44,7 +44,7 @@
         </ul>
         <a href="{% url "otp_fido2_add" %}">{% trans 'Add a new security key' %}</a>
     {% else %}
-        <h1>{% trans "Protect your Paper Matter account with two factor verification" %}</h1>
+        <h3 class="text-primary">{% trans "Protect your Paper Matter account with two factor verification" %}</h3>
         <p>
             {% blocktrans %}
                 Each time you sign-in into your Paper Matter account, you will need your usual password and a

@@ -1,7 +1,7 @@
-{% extends 'ftl/django_app_base.html' %}
+{% extends 'account/account_base.html' %}
 {% load i18n %}
 
-{% block main %}
+{% block account %}
     <h2>{% trans "Your emergency two factor codes (one use only!)" %}</h2>
     <ul>
         {% for code in object.token_set.all %}
