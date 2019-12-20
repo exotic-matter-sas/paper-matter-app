@@ -25,7 +25,8 @@
           <small class="doc-timestamp text-muted text-wrap" :title="$moment(doc.created).format('LLLL')">
             {{ $moment(doc.created).fromNow() }}
           </small>
-          <div v-if="!doc.is_processed" class="spinner-border spinner-border-sm text-primary ml-auto" role="status"
+          <div v-if="!doc.is_processed && !timeout_spinner"
+               class="spinner-border spinner-border-sm text-primary ml-auto" role="status"
                aria-hidden="true"></div>
         </div>
       </b-card-footer>
@@ -43,7 +44,22 @@
     },
 
     data() {
-      return {}
+      return {
+        timer: null,
+        timeout_spinner: false
+      }
+    },
+
+    created() {
+      if (this.doc.is_processed === false) {
+        this.timer = setTimeout(this.spinner_timeout, 300000);
+      }
+    },
+
+    beforeDestroy()  {
+      if (this.timer) {
+        clearTimeout(this.timer);
+      }
     },
 
     methods: {
@@ -57,6 +73,10 @@
         } else {
           this.$store.commit("selectDocuments", [this.doc])
         }
+      },
+
+      spinner_timeout: function () {
+        this.timeout_spinner = true;
       }
     }
   }
