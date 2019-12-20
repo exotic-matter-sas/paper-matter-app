@@ -52,7 +52,7 @@
 
     created() {
       if (this.doc.is_processed === false) {
-        this.timer = setTimeout(this.spinner_timeout, 300000);
+        this.timer = setTimeout(this.stop_spinner, 300000);
       }
     },
 
@@ -75,7 +75,7 @@
         }
       },
 
-      spinner_timeout: function () {
+      stop_spinner: function () {
         this.timeout_spinner = true;
       }
     }
