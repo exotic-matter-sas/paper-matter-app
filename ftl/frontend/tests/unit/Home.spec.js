@@ -90,7 +90,7 @@ const mockedUnselectAllDocumentsCommit = jest.fn();
 const mockedChangeSortHomeCommit = jest.fn();
 const mockedDocumentsCreated = jest.fn();
 const mockedNavigateToDocument = jest.fn();
-const mockedCloseDocument = jest.fn();
+const mockedDocumentClosed = jest.fn();
 const mockedDocumentUpdated = jest.fn();
 const mockedDocumentDeleted = jest.fn();
 
@@ -613,7 +613,7 @@ describe('Home event handling', () => {
           updateFolders: mockedUpdateFolders,
           documentsCreated: mockedDocumentsCreated,
           navigateToDocument: mockedNavigateToDocument,
-          closeDocument: mockedCloseDocument,
+          documentClosed: mockedDocumentClosed,
           documentUpdated: mockedDocumentUpdated,
           documentDeleted: mockedDocumentDeleted,
         },
@@ -669,7 +669,7 @@ describe('Home event handling', () => {
     expect(mockedNavigateToDocument).toHaveBeenCalledTimes(1);
   });
 
-  it('event-document-panel-closed call closeDocument', async () => {
+  it('event-document-panel-closed call documentClosed', async () => {
     // Need to define docPid in order FTLDocumentPanel component is instantiated
     let documentPid = tv.DOCUMENT_PROPS.pid;
     wrapper.setData({docPid: documentPid});
@@ -679,22 +679,8 @@ describe('Home event handling', () => {
     await flushPromises(); // wait all pending promises are resolved/rejected
 
     // then
-    expect(mockedCloseDocument).toHaveBeenCalledTimes(1);
+    expect(mockedDocumentClosed).toHaveBeenCalledTimes(1);
   });
-
-  it('event-document-renamed call documentUpdated', async () => {
-    // Need to define docPid in order FTLDocumentPanel component is instantiated
-    let documentPid = tv.DOCUMENT_PROPS.pid;
-    wrapper.setData({docPid: documentPid});
-
-    // when
-    wrapper.find(FTLDocumentPanel).vm.$emit('event-document-renamed');
-    await flushPromises(); // wait all pending promises are resolved/rejected
-
-    // then
-    expect(mockedDocumentUpdated).toHaveBeenCalledTimes(1);
-  });
-
 
   it('event-document-moved on FTLDocumentPanel call documentDeleted', async () => {
     // Need to define docPid in order FTLDocumentPanel component is instantiated

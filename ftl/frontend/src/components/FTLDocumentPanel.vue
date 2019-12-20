@@ -170,11 +170,11 @@
       },
 
       closeDocument: function () {
-        this.currentOpenDoc = {};
         this.$bvModal.hide('document-viewer');
-        this.$emit('event-document-panel-closed');
+        this.$emit('event-document-panel-closed', {doc: this.currentOpenDoc});
         this.$router.push({path: this.$route.path}, () => {
         });
+        this.currentOpenDoc = {};
       }
     }
   }
