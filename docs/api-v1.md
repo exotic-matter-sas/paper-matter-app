@@ -237,7 +237,8 @@ Content-Disposition: form-data; name="json"
   "created": "2019-08-19T13:14:15.397396Z",
   "edited": "2019-08-19T13:14:15.408445Z",
   "ftl_folder": null,
-  "thumbnail_available": false
+  "thumbnail_available": false,
+  "is_processed": true
 }
 ```
 
@@ -290,7 +291,8 @@ OR
       "created": "2019-08-19T15:03:03.504330Z",
       "edited": "2019-08-19T15:03:06.844287Z",
       "ftl_folder": null,
-      "thumbnail_available": false
+      "thumbnail_available": false,
+      "is_processed": true
     },
     {
       "pid": "6d3a6286-7c1c-45f6-86c9-6452fa2928fa",
@@ -299,7 +301,8 @@ OR
       "created": "2019-08-19T14:24:27.125753Z",
       "edited": "2019-08-19T14:24:30.431466Z",
       "ftl_folder": null,
-      "thumbnail_available": false
+      "thumbnail_available": false,
+      "is_processed": true
     }
   ]
 }
@@ -328,7 +331,8 @@ Rename, annotate, move a document (or set its thumbnail).
   "created": "2019-08-19T15:03:03.504330Z",
   "edited": "2019-08-19T16:10:00.771661Z",
   "ftl_folder": null,
-  "thumbnail_available": false
+  "thumbnail_available": false,
+  "is_processed": true
 }
 ```
 
