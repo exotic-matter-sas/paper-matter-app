@@ -11,6 +11,13 @@
            @hidden="closeDocument">
     <template slot="modal-header">
       <b-container>
+        <b-row>
+          <b-col class="my-0">
+            <small>
+              <b-breadcrumb class="doc-panel-breadcrumb" :items="breadcrumb"/>
+            </small>
+          </b-col>
+        </b-row>
         <b-row align-v="center">
           <b-col>
             <h5 class="d-inline modal-title">{{ currentOpenDoc.title }}</h5>
@@ -41,7 +48,7 @@
         </b-col>
         <b-col>
           <b-row>
-            <b-col class="my-3">
+            <b-col class="mb-1">
               <b-button class="mx-1" variant="primary" :href="`/app/uploads/` + currentOpenDoc.pid + `/doc.pdf`"
                         target="_blank">
                 {{ $_('Open PDF')}}
@@ -115,6 +122,8 @@
     data() {
       return {
         currentOpenDoc: {},
+        docPath: "/",
+        breadcrumb: [],
         publicPath: process.env.BASE_URL,
       }
     },
@@ -141,6 +150,10 @@
           .get('/app/api/v1/documents/' + this.pid)
           .then(response => {
             this.currentOpenDoc = response.data;
+            let _paths = this.currentOpenDoc.paths.map((v) => {
+              return {text: v.name, disabled: true}
+            });
+            this.breadcrumb = [{text: "Home", disabled: true}, ..._paths];
 
             if (!response.data.thumbnail_available) {
               this.createThumbnailForDocument(this.currentOpenDoc)
@@ -201,6 +214,21 @@
 
     .modal-content {
       height: calc(100vh - (#{$document-viewer-padding} * 2));
+    }
+
+    .doc-panel-breadcrumb {
+      color: map_get($theme-colors, 'primary');
+      margin: 0;
+      padding: 0;
+      background-color: transparent;
+
+      .active {
+        color: map_get($theme-colors, 'active');
+      }
+
+      .active + li {
+        color: $gray-700;
+      }
     }
   }
 </style>

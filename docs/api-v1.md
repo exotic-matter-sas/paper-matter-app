@@ -231,14 +231,24 @@ Content-Disposition: form-data; name="json"
 
 ```json
 {
-  "pid": "f04be12a-b08d-4857-ade0-20c778a257b3",
-  "title": "file.pdf",
-  "note": "",
-  "created": "2019-08-19T13:14:15.397396Z",
-  "edited": "2019-08-19T13:14:15.408445Z",
-  "ftl_folder": null,
-  "thumbnail_available": false,
-  "is_processed": true
+  "pid":"f04be12a-b08d-4857-ade0-20c778a257b3",
+  "title":"file.pdf",
+  "note":"",
+  "created":"2019-08-19T13:14:15.397396Z",
+  "edited":"2019-08-19T13:14:15.408445Z",
+  "ftl_folder":12,
+  "thumbnail_available":false,
+  "is_processed":true,
+  "paths":[
+    {
+      "id":34,
+      "name":"a"
+    },
+    {
+      "id":35,
+      "name":"b"
+    }
+  ]
 }
 ```
 
@@ -290,9 +300,19 @@ OR
       "note": "",
       "created": "2019-08-19T15:03:03.504330Z",
       "edited": "2019-08-19T15:03:06.844287Z",
-      "ftl_folder": null,
+      "ftl_folder": 12,
       "thumbnail_available": false,
-      "is_processed": true
+      "is_processed": true,
+      "paths":[
+        {
+          "id":34,
+          "name":"a"
+        },
+        {
+          "id":35,
+          "name":"b"
+        }
+      ]
     },
     {
       "pid": "6d3a6286-7c1c-45f6-86c9-6452fa2928fa",
@@ -300,9 +320,19 @@ OR
       "note": "",
       "created": "2019-08-19T14:24:27.125753Z",
       "edited": "2019-08-19T14:24:30.431466Z",
-      "ftl_folder": null,
+      "ftl_folder": 12,
       "thumbnail_available": false,
-      "is_processed": true
+      "is_processed": true,
+      "paths":[
+        {
+          "id":34,
+          "name":"a"
+        },
+        {
+          "id":35,
+          "name":"b"
+        }
+      ]
     }
   ]
 }
@@ -330,9 +360,19 @@ Rename, annotate, move a document (or set its thumbnail).
   "note": "",
   "created": "2019-08-19T15:03:03.504330Z",
   "edited": "2019-08-19T16:10:00.771661Z",
-  "ftl_folder": null,
+  "ftl_folder": 12,
   "thumbnail_available": false,
-  "is_processed": true
+  "is_processed": true,
+  "paths":[
+    {
+      "id":34,
+      "name":"a"
+    },
+    {
+      "id":35,
+      "name":"b"
+    }
+  ]
 }
 ```
 
