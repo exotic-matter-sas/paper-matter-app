@@ -38,7 +38,7 @@
     watch: {
       doc: function (newVal, oldVal) {
         if (newVal === undefined) {
-          this.docModal = false;
+          this.docPid = null;
         } else {
           if (newVal !== oldVal) {
             this.openDocument(newVal);

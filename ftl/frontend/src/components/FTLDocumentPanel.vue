@@ -11,13 +11,6 @@
            @hidden="closeDocument">
     <template slot="modal-header">
       <b-container>
-        <b-row>
-          <b-col class="my-0">
-            <small>
-              <b-breadcrumb class="doc-panel-breadcrumb" :items="breadcrumb"/>
-            </small>
-          </b-col>
-        </b-row>
         <b-row align-v="center">
           <b-col>
             <h5 class="d-inline modal-title">{{ currentOpenDoc.title }}</h5>
@@ -48,7 +41,15 @@
         </b-col>
         <b-col>
           <b-row>
+            <b-col class="my-0">
+              <small>
+                <b-breadcrumb class="doc-panel-breadcrumb" :items="breadcrumb"/>
+              </small>
+            </b-col>
+          </b-row>
+          <b-row>
             <b-col class="mb-1">
+              <hr/>
               <b-button class="mx-1" variant="primary" :href="`/app/uploads/` + currentOpenDoc.pid + `/doc.pdf`"
                         target="_blank">
                 {{ $_('Open PDF')}}
@@ -151,7 +152,7 @@
           .then(response => {
             this.currentOpenDoc = response.data;
             let _paths = this.currentOpenDoc.paths.map((v) => {
-              return {text: v.name, disabled: true}
+              return {text: v.name, to: {path: '/home/' + v.name + '/' + v.id}}
             });
             this.breadcrumb = [{text: "Home", disabled: true}, ..._paths];
 
