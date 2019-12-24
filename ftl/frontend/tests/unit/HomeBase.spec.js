@@ -135,7 +135,6 @@ describe('HomeBase watchers call proper methods', () => {
     wrapper.setData({doc});
 
     // then
-    expect(wrapper.vm.docModal).toBe(false);
     expect(mockedOpenDocument).not.toHaveBeenCalled();
   });
 });
