@@ -118,7 +118,6 @@
     data() {
       return {
         currentOpenDoc: {path: []},
-        docPath: "/",
         publicPath: process.env.BASE_URL,
       }
     },
