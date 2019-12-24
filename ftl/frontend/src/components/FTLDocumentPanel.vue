@@ -151,10 +151,10 @@
           .get('/app/api/v1/documents/' + this.pid)
           .then(response => {
             this.currentOpenDoc = response.data;
-            let _paths = this.currentOpenDoc.paths.map((v) => {
+            let _paths = this.currentOpenDoc.path.map((v) => {
               return {text: v.name, to: {path: '/home/' + v.name + '/' + v.id}}
             });
-            this.breadcrumb = [{text: "Home", disabled: true}, ..._paths];
+            this.breadcrumb = [{text: this.$_('Root'), disabled: true}, ..._paths];
 
             if (!response.data.thumbnail_available) {
               this.createThumbnailForDocument(this.currentOpenDoc)

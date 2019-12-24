@@ -303,7 +303,7 @@ OR
       "ftl_folder": 12,
       "thumbnail_available": false,
       "is_processed": true,
-      "paths":[
+      "path":[
         {
           "id":34,
           "name":"a"
@@ -323,7 +323,7 @@ OR
       "ftl_folder": 12,
       "thumbnail_available": false,
       "is_processed": true,
-      "paths":[
+      "path":[
         {
           "id":34,
           "name":"a"
@@ -363,7 +363,7 @@ Rename, annotate, move a document (or set its thumbnail).
   "ftl_folder": 12,
   "thumbnail_available": false,
   "is_processed": true,
-  "paths":[
+  "path":[
     {
       "id":34,
       "name":"a"
