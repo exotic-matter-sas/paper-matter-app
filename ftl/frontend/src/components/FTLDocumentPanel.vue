@@ -14,7 +14,7 @@
         <b-row align-v="center">
           <b-col>
             <h5 class="d-inline modal-title">
-              <b-link :to="parent_folder.to">{{ parent_folder.text }}</b-link>
+              <b-link :to="parent_folder.to" :title="path.map(v=>v.text).join('/')">{{ parent_folder.text }}</b-link>
               / {{ currentOpenDoc.title }}
             </h5>
             <b-button id="rename-document" v-b-modal="'modal-rename-document'" variant="link">
@@ -70,7 +70,7 @@
       v-if="currentOpenDoc"
       id="modal-move-document"
       :docs="[currentOpenDoc]"
-      @event-document-moved="$emit('event-document-moved', $event)"/>
+      @event-document-moved="documentMoved"/>
 
     <FTLRenameDocument
       v-if="currentOpenDoc.pid"
@@ -117,9 +117,8 @@
 
     data() {
       return {
-        currentOpenDoc: {},
+        currentOpenDoc: {path: []},
         docPath: "/",
-        parent_folder: {text: this.$_('Root'), to: {name: 'Home'}},
         publicPath: process.env.BASE_URL,
       }
     },
@@ -135,7 +134,21 @@
       viewerUrl: function () {
         return `/assets/pdfjs/web/viewer.html?file=/app/uploads/` + this.currentOpenDoc.pid + `#pagemode=none&search=`
           + this.search
-      }
+      },
+      path: function () {
+        let _path = this.currentOpenDoc.path.map((v) => {
+          return {text: v.name, to: {path: '/home/' + v.name + '/' + v.id}}
+        });
+
+        return [{text: this.$_('Root'), to: {name: 'home'}}, ..._path];
+      },
+      parent_folder: function () {
+        if (this.path.length > 0) {
+          return this.path.slice(-1)[0];
+        } else {
+          return {text: this.$_('Root'), to: {name: 'home'}};
+        }
+      },
     },
 
     methods: {
@@ -146,13 +159,6 @@
           .get('/app/api/v1/documents/' + this.pid)
           .then(response => {
             this.currentOpenDoc = response.data;
-            let _path = this.currentOpenDoc.path.map((v) => {
-              return {text: v.name, to: {path: '/home/' + v.name + '/' + v.id}}
-            });
-
-            if (_path.length > 0) {
-              this.parent_folder = _path.slice(-1)[0];
-            }
 
             if (!response.data.thumbnail_available) {
               this.createThumbnailForDocument(this.currentOpenDoc)
@@ -170,6 +176,11 @@
       documentRenamed: function (event) {
         this.currentOpenDoc = event.doc;
         this.$emit('event-document-renamed', event);
+      },
+
+      documentMoved: function (event) {
+        this.currentOpenDoc = event.doc;
+        this.$emit('event-document-moved', event);
       },
 
       documentNoteUpdated: function (event) {
