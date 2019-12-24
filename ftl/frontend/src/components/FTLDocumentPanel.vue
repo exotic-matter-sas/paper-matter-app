@@ -13,7 +13,10 @@
       <b-container>
         <b-row align-v="center">
           <b-col>
-            <h5 class="d-inline modal-title">{{ currentOpenDoc.title }}</h5>
+            <h5 class="d-inline modal-title">
+              <b-link :to="parent_folder.to">{{ parent_folder.text }}</b-link>
+              / {{ currentOpenDoc.title }}
+            </h5>
             <b-button id="rename-document" v-b-modal="'modal-rename-document'" variant="link">
               <font-awesome-icon icon="edit" :title="$_('Rename document')"/>
             </b-button>
@@ -41,15 +44,7 @@
         </b-col>
         <b-col>
           <b-row>
-            <b-col class="my-0">
-              <small>
-                <b-breadcrumb class="doc-panel-breadcrumb" :items="breadcrumb"/>
-              </small>
-            </b-col>
-          </b-row>
-          <b-row>
             <b-col class="mb-1">
-              <hr/>
               <b-button class="mx-1" variant="primary" :href="`/app/uploads/` + currentOpenDoc.pid + `/doc.pdf`"
                         target="_blank">
                 {{ $_('Open PDF')}}
@@ -124,7 +119,7 @@
       return {
         currentOpenDoc: {},
         docPath: "/",
-        breadcrumb: [],
+        parent_folder: {text: this.$_('Root'), to: {name: 'Home'}},
         publicPath: process.env.BASE_URL,
       }
     },
@@ -151,10 +146,13 @@
           .get('/app/api/v1/documents/' + this.pid)
           .then(response => {
             this.currentOpenDoc = response.data;
-            let _paths = this.currentOpenDoc.path.map((v) => {
+            let _path = this.currentOpenDoc.path.map((v) => {
               return {text: v.name, to: {path: '/home/' + v.name + '/' + v.id}}
             });
-            this.breadcrumb = [{text: this.$_('Root'), disabled: true}, ..._paths];
+
+            if (_path.length > 0) {
+              this.parent_folder = _path.slice(-1)[0];
+            }
 
             if (!response.data.thumbnail_available) {
               this.createThumbnailForDocument(this.currentOpenDoc)

@@ -297,6 +297,7 @@
                   query: {
                     doc: this.docPid
                   }
+                }, () => {
                 });
             } else {
               this.$router.push({path: '/home/' + this.computeFolderUrlPath(folderId)}, () => {
