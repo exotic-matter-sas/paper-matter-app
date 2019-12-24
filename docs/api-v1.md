@@ -239,7 +239,7 @@ Content-Disposition: form-data; name="json"
   "ftl_folder":12,
   "thumbnail_available":false,
   "is_processed":true,
-  "paths":[
+  "path":[
     {
       "id":34,
       "name":"a"
