@@ -72,6 +72,12 @@ export const DOCUMENT_PROPS_WITH_FOLDER = {
   path: []
 };
 
+export const DOCUMENT_PROPS_WITH_FOLDER_MOVED = {
+  ftl_folder: 321,
+  ...DOCUMENT_PROPS_WITH_FOLDER
+};
+
+
 export const DOCUMENT_NO_THUMB_PROPS = {
   pid: '3000',
   title: 'Document title',
