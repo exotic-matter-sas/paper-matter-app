@@ -11,21 +11,20 @@
            @hidden="closeDocument">
     <template slot="modal-header">
       <b-container>
-        <b-row align-v="center">
-          <b-col>
-            <h5 class="d-inline modal-title">
-              <b-link :to="parent_folder.to" :title="path.map(v=>v.text).join('/')">{{ parent_folder.text }}</b-link>
-              / {{ currentOpenDoc.title }}
-            </h5>
-            <b-button id="rename-document" v-b-modal="'modal-rename-document'" variant="link">
-              <font-awesome-icon icon="edit" :title="$_('Rename document')"/>
-            </b-button>
-          </b-col>
-          <b-col>
-            <button @click.prevent="$bvModal.hide('document-viewer')" type="button" aria-label="Close" class="close">×
-            </button>
-          </b-col>
-        </b-row>
+        <h5 class="modal-title">
+          <b-link id="document-parent-folder" class="float-left" :to="parent_folder.to" :title="path.map(v=>v.text).join('/')">
+            <font-awesome-icon icon="folder"/><font-awesome-icon icon="folder-open" class="d-none"/> {{ parent_folder.text }}
+          </b-link>
+          <div id="document-title" class="float-left" :title="currentOpenDoc.title">
+            / {{ currentOpenDoc.title }}
+          </div>
+          <b-button id="rename-document" class="float-left" v-b-modal="'modal-rename-document'" variant="link">
+            <font-awesome-icon icon="edit" :title="$_('Rename document')"/>
+          </b-button>
+        </h5>
+
+        <button @click.prevent="$bvModal.hide('document-viewer')" type="button" aria-label="Close" class="close">×
+        </button>
       </b-container>
     </template>
     <b-container class="h-100" fluid>
@@ -217,27 +216,54 @@
       margin: 0;
     }
 
-    .modal-title {
-      vertical-align: middle;
+    .fa-folder{
+      width:1.125em;
+    }
+
+    #document-parent-folder {
+      display: block;
+      max-width: 25%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding: 1rem 0.5rem 1rem 0;
+      margin: -1rem -1rem -1rem auto;
+      &:hover {
+        .fa-folder {
+          display: none !important;
+        }
+
+        .fa-folder-open {
+          display: inline-block !important;
+        }
+      }
+    }
+
+    #document-title {
+      display: block;
+      max-width: 65%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding: 1rem 0.5rem 1rem 1rem;
+      margin: -1rem -1rem -1rem auto;
+    }
+
+    #rename-document{
+      display: block;
+      padding: 1rem 0 1rem 1rem;
+      margin: -1rem -1rem -1rem auto;
+      font-size: 1.25rem;
+      line-height: 1.5;
+      border: 0;
+    }
+
+    .close{
+      line-height: 1.25;
     }
 
     .modal-content {
       height: calc(100vh - (#{$document-viewer-padding} * 2));
-    }
-
-    .doc-panel-breadcrumb {
-      color: map_get($theme-colors, 'primary');
-      margin: 0;
-      padding: 0;
-      background-color: transparent;
-
-      .active {
-        color: map_get($theme-colors, 'active');
-      }
-
-      .active + li {
-        color: $gray-700;
-      }
     }
   }
 </style>
