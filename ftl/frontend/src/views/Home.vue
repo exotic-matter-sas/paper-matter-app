@@ -14,7 +14,7 @@
 
       <b-row class="my-3" id="breadcrumb" no-gutter>
         <b-col>
-          <b-breadcrumb class="m-0" :items="breadcrumb"/>
+          <b-breadcrumb class="breadcrumb-ftl m-0" :items="breadcrumb"/>
         </b-col>
       </b-row>
 
@@ -297,6 +297,7 @@
                   query: {
                     doc: this.docPid
                   }
+                }, () => {
                 });
             } else {
               this.$router.push({path: '/home/' + this.computeFolderUrlPath(folderId)}, () => {
