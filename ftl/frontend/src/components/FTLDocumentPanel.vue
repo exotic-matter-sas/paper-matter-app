@@ -15,8 +15,9 @@
           <b-link id="document-parent-folder" class="float-left" :to="parent_folder.to" :title="path.map(v=>v.text).join('/')">
             <font-awesome-icon icon="folder"/><font-awesome-icon icon="folder-open" class="d-none"/> {{ parent_folder.text }}
           </b-link>
+          <div id="document-title-separator" class="float-left">/</div>
           <div id="document-title" class="float-left" :title="currentOpenDoc.title">
-            / {{ currentOpenDoc.title }}
+            {{ currentOpenDoc.title }}
           </div>
           <b-button id="rename-document" class="float-left" v-b-modal="'modal-rename-document'" variant="link">
             <font-awesome-icon icon="edit" :title="$_('Rename document')"/>
@@ -220,14 +221,17 @@
       width:1.125em;
     }
 
-    #document-parent-folder {
+    #document-parent-folder, #document-title-separator, #document-title, #rename-document {
       display: block;
+      padding: 1rem;
+      margin: -1rem -1rem -1rem auto;
+    }
+
+    #document-parent-folder {
       max-width: 25%;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      padding: 1rem 0.5rem 1rem 0;
-      margin: -1rem -1rem -1rem auto;
       &:hover {
         .fa-folder {
           display: none !important;
@@ -239,23 +243,22 @@
       }
     }
 
+    #document-title-separator{
+      padding: 1rem 0.5rem;
+    }
+
     #document-title {
-      display: block;
       max-width: 65%;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      padding: 1rem 0.5rem 1rem 1rem;
-      margin: -1rem -1rem -1rem auto;
     }
 
     #rename-document{
-      display: block;
-      padding: 1rem 0 1rem 1rem;
-      margin: -1rem -1rem -1rem auto;
       font-size: 1.25rem;
       line-height: 1.5;
       border: 0;
+      padding-left: 0.5rem;
     }
 
     .close{
