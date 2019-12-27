@@ -76,7 +76,7 @@ _Or alternatively `npx vue-cli-service test:unit`_
 
 ### i18n
   
- 1 - Add missing keys to translate into .po files (or add a new language ):
+ 1 - Add missing keys to translate into .po files (or add a new language):
 
 
      python manage.py makemessages -l fr --ignore=requirements*.txt,__init__.py,ftest/*

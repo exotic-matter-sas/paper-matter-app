@@ -48,7 +48,8 @@ export const DOCUMENT_PROPS = {
   note: 'Document note',
   created: new Date('2019-04-18T10:59:00').toString(),
   thumbnail_available: true,
-  ftl_folder: null
+  ftl_folder: null,
+  path: []
 };
 
 export const DOCUMENT_PROPS_VARIANT = {
@@ -57,7 +58,8 @@ export const DOCUMENT_PROPS_VARIANT = {
   note: 'Document note 2',
   created: new Date('2019-04-18T11:00:00').toString(),
   thumbnail_available: true,
-  ftl_folder: null
+  ftl_folder: null,
+  path: []
 };
 
 export const DOCUMENT_PROPS_WITH_FOLDER = {
@@ -66,15 +68,23 @@ export const DOCUMENT_PROPS_WITH_FOLDER = {
   note: 'Document note',
   created: new Date('2019-04-18T10:59:00').toString(),
   thumbnail_available: true,
-  ftl_folder: 123
+  ftl_folder: 123,
+  path: []
 };
+
+export const DOCUMENT_PROPS_WITH_FOLDER_MOVED = {
+  ftl_folder: 321,
+  ...DOCUMENT_PROPS_WITH_FOLDER
+};
+
 
 export const DOCUMENT_NO_THUMB_PROPS = {
   pid: '3000',
   title: 'Document title',
   note: 'Document note',
   created: new Date('2019-04-18T10:59:00').toString(),
-  thumbnail_available: false
+  thumbnail_available: false,
+  path: []
 };
 
 export const DOCUMENT_NO_THUMB_PROPS_2 = {
@@ -82,5 +92,6 @@ export const DOCUMENT_NO_THUMB_PROPS_2 = {
   title: 'Document title 2',
   note: 'Document note 2',
   created: new Date('2019-04-18T10:59:00').toString(),
-  thumbnail_available: false
+  thumbnail_available: false,
+  path: []
 };

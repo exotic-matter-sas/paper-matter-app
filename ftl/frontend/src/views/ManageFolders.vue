@@ -11,13 +11,12 @@
         <b-col id="left-panel" md="8">
           <b-row>
             <b-col>
-              <b-breadcrumb :items="breadcrumb"/>
+              <b-breadcrumb class="breadcrumb-ftl" :items="breadcrumb"/>
             </b-col>
           </b-row>
           <b-row v-if="foldersLoading">
             <b-col>
-              <b-spinner style="width: 3rem; height: 3rem;" class="m-5 loader"
-                         label="Loading..."></b-spinner>
+              <b-spinner style="width: 3rem; height: 3rem;" class="m-5 loader" label="Loading..."></b-spinner>
             </b-col>
           </b-row>
           <b-row align-h="center" v-else>
@@ -69,9 +68,15 @@
               </b-row>
               <b-row>
                 <b-col>
-                  <b-button id="rename-selected-folder" class="m-1" variant="secondary" v-b-modal="'modal-rename-folder'">Rename</b-button>
-                  <b-button id="move-selected-folder" class="m-1" variant="secondary" v-b-modal="'modal-move-folder'">Move</b-button>
-                  <b-button id="delete-selected-folder" class="m-1" variant="danger" v-b-modal="'modal-delete-folder'">Delete</b-button>
+                  <b-button id="rename-selected-folder" class="m-1" variant="secondary"
+                            v-b-modal="'modal-rename-folder'">Rename
+                  </b-button>
+                  <b-button id="move-selected-folder" class="m-1" variant="secondary" v-b-modal="'modal-move-folder'">
+                    Move
+                  </b-button>
+                  <b-button id="delete-selected-folder" class="m-1" variant="danger" v-b-modal="'modal-delete-folder'">
+                    Delete
+                  </b-button>
                 </b-col>
               </b-row>
             </b-col>
@@ -277,7 +282,7 @@
         const foundIndex = this.folders.findIndex(x => x.id === folder.id);
         this.$set(this.folders, foundIndex, folder); // to be reactive, see https://vuejs.org/v2/guide/list.html#Caveats
         if (this.folderDetail && this.folderDetail.id === folder.id) {
-            this.folderDetail = folder;
+          this.folderDetail = folder;
         }
       }
     }
@@ -290,14 +295,14 @@
     border: 3px solid transparent;
   }
 
-  #right-panel{
+  #right-panel {
     border-top: 2px solid map_get($theme-colors, 'light-gray');
     margin-top: 1em;
     padding-top: 1em;
   }
 
   @include media-breakpoint-up(md) {
-    #right-panel{
+    #right-panel {
       border-top: 0;
       border-left: 2px solid map_get($theme-colors, 'light-gray');
       margin-top: 0;

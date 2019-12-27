@@ -34,7 +34,7 @@ jest.mock('axios', () => ({
 }));
 
 const mockedMoveDocumentResponse = {
-  data: tv.DOCUMENT_PROPS_WITH_FOLDER,
+  data: tv.DOCUMENT_PROPS_WITH_FOLDER_MOVED,
   status: 200,
 };
 
@@ -181,7 +181,7 @@ describe('Event emitted by component', () => {
     expect(wrapper.emitted(testedEvent)).toBeTruthy();
     expect(wrapper.emitted(testedEvent).length).toBe(1);
     expect(wrapper.emitted(testedEvent)[0]).toEqual([{
-      'doc': documentProp,
+      'doc': tv.DOCUMENT_PROPS_WITH_FOLDER_MOVED,
       'target_folder': mockedSelectedMoveTargetFolderResponse
     }]);
   });

@@ -11,17 +11,21 @@
            :style="{'background-image': 'url(' + doc.thumbnail_url + ')'}"
            @click.exact="$emit('event-open-doc', doc.pid)"></div>
       <b-card-body>
-        <b-card-title class="text-truncate document-title"
-                      @click.exact="$emit('event-open-doc', doc.pid)">{{ doc.title }}
-        </b-card-title>
-        <b-button variant="secondary" size="sm" :href="'uploads/' + doc.pid">
+        <b-button class="float-right" variant="secondary" size="sm" :href="'uploads/' + doc.pid">
           <font-awesome-icon icon="file-download" :alt="this.$_('Download')"/>
         </b-button>
+        <b-card-title class="text-truncate document-title"
+                      @click.exact="$emit('event-open-doc', doc.pid)"
+                      >
+          <span :title="doc.title">{{ doc.title }}</span>
+        </b-card-title>
       </b-card-body>
       <b-card-footer :title="$moment(doc.created).format('LLLL')">
         <b-form-checkbox :checked="$store.getters.FTLDocumentSelected(doc.pid)" @change="toggleSelection"
                          :title="$_('Use CTRL + left click for quick selection')"/>
         <small class="text-muted">{{ $moment(doc.created).fromNow() }}</small>
+        <div v-if="!doc.is_processed && !timeout_spinner" class="spinner-border spinner-border-sm text-primary"
+             role="status" aria-hidden="true" :title="$_('Processing document, it cannot be searched yet.')"></div>
       </b-card-footer>
     </div>
   </b-col>
@@ -37,7 +41,22 @@
     },
 
     data() {
-      return {}
+      return {
+        timer: null,
+        timeout_spinner: false
+      }
+    },
+
+    created() {
+      if (this.doc.is_processed === false) {
+        this.timer = setTimeout(this.stop_spinner, 300000);
+      }
+    },
+
+    beforeDestroy()  {
+      if (this.timer) {
+        clearTimeout(this.timer);
+      }
     },
 
     methods: {
@@ -51,6 +70,10 @@
         } else {
           this.$store.commit("selectDocuments", [this.doc])
         }
+      },
+
+      stop_spinner: function () {
+        this.timeout_spinner = true;
       }
     }
   }
@@ -59,6 +82,7 @@
 <style scoped lang="scss">
   .document-title {
     color: map_get($theme-colors, 'primary');
+    line-height: calc(1.3rem + (0.25rem * 2) + (1px *2));
   }
 
   .card {
@@ -94,6 +118,7 @@
   .card-title {
     cursor: pointer;
     font-size: 1.1rem;
+    margin-bottom: 0;
   }
 
   .card-img-top:hover {
@@ -101,18 +126,31 @@
     box-shadow: inset 0 10px 30px -30px #0A0A0A;
   }
 
-  .card-footer {
-    &:first-letter {
-      text-transform: capitalize;
-    }
+  .card-body {
+    padding: 0.75rem;
+  }
 
+  .card-footer {
     text-align: center;
-    font-size: 0.9em;
-    padding: 0.5rem 1.25rem;
+    padding: 0.5rem 0.75rem;
     font-style: italic;
 
     .custom-checkbox {
       position: absolute;
+    }
+
+    small{
+      &::first-letter {
+        text-transform: uppercase;
+      }
+      display: inline-block;
+      vertical-align: 0.13rem;
+    }
+
+    .spinner-border{
+      position: absolute;
+      right:0.75rem;
+      bottom: 0.75rem;
     }
   }
 </style>

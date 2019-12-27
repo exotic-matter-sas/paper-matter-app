@@ -41,7 +41,7 @@ module.exports = {
       .host('127.0.0.1')
       .port(8080)
       .hotOnly(true)
-      .watchOptions({poll: 2500})
+      .watchOptions({ignored: /node_modules/})
       .https(false)
       .headers({
         "Access-Control-Allow-Credentials": "true",

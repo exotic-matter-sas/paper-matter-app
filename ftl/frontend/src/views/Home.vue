@@ -14,7 +14,7 @@
 
       <b-row class="my-3" id="breadcrumb" no-gutter>
         <b-col>
-          <b-breadcrumb class="m-0" :items="breadcrumb"/>
+          <b-breadcrumb class="breadcrumb-ftl m-0" :items="breadcrumb"/>
         </b-col>
       </b-row>
 
@@ -84,8 +84,7 @@
 
       <b-row class="mt-2 mb-3" id="documents-list">
         <b-col v-if="docsLoading">
-          <b-spinner class="mx-auto loader" id="documents-list-loader"
-                     label="Loading..."></b-spinner>
+          <b-spinner class="mx-auto loader" id="documents-list-loader" label="Loading..."></b-spinner>
         </b-col>
         <b-col v-else-if="docs.length">
           <b-row tag="section">
@@ -106,8 +105,7 @@
 
       <!-- Pdf viewer popup -->
       <FTLDocumentPanel v-if="docPid" :pid="docPid"
-                        @event-document-panel-closed="closeDocument"
-                        @event-document-renamed="documentUpdated"
+                        @event-document-panel-closed="documentClosed"
                         @event-document-moved="documentDeleted"
                         @event-document-deleted="documentDeleted"/>
 
@@ -299,9 +297,11 @@
                   query: {
                     doc: this.docPid
                   }
+                }, () => {
                 });
             } else {
-              this.$router.push({path: '/home/' + this.computeFolderUrlPath(folderId)}, () => {});
+              this.$router.push({path: '/home/' + this.computeFolderUrlPath(folderId)}, () => {
+              });
             }
           })
           .catch((error) => {
