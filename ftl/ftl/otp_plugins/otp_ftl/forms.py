@@ -126,7 +126,7 @@ class TOTPDeviceForm(Form):
     name = forms.CharField(
         label="Name",
         strip=True,
-        initial=_('App authenticator'),
+        initial=_('Authenticator app'),
         help_text=_('Indicate a name to recognize your two factor device')
     )
 
