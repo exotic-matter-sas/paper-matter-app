@@ -1,8 +1,10 @@
 {% extends 'account/account_base.html' %}
 
 {% block account %}
-    <form method="post">{% csrf_token %}
-        <p>Are you sure you want to delete "{{ object.persistent_id }}"?</p>
-        <input type="submit" value="Confirm">
-    </form>
+    <div class="m-4">
+        <form method="post">{% csrf_token %}
+            <h4>Are you sure you want to delete "{{ object.persistent_id }}"?</h4>
+            <input type="submit" class="btn btn-danger" value="Confirm">
+        </form>
+    </div>
 {% endblock %}

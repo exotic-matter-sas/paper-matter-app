@@ -2,17 +2,12 @@
 {% load i18n %}
 
 {% block account %}
-    <h2>Change name of OTP device</h2>
-
-    You can update the name
+    <h3 class="text-primary">Update the name of the device</h3>
 
     <form method="post">{% csrf_token %}
         {{ form.as_p }}
-        <input type="submit" value="Update">
+
+        <input type="submit" class="btn btn-primary" value="Update">
+        <a href="{% url 'otp_list' %}">Return to 2FA list</a>
     </form>
-
-    <ul>
-        <li><a href="{% url 'otp_list' %}">Return to 2FA list</a></li>
-    </ul>
-
 {% endblock %}

@@ -4,45 +4,81 @@
 
 {% block account %}
     {% if static_device or totp_device or fido2_device %}
-        <h3 class="text-primary">Current OTP device registered with this account</h3>
-        <h2>Emergency codes</h2>
-        <ul>
-            {% for static in static_device %}
-                <li><a href="{% url 'otp_static_update' static.id %}">{{ static.name }} ({{ static.persistent_id }})</a>
-                    - [<a href="{% url "otp_static_delete" static.id %}">{% trans 'Delete' %}</a>]
-                </li>
+        <h3 class="text-primary">{% trans 'Two factor authentication' %}</h3>
 
-                <ul>
-                    {% for code in static.token_set.all %}
-                        <li>{{ code.token }}</li>
-                    {% endfor %}
-                </ul>
-            {% endfor %}
-        </ul>
-        <a href="{% url "otp_static_add" %}">{% trans 'Add a new set of emergency code' %}</a>
+        <div class="m-3">
+            <h4>Emergency codes</h4>
+            <div>
+                {% for static in static_device %}
+                    <div class="border p-3 my-1">
+                        <div>
+                            <a href="{% url 'otp_static_update' static.id %}" title="{{ static.persistent_id }}">
+                                {{ static.name }}
+                            </a>
+                        </div>
 
-        <h2>Apps authenticator</h2>
-        <ul>
-            {% for totp in totp_device %}
-                <li><a href="{% url 'otp_totp_update' totp.id %}">{{ totp.name }} ({{ totp.persistent_id }})</a> -
-                    {% if not totp.confirmed %} NOT VALIDATED {% endif %}
-                    [<a href="{% url "otp_totp_delete"  totp.id %}">{% trans 'Delete' %}</a>]
+                        <div class="d-flex flex-row flex-wrap">
+                            {% for code in static.token_set.all %}
+                                <span class="mx-2"><code>{{ code.token }}</code></span>
+                            {% endfor %}
+                        </div>
 
-                    <img src="{% url 'otp_totp_qrcode' totp.id %}" alt="qrcode"/>
-                </li>
-            {% endfor %}
-        </ul>
-        <a href="{% url "otp_totp_add" %}">{% trans 'Add a new app authenticator' %}</a>
+                        <p class="text-right"><a href="{% url "otp_static_delete" static.id %}"
+                                                 class="btn btn-danger btn-sm">
+                            {% trans 'Delete' %}</a></p>
+                    </div>
+                {% endfor %}
+            </div>
+            <a href="{% url "otp_static_add" %}" class="btn btn-secondary btn-sm my-3">
+                {% trans 'Add a new set of emergency code' %}</a>
+        </div>
 
-        <h2>Security keys (FIDO2/U2F)</h2>
-        <ul>
-            {% for fido in fido2_device %}
-                <li><a href="{% url 'otp_fido2_update' fido.id %}">{{ fido.name }} ({{ fido.persistent_id }})</a> - [<a
-                        href="{% url "otp_fido2_delete"  fido.id %}">{% trans 'Delete' %}</a>]
-                </li>
-            {% endfor %}
-        </ul>
-        <a href="{% url "otp_fido2_add" %}">{% trans 'Add a new security key' %}</a>
+        <div class="m-3">
+            <h4>Apps authenticator</h4>
+            <div>
+                {% for totp in totp_device %}
+                    <div class="border p-3 my-1">
+                        <a href="{% url 'otp_totp_update' totp.id %}"
+                           title="{{ totp.persistent_id }}">{{ totp.name }}</a>
+
+                        {% if not totp.confirmed %}
+                            <a href="{% url 'otp_totp_detail' totp.id %}"
+                               title="{{ totp.persistent_id }}" class="badge badge-warning">Not confirmed</a>
+                        {% endif %}
+
+                        <div class="my-2">
+                            <p class="text-right"><a href="{% url "otp_totp_delete"  totp.id %}"
+                                                     class="btn btn-danger btn-sm">
+                                {% trans 'Delete' %}</a></p>
+                        </div>
+
+                    </div>
+                {% endfor %}
+            </div>
+            <a href="{% url "otp_totp_add" %}" class="btn btn-secondary btn-sm my-3">
+                {% trans 'Add a new app authenticator' %}</a>
+        </div>
+
+        <div class="m-3">
+            <h4>Security keys (FIDO2/U2F)</h4>
+            <div>
+                {% for fido in fido2_device %}
+                    <div class="border p-3 my-1">
+                        <a href="{% url 'otp_fido2_update' fido.id %}"
+                           title="{{ fido.persistent_id }}">{{ fido.name }}</a>
+
+                        <div class="my-2">
+                            <p class="text-right">
+                                <a href="{% url "otp_fido2_delete" fido.id %}" class="btn btn-danger btn-sm">
+                                    {% trans 'Delete' %}</a>
+                            </p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <a href="{% url "otp_fido2_add" %}"
+               class="btn btn-secondary btn-sm my-3">{% trans 'Add a new security key' %}</a>
+        </div>
     {% else %}
         <h3 class="text-primary">{% trans "Protect your Paper Matter account with two factor verification" %}</h3>
         <p>
