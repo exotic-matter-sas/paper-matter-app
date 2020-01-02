@@ -2,11 +2,16 @@
 {% load i18n %}
 
 {% block account %}
-    <h2>{% trans "Your security has been added!" %}</h2>
+    <h3 class="text-primary">{% trans "Your security key has been added!" %}</h3>
 
-    <ul>
-        <li><a href="{% url 'otp_static_add' %}">Generate emergency two factor codes</a></li>
-        <li><a href="{% url 'otp_list' %}">Return to 2FA list</a></li>
-    </ul>
+    <p class="highlight">
+        {% blocktrans %}
+            We highly suggest that you generate emergency code in case your lose your key. We will not be able to
+            recover your account.
+        {% endblocktrans %}
+    </p>
+
+    <a href="{% url 'otp_static_add' %}" class="btn btn-primary">{% trans 'Generate emergency two factor codes' %}</a>
+    <p class="text-right"><a href="{% url 'otp_list' %}">{% trans 'Return to 2FA list' %}</a></p>
 
 {% endblock %}

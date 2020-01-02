@@ -7,10 +7,10 @@
         <h3 class="text-primary">{% trans 'Two factor authentication' %}</h3>
 
         <div class="m-3">
-            <h4>Emergency codes</h4>
+            <h4 class="">Emergency codes</h4>
             <div>
                 {% for static in static_device %}
-                    <div class="border p-3 my-1">
+                    <div class="border bg-white p-3 my-1">
                         <div>
                             <a href="{% url 'otp_static_update' static.id %}" title="{{ static.persistent_id }}">
                                 {{ static.name }}
@@ -37,7 +37,7 @@
             <h4>Apps authenticator</h4>
             <div>
                 {% for totp in totp_device %}
-                    <div class="border p-3 my-1">
+                    <div class="border bg-white p-3 my-1">
                         <a href="{% url 'otp_totp_update' totp.id %}"
                            title="{{ totp.persistent_id }}">{{ totp.name }}</a>
 
@@ -63,7 +63,7 @@
             <h4>Security keys (FIDO2/U2F)</h4>
             <div>
                 {% for fido in fido2_device %}
-                    <div class="border p-3 my-1">
+                    <div class="border bg-white p-3 my-1">
                         <a href="{% url 'otp_fido2_update' fido.id %}"
                            title="{{ fido.persistent_id }}">{{ fido.name }}</a>
 
@@ -84,13 +84,14 @@
         <p>
             {% blocktrans %}
                 Each time you sign-in into your Paper Matter account, you will need your usual password and a
-                validation code that will be available via your phone.
+                validation code that will be available on your phone (or your security key).
             {% endblocktrans %}
         </p>
-        <p>{% trans "There is no two factor device registered with this account" %}</p>
+        <p><strong>{% trans "There is no two factor device registered with this account." %}</strong>
+        </p>
         <ul>
-            <li><a href="{% url "otp_totp_add" %}">Add a second factor using an app (recommended)</a></li>
-            <li><a href="{% url "otp_fido2_add" %}">Add a security key (FIDO2)</a></li>
+            <li><a href="{% url "otp_totp_add" %}">{% trans 'Add a second factor using an app (recommended)' %}</a></li>
+            <li><a href="{% url "otp_fido2_add" %}">{% trans 'Add a security key (U2F/FIDO2)' %}</a></li>
         </ul>
     {% endif %}
 {% endblock %}
