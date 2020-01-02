@@ -7,7 +7,7 @@
         <h3 class="text-primary">{% trans 'Two factor authentication' %}</h3>
 
         <div class="m-3">
-            <h4 class="">Emergency codes</h4>
+            <h4 class="">{% trans 'Emergency codes' %}</h4>
             <div>
                 {% for static in static_device %}
                     <div class="border bg-white p-3 my-1">
@@ -34,7 +34,7 @@
         </div>
 
         <div class="m-3">
-            <h4>Apps authenticator</h4>
+            <h4>{% trans 'Apps authenticator' %}</h4>
             <div>
                 {% for totp in totp_device %}
                     <div class="border bg-white p-3 my-1">
@@ -60,7 +60,7 @@
         </div>
 
         <div class="m-3">
-            <h4>Security keys (FIDO2/U2F)</h4>
+            <h4>{% trans 'Security keys (U2F/FIDO2)' %}</h4>
             <div>
                 {% for fido in fido2_device %}
                     <div class="border bg-white p-3 my-1">

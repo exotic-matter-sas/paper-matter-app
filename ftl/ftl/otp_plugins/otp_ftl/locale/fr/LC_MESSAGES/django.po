@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-02 18:01+0100\n"
-"PO-Revision-Date: 2020-01-02 18:02+0100\n"
+"POT-Creation-Date: 2020-01-02 18:07+0100\n"
+"PO-Revision-Date: 2020-01-02 18:07+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -51,6 +51,7 @@ msgid "Two factor code shown in your app authenticator"
 msgstr "Code indiqué dans votre app d'authentification"
 
 #: .\ftl\otp_plugins\otp_ftl\forms.py:109
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_list.html:10
 msgid "Emergency codes"
 msgstr "Codes d'urgence"
 
@@ -82,9 +83,17 @@ msgstr "Supprimer"
 msgid "Add a new set of emergency code"
 msgstr "Ajouter un nouveau lot de codes d'urgence"
 
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_list.html:37
+msgid "Apps authenticator"
+msgstr "App d'authentification"
+
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_list.html:59
 msgid "Add a new app authenticator"
 msgstr "Ajouter une nouvelle app d'authentification"
+
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_list.html:63
+msgid "Security keys (U2F/FIDO2)"
+msgstr "Clé de sécurité (U2F/FIDO2)"
 
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_list.html:80
 msgid "Add a new security key"
@@ -182,6 +191,8 @@ msgid "Generate emergency two factor codes"
 msgstr "Ajouter un lot de codes d'urgence"
 
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_detail.html:15
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\staticdevice_detail.html:12
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\totpdevice_detail.html:35
 msgid "Return to 2FA list"
 msgstr "Revenir à la liste des appareils à deux facteurs"
 
