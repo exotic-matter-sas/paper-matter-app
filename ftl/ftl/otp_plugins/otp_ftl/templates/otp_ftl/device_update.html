@@ -5,7 +5,12 @@
     <h3 class="text-primary">Update the name of the device</h3>
 
     <form method="post">{% csrf_token %}
-        {{ form.as_p }}
+        <div class="form-group">
+            <label for="id_name">Name</label>
+            <input type="text" name="name" value="" placeholder="Device name" required="required" id="id_name"
+                   class="form-control">
+            <small class="form-text text-muted">Indicate a name to recognize your two factor device</small>
+        </div>
 
         <input type="submit" class="btn btn-primary" value="Update">
         <a href="{% url 'otp_list' %}">Return to 2FA list</a>
