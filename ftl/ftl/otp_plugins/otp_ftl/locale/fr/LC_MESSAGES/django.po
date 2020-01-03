@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-03 15:59+0100\n"
-"PO-Revision-Date: 2020-01-03 16:01+0100\n"
+"POT-Creation-Date: 2020-01-03 16:35+0100\n"
+"PO-Revision-Date: 2020-01-03 16:36+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -53,6 +53,8 @@ msgstr "Code indiqué dans votre app d'authentification"
 
 #: .\ftl\otp_plugins\otp_ftl\forms.py:109
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_list.html:10
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\staticdevice_form.html:23
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\staticdevice_form.html:24
 msgid "Emergency codes"
 msgstr "Codes d'urgence"
 
@@ -86,6 +88,17 @@ msgstr ""
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_list.html:75
 msgid "Delete"
 msgstr "Supprimer"
+
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_confirm_delete.html:14
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_update.html:16
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_detail.html:15
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_form.html:28
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\staticdevice_detail.html:12
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\staticdevice_form.html:31
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\totpdevice_detail.html:35
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\totpdevice_form.html:35
+msgid "Return to 2FA list"
+msgstr "Revenir à la liste des appareils à deux facteurs"
 
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_list.html:7
 msgid "Two factor authentication"
@@ -151,19 +164,25 @@ msgstr "Ajouter une clé de sécurité (U2F/FIDO2)"
 msgid "Update the name of the device"
 msgstr "Mettre à jour le nom de l'appareil"
 
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_update.html:9
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\staticdevice_form.html:22
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\totpdevice_form.html:27
+msgid "Name"
+msgstr "Nom"
+
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_update.html:10
+msgid "Device name"
+msgstr "Nom de l'appareil"
+
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_update.html:12
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\staticdevice_form.html:26
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\totpdevice_form.html:30
+msgid "Name to recognize your two factor device"
+msgstr "Nom de votre choix pour reconnaître votre appareil d'authentification"
+
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_update.html:15
 msgid "Update"
 msgstr "Mettre à jour"
-
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_update.html:16
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_detail.html:15
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_form.html:28
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\staticdevice_detail.html:12
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\staticdevice_form.html:29
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\totpdevice_detail.html:35
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\totpdevice_form.html:35
-msgid "Return to 2FA list"
-msgstr "Revenir à la liste des appareils à deux facteurs"
 
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_check.html:5
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_check.html:12
@@ -262,6 +281,7 @@ msgstr ""
 "Microsoft Edge, Safari."
 
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_form.html:27
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\staticdevice_form.html:28
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\totpdevice_form.html:32
 msgid "Next"
 msgstr "Suivant"
@@ -357,11 +377,3 @@ msgstr ""
 "\n"
 "Utiliser une app d'authentification pour générer des codes de validation. "
 "Dans l'app, scanner le code QR qui sera affiché sur la page suivante."
-
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\totpdevice_form.html:27
-msgid "Name"
-msgstr "Nom"
-
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\totpdevice_form.html:30
-msgid "Name to recognize your two factor device"
-msgstr "Nom de votre choix pour reconnaître votre appareil d'authentification"
