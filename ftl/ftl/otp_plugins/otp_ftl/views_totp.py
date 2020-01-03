@@ -121,6 +121,6 @@ class TOPTDeviceViewQRCode(View):
 @method_decorator(login_required, name='dispatch')
 @method_decorator(otp_required(if_configured=True), name='dispatch')
 class TOTPDeviceDelete(DeleteView):
-    template_name = 'otp_ftl/totpdevice_confirm_delete.html'
+    template_name = 'otp_ftl/device_confirm_delete.html'
     model = TOTPDevice
     success_url = reverse_lazy('otp_list')

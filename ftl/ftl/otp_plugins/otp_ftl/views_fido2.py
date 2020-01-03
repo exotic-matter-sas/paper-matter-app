@@ -56,7 +56,7 @@ class Fido2DeviceAdd(View):
 @method_decorator(login_required, name='dispatch')
 @method_decorator(otp_required(if_configured=True), name='dispatch')
 class Fido2DeviceDelete(DeleteView):
-    template_name = 'otp_ftl/fido2device_confirm_delete.html'
+    template_name = 'otp_ftl/device_confirm_delete.html'
     model = Fido2Device
     success_url = reverse_lazy("otp_list")
 

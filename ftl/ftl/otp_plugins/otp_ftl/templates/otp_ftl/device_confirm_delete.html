@@ -1,0 +1,16 @@
+{% extends 'account/account_base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block account %}
+    <div class="m-4">
+        <form method="post">{% csrf_token %}
+            <h4 class="text-primary text-center">
+                {% blocktrans with object.name as name %}
+                    Are you sure you want to delete "{{ name }}"?
+                {% endblocktrans %}
+            </h4>
+            <p class="text-center mt-4"><input type="submit" class="btn btn-danger" value="{% trans 'Delete' %}"></p>
+        </form>
+    </div>
+{% endblock %}

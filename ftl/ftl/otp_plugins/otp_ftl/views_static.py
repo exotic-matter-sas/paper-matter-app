@@ -2,10 +2,8 @@
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
 
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
-from django.utils.http import is_safe_url
 from django.views.generic import FormView, DeleteView, DetailView, UpdateView
 from django_otp.decorators import otp_required
 from django_otp.plugins.otp_static.models import StaticDevice
@@ -54,6 +52,6 @@ class StaticDeviceAdd(FormView):
 @method_decorator(login_required, name='dispatch')
 @method_decorator(otp_required(if_configured=True), name='dispatch')
 class StaticDeviceDelete(DeleteView):
-    template_name = 'otp_ftl/staticdevice_confirm_delete.html'
+    template_name = 'otp_ftl/device_confirm_delete.html'
     model = StaticDevice
     success_url = reverse_lazy("otp_list")
