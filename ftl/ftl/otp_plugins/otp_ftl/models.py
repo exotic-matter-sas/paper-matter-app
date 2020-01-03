@@ -10,7 +10,7 @@ from django.db import models
 from django_otp.models import Device
 from fido2.client import ClientData
 from fido2.ctap2 import AuthenticatorData, AttestedCredentialData
-from fido2.server import RelyingParty, Fido2Server
+from fido2.server import PublicKeyCredentialRpEntity, Fido2Server
 
 
 class Fido2State(models.Model):
@@ -37,7 +37,7 @@ class Fido2Device(Device):
         credentials_query = Fido2Device.objects.filter(user=self.user)
         credentials = [AttestedCredentialData(cbor2.loads(c.authenticator_data)) for c in credentials_query]
 
-        rp = RelyingParty(state.domain, settings.FIDO2_RP_NAME)
+        rp = PublicKeyCredentialRpEntity(state.domain, settings.FIDO2_RP_NAME)
         fido2 = Fido2Server(rp)
 
         fido2.authenticate_complete(

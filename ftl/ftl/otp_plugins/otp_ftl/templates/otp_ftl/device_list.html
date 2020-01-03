@@ -6,7 +6,7 @@
     {% if static_device or totp_device or fido2_device %}
         <h3 class="text-primary">{% trans 'Two factor authentication' %}</h3>
 
-        <div class="m-3">
+        <div class="my-3">
             <h4 class="">{% trans 'Emergency codes' %}</h4>
             <div>
                 {% for static in static_device %}
@@ -33,7 +33,7 @@
                 {% trans 'Add a new set of emergency code' %}</a>
         </div>
 
-        <div class="m-3">
+        <div class="my-3">
             <h4>{% trans 'Apps authenticator' %}</h4>
             <div>
                 {% for totp in totp_device %}
@@ -59,7 +59,7 @@
                 {% trans 'Add a new app authenticator' %}</a>
         </div>
 
-        <div class="m-3">
+        <div class="my-3">
             <h4>{% trans 'Security keys (U2F/FIDO2)' %}</h4>
             <div>
                 {% for fido in fido2_device %}

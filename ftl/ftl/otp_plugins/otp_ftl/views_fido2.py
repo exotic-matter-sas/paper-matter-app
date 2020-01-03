@@ -14,7 +14,7 @@ from django.views.generic import DeleteView, TemplateView, UpdateView
 from django_otp.decorators import otp_required
 from fido2.client import ClientData
 from fido2.ctap2 import AttestationObject, AttestedCredentialData
-from fido2.server import RelyingParty, Fido2Server
+from fido2.server import PublicKeyCredentialRpEntity, Fido2Server
 
 from ftl.otp_plugins.otp_ftl.forms import Fido2DeviceCheckForm
 from ftl.otp_plugins.otp_ftl.models import Fido2Device, Fido2State
@@ -65,7 +65,7 @@ class Fido2DeviceDelete(DeleteView):
 @login_required
 @otp_required(if_configured=True)
 def fido2_api_register_begin(request):
-    rp = RelyingParty(get_domain(request), settings.FIDO2_RP_NAME)
+    rp = PublicKeyCredentialRpEntity(get_domain(request), settings.FIDO2_RP_NAME)
     fido2 = Fido2Server(rp)
 
     registration_data, state = fido2.register_begin({
@@ -88,7 +88,7 @@ def fido2_api_register_finish(request):
     client_data = ClientData(data["clientDataJSON"])
     att_obj = AttestationObject(data["attestationObject"])
 
-    rp = RelyingParty(get_domain(request), settings.FIDO2_RP_NAME)
+    rp = PublicKeyCredentialRpEntity(get_domain(request), settings.FIDO2_RP_NAME)
     fido2 = Fido2Server(rp)
     auth_data = fido2.register_complete(request.session[FIDO2_REGISTER_STATE], client_data, att_obj)
 
@@ -108,7 +108,7 @@ def fido2_api_login_begin(request):
     credentials_query = Fido2Device.objects.filter(user=user)
     credentials = [AttestedCredentialData(cbor2.loads(c.authenticator_data)) for c in credentials_query]
 
-    rp = RelyingParty(get_domain(request), settings.FIDO2_RP_NAME)
+    rp = PublicKeyCredentialRpEntity(get_domain(request), settings.FIDO2_RP_NAME)
     fido2 = Fido2Server(rp)
     auth_data, state = fido2.authenticate_begin(credentials)
 

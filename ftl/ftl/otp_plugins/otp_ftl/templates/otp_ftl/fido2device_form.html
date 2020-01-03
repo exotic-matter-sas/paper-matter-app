@@ -24,7 +24,8 @@
         {% endblocktrans %}
     </p>
 
-    <input id="fido2-next" class="btn btn-primary" type="submit" value="Next">
+    <input id="fido2-next" class="btn btn-primary" type="submit" value="{% trans 'Next' %}">
+    <p class="text-right"><a href="{% url 'otp_list' %}">{% trans 'Return to 2FA list' %}</a></p>
 {% endblock %}
 
 {% block footer %}
