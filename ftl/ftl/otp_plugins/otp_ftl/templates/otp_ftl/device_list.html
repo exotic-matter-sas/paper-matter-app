@@ -37,41 +37,42 @@
             <h4>{% trans 'Apps authenticator' %}</h4>
             <div>
                 {% for totp in totp_device %}
-                    <div class="border bg-white p-3 my-1">
-                        <a href="{% url 'otp_totp_update' totp.id %}"
-                           title="{{ totp.persistent_id }}">{{ totp.name }}</a>
+                    <div class="border bg-white p-3 my-1 d-flex flex-row justify-content-between align-items-center">
+                        <div class="mx-2">
+                            <a href="{% url 'otp_totp_update' totp.id %}"
+                               title="{{ totp.persistent_id }}">{{ totp.name }}</a>
 
-                        {% if not totp.confirmed %}
-                            <a href="{% url 'otp_totp_detail' totp.id %}"
-                               title="{{ totp.persistent_id }}" class="badge badge-warning">Not confirmed</a>
-                        {% endif %}
-
-                        <div class="my-2">
-                            <p class="text-right"><a href="{% url "otp_totp_delete"  totp.id %}"
-                                                     class="btn btn-danger btn-sm">
-                                {% trans 'Delete' %}</a></p>
+                            {% if not totp.confirmed %}
+                                <a href="{% url 'otp_totp_detail' totp.id %}"
+                                   title="{{ totp.persistent_id }}"
+                                   class="badge badge-warning">{% trans 'Not confirmed' %}</a>
+                            {% endif %}
+                        </div>
+                        <div class="mx-2">
+                            <a href="{% url "otp_totp_delete"  totp.id %}" class="btn btn-danger btn-sm">
+                                {% trans 'Delete' %}</a>
                         </div>
 
                     </div>
                 {% endfor %}
             </div>
             <a href="{% url "otp_totp_add" %}" class="btn btn-secondary btn-sm my-3">
-                {% trans 'Add a new app authenticator' %}</a>
+                {% trans 'Add a new authenticator app' %}</a>
         </div>
 
         <div class="my-3">
             <h4>{% trans 'Security keys (U2F/FIDO2)' %}</h4>
             <div>
                 {% for fido in fido2_device %}
-                    <div class="border bg-white p-3 my-1">
-                        <a href="{% url 'otp_fido2_update' fido.id %}"
-                           title="{{ fido.persistent_id }}">{{ fido.name }}</a>
+                    <div class="border bg-white p-3 my-1 d-flex flex-row justify-content-between align-items-center">
+                        <div class="mx-2">
+                            <a href="{% url 'otp_fido2_update' fido.id %}"
+                               title="{{ fido.persistent_id }}">{{ fido.name }}</a>
 
-                        <div class="my-2">
-                            <p class="text-right">
-                                <a href="{% url "otp_fido2_delete" fido.id %}" class="btn btn-danger btn-sm">
-                                    {% trans 'Delete' %}</a>
-                            </p>
+                        </div>
+                        <div class="mx-2">
+                            <a href="{% url "otp_fido2_delete" fido.id %}" class="btn btn-danger btn-sm">
+                                {% trans 'Delete' %}</a>
                         </div>
                     </div>
                 {% endfor %}

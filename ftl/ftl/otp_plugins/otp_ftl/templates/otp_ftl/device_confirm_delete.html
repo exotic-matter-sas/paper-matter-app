@@ -11,6 +11,7 @@
                 {% endblocktrans %}
             </h4>
             <p class="text-center mt-4"><input type="submit" class="btn btn-danger" value="{% trans 'Delete' %}"></p>
+            <p class="text-right"><a href="{% url 'otp_list' %}">{% trans 'Return to 2FA list' %}</a></p>
         </form>
     </div>
 {% endblock %}

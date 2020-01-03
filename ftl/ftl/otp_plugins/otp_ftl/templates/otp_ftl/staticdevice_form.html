@@ -20,8 +20,10 @@
         {% csrf_token %}
         <div class="form-group">
             <label for="id_name">Name</label>
-            <input type="text" name="name" value="Emergency codes" required="required" id="id_name" class="form-control">
-            <small class="form-text text-muted">Indicate a name to recognize your two factor device</small>
+            <input type="text" name="name" value="{% trans 'Emergency codes' %}"
+                   placeholder="{% trans 'Emergency codes' %}"
+                   required="required" id="id_name" class="form-control">
+            <small class="form-text text-muted">{% trans 'Name to recognize your two factor device' %}</small>
         </div>
         <input class="btn btn-primary" type="submit" value="Generate code">
     </form>

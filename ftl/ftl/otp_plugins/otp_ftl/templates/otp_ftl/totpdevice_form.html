@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block account %}
-    <h3 class="text-primary">{% trans "Add an app authenticator" %}</h3>
+    <h3 class="text-primary">{% trans "Add an authenticator app" %}</h3>
     <p>
         {% blocktrans %}
             Use an app on your phone to generate validation code. In the app, scan the QR code that will be shown next
@@ -24,9 +24,10 @@
     <form method="post">
         {% csrf_token %}
         <div class="form-group">
-            <label for="id_name">Name</label>
-            <input type="text" name="name" value="App authenticator" required="required" id="id_name" class="form-control">
-            <small class="form-text text-muted">Indicate a name to recognize your two factor device</small>
+            <label for="id_name">{% trans 'Name' %}</label>
+            <input type="text" name="name" value="Authenticator app" placeholder="{% trans 'Authenticator app' %}"
+                   required="required" id="id_name" class="form-control">
+            <small class="form-text text-muted">{% trans 'Name to recognize your two factor device' %}</small>
         </div>
         <input class="btn btn-primary" type="submit" value="{% trans "Next" %}">
     </form>
