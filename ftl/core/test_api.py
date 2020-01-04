@@ -188,11 +188,11 @@ class DocumentsTests(APITestCase):
         client_delete = self.client.delete(f'/app/api/v1/documents/{str(document_to_be_deleted.pid)}')
         self.assertEqual(client_delete.status_code, status.HTTP_204_NO_CONTENT)
 
-        with self.assertRaises(core.models.FTLDocument.DoesNotExist):
-            FTLDocument.objects.get(pid=document_to_be_deleted.pid)
+        document_marked_as_deleted = FTLDocument.objects.get(pid=document_to_be_deleted.pid)
+        self.assertTrue(document_marked_as_deleted.deleted)
 
-        # File has been deleted.
-        self.assertTrue(not os.path.exists(binary_f))
+        # File has not been deleted.
+        self.assertTrue(os.path.exists(binary_f))
 
     @patch.object(FTLDocumentProcessing, 'apply_processing')
     def test_upload_document(self, mock_apply_processing):
