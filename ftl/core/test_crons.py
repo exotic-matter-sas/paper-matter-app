@@ -8,7 +8,8 @@ from rest_framework.test import APITestCase
 import core
 from core.models import FTLDocument
 from ftests.tools import test_values as tv
-from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_document, setup_folder
+from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_document, setup_folder, \
+    setup_temporary_file
 
 
 class CronTests(APITestCase):
@@ -26,7 +27,14 @@ class CronTests(APITestCase):
                                             ftl_folder=self.first_level_folder)
 
     def test_batch_delete_document(self):
-        ftl_document = FTLDocument.objects.get(pid=self.doc_bis.pid)
+        binary_f = setup_temporary_file().name
+        ftl_document = FTLDocument.objects.create(
+            org=self.org,
+            ftl_user=self.user,
+            title="Test document to be deleted",
+            binary=binary_f,  # We don't want to delete the test pdf file
+        )
+
         self.assertIsNotNone(ftl_document.pid)
 
         ftl_document.deleted = True
@@ -38,5 +46,4 @@ class CronTests(APITestCase):
         with self.assertRaises(core.models.FTLDocument.DoesNotExist):
             FTLDocument.objects.get(pid=ftl_document.pid)
 
-        count = FTLDocument.objects.count()
-        self.assertTrue(count == 2)
+        self.assertEqual(FTLDocument.objects.count(), 3)
