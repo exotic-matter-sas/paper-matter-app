@@ -38,13 +38,13 @@ ADD docker/settings_local.py /app/ftl/settings_local.py
 ADD docker/supervisord.conf /etc/supervisor/supervisord.conf
 
 ADD docker/cron-env-init.sh /tmp/cron-env-init.sh
-RUN chmod 0644 /tmp/cron-env-init.sh
+RUN chmod 0700 /tmp/cron-env-init.sh
 
 ADD docker/crontab /etc/cron.d/ftl
-RUN chmod 0644 /etc/cron.d/ftl
+RUN chmod 0700 /etc/cron.d/ftl
 
 ADD docker/batch-delete-documents.sh /etc/cron.hourly/batch-delete-documents
-RUN chmod 0644 /etc/cron.hourly/batch-delete-documents
+RUN chmod 0700 /etc/cron.hourly/batch-delete-documents
 
 RUN python3 -m pip install -r /app/requirements.txt --no-cache-dir && \
  python3 -m pip install -r /app/requirements_deploy.txt --no-cache-dir
