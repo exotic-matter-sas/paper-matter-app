@@ -32,7 +32,7 @@ class CronTests(APITestCase):
         ftl_document.deleted = True
         ftl_document.save()
 
-        client_get = self.client.get('/crons/not-secure/batch-delete-documents')
+        client_get = self.client.get('/crons/not-secure/batch-delete-documents', HTTP_X_APPENGINE_CRON="true")
         self.assertEqual(client_get.status_code, status.HTTP_204_NO_CONTENT)
 
         with self.assertRaises(core.models.FTLDocument.DoesNotExist):
