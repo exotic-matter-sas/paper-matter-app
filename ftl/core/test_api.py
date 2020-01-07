@@ -221,6 +221,30 @@ class DocumentsTests(APITestCase):
         self.assertEqual(creation_date, objects_get.created.isoformat())
 
     @patch.object(FTLDocumentProcessing, 'apply_processing')
+    def test_upload_doc_with_title(self, mock_apply_processing):
+        title = 'My document 123'
+        with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'test.pdf'), 'rb') as f:
+            data = {'title': title}
+            body_post = {'json': json.dumps(data), 'file': f}
+            response = self.client.post('/app/api/v1/documents/upload', body_post)
+
+        upload_doc = response.data
+        objects_get = FTLDocument.objects.get(pid=upload_doc['pid'])
+        self.assertEqual(title, objects_get.title)
+
+    @patch.object(FTLDocumentProcessing, 'apply_processing')
+    def test_upload_doc_with_note(self, mock_apply_processing):
+        note = 'My document note 123'
+        with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'test.pdf'), 'rb') as f:
+            data = {'note': note}
+            body_post = {'json': json.dumps(data), 'file': f}
+            response = self.client.post('/app/api/v1/documents/upload', body_post)
+
+        upload_doc = response.data
+        objects_get = FTLDocument.objects.get(pid=upload_doc['pid'])
+        self.assertEqual(note, objects_get.note)
+
+    @patch.object(FTLDocumentProcessing, 'apply_processing')
     def test_upload_document_wrong_format(self, mock_apply_processing):
         with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'wrong-format.txt'), mode='rb') as fp:
             client_post = self.client.post('/app/api/v1/documents/upload', {'json': '{}', 'file': fp})
