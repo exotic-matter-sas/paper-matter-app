@@ -2,6 +2,7 @@
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
 
 import json
+import urllib
 from base64 import b64decode
 
 import filetype
@@ -16,6 +17,7 @@ from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFou
 from django.shortcuts import render, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.utils.http import http_date
+from django.utils.text import slugify
 from django.views import View
 from mptt.exceptions import InvalidMove
 from rest_framework import generics, views, serializers, filters
@@ -64,12 +66,21 @@ class DownloadView(views.APIView):
     def get(self, request, *args, **kwargs):
         doc = get_object_or_404(self.get_queryset(), pid=kwargs['uuid'])
 
+        # Slugify only the filename, not the file extension
+        if doc.title.lower().endswith('.pdf'):
+            title = f'{slugify(doc.title[:-4])[:128]}.pdf'
+        else:
+            title = f'{slugify(doc.title)[:128]}.pdf'
+
         if settings.DEFAULT_FILE_STORAGE in [FTLStorages.GCS, FTLStorages.AWS_S3]:
-            return HttpResponseRedirect(doc.binary.url)
+            urlencode = urllib.parse.urlencode(
+                {'response-content-disposition': f'attachment; filename="{title}"'})
+
+            return HttpResponseRedirect(f'{doc.binary.url}&{urlencode}')
         else:
             response = HttpResponse(doc.binary, 'application/octet')
             response['Last-Modified'] = http_date(doc.edited.timestamp())
-            response['Content-Disposition'] = f'attachment; filename="{doc.binary.name}"'
+            response['Content-Disposition'] = f'attachment; filename="{title}"'
             return response
 
 
