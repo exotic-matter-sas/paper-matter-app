@@ -28,6 +28,8 @@ class FTLDocumentSerializer(serializers.ModelSerializer):
     thumbnail_binary = ThumbnailField(write_only=True)
     thumbnail_available = serializers.SerializerMethodField()
     thumbnail_url = serializers.SerializerMethodField()
+    is_processed = serializers.SerializerMethodField()
+    path = serializers.SerializerMethodField()
 
     def get_thumbnail_available(self, obj):
         return bool(obj.thumbnail_binary)
@@ -41,11 +43,20 @@ class FTLDocumentSerializer(serializers.ModelSerializer):
         else:
             return None
 
+    def get_is_processed(self, obj):
+        return bool(obj.tsvector)
+
+    def get_path(self, obj):
+        if obj.ftl_folder:
+            return map(lambda e: {'id': e.id, 'name': e.name}, obj.ftl_folder.get_ancestors(include_self=True))
+        else:
+            return []
+
     class Meta:
         model = FTLDocument
         fields = ('pid', 'title', 'note', 'created', 'edited', 'ftl_folder', 'thumbnail_binary', 'thumbnail_available',
-                  'thumbnail_url')
-        read_only_fields = ('pid', 'created', 'edited', 'thumbnail_available', 'thumbnail_url')
+                  'thumbnail_url', 'is_processed', 'path')
+        read_only_fields = ('pid', 'created', 'edited', 'thumbnail_available', 'thumbnail_url', 'is_processed', 'path')
 
 
 class FTLFolderSerializer(serializers.ModelSerializer):

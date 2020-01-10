@@ -204,6 +204,8 @@ Rename or move an existing folder.
     - **created**: creation date following ISO 8601 format, eg. `2019-11-18T00:42:42.242424Z` (if omitted or `null` current date will be set)
     - **ftl_folder**: parent folder id (if omitted or `null`, folder is created inside root folder)
     - **ignore_thumbnail_generation_error**: if set to `false` and sent **thumbnail** is corrupt or not properly formatted upload request will fail (if omitted or `true`, error will be ignored and document will be uploaded without thumbnail, it's the default behavior as some browsers may not support thumbnail generation using canvas)
+    - **title**: document title, string (if omitted or `null`, pdf file name will be used as document title)
+    - **note**: document note, string (if omitted or `null`, no note will be set)
 - _**thumbnail** (optional): thumbnail to display in the documents list, thumbnail should be a PNG image encoded as data uri `data:image/png;base64,...` (if omitted thumbnail will be generated on next document display from web interface, recommended format is half the size of the original document)_
 ```
 -----------------------------197247801933990060269089656
@@ -231,13 +233,24 @@ Content-Disposition: form-data; name="json"
 
 ```json
 {
-  "pid": "f04be12a-b08d-4857-ade0-20c778a257b3",
-  "title": "file.pdf",
-  "note": "",
-  "created": "2019-08-19T13:14:15.397396Z",
-  "edited": "2019-08-19T13:14:15.408445Z",
-  "ftl_folder": null,
-  "thumbnail_available": false
+  "pid":"f04be12a-b08d-4857-ade0-20c778a257b3",
+  "title":"file.pdf",
+  "note":"",
+  "created":"2019-08-19T13:14:15.397396Z",
+  "edited":"2019-08-19T13:14:15.408445Z",
+  "ftl_folder":12,
+  "thumbnail_available":false,
+  "is_processed":true,
+  "path":[
+    {
+      "id":34,
+      "name":"a"
+    },
+    {
+      "id":35,
+      "name":"b"
+    }
+  ]
 }
 ```
 
@@ -289,8 +302,19 @@ OR
       "note": "",
       "created": "2019-08-19T15:03:03.504330Z",
       "edited": "2019-08-19T15:03:06.844287Z",
-      "ftl_folder": null,
-      "thumbnail_available": false
+      "ftl_folder": 12,
+      "thumbnail_available": false,
+      "is_processed": true,
+      "path":[
+        {
+          "id":34,
+          "name":"a"
+        },
+        {
+          "id":35,
+          "name":"b"
+        }
+      ]
     },
     {
       "pid": "6d3a6286-7c1c-45f6-86c9-6452fa2928fa",
@@ -298,8 +322,19 @@ OR
       "note": "",
       "created": "2019-08-19T14:24:27.125753Z",
       "edited": "2019-08-19T14:24:30.431466Z",
-      "ftl_folder": null,
-      "thumbnail_available": false
+      "ftl_folder": 12,
+      "thumbnail_available": false,
+      "is_processed": true,
+      "path":[
+        {
+          "id":34,
+          "name":"a"
+        },
+        {
+          "id":35,
+          "name":"b"
+        }
+      ]
     }
   ]
 }
@@ -327,8 +362,19 @@ Rename, annotate, move a document (or set its thumbnail).
   "note": "",
   "created": "2019-08-19T15:03:03.504330Z",
   "edited": "2019-08-19T16:10:00.771661Z",
-  "ftl_folder": null,
-  "thumbnail_available": false
+  "ftl_folder": 12,
+  "thumbnail_available": false,
+  "is_processed": true,
+  "path":[
+    {
+      "id":34,
+      "name":"a"
+    },
+    {
+      "id":35,
+      "name":"b"
+    }
+  ]
 }
 ```
 

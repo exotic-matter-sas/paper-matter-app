@@ -39,7 +39,7 @@
     watch: {
       doc: function (newVal, oldVal) {
         if (newVal === undefined) {
-          this.docModal = false;
+          this.docPid = null;
         } else {
           if (newVal !== oldVal) {
             this.openDocument(newVal);
@@ -61,7 +61,9 @@
         this.docPid = pid;
       },
 
-      closeDocument: function () {
+      documentClosed: function (event) {
+        // always force document update in list when document panel is closed (useful for doc renamed or just processed)
+        this.documentUpdated(event);
         this.docPid = null;
         this.$router.push({path: this.$route.path});
       },

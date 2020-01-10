@@ -11,18 +11,21 @@
            @hidden="closeDocument">
     <template slot="modal-header">
       <b-container>
-        <b-row align-v="center">
-          <b-col>
-            <h5 class="d-inline modal-title">{{ currentOpenDoc.title }}</h5>
-            <b-button id="rename-document" v-b-modal="'modal-rename-document'" variant="link">
-              <font-awesome-icon icon="edit" :title="$_('Rename document')"/>
-            </b-button>
-          </b-col>
-          <b-col>
-            <button @click.prevent="$bvModal.hide('document-viewer')" type="button" aria-label="Close" class="close">×
-            </button>
-          </b-col>
-        </b-row>
+        <h5 class="modal-title">
+          <b-link id="document-parent-folder" class="float-left" :to="parent_folder.to" :title="path.map(v=>v.text).join('/')">
+            <font-awesome-icon icon="folder"/><font-awesome-icon icon="folder-open" class="d-none"/> {{ parent_folder.text }}
+          </b-link>
+          <div id="document-title-separator" class="float-left">/</div>
+          <div id="document-title" class="float-left" :title="currentOpenDoc.title">
+            {{ currentOpenDoc.title }}
+          </div>
+          <b-button id="rename-document" class="float-left" v-b-modal="'modal-rename-document'" variant="link">
+            <font-awesome-icon icon="edit" :title="$_('Rename document')"/>
+          </b-button>
+        </h5>
+
+        <button @click.prevent="$bvModal.hide('document-viewer')" type="button" aria-label="Close" class="close">×
+        </button>
       </b-container>
     </template>
     <b-container class="h-100" fluid>
@@ -30,8 +33,7 @@
         <b-col md="8">
           <div v-if="!isIOS" class="h-100 embed-responsive doc-pdf" id="pdfviewer">
             <iframe v-if="currentOpenDoc.pid" class="embed-responsive-item"
-                    :src="`/assets/pdfjs/web/viewer.html?file=/app/uploads/` + currentOpenDoc.pid
-                    + `#pagemode=none&search=` + search">
+                    :src="viewerUrl">
             </iframe>
           </div>
           <div v-else>
@@ -42,7 +44,7 @@
         </b-col>
         <b-col>
           <b-row>
-            <b-col class="my-3">
+            <b-col class="mb-1">
               <b-button class="mx-1" variant="primary" :href="`/app/uploads/` + currentOpenDoc.pid + `/doc.pdf`"
                         target="_blank">
                 {{ $_('Open PDF')}}
@@ -68,7 +70,7 @@
       v-if="currentOpenDoc"
       id="modal-move-document"
       :docs="[currentOpenDoc]"
-      @event-document-moved="$emit('event-document-moved', $event)"/>
+      @event-document-moved="documentMoved"/>
 
     <FTLRenameDocument
       v-if="currentOpenDoc.pid"
@@ -108,13 +110,14 @@
       },
       search: {
         type: String,
-        required: false
+        required: false,
+        default: ""
       }
     },
 
     data() {
       return {
-        currentOpenDoc: {},
+        currentOpenDoc: {path: []},
         publicPath: process.env.BASE_URL,
       }
     },
@@ -126,7 +129,25 @@
     computed: {
       isIOS: function () {
         return (/iphone|ipad|ipod/i.test(window.navigator.userAgent.toLowerCase()));
-      }
+      },
+      viewerUrl: function () {
+        return `/assets/pdfjs/web/viewer.html?file=/app/uploads/` + this.currentOpenDoc.pid + `#pagemode=none&search=`
+          + this.search
+      },
+      path: function () {
+        let _path = this.currentOpenDoc.path.map((v) => {
+          return {text: v.name, to: {path: '/home/' + v.name + '/' + v.id}}
+        });
+
+        return [{text: this.$_('Root'), to: {name: 'home'}}, ..._path];
+      },
+      parent_folder: function () {
+        if (this.path.length > 0) {
+          return this.path.slice(-1)[0];
+        } else {
+          return {text: this.$_('Root'), to: {name: 'home'}};
+        }
+      },
     },
 
     methods: {
@@ -156,6 +177,11 @@
         this.$emit('event-document-renamed', event);
       },
 
+      documentMoved: function (event) {
+        this.currentOpenDoc = event.doc;
+        this.$emit('event-document-moved', event);
+      },
+
       documentNoteUpdated: function (event) {
         this.currentOpenDoc = event.doc;
       },
@@ -166,11 +192,11 @@
       },
 
       closeDocument: function () {
-        this.currentOpenDoc = {};
         this.$bvModal.hide('document-viewer');
-        this.$emit('event-document-panel-closed');
+        this.$emit('event-document-panel-closed', {doc: this.currentOpenDoc});
         this.$router.push({path: this.$route.path}, () => {
         });
+        this.currentOpenDoc = {};
       }
     }
   }
@@ -191,8 +217,52 @@
       margin: 0;
     }
 
-    .modal-title {
-      vertical-align: middle;
+    .fa-folder{
+      width:1.125em;
+    }
+
+    #document-parent-folder, #document-title-separator, #document-title, #rename-document {
+      display: block;
+      padding: 1rem;
+      margin: -1rem -1rem -1rem auto;
+    }
+
+    #document-parent-folder {
+      max-width: 25%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      &:hover {
+        .fa-folder {
+          display: none !important;
+        }
+
+        .fa-folder-open {
+          display: inline-block !important;
+        }
+      }
+    }
+
+    #document-title-separator{
+      padding: 1rem 0.5rem;
+    }
+
+    #document-title {
+      max-width: 65%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    #rename-document{
+      font-size: 1.25rem;
+      line-height: 1.5;
+      border: 0;
+      padding-left: 0.5rem;
+    }
+
+    .close{
+      line-height: 1.25;
     }
 
     .modal-content {

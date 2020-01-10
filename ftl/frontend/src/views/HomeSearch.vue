@@ -101,8 +101,7 @@
 
       <!-- Pdf viewer popup -->
       <FTLDocumentPanel v-if="docPid" :pid="docPid" :search="currentSearch"
-                        @event-document-panel-closed="closeDocument"
-                        @event-document-renamed="documentUpdated"
+                        @event-document-panel-closed="documentClosed"
                         @event-document-moved="documentDeleted"
                         @event-document-deleted="documentDeleted"/>
 

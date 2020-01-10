@@ -193,10 +193,13 @@ class FileUploadView(views.APIView):
             ftl_doc.ftl_user = self.request.user
             ftl_doc.binary = file_obj
             ftl_doc.org = self.request.user.org
-            ftl_doc.title = file_obj.name
+            ftl_doc.title = payload['title'] if 'title' in payload and payload['title'] else file_obj.name
 
             if 'created' in payload and payload['created']:
                 ftl_doc.created = payload['created']
+
+            if 'note' in payload and payload['note']:
+                ftl_doc.note = payload['note']
 
             if 'thumbnail' in request.POST and request.POST['thumbnail']:
                 try:

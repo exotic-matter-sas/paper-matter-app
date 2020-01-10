@@ -135,7 +135,6 @@ describe('HomeBase watchers call proper methods', () => {
     wrapper.setData({doc});
 
     // then
-    expect(wrapper.vm.docModal).toBe(false);
     expect(mockedOpenDocument).not.toHaveBeenCalled();
   });
 });
@@ -164,9 +163,11 @@ describe('HomeBase methods call proper methods', () => {
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
 
-  it('closeDocument set docPid to null and call closeDocument', () => {
+  it('documentClosed set docPid to null', () => {
+    wrapper.setData({docPid:tv.DOCUMENT_PROPS.pid});
+
     // when
-    wrapper.vm.closeDocument();
+    wrapper.vm.documentClosed({doc: tv.DOCUMENT_PROPS});
 
     // then
     expect(wrapper.vm.docPid).toBe(null);
