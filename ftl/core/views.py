@@ -1,6 +1,6 @@
-#  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
-
+import hashlib
 import json
 from base64 import b64decode
 
@@ -192,6 +192,13 @@ class FileUploadView(views.APIView):
             ftl_doc.ftl_folder = ftl_folder
             ftl_doc.ftl_user = self.request.user
             ftl_doc.binary = file_obj
+            ftl_doc.size = file_obj.size
+
+            md5 = hashlib.md5()
+            for data in ftl_doc.binary.chunks():
+                md5.update(data)
+            ftl_doc.md5 = md5.hexdigest()
+
             ftl_doc.org = self.request.user.org
             ftl_doc.title = payload['title'] if 'title' in payload and payload['title'] else file_obj.name
 
