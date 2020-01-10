@@ -12,12 +12,6 @@
         </b-col>
       </b-row>
 
-      <b-row v-if="count > 0" class="my-3">
-        <b-col>
-          <p class="text-center">{{ this.$_('%s results found', [count])}}</p>
-        </b-col>
-      </b-row>
-
       <b-row v-show="!selectedDocumentsHome.length" class="my-3" id="folders-list">
         <b-col>
           <b-button id="refresh-documents" :disabled="docsLoading" variant="primary" @click="updateDocuments">
@@ -77,6 +71,12 @@
         </b-col>
       </b-row>
 
+      <b-row class="my-3" id="documents-count">
+        <b-col>
+          <small v-if="docs.length > 0" class="text-muted">{{ this.$_('%s documents found', [docs.length]) }}</small>
+        </b-col>
+      </b-row>
+
       <b-row class="my-3" id="documents-list">
         <b-col v-if="docsLoading">
           <b-spinner class="mx-auto loader" id="documents-list-loader"
@@ -94,7 +94,7 @@
         <b-col>
           <b-button id="more-documents" block variant="secondary" @click.prevent="loadMoreDocuments">
             <b-spinner class="loader" :class="{'d-none': !moreDocsLoading}" small></b-spinner>
-            <span :class="{'d-none': moreDocsLoading}">{{ this.$_('Show more results (%s remaining)', [count - docs.length]) }}</span>
+            <span :class="{'d-none': moreDocsLoading}">{{ this.$_('Show more documents (%s remaining)', [count - docs.length]) }}</span>
           </b-button>
         </b-col>
       </b-row>

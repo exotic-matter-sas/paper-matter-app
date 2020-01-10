@@ -83,6 +83,12 @@
         </b-col>
       </b-row>
 
+      <b-row class="mb-2" id="documents-count">
+        <b-col>
+          <small v-if="docs.length > 0" class="text-muted">{{ this.$_('%s documents in this folder', [docs.length]) }}</small>
+        </b-col>
+      </b-row>
+
       <b-row class="mt-2 mb-3" id="documents-list">
         <b-col v-if="docsLoading">
           <b-spinner class="mx-auto loader" id="documents-list-loader" label="Loading..."></b-spinner>
@@ -100,7 +106,7 @@
           <b-button id="more-documents" block variant="secondary" @click.prevent="loadMoreDocuments">
             <b-spinner class="loader" :class="{'d-none': !moreDocsLoading}" small></b-spinner>
             <span :class="{'d-none': moreDocsLoading}">
-              {{ this.$_('Show more documents (%s left from %s)', [count - docs.length, count]) }}
+              {{ this.$_('Show more documents (%s remaining)', [count - docs.length, count]) }}
             </span>
           </b-button>
         </b-col>
