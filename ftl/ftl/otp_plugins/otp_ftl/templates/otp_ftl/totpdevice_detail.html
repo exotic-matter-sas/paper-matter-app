@@ -22,10 +22,11 @@
             {% csrf_token %}
 
             <div class="form-group">
-                <label for="id_otp_token">Code</label>
+                <label for="id_otp_token">{{ form.otp_token.label }}</label>
                 <input type="text" name="otp_token" value="" placeholder="XXX XXX" required="required" id="id_otp_token"
-                       class="form-control">
-                <small class="form-text text-muted">{% trans 'Code shown in your auth app' %}</small>
+                       class="form-control{% if form.errors %} is-invalid{% endif %}" inputmode="numeric"
+                       pattern="[0-9]*" autocomplete="one-time-code">
+                <small class="form-text text-muted">{{ form.otp_token.help_text }}</small>
             </div>
 
             <input type="submit" class="btn btn-primary" value="{% trans "Validate" %}">

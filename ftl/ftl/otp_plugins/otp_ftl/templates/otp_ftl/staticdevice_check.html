@@ -1,6 +1,7 @@
 {% extends "ftl/main_with_aside.html" %}
 {% load i18n %}
 {% load static %}
+{% load add_attr %}
 
 {% block title %}{% trans "Two-step Verification" %}{% endblock %}
 
@@ -14,7 +15,19 @@
     {% if form.otp_device.field.choices %}
         <form method="post" id="user-form">
             {% csrf_token %}
-            {{ form.as_p }}
+
+            <div class="form-group">
+                <label for="id_otp_device">{{ form.otp_device.label }}</label>
+                {{ form.otp_device|add_attr:"class:form-control" }}
+                <small class="form-text text-muted">{{ form.otp_device.help_text }}</small>
+            </div>
+
+            <div class="form-group">
+                <label for="id_otp_token">{{ form.otp_token.label }}</label>
+                <input type="text" name="otp_token" value="" required="required" id="id_otp_token"
+                       class="form-control{% if form.errors %} is-invalid{% endif %}" autocomplete="no">
+                <small class="form-text text-muted">{{ form.otp_token.help_text }}</small>
+            </div>
 
             <input class="btn btn-lg btn-primary btn-block" type="submit" value="{% trans "Verify" %}">
         </form>
