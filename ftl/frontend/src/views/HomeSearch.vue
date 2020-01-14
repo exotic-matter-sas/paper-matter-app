@@ -23,8 +23,8 @@
             <template slot="button-content">
               <font-awesome-icon icon="sort"/>
               {{ $t('Sort') }}
-              <span v-if="sort === 'az'">(a-z)</span>
-              <span v-else-if="sort === 'za'">(z-a)</span>
+              <span v-if="sort === 'az'">({{ $t('A-Z') }})</span>
+              <span v-else-if="sort === 'za'">({{ $t('Z-A') }})</span>
               <span v-else-if="sort === 'recent'">({{ $t('Recent first') }})</span>
               <span v-else-if="sort === 'older'">({{ $t('Older first') }})</span>
               <span v-else-if="sort === 'relevance'">({{ $t('Relevance') }})</span>

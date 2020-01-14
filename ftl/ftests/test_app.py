@@ -263,26 +263,26 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
 
         # Documents are sort by recent first by default
         recent_first_order = list(reversed(document_title_to_create))
-        self.assertIn('recent', self.get_elem_text(self.sort_dropdown_button))
+        self.assertIn('Recent first', self.get_elem_text(self.sort_dropdown_button))
         self.assertEqual(self.get_elems_text(self.documents_titles), recent_first_order[:10])
 
         # User change sort to older
         self.sort_documents_list('older')
 
-        self.assertIn('older', self.get_elem_text(self.sort_dropdown_button))
+        self.assertIn('Older first', self.get_elem_text(self.sort_dropdown_button))
         self.assertEqual(self.get_elems_text(self.documents_titles), list(reversed(recent_first_order))[:10])
 
         # User change sort to a-z
         self.sort_documents_list('az')
 
         az_order = (['1'] + list(ascii_lowercase))
-        self.assertIn('a-z', self.get_elem_text(self.sort_dropdown_button))
+        self.assertIn('A-Z', self.get_elem_text(self.sort_dropdown_button))
         self.assertEqual(self.get_elems_text(self.documents_titles), az_order[:10])
 
         # User change sort to z-a
         self.sort_documents_list('za')
 
-        self.assertIn('z-a', self.get_elem_text(self.sort_dropdown_button))
+        self.assertIn('Z-A', self.get_elem_text(self.sort_dropdown_button))
         self.assertEqual(self.get_elems_text(self.documents_titles), list(reversed(az_order))[:10])
 
         # User make a search
@@ -290,7 +290,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
 
         # Default sort for search is always relevance
         relevance_order = list(reversed(document_title_to_create[:5]))
-        self.assertIn('relevance', self.get_elem_text(self.sort_dropdown_button))
+        self.assertIn('Relevance', self.get_elem_text(self.sort_dropdown_button))
         self.assertEqual(self.get_elems_text(self.documents_titles), relevance_order)
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
@@ -309,37 +309,37 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         self.refresh_documents_list()
 
         # Default sort in root is recent
-        self.assertIn('recent', self.get_elem_text(self.sort_dropdown_button))
+        self.assertIn('Recent', self.get_elem_text(self.sort_dropdown_button))
 
         # User open subfolder
         self.get_elem(self.folders_list_buttons).click()
 
         # Default sort is also recent
-        self.assertIn('recent', self.get_elem_text(self.sort_dropdown_button))
+        self.assertIn('Recent', self.get_elem_text(self.sort_dropdown_button))
 
         # User update sort to a-z
         self.sort_documents_list('az')
 
         # Sort properly updated
-        self.assertIn('a-z', self.get_elem_text(self.sort_dropdown_button))
+        self.assertIn('A-Z', self.get_elem_text(self.sort_dropdown_button))
 
         # User come back to root
         self.get_elem(self.home_page_link).click()
 
         # Default sort is now a-z
-        self.assertIn('a-z', self.get_elem_text(self.sort_dropdown_button))
+        self.assertIn('A-Z', self.get_elem_text(self.sort_dropdown_button))
 
         # User make a search
         self.search_documents('note')
 
         # Default sort for search is always relevance
-        self.assertIn('relevance', self.get_elem_text(self.sort_dropdown_button))
+        self.assertIn('Relevance', self.get_elem_text(self.sort_dropdown_button))
 
         # User update sort to z-a
         self.sort_documents_list('za')
 
         # Sort properly updated
-        self.assertIn('z-a', self.get_elem_text(self.sort_dropdown_button))
+        self.assertIn('Z-A', self.get_elem_text(self.sort_dropdown_button))
 
         # User display the page to manage folder
         self.get_elem(self.manage_folder_page_link).click()
@@ -348,14 +348,14 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         self.get_elem(self.home_page_link).click()
 
         # Default sort is still a-z
-        self.assertIn('a-z', self.get_elem_text(self.sort_dropdown_button),
+        self.assertIn('A-Z', self.get_elem_text(self.sort_dropdown_button),
                       'user custom sort should have been saved')
 
         # User make an F5
         self.visit(HomePage.url)
 
         # Default sort is back to recent first
-        self.assertIn('recent', self.get_elem_text(self.sort_dropdown_button))
+        self.assertIn('Recent', self.get_elem_text(self.sort_dropdown_button))
 
 
 class SearchTests(LoginPage, HomePage, DocumentViewerModal):
