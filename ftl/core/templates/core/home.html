@@ -6,7 +6,6 @@
 {% block head %}
     {{ ftl_account|json_script:"ftlAccount" }}
     {{ request.LANGUAGE_CODE|json_script:"locale" }}
-    <script type="text/javascript" src="{% url 'javascript-catalog' %}"></script>
 {% endblock %}
 
 {% block body %}
