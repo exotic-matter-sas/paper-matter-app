@@ -4,6 +4,7 @@
  */
 
 import {createLocalVue, shallowMount} from '@vue/test-utils';
+import VueI18n from 'vue-i18n'
 
 import BootstrapVue from "bootstrap-vue";
 
@@ -11,12 +12,10 @@ import FTLFooter from "@/components/FTLFooter";
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue); // to avoid warning on tests execution
+localVue.use(VueI18n);
 localVue.prototype.$t = (text) => {
   return text;
 }; // i18n mock
-localVue.component('i18n', (text) => {
-  return text
-});
 
 
 describe('FTLFooter template', () => {
