@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+  - Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
   - Licensed under the BSL License. See LICENSE in the project root for license information.
   -->
 
@@ -8,19 +8,29 @@
            :ok-disabled="!newDocumentName || newDocumentName === doc.title"
            @ok="renameDocument">
     <template slot="modal-title">
-      <span>{{ this.$_('Rename document') }}</span>
+      <span>{{ $t('Rename document') }}</span>
     </template>
     <b-container fluid>
       <b-form-group
         id="fieldset-rename-document"
-        :description="this.$_('The new name of the document')"
-        :label="this.$_('The document will be renamed to %s.', [newDocumentName])"
+        :description="$t('The new name of the document')"
+        :label='$t("The document will be renamed to \"{0}\".", [newDocumentName])'
         label-for="rename-document-text" class="text-truncate">
-        <b-form-input id="rename-document-text" autofocus onfocus="this.select()" v-model="newDocumentName" trim></b-form-input>
+        <b-form-input id="rename-document-text" autofocus onfocus="this.select()" v-model="newDocumentName"
+                      trim></b-form-input>
       </b-form-group>
     </b-container>
   </b-modal>
 </template>
+
+<i18n>
+  fr:
+    Rename document: Renommer le document
+    The new name of the document: Le nouveau nom du document
+    The document will be renamed to "{0}".: Le document sera renommé « {0} ».
+    Document successfully renamed.: Le document a été renommé avec succès.
+    Could not rename document.: Le document n'a pas pu être renommé.
+</i18n>
 
 <script>
   import axios from "axios";
@@ -49,11 +59,11 @@
         axios
           .patch('/app/api/v1/documents/' + this.doc.pid, body, axiosConfig)
           .then(response => {
-            this.$emit('event-document-renamed', {doc : response.data});
-            this.mixinAlert('Document successfully renamed');
+            this.$emit('event-document-renamed', {doc: response.data});
+            this.mixinAlert(this.$t('Document successfully renamed.'));
           })
           .catch(error => {
-            this.mixinAlert('Could not rename document', true);
+            this.mixinAlert(this.$t('Could not rename document.'), true);
           })
       }
     }

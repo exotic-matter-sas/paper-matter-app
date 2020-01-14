@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+  - Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
   - Licensed under the BSL License. See LICENSE in the project root for license information.
   -->
 
@@ -16,11 +16,17 @@
         ></FTLTreeItem>
       </ul>
       <ul v-else>
-        <li class="text-muted">{{ this.$_('No other folder.') }}</li>
+        <li class="text-muted">{{ $t('No other folder.') }}</li>
       </ul>
     </b-col>
   </b-row>
 </template>
+
+<i18n>
+  fr:
+    No other folder.: Pas d'autres dossiers.
+    Unable to refresh folders list: La liste des dossiers n'a pu être rafraichie
+</i18n>
 
 <script>
   import FTLTreeItem from "@/components/FTLTreeItem";
@@ -56,7 +62,7 @@
         .then(response => {
             if (!vi.root) {
               // Add a static root
-              vi.folders.push({id: null, name: vi.$_('Root')});
+              vi.folders.push({id: null, name: vi.$t('Root')});
             }
 
             vi.folders = vi.folders
@@ -71,7 +77,7 @@
               );
           }
         )
-        .catch(error => vi.mixinAlert(vi.$_('Unable to refresh folders list'), true));
+        .catch(error => vi.mixinAlert(vi.$t('Unable to refresh folders list'), true));
     }
   }
 </script>

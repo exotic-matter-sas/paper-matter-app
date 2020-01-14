@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+ * Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
  * Licensed under the BSL License. See LICENSE in the project root for license information.
  */
 
@@ -11,6 +11,7 @@ import {library} from '@fortawesome/fontawesome-svg-core';
 import {
   faCrown,
   faEdit,
+  faExclamationCircle,
   faFileDownload,
   faFolder,
   faFolderOpen,
@@ -18,15 +19,12 @@ import {
   faHome,
   faLevelUpAlt,
   faSearch,
+  faSort,
   faSync,
   faTrash,
-  faWindowClose,
-  faSort,
-  faExclamationCircle
+  faWindowClose
 } from '@fortawesome/free-solid-svg-icons';
-import {
-  faMarkdown
-} from '@fortawesome/free-brands-svg-icons';
+import {faMarkdown} from '@fortawesome/free-brands-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
 
 import {mixinAlert} from "./vueMixins";
@@ -35,6 +33,7 @@ import moment from 'moment'
 import axios from 'axios';
 import Vuex from 'vuex'
 import storeConfig from "./store/storeConfig"
+import i18n from './i18n'
 
 Vue.config.productionTip = false;
 
@@ -43,41 +42,6 @@ library.add(faHome, faFolder, faFolderOpen, faSearch, faWindowClose, faTrash, fa
   faLevelUpAlt, faCrown, faEdit, faSort, faExclamationCircle, faMarkdown);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.use(BootstrapVue);
-
-/**
- * Translate text string using Django Javascript catalog
- * If vars is passed as an array it will make a positional interpolation
- * If vars is passed as an object it will make a named interpolation
- * @example translation only
- * // returns 'Bonjour'
- * this.$_('Hello');
- * @example translation with positional interpolation
- * // returns 'Bonjour Jon'
- * this.$_('Hello %s', ['Jon']);
- * @example translation with named interpolation
- * // returns 'Bonjour Jon Snow'
- * this.$_('Hello %(firstName)s %(lastName)s', {lastName: 'Snow', firstName: 'Jon'});
- */
-Vue.prototype.$_ = function (text, vars = null) {
-
-  let translated_text = text;
-
-  if (typeof gettext === 'function') {
-    translated_text = gettext(translated_text);
-  }
-
-  if (vars !== null) {
-    if (typeof interpolate === 'function') {
-      if (Array.isArray(vars)) {
-        translated_text = interpolate(translated_text, vars);
-      } else {
-        translated_text = interpolate(translated_text, vars, true);
-      }
-    }
-  }
-
-  return translated_text;
-};
 
 // Moment JS for nice date
 Vue.prototype.$moment = moment;
@@ -100,6 +64,7 @@ const store = new Vuex.Store(storeConfig);
 new Vue({
   router,
   store,
+  i18n,
   render: h => h(App)
 }).$mount('#app');
 

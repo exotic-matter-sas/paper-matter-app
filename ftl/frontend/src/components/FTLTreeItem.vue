@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+  - Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
   - Licensed under the BSL License. See LICENSE in the project root for license information.
   -->
 
@@ -23,6 +23,11 @@
     </ul>
   </li>
 </template>
+
+<i18n>
+  fr:
+    Unable to refresh folders list: La liste des dossiers n'a pu être rafraichie
+</i18n>
 
 <script>
   import axios from 'axios';
@@ -90,7 +95,7 @@
                 })
             }
           )
-          .catch(error => vi.mixinAlert(vi.$_('Unable to refresh folders list'), true))
+          .catch(error => vi.mixinAlert(vi.$t('Unable to refresh folders list'), true))
           .finally(() => this.loading = false);
       }
     }

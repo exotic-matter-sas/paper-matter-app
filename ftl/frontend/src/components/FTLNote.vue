@@ -1,14 +1,14 @@
 <!--
-  - Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+  - Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
   - Licensed under the BSL License. See LICENSE in the project root for license information.
   -->
 
 <template>
   <b-row>
     <b-col id="note-title" cols="12" class="mb-1">
-      <h6 class="d-inline font-weight-bold">{{ $_('Note') }}</h6>
+      <h6 class="d-inline font-weight-bold">{{ $t('Note') }}</h6>
       <b-button v-if="!editing" id="edit-note" variant="link" size="sm" @click.prevent="editing = true">
-        <font-awesome-icon icon="edit" :title="$_('Edit note')"/>
+        <font-awesome-icon icon="edit" :title="$t('Edit note')"/>
       </b-button>
     </b-col>
 
@@ -16,15 +16,15 @@
       <b-row>
         <b-col>
           <b-tabs content-class="mt-2" small lazy>
-            <b-tab :title="$_('Edition')" active>
+            <b-tab :title="$t('Edition')" active>
               <b-form-textarea
                 id="note-textarea"
                 v-model="text"
-                :placeholder="$_('Document note ...')"
+                :placeholder="$t('Example note')"
                 max-rows="10">
               </b-form-textarea>
             </b-tab>
-            <b-tab :title="$_('Preview')">
+            <b-tab :title="$t('Preview')">
               <div id="note-preview"><span v-html="getNoteMarkdownSanitized"></span></div>
             </b-tab>
           </b-tabs>
@@ -33,25 +33,25 @@
       <b-row id="note-toolbar" class="mt-2" align-v="center">
         <b-col>
           <div id="note-tip">
-            <a v-if="doc.note === text" class="text-muted" :title="$_('Markdown syntax supported')"
+            <a v-if="doc.note === text" class="text-muted" :title="$t('Markdown syntax supported')"
                href="https://guides.github.com/features/mastering-markdown/#examples" target="_blank">
-              <font-awesome-icon :icon="['fab', 'markdown']" rel="Markdown logo"/>
-              {{ $_(' supported') }}
+              <font-awesome-icon :icon="['fab', 'markdown']" rel="Markdown logo"/>&nbsp;
+              {{ $t('supported') }}
             </a>
             <span v-else class="highlight">
               <font-awesome-icon icon="exclamation-circle"/>
-              {{$_('unsaved note')}}
+              {{ $t('unsaved note') }}
             </span>
           </div>
         </b-col>
         <b-col class="text-right">
           <b-button variant="link" size="sm" :disabled="editing === false"
                     @click.prevent="cancelUpdate">
-            {{$_('Cancel')}}
+            {{ $t('Cancel') }}
           </b-button>
           <b-button id="save-note" variant="primary" size="sm" :disabled="doc.note === text"
                     @click.prevent="updateNote">
-            {{$_('Save')}}
+            {{ $t('Save') }}
           </b-button>
         </b-col>
       </b-row>
@@ -62,10 +62,24 @@
     </b-col>
 
     <b-col v-else>
-      <span class="text-muted font-italic">{{$_('No note set')}}</span>
+      <span class="text-muted font-italic">{{ $t('No note set') }}</span>
     </b-col>
   </b-row>
 </template>
+
+<i18n>
+  fr:
+    Note: Note
+    Edit note: Édtier note
+    Edition: Édition
+    Example note: Note d'exemple
+    Preview: Prévisualisation
+    Markdown syntax supported: Syntaxe Markdown supportée
+    supported: supportée
+    unsaved note: note non sauvegardée
+    No note set: Aucune note définie
+    Could not save note: La note n'a pu être sauvegardée
+</i18n>
 
 <script>
   import marked from "marked";
@@ -112,7 +126,7 @@
             this.mixinAlert('Document note saved!');
           })
           .catch(error => {
-            this.mixinAlert(this.$_('Could not save note'), true)
+            this.mixinAlert(this.$t('Could not save note'), true)
           });
       },
 
