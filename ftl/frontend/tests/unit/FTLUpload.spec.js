@@ -14,7 +14,7 @@ import {createThumbFromFile} from '../../src/thumbnailGenerator'
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue); // to avoid warning on tests execution
-localVue.prototype.$_ = (text) => {
+localVue.prototype.$t = (text) => {
   return text;
 }; // i18n mock
 localVue.prototype.$moment = () => {

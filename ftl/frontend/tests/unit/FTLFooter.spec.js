@@ -3,7 +3,7 @@
  * Licensed under the BSL License. See LICENSE in the project root for license information.
  */
 
-import { shallowMount, createLocalVue } from '@vue/test-utils';
+import {createLocalVue, shallowMount} from '@vue/test-utils';
 
 import BootstrapVue from "bootstrap-vue";
 
@@ -11,7 +11,12 @@ import FTLFooter from "@/components/FTLFooter";
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue); // to avoid warning on tests execution
-localVue.prototype.$_ = (text) => { return text; }; // i18n mock
+localVue.prototype.$t = (text) => {
+  return text;
+}; // i18n mock
+localVue.component('i18n', (text) => {
+  return text
+});
 
 
 describe('FTLFooter template', () => {

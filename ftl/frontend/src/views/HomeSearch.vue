@@ -49,11 +49,11 @@
         <b-col>
           <b-button id="select-all-documents" variant="outline-primary" title="Select all documents displayed"
                     @click="$store.commit('selectDocuments', docs)">
-            {{ $('Select all') }}
+            {{ $t('Select all') }}
           </b-button>
         </b-col>
         <b-col cols="8" class="text-right">
-          <span class="text-muted d-none d-sm-inline">{{ $('{0} documents:', [selectedDocumentsHome.length]) }}</span>
+          <span class="text-muted d-none d-sm-inline">{{ $t('{0} documents:', [selectedDocumentsHome.length]) }}</span>
           <b-button id="move-documents" variant="primary" v-b-modal="'modal-move-documents'" title="Move to folder">
             <font-awesome-icon icon="folder-open" class="d-sm-none"/>
             <span class="d-none d-sm-inline">{{ $t('Move') }}</span>
@@ -88,7 +88,7 @@
         <b-col>
           <b-button id="more-documents" block variant="secondary" @click.prevent="loadMoreDocuments">
             <b-spinner class="loader" :class="{'d-none': !moreDocsLoading}" small></b-spinner>
-            <span :class="{'d-none': moreDocsLoading}">{{ this.$t('Show more documents') }}</span>
+            <span :class="{'d-none': moreDocsLoading}">{{ $t('Show more documents') }}</span>
           </b-button>
         </b-col>
       </b-row>
