@@ -227,7 +227,10 @@ class FileUploadView(views.APIView):
                     ftl_doc.title = file_obj.name[:-(len(f'.{kind.extension}'))]
                 else:
                     ftl_doc.title = file_obj.name
-                    ftl_doc.binary.name = f'{file_obj.name}.{kind.extension}'
+
+            # The actual name of the file doesn't matter because we use a random UUID. On the contrary, the extension
+            # is important.
+            ftl_doc.binary.name = f'document.{kind.extension}'
 
             if 'created' in payload and payload['created']:
                 ftl_doc.created = payload['created']
