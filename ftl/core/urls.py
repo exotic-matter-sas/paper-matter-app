@@ -1,7 +1,6 @@
 #  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
-from django.conf import settings
-from django.urls import path, include
+from django.urls import path
 from django.views.i18n import JavaScriptCatalog
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
