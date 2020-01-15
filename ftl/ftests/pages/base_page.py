@@ -6,6 +6,7 @@ import platform
 import time
 import urllib.error
 import urllib.request
+from tempfile import TemporaryDirectory
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.core import mail
@@ -68,14 +69,25 @@ class BasePage(LIVE_SERVER):
         super().__init__(*args, **kwargs)
         self.root_url = ''
 
+        self._download_dir = None
+
     def setUp(self, browser=DEFAULT_TEST_BROWSER, browser_locale='en'):
+        self._download_dir = TemporaryDirectory()
 
         if browser == 'firefox':
             profile = webdriver.FirefoxProfile()
+            # Set browser language for web pages
             profile.set_preference('intl.accept_languages', browser_locale)
 
-            options = FirefoxOptions()
+            # Set default browser download dir and remove download prompt
+            profile.set_preference('browser.download.dir', self._download_dir.name)
+            profile.set_preference('browser.download.folderList', 2)
+            profile.set_preference('browser.download.manager.showWhenStarting', False)
+            mime_type_list = 'application/octet-stream'
+            profile.set_preference('browser.helperApps.neverAsk.openFile', mime_type_list)
+            profile.set_preference('browser.helperApps.neverAsk.saveToDisk', mime_type_list)
 
+            options = FirefoxOptions()
             if TEST_BROWSER_HEADLESS:
                 options.headless = True
             if BROWSER_BINARY_PATH:
@@ -85,7 +97,16 @@ class BasePage(LIVE_SERVER):
                                              firefox_options=options)
         elif browser == 'chrome':
             options = ChromeOptions()
+            # Set browser language for web pages
             options.add_argument(f'--lang={browser_locale}')
+
+            # Set default browser download dir and remove download prompt
+            chrome_profile = {
+                'download.default_directory': self._download_dir.name,
+                'savefile.default_directory': self._download_dir.name, 'download.prompt_for_download': False,
+                'download.directory_upgrade': True,
+                'profile.default_content_setting_values.automatic_downloads': 1
+            }
 
             if TEST_BROWSER_HEADLESS:
                 options.add_argument('--headless')
@@ -96,6 +117,7 @@ class BasePage(LIVE_SERVER):
             if BROWSER_BINARY_PATH:
                 options.binary_location = BROWSER_BINARY_PATH
 
+            options.add_experimental_option('prefs', chrome_profile)
             self.browser = webdriver.Chrome(executable_path=DEFAULT_CHROMEDRIVER_PATH, chrome_options=options)
         else:
             raise ValueError('Unsupported browser, allowed: firefox, chrome')
@@ -106,6 +128,8 @@ class BasePage(LIVE_SERVER):
         self.browser.implicitly_wait(1)
 
     def tearDown(self):
+        self._download_dir.cleanup()
+
         self.browser.quit()
 
     @property
@@ -255,3 +279,20 @@ class BasePage(LIVE_SERVER):
     @staticmethod
     def get_last_email():
         return mail.outbox[-1]
+
+    def download_file(self, download_trigger_css_selector, timeout=1):
+        self.get_elem(download_trigger_css_selector).click()
+        initial_content = os.listdir(self._download_dir.name)
+        current_content = initial_content
+
+        # Wait for new file to show up in download dir
+        start_time = time.time()
+        while len(initial_content) == len(current_content):
+            if time.time() - start_time > timeout:
+                raise TimeoutException(f'No file downloaded after {timeout}s')
+            time.sleep(0.2)
+            current_content = [e for e in os.listdir(self._download_dir.name)
+                               if not e.endswith(('.crdownload', '.tmp', '.'))]
+
+        downloaded_filename = (set(current_content) - set(initial_content)).pop()
+        return downloaded_filename

@@ -45,6 +45,7 @@ class HomePage(BasePage):
 
     documents_list_container = '#documents-list'
     documents_thumbnails = '.document-thumbnail'
+    documents_download_buttons = '.document-thumbnail .download-button'
     documents_checkboxes = '.document-thumbnail .custom-checkbox'
     documents_titles = '.document-thumbnail .card-title'
     first_document_title = '.document-thumbnail:first-child .card-title'
