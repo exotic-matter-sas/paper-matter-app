@@ -45,13 +45,14 @@
         <b-col>
           <b-row>
             <b-col class="mb-1">
-              <b-button class="mx-1" variant="primary" :href="`/app/uploads/` + currentOpenDoc.pid + `/doc.pdf`"
-                        target="_blank">
-                {{ $_('Open PDF')}}
+              <b-button id="open-pdf" class="mx-1 mb-1" variant="primary"
+                        :href="`/app/uploads/` + currentOpenDoc.pid + `/doc.pdf`"
+                        target="_blank" :title="$_('Open PDF in a new tab')">
+                {{ $_('Open PDF')}} <font-awesome-icon icon="external-link-alt" size="sm"/>
               </b-button>
-              <b-button id="move-document" class="mx-1" variant="secondary" v-b-modal="'modal-move-document'">Move
+              <b-button id="move-document" class="mx-1 mb-1" variant="secondary" v-b-modal="'modal-move-document'">Move
               </b-button>
-              <b-button id="delete-document" class="mx-1" variant="danger" v-b-modal="'modal-delete-document'">Delete
+              <b-button id="delete-document" class="mx-1 mb-1" variant="danger" v-b-modal="'modal-delete-document'">Delete
               </b-button>
             </b-col>
           </b-row>

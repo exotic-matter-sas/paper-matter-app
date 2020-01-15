@@ -86,7 +86,7 @@ class DownloadView(views.APIView):
 
             return HttpResponseRedirect(f'{doc.binary.url}&{urlencode}')
         else:
-            response = HttpResponse(doc.binary, 'application/octet')
+            response = HttpResponse(doc.binary, 'application/octet-stream')
             response['Last-Modified'] = http_date(doc.edited.timestamp())
             response['Content-Disposition'] = f'attachment; filename="{title}"'
             return response
