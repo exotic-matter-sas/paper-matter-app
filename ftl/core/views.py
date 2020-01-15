@@ -64,7 +64,7 @@ class DownloadView(views.APIView):
     def get_queryset(self):
         return FTLDocument.objects.filter(org=self.request.user.org)
 
-    def get(self, request, *args, **kwargs):
+    def _get_doc(self, request, *args, **kwargs):
         doc = get_object_or_404(self.get_queryset(), pid=kwargs['uuid'])
 
         doc_ext = Path(doc.binary.name).suffix.lower()
@@ -74,6 +74,11 @@ class DownloadView(views.APIView):
             title = f'{slugify(doc.title[:-len(doc_ext)])[:128]}{doc_ext}'
         else:
             title = f'{slugify(doc.title)[:128]}{doc_ext}'
+
+        return doc, doc_ext, title
+
+    def get(self, request, *args, **kwargs):
+        doc, doc_ext, title = self._get_doc(request, *args, **kwargs)
 
         if settings.DEFAULT_FILE_STORAGE in [FTLStorages.GCS, ]:
             urlencode = urllib.parse.urlencode(
@@ -89,10 +94,17 @@ class DownloadView(views.APIView):
 
 class ViewPDF(DownloadView):
     def get(self, request, *args, **kwargs):
-        response = super().get(request, *args, **kwargs)
-        response['Content-Type'] = 'application/pdf'
-        response['Content-Disposition'] = 'inline'
-        return response
+        doc, doc_ext, title = self._get_doc(request, *args, **kwargs)
+
+        if settings.DEFAULT_FILE_STORAGE in [FTLStorages.GCS, ]:
+            urlencode = urllib.parse.urlencode(
+                {'response-content-disposition': 'inline'})
+
+            return HttpResponseRedirect(f'{doc.binary.url}&{urlencode}')
+        else:
+            response = HttpResponse(doc.binary, 'application/pdf')
+            response['Content-Disposition'] = 'inline'
+            return response
 
 
 class FTLDocumentList(generics.ListAPIView):
@@ -212,7 +224,7 @@ class FileUploadView(views.APIView):
                 ftl_doc.title = payload['title']
             else:
                 if file_obj.name.lower().endswith(f'.{kind.extension}'):
-                    ftl_doc.title = file_obj.name[:-(len(kind.extension) + 1)]
+                    ftl_doc.title = file_obj.name[:-(len(f'.{kind.extension}'))]
                 else:
                     ftl_doc.title = file_obj.name
                     ftl_doc.binary.name = f'{file_obj.name}.{kind.extension}'
