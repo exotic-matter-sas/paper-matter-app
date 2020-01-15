@@ -4,6 +4,7 @@
 import json
 import urllib
 from base64 import b64decode
+from pathlib import Path
 
 import filetype
 from django.conf import settings
@@ -66,13 +67,15 @@ class DownloadView(views.APIView):
     def get(self, request, *args, **kwargs):
         doc = get_object_or_404(self.get_queryset(), pid=kwargs['uuid'])
 
-        # Slugify only the filename, not the file extension
-        if doc.title.lower().endswith('.pdf'):
-            title = f'{slugify(doc.title[:-4])[:128]}.pdf'
-        else:
-            title = f'{slugify(doc.title)[:128]}.pdf'
+        doc_ext = Path(doc.binary.name).suffix.lower()
 
-        if settings.DEFAULT_FILE_STORAGE in [FTLStorages.GCS, FTLStorages.AWS_S3]:
+        # Slugify only the filename, not the file extension
+        if doc.title.lower().endswith(doc_ext):
+            title = f'{slugify(doc.title[:-len(doc_ext)])[:128]}{doc_ext}'
+        else:
+            title = f'{slugify(doc.title)[:128]}{doc_ext}'
+
+        if settings.DEFAULT_FILE_STORAGE in [FTLStorages.GCS, ]:
             urlencode = urllib.parse.urlencode(
                 {'response-content-disposition': f'attachment; filename="{title}"'})
 
@@ -204,7 +207,15 @@ class FileUploadView(views.APIView):
             ftl_doc.ftl_user = self.request.user
             ftl_doc.binary = file_obj
             ftl_doc.org = self.request.user.org
-            ftl_doc.title = payload['title'] if 'title' in payload and payload['title'] else file_obj.name
+
+            if 'title' in payload and payload['title']:
+                ftl_doc.title = payload['title']
+            else:
+                if file_obj.name.lower().endswith(f'.{kind.extension}'):
+                    ftl_doc.title = file_obj.name[:-(len(kind.extension) + 1)]
+                else:
+                    ftl_doc.title = file_obj.name
+                    ftl_doc.binary.name = f'{file_obj.name}.{kind.extension}'
 
             if 'created' in payload and payload['created']:
                 ftl_doc.created = payload['created']
