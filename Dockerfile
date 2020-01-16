@@ -14,6 +14,8 @@ RUN npm run build
 FROM python:3.7.4-slim
 # PORT is used by uwsgi config, it's mainly used by Heroku because they assign random port to app.
 ENV PORT 8000
+# Default cron secret key is not secure, it will automatically taken into account in the internal cronjob
+ENV CRON_SECRET_KEY CHANGEME
 
 # Workaround for https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=863199
 RUN mkdir -p /usr/share/man/man1
@@ -26,12 +28,25 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq-dev \
     libffi-dev \
     libssl-dev \
+    cron \
+    supervisor \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 ADD ftl/requirements.txt /app/requirements.txt
 ADD docker/requirements_deploy.txt /app/requirements_deploy.txt
 ADD docker/ftl_uwsgi.ini /app/ftl_uwsgi.ini
 ADD docker/settings_local.py /app/ftl/settings_local.py
+ADD docker/supervisord.conf /etc/supervisor/supervisord.conf
+
+ADD docker/cron-env-init.sh /tmp/cron-env-init.sh
+RUN chmod 0700 /tmp/cron-env-init.sh
+
+ADD docker/crontab /etc/cron.d/ftl
+RUN chmod 0700 /etc/cron.d/ftl
+
+ADD docker/batch-delete-documents.sh /etc/cron.hourly/batch-delete-documents
+RUN chmod 0700 /etc/cron.hourly/batch-delete-documents
 
 RUN python3 -m pip install -r /app/requirements.txt --no-cache-dir && \
  python3 -m pip install -r /app/requirements_deploy.txt --no-cache-dir
@@ -67,5 +82,4 @@ VOLUME /app/uploads
 
 # For local or standard use, must match the env var PORT value.
 EXPOSE 8000
-USER ftl
-CMD uwsgi --ini /app/ftl_uwsgi.ini
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]

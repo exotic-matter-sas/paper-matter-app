@@ -188,11 +188,11 @@ class DocumentsTests(APITestCase):
         client_delete = self.client.delete(f'/app/api/v1/documents/{str(document_to_be_deleted.pid)}')
         self.assertEqual(client_delete.status_code, status.HTTP_204_NO_CONTENT)
 
-        with self.assertRaises(core.models.FTLDocument.DoesNotExist):
-            FTLDocument.objects.get(pid=document_to_be_deleted.pid)
+        document_marked_as_deleted = FTLDocument.objects.get(pid=document_to_be_deleted.pid)
+        self.assertTrue(document_marked_as_deleted.deleted)
 
-        # File has been deleted.
-        self.assertTrue(not os.path.exists(binary_f))
+        # File has not been deleted.
+        self.assertTrue(os.path.exists(binary_f))
 
     @patch.object(FTLDocumentProcessing, 'apply_processing')
     def test_upload_document(self, mock_apply_processing):
@@ -464,6 +464,33 @@ class FoldersTests(APITestCase):
                                     {'name': 'X', 'parent': folder_a.id}, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_delete_folders_recursively(self):
+        # A
+        # *  B
+        # *  B2
+        #       * C
+
+        folder_a = setup_folder(self.org, name='A')
+        folder_a_b = setup_folder(self.org, name='B', parent=folder_a)
+        folder_a_b2 = setup_folder(self.org, name='B2', parent=folder_a)
+        folder_a_b2_c = setup_folder(self.org, name='B2', parent=folder_a_b2)
+
+        doc_folder_a = setup_document(self.org, self.user, ftl_folder=folder_a)
+        doc_folder_a_b2 = setup_document(self.org, self.user, ftl_folder=folder_a_b2)
+        doc_folder_a_b2_c = setup_document(self.org, self.user, ftl_folder=folder_a_b2_c)
+
+        response = self.client.delete(f'/app/api/v1/folders/{folder_a.id}')
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+        doc_folder_a.refresh_from_db()
+        doc_folder_a_b2.refresh_from_db()
+        doc_folder_a_b2_c.refresh_from_db()
+
+        self.assertTrue(doc_folder_a.deleted)
+        self.assertTrue(doc_folder_a_b2.deleted)
+        self.assertTrue(doc_folder_a_b2_c.deleted)
 
 
 class JWTAuthenticationTests(APITestCase):

@@ -59,7 +59,7 @@ class DownloadView(views.APIView):
     lookup_field = 'pid'
 
     def get_queryset(self):
-        return FTLDocument.objects.filter(org=self.request.user.org)
+        return FTLDocument.objects.filter(org=self.request.user.org, deleted=False)
 
     def get(self, request, *args, **kwargs):
         doc = get_object_or_404(self.get_queryset(), pid=kwargs['uuid'])
@@ -91,7 +91,7 @@ class FTLDocumentList(generics.ListAPIView):
         flat_mode = True if self.request.query_params.get('flat', False) is not False else False
         text_search = self.request.query_params.get('search', None)
 
-        queryset = FTLDocument.objects.filter(org=self.request.user.org).order_by('-created')
+        queryset = FTLDocument.objects.filter(org=self.request.user.org, deleted=False).order_by('-created')
 
         if not flat_mode:
             if text_search:
@@ -115,7 +115,7 @@ class FTLDocumentDetail(generics.RetrieveUpdateDestroyAPIView):
     lookup_field = 'pid'
 
     def get_queryset(self):
-        return FTLDocument.objects.filter(org=self.request.user.org)
+        return FTLDocument.objects.filter(org=self.request.user.org, deleted=False)
 
     def perform_update(self, serializer):
         need_processing = False
@@ -136,13 +136,16 @@ class FTLDocumentDetail(generics.RetrieveUpdateDestroyAPIView):
             # only apply processing in case value changed, avoid processing when just moving document in folder
             ftl_doc_processing.apply_processing(instance, list(force_processing))
 
+    def perform_destroy(self, instance):
+        instance.mark_delete()
+
 
 class FTLDocumentThumbnail(views.APIView):
     serializer_class = FTLDocumentSerializer
     lookup_field = 'pid'
 
     def get_queryset(self):
-        return FTLDocument.objects.filter(org=self.request.user.org)
+        return FTLDocument.objects.filter(org=self.request.user.org, deleted=False)
 
     def get(self, request, *args, **kwargs):
         doc = get_object_or_404(self.get_queryset(), pid=kwargs['pid'])
