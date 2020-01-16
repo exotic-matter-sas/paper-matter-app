@@ -9,7 +9,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0003_auto_20191207_1626'),
+        ('core', '0004_ftldocument_deleted'),
     ]
 
     operations = [
