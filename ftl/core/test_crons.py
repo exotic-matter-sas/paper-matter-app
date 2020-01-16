@@ -27,7 +27,6 @@ class CronTests(APITestCase):
                                             ftl_folder=self.first_level_folder)
 
     def test_batch_delete_document(self):
-        initial_doc_count = FTLDocument.objects.count()
         binary_f = setup_temporary_file().name
         ftl_document = FTLDocument.objects.create(
             org=self.org,
@@ -35,8 +34,8 @@ class CronTests(APITestCase):
             title="Test document to be deleted",
             binary=binary_f,  # We don't want to delete the test pdf file
         )
-
         self.assertIsNotNone(ftl_document.pid)
+        initial_doc_count = FTLDocument.objects.count()
 
         ftl_document.deleted = True
         ftl_document.save()
