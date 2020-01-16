@@ -5,11 +5,11 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-import core
 from core.models import FTLDocument
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_document, setup_folder, \
     setup_temporary_file
+from ftl.settings import CRON_SECRET_KEY
 
 
 class CronTests(APITestCase):
@@ -40,10 +40,10 @@ class CronTests(APITestCase):
         ftl_document.deleted = True
         ftl_document.save()
 
-        client_get = self.client.get('/crons/not-secure/batch-delete-documents', HTTP_X_APPENGINE_CRON="true")
+        client_get = self.client.get(f'/crons/{CRON_SECRET_KEY}/batch-delete-documents', HTTP_X_APPENGINE_CRON="true")
         self.assertEqual(client_get.status_code, status.HTTP_204_NO_CONTENT)
 
-        with self.assertRaises(core.models.FTLDocument.DoesNotExist):
+        with self.assertRaises(FTLDocument.DoesNotExist):
             FTLDocument.objects.get(pid=ftl_document.pid)
 
         self.assertEqual(FTLDocument.objects.count(), 3)
