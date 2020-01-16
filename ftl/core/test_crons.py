@@ -27,6 +27,7 @@ class CronTests(APITestCase):
                                             ftl_folder=self.first_level_folder)
 
     def test_batch_delete_document(self):
+        initial_doc_count = FTLDocument.objects.count()
         binary_f = setup_temporary_file().name
         ftl_document = FTLDocument.objects.create(
             org=self.org,
@@ -46,4 +47,4 @@ class CronTests(APITestCase):
         with self.assertRaises(FTLDocument.DoesNotExist):
             FTLDocument.objects.get(pid=ftl_document.pid)
 
-        self.assertEqual(FTLDocument.objects.count(), 3)
+        self.assertEqual(FTLDocument.objects.count(), initial_doc_count-1, 'Only one doc should have been deleted')
