@@ -441,6 +441,33 @@ class FoldersTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+    def test_delete_folders_recursively(self):
+        # A
+        # *  B
+        # *  B2
+        #       * C
+
+        folder_a = setup_folder(self.org, name='A')
+        folder_a_b = setup_folder(self.org, name='B', parent=folder_a)
+        folder_a_b2 = setup_folder(self.org, name='B2', parent=folder_a)
+        folder_a_b2_c = setup_folder(self.org, name='B2', parent=folder_a_b2)
+
+        doc_folder_a = setup_document(self.org, self.user, ftl_folder=folder_a)
+        doc_folder_a_b2 = setup_document(self.org, self.user, ftl_folder=folder_a_b2)
+        doc_folder_a_b2_c = setup_document(self.org, self.user, ftl_folder=folder_a_b2_c)
+
+        response = self.client.delete(f'/app/api/v1/folders/{folder_a.id}')
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+        doc_folder_a.refresh_from_db()
+        doc_folder_a_b2.refresh_from_db()
+        doc_folder_a_b2_c.refresh_from_db()
+
+        self.assertTrue(doc_folder_a.deleted)
+        self.assertTrue(doc_folder_a_b2.deleted)
+        self.assertTrue(doc_folder_a_b2_c.deleted)
+
 
 class JWTAuthenticationTests(APITestCase):
     def setUp(self):
