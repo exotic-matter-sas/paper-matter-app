@@ -1,11 +1,14 @@
 #  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
+import logging
 from http import HTTPStatus
 
 from django.http import HttpResponse, HttpResponseServerError, HttpResponseForbidden
 from django.views import View
 
 from core.models import FTLDocument
+
+logger = logging.getLogger(__name__)
 
 
 class HttpResponseNoContent(HttpResponse):
@@ -47,6 +50,7 @@ class BatchDeleteDocument(CronView):
         docs_to_delete = FTLDocument.objects.filter(deleted=True)
 
         for doc in docs_to_delete:
+            logger.info(f'Deleting {doc.pid} ...')
             doc.delete()
 
         return True
