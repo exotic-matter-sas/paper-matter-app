@@ -359,9 +359,10 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         self.assertIn('recent', self.get_elem_text(self.sort_dropdown_button))
 
     @skipIf(DEFAULT_TEST_BROWSER == 'firefox',
-            'Due to a Firefox bug download can\'t be automated for file with Content-Disposition header set to '
-            'attachment \nRef: https://bugzilla.mozilla.org/show_bug.cgi?id=453455 \nPossible workaround: '
-            'https://bugzilla.mozilla.org/show_bug.cgi?id=453455#c150')
+            'Due to a Firefox bug, download can\'t be automated for file with Content-Disposition header set to '
+            'attachment.'
+            '\nRef: https://bugzilla.mozilla.org/show_bug.cgi?id=453455'
+            '\nPossible workaround: https://bugzilla.mozilla.org/show_bug.cgi?id=453455#c150')
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_download_document_from_list(self):
         # User has already added a document
