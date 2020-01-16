@@ -80,5 +80,4 @@ VOLUME /app/uploads
 
 # For local or standard use, must match the env var PORT value.
 EXPOSE 8000
-#CMD uwsgi --ini /app/ftl_uwsgi.ini
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
