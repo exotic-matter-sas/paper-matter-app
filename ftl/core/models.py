@@ -207,7 +207,9 @@ class FTLFolder(MPTTModel):
             document.mark_delete()
 
         # Delete descendants folders recursively
-        descendants = self.get_descendants()[:1]  # slice syntax for reversing
+        # Each first descendant will be deleted recursively
+        # It's kept as a list because we can easily handle an empty list
+        descendants = self.get_descendants()[:1]
         for descendant in descendants:
             descendant.delete()
 
