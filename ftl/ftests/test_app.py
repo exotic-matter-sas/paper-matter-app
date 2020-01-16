@@ -19,7 +19,7 @@ from ftests.pages.user_login_page import LoginPage
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_document, setup_folder, \
     setup_temporary_file
-from ftl.settings import DEV_MODE, BASE_DIR, DEFAULT_TEST_BROWSER
+from ftl.settings import DEV_MODE, BASE_DIR, DEFAULT_TEST_BROWSER, TEST_BROWSER_HEADLESS
 
 
 class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
@@ -715,6 +715,12 @@ class DocumentViewerModalTests(LoginPage, HomePage, DocumentViewerModal):
         with self.assertRaises(NoSuchElementException):
             self.get_elem(self.first_document_title)
 
+    @skipIf(DEFAULT_TEST_BROWSER == 'chrome' and TEST_BROWSER_HEADLESS,
+            "Headless chrome doesn't support extensions and it seem it doesn't support PDF preview too (browser freeze"
+            " after switching to tab with PDF preview).\n"
+            "Refs:\n"
+            " - https://bugs.chromium.org/p/chromedriver/issues/detail?id=1961\n"
+            " - https://bugs.chromium.org/p/chromium/issues/detail?id=706008")
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_open_document(self):
         # User has already added and opened a document
