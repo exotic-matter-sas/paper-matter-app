@@ -67,7 +67,6 @@ class HomePage(BasePage):
         self.get_elem(self.search_input).clear()
         self.get_elem(self.search_input).send_keys(search_text)
         self.get_elem(self.search_button).click()
-        self.wait_for_elem_to_show(self.document_list_loader)
         self.wait_documents_list_loaded()
 
     def upload_documents(self, absolute_paths=None):
