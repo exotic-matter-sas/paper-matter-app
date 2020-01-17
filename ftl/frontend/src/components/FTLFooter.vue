@@ -15,7 +15,7 @@
 
 <i18n>
   fr:
-    Paper Matter, open source software. Made with ❤ by {em}.: Paper Matter, open source software. Soigneusement conçu
+    Paper Matter, open source software. Made with ❤ by {em}.: Paper Matter, logiciel open source. Soigneusement conçu
       par {em} en France.
 </i18n>
 

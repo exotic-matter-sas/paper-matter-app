@@ -29,7 +29,7 @@
 
 <i18n>
   fr:
-    Deletion of folder "{0}" and its contents:
+    Deletion of folder "{0}" and its contents: Suppresion du dossier « {0} » et de son contenu
     Type the name of the folder to validate.: Saisissez le nom du dossier pour valider.
     Please confirm that you want to delete the folder and everything inside. This action is not reversible.: Veuillez
       confirmer que vous voulez supprimer le dossier et tout ce qu'il contient. Cette action est irréversible.

@@ -70,7 +70,7 @@
 <i18n>
   fr:
     Note: Note
-    Edit note: Édtier note
+    Edit note: Éditer note
     Edition: Édition
     Example note: Note d'exemple
     Preview: Prévisualisation
