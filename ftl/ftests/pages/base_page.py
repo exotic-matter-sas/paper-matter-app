@@ -280,7 +280,7 @@ class BasePage(LIVE_SERVER):
     def get_last_email():
         return mail.outbox[-1]
 
-    def download_file(self, download_trigger_css_selector, timeout=3):
+    def download_file(self, download_trigger_css_selector, timeout=10):
         self.get_elem(download_trigger_css_selector).click()
         initial_content = os.listdir(self._download_dir.name)
         current_content = initial_content
