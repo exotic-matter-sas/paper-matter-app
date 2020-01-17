@@ -12,6 +12,7 @@ import {
   faCrown,
   faEdit,
   faExclamationCircle,
+  faExternalLinkAlt,
   faFileDownload,
   faFolder,
   faFolderOpen,
@@ -31,9 +32,9 @@ import {mixinAlert} from "./vueMixins";
 import router from './router';
 import moment from 'moment'
 import axios from 'axios';
-import Vuex from 'vuex'
-import storeConfig from "./store/storeConfig"
-import i18n from './i18n'
+import Vuex from 'vuex';
+import storeConfig from "./store/storeConfig";
+import i18n from './i18n';
 
 Vue.config.productionTip = false;
 
