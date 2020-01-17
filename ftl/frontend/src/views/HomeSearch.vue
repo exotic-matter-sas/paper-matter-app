@@ -20,7 +20,7 @@
                                :title="$_('Refresh documents list')"/>
           </b-button>
 
-          <span id="documents-count" class="text-muted">{{this.$_('%s results found', [count])}}</span>
+          <span v-if="count>0" id="documents-count" class="text-muted">{{this.$_('%s results found', [count])}}</span>
 
           <b-dropdown id="documents-sort" right variant="link" class="m-1 text-decoration-none">
             <template slot="button-content">

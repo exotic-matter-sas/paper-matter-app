@@ -131,7 +131,9 @@
       },
 
       doSearch: function () {
-        this.$router.push({name: 'home-search', params: {search: this.search}})
+        if (this.search !== ''){
+          this.$router.push({name: 'home-search', params: {search: this.search}})
+        }
       }
     }
   }
