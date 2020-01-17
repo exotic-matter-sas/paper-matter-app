@@ -119,8 +119,8 @@
     Refresh documents list: Rafraichir la liste des documents
     Create new folder: Créer un nouveau dossier
     Sort: Trier
-    Recent first: récent
-    Older first: ancien
+    Recent first: Récents en premier
+    Older first: Anciens en premier
     Relevance: Pertinence
     A-Z: A-Z
     Z-A: Z-A
