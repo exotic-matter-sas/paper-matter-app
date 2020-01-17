@@ -23,7 +23,7 @@ describe('FTLFooter template', () => {
     localVue: localVue
   });
 
-  it('renders properly account name', () => {
-    expect(wrapper.text()).toContain('Made with ❤ by', 'Exotic Matter')
+  it('renders properly footer content', () => {
+    expect(wrapper.html()).toContain('Made with ❤ by', 'Exotic Matter')
   })
 });

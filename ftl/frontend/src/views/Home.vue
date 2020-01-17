@@ -150,7 +150,7 @@
     "{0} documents:": "{0} documents:"
     No document yet: Aucun document
     Show more documents ({0} remaining): Afficher plus de documents ({0} restants)
-    No more documents in this folder: Aucun document restant à afficher.
+    No more documents in this folder: Aucun document restant à afficher
     Could not open this folder.: Impossible d'ouvrir ce dossier.
 </i18n>
 <script>
