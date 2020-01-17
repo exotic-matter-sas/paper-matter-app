@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+  - Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
   - Licensed under the BSL License. See LICENSE in the project root for license information.
   -->
 
@@ -7,20 +7,29 @@
   <b-modal id="modal-new-folder"
            @ok="createNewFolder"
            :ok-disabled="newFolderName === ''"
-           :cancel-title="this.$_('Cancel')"
-           :ok-title="this.$_('Create')">
-    <span slot="modal-title">{{ this.$_('Create a new folder') }}</span>
+           :cancel-title="$t('Cancel')"
+           :ok-title="$t('Create')">
+    <span slot="modal-title">{{ $t('Create a new folder') }}</span>
     <b-container>
       <b-form-group
         id="fieldset-new-folder"
-        :description='this.$_("The folder will be created in \"%s\" folder.", [this.getParentName])'
-        :label="this.$_('Name of the folder')"
+        :description='$t("The folder will be created in \"{0}\" folder.", [this.getParentName])'
+        :label="$t('Name of the folder')"
         label-for="new-folder">
         <b-form-input id="new-folder" autofocus v-model="newFolderName" trim></b-form-input>
       </b-form-group>
     </b-container>
   </b-modal>
 </template>
+
+<i18n>
+  fr:
+    Create a new folder: Créer un nouveau dossier
+    The folder will be created in "{0}" folder.: Le dossier sera crée dans « {0} ».
+    Name of the folder: Nom du dossier
+    Folder {0} created: Dossier {0} crée avec succès
+    Unable to create new folder: La création du dossier a échoué
+</i18n>
 
 <script>
   import axios from "axios";
@@ -45,7 +54,7 @@
     computed: {
       getParentName: function () {
         if (this.parent == null) {
-          return this.$_('Root');
+          return this.$t('Root');
         } else {
           return this.parent.name;
         }
@@ -65,7 +74,7 @@
           .post("/app/api/v1/folders", postBody, axiosConfig)
           .then((response) => {
             // TODO flash the new folder when just created
-            this.mixinAlert(this.$_("Folder %s created", [this.newFolderName]));
+            this.mixinAlert(this.$t("Folder {0} created", [this.newFolderName]));
             this.newFolderName = '';
             this.$emit('event-folder-created', response.data);
           }).catch((error) => {
@@ -73,7 +82,7 @@
           try {
             error_details = error.response.data.details;
           } finally {
-            this.mixinAlert(this.$_('Unable to create new folder'), true, error_details);
+            this.mixinAlert(this.$t('Unable to create new folder'), true, error_details);
           }
         });
       }

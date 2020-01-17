@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+  - Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
   - Licensed under the BSL License. See LICENSE in the project root for license information.
   -->
 
@@ -34,6 +34,11 @@
       let ftlAccountElem = document.getElementById('ftlAccount');
       if (ftlAccountElem) {
         this.account = JSON.parse(ftlAccountElem.textContent);
+      }
+      // get account value from Django core/home.html template
+      const localeElem = document.getElementById('locale');
+      if (localeElem) {
+        this.$i18n.locale = JSON.parse(localeElem.textContent);
       }
     }
   }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+ * Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
  * Licensed under the BSL License. See LICENSE in the project root for license information.
  */
 
@@ -10,6 +10,7 @@ module.exports = {
   publicPath: process.env.NODE_ENV === 'production' ? "/assets/" : "/local/",
   outputDir: './dist/',
   lintOnSave: 'error',
+
   css: {
     // Needed to render css bundle in Django base template when in development
     // Unfortunately it disable css hot reloading
@@ -55,5 +56,25 @@ module.exports = {
         options.failOnWarning = true;
         return options;
       });
+
+    config.module
+      .rule("i18n")
+      .resourceQuery(/blockType=i18n/)
+      .type('javascript/auto')
+      .use("i18n")
+      .loader("@kazupon/vue-i18n-loader")
+      .end()
+      .use('yaml')
+      .loader('yaml-loader')
+      .end();
+  },
+
+  pluginOptions: {
+    i18n: {
+      locale: 'en',
+      fallbackLocale: 'en',
+      localeDir: 'locales',
+      enableInSFC: true
+    }
   }
 };

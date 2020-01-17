@@ -19,7 +19,7 @@ const localVue = createLocalVue();
 localVue.use(BootstrapVue); // avoid bootstrap vue warnings
 localVue.component('font-awesome-icon', jest.fn()); // avoid font awesome warnings
 
-localVue.prototype.$_ = (text, args='') => {return text + args};// i18n mock
+localVue.prototype.$t = (text, args='') => {return text + args};// i18n mock
 localVue.prototype.$moment = () => {return {fromNow: jest.fn()}}; // moment mock
 localVue.prototype.$router = {push: jest.fn()}; // router mock
 const mockedMixinAlert = jest.fn();

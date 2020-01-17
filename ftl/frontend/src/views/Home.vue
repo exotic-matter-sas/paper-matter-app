@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+  - Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
   - Licensed under the BSL License. See LICENSE in the project root for license information.
   -->
 
@@ -22,10 +22,10 @@
         <b-col>
           <b-button id="refresh-documents" :disabled="docsLoading" variant="primary" @click="refreshAll">
             <font-awesome-icon icon="sync" :spin="docsLoading" :class="{ 'stop-spin':!docsLoading }"
-                               :title="$_('Refresh documents list')"/>
+                               :title="$t('Refresh documents list')"/>
           </b-button>
           <b-button id="create-folder" variant="primary" v-b-modal="'modal-new-folder'">
-            <font-awesome-icon icon="folder-plus" :title="$_('Create new folder')"/>
+            <font-awesome-icon icon="folder-plus" :title="$t('Create new folder')"/>
           </b-button>
           <b-button variant="primary" :disabled="!previousLevels.length"
                     @click="changeToPreviousFolder">
@@ -37,20 +37,20 @@
           <b-dropdown id="documents-sort" right variant="link" class="m-1 text-decoration-none">
             <template slot="button-content">
               <font-awesome-icon icon="sort"/>
-              {{ $_('Sort') }}
-              <span v-if="sort === 'az'">(a-z)</span>
-              <span v-else-if="sort === 'za'">(z-a)</span>
-              <span v-else-if="sort === 'recent'">({{ $_('recent') }})</span>
-              <span v-else-if="sort === 'older'">({{ $_('older') }})</span>
+              {{ $t('Sort') }}
+              <span v-if="sort === 'az'">({{ $t('A-Z') }})</span>
+              <span v-else-if="sort === 'za'">({{ $t('Z-A') }})</span>
+              <span v-else-if="sort === 'recent'">({{ $t('Recent first') }})</span>
+              <span v-else-if="sort === 'older'">({{ $t('Older first') }})</span>
             </template>
-            <b-dropdown-item-button id="az-sort" href="#" @click.prevent="sort = 'az'">{{ $_('A-Z') }}&nbsp;
+            <b-dropdown-item-button id="az-sort" href="#" @click.prevent="sort = 'az'">{{ $t('A-Z') }}&nbsp;
               <span v-if="sort === 'az'">&checkmark;</span></b-dropdown-item-button>
-            <b-dropdown-item-button id="za-sort" href="#" @click.prevent="sort = 'za'">{{ $_('Z-A') }}&nbsp;
+            <b-dropdown-item-button id="za-sort" href="#" @click.prevent="sort = 'za'">{{ $t('Z-A') }}&nbsp;
               <span v-if="sort === 'za'">&checkmark;</span></b-dropdown-item-button>
             <b-dropdown-divider/>
-            <b-dropdown-item-button id="recent-sort" href="#" @click.prevent="sort = 'recent'">{{ $_('Recent first') }}&nbsp;
+            <b-dropdown-item-button id="recent-sort" href="#" @click.prevent="sort = 'recent'">{{ $t('Recent first') }}&nbsp;
               <span v-if="sort === 'recent'">&checkmark;</span></b-dropdown-item-button>
-            <b-dropdown-item-button id="older-sort" href="#" @click.prevent="sort = 'older'">{{ $_('Older first') }}&nbsp;
+            <b-dropdown-item-button id="older-sort" href="#" @click.prevent="sort = 'older'">{{ $t('Older first') }}&nbsp;
               <span v-if="sort === 'older'">&checkmark;</span></b-dropdown-item-button>
           </b-dropdown>
         </b-col>
@@ -60,25 +60,25 @@
         <b-col>
           <b-button id="select-all-documents" variant="outline-primary" title="Select all documents displayed"
                     @click="$store.commit('selectDocuments', docs)">
-            {{ $_('Select all') }}
+            {{ $t('Select all') }}
           </b-button>
         </b-col>
         <b-col cols="8" class="text-right">
           <span
-            class="text-muted d-none d-sm-inline">{{ $_('%s documents selected', [selectedDocumentsHome.length]) }}</span>
+            class="text-muted d-none d-sm-inline">{{ $t('{0} documents:', [selectedDocumentsHome.length]) }}</span>
           <b-button id="unselect-all-documents" @click="$store.commit('unselectAllDocuments')"
                     title="Unselect documents">
             <font-awesome-icon icon="window-close" class="d-sm-none"/>
-            <span class="d-none d-sm-inline">{{ $_('Cancel') }}</span>
+            <span class="d-none d-sm-inline">{{ $t('Cancel') }}</span>
           </b-button>
           <b-button id="move-documents" variant="primary" v-b-modal="'modal-move-documents'" title="Move to folder">
             <font-awesome-icon icon="folder-open" class="d-sm-none"/>
-            <span class="d-none d-sm-inline">{{ $_('Move') }}</span>
+            <span class="d-none d-sm-inline">{{ $t('Move') }}</span>
           </b-button>
           <b-button id="delete-documents" variant="danger" v-b-modal="'modal-delete-documents'"
                     title="Delete documents">
             <font-awesome-icon icon="trash" class="d-sm-none"/>
-            <span class="d-none d-sm-inline">{{ $_('Delete') }}</span>
+            <span class="d-none d-sm-inline">{{ $t('Delete') }}</span>
           </b-button>
         </b-col>
       </b-row>
@@ -92,7 +92,7 @@
             <FTLDocument v-for="doc in docs" :key="doc.pid" :doc="doc" @event-open-doc="navigateToDocument"/>
           </b-row>
         </b-col>
-        <b-col v-else class="text-center">{{ this.$_('No document yet') }}</b-col>
+        <b-col v-else class="text-center">{{ $t('No document yet') }}</b-col>
       </b-row>
 
       <b-row v-if="moreDocs" align-h="center" class="my-3">
@@ -100,7 +100,7 @@
           <b-button id="more-documents" block variant="secondary" @click.prevent="loadMoreDocuments">
             <b-spinner class="loader" :class="{'d-none': !moreDocsLoading}" small></b-spinner>
             <span :class="{'d-none': moreDocsLoading}">
-              {{ this.$_('Show more documents (%s remaining)', [count - docs.length, count]) }}
+              {{ $t('Show more documents ({0} remaining)', [count - docs.length, count]) }}
             </span>
           </b-button>
         </b-col>
@@ -108,7 +108,7 @@
 
       <b-row v-else-if="count > 0" class="my-3">
         <b-col>
-          <p class="text-center">{{ this.$_('No more documents in this folder')}}</p>
+          <p class="text-center">{{ $t('No more documents in this folder') }}</p>
         </b-col>
       </b-row>
 
@@ -137,6 +137,22 @@
   </main>
 </template>
 
+<i18n>
+  fr:
+    Refresh documents list: Rafraichir la liste des documents
+    Create new folder: Créer un nouveau dossier
+    Sort: Trier
+    Recent first: Récents en premier
+    Older first: Anciens en premier
+    A-Z: A-Z
+    Z-A: Z-A
+    Select all: Tout sélectionner
+    "{0} documents:": "{0} documents:"
+    No document yet: Aucun document
+    Show more documents ({0} remaining): Afficher plus de documents ({0} restants)
+    No more documents in this folder: Aucun document restant à afficher
+    Could not open this folder.: Impossible d'ouvrir ce dossier.
+</i18n>
 <script>
   // @ is an alias to /src
   import {mapState} from 'vuex'
@@ -226,7 +242,7 @@
         let paths = [];
 
         paths.push({
-          text: this.$_('Root'),
+          text: this.$t('Root'),
           to: {name: 'home'}
         });
 
@@ -319,7 +335,7 @@
             }
           })
           .catch((error) => {
-            this.mixinAlert("Could not open this folder", true);
+            this.mixinAlert(this.$t("Could not open this folder."), true);
           });
       },
 

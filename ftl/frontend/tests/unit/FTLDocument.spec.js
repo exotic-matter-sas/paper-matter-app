@@ -24,7 +24,7 @@ localVue.use(Vuex);
 
 localVue.component('font-awesome-icon', jest.fn()); // avoid font awesome warnings
 
-localVue.prototype.$_ = (text) => {
+localVue.prototype.$t = (text) => {
   return text
 }; // i18n mock
 localVue.prototype.$moment = () => {
