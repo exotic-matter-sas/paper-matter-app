@@ -48,14 +48,16 @@
         <b-col>
           <b-row>
             <b-col class="mb-1">
-              <b-button class="mx-1" variant="primary" :href="`/app/uploads/` + currentOpenDoc.pid + `/doc.pdf`"
-                        target="_blank">
-                {{ $t('Open PDF')}}
+              <b-button id="open-pdf" class="mx-1 mb-1" variant="primary"
+                        :href="`/app/uploads/` + currentOpenDoc.pid + `/doc.pdf`"
+                        target="_blank" :title="$t('Open PDF in a new tab')">
+                {{ $t('Open PDF') }}
+                <font-awesome-icon icon="external-link-alt" size="sm"/>
               </b-button>
-              <b-button id="move-document" class="mx-1" variant="secondary" v-b-modal="'modal-move-document'">
+              <b-button id="move-document" class="mx-1 mb-1" variant="secondary" v-b-modal="'modal-move-document'">
                 {{ $t('Move') }}
               </b-button>
-              <b-button id="delete-document" class="mx-1" variant="danger" v-b-modal="'modal-delete-document'">
+              <b-button id="delete-document" class="mx-1 mb-1" variant="danger" v-b-modal="'modal-delete-document'">
                 {{ $t('Delete') }}
               </b-button>
             </b-col>
@@ -96,6 +98,7 @@
     Viewer not available on this device, open the document instead.: Visualisateur indisponible pour cet appareil,
       ouvrir le document à la place.
     Open PDF: Ouvrir le PDF
+    Open PDF in a new tab: Ouvrir le PDF dans un nouvel onglet
 </i18n>
 
 <script>
@@ -246,6 +249,7 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+
 
       &:hover {
         .fa-folder {

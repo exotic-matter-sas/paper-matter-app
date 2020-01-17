@@ -2,6 +2,7 @@
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
 
 import os
+import time
 from string import ascii_lowercase
 from unittest import skip, skipIf
 from unittest.mock import patch
@@ -18,7 +19,7 @@ from ftests.pages.user_login_page import LoginPage
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_document, setup_folder, \
     setup_temporary_file
-from ftl.settings import DEV_MODE, BASE_DIR
+from ftl.settings import DEV_MODE, BASE_DIR, DEFAULT_TEST_BROWSER, TEST_BROWSER_HEADLESS
 
 
 class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
@@ -356,6 +357,24 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
 
         # Default sort is back to recent first
         self.assertIn('Recent', self.get_elem_text(self.sort_dropdown_button))
+
+    @skipIf(DEFAULT_TEST_BROWSER == 'firefox',
+            'Due to a Firefox bug, download can\'t be automated for file with Content-Disposition header set to '
+            'attachment.'
+            '\nRef: https://bugzilla.mozilla.org/show_bug.cgi?id=453455'
+            '\nPossible workaround: https://bugzilla.mozilla.org/show_bug.cgi?id=453455#c150')
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_download_document_from_list(self):
+        # User has already added a document
+        document_name = 'doc_name1'
+        setup_document(self.org, self.user, title=document_name)
+        self.refresh_documents_list()
+
+        # User click on the download button
+        file_name = self.download_file(self.documents_download_buttons)
+
+        # Downloaded file name match document name
+        self.assertEqual(file_name, document_name + '.pdf')
 
 
 class SearchTests(LoginPage, HomePage, DocumentViewerModal):
@@ -696,6 +715,35 @@ class DocumentViewerModalTests(LoginPage, HomePage, DocumentViewerModal):
         self.visit(HomePage.url)
         with self.assertRaises(NoSuchElementException):
             self.get_elem(self.first_document_title)
+
+    @skipIf(DEFAULT_TEST_BROWSER == 'chrome' and TEST_BROWSER_HEADLESS,
+            "Headless chrome doesn't support extensions and it seem it doesn't support PDF preview too (browser freeze"
+            " after switching to tab with PDF preview).\n"
+            "Refs:\n"
+            " - https://bugs.chromium.org/p/chromedriver/issues/detail?id=1961\n"
+            " - https://bugs.chromium.org/p/chromium/issues/detail?id=706008")
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_open_document(self):
+        # User has already added and opened a document
+        document_name = 'doc_name1'
+        document = setup_document(self.org, self.user, title=document_name)
+        self.refresh_documents_list()
+        self.open_first_document()
+
+        # User click on open pdf button
+        initial_tabs = self.browser.window_handles
+        self.get_elem(self.open_pdf_button).click()
+        time.sleep(0.5)  # wait for browser to open new tab
+        current_tabs = self.browser.window_handles
+
+        # A new tab has opened
+        self.assertGreater(len(current_tabs), len(initial_tabs), 'no new tab opened')
+
+        # document is opened in new tab
+        new_window = (set(current_tabs) - set(initial_tabs)).pop()
+        self.browser.switch_to.window(new_window)
+        time.sleep(0.5)  # wait for browser to load viewer
+        self.assertIn(f'{document.pid}/doc.pdf', self.browser.current_url)
 
 
 class ManageFoldersPageTests(LoginPage, ManageFolderPage):
