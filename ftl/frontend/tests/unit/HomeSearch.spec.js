@@ -87,7 +87,7 @@ describe('HomeSearch template', () => {
   });
 
   it('renders properly home template', () => {
-    expect(wrapper.text()).toContain('No document yet');
+    expect(wrapper.text()).toContain('No result found');
   });
 });
 

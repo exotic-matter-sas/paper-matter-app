@@ -177,7 +177,7 @@ describe('Home computed', () => {
         to: {path: '/home/' + fakePath}
       },
       {
-        text: fakeLevels[1].name,
+        text: fakeLevels[1].name + ' (0)',
         to: {path: '/home/' + fakePath}
       },
     ];

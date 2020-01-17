@@ -13,11 +13,14 @@
       </b-row>
 
       <b-row v-show="!selectedDocumentsHome.length" class="my-3" id="folders-list">
-        <b-col>
-          <b-button id="refresh-documents" :disabled="docsLoading" variant="primary" @click="updateDocuments">
+        <b-col class="text-center">
+          <b-button id="refresh-documents" class="float-left" :disabled="docsLoading" variant="primary"
+                    @click="updateDocuments">
             <font-awesome-icon icon="sync" :spin="docsLoading" :class="{ 'stop-spin':!docsLoading }"
                                :title="$_('Refresh documents list')"/>
           </b-button>
+
+          <span v-if="count>0" id="documents-count" class="text-muted">{{this.$_('%s results found', [count])}}</span>
 
           <b-dropdown id="documents-sort" right variant="link" class="m-1 text-decoration-none">
             <template slot="button-content">
@@ -81,15 +84,21 @@
             <FTLDocument v-for="doc in docs" :key="doc.pid" :doc="doc" @event-open-doc="navigateToDocument"/>
           </b-row>
         </b-col>
-        <b-col v-else class="text-center">{{ this.$_('No document yet') }}</b-col>
+        <b-col v-else class="text-center">{{ this.$_('No result found') }}</b-col>
       </b-row>
 
       <b-row v-if="moreDocs" align-h="center" class="my-3">
         <b-col>
           <b-button id="more-documents" block variant="secondary" @click.prevent="loadMoreDocuments">
             <b-spinner class="loader" :class="{'d-none': !moreDocsLoading}" small></b-spinner>
-            <span :class="{'d-none': moreDocsLoading}">{{ this.$_('Load more') }}</span>
+            <span :class="{'d-none': moreDocsLoading}">{{ this.$_('Show more documents (%s remaining)', [count - docs.length]) }}</span>
           </b-button>
+        </b-col>
+      </b-row>
+
+      <b-row v-else-if="count > 0" class="my-3">
+        <b-col>
+          <p class="text-center">{{ this.$_('No more search results')}}</p>
         </b-col>
       </b-row>
 
@@ -226,6 +235,11 @@
     #action-selected-documents {
       top: 56px;
     }
+  }
+
+  #documents-count{
+    position: relative;
+    top: 0.5em;
   }
 
   .stop-spin {

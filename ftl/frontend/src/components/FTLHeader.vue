@@ -67,7 +67,7 @@
 
           <b-input-group-append>
             <b-button id="search-button" variant="outline-secondary" type="submit"
-                      @click.prevent="doSearch">
+                      @click.prevent="doSearch" :disabled="search === ''">
               {{this.$_('Search')}}
             </b-button>
           </b-input-group-append>
@@ -131,7 +131,9 @@
       },
 
       doSearch: function () {
-        this.$router.push({name: 'home-search', params: {search: this.search}})
+        if (this.search !== ''){
+          this.$router.push({name: 'home-search', params: {search: this.search}})
+        }
       }
     }
   }
