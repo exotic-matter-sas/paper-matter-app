@@ -203,6 +203,9 @@
         this.refreshFolders();
         this.updateDocuments();
       }
+
+      // Clear the selected documents
+      this.$store.commit("unselectAllDocuments");
     },
 
     watch: {
