@@ -209,6 +209,28 @@ class DocumentsTests(APITestCase):
         self.assertIsNone(objects_get.ftl_folder)
 
     @patch.object(FTLDocumentProcessing, 'apply_processing')
+    def test_upload_document_correct_size(self, mock_apply_processing):
+        with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'test.pdf'), mode='rb') as fp:
+            client_post = self.client.post('/app/api/v1/documents/upload', {'json': '{}', 'file': fp})
+        self.assertEqual(client_post.status_code, status.HTTP_201_CREATED)
+
+        client_doc = client_post.data
+        objects_get = FTLDocument.objects.get(pid=client_doc['pid'])
+
+        self.assertEqual(objects_get.size, 20247)
+
+    @patch.object(FTLDocumentProcessing, 'apply_processing')
+    def test_upload_document_correct_md5(self, mock_apply_processing):
+        with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'test.pdf'), mode='rb') as fp:
+            client_post = self.client.post('/app/api/v1/documents/upload', {'json': '{}', 'file': fp})
+        self.assertEqual(client_post.status_code, status.HTTP_201_CREATED)
+
+        client_doc = client_post.data
+        objects_get = FTLDocument.objects.get(pid=client_doc['pid'])
+
+        self.assertEqual(objects_get.md5, "2b0d9bcba3913d2d26b364630dab4c4b")
+
+    @patch.object(FTLDocumentProcessing, 'apply_processing')
     def test_upload_doc_with_creation_date(self, mock_apply_processing):
         creation_date = '2019-11-15T08:54:33.361913+00:00'
         with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'test.pdf'), 'rb') as f:

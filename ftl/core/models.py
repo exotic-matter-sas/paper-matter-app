@@ -1,4 +1,4 @@
-#  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
 
 import logging
@@ -129,6 +129,8 @@ class FTLDocument(models.Model):
     tsvector = SearchVectorField(blank=True)
     language = models.CharField(max_length=64, default='simple')
     thumbnail_binary = models.FileField(upload_to=_get_name_binary, max_length=256, null=True)
+    size = models.BigIntegerField(default=0)
+    md5 = models.CharField(max_length=32, null=True)
     deleted = models.BooleanField(default=False)
 
     class Meta:
