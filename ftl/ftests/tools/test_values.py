@@ -17,7 +17,7 @@ USER1_PASS = 'a123456!'
 USER2_EMAIL = 'user2@localhost.com'
 USER2_PASS = 'a123456!'
 
-DOCUMENT1_TITLE = 'test.pdf'
+DOCUMENT1_TITLE = 'test'
 DOCUMENT1_NOTE = 'Document 1 note'
 DOCUMENT1_BINARY_PATH = 'ftests/tools/test_documents/test.pdf'
 DOCUMENT1_CONTENT = 'Document 1 content'

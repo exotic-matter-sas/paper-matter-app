@@ -36,7 +36,7 @@ FTL_PERMISSIONS_USER = [
 
 
 def _get_name_binary(instance, filename):
-    return 'uploads/' + str(uuid.uuid4()) + pathlib.Path(filename).suffix
+    return 'uploads/' + str(uuid.uuid4()) + pathlib.Path(instance.binary.name).suffix
 
 
 # FTP orgs
