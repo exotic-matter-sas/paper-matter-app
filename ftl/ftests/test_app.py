@@ -1,10 +1,10 @@
-#  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
 
 import os
 import time
 from string import ascii_lowercase
-from unittest import skip, skipIf
+from unittest import skipIf
 from unittest.mock import patch
 
 from selenium.common.exceptions import NoSuchElementException
@@ -375,6 +375,33 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
 
         # Downloaded file name match document name
         self.assertEqual(file_name, document_name + '.pdf')
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_unselect_documents(self):
+        # Ensure that documents selected are unselected when switching pages
+        folder_a = setup_folder(self.org, "Folder A")
+        folder_b = setup_folder(self.org, "Folder B")
+        doc_in_folder_a = setup_document(self.org, self.user, title="doc ABBBAX", ftl_folder=folder_a)
+        doc_in_folder_b = setup_document(self.org, self.user, title="doc ABXXAB", ftl_folder=folder_b)
+
+        self.refresh_page()
+
+        self.search_documents("ABXXAB")
+        self.get_elem(self.documents_checkboxes).click()
+        self.get_elem(self.home_page_link).click()
+
+        with self.assertRaises(NoSuchElementException, msg='No batch toolbar should be shown'):
+            self.get_elem(self.batch_toolbar)
+
+        # Ensure it's reset between searches too
+        self.search_documents("ABXXAB")
+        self.get_elem(self.documents_checkboxes).click()
+        self.wait_for_elem_to_show(self.batch_toolbar)
+        self.assertTrue(self.get_elem(self.batch_toolbar))
+
+        self.search_documents("ABBBAX")
+        with self.assertRaises(NoSuchElementException, msg='No batch toolbar should be shown'):
+            self.get_elem(self.batch_toolbar)
 
 
 class SearchTests(LoginPage, HomePage, DocumentViewerModal):

@@ -155,6 +155,9 @@
         // all docs
         this.updateDocuments();
       }
+
+      // Clear the selected documents
+      this.$store.commit("unselectAllDocuments");
     },
 
     watch: {
@@ -162,6 +165,9 @@
         if (newVal !== oldVal) {
           this.refreshDocumentWithSearch(newVal);
         }
+
+        // Clear the selected documents
+        this.$store.commit("unselectAllDocuments");
       },
       sort: function (newVal, oldVal) {
         if (newVal !== oldVal) {
