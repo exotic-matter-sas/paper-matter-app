@@ -83,12 +83,6 @@
         </b-col>
       </b-row>
 
-      <b-row class="mb-2" id="documents-count">
-        <b-col>
-          <small v-if="docs.length > 0" class="text-muted">{{ this.$_('%s documents in this folder', [docs.length]) }}</small>
-        </b-col>
-      </b-row>
-
       <b-row class="mt-2 mb-3" id="documents-list">
         <b-col v-if="docsLoading">
           <b-spinner class="mx-auto loader" id="documents-list-loader" label="Loading..."></b-spinner>
@@ -114,7 +108,7 @@
 
       <b-row v-else-if="count > 0" class="my-3">
         <b-col>
-          <p class="text-center">{{ this.$_('%s documents in this folder', [count])}}</p>
+          <p class="text-center">{{ this.$_('No more documents in this folder')}}</p>
         </b-col>
       </b-row>
 
@@ -236,7 +230,7 @@
           to: {name: 'home'}
         });
 
-        return paths.concat(this.previousLevels.map((e) => {
+        paths = paths.concat(this.previousLevels.map((e) => {
           return {
             text: e.name,
             to: {
@@ -244,6 +238,11 @@
             }
           }
         }));
+
+        // Add total documents count after current folder name
+        paths[paths.length - 1].text = `${paths[paths.length - 1].text} (${this.count})`;
+
+        return paths
       },
       ...mapState(['selectedDocumentsHome', 'sortHome']) // generate vuex computed getter
     },

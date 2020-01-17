@@ -117,6 +117,7 @@
       documentsCreated: function (event) {
         const doc = event.doc;
         this.docs.unshift(doc);
+        this.count ++
       },
 
       documentDeleted: function (event) {
