@@ -469,7 +469,7 @@ class SearchTests(LoginPage, HomePage, DocumentViewerModal):
         with self.assertRaises(NoSuchElementException, msg='No document should be found by this search query'):
             self.get_elems(self.documents_thumbnails)
 
-        self.assertIn('No document', self.get_elem_text(self.documents_list_container),
+        self.assertIn('No result found', self.get_elem_text(self.documents_list_container),
                       'A message should indicate no documents were found')
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
@@ -488,7 +488,7 @@ class SearchTests(LoginPage, HomePage, DocumentViewerModal):
         with self.assertRaises(NoSuchElementException, msg='No document should be found by this search query'):
             self.get_elems(self.documents_thumbnails)
 
-        self.assertIn('No document', self.get_elem_text(self.documents_list_container),
+        self.assertIn('No result found', self.get_elem_text(self.documents_list_container),
                       'A message should indicate no documents were found')
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
