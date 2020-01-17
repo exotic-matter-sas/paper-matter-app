@@ -250,7 +250,9 @@ Content-Disposition: form-data; name="json"
       "id":35,
       "name":"b"
     }
-  ]
+  ],
+  "md5":"d85fce92a5789f66f58096402da6b98f",
+  "size":123
 }
 ```
 
@@ -292,19 +294,19 @@ OR
 
 ```json
 {
-  "count": 2,
-  "next": null,
-  "previous": null,
-  "results": [
+  "count":2,
+  "next":null,
+  "previous":null,
+  "results":[
     {
-      "pid": "4c092ae2-2c91-4759-9123-5f4af7538f85",
-      "title": "file.pdf",
-      "note": "",
-      "created": "2019-08-19T15:03:03.504330Z",
-      "edited": "2019-08-19T15:03:06.844287Z",
-      "ftl_folder": 12,
-      "thumbnail_available": false,
-      "is_processed": true,
+      "pid":"4c092ae2-2c91-4759-9123-5f4af7538f85",
+      "title":"file.pdf",
+      "note":"",
+      "created":"2019-08-19T15:03:03.504330Z",
+      "edited":"2019-08-19T15:03:06.844287Z",
+      "ftl_folder":12,
+      "thumbnail_available":false,
+      "is_processed":true,
       "path":[
         {
           "id":34,
@@ -314,17 +316,19 @@ OR
           "id":35,
           "name":"b"
         }
-      ]
+      ],
+      "md5":"d85fce92a5789f66f58096402da6b98f",
+      "size":123
     },
     {
-      "pid": "6d3a6286-7c1c-45f6-86c9-6452fa2928fa",
-      "title": "file2.pdf",
-      "note": "",
-      "created": "2019-08-19T14:24:27.125753Z",
-      "edited": "2019-08-19T14:24:30.431466Z",
-      "ftl_folder": 12,
-      "thumbnail_available": false,
-      "is_processed": true,
+      "pid":"6d3a6286-7c1c-45f6-86c9-6452fa2928fa",
+      "title":"file2.pdf",
+      "note":"",
+      "created":"2019-08-19T14:24:27.125753Z",
+      "edited":"2019-08-19T14:24:30.431466Z",
+      "ftl_folder":12,
+      "thumbnail_available":false,
+      "is_processed":true,
       "path":[
         {
           "id":34,
@@ -334,7 +338,9 @@ OR
           "id":35,
           "name":"b"
         }
-      ]
+      ],
+      "md5":"d85fce92a5789f66f58096402da6b98f",
+      "size":123
     }
   ]
 }
@@ -357,14 +363,14 @@ Rename, annotate, move a document (or set its thumbnail).
 
 ```json
 {
-  "pid": "4c092ae2-2c91-4759-9123-5f4af7538f85",
-  "title": "renamed",
-  "note": "",
-  "created": "2019-08-19T15:03:03.504330Z",
-  "edited": "2019-08-19T16:10:00.771661Z",
-  "ftl_folder": 12,
-  "thumbnail_available": false,
-  "is_processed": true,
+  "pid":"4c092ae2-2c91-4759-9123-5f4af7538f85",
+  "title":"renamed",
+  "note":"",
+  "created":"2019-08-19T15:03:03.504330Z",
+  "edited":"2019-08-19T16:10:00.771661Z",
+  "ftl_folder":12,
+  "thumbnail_available":false,
+  "is_processed":true,
   "path":[
     {
       "id":34,
@@ -374,7 +380,9 @@ Rename, annotate, move a document (or set its thumbnail).
       "id":35,
       "name":"b"
     }
-  ]
+  ],
+  "md5":"d85fce92a5789f66f58096402da6b98f",
+  "size":123
 }
 ```
 

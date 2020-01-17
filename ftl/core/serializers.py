@@ -1,4 +1,4 @@
-#  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
 
 import binascii
@@ -55,8 +55,9 @@ class FTLDocumentSerializer(serializers.ModelSerializer):
     class Meta:
         model = FTLDocument
         fields = ('pid', 'title', 'note', 'created', 'edited', 'ftl_folder', 'thumbnail_binary', 'thumbnail_available',
-                  'thumbnail_url', 'is_processed', 'path')
-        read_only_fields = ('pid', 'created', 'edited', 'thumbnail_available', 'thumbnail_url', 'is_processed', 'path')
+                  'thumbnail_url', 'is_processed', 'path', 'md5', 'size')
+        read_only_fields = ('pid', 'created', 'edited', 'thumbnail_available', 'thumbnail_url', 'is_processed', 'path',
+                            'md5', 'size')
 
 
 class FTLFolderSerializer(serializers.ModelSerializer):

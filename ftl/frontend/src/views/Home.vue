@@ -64,7 +64,8 @@
           </b-button>
         </b-col>
         <b-col cols="8" class="text-right">
-          <span class="text-muted d-none d-sm-inline">{{ $t('{0} documents:', [selectedDocumentsHome.length]) }}</span>
+          <span
+            class="text-muted d-none d-sm-inline">{{ $t('{0} documents:', [selectedDocumentsHome.length]) }}</span>
           <b-button id="unselect-all-documents" @click="$store.commit('unselectAllDocuments')"
                     title="Unselect documents">
             <font-awesome-icon icon="window-close" class="d-sm-none"/>
@@ -98,8 +99,16 @@
         <b-col>
           <b-button id="more-documents" block variant="secondary" @click.prevent="loadMoreDocuments">
             <b-spinner class="loader" :class="{'d-none': !moreDocsLoading}" small></b-spinner>
-            <span :class="{'d-none': moreDocsLoading}">{{ $t('Show more documents') }}</span>
+            <span :class="{'d-none': moreDocsLoading}">
+              {{ $t('Show more documents ({0} remaining)', [count - docs.length, count]) }}
+            </span>
           </b-button>
+        </b-col>
+      </b-row>
+
+      <b-row v-else-if="count > 0" class="my-3">
+        <b-col>
+          <p class="text-center">{{ $t('No more documents in this folder') }}</p>
         </b-col>
       </b-row>
 
@@ -140,7 +149,8 @@
     Select all: Tout sélectionner
     "{0} documents:": "{0} documents:"
     No document yet: Aucun document
-    Show more documents: Afficher plus de documents
+    Show more documents ({0} remaining): Afficher plus de documents ({0} restants)
+    No more documents in this folder: Aucun document restant à afficher.
     Could not open this folder.: Impossible d'ouvrir ce dossier.
 </i18n>
 <script>
@@ -236,7 +246,7 @@
           to: {name: 'home'}
         });
 
-        return paths.concat(this.previousLevels.map((e) => {
+        paths = paths.concat(this.previousLevels.map((e) => {
           return {
             text: e.name,
             to: {
@@ -244,6 +254,11 @@
             }
           }
         }));
+
+        // Add total documents count after current folder name
+        paths[paths.length - 1].text = `${paths[paths.length - 1].text} (${this.count})`;
+
+        return paths
       },
       ...mapState(['selectedDocumentsHome', 'sortHome']) // generate vuex computed getter
     },
