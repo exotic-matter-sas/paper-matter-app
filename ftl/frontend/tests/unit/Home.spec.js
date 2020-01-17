@@ -410,7 +410,7 @@ describe('Home methods call proper methods', () => {
     wrapper.vm.navigateToFolder(folderToNavigate);
 
     // then
-    expect(wrapper.vm.previousLevels[wrapper.vm.previousLevels.length-1]).toEqual(folderToNavigate);
+    expect(wrapper.vm.previousLevels[wrapper.vm.previousLevels.length - 1]).toEqual(folderToNavigate);
     expect(wrapper.vm.$router.push).toHaveBeenNthCalledWith(1, {path: '/home/' + fakePath});
   });
 
@@ -546,7 +546,8 @@ describe('Home methods call proper api', () => {
 
     // then
     expect(axios.get).toHaveBeenCalledWith('/app/api/v1/folders');
-    expect(axios.get).toHaveBeenCalledTimes(2);  });
+    expect(axios.get).toHaveBeenCalledTimes(2);
+  });
 
   it('updateFoldersPath call api', async () => {
     // restore original method to test it
@@ -597,6 +598,9 @@ describe('Home event handling', () => {
     store = new Vuex.Store(Object.assign(
       storeConfigCopy,
       {
+        mutations: {
+          unselectAllDocuments: mockedUnselectAllDocumentsCommit
+        },
         state: {
           selectedDocumentsHome: ['fakeDocument']
         }
@@ -646,7 +650,7 @@ describe('Home event handling', () => {
     expect(mockedFolderCreated).toHaveBeenCalledTimes(1);
   });
 
- it('event-new-upload call documentsCreated', async () => {
+  it('event-new-upload call documentsCreated', async () => {
     // when
     wrapper.find(FTLUpload).vm.$emit('event-new-upload');
     await flushPromises(); // wait all pending promises are resolved/rejected
