@@ -38,7 +38,7 @@ class Command(BaseCommand):
                     plugins_forced.append(value)
 
         processing = FTLDocumentProcessing(settings.FTL_DOC_PROCESSING_PLUGINS)
-        docs = FTLDocument.objects.all()
+        docs = FTLDocument.objects.filter(deleted=False).all()
 
         start_time = time.time()
         documents_count = len(docs)
