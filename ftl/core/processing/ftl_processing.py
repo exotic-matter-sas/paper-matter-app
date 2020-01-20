@@ -1,4 +1,4 @@
-#  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
 
 import logging
@@ -78,12 +78,13 @@ class FTLOCRBase(FTLDocProcessingBase):
             # If full text not already extracted
             if force or not ftl_doc.content_text.strip():
                 ftl_doc.content_text = self._extract_text(ftl_doc.binary)
+                ftl_doc.ocr = True
                 ftl_doc.save()
             else:
-                logger.info(f'{self.log_prefix} Processing skipped, document {ftl_doc.id} already get a text_content')
+                logger.info(f'{self.log_prefix} Processing skipped, document {ftl_doc.id} already got a text_content')
         else:
             raise PluginUnsupportedStorage(
-                f'{self.log_prefix} does not support storage {DEFAULT_FILE_STORAGE} (supported storages are: '
+                f'{self.log_prefix} does not support storage {DEFAULT_FILE_STORAGE} (supported storage are: '
                 f'{self.supported_storages}).')
 
     def _extract_text(self, ftl_doc_binary):
