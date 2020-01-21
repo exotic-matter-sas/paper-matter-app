@@ -9,7 +9,8 @@ const mixinAlert = function (message, error = false, error_details = null, title
   if (error_details != null) {
     message += ` (${error_details})`;
   }
-  this.$bvToast.toast(message, {
+
+  this.$root.$bvToast.toast(message, {
     title: title,
     variant: error ? 'danger' : 'success',
     solid: true,
