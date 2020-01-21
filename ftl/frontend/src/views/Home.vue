@@ -65,7 +65,7 @@
         </b-col>
         <b-col cols="8" class="text-right">
           <span
-            class="text-muted d-none d-sm-inline">{{ $t('{0} documents:', [selectedDocumentsHome.length]) }}</span>
+            class="text-muted d-none d-sm-inline">{{ $tc('| 1 document: | {n} documents:', selectedDocumentsHome.length) }}</span>
           <b-button id="unselect-all-documents" @click="$store.commit('unselectAllDocuments')"
                     title="Unselect documents">
             <font-awesome-icon icon="window-close" class="d-sm-none"/>
@@ -100,7 +100,7 @@
           <b-button id="more-documents" block variant="secondary" @click.prevent="loadMoreDocuments">
             <b-spinner class="loader" :class="{'d-none': !moreDocsLoading}" small></b-spinner>
             <span :class="{'d-none': moreDocsLoading}">
-              {{ $t('Show more documents ({0} remaining)', [count - docs.length, count]) }}
+              {{ $tc("| Show more documents (1 remaining) | Show more documents ({n} remaining)", count - docs.length) }}
             </span>
           </b-button>
         </b-col>
@@ -147,12 +147,13 @@
     A-Z: A-Z
     Z-A: Z-A
     Select all: Tout sélectionner
-    "{0} documents:": "{0} documents:"
+    "| 1 document: | {n} documents:": "| 1 document : | {n} documents :"
     No document yet: Aucun document
-    Show more documents ({0} remaining): Afficher plus de documents ({0} restants)
+    "| Show more documents (1 remaining) | Show more documents ({n} remaining)": "| Afficher plus de documents (1 restant) | Afficher plus de documents ({n} restants)"
     No more documents in this folder: Aucun document restant à afficher
     Could not open this folder.: Impossible d'ouvrir ce dossier.
 </i18n>
+
 <script>
   // @ is an alias to /src
   import {mapState} from 'vuex'

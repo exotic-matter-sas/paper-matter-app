@@ -10,7 +10,7 @@
            @ok="moveDocument">
     <template slot="modal-title">
       <span v-if="docs.length > 1">{{ $t('Move {0} documents to...', [docs.length])}}</span>
-      <span v-else>{{ $t('Move {0} to...', [docs[0].title])}}</span>
+      <span v-else>{{ $t('Move "{0}" to...', [docs[0].title])}}</span>
     </template>
     <b-container fluid>
       <b-row>
@@ -28,8 +28,8 @@
 <i18n>
   fr:
     Move {0} documents to...: Déplacer {0} documents vers ...
-    Move {0} to...: Déplacer {0} vers ...
-    "Selected folder: {0}": "Dossier sélectionné: {0}"
+    Move "{0}" to...: Déplacer « {0} » vers ...
+    "Selected folder: {0}": "Dossier sélectionné : {0}"
     No folder selected: Aucun dossier sélectionné
     Could not move document: Le document n'a pu être déplacé
 </i18n>
