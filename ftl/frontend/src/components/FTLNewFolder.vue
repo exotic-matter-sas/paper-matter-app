@@ -74,7 +74,7 @@
           .post("/app/api/v1/folders", postBody, axiosConfig)
           .then((response) => {
             // TODO flash the new folder when just created
-            this.mixinAlert(this.$t("Folder {0} created", [this.newFolderName]));
+            this.mixinAlert(this.$t('Folder "{0}" created', [this.newFolderName]));
             this.newFolderName = '';
             this.$emit('event-folder-created', response.data);
           }).catch((error) => {
