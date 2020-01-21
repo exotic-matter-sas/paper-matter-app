@@ -20,6 +20,7 @@
     Delete documents: Supprimer les documents
     Please confirm that you want to delete {0} documents?: Êtes-vous sûr de vouloir supprimer {0} documents ?
     Please confirm that you want to delete "{0}".: Veuillez confirmer la suppression de « {0} ».
+    "| One document deleted successfully. | {n} documents deleted successfully.": "| Un document supprimé. | {n} documents supprimés."
     Could not delete document: Le document n'a pu être supprimé
 </i18n>
 <script>
@@ -49,11 +50,20 @@
 
     methods: {
       deleteDocuments: function () {
+        let toasted = false;
+        const nb = this.docs.length; // store count due to async access later
+
         for (const doc of this.docs) {
           axios
             .delete('/app/api/v1/documents/' + doc.pid, axiosConfig)
             .then((response) => {
               this.$emit('event-document-deleted', {'doc': doc})
+
+              if (!toasted) {
+                this.mixinAlert(
+                  this.$tc('| One document deleted successfully. | {n} documents deleted successfully.', nb));
+                toasted = true;
+              }
             })
             .catch(error => this.mixinAlert(this.$t('Could not delete document'), true));
         }

@@ -32,6 +32,7 @@
     "Selected folder: {0}": "Dossier sélectionné : {0}"
     No folder selected: Aucun dossier sélectionné
     Document moved successfully.: Le document a été déplacé avec succès.
+    "| One document moved successfully. | {n} documents moved successfully.": "| Un document déplacé. | {n} documents déplacés."
     Could not move document.: Le document n'a pu être déplacé.
 </i18n>
 
@@ -70,6 +71,9 @@
 
     methods: {
       moveDocument: function () {
+        let toasted = false;
+        const nb = this.docs.length; // store count due to async access later
+
         for (const doc of this.docs) {
           if (doc.ftl_folder === this.selectedMoveTargetFolder.id) {
             continue;
@@ -88,7 +92,12 @@
               });
 
               this.$store.commit('selectMoveTargetFolder', null);
-              this.mixinAlert(this.$t('Document moved successfully.'));
+
+              if (!toasted) {
+                this.mixinAlert(
+                  this.$tc('| One document moved successfully. | {n} documents moved successfully.', nb));
+                toasted = true;
+              }
             })
             .catch(error => {
               this.mixinAlert(this.$t('Could not move document.'), true)
