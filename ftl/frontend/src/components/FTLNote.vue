@@ -123,7 +123,6 @@
           .patch('/app/api/v1/documents/' + this.doc.pid, body, axiosConfig)
           .then(response => {
             this.$emit('event-document-note-edited', {doc: response.data});
-            this.mixinAlert('Document note saved!');
           })
           .catch(error => {
             this.mixinAlert(this.$t('Could not save note'), true)

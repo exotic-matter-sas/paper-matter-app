@@ -31,7 +31,8 @@
     Move "{0}" to...: Déplacer « {0} » vers ...
     "Selected folder: {0}": "Dossier sélectionné : {0}"
     No folder selected: Aucun dossier sélectionné
-    Could not move document: Le document n'a pu être déplacé
+    Document moved successfully.: Le document a été déplacé avec succès.
+    Could not move document.: Le document n'a pu être déplacé.
 </i18n>
 
 <script>
@@ -85,11 +86,12 @@
                 'doc': response.data,
                 'target_folder': this.selectedMoveTargetFolder
               });
+
               this.$store.commit('selectMoveTargetFolder', null);
-              this.mixinAlert('Document moved successfully');
+              this.mixinAlert(this.$t('Document moved successfully.'));
             })
             .catch(error => {
-              this.mixinAlert(this.$t('Could not move document'), true)
+              this.mixinAlert(this.$t('Could not move document.'), true)
             });
         }
       }
