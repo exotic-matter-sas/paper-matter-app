@@ -39,6 +39,10 @@ def _get_name_binary(instance, filename):
     return 'uploads/' + str(uuid.uuid4()) + pathlib.Path(instance.binary.name).suffix
 
 
+def _get_name_thumb(instance, filename):
+    return 'uploads/' + str(uuid.uuid4()) + pathlib.Path(filename).suffix
+
+
 # FTP orgs
 class FTLOrg(models.Model):
     name = models.CharField(max_length=128)
@@ -128,7 +132,7 @@ class FTLDocument(models.Model):
     edited = models.DateTimeField(auto_now=True)
     tsvector = SearchVectorField(blank=True)
     language = models.CharField(max_length=64, default='simple')
-    thumbnail_binary = models.FileField(upload_to=_get_name_binary, max_length=256, null=True)
+    thumbnail_binary = models.FileField(upload_to=_get_name_thumb, max_length=256, null=True)
     size = models.BigIntegerField(default=0)
     md5 = models.CharField(max_length=32, null=True)
     deleted = models.BooleanField(default=False)
