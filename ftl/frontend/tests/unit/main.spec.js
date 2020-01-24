@@ -40,13 +40,13 @@ describe('vue mixins call proper methods', () => {
     });
   });
 
-  it('mixinAlert call bootstrapVue toast method', () => {
+  it('mixinAlert and mixinAlertWarning call bootstrapVue toast method', () => {
     //when
-    wrapper.vm.$bvToast.toast = mockedToast.bind(wrapper.vm.$bvToast);
+    wrapper.vm.$root.$bvToast.toast = mockedToast.bind(wrapper.vm.$root.$bvToast);
     wrapper.vm.mixinAlert('OK');
     wrapper.vm.mixinAlertWarning('OK');
 
     //then
-    expect(mockedToast).toHaveBeenCalled();
+    expect(mockedToast).toHaveBeenCalledTimes(2);
   })
 });

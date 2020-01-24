@@ -89,6 +89,8 @@
             .patch('/app/api/v1/documents/' + doc.pid, body, {...axiosConfig, docPid: doc.pid}));
         }
 
+        console.log(promisesUpdate);
+
         Promise.allSettled(promisesUpdate)
           .then(res => res.filter(p => p.status === "fulfilled"))
           .then(res => res.map(p => p.value))
