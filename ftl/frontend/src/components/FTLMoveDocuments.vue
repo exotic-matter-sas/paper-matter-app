@@ -33,6 +33,7 @@
     No folder selected: Aucun dossier sélectionné
     Document moved successfully.: Le document a été déplacé avec succès.
     "| One document moved successfully. | {n} documents moved successfully.": "| Un document déplacé. | {n} documents déplacés."
+    "No document could be moved. | One document moved successfully ({remain} couldn't). | {n} documents moved successfully ({remain} couldn't).": "Aucun document n'a pu être déplacé. | Un document déplacé ({remain} en erreur). | {n} documents déplacés ({remain} en erreur)."
     Could not move document.: Le document n'a pu être déplacé.
 </i18n>
 
@@ -105,8 +106,8 @@
               this.mixinAlert(this.$tc('| One document moved successfully. | {n} documents moved successfully.', responses.length))
             } else {
               this.mixinAlertWarning(
-                this.$tc('No document was moved. | One document moved successfully ({remain} remains). | {n} documents moved successfully ({remain} remains).',
-                  responses.length, {remain: nb - responses.length}), true);
+                this.$tc('No document could be moved. | One document moved successfully ({remain} couldn\'t). | {n} documents moved successfully ({remain} couldn\'t).',
+                  responses.length, {remain: nb - responses.length}));
             }
           });
       }

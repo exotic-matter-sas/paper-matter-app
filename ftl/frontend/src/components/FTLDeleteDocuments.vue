@@ -21,6 +21,7 @@
     Please confirm that you want to delete {0} documents?: Êtes-vous sûr de vouloir supprimer {0} documents ?
     Please confirm that you want to delete "{0}".: Veuillez confirmer la suppression de « {0} ».
     "| One document deleted successfully. | {n} documents deleted successfully.": "| Un document supprimé. | {n} documents supprimés."
+    "No document could be deleted. | One document deleted successfully ({remain} couldn't). | {n} documents deleted successfully ({remain} couldn't).": "Aucun document n'a pu être supprimé. | Un document supprimé ({remain} en erreur). | {n} documents supprimés ({remain} en erreur)."
     Could not delete document: Le document n'a pu être supprimé
 </i18n>
 <script>
@@ -71,8 +72,8 @@
               this.mixinAlert(this.$tc('| One document deleted successfully. | {n} documents deleted successfully.', res.length))
             } else {
               this.mixinAlertWarning(
-                this.$tc('No document was deleted. | One document deleted successfully ({remain} remains). | {n} documents deleted successfully ({remain} remains).',
-                  res.length, {remain: nb - res.length}), true);
+                this.$tc('No document could be deleted. | One document deleted successfully ({remain} couldn\'t). | {n} documents deleted successfully ({remain} couldn\'t).',
+                  res.length, {remain: nb - res.length}));
             }
           });
       }
