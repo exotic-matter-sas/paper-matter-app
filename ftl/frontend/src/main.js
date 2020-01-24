@@ -28,7 +28,7 @@ import {
 import {faMarkdown} from '@fortawesome/free-brands-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
 
-import {mixinAlert} from "./vueMixins";
+import {mixinAlert, mixinAlertWarning} from "./vueMixins";
 import router from './router';
 import moment from 'moment'
 import axios from 'axios';
@@ -54,7 +54,8 @@ if (localeElem) {
 // Defined mixins
 Vue.mixin({
   methods: {
-    mixinAlert
+    mixinAlert,
+    mixinAlertWarning
   }
 });
 

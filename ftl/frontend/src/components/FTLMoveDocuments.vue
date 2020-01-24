@@ -71,11 +71,12 @@
 
     methods: {
       moveDocument: function () {
-        let toasted = false;
-        const nb = this.docs.length; // store count due to async access later
+        const promisesUpdate = [];
+        let nb = this.docs.length; // store count due to async access later
 
         for (const doc of this.docs) {
           if (doc.ftl_folder === this.selectedMoveTargetFolder.id) {
+            --nb;
             continue;
           }
 
@@ -83,26 +84,31 @@
             ftl_folder: this.selectedMoveTargetFolder.id
           };
 
-          axios
-            .patch('/app/api/v1/documents/' + doc.pid, body, axiosConfig)
-            .then(response => {
+          promisesUpdate.push(axios
+            .patch('/app/api/v1/documents/' + doc.pid, body, {...axiosConfig, docPid: doc.pid}));
+        }
+
+        Promise.allSettled(promisesUpdate)
+          .then(res => res.filter(p => p.status === "fulfilled"))
+          .then(res => res.map(p => p.value))
+          .then(responses => {
+            for (const res of responses) {
               this.$emit('event-document-moved', {
-                'doc': response.data,
+                'doc': res.data,
                 'target_folder': this.selectedMoveTargetFolder
               });
+            }
 
-              this.$store.commit('selectMoveTargetFolder', null);
+            this.$store.commit('selectMoveTargetFolder', null);
 
-              if (!toasted) {
-                this.mixinAlert(
-                  this.$tc('| One document moved successfully. | {n} documents moved successfully.', nb));
-                toasted = true;
-              }
-            })
-            .catch(error => {
-              this.mixinAlert(this.$t('Could not move document.'), true)
-            });
-        }
+            if (responses.length === nb) {
+              this.mixinAlert(this.$tc('| One document moved successfully. | {n} documents moved successfully.', responses.length))
+            } else {
+              this.mixinAlertWarning(
+                this.$tc('No document was moved. | One document moved successfully ({remain} remains). | {n} documents moved successfully ({remain} remains).',
+                  responses.length, {remain: nb - responses.length}), true);
+            }
+          });
       }
     }
   }

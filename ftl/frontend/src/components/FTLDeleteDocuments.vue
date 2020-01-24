@@ -50,23 +50,31 @@
 
     methods: {
       deleteDocuments: function () {
-        let toasted = false;
+        const promisesDelete = [];
         const nb = this.docs.length; // store count due to async access later
 
         for (const doc of this.docs) {
-          axios
-            .delete('/app/api/v1/documents/' + doc.pid, axiosConfig)
-            .then((response) => {
-              this.$emit('event-document-deleted', {'doc': doc})
-
-              if (!toasted) {
-                this.mixinAlert(
-                  this.$tc('| One document deleted successfully. | {n} documents deleted successfully.', nb));
-                toasted = true;
-              }
-            })
-            .catch(error => this.mixinAlert(this.$t('Could not delete document'), true));
+          // store doc pid in axios config which will be available later in the response
+          promisesDelete.push(
+            axios.delete('/app/api/v1/documents/' + doc.pid, {...axiosConfig, docPid: doc.pid}));
         }
+
+        Promise.allSettled(promisesDelete)
+          .then(res => res.filter(p => p.status === "fulfilled"))
+          .then(res => res.map(p => p.value))
+          .then(res => {
+            for (const doc of res) {
+              this.$emit('event-document-deleted', {'doc': {pid: doc.config.docPid}});
+            }
+
+            if (res.length === nb) {
+              this.mixinAlert(this.$tc('| One document deleted successfully. | {n} documents deleted successfully.', res.length))
+            } else {
+              this.mixinAlertWarning(
+                this.$tc('No document was deleted. | One document deleted successfully ({remain} remains). | {n} documents deleted successfully ({remain} remains).',
+                  res.length, {remain: nb - res.length}), true);
+            }
+          });
       }
     }
   }

@@ -44,6 +44,7 @@ describe('vue mixins call proper methods', () => {
     //when
     wrapper.vm.$bvToast.toast = mockedToast.bind(wrapper.vm.$bvToast);
     wrapper.vm.mixinAlert('OK');
+    wrapper.vm.mixinAlertWarning('OK');
 
     //then
     expect(mockedToast).toHaveBeenCalled();

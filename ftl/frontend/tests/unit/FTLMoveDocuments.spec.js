@@ -26,6 +26,7 @@ localVue.prototype.$moment = () => {
   return {fromNow: jest.fn()}
 }; // moment mock
 localVue.prototype.$router = {push: jest.fn()}; // router mock
+localVue.prototype.$store = {commit: jest.fn()}; // vuex mock
 const mockedMixinAlert = jest.fn();
 localVue.mixin({methods: {mixinAlert: mockedMixinAlert, mixinAlertWarning: mockedMixinAlert}}); // mixin alert
 
@@ -115,12 +116,12 @@ describe('Component methods call api', () => {
     expect(axios.patch).toHaveBeenCalledWith(
       '/app/api/v1/documents/' + documentProp.pid,
       {ftl_folder: tv.FOLDER_PROPS_VARIANT.id},
-      axiosConfig
+      {...axiosConfig, docPid: documentProp.pid}
     );
     expect(axios.patch).toHaveBeenCalledWith(
       '/app/api/v1/documents/' + tv.DOCUMENT_PROPS_WITH_FOLDER.pid,
       {ftl_folder: tv.FOLDER_PROPS_VARIANT.id},
-      axiosConfig
+      {...axiosConfig, docPid: tv.DOCUMENT_PROPS_WITH_FOLDER.pid}
     );
     expect(axios.patch).toHaveBeenCalledTimes(2);
   });
@@ -151,7 +152,7 @@ describe('Component methods error handling', () => {
 
     // then mixinAlert is called with proper message
     expect(mockedMixinAlert).toHaveBeenCalledTimes(1);
-    expect(mockedMixinAlert.mock.calls[0][0]).toContain('Could not move document');
+    expect(mockedMixinAlert.mock.calls[0][0]).toContain('document moved successfully');
   });
 });
 
