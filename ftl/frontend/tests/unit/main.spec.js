@@ -6,7 +6,7 @@
 import App from "../../src/App";
 import {createLocalVue, shallowMount} from "@vue/test-utils";
 import BootstrapVue from "bootstrap-vue";
-import {mixinAlert} from "../../src/vueMixins";
+import {mixinAlert, mixinAlertWarning} from "../../src/vueMixins";
 import VueRouter from 'vue-router';
 
 const localVue = createLocalVue();
@@ -15,10 +15,11 @@ localVue.use(VueRouter);
 localVue.prototype.$t = (text) => {
   return text;
 }; // i18n mock
+localVue.prototype.$tc = (text, args='') => {return text + args};// i18n mock
 localVue.prototype.$moment = () => {
   return {fromNow: jest.fn()}
 };
-localVue.mixin({methods: {mixinAlert}}); // set mixinAlert as set in main.js
+localVue.mixin({methods: {mixinAlert, mixinAlertWarning}}); // set mixinAlert as set in main.js
 
 const mockedUpdateFolder = jest.fn();
 const mockedUpdateDocument = jest.fn();
@@ -39,12 +40,13 @@ describe('vue mixins call proper methods', () => {
     });
   });
 
-  it('mixinAlert call bootstrapVue toast method', () => {
+  it('mixinAlert and mixinAlertWarning call bootstrapVue toast method', () => {
     //when
-    wrapper.vm.$bvToast.toast = mockedToast.bind(wrapper.vm.$bvToast);
+    wrapper.vm.$root.$bvToast.toast = mockedToast.bind(wrapper.vm.$root.$bvToast);
     wrapper.vm.mixinAlert('OK');
+    wrapper.vm.mixinAlertWarning('OK');
 
     //then
-    expect(mockedToast).toHaveBeenCalled();
+    expect(mockedToast).toHaveBeenCalledTimes(2);
   })
 });

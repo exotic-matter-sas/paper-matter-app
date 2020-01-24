@@ -18,11 +18,15 @@ localVue.component('font-awesome-icon', jest.fn()); // avoid font awesome warnin
 localVue.prototype.$t = (text, args = '') => {
   return text + args
 };// i18n mock
+localVue.prototype.$tc = (text, args = '') => {
+  return text + args
+};// i18n mock
 localVue.prototype.$moment = () => {
   return {fromNow: jest.fn()}
 }; // moment mock
+localVue.prototype.$store = {commit: jest.fn()}; // vuex mock
 const mockedMixinAlert = jest.fn();
-localVue.mixin({methods: {mixinAlert: mockedMixinAlert}}); // mixinAlert mock
+localVue.mixin({methods: {mixinAlert: mockedMixinAlert, mixinAlertWarning: mockedMixinAlert}}); // mixin alert
 
 // mock calls to api requests
 jest.mock('axios', () => ({
@@ -50,7 +54,7 @@ describe('FTLDeleteDocuments template', () => {
 
   it('renders properly FTLDeleteDocuments data for 1 document', () => {
     // overwrite docs prop with only 1 doc
-    wrapper.setData({ docs: [docsProp[0]]});
+    wrapper.setData({docs: [docsProp[0]]});
 
     expect(wrapper.html()).toContain(docsProp[0].title);
   });
@@ -76,8 +80,14 @@ describe('FTLDeleteDocuments methods', () => {
     wrapper.vm.deleteDocuments();
 
     // then
-    expect(axios.delete).toHaveBeenCalledWith('/app/api/v1/documents/' + docsProp[0].pid, axiosConfig);
-    expect(axios.delete).toHaveBeenCalledWith('/app/api/v1/documents/' + docsProp[1].pid, axiosConfig);
+    expect(axios.delete).toHaveBeenCalledWith('/app/api/v1/documents/' + docsProp[0].pid, {
+      ...axiosConfig,
+      docPid: docsProp[0].pid
+    });
+    expect(axios.delete).toHaveBeenCalledWith('/app/api/v1/documents/' + docsProp[1].pid, {
+      ...axiosConfig,
+      docPid: docsProp[1].pid
+    });
     expect(axios.delete).toHaveBeenCalledTimes(2);
   });
 });

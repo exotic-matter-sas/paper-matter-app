@@ -10,9 +10,9 @@
            @ok="moveFolder">
     <template slot="modal-title">
           <span v-if="selectedMoveTargetFolder">
-            {{ $t('Move {0} to {1}', [folder.name, selectedMoveTargetFolder.name])}}
+            {{ $t('Move "{0}" to "{1}"', [folder.name, selectedMoveTargetFolder.name])}}
           </span>
-      <span v-else>{{ $t('Move {0} to...', [folder.name])}}</span>
+      <span v-else>{{ $t('Move "{0}" to...', [folder.name])}}</span>
     </template>
     <b-container fluid>
       <b-row>
@@ -29,9 +29,9 @@
 
 <i18n>
   fr:
-    Move {0} to {1}: Déplacer {0} vers {1}
-    Move {0} to...: Déplacer {0} vers ...
-    "Selected folder: {0}": "Dossier sélectionné: {0}"
+    Move "{0}" to "{1}": Déplacer « {0} » vers « {1} »
+    Move "{0}" to...: Déplacer « {0} » vers ...
+    "Selected folder: {0}": "Dossier sélectionné : {0}"
     No folder selected: Aucun dossier sélectionné
     Could not move folder: Le dossier n'a pu être déplacé
 </i18n>

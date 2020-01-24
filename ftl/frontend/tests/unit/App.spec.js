@@ -14,6 +14,9 @@ localVue.use(VueRouter);
 localVue.prototype.$t = (text) => {
   return text;
 }; // i18n mock
+localVue.prototype.tc = (text) => {
+  return text;
+}; // i18n mock
 localVue.prototype.$moment = () => {
   return {fromNow: jest.fn()}
 };

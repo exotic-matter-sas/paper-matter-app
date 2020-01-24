@@ -25,9 +25,9 @@
 <i18n>
   fr:
     Create a new folder: Créer un nouveau dossier
-    The folder will be created in "{0}" folder.: Le dossier sera crée dans « {0} ».
+    The folder will be created in "{0}" folder.: Le dossier sera créé dans « {0} ».
     Name of the folder: Nom du dossier
-    Folder {0} created: Dossier {0} crée avec succès
+    Folder "{0}" created: Dossier « {0} » créé avec succès
     Unable to create new folder: La création du dossier a échoué
 </i18n>
 
@@ -74,7 +74,7 @@
           .post("/app/api/v1/folders", postBody, axiosConfig)
           .then((response) => {
             // TODO flash the new folder when just created
-            this.mixinAlert(this.$t("Folder {0} created", [this.newFolderName]));
+            this.mixinAlert(this.$t('Folder "{0}" created', [this.newFolderName]));
             this.newFolderName = '';
             this.$emit('event-folder-created', response.data);
           }).catch((error) => {

@@ -126,7 +126,7 @@
         this.docs.splice(foundIndex, 1);
         // remove from selection
         this.$store.commit('unselectDocument', doc);
-        // if last doc in the list has been removed and there is more docs to come, refresh list
+        // if last doc in the list has been removed and there are more docs, refresh list
         if (this.docs.length < 1 && this.moreDocs !== null) {
           this.updateDocuments()
         }

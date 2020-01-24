@@ -20,7 +20,7 @@
                                :title="$t('Refresh documents list')"/>
           </b-button>
 
-          <span v-if="count>0" id="documents-count" class="text-muted">{{ $t('{0} results found', [count]) }}</span>
+          <span v-if="count>0" id="documents-count" class="text-muted">{{ $tc('| 1 result found | {n} results found', count) }}</span>
 
           <b-dropdown id="documents-sort" right variant="link" class="m-1 text-decoration-none">
             <template slot="button-content">
@@ -56,7 +56,7 @@
           </b-button>
         </b-col>
         <b-col cols="8" class="text-right">
-          <span class="text-muted d-none d-sm-inline">{{ $t('{0} documents:', [selectedDocumentsHome.length]) }}</span>
+          <span class="text-muted d-none d-sm-inline">{{ $tc('| 1 document: | {n} documents:', selectedDocumentsHome.length) }}</span>
           <b-button id="move-documents" variant="primary" v-b-modal="'modal-move-documents'" title="Move to folder">
             <font-awesome-icon icon="folder-open" class="d-sm-none"/>
             <span class="d-none d-sm-inline">{{ $t('Move') }}</span>
@@ -91,7 +91,7 @@
         <b-col>
           <b-button id="more-documents" block variant="secondary" @click.prevent="loadMoreDocuments">
             <b-spinner class="loader" :class="{'d-none': !moreDocsLoading}" small></b-spinner>
-            <span :class="{'d-none': moreDocsLoading}">{{ $t('Show more documents ({0} remaining)', [count - docs.length]) }}</span>
+            <span :class="{'d-none': moreDocsLoading}">{{ $tc('| Show more documents (1 remaining) | Show more documents ({n} remaining)', count - docs.length) }}</span>
           </b-button>
         </b-col>
       </b-row>
@@ -134,10 +134,10 @@
     A-Z: A-Z
     Z-A: Z-A
     Select all: Tout sélectionner
-    "{0} documents:": "{0} documents:"
-    "{0} results found": "{0} résultats"
+    "| 1 document: | {n} documents:": "| 1 document : | {n} documents :"
+    "| 1 result found | {n} results found": "| 1 résultat | {n} résultats"
     No result found: Aucun résultat
-    Show more documents ({0} remaining): Afficher plus de documents ({0} restants)
+    "| Show more documents (1 remaining) | Show more documents ({n} remaining)": "| Afficher plus de documents (1 restant) | Afficher plus de documents ({n} restants)"
     No more search results: Plus aucun résultat à afficher
     Could not open this folder.: Impossible d'ouvrir ce dossier.
 </i18n>
@@ -262,7 +262,7 @@
     }
   }
 
-  #documents-count{
+  #documents-count {
     position: relative;
     top: 0.5em;
   }

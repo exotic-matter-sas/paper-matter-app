@@ -9,7 +9,8 @@ const mixinAlert = function (message, error = false, error_details = null, title
   if (error_details != null) {
     message += ` (${error_details})`;
   }
-  this.$bvToast.toast(message, {
+
+  this.$root.$bvToast.toast(message, {
     title: title,
     variant: error ? 'danger' : 'success',
     solid: true,
@@ -17,4 +18,17 @@ const mixinAlert = function (message, error = false, error_details = null, title
   });
 };
 
-export {mixinAlert};
+const mixinAlertWarning = function (message, error_details = null, title = "Notification") {
+  if (error_details != null) {
+    message += ` (${error_details})`;
+  }
+
+  this.$root.$bvToast.toast(message, {
+    title: title,
+    variant: 'warning',
+    solid: true,
+    toaster: 'b-toaster-bottom-right'
+  });
+};
+
+export {mixinAlert, mixinAlertWarning};

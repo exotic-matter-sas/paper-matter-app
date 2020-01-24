@@ -5,7 +5,7 @@
 
 <template>
   <footer class="footer mt-auto py-3 text-muted text-center">
-    <i18n path="Paper Matter, open source software. Made with ❤ by {em}." tag="p">
+    <i18n path="label" tag="p">
       <template v-slot:em>
         <a id="em-link" target="_blank" href="https://www.exotic-matter.fr">Exotic <span class="highlight">Matter</span></a>
       </template>
@@ -14,8 +14,10 @@
 </template>
 
 <i18n>
+  en:
+    label: Paper Matter, open source software. Made with ❤ by {em}.
   fr:
-    Paper Matter, open source software. Made with ❤ by {em}.: Paper Matter, logiciel open source. Soigneusement conçu
+    label: Paper Matter, logiciel open source. Soigneusement conçu
       par {em} en France.
 </i18n>
 

@@ -10,7 +10,7 @@
            @ok="moveDocument">
     <template slot="modal-title">
       <span v-if="docs.length > 1">{{ $t('Move {0} documents to...', [docs.length])}}</span>
-      <span v-else>{{ $t('Move {0} to...', [docs[0].title])}}</span>
+      <span v-else>{{ $t('Move "{0}" to...', [docs[0].title])}}</span>
     </template>
     <b-container fluid>
       <b-row>
@@ -28,10 +28,13 @@
 <i18n>
   fr:
     Move {0} documents to...: Déplacer {0} documents vers ...
-    Move {0} to...: Déplacer {0} vers ...
-    "Selected folder: {0}": "Dossier sélectionné: {0}"
+    Move "{0}" to...: Déplacer « {0} » vers ...
+    "Selected folder: {0}": "Dossier sélectionné : {0}"
     No folder selected: Aucun dossier sélectionné
-    Could not move document: Le document n'a pu être déplacé
+    Document moved successfully.: Le document a été déplacé avec succès.
+    "| One document moved successfully. | {n} documents moved successfully.": "| Un document déplacé. | {n} documents déplacés."
+    "No document could be moved. | One document moved successfully ({remain} couldn't). | {n} documents moved successfully ({remain} couldn't).": "Aucun document n'a pu être déplacé. | Un document déplacé ({remain} en erreur). | {n} documents déplacés ({remain} en erreur)."
+    Could not move document.: Le document n'a pu être déplacé.
 </i18n>
 
 <script>
@@ -69,8 +72,12 @@
 
     methods: {
       moveDocument: function () {
+        const promisesUpdate = [];
+        let nb = this.docs.length; // store count due to async access later
+
         for (const doc of this.docs) {
           if (doc.ftl_folder === this.selectedMoveTargetFolder.id) {
+            --nb;
             continue;
           }
 
@@ -78,20 +85,31 @@
             ftl_folder: this.selectedMoveTargetFolder.id
           };
 
-          axios
-            .patch('/app/api/v1/documents/' + doc.pid, body, axiosConfig)
-            .then(response => {
+          promisesUpdate.push(axios
+            .patch('/app/api/v1/documents/' + doc.pid, body, {...axiosConfig, docPid: doc.pid}));
+        }
+
+        Promise.allSettled(promisesUpdate)
+          .then(res => res.filter(p => p.status === "fulfilled"))
+          .then(res => res.map(p => p.value))
+          .then(responses => {
+            for (const res of responses) {
               this.$emit('event-document-moved', {
-                'doc': response.data,
+                'doc': res.data,
                 'target_folder': this.selectedMoveTargetFolder
               });
-              this.$store.commit('selectMoveTargetFolder', null);
-              this.mixinAlert('Document moved successfully');
-            })
-            .catch(error => {
-              this.mixinAlert(this.$t('Could not move document'), true)
-            });
-        }
+            }
+
+            this.$store.commit('selectMoveTargetFolder', null);
+
+            if (responses.length === nb) {
+              this.mixinAlert(this.$tc('| One document moved successfully. | {n} documents moved successfully.', responses.length))
+            } else {
+              this.mixinAlertWarning(
+                this.$tc('No document could be moved. | One document moved successfully ({remain} couldn\'t). | {n} documents moved successfully ({remain} couldn\'t).',
+                  responses.length, {remain: nb - responses.length}));
+            }
+          });
       }
     }
   }
