@@ -18,11 +18,14 @@ localVue.component('font-awesome-icon', jest.fn()); // avoid font awesome warnin
 localVue.prototype.$t = (text, args = '') => {
   return text + args
 };// i18n mock
+localVue.prototype.$tc = (text, args = '') => {
+  return text + args
+};// i18n mock
 localVue.prototype.$moment = () => {
   return {fromNow: jest.fn()}
 }; // moment mock
 const mockedMixinAlert = jest.fn();
-localVue.mixin({methods: {mixinAlert: mockedMixinAlert}}); // mixinAlert mock
+localVue.mixin({methods: {mixinAlert: mockedMixinAlert, mixinAlertWarning: mockedMixinAlert}}); // mixin alert
 
 // mock calls to api requests
 jest.mock('axios', () => ({

@@ -16,7 +16,7 @@ localVue.use(VueI18n);
 localVue.prototype.$t = (text) => {
   return text;
 }; // i18n mock
-
+localVue.prototype.$tc = (text, args='') => {return text + args};// i18n mock
 
 describe('FTLFooter template', () => {
   const wrapper = shallowMount(FTLFooter, {

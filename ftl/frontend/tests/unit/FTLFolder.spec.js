@@ -15,6 +15,7 @@ localVue.use(BootstrapVue); // to avoid warning on tests execution
 localVue.prototype.$t = (text) => {
   return text;
 }; // i18n mock
+localVue.prototype.$tc = (text, args='') => {return text + args};// i18n mock
 localVue.prototype.$moment = () => {
   return {fromNow: jest.fn()}
 };
