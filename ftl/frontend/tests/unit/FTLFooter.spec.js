@@ -24,6 +24,6 @@ describe('FTLFooter template', () => {
   });
 
   it('renders properly footer content', () => {
-    expect(wrapper.html()).toContain('Made with ❤ by', 'Exotic Matter')
+    expect(wrapper.html()).toContain('<footer');
   })
 });
