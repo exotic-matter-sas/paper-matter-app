@@ -78,7 +78,7 @@ class FTLOCRBase(FTLDocProcessingBase):
             # If full text not already extracted
             if force or not ftl_doc.content_text.strip():
                 ftl_doc.content_text = self._extract_text(ftl_doc.binary)
-                ftl_doc.ocr = True
+                ftl_doc.ocrized = True
                 ftl_doc.save()
             else:
                 logger.info(f'{self.log_prefix} Processing skipped, document {ftl_doc.id} already got a text_content')
