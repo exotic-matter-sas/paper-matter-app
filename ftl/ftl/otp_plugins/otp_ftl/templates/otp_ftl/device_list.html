@@ -82,16 +82,15 @@
         </div>
     {% else %}
         <h3 class="text-primary">{% trans "Protect your Paper Matter account with two factor verification" %}</h3>
-        <p>
+        <p class="font-italic">
             {% blocktrans %}
-                Each time you sign-in into your Paper Matter account, you will need your usual password and a
-                validation code that will be available on your phone (or your security key).
+                A validation code or security key will be asked each time you sign-in, in addition to your usual login.
             {% endblocktrans %}
         </p>
-        <p><strong>{% trans "There is no two factor device registered with this account." %}</strong>
+        <p class="highlight">{% trans "There is no two factor device registered with this account." %}
         </p>
         <ul>
-            <li><a href="{% url "otp_totp_add" %}">{% trans 'Add a second factor using an app (recommended)' %}</a></li>
+            <li><a href="{% url "otp_totp_add" %}">{% trans 'Add an authentication app (recommended)' %}</a></li>
             <li><a href="{% url "otp_fido2_add" %}">{% trans 'Add a security key (U2F/FIDO2)' %}</a></li>
         </ul>
     {% endif %}

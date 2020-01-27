@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-27 11:46+0000\n"
+"POT-Creation-Date: 2020-01-27 14:36+0000\n"
 "PO-Revision-Date: 2020-01-03 16:36+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -134,10 +134,8 @@ msgstr ""
 #: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_list.html:86
 msgid ""
 "\n"
-"                Each time you sign-in into your Paper Matter account, you "
-"will need your usual password and a\n"
-"                validation code that will be available on your phone (or "
-"your security key).\n"
+"                A validation code or security key will be asked each time "
+"you sign-in, in addition to your usual login.\n"
 "            "
 msgstr ""
 "\n"
@@ -148,13 +146,14 @@ msgstr ""
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_list.html:91
 msgid "There is no two factor device registered with this account."
 msgstr ""
-"Il n'y a aucun appareil d'authentification à deux facteurs sur votre compte."
+"Il n'y a aucun appareil d'authentification à deux facteurs configuré sur "
+"votre compte."
 
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_list.html:94
-msgid "Add a second factor using an app (recommended)"
-msgstr "Ajouté un second facteur en utilisant une application (recommandée)"
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_list.html:94
+msgid "Add an authentication app (recommended)"
+msgstr "Ajouter une application d'authentification (recommandé)"
 
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_list.html:95
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_list.html:95
 msgid "Add a security key (U2F/FIDO2)"
 msgstr "Ajouter une clé de sécurité (U2F/FIDO2)"
 
