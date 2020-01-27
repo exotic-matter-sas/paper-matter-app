@@ -39,6 +39,7 @@ def _extract_binary_from_data_uri(data_uri):
 class WebSearchQuery(SearchQuery):
     SEARCH_TYPES = {**SearchQuery.SEARCH_TYPES, 'web': 'websearch_to_tsquery'}
 
+
 @method_decorator(login_required, name='dispatch')
 @method_decorator(otp_required(if_configured=True), name='dispatch')
 class HomeView(View):
