@@ -48,7 +48,7 @@ class TOTPDeviceCheckForm(OTPTokenForm):
         required=True,
         label=_("Code"),
         strip=True,
-        help_text=_('Two factor code shown in your app authenticator')
+        help_text=_('Two factor code shown in your app authenticator (only numbers)')
     )
     otp_challenge = None
 
@@ -72,7 +72,7 @@ class TOTPDeviceConfirmForm(OTPTokenForm):
         required=True,
         label=_("Code"),
         strip=True,
-        help_text=_('Two factor code shown in your app authenticator')
+        help_text=_('Two factor code shown in your app authenticator (only numbers)')
     )
     otp_challenge = None
 

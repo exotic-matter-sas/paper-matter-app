@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-27 15:34+0000\n"
+"POT-Creation-Date: 2020-01-27 16:06+0000\n"
 "PO-Revision-Date: 2020-01-03 16:36+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -47,9 +47,9 @@ msgstr "App d'authentification"
 msgid "Select the authenticator app you wish to use"
 msgstr "Sélectionner l'app d'authentification souhaitée"
 
-#: .\ftl\otp_plugins\otp_ftl\forms.py:51 .\ftl\otp_plugins\otp_ftl\forms.py:75
-msgid "Two factor code shown in your app authenticator"
-msgstr "Code indiqué dans votre app d'authentification"
+#: ftl/otp_plugins/otp_ftl/forms.py:51 ftl/otp_plugins/otp_ftl/forms.py:75
+msgid "Two factor code shown in your app authenticator (only numbers)"
+msgstr "Code indiqué dans votre app d'authentification (chiffres uniquement)"
 
 #: .\ftl\otp_plugins\otp_ftl\forms.py:109
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_list.html:10
@@ -93,8 +93,6 @@ msgstr "Supprimer"
 #: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_form.html:28
 #: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_detail.html:12
 #: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_form.html:31
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_detail.html:36
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_form.html:35
 msgid "Return to 2FA list"
 msgstr "Revenir à la liste des appareils d'authentification à deux facteurs"
 
@@ -161,19 +159,18 @@ msgstr "Ajouter une clé de sécurité (U2F/FIDO2)"
 msgid "Update the name of the device"
 msgstr "Mettre à jour le nom de l'appareil"
 
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_update.html:9
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\staticdevice_form.html:22
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\totpdevice_form.html:27
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_update.html:9
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_form.html:22
 msgid "Name"
 msgstr "Nom"
 
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_update.html:10
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_update.html:10
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_form.html:24
 msgid "Device name"
 msgstr "Nom de l'appareil"
 
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_update.html:12
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\staticdevice_form.html:26
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\totpdevice_form.html:30
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_update.html:12
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_form.html:26
 msgid "Name to recognize your two factor device"
 msgstr "Nom de votre choix pour reconnaître votre appareil d'authentification"
 
@@ -334,9 +331,9 @@ msgstr ""
 msgid "Confirm your authenticator app"
 msgstr "Valider votre app d'authentification"
 
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_detail.html:9
-msgid "Scan this QR code with the authenticator app"
-msgstr "Scannez ce code QR avec votre app d'authentification"
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_detail.html:8
+msgid "Scan this QR code with the authenticator app:"
+msgstr "Scannez ce code QR avec votre app d'authentification :"
 
 #: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_detail.html:15
 msgid ""
@@ -350,7 +347,11 @@ msgstr ""
 "Validez que vous avez bien configuré votre app d'authentification en "
 "indiquant le code affiché dans l'app ci-dessous."
 
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_detail.html:32
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_detail.html:30
+msgid "Cancel"
+msgstr "Annuler"
+
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_detail.html:31
 msgid "Validate"
 msgstr "Valider"
 
@@ -398,7 +399,8 @@ msgstr "Le nom de mon smartphone ou de ma tablette"
 msgid ""
 "Device name on which auth app is installed, to help you recognize it later"
 msgstr ""
-"Nom de l'appareil sur lequel l'appli sera installée, pour vous aider à l'identifier plus tard."
+"Nom de l'appareil sur lequel l'appli sera installée, pour vous aider à "
+"l'identifier plus tard."
 
 #: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_form.html:32
 msgid "Previous"

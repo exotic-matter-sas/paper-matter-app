@@ -2,16 +2,15 @@
 {% load i18n %}
 
 {% block account %}
-    <h3 class="text-primary">{% trans "Confirm your authenticator app" %}</h3>
-    <p>{{ object }}</p>
+    <h3 class="text-primary">{% trans "Confirm your authenticator app" %} {{ object }}</h3>
 
     {% if not object.confirmed %}
-        <p>{% trans "Scan this QR code with the authenticator app" %}</p>
+        <p>{% trans "Scan this QR code with the authenticator app:" %}</p>
 
 
-        <p><img src="{% url 'otp_totp_qrcode' object.id %}" alt="qrcode"/></p>
+        <p><img class="d-block mx-auto" src="{% url 'otp_totp_qrcode' object.id %}" alt="qrcode"/></p>
 
-        <p class="highlight">
+        <p class="highlight text-justify">
             {% blocktrans %}
                 Confirm that you have successfully configured your authenticator app by entering below the current code
                 displayed on your app.
@@ -23,15 +22,13 @@
 
             <div class="form-group">
                 <label for="id_otp_token">{{ form.otp_token.label }}</label>
-                <input type="text" name="otp_token" value="" placeholder="XXX XXX" required="required" id="id_otp_token"
+                <input type="text" name="otp_token" placeholder="123456" required="required" id="id_otp_token"
                        class="form-control{% if form.errors %} is-invalid{% endif %}" inputmode="numeric"
                        pattern="[0-9]*" autocomplete="one-time-code">
                 <small class="form-text text-muted">{{ form.otp_token.help_text }}</small>
             </div>
-
-            <input type="submit" class="btn btn-primary" value="{% trans "Validate" %}">
+            <a class="btn btn-secondary float-left" href="{% url 'otp_list' %}">{% trans 'Cancel' %}</a>
+            <input type="submit" class="btn btn-primary float-right" value="{% trans "Validate" %}">
         </form>
     {% endif %}
-
-    <p class="text-right"><a href="{% url 'otp_list' %}">{% trans 'Return to 2FA list' %}</a></p>
 {% endblock %}
