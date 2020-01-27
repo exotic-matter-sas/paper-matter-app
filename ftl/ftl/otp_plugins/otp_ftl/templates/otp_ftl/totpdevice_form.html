@@ -3,34 +3,35 @@
 
 {% block account %}
     <h3 class="text-primary">{% trans "Add an authenticator app" %}</h3>
-    <p>
+    <p class="font-italic">
         {% blocktrans %}
             Use an app on your phone to generate validation code. In the app, scan the QR code that will be shown next
             page.
         {% endblocktrans %}
     </p>
-    <div>
-        <a href='https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2'>
-            <img alt='Get it on Google Play' width="135"
-                 src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png'/>
-        </a>
-        <a href="https://apps.apple.com/us/app/google-authenticator/id388497605?mt=8">
-            <img alt="Get it on iOS App Store"
-                 src="https://linkmaker.itunes.apple.com/fr-fr/badge-lrg.svg?releaseDate=2010-09-20&kind=iossoftware&bubble=ios_apps"
-                 width="135"/>
-        </a>
-    </div>
+    <p class="font-italic">
+        {% blocktrans %}
+            You could use the Google Authenticator app, available on
+            <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2"
+               target="_blank">Google Play</a> or
+            <a href="https://apps.apple.com/us/app/google-authenticator/id388497605?mt=8" target="_blank">App Store</a>.
+        {% endblocktrans %}
+    </p>
 
     <form method="post">
         {% csrf_token %}
         <div class="form-group">
-            <label for="id_name">{% trans 'Name' %}</label>
-            <input type="text" name="name" value="Authenticator app" placeholder="{% trans 'Authenticator app' %}"
-                   required="required" id="id_name" class="form-control">
-            <small class="form-text text-muted">{% trans 'Name to recognize your two factor device' %}</small>
+            <label for="id_name">{% trans 'Device name' %}</label>
+            <input type="text" name="name"
+                   placeholder="{% trans 'My smartphone or tablet name' %}" required="required" id="id_name"
+                   class="form-control">
+            <small class="form-text text-muted">
+                {% trans 'Device name on which auth app is installed, to help you recognize it later' %}
+            </small>
         </div>
-        <input class="btn btn-primary" type="submit" value="{% trans "Next" %}">
+        <a class="btn btn-secondary float-left" href="{% url 'otp_list' %}">{% trans "Previous" %}</a>
+        <input class="btn btn-primary float-right" type="submit" value="{% trans "Next" %}">
     </form>
 
-    <p class="text-right"><a href="{% url 'otp_list' %}">{% trans 'Return to 2FA list' %}</a></p>
+    <p class="text-right"></p>
 {% endblock %}
