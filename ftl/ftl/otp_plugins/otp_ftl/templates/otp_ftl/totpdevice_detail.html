@@ -6,15 +6,15 @@
     <p>{{ object }}</p>
 
     {% if not object.confirmed %}
-        <p>{% trans "Scan the following QR code with the authenticator app" %}</p>
+        <p>{% trans "Scan this QR code with the authenticator app" %}</p>
 
 
         <p><img src="{% url 'otp_totp_qrcode' object.id %}" alt="qrcode"/></p>
 
         <p class="highlight">
             {% blocktrans %}
-                Confirm that you have successfully configured your authenticator app by writing the current code in the
-                form below.
+                Confirm that you have successfully configured your authenticator app by entering below the current code
+                displayed on your app.
             {% endblocktrans %}
         </p>
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-03 16:35+0100\n"
+"POT-Creation-Date: 2020-01-27 11:35+0000\n"
 "PO-Revision-Date: 2020-01-03 16:36+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -61,11 +61,9 @@ msgstr "Codes d'urgence"
 #: .\ftl\otp_plugins\otp_ftl\forms.py:110
 #: .\ftl\otp_plugins\otp_ftl\forms.py:130
 msgid "Indicate a name to recognize your two factor device"
-msgstr ""
-"Indiquer un nom de votre choix pour reconnaître votre apparait "
-"d'authentification"
+msgstr "Nommer votre appareil d'authentification pour le reconnaitre plus tard"
 
-#: .\ftl\otp_plugins\otp_ftl\management\commands\clean_fido2_state.py:19
+#: ftl/otp_plugins/otp_ftl/management/commands/clean_fido2_state.py:19
 #, python-format
 msgid "Deleted one state"
 msgid_plural "Deleted %(count)s states"
@@ -259,11 +257,10 @@ msgstr ""
 "\n"
 "Une clé de sécurité est un petit appareil que vous pouvez acheter et qui "
 "vous permet de prouver que ce soit réellement vous qui vous connectez. Quand "
-"nous avons besoin de vérifier que vous êtes bien qui vous êtes, vous n'avez "
-"qu'à connecter simplement votre clé à votre ordinateur, téléphone ou "
-"tablette."
+"nous avons besoin de vérifier qu'il s'agit bien de vous, vous n'avez qu'à "
+"connecter votre clé à votre ordinateur, téléphone ou tablette."
 
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_form.html:19
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_form.html:19
 msgid ""
 "\n"
 "            Such keys are the ones that are compatible with the U2F or FIDO2 "
@@ -310,25 +307,25 @@ msgid ""
 "\n"
 "            We highly recommend you generate a set of emergency code in case "
 "you have lost your mobile phone or security\n"
-"            key. These codes are one-time use code, namely each code will "
-"only work one (1) time.\n"
+"            key. Important: for security reasons, each code will only work "
+"one (1) time.\n"
 "        "
 msgstr ""
 "\n"
 "Nous recommandons vivement que vous générez des codes d'urgence dans le cas "
-"où vous perdez votre téléphone ou votre clé de sécurité. Ces codes sont à "
-"usage unique, c'est à dire que chaque code ne fonctionne qu'une seule fois."
+"où vous perdez votre téléphone ou votre clé de sécurité. Important : pour "
+"desraisons de sécurité, chaque code ne fonctionnera qu'une seule fois."
 
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\staticdevice_form.html:14
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_form.html:14
 msgid ""
 "\n"
 "            Please keep those codes in a safe place.\n"
 "        "
 msgstr ""
 "\n"
-"Conserver ces codes à l'abri dans un lieu sûr."
+"Conservez ces codes dans un lieu sûr."
 
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\totpdevice_check.html:22
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_check.html:35
 msgid "Error: you can't use an authenticator app on this account"
 msgstr ""
 "Une erreur est survenue : vous ne pouvez pas utiliser une app "
@@ -338,21 +335,21 @@ msgstr ""
 msgid "Confirm your authenticator app"
 msgstr "Valider votre app d'authentification"
 
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\totpdevice_detail.html:9
-msgid "Scan the following QR code with the authenticator app"
-msgstr "Scanner le code QR suivant avec votre app d'authentification"
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_detail.html:9
+msgid "Scan this QR code with the authenticator app"
+msgstr "Scannez ce code QR avec votre app d'authentification"
 
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\totpdevice_detail.html:15
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_detail.html:15
 msgid ""
 "\n"
 "                Confirm that you have successfully configured your "
-"authenticator app by writing the current code in the\n"
-"                form below.\n"
+"authenticator app by entering below the current code\n"
+"                displayed on your app.\n"
 "            "
 msgstr ""
 "\n"
-"Valider que vous avez bien configuré votre app d'authentification en "
-"indiquant un code affiché dans l'app."
+"Validez que vous avez bien configuré votre app d'authentification en "
+"indiquant le code affiché dans l'app ci-dessous."
 
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\totpdevice_detail.html:28
 msgid "Code shown in your auth app"
