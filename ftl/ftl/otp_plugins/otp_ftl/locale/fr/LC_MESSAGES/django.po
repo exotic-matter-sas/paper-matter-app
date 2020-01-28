@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-28 17:19+0000\n"
+"POT-Creation-Date: 2020-01-28 17:28+0000\n"
 "PO-Revision-Date: 2020-01-03 16:36+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -68,36 +68,39 @@ msgid_plural "Deleted %(count)s states"
 msgstr[0] "Un state supprimé"
 msgstr[1] "%(count)s states supprimés"
 
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_confirm_delete.html:9
-#, python-format
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_confirm_delete.html:9
 msgid ""
 "\n"
-"                    Are you sure you want to delete \"%(name)s\"?\n"
+"                    Are you sure you want to delete<br/> \"%(name)s\"?\n"
 "                "
 msgstr ""
 "\n"
-"Êtes-vous sûr de vouloir supprimer « %(name)s » ?"
+"Êtes-vous sûr de vouloir supprimer<br/> « %(name)s » ?"
 
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_confirm_delete.html:13
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_list.html:28
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_list.html:53
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_list.html:75
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_confirm_delete.html:14
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_update.html:15
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_form.html:27
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_form.html:26
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_detail.html:30
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_form.html:32
+msgid "Cancel"
+msgstr "Annuler"
+
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_confirm_delete.html:15
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_list.html:22
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_list.html:61
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_list.html:89
 msgid "Delete"
 msgstr "Supprimer"
 
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_confirm_delete.html:14
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_detail.html:15
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_detail.html:12
-msgid "Return to 2FA list"
-msgstr "Revenir à la liste des appareils d'authentification à deux facteurs"
-
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_list.html:7
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_list.html:7
 msgid "Two factor authentication"
 msgstr "Authentification à deux facteurs"
 
 #: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_list.html:17
 #: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_list.html:48
 #: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_list.html:82
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_update.html:16
 msgid "Rename"
 msgstr "Renommer"
 
@@ -163,9 +166,6 @@ msgid "Rename device"
 msgstr "Renommer l'appareil"
 
 #: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_update.html:9
-msgid "Name"
-msgstr "Nom"
-
 #: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_update.html:10
 #: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_form.html:24
 msgid "Device name"
@@ -175,20 +175,12 @@ msgstr "Nom de l'appareil"
 msgid "Name to recognize your two factor device"
 msgstr "Nom de votre choix pour reconnaître votre appareil d'authentification"
 
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_update.html:15
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_form.html:27
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_form.html:26
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_detail.html:30
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_form.html:32
-msgid "Cancel"
-msgstr "Annuler"
-
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_check.html:5
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_check.html:12
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\staticdevice_check.html:5
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\staticdevice_check.html:9
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\totpdevice_check.html:5
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\totpdevice_check.html:9
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_check.html:5
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_check.html:12
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_check.html:6
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_check.html:10
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_check.html:6
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_check.html:10
 msgid "Two-step Verification"
 msgstr "Vérification à deux facteurs"
 
@@ -242,6 +234,11 @@ msgstr ""
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_detail.html:14
 msgid "Generate emergency two factor codes"
 msgstr "Ajouter un lot de codes d'urgence"
+
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_detail.html:15
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_detail.html:12
+msgid "Return to 2FA list"
+msgstr "Revenir à la liste des appareils d'authentification à deux facteurs"
 
 #: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_form.html:13
 msgid ""
