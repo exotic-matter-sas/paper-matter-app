@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-27 16:06+0000\n"
+"POT-Creation-Date: 2020-01-28 14:30+0000\n"
 "PO-Revision-Date: 2020-01-03 16:36+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -51,10 +51,8 @@ msgstr "Sélectionner l'app d'authentification souhaitée"
 msgid "Two factor code shown in your app authenticator (only numbers)"
 msgstr "Code indiqué dans votre app d'authentification (chiffres uniquement)"
 
-#: .\ftl\otp_plugins\otp_ftl\forms.py:109
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_list.html:10
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\staticdevice_form.html:23
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\staticdevice_form.html:24
+#: ftl/otp_plugins/otp_ftl/forms.py:109
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_list.html:10
 msgid "Emergency codes"
 msgstr "Codes d'urgence"
 
@@ -92,7 +90,6 @@ msgstr "Supprimer"
 #: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_detail.html:15
 #: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_form.html:28
 #: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_detail.html:12
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_form.html:31
 msgid "Return to 2FA list"
 msgstr "Revenir à la liste des appareils d'authentification à deux facteurs"
 
@@ -160,7 +157,6 @@ msgid "Update the name of the device"
 msgstr "Mettre à jour le nom de l'appareil"
 
 #: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_update.html:9
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_form.html:22
 msgid "Name"
 msgstr "Nom"
 
@@ -170,7 +166,6 @@ msgid "Device name"
 msgstr "Nom de l'appareil"
 
 #: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_update.html:12
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_form.html:26
 msgid "Name to recognize your two factor device"
 msgstr "Nom de votre choix pour reconnaître votre appareil d'authentification"
 
@@ -298,28 +293,46 @@ msgstr "Vos codes d'urgence à usage unique"
 msgid "Add emergency two factor codes"
 msgstr "Ajouter un lot de codes d'urgence"
 
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\staticdevice_form.html:8
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_form.html:7
 msgid ""
 "\n"
-"            We highly recommend you generate a set of emergency code in case "
-"you have lost your mobile phone or security\n"
-"            key. Important: for security reasons, each code will only work "
-"one (1) time.\n"
+"            We highly recommend you generate a set of emergency code too in "
+"case you have lost your mobile phone or\n"
+"            security key.\n"
 "        "
 msgstr ""
 "\n"
-"Nous recommandons vivement que vous générez des codes d'urgence dans le cas "
-"où vous perdez votre téléphone ou votre clé de sécurité. Important : pour "
-"desraisons de sécurité, chaque code ne fonctionnera qu'une seule fois."
+"Nous recommandons vivement de générer des codes d'urgence dans le cas où "
+"vous perdriez votre téléphone ou votre clé de sécurité."
 
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_form.html:14
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_form.html:13
 msgid ""
 "\n"
-"            Please keep those codes in a safe place.\n"
+"            For security reasons, each code will only work one (1) time. <br/"
+"> Please keep those codes in a safe place.\n"
 "        "
 msgstr ""
 "\n"
-"Conservez ces codes dans un lieu sûr."
+"Pour des raisons de sécurité, chaque code est à usage unique.<br/>Conservez "
+"ces codes en lieu sûr."
+
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_form.html:21
+msgid "Emergency codes name"
+msgstr "Nom des codes d'urgence"
+
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_form.html:22
+msgid "Safe deposit box emergency codes"
+msgstr "Lot de codes d'urgence du coffre fort"
+
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_form.html:24
+msgid "Could be its storage location or a clue to remember it"
+msgstr "Il peut s'agir du lieu de stockage ou d'un indice pour s'en souvenir"
+
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_form.html:26
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_detail.html:30
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_form.html:32
+msgid "Cancel"
+msgstr "Annuler"
 
 #: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_check.html:35
 msgid "Error: you can't use an authenticator app on this account"
@@ -346,10 +359,6 @@ msgstr ""
 "\n"
 "Validez que vous avez bien configuré votre app d'authentification en "
 "indiquant le code affiché dans l'app ci-dessous."
-
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_detail.html:30
-msgid "Cancel"
-msgstr "Annuler"
 
 #: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_detail.html:31
 msgid "Validate"
@@ -401,7 +410,3 @@ msgid ""
 msgstr ""
 "Nom de l'appareil sur lequel l'appli sera installée, pour vous aider à "
 "l'identifier plus tard."
-
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_form.html:32
-msgid "Previous"
-msgstr "Précédent"
