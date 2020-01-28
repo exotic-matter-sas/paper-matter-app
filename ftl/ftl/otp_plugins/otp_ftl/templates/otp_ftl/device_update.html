@@ -2,17 +2,17 @@
 {% load i18n %}
 
 {% block account %}
-    <h3 class="text-primary">{% trans 'Update the name of the device' %}</h3>
+    <h3 class="text-primary">{% trans 'Rename device' %}</h3>
 
     <form method="post">{% csrf_token %}
         <div class="form-group">
-            <label for="id_name">{% trans 'Name' %}</label>
+            <label for="id_name">{% trans 'Device name' %}</label>
             <input type="text" name="name" value="" placeholder="{% trans 'Device name' %}" required="required"
                    id="id_name" class="form-control">
             <small class="form-text text-muted">{% trans 'Name to recognize your two factor device' %}</small>
         </div>
 
-        <input type="submit" class="btn btn-primary" value="{% trans 'Update' %}">
-        <p class="text-right"><a href="{% url 'otp_list' %}">{% trans 'Return to 2FA list' %}</a></p>
+        <a class="btn btn-secondary float-left" href="{% url 'otp_list' %}">{% trans 'Cancel' %}</a>
+        <input type="submit" class="btn btn-primary float-right" value="{% trans 'Rename' %}">
     </form>
 {% endblock %}

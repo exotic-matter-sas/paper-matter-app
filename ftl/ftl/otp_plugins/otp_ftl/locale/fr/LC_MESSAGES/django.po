@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-28 17:07+0000\n"
+"POT-Creation-Date: 2020-01-28 17:19+0000\n"
 "PO-Revision-Date: 2020-01-03 16:36+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -86,7 +86,6 @@ msgid "Delete"
 msgstr "Supprimer"
 
 #: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_confirm_delete.html:14
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_update.html:16
 #: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_detail.html:15
 #: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_detail.html:12
 msgid "Return to 2FA list"
@@ -159,9 +158,9 @@ msgstr "Ajouter une application d'authentification (recommandé)"
 msgid "Add a security key (U2F/FIDO2)"
 msgstr "Ajouter une clé de sécurité (U2F/FIDO2)"
 
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_update.html:5
-msgid "Update the name of the device"
-msgstr "Mettre à jour le nom de l'appareil"
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_update.html:5
+msgid "Rename device"
+msgstr "Renommer l'appareil"
 
 #: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_update.html:9
 msgid "Name"
@@ -176,9 +175,13 @@ msgstr "Nom de l'appareil"
 msgid "Name to recognize your two factor device"
 msgstr "Nom de votre choix pour reconnaître votre appareil d'authentification"
 
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_update.html:15
-msgid "Update"
-msgstr "Mettre à jour"
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_update.html:15
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_form.html:27
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_form.html:26
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_detail.html:30
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_form.html:32
+msgid "Cancel"
+msgstr "Annuler"
 
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_check.html:5
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_check.html:12
@@ -269,13 +272,6 @@ msgstr ""
 "(comme les clés Yubikey, Google Titan Security, etc.).<br />Seul des "
 "navigateurs récents sont compatibles comme Google Chrome, Mozilla Firefox, "
 "Microsoft Edge, Safari."
-
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_form.html:27
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_form.html:26
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_detail.html:30
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_form.html:32
-msgid "Cancel"
-msgstr "Annuler"
 
 #: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_form.html:28
 #: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_form.html:27
