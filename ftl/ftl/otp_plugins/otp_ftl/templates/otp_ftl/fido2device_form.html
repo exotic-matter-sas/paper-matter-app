@@ -9,13 +9,13 @@
 {% block account %}
     <h3 class="text-primary">{% trans "Add a security key" %}</h3>
 
-    <p>
+    <p class="font-italic">
         {% blocktrans %}
-            A security key dongle is a small device that you can buy to help prove it’s you signing in. When we need to
-            make sure it’s you, you can simply connect the key to your phone, tablet, or computer.
+            A security key dongle is a small device that you can buy to help prove it’s you signing in: you simply have
+            to connect the key to your phone, tablet, or computer.
         {% endblocktrans %}
     </p>
-    <p>
+    <p class="highlight text-justify">
         {% blocktrans %}
             Such keys are the ones that are compatible with the U2F or FIDO2 protocol
             (Yubikey, Google Titan Security Key, etc.).<br/>
@@ -24,8 +24,8 @@
         {% endblocktrans %}
     </p>
 
-    <input id="fido2-next" class="btn btn-primary" type="submit" value="{% trans 'Next' %}">
-    <p class="text-right"><a href="{% url 'otp_list' %}">{% trans 'Return to 2FA list' %}</a></p>
+    <a class="btn btn-secondary float-left" href="{% url 'otp_list' %}">{% trans 'Cancel' %}</a>
+    <input id="fido2-next" class="btn btn-primary float-right" type="submit" value="{% trans 'Next' %}">
 {% endblock %}
 
 {% block footer %}
