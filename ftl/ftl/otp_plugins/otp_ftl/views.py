@@ -12,12 +12,13 @@ from django_otp.decorators import otp_required
 from django_otp.plugins.otp_static.models import StaticDevice
 from django_otp.plugins.otp_totp.models import TOTPDevice
 
+from core.ftl_mixins import FTLUserContextDataMixin
 from ftl.otp_plugins.otp_ftl.models import Fido2Device
 
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(otp_required(if_configured=True), name='dispatch')
-class ListOTPDevice(View):
+class ListOTPDevice(FTLUserContextDataMixin, View):
     def get(self, request, *args, **kwargs):
         user = request.user
         # Static token
@@ -29,14 +30,14 @@ class ListOTPDevice(View):
         # FIDO2
         fido2_device = Fido2Device.objects.filter(user=user)
 
-        context = {
+        context_data = self.get_context_data()
+        context_data.update({
             'static_device': static_device,
             'totp_device': totp_device,
-            'fido2_device': fido2_device,
-            'ftl_account': {'name': request.user.get_username(),  # get_username now return email
-                            'isSuperUser': request.user.is_superuser},
-        }
-        return render(request, 'otp_ftl/device_list.html', context)
+            'fido2_device': fido2_device
+        })
+
+        return render(request, 'otp_ftl/device_list.html', context_data)
 
 
 @method_decorator(login_required, name='dispatch')
