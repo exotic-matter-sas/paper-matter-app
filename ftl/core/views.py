@@ -23,6 +23,7 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 
 from core.errors import get_api_error
+from core.ftl_mixins import FTLUserContextDataMixin
 from core.models import FTLDocument, FTLFolder
 from core.processing.ftl_processing import FTLDocumentProcessing
 from core.serializers import FTLDocumentSerializer, FTLFolderSerializer
@@ -42,16 +43,10 @@ class WebSearchQuery(SearchQuery):
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(otp_required(if_configured=True), name='dispatch')
-class HomeView(View):
+class HomeView(FTLUserContextDataMixin, View):
 
     def get(self, request, *args, **kwargs):
-        context = {
-            'org_name': request.session['org_name'],
-            # ftl_account is exposed to javascript through json_script filter in home.html template
-            'ftl_account': {'name': request.user.get_username(),  # get_username now return email
-                            'isSuperUser': request.user.is_superuser},
-        }
-        return render(request, 'core/home.html', context)
+        return render(request, 'core/home.html', self.get_context_data())
 
 
 # API

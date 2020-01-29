@@ -25,6 +25,7 @@ from django.views.generic import FormView
 from django_otp.decorators import otp_required
 
 from account.forms import EmailSendForm
+from core.ftl_mixins import FTLUserContextDataMixin
 from core.models import FTLUser
 
 
@@ -41,7 +42,7 @@ class AccountView(View):
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(otp_required(if_configured=True), name='dispatch')
-class AccountEmailChangeView(LoginRequiredMixin, SuccessMessageMixin, FormView):
+class AccountEmailChangeView(LoginRequiredMixin, SuccessMessageMixin, FTLUserContextDataMixin, FormView):
     template_name = "account/account_email.html"
     email_change_subject = "account/account_email_change_subject.txt"
     email_warn_subject = "account/account_email_warn_subject.txt"
@@ -50,12 +51,6 @@ class AccountEmailChangeView(LoginRequiredMixin, SuccessMessageMixin, FormView):
     form_class = EmailSendForm
     success_url = reverse_lazy('account_index')
     success_message = _("A confirmation email has been sent.")
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['ftl_account'] = {'name': self.request.user.get_username(),
-                                  'isSuperUser': self.request.user.is_superuser}
-        return context
 
     def get_email_context(self, activation_key):
         scheme = 'https' if self.request.is_secure() else 'http'
@@ -142,7 +137,7 @@ class AccountEmailChangeValidateView(LoginRequiredMixin, View):
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(otp_required(if_configured=True), name='dispatch')
-class AccountPasswordView(LoginRequiredMixin, FormView):
+class AccountPasswordView(LoginRequiredMixin, FTLUserContextDataMixin, FormView):
     template_name = "account/account_password.html"
     form_class = PasswordChangeForm
     success_url = reverse_lazy('account_index')
@@ -152,12 +147,6 @@ class AccountPasswordView(LoginRequiredMixin, FormView):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['ftl_account'] = {'name': self.request.user.get_username(),
-                                  'isSuperUser': self.request.user.is_superuser}
-        return context
 
     def form_valid(self, form):
         form.save()

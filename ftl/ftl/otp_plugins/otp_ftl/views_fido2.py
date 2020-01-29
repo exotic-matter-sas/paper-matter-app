@@ -16,6 +16,7 @@ from fido2.client import ClientData
 from fido2.ctap2 import AttestationObject, AttestedCredentialData
 from fido2.server import PublicKeyCredentialRpEntity, Fido2Server
 
+from core.ftl_mixins import FTLUserContextDataMixin
 from ftl.otp_plugins.otp_ftl.forms import Fido2DeviceCheckForm
 from ftl.otp_plugins.otp_ftl.models import Fido2Device, Fido2State
 from ftl.otp_plugins.otp_ftl.views import FTLBaseCheckView
@@ -33,13 +34,13 @@ class Fido2Check(FTLBaseCheckView):
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(otp_required(if_configured=True), name='dispatch')
-class Fido2DeviceSuccess(TemplateView):
+class Fido2DeviceSuccess(FTLUserContextDataMixin, TemplateView):
     template_name = 'otp_ftl/fido2device_detail.html'
 
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(otp_required(if_configured=True), name='dispatch')
-class Fido2DeviceUpdate(UpdateView):
+class Fido2DeviceUpdate(FTLUserContextDataMixin, UpdateView):
     model = Fido2Device
     fields = ['name']
     template_name = 'otp_ftl/device_update.html'
@@ -48,14 +49,14 @@ class Fido2DeviceUpdate(UpdateView):
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(otp_required(if_configured=True), name='dispatch')
-class Fido2DeviceAdd(View):
+class Fido2DeviceAdd(FTLUserContextDataMixin, View):
     def get(self, request, *args, **kwargs):
-        return render(request, 'otp_ftl/fido2device_form.html')
+        return render(request, 'otp_ftl/fido2device_form.html', self.get_context_data())
 
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(otp_required(if_configured=True), name='dispatch')
-class Fido2DeviceDelete(DeleteView):
+class Fido2DeviceDelete(FTLUserContextDataMixin, DeleteView):
     template_name = 'otp_ftl/device_confirm_delete.html'
     model = Fido2Device
     success_url = reverse_lazy("otp_list")

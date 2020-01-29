@@ -33,6 +33,8 @@ class ListOTPDevice(View):
             'static_device': static_device,
             'totp_device': totp_device,
             'fido2_device': fido2_device,
+            'ftl_account': {'name': request.user.get_username(),  # get_username now return email
+                            'isSuperUser': request.user.is_superuser},
         }
         return render(request, 'otp_ftl/device_list.html', context)
 
@@ -41,9 +43,9 @@ class ListOTPDevice(View):
 class OTPCheckView(View):
     def get(self, request, *args, **kwargs):
         devices = list((d.persistent_id, d.name) for d in devices_for_user(request.user))
-        next = request.GET.get('next', None)
-        if next:
-            request.session['next'] = next
+        _next = request.GET.get('next', None)
+        if _next:
+            request.session['next'] = _next
 
         if [d for d in devices if Fido2Device.model_label() in d[0]]:
             return redirect('otp_fido2_check', *args, **kwargs)
