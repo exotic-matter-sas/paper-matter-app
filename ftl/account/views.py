@@ -6,6 +6,7 @@ from datetime import timedelta
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
@@ -17,17 +18,19 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views import View
 from django.views.generic import FormView
+from django_otp.decorators import otp_required
 
 from account.forms import EmailSendForm
 from core.models import FTLUser
 
 
-# FIXME secure these pages with 2FA when available
-
-class AccountView(LoginRequiredMixin, View):
+@method_decorator(login_required, name='dispatch')
+@method_decorator(otp_required(if_configured=True), name='dispatch')
+class AccountView(View):
     def get(self, request, *args, **kwargs):
         context = {
             'ftl_account': {'name': request.user.get_username(),  # get_username now return email
@@ -36,6 +39,8 @@ class AccountView(LoginRequiredMixin, View):
         return render(request, 'account/account_index.html', context)
 
 
+@method_decorator(login_required, name='dispatch')
+@method_decorator(otp_required(if_configured=True), name='dispatch')
 class AccountEmailChangeView(LoginRequiredMixin, SuccessMessageMixin, FormView):
     template_name = "account/account_email.html"
     email_change_subject = "account/account_email_change_subject.txt"
@@ -106,6 +111,8 @@ class AccountEmailChangeView(LoginRequiredMixin, SuccessMessageMixin, FormView):
         return super().form_valid(form)
 
 
+@method_decorator(login_required, name='dispatch')
+@method_decorator(otp_required(if_configured=True), name='dispatch')
 class AccountEmailChangeValidateView(LoginRequiredMixin, View):
     success_message = _("Email successfully updated.")
     expired_message = _("The link expired. Please try again.")
@@ -133,6 +140,8 @@ class AccountEmailChangeValidateView(LoginRequiredMixin, View):
         return HttpResponseRedirect(reverse_lazy('account_index'))
 
 
+@method_decorator(login_required, name='dispatch')
+@method_decorator(otp_required(if_configured=True), name='dispatch')
 class AccountPasswordView(LoginRequiredMixin, FormView):
     template_name = "account/account_password.html"
     form_class = PasswordChangeForm
