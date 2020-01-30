@@ -110,7 +110,7 @@ msgid "Add a set of emergency code"
 msgstr "Ajouter un lot de codes d'urgence"
 
 #: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_list.html:40
-msgid "Apps authenticator"
+msgid "Authenticator app"
 msgstr "Apps d'authentification"
 
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_list.html:48
