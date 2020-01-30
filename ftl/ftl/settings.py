@@ -31,12 +31,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'NOT SECURE'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = []
 
 # This param allow app to run with an unbuilt frontend
-DEV_MODE = False
+DEV_MODE = True
 
 # Custom user auth model
 AUTH_USER_MODEL = 'core.FTLUser'

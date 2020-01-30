@@ -38,11 +38,6 @@ msgstr ""
 "Un code à usage unique du lot (code alphanumérique, un code sera utilisé "
 "définitivement)"
 
-#: .\ftl\otp_plugins\otp_ftl\forms.py:44 .\ftl\otp_plugins\otp_ftl\forms.py:129
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\totpdevice_form.html:28
-msgid "Authenticator app"
-msgstr "App d'authentification"
-
 #: .\ftl\otp_plugins\otp_ftl\forms.py:45
 msgid "Select the authenticator app you wish to use"
 msgstr "Sélectionner l'app d'authentification souhaitée"
