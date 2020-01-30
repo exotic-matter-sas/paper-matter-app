@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-30 10:09+0000\n"
+"POT-Creation-Date: 2020-01-30 14:37+0000\n"
 "PO-Revision-Date: 2020-01-03 16:36+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -38,7 +38,11 @@ msgstr ""
 "Un code à usage unique du lot (code alphanumérique, un code sera utilisé "
 "définitivement)"
 
-#: .\ftl\otp_plugins\otp_ftl\forms.py:45
+#: ftl/otp_plugins/otp_ftl/forms.py:44 ftl/otp_plugins/otp_ftl/forms.py:129
+msgid "Authenticator app"
+msgstr "Apps d'authentification"
+
+#: ftl/otp_plugins/otp_ftl/forms.py:45
 msgid "Select the authenticator app you wish to use"
 msgstr "Sélectionner l'app d'authentification souhaitée"
 
@@ -105,7 +109,7 @@ msgid "Add a set of emergency code"
 msgstr "Ajouter un lot de codes d'urgence"
 
 #: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_list.html:40
-msgid "Authenticator app"
+msgid "Authenticator apps"
 msgstr "Apps d'authentification"
 
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_list.html:48
