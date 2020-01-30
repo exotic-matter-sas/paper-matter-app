@@ -25,6 +25,7 @@
             <div class="form-group">
                 <label for="id_otp_token">{{ form.otp_token.label }}</label>
                 <input type="text" name="otp_token" value="" required="required" id="id_otp_token"
+                       placeholder="XXXXXXXX" pattern="[A-Z0-9]*"
                        class="form-control{% if form.errors %} is-invalid{% endif %}" autocomplete="no">
                 <small class="form-text text-muted">{{ form.otp_token.help_text }}</small>
             </div>
