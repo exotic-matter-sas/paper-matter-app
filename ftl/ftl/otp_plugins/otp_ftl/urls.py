@@ -6,7 +6,7 @@ from django.urls import path
 from ftl.otp_plugins.otp_ftl import views, views_static, views_totp, views_fido2
 
 urlpatterns = [
-    path('', views.ListOTPDevice.as_view(), name='otp_list'),
+    path('', views.ListOTPDevices.as_view(), name='otp_list'),
     path('check', views.OTPCheckView.as_view(), name="otp_check"),
 
     path('static/', views_static.StaticDeviceAdd.as_view(), name='otp_static_add'),

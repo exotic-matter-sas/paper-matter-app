@@ -18,23 +18,23 @@ from ftl.otp_plugins.otp_ftl.models import Fido2Device
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(otp_required(if_configured=True), name='dispatch')
-class ListOTPDevice(FTLUserContextDataMixin, View):
+class ListOTPDevices(FTLUserContextDataMixin, View):
     def get(self, request, *args, **kwargs):
         user = request.user
         # Static token
-        static_device = StaticDevice.objects.filter(user=user)
+        static_devices = StaticDevice.objects.filter(user=user)
 
         # TOTP
-        totp_device = TOTPDevice.objects.filter(user=user)
+        totp_devices = TOTPDevice.objects.filter(user=user)
 
         # FIDO2
-        fido2_device = Fido2Device.objects.filter(user=user)
+        fido2_devices = Fido2Device.objects.filter(user=user)
 
         context_data = self.get_context_data()
         context_data.update({
-            'static_device': static_device,
-            'totp_device': totp_device,
-            'fido2_device': fido2_device
+            'static_devices': static_devices,
+            'totp_devices': totp_devices,
+            'fido2_devices': fido2_devices
         })
 
         return render(request, 'otp_ftl/device_list.html', context_data)
