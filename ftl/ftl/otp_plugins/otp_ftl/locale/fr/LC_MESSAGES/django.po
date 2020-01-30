@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-28 17:28+0000\n"
+"POT-Creation-Date: 2020-01-30 10:09+0000\n"
 "PO-Revision-Date: 2020-01-03 16:36+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -69,6 +69,7 @@ msgstr[0] "Un state supprimé"
 msgstr[1] "%(count)s states supprimés"
 
 #: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_confirm_delete.html:9
+#, python-format
 msgid ""
 "\n"
 "                    Are you sure you want to delete<br/> \"%(name)s\"?\n"
