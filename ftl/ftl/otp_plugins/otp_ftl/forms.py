@@ -15,13 +15,13 @@ from ftl.otp_plugins.otp_ftl.models import Fido2Device
 class StaticDeviceCheckForm(OTPTokenForm):
     otp_device = forms.ChoiceField(
         label=_("Set of emergency codes"),
-        help_text=_('Select your set of codes'),
+        help_text=_('Select set of codes to use'),
         choices=[])
     otp_token = forms.CharField(
         required=True,
         label=_("Code"),
         strip=True,
-        help_text=_('One emergency code from your set (the code will be consumed after validating)')
+        help_text=_('One emergency code from your set (alphanumeric code, it will be consumed)')
     )
     otp_challenge = None
 

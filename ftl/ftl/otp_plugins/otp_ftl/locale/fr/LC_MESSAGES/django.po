@@ -22,20 +22,20 @@ msgstr ""
 msgid "Set of emergency codes"
 msgstr "Lot de codes d'urgence"
 
-#: .\ftl\otp_plugins\otp_ftl\forms.py:18
-msgid "Select your set of codes"
-msgstr "Sélectionner votre lot de codes"
+#: ftl/otp_plugins/otp_ftl/forms.py:18
+msgid "Select set of codes to use"
+msgstr "Sélectionner le lot de code à utiliser"
 
 #: .\ftl\otp_plugins\otp_ftl\forms.py:22 .\ftl\otp_plugins\otp_ftl\forms.py:49
 #: .\ftl\otp_plugins\otp_ftl\forms.py:73
 msgid "Code"
 msgstr "Code"
 
-#: .\ftl\otp_plugins\otp_ftl\forms.py:24
+#: ftl/otp_plugins/otp_ftl/forms.py:24
 msgid ""
-"One emergency code from your set (the code will be consumed after validating)"
+"One emergency code from your set (alphanumeric code, it will be consumed)"
 msgstr ""
-"Indiquer un code à usage unique parmi les codes du lot (un code sera utilisé "
+"Un code à usage unique du lot (code alphanumérique, un code sera utilisé "
 "définitivement)"
 
 #: .\ftl\otp_plugins\otp_ftl\forms.py:44 .\ftl\otp_plugins\otp_ftl\forms.py:129
@@ -210,10 +210,10 @@ msgstr "Essayer une autre méthode"
 msgid "Use a code from your authentication app"
 msgstr "Utiliser un code affiché sur votre app d'authentification"
 
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_check.html:27
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\totpdevice_check.html:28
-msgid "Use a one time unique emergency code"
-msgstr "Utiliser un code à usage unique parmi vos codes d'urgence"
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_check.html:27
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_check.html:41
+msgid "Use a one time emergency code"
+msgstr "Utiliser un code à usage unique"
 
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_detail.html:5
 msgid "Your security key has been added!"
