@@ -37,7 +37,9 @@
       }).then(function (response) {
         if (response.ok) return response.arrayBuffer();
         throw new Error('Error getting registration data!');
-      }).then(CBOR.decode).then(function (options) {
+      })
+      {# CBOR come from cbor.js static file, included by script balise at the top of this file #}
+      .then(CBOR.decode).then(function (options) {
         return navigator.credentials.create(options);
       }).then(function (attestation) {
         return fetch('{% url 'otp_fido2_api_register_finish' %}', {
