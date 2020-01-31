@@ -25,6 +25,7 @@
         <p>{% trans "Error: you can't use a security key on this account" %}</p>
     {% endif %}
 
+    {% if have_totp or have_static %}
     <p>{% trans "Try another way" %}</p>
     <ul>
         {% if have_totp %}
@@ -34,6 +35,7 @@
             <li><a href="{% url "otp_static_check" %}">{% trans "Use a one time emergency code" %}</a></li>
         {% endif %}
     </ul>
+    {% endif %}
 {% endblock %}
 
 {% block aside_illustration %}
