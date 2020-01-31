@@ -1,6 +1,7 @@
 #  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
 
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.shortcuts import render, redirect
@@ -83,3 +84,12 @@ class FTLBaseCheckView(LoginView):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
+
+    def get(self, request, *args, **kwargs):
+        request.session['saved_expiration'] = request.session.get_expiry_age()
+        request.session.set_expiry(600)
+        return super().get(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        self.request.session.set_expiry(self.request.session.get('saved_expiration', settings.SESSION_COOKIE_AGE))
+        return super().form_valid(form)
