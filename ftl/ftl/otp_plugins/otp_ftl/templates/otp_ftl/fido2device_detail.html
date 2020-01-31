@@ -4,14 +4,13 @@
 {% block account %}
     <h3 class="text-primary">{% trans "Your security key has been added!" %}</h3>
 
-    <p class="highlight">
+    <p class="highlight text-justify">
         {% blocktrans %}
-            We highly recommend you generate a set of emergency code too in case you have lost your mobile phone or
-            security key.
+            We highly recommend you generate a set of emergency code too in case you have lost your security key.
         {% endblocktrans %}
     </p>
 
-    <a href="{% url 'otp_static_add' %}" class="btn btn-primary">{% trans 'Generate emergency two factor codes' %}</a>
-    <p class="text-right"><a href="{% url 'otp_list' %}">{% trans 'Return to 2FA list' %}</a></p>
+    <a href="{% url 'otp_list' %}" class="btn btn-secondary float-left">{% trans 'No thanks' %}</a>
+    <a href="{% url 'otp_static_add' %}" class="btn btn-primary float-right">{% trans 'Generate emergency two factor codes' %}</a>
 
 {% endblock %}

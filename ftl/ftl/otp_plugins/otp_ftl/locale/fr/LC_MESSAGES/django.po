@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-31 17:57+0000\n"
+"POT-Creation-Date: 2020-01-31 18:09+0000\n"
 "PO-Revision-Date: 2020-01-03 16:36+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -238,26 +238,23 @@ msgid "Your security key has been added!"
 msgstr "Votre clé de sécurité a été ajoutée !"
 
 #: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_detail.html:8
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_form.html:7
 msgid ""
 "\n"
 "            We highly recommend you generate a set of emergency code too in "
-"case you have lost your mobile phone or\n"
-"            security key.\n"
+"case you have lost your security key.\n"
 "        "
 msgstr ""
 "\n"
-"Nous recommandons vivement de générer des codes d'urgence en plus, dans le "
-"cas où vous perdriez votre téléphone ou votre clé de sécurité."
+"Nous recommandons vivement de générer également des codes d'urgence, dans "
+"l'hypothèse oú vous perdriez votre clé de sécurité."
 
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_detail.html:14
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_detail.html:13
+msgid "No thanks"
+msgstr "Non merci"
+
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_detail.html:14
 msgid "Generate emergency two factor codes"
 msgstr "Ajouter un lot de codes d'urgence"
-
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_detail.html:15
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_detail.html:12
-msgid "Return to 2FA list"
-msgstr "Revenir à la liste des appareils d'authentification à deux facteurs"
 
 #: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_form.html:13
 msgid ""
@@ -322,9 +319,25 @@ msgstr "Insérer votre clé de sécurité"
 msgid "Your emergency two factor codes (one use only!)"
 msgstr "Vos codes d'urgence à usage unique"
 
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\staticdevice_form.html:5
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_detail.html:12
+msgid "Return to 2FA list"
+msgstr "Revenir à la liste des appareils d'authentification à deux facteurs"
+
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_form.html:5
 msgid "Add emergency two factor codes"
 msgstr "Ajouter un lot de codes d'urgence"
+
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_form.html:7
+msgid ""
+"\n"
+"            We highly recommend you generate a set of emergency code too in "
+"case you have lost your mobile phone or\n"
+"            security key.\n"
+"        "
+msgstr ""
+"\n"
+"Nous recommandons vivement de générer des codes d'urgence en plus, dans le "
+"cas où vous perdriez votre téléphone ou votre clé de sécurité."
 
 #: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_form.html:13
 msgid ""
