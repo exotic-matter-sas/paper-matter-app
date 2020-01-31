@@ -4,6 +4,7 @@
 from django import forms
 from django.forms import Form
 from django.utils.translation import gettext_lazy as _
+from django_otp import devices_for_user
 from django_otp.forms import OTPTokenForm
 from django_otp.plugins.otp_static.models import StaticDevice, StaticToken
 from django_otp.plugins.otp_totp.models import TOTPDevice
@@ -29,14 +30,21 @@ class StaticDeviceCheckForm(OTPTokenForm):
         super(OTPTokenForm, self).__init__(*args, **kwargs)
 
         self.user = user
-        self.fields['otp_device'].choices = [d for d in self.device_choices(user) if StaticDevice.model_label() in d[0]]
+
+        self.fields['otp_device'].choices = self._get_valid_choices(user)
+
+    def _get_valid_choices(self, user):
+        # Only show sets that still contains codes
+        choices = [d for d in devices_for_user(user) if
+                   StaticDevice.model_label() in d.persistent_id and StaticToken.objects.filter(device=d).exists()]
+        choices_with_token = list((d.persistent_id, d.name) for d in choices)
+        return choices_with_token
 
     def _update_form(self, user):
         super()._update_form(user)
 
         if 'otp_device' in self.fields:
-            self.fields['otp_device'].widget.choices = [d for d in self.device_choices(user) if
-                                                        StaticDevice.model_label() in d[0]]
+            self.fields['otp_device'].widget.choices = self._get_valid_choices(user)
 
 
 class TOTPDeviceCheckForm(OTPTokenForm):
