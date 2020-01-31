@@ -95,7 +95,7 @@ def fido2_api_register_finish(request):
 
     device = Fido2Device(authenticator_data=cbor2.dumps(auth_data.credential_data))
     device.user = request.user
-    device.name = "fido2"
+    device.name = data["name"] or 'Fido key'
     device.confirmed = True
     device.save()
 
