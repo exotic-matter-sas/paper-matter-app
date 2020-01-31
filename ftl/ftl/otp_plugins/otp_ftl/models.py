@@ -2,6 +2,7 @@
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
 
 import base64
+import logging
 
 import cbor2
 from django.conf import settings
@@ -11,6 +12,8 @@ from django_otp.models import Device
 from fido2.client import ClientData
 from fido2.ctap2 import AuthenticatorData, AttestedCredentialData
 from fido2.server import PublicKeyCredentialRpEntity, Fido2Server
+
+logger = logging.getLogger(__name__)
 
 
 class Fido2State(models.Model):
@@ -40,13 +43,17 @@ class Fido2Device(Device):
         rp = PublicKeyCredentialRpEntity(state.domain, settings.FIDO2_RP_NAME)
         fido2 = Fido2Server(rp)
 
-        fido2.authenticate_complete(
-            state_decode,
-            credentials,
-            credential_id,
-            client_data,
-            auth_data,
-            signature,
-        )
+        try:
+            fido2.authenticate_complete(
+                state_decode,
+                credentials,
+                credential_id,
+                client_data,
+                auth_data,
+                signature,
+            )
 
-        return True
+            return True
+        except ValueError:
+            logger.exception("Error in FIDO2 final authentication")
+            return False
