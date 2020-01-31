@@ -29,7 +29,7 @@
             <label for="id_name">{% trans 'Security key name' %}</label>
             <input type="text" name="name" placeholder="{% trans 'Security key with house key' %}"
                    required="required" id="id_name" class="form-control">
-            <small class="form-text text-muted">{% trans 'A name to remember your security key' %}</small>
+            <small class="form-text text-muted">{% trans 'A name to identify your security key' %}</small>
         </div>
         <a class="btn btn-secondary float-left" href="{% url 'otp_list' %}">{% trans 'Cancel' %}</a>
         <input id="fido2-next" class="btn btn-primary float-right" type="submit" value="{% trans 'Next' %}">

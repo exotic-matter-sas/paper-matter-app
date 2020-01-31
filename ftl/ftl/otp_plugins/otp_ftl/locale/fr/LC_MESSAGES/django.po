@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-30 14:37+0000\n"
+"POT-Creation-Date: 2020-01-31 17:57+0000\n"
 "PO-Revision-Date: 2020-01-03 16:36+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -104,7 +104,20 @@ msgstr "Authentification à deux facteurs"
 msgid "Rename"
 msgstr "Renommer"
 
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_list.html:35
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_list.html:33
+msgid ""
+"\n"
+"                                        All codes in this set have been "
+"used! Avoid being lockout of your account by\n"
+"                                        adding a new set.\n"
+"                                    "
+msgstr ""
+"\n"
+"Tous les codes de ce lot ont étéutilisés ! Ajoutez un nouveau lot pour ne "
+"pas risquer de perdre l'accès à votre compte.\n"
+"                                    "
+
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_list.html:45
 msgid "Add a set of emergency code"
 msgstr "Ajouter un lot de codes d'urgence"
 
@@ -198,9 +211,15 @@ msgstr ""
 msgid "Verify"
 msgstr "Vérifier"
 
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_check.html:24
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\staticdevice_check.html:25
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\totpdevice_check.html:25
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_check.html:25
+msgid "Error: you can't use a security key on this account"
+msgstr ""
+"Une erreur est survenue : vous ne pouvez pas utiliser de clé de sécurité sur "
+"ce compte."
+
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_check.html:28
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_check.html:39
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_check.html:39
 msgid "Try another way"
 msgstr "Essayer une autre méthode"
 
@@ -270,7 +289,19 @@ msgstr ""
 "navigateurs récents sont compatibles comme Google Chrome, Mozilla Firefox, "
 "Microsoft Edge, Safari."
 
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_form.html:28
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_form.html:29
+msgid "Security key name"
+msgstr "Nom de la clé de sécurité"
+
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_form.html:30
+msgid "Security key with house key"
+msgstr "Clé de sécurité avec la clé de la maison"
+
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_form.html:32
+msgid "A name to identify your security key"
+msgstr "Un nom pour identifier votre clé de sécurité"
+
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_form.html:35
 #: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_form.html:27
 #: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_form.html:33
 msgid "Next"
