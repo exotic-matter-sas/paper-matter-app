@@ -14,12 +14,16 @@
 
     <p>{% trans "This extra step shows that it’s really you trying to sign in" %}</p>
 
-    <form method="post" id="user-form">
-        {% csrf_token %}
-        {{ form.as_p }}
+    {% if have_fido2 %}
+        <form method="post" id="user-form">
+            {% csrf_token %}
+            {{ form.as_p }}
 
-        <input class="btn btn-lg btn-primary btn-block" type="submit" value="{% trans "Verify" %}">
-    </form>
+            <input class="btn btn-lg btn-primary btn-block" type="submit" value="{% trans "Verify" %}">
+        </form>
+    {% else %}
+        <p>{% trans "Error: you can't use a security key on this account" %}</p>
+    {% endif %}
 
     <p>{% trans "Try another way" %}</p>
     <ul>
@@ -36,6 +40,10 @@
     <img src="{% static "user_setup.svg" %}" alt="Signup steps illustration">
 {% endblock %}
 
+
 {% block footer %}
-    <script type="application/javascript" src="{% static 'fido2_form.js' %}"></script>
+    {% if have_fido2 %}
+        <script type="application/javascript" src="{% static 'fido2_form.js' %}"></script>
+    {% endif %}
 {% endblock %}
+
