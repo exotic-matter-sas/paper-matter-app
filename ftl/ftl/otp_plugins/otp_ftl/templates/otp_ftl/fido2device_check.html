@@ -23,8 +23,12 @@
 
     <p>{% trans "Try another way" %}</p>
     <ul>
-        <li><a href="{% url "otp_totp_check" %}">{% trans "Use a code from your authentication app" %}</a></li>
-        <li><a href="{% url "otp_static_check" %}">{% trans "Use a one time emergency code" %}</a></li>
+        {% if have_totp %}
+            <li><a href="{% url "otp_totp_check" %}">{% trans "Use a code from your authentication app" %}</a></li>
+        {% endif %}
+        {% if have_static %}
+            <li><a href="{% url "otp_static_check" %}">{% trans "Use a one time emergency code" %}</a></li>
+        {% endif %}
     </ul>
 {% endblock %}
 

@@ -25,7 +25,8 @@
             <div class="form-group">
                 <label for="id_otp_token">{{ form.otp_token.label }}</label>
                 <input type="text" name="otp_token" value="" placeholder="XXX XXX" required="required" id="id_otp_token"
-                       class="form-control{% if form.errors %} is-invalid{% endif %}" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code">
+                       class="form-control{% if form.errors %} is-invalid{% endif %}" inputmode="numeric"
+                       pattern="[0-9]*" autocomplete="one-time-code">
                 <small class="form-text text-muted">{{ form.otp_token.help_text }}</small>
             </div>
 
@@ -37,8 +38,12 @@
 
     <p>{% trans "Try another way" %}</p>
     <ul>
-        <li><a href="{% url "otp_fido2_check" %}">{% trans "Use your security key" %}</a></li>
-        <li><a href="{% url "otp_static_check" %}">{% trans "Use a one time emergency code" %}</a></li>
+        {% if have_fido2 %}
+            <li><a href="{% url "otp_fido2_check" %}">{% trans "Use your security key" %}</a></li>
+        {% endif %}
+        {% if have_static %}
+            <li><a href="{% url "otp_static_check" %}">{% trans "Use a one time emergency code" %}</a></li>
+        {% endif %}
     </ul>
 {% endblock %}
 
