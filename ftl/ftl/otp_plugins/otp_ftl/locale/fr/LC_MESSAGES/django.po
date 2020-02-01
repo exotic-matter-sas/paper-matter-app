@@ -113,7 +113,7 @@ msgid ""
 "                                    "
 msgstr ""
 "\n"
-"Tous les codes de ce lot ont étéutilisés ! Ajoutez un nouveau lot pour ne "
+"Tous les codes de ce lot ont été utilisés ! Ajoutez un nouveau lot pour ne "
 "pas risquer de perdre l'accès à votre compte.\n"
 "                                    "
 
