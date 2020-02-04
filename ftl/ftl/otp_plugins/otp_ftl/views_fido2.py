@@ -18,7 +18,7 @@ from fido2.server import PublicKeyCredentialRpEntity, Fido2Server
 
 from core.ftl_mixins import FTLUserContextDataMixin
 from ftl.otp_plugins.otp_ftl.forms import Fido2DeviceCheckForm
-from ftl.otp_plugins.otp_ftl.models import Fido2Device, Fido2State
+from ftl.otp_plugins.otp_ftl.models import Fido2Device
 from ftl.otp_plugins.otp_ftl.views import FTLBaseCheckView
 
 FIDO2_REGISTER_STATE = 'fido2_register_state'
@@ -113,7 +113,8 @@ def fido2_api_login_begin(request):
     fido2 = Fido2Server(rp)
     auth_data, state = fido2.authenticate_begin(credentials)
 
-    Fido2State(user=user, state=cbor2.dumps(state), domain=get_domain(request)).save()
+    request.session['fido2_state'] = state
+    request.session['fido2_domain'] = get_domain(request)
     return HttpResponse(cbor2.dumps(auth_data), content_type='application/cbor')
 
 

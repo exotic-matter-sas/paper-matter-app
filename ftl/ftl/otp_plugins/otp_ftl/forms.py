@@ -102,11 +102,17 @@ class Fido2DeviceCheckForm(OTPTokenForm):
     def __init__(self, user, request=None, *args, **kwargs):
         super(OTPTokenForm, self).__init__(*args, **kwargs)
         self.user = user
+        self.request = request
 
     def clean(self):
         fido2_devices = [d for d in self.device_choices(self.user) if Fido2Device.model_label() in d[0]]
         self.cleaned_data['otp_device'] = fido2_devices[0][0]
         return super().clean()
+
+    def _verify_token(self, user, token, device=None):
+        state = self.request.session.pop('fido2_state')
+        domain = self.request.session.pop('fido2_domain')
+        return super()._verify_token(user, {'token': token, 'state': state, 'domain': domain}, device)
 
 
 # Forms for registering a new device
