@@ -17,24 +17,31 @@
     {% if have_fido2 %}
         <form method="post" id="user-form">
             {% csrf_token %}
-            {{ form.as_p }}
+            {{ form.otp_token }}
 
-            <input class="btn btn-lg btn-primary btn-block" type="submit" value="{% trans "Verify" %}">
+            {% if form.errors %}
+                <div class="alert alert-danger" role="alert">
+                    Missing or invalid security key
+                </div>
+            {% endif %}
+
+            <input class="btn btn-lg btn-primary btn-block" type="submit"
+                   value="{% trans "Insert your security key" %}">
         </form>
     {% else %}
         <p>{% trans "Error: you can't use a security key on this account" %}</p>
     {% endif %}
 
     {% if have_totp or have_static %}
-    <p>{% trans "Try another way" %}</p>
-    <ul>
-        {% if have_totp %}
-            <li><a href="{% url "otp_totp_check" %}">{% trans "Use a code from your authentication app" %}</a></li>
-        {% endif %}
-        {% if have_static %}
-            <li><a href="{% url "otp_static_check" %}">{% trans "Use a one time emergency code" %}</a></li>
-        {% endif %}
-    </ul>
+        <p>{% trans "Try another way" %}</p>
+        <ul>
+            {% if have_totp %}
+                <li><a href="{% url "otp_totp_check" %}">{% trans "Use a code from your authentication app" %}</a></li>
+            {% endif %}
+            {% if have_static %}
+                <li><a href="{% url "otp_static_check" %}">{% trans "Use a one time emergency code" %}</a></li>
+            {% endif %}
+        </ul>
     {% endif %}
 {% endblock %}
 

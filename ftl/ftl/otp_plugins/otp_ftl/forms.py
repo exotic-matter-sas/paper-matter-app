@@ -46,6 +46,9 @@ class StaticDeviceCheckForm(OTPTokenForm):
         if 'otp_device' in self.fields:
             self.fields['otp_device'].widget.choices = self._get_valid_choices(user)
 
+    def _verify_token(self, user, token, device=None):
+        return super()._verify_token(user, token.upper(), device)
+
 
 class TOTPDeviceCheckForm(OTPTokenForm):
     otp_device = forms.ChoiceField(

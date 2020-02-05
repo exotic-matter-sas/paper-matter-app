@@ -30,6 +30,12 @@
                 <small class="form-text text-muted">{{ form.otp_token.help_text }}</small>
             </div>
 
+            {% if form.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {% trans 'Incorrect code' %}
+                </div>
+            {% endif %}
+
             <input class="btn btn-lg btn-primary btn-block" type="submit" value="{% trans "Verify" %}">
         </form>
     {% else %}
@@ -37,15 +43,15 @@
     {% endif %}
 
     {% if have_fido2 or have_static %}
-    <p>{% trans "Try another way" %}</p>
-    <ul>
-        {% if have_fido2 %}
-            <li><a href="{% url "otp_fido2_check" %}">{% trans "Use your security key" %}</a></li>
-        {% endif %}
-        {% if have_static %}
-            <li><a href="{% url "otp_static_check" %}">{% trans "Use a one time emergency code" %}</a></li>
-        {% endif %}
-    </ul>
+        <p>{% trans "Try another way" %}</p>
+        <ul>
+            {% if have_fido2 %}
+                <li><a href="{% url "otp_fido2_check" %}">{% trans "Use your security key" %}</a></li>
+            {% endif %}
+            {% if have_static %}
+                <li><a href="{% url "otp_static_check" %}">{% trans "Use a one time emergency code" %}</a></li>
+            {% endif %}
+        </ul>
     {% endif %}
 {% endblock %}
 
