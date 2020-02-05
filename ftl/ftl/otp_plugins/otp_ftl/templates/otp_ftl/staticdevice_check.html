@@ -39,7 +39,7 @@
             <input class="btn btn-lg btn-primary btn-block" type="submit" value="{% trans "Verify" %}">
         </form>
     {% else %}
-        <p>{% trans "Error: you can't use emergency code on this account" %}</p>
+        <p>{% trans "Error: you can't use emergency code on this account." %}</p>
     {% endif %}
 
     {% if have_fido2 or have_totp %}

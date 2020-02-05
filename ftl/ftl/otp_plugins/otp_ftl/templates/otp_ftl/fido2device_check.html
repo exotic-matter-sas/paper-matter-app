@@ -21,7 +21,7 @@
 
             {% if form.errors %}
                 <div class="alert alert-danger" role="alert">
-                    Missing or invalid security key
+                    {% trans 'Missing or invalid security key.' %}
                 </div>
             {% endif %}
 
@@ -29,7 +29,7 @@
                    value="{% trans "Insert your security key" %}">
         </form>
     {% else %}
-        <p>{% trans "Error: you can't use a security key on this account" %}</p>
+        <p>{% trans "Error: you can't use a security key on this account." %}</p>
     {% endif %}
 
     {% if have_totp or have_static %}
