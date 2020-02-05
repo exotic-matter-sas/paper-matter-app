@@ -27,9 +27,10 @@ const localVue = createLocalVue();
 localVue.use(BootstrapVue); // to avoid warning on tests execution
 localVue.use(Vuex);
 localVue.component('font-awesome-icon', jest.fn()); // avoid font awesome warning
-localVue.prototype.$_ = (text) => {
+localVue.prototype.$t = (text) => {
   return text;
 }; // i18n mock
+localVue.prototype.$tc = (text, args='') => {return text + args};// i18n mock
 localVue.prototype.$moment = () => {
   return {fromNow: jest.fn()}
 };
@@ -41,7 +42,7 @@ localVue.prototype.$route = {
   }
 }; // router mock
 const mockedMixinAlert = jest.fn();
-localVue.mixin({methods: {mixinAlert: mockedMixinAlert}}); // mixin alert
+localVue.mixin({methods: {mixinAlert: mockedMixinAlert, mixinAlertWarning: mockedMixinAlert}}); // mixin alert
 
 jest.mock('axios', () => ({
   get: jest.fn(),
@@ -177,7 +178,7 @@ describe('Home computed', () => {
         to: {path: '/home/' + fakePath}
       },
       {
-        text: fakeLevels[1].name,
+        text: fakeLevels[1].name + ' (0)',
         to: {path: '/home/' + fakePath}
       },
     ];
@@ -410,7 +411,7 @@ describe('Home methods call proper methods', () => {
     wrapper.vm.navigateToFolder(folderToNavigate);
 
     // then
-    expect(wrapper.vm.previousLevels[wrapper.vm.previousLevels.length-1]).toEqual(folderToNavigate);
+    expect(wrapper.vm.previousLevels[wrapper.vm.previousLevels.length - 1]).toEqual(folderToNavigate);
     expect(wrapper.vm.$router.push).toHaveBeenNthCalledWith(1, {path: '/home/' + fakePath});
   });
 
@@ -546,7 +547,8 @@ describe('Home methods call proper api', () => {
 
     // then
     expect(axios.get).toHaveBeenCalledWith('/app/api/v1/folders');
-    expect(axios.get).toHaveBeenCalledTimes(2);  });
+    expect(axios.get).toHaveBeenCalledTimes(2);
+  });
 
   it('updateFoldersPath call api', async () => {
     // restore original method to test it
@@ -597,6 +599,9 @@ describe('Home event handling', () => {
     store = new Vuex.Store(Object.assign(
       storeConfigCopy,
       {
+        mutations: {
+          unselectAllDocuments: mockedUnselectAllDocumentsCommit
+        },
         state: {
           selectedDocumentsHome: ['fakeDocument']
         }
@@ -646,7 +651,7 @@ describe('Home event handling', () => {
     expect(mockedFolderCreated).toHaveBeenCalledTimes(1);
   });
 
- it('event-new-upload call documentsCreated', async () => {
+  it('event-new-upload call documentsCreated', async () => {
     // when
     wrapper.find(FTLUpload).vm.$emit('event-new-upload');
     await flushPromises(); // wait all pending promises are resolved/rejected

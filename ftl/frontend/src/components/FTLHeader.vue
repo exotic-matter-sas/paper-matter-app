@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+  - Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
   - Licensed under the BSL License. See LICENSE in the project root for license information.
   -->
 
@@ -47,10 +47,10 @@
 
     <b-navbar-nav>
       <router-link :to="{name: 'home'}" tag="b-nav-item">
-        <font-awesome-icon icon="home" :title="this.$_('Home')"/>
+        <font-awesome-icon icon="home" :title="$t('Home')"/>
       </router-link>
       <router-link :to="{name: 'folders'}" tag="b-nav-item">
-        <font-awesome-icon icon="folder" :title="this.$_('Folders management')"/>
+        <font-awesome-icon icon="folder" :title="$t('Folders management')"/>
       </router-link>
     </b-navbar-nav>
 
@@ -59,7 +59,7 @@
     <b-collapse id="nav-collapse" is-nav>
       <b-nav-form class="mt-3 mt-sm-0">
         <b-input-group>
-          <b-form-input id="search-input" variant="outilne" :placeholder="this.$_('Key words...')"
+          <b-form-input id="search-input" variant="outilne" :placeholder="$t('Keywords...')"
                         v-model="search"
                         @keydown.enter.prevent="doSearch"
                         required
@@ -67,8 +67,8 @@
 
           <b-input-group-append>
             <b-button id="search-button" variant="outline-secondary" type="submit"
-                      @click.prevent="doSearch">
-              {{this.$_('Search')}}
+                      @click.prevent="doSearch" :disabled="search === ''">
+              {{ $t('Search') }}
             </b-button>
           </b-input-group-append>
         </b-input-group>
@@ -83,15 +83,25 @@
             <b-badge v-if="account.otp_warning" variant="danger" class="m-1">&nbsp;!</b-badge>
           </template>
           <b-dropdown-item href="/accounts">
-            {{this.$_('Settings')}}
+            {{ $t('Settings') }}
             <b-badge v-if="account.otp_warning" variant="danger" class="m-1">&nbsp;!</b-badge>
           </b-dropdown-item>
-          <b-dropdown-item href="/logout">{{this.$_('Sign Out')}}</b-dropdown-item>
+          <b-dropdown-item href="/logout">{{ $t('Sign Out') }}</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
     </b-collapse>
   </b-navbar>
 </template>
+
+<i18n>
+  fr:
+    Home: Accueil
+    Folders management: Gestion des dossiers
+    Keywords...: Mots clés...
+    Search: Rechercher
+    Settings: Paramètres
+    Sign Out: Se déconnecter
+</i18n>
 
 <script>
   export default {
@@ -135,7 +145,9 @@
       },
 
       doSearch: function () {
-        this.$router.push({name: 'home-search', params: {search: this.search}})
+        if (this.search !== '') {
+          this.$router.push({name: 'home-search', params: {search: this.search}})
+        }
       }
     }
   }

@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+  - Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
   - Licensed under the BSL License. See LICENSE in the project root for license information.
   -->
 
@@ -36,7 +36,7 @@
                 </b-col>
               </b-row>
               <b-row>
-                <b-col><b>{{ this.$_('Create new folder') }}</b></b-col>
+                <b-col><b>{{ $t('Create new folder') }}</b></b-col>
               </b-row>
             </b-col>
           </b-row>
@@ -45,7 +45,7 @@
         <b-col id="right-panel">
           <b-row v-if="folderDetailLoading">
             <b-col>
-              <b-spinner :label="$_('Loading')"></b-spinner>
+              <b-spinner :label="$t('Loading')"></b-spinner>
             </b-col>
           </b-row>
           <b-row v-else-if="folderDetail">
@@ -60,7 +60,7 @@
               </b-row>
               <b-row>
                 <b-col>
-                  Creation date
+                  {{ $t('Creation date')}}
                 </b-col>
                 <b-col>
                   <span id="selected-folder-date" :title="folderDetail.created">{{ $moment(folderDetail.created).fromNow() }}</span>
@@ -69,20 +69,20 @@
               <b-row>
                 <b-col>
                   <b-button id="rename-selected-folder" class="m-1" variant="secondary"
-                            v-b-modal="'modal-rename-folder'">Rename
+                            v-b-modal="'modal-rename-folder'"> {{ $t('Rename') }}
                   </b-button>
                   <b-button id="move-selected-folder" class="m-1" variant="secondary" v-b-modal="'modal-move-folder'">
-                    Move
+                    {{ $t('Move') }}
                   </b-button>
                   <b-button id="delete-selected-folder" class="m-1" variant="danger" v-b-modal="'modal-delete-folder'">
-                    Delete
+                    {{ $t('Delete') }}
                   </b-button>
                 </b-col>
               </b-row>
             </b-col>
           </b-row>
           <b-row v-else>
-            <b-col><h1 class="text-muted">{{ this.$_('No folder selected') }}</h1></b-col>
+            <b-col><h1 class="text-muted">{{ $t('No folder selected') }}</h1></b-col>
           </b-row>
         </b-col>
       </b-row>
@@ -108,6 +108,16 @@
     </b-container>
   </main>
 </template>
+
+<i18n>
+  fr:
+    Create new folder: Créer un nouveau dossier
+    Loading: Chargement
+    No folder selected: Aucun dossier sélectionné
+    Unable to get folder details: Les détails du dossier n'ont pu être récupérés
+    Unable to refresh folders list: La liste des dossiers n'a pu être rafraichie
+    Creation date: Date de création
+</i18n>
 
 <script>
   import FTLSelectableFolder from "@/components/FTLSelectableFolder";
@@ -177,7 +187,7 @@
         let paths = [];
 
         paths.push({
-          text: this.$_('Root'),
+          text: this.$t('Root'),
           to: {name: 'folders'}
         });
 
@@ -212,7 +222,7 @@
             .then(response => {
               this.folderDetail = response.data;
             })
-            .catch(error => this.mixinAlert(this.$_('Unable to get folder details'), true))
+            .catch(error => this.mixinAlert(this.$t('Unable to get folder details'), true))
             .finally(() => {
             })
             .then(() => this.folderDetailLoading = false);
@@ -244,7 +254,7 @@
           .then(response => {
             vi.folders = response.data;
           })
-          .catch(error => vi.mixinAlert(vi.$_('Unable to refresh folders list'), true))
+          .catch(error => vi.mixinAlert(vi.$t('Unable to refresh folders list'), true))
           .finally(() => vi.foldersLoading = false);
       },
 

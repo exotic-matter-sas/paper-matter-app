@@ -25,6 +25,7 @@
         moreDocsLoading: false,
         moreDocs: null,
         sort: null,
+        count: 0,
       }
     },
 
@@ -75,6 +76,7 @@
           .then(response => {
             this.moreDocsLoading = false;
             vi.docs = vi.docs.concat(response.data['results']);
+            vi.count = response.data['count'];
             vi.moreDocs = response.data['next'];
           }).catch(error => {
           this.moreDocsLoading = false;
@@ -104,6 +106,7 @@
           .then(response => {
             this.docsLoading = false;
             this.docs = response.data['results'];
+            this.count = response.data['count'];
             this.moreDocs = response.data['next'];
           }).catch(error => {
           this.docsLoading = false;
@@ -114,6 +117,7 @@
       documentsCreated: function (event) {
         const doc = event.doc;
         this.docs.unshift(doc);
+        this.count ++
       },
 
       documentDeleted: function (event) {
@@ -122,7 +126,7 @@
         this.docs.splice(foundIndex, 1);
         // remove from selection
         this.$store.commit('unselectDocument', doc);
-        // if last doc in the list has been removed and there is more docs to come, refresh list
+        // if last doc in the list has been removed and there are more docs, refresh list
         if (this.docs.length < 1 && this.moreDocs !== null) {
           this.updateDocuments()
         }

@@ -1,9 +1,10 @@
-#  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
 
 import os
+import time
 from string import ascii_lowercase
-from unittest import skip, skipIf
+from unittest import skipIf
 from unittest.mock import patch
 
 from selenium.common.exceptions import NoSuchElementException
@@ -18,7 +19,7 @@ from ftests.pages.user_login_page import LoginPage
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_document, setup_folder, \
     setup_temporary_file
-from ftl.settings import DEV_MODE, BASE_DIR
+from ftl.settings import DEV_MODE, BASE_DIR, DEFAULT_TEST_BROWSER, TEST_BROWSER_HEADLESS
 
 
 class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
@@ -263,26 +264,26 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
 
         # Documents are sort by recent first by default
         recent_first_order = list(reversed(document_title_to_create))
-        self.assertIn('recent', self.get_elem_text(self.sort_dropdown_button))
+        self.assertIn('Recent first', self.get_elem_text(self.sort_dropdown_button))
         self.assertEqual(self.get_elems_text(self.documents_titles), recent_first_order[:10])
 
         # User change sort to older
         self.sort_documents_list('older')
 
-        self.assertIn('older', self.get_elem_text(self.sort_dropdown_button))
+        self.assertIn('Older first', self.get_elem_text(self.sort_dropdown_button))
         self.assertEqual(self.get_elems_text(self.documents_titles), list(reversed(recent_first_order))[:10])
 
         # User change sort to a-z
         self.sort_documents_list('az')
 
         az_order = (['1'] + list(ascii_lowercase))
-        self.assertIn('a-z', self.get_elem_text(self.sort_dropdown_button))
+        self.assertIn('A-Z', self.get_elem_text(self.sort_dropdown_button))
         self.assertEqual(self.get_elems_text(self.documents_titles), az_order[:10])
 
         # User change sort to z-a
         self.sort_documents_list('za')
 
-        self.assertIn('z-a', self.get_elem_text(self.sort_dropdown_button))
+        self.assertIn('Z-A', self.get_elem_text(self.sort_dropdown_button))
         self.assertEqual(self.get_elems_text(self.documents_titles), list(reversed(az_order))[:10])
 
         # User make a search
@@ -290,7 +291,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
 
         # Default sort for search is always relevance
         relevance_order = list(reversed(document_title_to_create[:5]))
-        self.assertIn('relevance', self.get_elem_text(self.sort_dropdown_button))
+        self.assertIn('Relevance', self.get_elem_text(self.sort_dropdown_button))
         self.assertEqual(self.get_elems_text(self.documents_titles), relevance_order)
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
@@ -309,37 +310,37 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         self.refresh_documents_list()
 
         # Default sort in root is recent
-        self.assertIn('recent', self.get_elem_text(self.sort_dropdown_button))
+        self.assertIn('Recent', self.get_elem_text(self.sort_dropdown_button))
 
         # User open subfolder
         self.get_elem(self.folders_list_buttons).click()
 
         # Default sort is also recent
-        self.assertIn('recent', self.get_elem_text(self.sort_dropdown_button))
+        self.assertIn('Recent', self.get_elem_text(self.sort_dropdown_button))
 
         # User update sort to a-z
         self.sort_documents_list('az')
 
         # Sort properly updated
-        self.assertIn('a-z', self.get_elem_text(self.sort_dropdown_button))
+        self.assertIn('A-Z', self.get_elem_text(self.sort_dropdown_button))
 
         # User come back to root
         self.get_elem(self.home_page_link).click()
 
         # Default sort is now a-z
-        self.assertIn('a-z', self.get_elem_text(self.sort_dropdown_button))
+        self.assertIn('A-Z', self.get_elem_text(self.sort_dropdown_button))
 
         # User make a search
         self.search_documents('note')
 
         # Default sort for search is always relevance
-        self.assertIn('relevance', self.get_elem_text(self.sort_dropdown_button))
+        self.assertIn('Relevance', self.get_elem_text(self.sort_dropdown_button))
 
         # User update sort to z-a
         self.sort_documents_list('za')
 
         # Sort properly updated
-        self.assertIn('z-a', self.get_elem_text(self.sort_dropdown_button))
+        self.assertIn('Z-A', self.get_elem_text(self.sort_dropdown_button))
 
         # User display the page to manage folder
         self.get_elem(self.manage_folder_page_link).click()
@@ -348,14 +349,59 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         self.get_elem(self.home_page_link).click()
 
         # Default sort is still a-z
-        self.assertIn('a-z', self.get_elem_text(self.sort_dropdown_button),
+        self.assertIn('A-Z', self.get_elem_text(self.sort_dropdown_button),
                       'user custom sort should have been saved')
 
         # User make an F5
         self.visit(HomePage.url)
 
         # Default sort is back to recent first
-        self.assertIn('recent', self.get_elem_text(self.sort_dropdown_button))
+        self.assertIn('Recent', self.get_elem_text(self.sort_dropdown_button))
+
+    @skipIf(DEFAULT_TEST_BROWSER == 'firefox',
+            'Due to a Firefox bug, download can\'t be automated for file with Content-Disposition header set to '
+            'attachment.'
+            '\nRef: https://bugzilla.mozilla.org/show_bug.cgi?id=453455'
+            '\nPossible workaround: https://bugzilla.mozilla.org/show_bug.cgi?id=453455#c150')
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_download_document_from_list(self):
+        # User has already added a document
+        document_name = 'doc_name1'
+        setup_document(self.org, self.user, title=document_name)
+        self.refresh_documents_list()
+
+        # User click on the download button
+        file_name = self.download_file(self.documents_download_buttons)
+
+        # Downloaded file name match document name
+        self.assertEqual(file_name, document_name + '.pdf')
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_unselect_documents(self):
+        # Ensure that documents selected are unselected when switching pages
+        folder_a = setup_folder(self.org, "Folder A")
+        folder_b = setup_folder(self.org, "Folder B")
+        doc_in_folder_a = setup_document(self.org, self.user, title="doc ABBBAX", ftl_folder=folder_a)
+        doc_in_folder_b = setup_document(self.org, self.user, title="doc ABXXAB", ftl_folder=folder_b)
+
+        self.refresh_page()
+
+        self.search_documents("ABXXAB")
+        self.get_elem(self.documents_checkboxes).click()
+        self.get_elem(self.home_page_link).click()
+
+        with self.assertRaises(NoSuchElementException, msg='No batch toolbar should be shown'):
+            self.get_elem(self.batch_toolbar)
+
+        # Ensure it's reset between searches too
+        self.search_documents("ABXXAB")
+        self.get_elem(self.documents_checkboxes).click()
+        self.wait_for_elem_to_show(self.batch_toolbar)
+        self.assertTrue(self.get_elem(self.batch_toolbar))
+
+        self.search_documents("ABBBAX")
+        with self.assertRaises(NoSuchElementException, msg='No batch toolbar should be shown'):
+            self.get_elem(self.batch_toolbar)
 
 
 class SearchTests(LoginPage, HomePage, DocumentViewerModal):
@@ -446,11 +492,12 @@ class SearchTests(LoginPage, HomePage, DocumentViewerModal):
 
         # User search something that isn't present in his document
         self.search_documents('this text doesn\'t exist')
+        time.sleep(1)  # Force additional wait to make test pass on CI
 
         with self.assertRaises(NoSuchElementException, msg='No document should be found by this search query'):
             self.get_elems(self.documents_thumbnails)
 
-        self.assertIn('No document', self.get_elem_text(self.documents_list_container),
+        self.assertIn('No result found', self.get_elem_text(self.documents_list_container),
                       'A message should indicate no documents were found')
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
@@ -465,11 +512,12 @@ class SearchTests(LoginPage, HomePage, DocumentViewerModal):
         self.get_elem(self.folders_list_buttons).click()
         self.wait_folder_list_loaded()
         self.search_documents('this text doesn\'t exist')
+        time.sleep(1)  # Force additional wait to make test pass on CI
 
         with self.assertRaises(NoSuchElementException, msg='No document should be found by this search query'):
             self.get_elems(self.documents_thumbnails)
 
-        self.assertIn('No document', self.get_elem_text(self.documents_list_container),
+        self.assertIn('No result found', self.get_elem_text(self.documents_list_container),
                       'A message should indicate no documents were found')
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
@@ -696,6 +744,35 @@ class DocumentViewerModalTests(LoginPage, HomePage, DocumentViewerModal):
         self.visit(HomePage.url)
         with self.assertRaises(NoSuchElementException):
             self.get_elem(self.first_document_title)
+
+    @skipIf(DEFAULT_TEST_BROWSER == 'chrome' and TEST_BROWSER_HEADLESS,
+            "Headless chrome doesn't support extensions and it seem it doesn't support PDF preview too (browser freeze"
+            " after switching to tab with PDF preview).\n"
+            "Refs:\n"
+            " - https://bugs.chromium.org/p/chromedriver/issues/detail?id=1961\n"
+            " - https://bugs.chromium.org/p/chromium/issues/detail?id=706008")
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_open_document(self):
+        # User has already added and opened a document
+        document_name = 'doc_name1'
+        document = setup_document(self.org, self.user, title=document_name)
+        self.refresh_documents_list()
+        self.open_first_document()
+
+        # User click on open pdf button
+        initial_tabs = self.browser.window_handles
+        self.get_elem(self.open_pdf_button).click()
+        time.sleep(0.5)  # wait for browser to open new tab
+        current_tabs = self.browser.window_handles
+
+        # A new tab has opened
+        self.assertGreater(len(current_tabs), len(initial_tabs), 'no new tab opened')
+
+        # document is opened in new tab
+        new_window = (set(current_tabs) - set(initial_tabs)).pop()
+        self.browser.switch_to.window(new_window)
+        time.sleep(0.5)  # wait for browser to load viewer
+        self.assertIn(f'{document.pid}/doc.pdf', self.browser.current_url)
 
 
 class ManageFoldersPageTests(LoginPage, ManageFolderPage):

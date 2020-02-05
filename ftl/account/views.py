@@ -66,7 +66,7 @@ class AccountEmailChangeView(LoginRequiredMixin, SuccessMessageMixin, FTLUserCon
 
         # Encode new email and sign it
         activation_key = signing.dumps(
-            obj=email_,
+            obj={'id': self.request.user.id, 'old_email': self.request.user.email, 'new_email': email_},
             salt='email_change'
         )
 
@@ -113,16 +113,20 @@ class AccountEmailChangeValidateView(LoginRequiredMixin, View):
         if 'token' in kwargs:
             # check for validity
             try:
-                email = signing.loads(
+                email_change_request = signing.loads(
                     kwargs['token'],
                     salt='email_change',
                     max_age=timedelta(minutes=10)
                 )
 
                 user = self.request.user
-                user.email = email
-                user.save()
-                messages.success(self.request, self.success_message)
+
+                if user.email == email_change_request['old_email'] and user.id == email_change_request['id']:
+                    user.email = email_change_request['new_email']
+                    user.save()
+                    messages.success(self.request, self.success_message)
+                else:
+                    messages.error(self.request, self.incorrect_signature)
             except SignatureExpired:
                 messages.error(self.request, self.expired_message)
             except BadSignature:

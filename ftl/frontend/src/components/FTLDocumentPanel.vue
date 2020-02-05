@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+  - Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
   - Licensed under the BSL License. See LICENSE in the project root for license information.
   -->
 
@@ -12,15 +12,18 @@
     <template slot="modal-header">
       <b-container>
         <h5 class="modal-title">
-          <b-link id="document-parent-folder" class="float-left" :to="parent_folder.to" :title="path.map(v=>v.text).join('/')">
-            <font-awesome-icon icon="folder"/><font-awesome-icon icon="folder-open" class="d-none"/> {{ parent_folder.text }}
+          <b-link id="document-parent-folder" class="float-left" :to="parent_folder.to"
+                  :title="path.map(v=>v.text).join('/')">
+            <font-awesome-icon icon="folder"/>
+            <font-awesome-icon icon="folder-open" class="d-none"/>
+            {{ parent_folder.text }}
           </b-link>
           <div id="document-title-separator" class="float-left">/</div>
           <div id="document-title" class="float-left" :title="currentOpenDoc.title">
             {{ currentOpenDoc.title }}
           </div>
           <b-button id="rename-document" class="float-left" v-b-modal="'modal-rename-document'" variant="link">
-            <font-awesome-icon icon="edit" :title="$_('Rename document')"/>
+            <font-awesome-icon icon="edit" :title="$t('Rename document')"/>
           </b-button>
         </h5>
 
@@ -38,20 +41,24 @@
           </div>
           <div v-else>
             <span class="text-muted">
-              {{ $_('Viewer not available on this device, open the document instead.') }}
+              {{ $t('Viewer not available on this device, open the document instead.') }}
             </span>
           </div>
         </b-col>
         <b-col>
           <b-row>
             <b-col class="mb-1">
-              <b-button class="mx-1" variant="primary" :href="`/app/uploads/` + currentOpenDoc.pid + `/doc.pdf`"
-                        target="_blank">
-                {{ $_('Open PDF')}}
+              <b-button id="open-pdf" class="mx-1 mb-1" variant="primary"
+                        :href="`/app/uploads/` + currentOpenDoc.pid + `/doc.pdf`"
+                        target="_blank" :title="$t('Open PDF in a new tab')">
+                {{ $t('Open PDF') }}
+                <font-awesome-icon icon="external-link-alt" size="sm"/>
               </b-button>
-              <b-button id="move-document" class="mx-1" variant="secondary" v-b-modal="'modal-move-document'">Move
+              <b-button id="move-document" class="mx-1 mb-1" variant="secondary" v-b-modal="'modal-move-document'">
+                {{ $t('Move') }}
               </b-button>
-              <b-button id="delete-document" class="mx-1" variant="danger" v-b-modal="'modal-delete-document'">Delete
+              <b-button id="delete-document" class="mx-1 mb-1" variant="danger" v-b-modal="'modal-delete-document'">
+                {{ $t('Delete') }}
               </b-button>
             </b-col>
           </b-row>
@@ -84,6 +91,16 @@
       @event-document-deleted="documentDeleted"/>
   </b-modal>
 </template>
+
+<i18n>
+  fr:
+    Rename document: Renommer le document
+    Viewer not available on this device, open the document instead.: Visualisateur indisponible pour cet appareil,
+      ouvrir le document à la place.
+    Open PDF: Ouvrir le PDF
+    Open PDF in a new tab: Ouvrir le PDF dans un nouvel onglet
+</i18n>
+
 <script>
   import axios from 'axios';
   import FTLMoveDocuments from "@/components/FTLMoveDocuments";
@@ -139,13 +156,13 @@
           return {text: v.name, to: {path: '/home/' + v.name + '/' + v.id}}
         });
 
-        return [{text: this.$_('Root'), to: {name: 'home'}}, ..._path];
+        return [{text: this.$t('Root'), to: {name: 'home'}}, ..._path];
       },
       parent_folder: function () {
         if (this.path.length > 0) {
           return this.path.slice(-1)[0];
         } else {
-          return {text: this.$_('Root'), to: {name: 'home'}};
+          return {text: this.$t('Root'), to: {name: 'home'}};
         }
       },
     },
@@ -217,8 +234,8 @@
       margin: 0;
     }
 
-    .fa-folder{
-      width:1.125em;
+    .fa-folder {
+      width: 1.125em;
     }
 
     #document-parent-folder, #document-title-separator, #document-title, #rename-document {
@@ -232,6 +249,8 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+
+
       &:hover {
         .fa-folder {
           display: none !important;
@@ -243,7 +262,7 @@
       }
     }
 
-    #document-title-separator{
+    #document-title-separator {
       padding: 1rem 0.5rem;
     }
 
@@ -254,14 +273,14 @@
       text-overflow: ellipsis;
     }
 
-    #rename-document{
+    #rename-document {
       font-size: 1.25rem;
       line-height: 1.5;
       border: 0;
       padding-left: 0.5rem;
     }
 
-    .close{
+    .close {
       line-height: 1.25;
     }
 

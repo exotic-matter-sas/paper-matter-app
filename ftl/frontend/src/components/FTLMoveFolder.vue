@@ -1,30 +1,40 @@
 <!--
-  - Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+  - Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
   - Licensed under the BSL License. See LICENSE in the project root for license information.
   -->
 
 <template>
   <b-modal id="modal-move-folder"
            :ok-disabled="!selectedMoveTargetFolder"
+           :cancel-title="$t('Cancel')"
            @ok="moveFolder">
     <template slot="modal-title">
           <span v-if="selectedMoveTargetFolder">
-            {{ this.$_('Move %s to %s', [folder.name, selectedMoveTargetFolder.name])}}
+            {{ $t('Move "{0}" to "{1}"', [folder.name, selectedMoveTargetFolder.name])}}
           </span>
-      <span v-else>{{ this.$_('Move %s to ...', [folder.name])}}</span>
+      <span v-else>{{ $t('Move "{0}" to...', [folder.name])}}</span>
     </template>
     <b-container fluid>
       <b-row>
         <b-col>
           <span
-            v-if="selectedMoveTargetFolder">{{this.$_('Selected folder: %s', [selectedMoveTargetFolder.name])}}</span>
-          <span v-else>{{this.$_('No folder selected')}}</span>
+            v-if="selectedMoveTargetFolder">{{ $t('Selected folder: {0}', [selectedMoveTargetFolder.name])}}</span>
+          <span v-else>{{ $t('No folder selected')}}</span>
           <FTLTreeFolders :root="isRoot" :source-folder="folder.id"/>
         </b-col>
       </b-row>
     </b-container>
   </b-modal>
 </template>
+
+<i18n>
+  fr:
+    Move "{0}" to "{1}": Déplacer « {0} » vers « {1} »
+    Move "{0}" to...: Déplacer « {0} » vers ...
+    "Selected folder: {0}": "Dossier sélectionné : {0}"
+    No folder selected: Aucun dossier sélectionné
+    Could not move folder: Le dossier n'a pu être déplacé
+</i18n>
 
 <script>
   import FTLTreeFolders from "@/components/FTLTreeFolders";
@@ -66,7 +76,7 @@
             this.$store.commit('selectMoveTargetFolder', null);
           })
           .catch(error => {
-            this.mixinAlert(this.$_('Could not move folder'), true)
+            this.mixinAlert(this.$t('Could not move folder'), true)
           });
       }
     }

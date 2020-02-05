@@ -204,6 +204,8 @@ Rename or move an existing folder.
     - **created**: creation date following ISO 8601 format, eg. `2019-11-18T00:42:42.242424Z` (if omitted or `null` current date will be set)
     - **ftl_folder**: parent folder id (if omitted or `null`, folder is created inside root folder)
     - **ignore_thumbnail_generation_error**: if set to `false` and sent **thumbnail** is corrupt or not properly formatted upload request will fail (if omitted or `true`, error will be ignored and document will be uploaded without thumbnail, it's the default behavior as some browsers may not support thumbnail generation using canvas)
+    - **title**: document title, string (if omitted or `null`, pdf file name will be used as document title)
+    - **note**: document note, string (if omitted or `null`, no note will be set)
 - _**thumbnail** (optional): thumbnail to display in the documents list, thumbnail should be a PNG image encoded as data uri `data:image/png;base64,...` (if omitted thumbnail will be generated on next document display from web interface, recommended format is half the size of the original document)_
 ```
 -----------------------------197247801933990060269089656
@@ -248,7 +250,10 @@ Content-Disposition: form-data; name="json"
       "id":35,
       "name":"b"
     }
-  ]
+  ],
+  "md5":"d85fce92a5789f66f58096402da6b98f",
+  "size":123,
+  "ocrized": true
 }
 ```
 
@@ -290,19 +295,19 @@ OR
 
 ```json
 {
-  "count": 2,
-  "next": null,
-  "previous": null,
-  "results": [
+  "count":2,
+  "next":null,
+  "previous":null,
+  "results":[
     {
-      "pid": "4c092ae2-2c91-4759-9123-5f4af7538f85",
-      "title": "file.pdf",
-      "note": "",
-      "created": "2019-08-19T15:03:03.504330Z",
-      "edited": "2019-08-19T15:03:06.844287Z",
-      "ftl_folder": 12,
-      "thumbnail_available": false,
-      "is_processed": true,
+      "pid":"4c092ae2-2c91-4759-9123-5f4af7538f85",
+      "title":"file.pdf",
+      "note":"",
+      "created":"2019-08-19T15:03:03.504330Z",
+      "edited":"2019-08-19T15:03:06.844287Z",
+      "ftl_folder":12,
+      "thumbnail_available":false,
+      "is_processed":true,
       "path":[
         {
           "id":34,
@@ -312,17 +317,20 @@ OR
           "id":35,
           "name":"b"
         }
-      ]
+      ],
+      "md5":"d85fce92a5789f66f58096402da6b98f",
+      "size":123,
+      "ocrized": true
     },
     {
-      "pid": "6d3a6286-7c1c-45f6-86c9-6452fa2928fa",
-      "title": "file2.pdf",
-      "note": "",
-      "created": "2019-08-19T14:24:27.125753Z",
-      "edited": "2019-08-19T14:24:30.431466Z",
-      "ftl_folder": 12,
-      "thumbnail_available": false,
-      "is_processed": true,
+      "pid":"6d3a6286-7c1c-45f6-86c9-6452fa2928fa",
+      "title":"file2.pdf",
+      "note":"",
+      "created":"2019-08-19T14:24:27.125753Z",
+      "edited":"2019-08-19T14:24:30.431466Z",
+      "ftl_folder":12,
+      "thumbnail_available":false,
+      "is_processed":true,
       "path":[
         {
           "id":34,
@@ -332,7 +340,10 @@ OR
           "id":35,
           "name":"b"
         }
-      ]
+      ],
+      "md5":"d85fce92a5789f66f58096402da6b98f",
+      "size":123,
+      "ocrized": true
     }
   ]
 }
@@ -355,14 +366,14 @@ Rename, annotate, move a document (or set its thumbnail).
 
 ```json
 {
-  "pid": "4c092ae2-2c91-4759-9123-5f4af7538f85",
-  "title": "renamed",
-  "note": "",
-  "created": "2019-08-19T15:03:03.504330Z",
-  "edited": "2019-08-19T16:10:00.771661Z",
-  "ftl_folder": 12,
-  "thumbnail_available": false,
-  "is_processed": true,
+  "pid":"4c092ae2-2c91-4759-9123-5f4af7538f85",
+  "title":"renamed",
+  "note":"",
+  "created":"2019-08-19T15:03:03.504330Z",
+  "edited":"2019-08-19T16:10:00.771661Z",
+  "ftl_folder":12,
+  "thumbnail_available":false,
+  "is_processed":true,
   "path":[
     {
       "id":34,
@@ -372,7 +383,10 @@ Rename, annotate, move a document (or set its thumbnail).
       "id":35,
       "name":"b"
     }
-  ]
+  ],
+  "md5":"d85fce92a5789f66f58096402da6b98f",
+  "size":123,
+  "ocrized": true
 }
 ```
 

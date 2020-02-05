@@ -12,9 +12,10 @@ import FTLFolder from "../../src/components/FTLFolder";
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue); // to avoid warning on tests execution
-localVue.prototype.$_ = (text) => {
+localVue.prototype.$t = (text) => {
   return text;
 }; // i18n mock
+localVue.prototype.$tc = (text, args='') => {return text + args};// i18n mock
 localVue.prototype.$moment = () => {
   return {fromNow: jest.fn()}
 };

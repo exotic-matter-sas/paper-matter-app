@@ -1,7 +1,6 @@
 #  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
-
-from django.urls import path, include
+from django.urls import path
 from django.views.i18n import JavaScriptCatalog
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
@@ -9,7 +8,6 @@ from . import views
 
 urlpatterns = [
     path('', views.HomeView.as_view(), name='home'),
-    path('jsi18n/', JavaScriptCatalog.as_view(), name='javascript-catalog'),
     path('uploads/<str:uuid>', views.DownloadView.as_view()),
     path('uploads/<str:uuid>/<str:name>.pdf', views.ViewPDF.as_view()),
     path('api/v1/folders', views.FTLFolderList.as_view()),

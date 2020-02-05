@@ -22,9 +22,10 @@ localVue.use(BootstrapVue); // avoid bootstrap vue warnings
 localVue.use(Vuex);
 localVue.component('font-awesome-icon', jest.fn()); // avoid font awesome warnings
 
-localVue.prototype.$_ = (text, args = '') => {
+localVue.prototype.$t = (text, args = '') => {
   return text + args
 };// i18n mock
+localVue.prototype.$tc = (text, args='') => {return text + args};// i18n mock
 localVue.prototype.$moment = () => {
   return {fromNow: jest.fn()}
 }; // moment mock

@@ -19,7 +19,7 @@ stages:
 
 compile-frontend:
   stage: build-frontend
-  image: node:10.15.3-alpine
+  image: node:lts-alpine
   artifacts:
     paths:
       - ftl/frontend/dist
@@ -33,7 +33,7 @@ compile-frontend:
 
 test-frontend-js:
   stage: test
-  image: node:10.15.3-alpine
+  image: node:lts-alpine
   dependencies:
     - compile-frontend
   script:

@@ -9,6 +9,7 @@ from google.oauth2 import service_account
 from ftl.enums import FTLStorages, FTLPlugins
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'CHANGEME')
+CRON_SECRET_KEY = os.getenv('CRON_SECRET_KEY', 'CHANGEME')
 DEBUG = bool(strtobool(os.getenv("DJANGO_DEBUG", "False")))
 ALLOWED_HOSTS = ['*']
 

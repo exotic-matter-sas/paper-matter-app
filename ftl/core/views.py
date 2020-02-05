@@ -1,8 +1,10 @@
-#  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
-
+import hashlib
 import json
+import urllib
 from base64 import b64decode
+from pathlib import Path
 
 import filetype
 from django.conf import settings
@@ -15,6 +17,7 @@ from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFou
 from django.shortcuts import render, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.utils.http import http_date
+from django.utils.text import slugify
 from django.views import View
 from django_otp.decorators import otp_required
 from mptt.exceptions import InvalidMove
@@ -56,26 +59,49 @@ class DownloadView(views.APIView):
     lookup_field = 'pid'
 
     def get_queryset(self):
-        return FTLDocument.objects.filter(org=self.request.user.org)
+        return FTLDocument.objects.filter(org=self.request.user.org, deleted=False)
 
-    def get(self, request, *args, **kwargs):
+    def _get_doc(self, request, *args, **kwargs):
         doc = get_object_or_404(self.get_queryset(), pid=kwargs['uuid'])
 
-        if settings.DEFAULT_FILE_STORAGE in [FTLStorages.GCS, FTLStorages.AWS_S3]:
-            return HttpResponseRedirect(doc.binary.url)
+        doc_ext = Path(doc.binary.name).suffix.lower()
+
+        # Slugify only the filename, not the file extension
+        if doc.title.lower().endswith(doc_ext):
+            title = f'{slugify(doc.title[:-len(doc_ext)])[:128]}{doc_ext}'
         else:
-            response = HttpResponse(doc.binary, 'application/octet')
+            title = f'{slugify(doc.title)[:128]}{doc_ext}'
+
+        return doc, doc_ext, title
+
+    def get(self, request, *args, **kwargs):
+        doc, doc_ext, title = self._get_doc(request, *args, **kwargs)
+
+        if settings.DEFAULT_FILE_STORAGE in [FTLStorages.GCS, ]:
+            urlencode = urllib.parse.urlencode(
+                {'response-content-disposition': f'attachment; filename="{title}"'})
+
+            return HttpResponseRedirect(f'{doc.binary.url}&{urlencode}')
+        else:
+            response = HttpResponse(doc.binary, 'application/octet-stream')
             response['Last-Modified'] = http_date(doc.edited.timestamp())
-            response['Content-Disposition'] = f'attachment; filename="{doc.binary.name}"'
+            response['Content-Disposition'] = f'attachment; filename="{title}"'
             return response
 
 
 class ViewPDF(DownloadView):
     def get(self, request, *args, **kwargs):
-        response = super().get(request, *args, **kwargs)
-        response['Content-Type'] = 'application/pdf'
-        response['Content-Disposition'] = 'inline'
-        return response
+        doc, doc_ext, title = self._get_doc(request, *args, **kwargs)
+
+        if settings.DEFAULT_FILE_STORAGE in [FTLStorages.GCS, ]:
+            urlencode = urllib.parse.urlencode(
+                {'response-content-disposition': 'inline'})
+
+            return HttpResponseRedirect(f'{doc.binary.url}&{urlencode}')
+        else:
+            response = HttpResponse(doc.binary, 'application/pdf')
+            response['Content-Disposition'] = 'inline'
+            return response
 
 
 class FTLDocumentList(generics.ListAPIView):
@@ -88,7 +114,7 @@ class FTLDocumentList(generics.ListAPIView):
         flat_mode = True if self.request.query_params.get('flat', False) is not False else False
         text_search = self.request.query_params.get('search', None)
 
-        queryset = FTLDocument.objects.filter(org=self.request.user.org).order_by('-created')
+        queryset = FTLDocument.objects.filter(org=self.request.user.org, deleted=False).order_by('-created')
 
         if not flat_mode:
             if text_search:
@@ -112,7 +138,7 @@ class FTLDocumentDetail(generics.RetrieveUpdateDestroyAPIView):
     lookup_field = 'pid'
 
     def get_queryset(self):
-        return FTLDocument.objects.filter(org=self.request.user.org)
+        return FTLDocument.objects.filter(org=self.request.user.org, deleted=False)
 
     def perform_update(self, serializer):
         need_processing = False
@@ -133,13 +159,16 @@ class FTLDocumentDetail(generics.RetrieveUpdateDestroyAPIView):
             # only apply processing in case value changed, avoid processing when just moving document in folder
             ftl_doc_processing.apply_processing(instance, list(force_processing))
 
+    def perform_destroy(self, instance):
+        instance.mark_delete()
+
 
 class FTLDocumentThumbnail(views.APIView):
     serializer_class = FTLDocumentSerializer
     lookup_field = 'pid'
 
     def get_queryset(self):
-        return FTLDocument.objects.filter(org=self.request.user.org)
+        return FTLDocument.objects.filter(org=self.request.user.org, deleted=False)
 
     def get(self, request, *args, **kwargs):
         doc = get_object_or_404(self.get_queryset(), pid=kwargs['pid'])
@@ -189,11 +218,32 @@ class FileUploadView(views.APIView):
             ftl_doc.ftl_folder = ftl_folder
             ftl_doc.ftl_user = self.request.user
             ftl_doc.binary = file_obj
+            ftl_doc.size = file_obj.size
+
+            md5 = hashlib.md5()
+            for data in ftl_doc.binary.chunks():
+                md5.update(data)
+            ftl_doc.md5 = md5.hexdigest()
+
             ftl_doc.org = self.request.user.org
-            ftl_doc.title = file_obj.name
+
+            if 'title' in payload and payload['title']:
+                ftl_doc.title = payload['title']
+            else:
+                if file_obj.name.lower().endswith(f'.{kind.extension}'):
+                    ftl_doc.title = file_obj.name[:-(len(f'.{kind.extension}'))]
+                else:
+                    ftl_doc.title = file_obj.name
+
+            # The actual name of the file doesn't matter because we use a random UUID. On the contrary, the extension
+            # is important.
+            ftl_doc.binary.name = f'document.{kind.extension}'
 
             if 'created' in payload and payload['created']:
                 ftl_doc.created = payload['created']
+
+            if 'note' in payload and payload['note']:
+                ftl_doc.note = payload['note']
 
             if 'thumbnail' in request.POST and request.POST['thumbnail']:
                 try:

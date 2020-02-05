@@ -1,4 +1,4 @@
-#  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
 
 import logging
@@ -36,6 +36,10 @@ FTL_PERMISSIONS_USER = [
 
 
 def _get_name_binary(instance, filename):
+    return 'uploads/' + str(uuid.uuid4()) + pathlib.Path(instance.binary.name).suffix
+
+
+def _get_name_thumb(instance, filename):
     return 'uploads/' + str(uuid.uuid4()) + pathlib.Path(filename).suffix
 
 
@@ -128,7 +132,11 @@ class FTLDocument(models.Model):
     edited = models.DateTimeField(auto_now=True)
     tsvector = SearchVectorField(blank=True)
     language = models.CharField(max_length=64, default='simple')
-    thumbnail_binary = models.FileField(upload_to=_get_name_binary, max_length=256, null=True)
+    thumbnail_binary = models.FileField(upload_to=_get_name_thumb, max_length=256, null=True)
+    size = models.BigIntegerField(default=0)
+    md5 = models.CharField(max_length=32, null=True)
+    deleted = models.BooleanField(default=False)
+    ocrized = models.BooleanField(default=False)
 
     class Meta:
         indexes = [
@@ -140,6 +148,11 @@ class FTLDocument(models.Model):
 
     def __str__(self):
         return self.title
+
+    def mark_delete(self, *args, **kwargs):
+        self.deleted = True
+        self.ftl_folder = None
+        self.save()
 
     def delete(self, *args, **kwargs):
         """Override to ensure document file is deleted"""
@@ -181,7 +194,7 @@ class FTLDocument(models.Model):
                 else:
                     raise
 
-        super().delete(*args, **kwargs)
+        return super().delete(*args, **kwargs)
 
 
 # FTL Folders
@@ -196,16 +209,16 @@ class FTLFolder(MPTTModel):
 
     def delete(self, *args, **kwargs):
         # Delete documents in this folder
-        documents = FTLDocument.objects.filter(ftl_folder=self)
+        documents = FTLDocument.objects.filter(ftl_folder=self, deleted=False)
         for document in documents:
-            document.delete()
+            document.mark_delete()
 
         # Delete descendants folders recursively
         descendants = self.get_descendants()[::-1]  # slice syntax for reversing
         for descendant in descendants:
             descendant.delete()
 
-        super().delete(*args, **kwargs)
+        return super().delete(*args, **kwargs)
 
     class MPTTMeta:
         order_insertion_by = ['name']

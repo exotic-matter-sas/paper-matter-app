@@ -26,7 +26,8 @@ localVue.use(Vuex); // TODO use Vuex store if needed
 localVue.component('font-awesome-icon', jest.fn()); // avoid font awesome warnings
 
 // Mock prototype and mixin bellow
-localVue.prototype.$_ = (text, args='') => {return text + args};// i18n mock
+localVue.prototype.$t = (text, args='') => {return text + args};// i18n mock
+localVue.prototype.$tc = (text, args='') => {return text + args};// i18n mock
 localVue.prototype.$moment = () => {return {fromNow: jest.fn(), format: jest.fn()}}; // moment mock
 localVue.prototype.$router = {push: jest.fn()}; // router mock
 const mockedRouteName = jest.fn();

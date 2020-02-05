@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+  - Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
   - Licensed under the BSL License. See LICENSE in the project root for license information.
   -->
 
@@ -12,9 +12,9 @@
           ref="fileUploadField"
           v-model="files"
           :state="files.length > 0"
-          :placeholder="this.$_('Upload document')"
-          :drop-placeholder="this.$_('Drop file here...')"
-          :browse-text="this.$_('Browse')"
+          :placeholder="$t('Upload document')"
+          :drop-placeholder="$t('Drop file here...')"
+          :browse-text="$t('Browse')"
           accept="application/pdf"
         ></b-form-file>
       </b-col>
@@ -22,19 +22,20 @@
         <b-button class="w-100 mt-2 mt-md-0" id="upload-button" variant="primary"
                   :disabled="uploading || !files.length > 0"
                   @click="uploadDocument">
-          {{this.$_('Upload')}}
+          {{ $t('Upload') }}
         </b-button>
       </b-col>
       <b-col class="d-none d-md-flex align-items-center justify-content-center" md="2">
         <a class="text-center" href="https://welcome.papermatter.app/import-export"
-           :title="this.$_('Import a folder or a large amount of documents using the local import client')">
-          {{this.$_('Import a folder')}}
+           :title="$t('Import a folder or a large amount of documents using the local import client')">
+          {{ $t('Import a folder')}}
         </a>
       </b-col>
     </b-row>
     <b-row>
       <b-col>
-        <b-progress id="document-upload-loader" :class="{ 'd-none': !uploading }" :max="100" :value="globalUploadProgress"
+        <b-progress id="document-upload-loader" :class="{ 'd-none': !uploading }" :max="100"
+                    :value="globalUploadProgress"
                     variant="success"
                     show-progress/>
       </b-col>
@@ -42,6 +43,16 @@
   </section>
 </template>
 
+<i18n>
+  fr:
+    Upload document: Ajouter un document
+    Drop file here...: Déposer un fichier ici ...
+    Browse: Parcourir
+    Upload: Envoyer
+    Import a folder: Importer un dossier
+    Import a folder or a large amount of documents using the local import client: Importer un dossier ou un grand
+      nombre de documents en utilisant le client d'import local
+</i18n>
 <script>
   import axios from 'axios';
   import {createThumbFromFile} from "@/thumbnailGenerator";

@@ -1,26 +1,37 @@
 <!--
-  - Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+  - Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
   - Licensed under the BSL License. See LICENSE in the project root for license information.
   -->
 
 <template>
   <b-modal id="modal-rename-folder"
            :ok-disabled="!newFolderName"
+           :cancel-title="$t('Cancel')"
            @ok="renameFolder">
     <template slot="modal-title">
-      <span>Rename folder</span>
+      <span>{{ $t('Rename folder')}}</span>
     </template>
     <b-container fluid>
       <b-form-group
         id="fieldset-rename-folder"
-        :description="this.$_('The new name of the folder')"
-        :label="this.$_('The folder will be renamed.')"
+        :description="$t('The folder will be renamed.')"
+        :label="$t('The new name of the folder')"
         label-for="rename-folder-text">
-        <b-form-input id="rename-folder-text" autofocus onfocus="this.select()" v-model="newFolderName" trim></b-form-input>
+        <b-form-input id="rename-folder-text" autofocus onfocus="this.select()" v-model="newFolderName"
+                      trim></b-form-input>
       </b-form-group>
     </b-container>
   </b-modal>
 </template>
+
+<i18n>
+  fr:
+    Rename folder: Renommer le dossier
+    The new name of the folder: Le nouveau nom du dossier
+    The folder will be renamed.: Le dossier sera renommé.
+    Folder successfully renamed.: Le dossier a été renommé avec succès.
+    Could not rename folder.: Le dossier n'a pas pu être renommé.
+</i18n>
 
 <script>
   import axios from "axios";
@@ -49,10 +60,10 @@
           .patch('/app/api/v1/folders/' + this.folder.id, body, axiosConfig)
           .then(response => {
             this.$emit('event-folder-renamed', {folder: response.data});
-            this.mixinAlert('Folder successfully renamed');
+            this.mixinAlert(this.$t('Folder successfully renamed.'));
           })
           .catch(error => {
-            this.mixinAlert('Could not rename folder', true);
+            this.mixinAlert(this.$t('Could not rename folder.'), true);
           })
       }
     }

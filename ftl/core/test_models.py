@@ -79,18 +79,18 @@ class FTLUserModelTest(TestCase):
         document_2 = setup_document(org, user, folder, binary=setup_temporary_file().name)
         document_3 = setup_document(org, user, folder_sub, binary=setup_temporary_file().name)
 
-        self.assertEqual(FTLDocument.objects.count(), 3)
+        self.assertEqual(FTLDocument.objects.filter(deleted=False).count(), 3)
         self.assertEqual(FTLFolder.objects.count(), 2)
 
         folder.delete()
 
-        self.assertEqual(FTLDocument.objects.count(), 1)
+        self.assertEqual(FTLDocument.objects.filter(deleted=False).count(), 1)
         self.assertEqual(FTLFolder.objects.count(), 0)
 
         self.assertIsNotNone(FTLDocument.objects.get(pid=document_1.pid))
 
-        with self.assertRaises(core.models.FTLDocument.DoesNotExist):
-            FTLDocument.objects.get(pid=document_2.pid)
+        doc_marked_as_deleted_2 = FTLDocument.objects.get(pid=document_2.pid)
+        self.assertTrue(doc_marked_as_deleted_2.deleted)
 
-        with self.assertRaises(core.models.FTLDocument.DoesNotExist):
-            FTLDocument.objects.get(pid=document_3.pid)
+        doc_marked_as_deleted_3 = FTLDocument.objects.get(pid=document_3.pid)
+        self.assertTrue(doc_marked_as_deleted_3.deleted)

@@ -11,7 +11,10 @@ import VueRouter from 'vue-router';
 const localVue = createLocalVue();
 localVue.use(BootstrapVue); // to avoid warning on tests execution
 localVue.use(VueRouter);
-localVue.prototype.$_ = (text) => {
+localVue.prototype.$t = (text) => {
+  return text;
+}; // i18n mock
+localVue.prototype.tc = (text) => {
   return text;
 }; // i18n mock
 localVue.prototype.$moment = () => {
