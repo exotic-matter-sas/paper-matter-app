@@ -71,7 +71,7 @@ urlpatterns = [
     path('accounts/2fa/', include('ftl.otp_plugins.otp_ftl.urls')),
 
     # OAuth2 Provider
-    path('oauth2/', include('oauth2_provider.urls', namespace='oauth2_provider')),
+    path('oauth2/', include('ftl.urls_oauth2', namespace='oauth2_provider')),
 ]
 
 if settings.DEBUG and settings.DEV_MODE:
