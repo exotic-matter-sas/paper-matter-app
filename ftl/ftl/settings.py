@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     'django_otp.plugins.otp_static',
     'ftl.otp_plugins.otp_ftl',
     'mptt',
+    'oauth2_provider',
     'rest_framework',
     'webpack_loader',
     'ftl',
@@ -205,7 +206,7 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'ftl.otp_plugins.otp_ftl.middleware.FTLSessionAuthentication',
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication'
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'DEFAULT_PERMISSION_CLASSES': (
@@ -227,6 +228,12 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+}
+
+# OAuth2 Provider
+OAUTH2_PROVIDER = {
+    # this is the list of available scopes
+    'SCOPES': {'read': 'Read scope', 'write': 'Write scope'}
 }
 
 WEBPACK_LOADER = {
