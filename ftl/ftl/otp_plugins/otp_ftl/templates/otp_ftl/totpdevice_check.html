@@ -53,6 +53,8 @@
             {% endif %}
         </ul>
     {% endif %}
+
+    <a href="{% url 'logout' %}" class="btn-sm btn-secondary float-right">{% trans 'Log out' %}</a>
 {% endblock %}
 
 {% block aside_illustration %}
