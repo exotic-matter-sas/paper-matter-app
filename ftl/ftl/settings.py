@@ -223,16 +223,9 @@ REST_FRAMEWORK = {
     }
 }
 
-# JWT API Token
-# Docs: https://github.com/davesque/django-rest-framework-simplejwt#settings
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-}
-
 # OAuth2 Provider
 OAUTH2_PROVIDER = {
-    # this is the list of available scopes
+    # TODO to be completed with more
     'SCOPES': {'read': 'Read scope', 'write': 'Write scope'}
 }
 
