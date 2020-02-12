@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-12 10:30+0000\n"
+"POT-Creation-Date: 2020-02-12 19:51+0000\n"
 "PO-Revision-Date: 2020-02-05 15:25+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -301,9 +301,59 @@ msgstr "Clé de sécurité avec la clé de la maison"
 msgid "A name to identify your security key"
 msgstr "Un nom pour identifier votre clé de sécurité"
 
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_form.html:35
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\staticdevice_form.html:27
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\totpdevice_form.html:33
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_form.html:37
+msgid "Browser prompt asking for the key was cancel"
+msgstr "La demande du navigateur concernant la clé a été annulée"
+
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_form.html:39
+msgid "Browser prompt asking for the key was ignore or refused"
+msgstr "La demande du navigateur concernant la clé a été ignorée ou refusée"
+
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_form.html:41
+msgid ""
+"\n"
+"                        Key registration failed, make sure your key type is "
+"supported. <br/>\n"
+"                        Registration could also fail if page url isn't in "
+"https. <br/>\n"
+"                    "
+msgstr ""
+"\n"
+"                        L'enregistrement de la clé a échoué, assurez-vous que le type de votre clé est "
+"pris en charge. <br/>\n"
+"                        L'enregistrement peut aussi échouer si l'url de la page n'est pas en "
+"https. <br/>\n"
+"                    "
+
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_form.html:46
+msgid "A network error occurred during key registration, try again"
+msgstr "Une erreur de connectivité est survenue durant l'enregistrement de la clé, essayez de nouveau"
+
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_form.html:48
+msgid ""
+"An internal error occured during key registration, you may have found a bug"
+msgstr ""
+"Une erreur interne est survenue durant l'enregistrement de la clé, il s'agit peut être d'un bug"
+
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_form.html:50
+msgid ""
+"An unknown error occured during key registration, you may have found a bug"
+msgstr ""
+"Une erreur inconnue est survenue durant l'enregistrement de la clé, il s'agit peut être d'un bug"
+
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_form.html:52
+msgid ""
+"An unexpected error occured during key registration, you may have found a bug"
+msgstr ""
+"Une erreur inattendue est survenue durant l'enregistrement de la clé, il s'agit peut être d'un bug"
+
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_form.html:54
+msgid "error code: "
+msgstr "code erreur : "
+
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_form.html:58
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_form.html:27
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_form.html:33
 msgid "Next"
 msgstr "Suivant"
 

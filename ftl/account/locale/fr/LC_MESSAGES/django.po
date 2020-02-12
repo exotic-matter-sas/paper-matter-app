@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-12 09:49+0000\n"
+"POT-Creation-Date: 2020-02-12 19:51+0000\n"
 "PO-Revision-Date: 2020-01-19 22:08+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -29,10 +29,6 @@ msgstr "Revenir à l'application"
 #: account/templates/account/account_base.html:61
 msgid "Settings"
 msgstr "Paramètres"
-
-#: account/templates/account/account_base.html:87
-msgid "Email"
-msgstr "Email"
 
 #: account/templates/account/account_base.html:91
 msgid "Password"
@@ -151,10 +147,11 @@ msgstr ""
 "\n"
 "Gardez votre email de contact à jour"
 
-#: account/templates/account/account_index.html:37                   "
+#: account/templates/account/account_index.html:37
 msgid ""
 "\n"
-"                                For more security: update your password regularly\n"
+"                                For more security: update your password "
+"regularly\n"
 "                            "
 msgstr ""
 "\n"
@@ -163,12 +160,13 @@ msgstr ""
 #: account/templates/account/account_index.html:41
 msgid ""
 "\n"
-"                                For more security: update your password regularly"
-"and enable 2FA\n"
+"                                For more security: update your password "
+"regularly and enable 2FA\n"
 "                            "
 msgstr ""
 "\n"
-"Pour plus de sécurité : changez régulièrement de mot de passe et activez le 2FA"
+"Pour plus de sécurité : changez régulièrement de mot de passe et activez le "
+"2FA"
 
 #: account/templates/account/account_password.html:8
 msgid "Change your password"

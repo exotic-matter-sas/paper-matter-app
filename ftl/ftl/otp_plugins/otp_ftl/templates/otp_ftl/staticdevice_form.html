@@ -20,7 +20,7 @@
         <div class="form-group">
             <label for="id_name">{% trans 'Emergency codes name' %}</label>
             <input type="text" name="name" placeholder="{% trans 'Safe deposit box emergency codes' %}"
-                   required="required" id="id_name" class="form-control">
+                   required="required" id="id_name" class="form-control" autofocus="autofocus">
             <small class="form-text text-muted">{% trans 'Could be its storage location or a clue to remember it' %}</small>
         </div>
         <a class="btn btn-secondary float-left" href="{% url 'otp_list' %}">{% trans 'Cancel' %}</a>
