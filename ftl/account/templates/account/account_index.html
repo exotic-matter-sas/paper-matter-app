@@ -22,7 +22,7 @@
                 <div class="card-body">
                     <p class="card-text text-center">
                         {% blocktrans %}
-                            Update your email or profile information
+                            Keep your contact email up-to-date
                         {% endblocktrans %}
                     </p>
                 </div>
@@ -35,11 +35,11 @@
                     <p class="card-text text-center">
                         {% if user.is_verified %}
                             {% blocktrans %}
-                                Update your password regularly
+                                For more security: update your password regularly
                             {% endblocktrans %}
                         {% else %}
                             {% blocktrans %}
-                                Update your password regularly or enable 2FA
+                                For more security: update your password regularly and enable 2FA
                             {% endblocktrans %}
                         {% endif %}
                     </p>
