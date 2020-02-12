@@ -79,7 +79,7 @@
     <main class="my-3 flex-grow-1">
         <div class="container">
             <div class="row justify-content-center px-3">
-                <div id="account-side-menu" class="col-12 px-0 py-3 col-md-3 px-md-3 py-md-0">
+                <div id="account-side-menu" class="col-12 px-0 py-3 col-md-3 px-md-3 py-md-0 d-print-none">
                     <div class="list-group">
                         {% with request.resolver_match.view_name as view_name %}
                             <a href="{% url 'account_email' %}"
@@ -115,7 +115,7 @@
         </div>
     </main>
     {% block before_footer %}{% endblock %}
-    <footer class="footer mt-auto text-muted text-center">
+    <footer class="footer mt-auto text-muted text-center d-print-none">
         {% blocktrans %}
             Paper Matter, open source software. Made with ❤ by
             <a id="em-link" target="_blank" href="https://www.exotic-matter.fr">Exotic <span

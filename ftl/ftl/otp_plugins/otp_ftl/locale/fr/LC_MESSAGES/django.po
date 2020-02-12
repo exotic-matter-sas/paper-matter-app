@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-12 09:49+0000\n"
+"POT-Creation-Date: 2020-02-12 10:30+0000\n"
 "PO-Revision-Date: 2020-02-05 15:25+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -114,7 +114,13 @@ msgstr ""
 "pas risquer de perdre l'accès à votre compte.\n"
 "                                    "
 
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_list.html:53
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_list.html:48
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_detail.html:14
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_form.html:5
+msgid "Generate emergency two factor codes"
+msgstr "Générer un lot de codes d'urgence"
+
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_list.html:53
 msgid "Authenticator apps"
 msgstr "Apps d'authentification"
 
@@ -253,13 +259,7 @@ msgstr ""
 msgid "No thanks"
 msgstr "Non merci"
 
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_detail.html:14
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_form.html:5
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_list.html:48
-msgid "Generate emergency two factor codes"
-msgstr "Générer un lot de codes d'urgence"
-
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_form.html:13
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_form.html:13
 msgid ""
 "\n"
 "            A security key dongle is a small device that you can buy to help "
@@ -332,9 +332,15 @@ msgstr "Insérer votre clé de sécurité"
 msgid "Your emergency two factor codes (one use only!)"
 msgstr "Vos codes d'urgence à usage unique"
 
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\staticdevice_detail.html:12
-msgid "Return to 2FA list"
-msgstr "Revenir à la liste des appareils d'authentification à deux facteurs"
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_detail.html:12
+msgid "Return to list"
+msgstr "Revenir à la liste"
+
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_detail.html:15
+#, fuzzy
+#| msgid "Emergency codes"
+msgid "Print codes"
+msgstr "Codes d'urgence"
 
 #: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_form.html:7
 msgid ""
