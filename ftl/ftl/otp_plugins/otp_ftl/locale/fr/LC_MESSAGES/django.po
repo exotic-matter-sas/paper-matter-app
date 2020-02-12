@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-05 15:25+0100\n"
+"POT-Creation-Date: 2020-02-12 09:49+0000\n"
 "PO-Revision-Date: 2020-02-05 15:25+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -232,7 +232,13 @@ msgstr "Utiliser un code affiché sur votre app d'authentification"
 msgid "Use a one time emergency code"
 msgstr "Utiliser un code à usage unique"
 
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_detail.html:5
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_check.html:47
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_check.html:57
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_check.html:57
+msgid "Log out"
+msgstr ""
+
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_detail.html:5
 msgid "Your security key has been added!"
 msgstr "Votre clé de sécurité a été ajoutée !"
 
@@ -251,7 +257,8 @@ msgstr ""
 msgid "No thanks"
 msgstr "Non merci"
 
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_detail.html:14
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_detail.html:14
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_form.html:5
 msgid "Generate emergency two factor codes"
 msgstr "Ajouter un lot de codes d'urgence"
 
@@ -332,11 +339,7 @@ msgstr "Vos codes d'urgence à usage unique"
 msgid "Return to 2FA list"
 msgstr "Revenir à la liste des appareils d'authentification à deux facteurs"
 
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\staticdevice_form.html:5
-msgid "Add emergency two factor codes"
-msgstr "Ajouter un lot de codes d'urgence"
-
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\staticdevice_form.html:7
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_form.html:7
 msgid ""
 "\n"
 "            We highly recommend you generate a set of emergency code too in "
@@ -443,8 +446,3 @@ msgid ""
 msgstr ""
 "Nom de l'appareil sur lequel l'appli sera installée, pour vous aider à "
 "l'identifier plus tard."
-
-#~ msgid "Deleted one state"
-#~ msgid_plural "Deleted %(count)s states"
-#~ msgstr[0] "Un state supprimé"
-#~ msgstr[1] "%(count)s states supprimés"
