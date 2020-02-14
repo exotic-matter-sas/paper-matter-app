@@ -13,6 +13,7 @@ django-otp==0.7.5
 fido2==0.8.1
 cbor2==4.1.2
 qrcode[pil]==6.1
+# latest master ref used as there is no recent tag available at the time (latest released done on Feb 15, 2018)
 git+https://github.com/jazzband/django-oauth-toolkit.git@6c7d2221e5cc3afc9ff2252c6fe68d887ea067ba
 
 # django-storages==1.7.1
