@@ -22,7 +22,7 @@ class CorePagesTests(TestCase):
         response = self.client.get('/app/')
         self.assertContains(
             response,
-            f'<script id="ftlAccount" type="application/json">{{"name": "{self.user.email}", "isSuperUser": false}}'
+            f'<script id="ftlAccount" type="application/json">{{"name": "{self.user.email}", "isSuperUser": false, "otp_warning": false}}'
             f'</script>')
         self.assertContains(response, '<div id="app">')
         self.assertTemplateUsed(response, 'core/home.html')
