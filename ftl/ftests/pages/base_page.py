@@ -33,7 +33,7 @@ def is_node_server_running():
     """
     Check if Node server is running
     """
-    if DEV_MODE:
+    if DEV_MODE and 'CI' not in os.environ:
         try:
             urllib.request.urlopen('http://localhost:8080/')
             return True
