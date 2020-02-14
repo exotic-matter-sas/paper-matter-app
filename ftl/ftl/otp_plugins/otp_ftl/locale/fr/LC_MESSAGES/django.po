@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-12 19:51+0000\n"
-"PO-Revision-Date: 2020-02-05 15:25+0100\n"
+"POT-Creation-Date: 2020-02-14 15:40+0100\n"
+"PO-Revision-Date: 2020-02-14 15:47+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -72,7 +72,7 @@ msgstr ""
 
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_confirm_delete.html:14
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_update.html:15
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_form.html:34
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_form.html:57
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\staticdevice_form.html:26
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\totpdevice_detail.html:30
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\totpdevice_form.html:32
@@ -114,13 +114,13 @@ msgstr ""
 "pas risquer de perdre l'accès à votre compte.\n"
 "                                    "
 
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_list.html:48
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_detail.html:14
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_form.html:5
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_list.html:48
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_detail.html:14
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\staticdevice_form.html:5
 msgid "Generate emergency two factor codes"
 msgstr "Générer un lot de codes d'urgence"
 
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_list.html:53
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_list.html:53
 msgid "Authenticator apps"
 msgstr "Apps d'authentification"
 
@@ -159,17 +159,31 @@ msgstr ""
 "besoin de votre mot de passe habituel et du code de validation qui sera "
 "affiché sur votre téléphone (ou de votre clé de sécurité)."
 
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_list.html:124
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_list.html:128
+#, python-format
+msgid ""
+"\n"
+"                    Please use <a href=\"%(the_url)s\" class=\"alert-link"
+"\">the import app</a> before enabling 2FA (the\n"
+"                    app doesn't support 2FA yet).\n"
+"                "
+msgstr ""
+"\n"
+"Penser à utiliser <a href=\"%(the_url)s\" class=\"alert-link\">le logiciel "
+"d'import</a> avant d'activer le 2FA (l'application ne supporte pas encore le "
+"2FA)."
+
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_list.html:135
 msgid "There is no two factor device registered with this account."
 msgstr ""
 "Il n'y a aucun appareil d'authentification à deux facteurs configuré sur "
 "votre compte."
 
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_list.html:127
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_list.html:138
 msgid "Add an authentication app (recommended)"
 msgstr "Ajouter une application d'authentification (recommandé)"
 
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_list.html:128
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_list.html:139
 msgid "Add a security key (U2F/FIDO2)"
 msgstr "Ajouter une clé de sécurité (U2F/FIDO2)"
 
@@ -234,13 +248,13 @@ msgstr "Utiliser un code affiché sur votre app d'authentification"
 msgid "Use a one time emergency code"
 msgstr "Utiliser un code à usage unique"
 
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_check.html:47
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_check.html:57
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_check.html:57
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_check.html:47
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\staticdevice_check.html:57
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\totpdevice_check.html:57
 msgid "Log out"
 msgstr ""
 
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_detail.html:5
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_detail.html:5
 msgid "Your security key has been added!"
 msgstr "Votre clé de sécurité a été ajoutée !"
 
@@ -259,7 +273,7 @@ msgstr ""
 msgid "No thanks"
 msgstr "Non merci"
 
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_form.html:13
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_form.html:13
 msgid ""
 "\n"
 "            A security key dongle is a small device that you can buy to help "
@@ -301,15 +315,15 @@ msgstr "Clé de sécurité avec la clé de la maison"
 msgid "A name to identify your security key"
 msgstr "Un nom pour identifier votre clé de sécurité"
 
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_form.html:37
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_form.html:37
 msgid "Browser prompt asking for the key was cancel"
 msgstr "La demande du navigateur concernant la clé a été annulée"
 
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_form.html:39
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_form.html:39
 msgid "Browser prompt asking for the key was ignore or refused"
 msgstr "La demande du navigateur concernant la clé a été ignorée ou refusée"
 
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_form.html:41
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_form.html:41
 msgid ""
 "\n"
 "                        Key registration failed, make sure your key type is "
@@ -319,41 +333,46 @@ msgid ""
 "                    "
 msgstr ""
 "\n"
-"                        L'enregistrement de la clé a échoué, assurez-vous que le type de votre clé est "
-"pris en charge. <br/>\n"
-"                        L'enregistrement peut aussi échouer si l'url de la page n'est pas en "
-"https. <br/>\n"
+"                        L'enregistrement de la clé a échoué, assurez-vous "
+"que le type de votre clé est pris en charge. <br/>\n"
+"                        L'enregistrement peut aussi échouer si l'url de la "
+"page n'est pas en https. <br/>\n"
 "                    "
 
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_form.html:46
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_form.html:46
 msgid "A network error occurred during key registration, try again"
-msgstr "Une erreur de connectivité est survenue durant l'enregistrement de la clé, essayez de nouveau"
+msgstr ""
+"Une erreur de connectivité est survenue durant l'enregistrement de la clé, "
+"essayez de nouveau"
 
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_form.html:48
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_form.html:48
 msgid ""
 "An internal error occured during key registration, you may have found a bug"
 msgstr ""
-"Une erreur interne est survenue durant l'enregistrement de la clé, il s'agit peut être d'un bug"
+"Une erreur interne est survenue durant l'enregistrement de la clé, il s'agit "
+"peut être d'un bug"
 
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_form.html:50
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_form.html:50
 msgid ""
 "An unknown error occured during key registration, you may have found a bug"
 msgstr ""
-"Une erreur inconnue est survenue durant l'enregistrement de la clé, il s'agit peut être d'un bug"
+"Une erreur inconnue est survenue durant l'enregistrement de la clé, il "
+"s'agit peut être d'un bug"
 
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_form.html:52
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_form.html:52
 msgid ""
 "An unexpected error occured during key registration, you may have found a bug"
 msgstr ""
-"Une erreur inattendue est survenue durant l'enregistrement de la clé, il s'agit peut être d'un bug"
+"Une erreur inattendue est survenue durant l'enregistrement de la clé, il "
+"s'agit peut être d'un bug"
 
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_form.html:54
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_form.html:54
 msgid "error code: "
 msgstr "code erreur : "
 
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_form.html:58
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_form.html:27
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_form.html:33
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_form.html:58
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\staticdevice_form.html:27
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\totpdevice_form.html:33
 msgid "Next"
 msgstr "Suivant"
 
@@ -382,17 +401,15 @@ msgstr "Insérer votre clé de sécurité"
 msgid "Your emergency two factor codes (one use only!)"
 msgstr "Vos codes d'urgence à usage unique"
 
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_detail.html:12
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\staticdevice_detail.html:12
 msgid "Return to list"
 msgstr "Revenir à la liste"
 
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_detail.html:15
-#, fuzzy
-#| msgid "Emergency codes"
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\staticdevice_detail.html:15
 msgid "Print codes"
-msgstr "Codes d'urgence"
+msgstr "Imprimer les codes"
 
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_form.html:7
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\staticdevice_form.html:7
 msgid ""
 "\n"
 "            We highly recommend you generate a set of emergency code too in "

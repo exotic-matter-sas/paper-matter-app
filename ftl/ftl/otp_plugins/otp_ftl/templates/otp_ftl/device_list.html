@@ -121,8 +121,19 @@
                 A validation code or security key will be asked each time you sign-in, in addition to your usual login.
             {% endblocktrans %}
         </p>
-        <p class="highlight">{% trans "There is no two factor device registered with this account." %}
-        </p>
+
+        <div class="alert alert-primary">
+            <strong>
+                {% url 'otp' as the_url %}
+                {% blocktrans %}
+                    Please use <a href="{{ the_url }}" class="alert-link">the import app</a> before enabling 2FA (the
+                    app doesn't support 2FA yet).
+                {% endblocktrans %}
+            </strong>
+        </div>
+
+        <p class="highlight">{% trans "There is no two factor device registered with this account." %}</p>
+
         <ul>
             <li><a href="{% url "otp_totp_add" %}">{% trans 'Add an authentication app (recommended)' %}</a></li>
             <li><a href="{% url "otp_fido2_add" %}">{% trans 'Add a security key (U2F/FIDO2)' %}</a></li>
