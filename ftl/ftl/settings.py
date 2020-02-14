@@ -206,6 +206,7 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'ftl.otp_plugins.otp_ftl.middleware.FTLSessionAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
         'ftl.ftl_oauth2_auth.FTLOAuth2Authentication'
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
@@ -221,6 +222,13 @@ REST_FRAMEWORK = {
         'anon': '1/second',
         'user': '15/second'
     }
+}
+
+# JWT API Token
+# Docs: https://github.com/davesque/django-rest-framework-simplejwt#settings
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
 # OAuth2 Provider
