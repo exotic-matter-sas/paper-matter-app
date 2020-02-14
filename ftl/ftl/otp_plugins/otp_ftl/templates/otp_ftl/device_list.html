@@ -122,15 +122,15 @@
             {% endblocktrans %}
         </p>
 
-        <div class="alert alert-primary">
-            <strong>
-                {% url 'otp' as the_url %}
-                {% blocktrans %}
-                    Please use <a href="{{ the_url }}" class="alert-link">the import app</a> before enabling 2FA (the
-                    app doesn't support 2FA yet).
-                {% endblocktrans %}
-            </strong>
-        </div>
+        {#        <div class="alert alert-primary">#}
+        {#            <strong>#}
+        {#                {% url 'otp' as the_url %}#}
+        {#                {% blocktrans %}#}
+        {#                    Please use <a href="{{ the_url }}" class="alert-link">the import app</a> before enabling 2FA (the#}
+        {#                    app doesn't support 2FA yet).#}
+        {#                {% endblocktrans %}#}
+        {#            </strong>#}
+        {#        </div>#}
 
         <p class="highlight">{% trans "There is no two factor device registered with this account." %}</p>
 
