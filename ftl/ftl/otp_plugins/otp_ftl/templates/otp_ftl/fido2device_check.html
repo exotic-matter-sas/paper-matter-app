@@ -44,7 +44,9 @@
         </ul>
     {% endif %}
 
-    <a href="{% url 'logout' %}" class="btn-sm btn-secondary float-right">{% trans 'Log out' %}</a>
+    <div class="text-center">
+        <a href="{% url 'logout' %}" class="btn-sm btn-link">{% trans 'Cancel' %}</a>
+    </div>
 {% endblock %}
 
 {% block aside_illustration %}
