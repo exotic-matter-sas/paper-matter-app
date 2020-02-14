@@ -30,7 +30,8 @@ class CorePagesTests(TestCase):
     def test_home_get_proper_context(self):
         response = self.client.get('/app/')
         self.assertEqual(response.context['org_name'], self.org.name)
-        self.assertEqual(response.context['ftl_account'], {'name': self.user.email, 'isSuperUser': False})
+        self.assertEqual(response.context['ftl_account'],
+                         {'name': self.user.email, 'isSuperUser': False, 'otp_warning': False})
 
 
 class DownloadDocumentTests(TestCase):

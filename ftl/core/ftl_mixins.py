@@ -8,6 +8,7 @@ from django_otp.plugins.otp_static.models import StaticDevice
 class FTLUserContextDataMixin(ContextMixin):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['org_name'] = self.request.session['org_name'],
         context['ftl_account'] = {'name': self.request.user.get_username(),
                                   'isSuperUser': self.request.user.is_superuser,
                                   'otp_warning': any(
