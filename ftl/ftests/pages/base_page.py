@@ -33,18 +33,20 @@ def is_node_server_running():
     """
     Check if Node server is running
     """
-    if DEV_MODE:
+    if DEV_MODE and 'CI' not in os.environ:
         try:
             urllib.request.urlopen('http://localhost:8080/')
             return True
         except urllib.error.URLError:
             return False
+    else:
+        return False
 
 
 # Display a warning if Node server not running during test execution
 NODE_SERVER_RUNNING = is_node_server_running()
 red_message = '\x1b[1;31m{}\033[0m'
-if DEV_MODE and not is_node_server_running():
+if DEV_MODE and not is_node_server_running() and 'CI' not in os.environ:
     print(red_message.
           format('WARNING: Node server NOT running: all tests related to JS frontend will be skipped.'))
     input("Run Node server now if you want to run all tests, press Enter to continue...")

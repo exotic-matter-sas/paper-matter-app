@@ -1,0 +1,16 @@
+{% extends 'account/account_base.html' %}
+{% load i18n %}
+
+{% block account %}
+    <h3 class="text-primary">{% trans "Your security key has been added!" %}</h3>
+
+    <p class="highlight text-justify">
+        {% blocktrans %}
+            We highly recommend you generate a set of emergency code too in case you have lost your security key.
+        {% endblocktrans %}
+    </p>
+
+    <a href="{% url 'otp_list' %}" class="btn btn-secondary float-left">{% trans 'No thanks' %}</a>
+    <a href="{% url 'otp_static_add' %}" class="btn btn-primary float-right">{% trans 'Generate emergency two factor codes' %}</a>
+
+{% endblock %}

@@ -269,7 +269,7 @@ aside {
     }
 }
 
-.navbar > .navbar-collapse{
+.navbar > .navbar-collapse {
     .nav-item {
         padding: 0.5rem 1rem;
         color: rgba(255, 255, 255, 0.5) !important;
@@ -277,7 +277,7 @@ aside {
 }
 
 .nav-link.dropdown-toggle {
-    padding-right: 0!important;
+    padding-right: 0 !important;
 }
 
 @include media-breakpoint-up(sm) {
@@ -340,5 +340,18 @@ aside {
         border-right: 1px solid #dee2e6;
         border-bottom: 0;
         margin-bottom: 0;
+    }
+}
+
+@media print {
+    #emergency-code-to-print {
+        list-style: none;
+        padding-left: 0;
+        font-size: 2rem;
+        line-height: 3rem;
+
+        code {
+            color: black !important;
+        }
     }
 }

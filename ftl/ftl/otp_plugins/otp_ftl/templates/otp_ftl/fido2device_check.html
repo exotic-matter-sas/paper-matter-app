@@ -1,0 +1,85 @@
+{% extends "ftl/main_with_aside.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{% trans "Two-step Verification" %}{% endblock %}
+{% block head %}
+    <script type="application/javascript" src="{% static 'cbor.js' %}"></script>
+{% endblock %}
+
+{% block main_content %}
+    <h1 class="text-primary">
+        {% trans "Two-step Verification" %}
+    </h1>
+
+    <p>{% trans "This extra step shows that it’s really you trying to sign in" %}</p>
+
+    {% if have_fido2 %}
+        <form method="post" id="user-form">
+            {% csrf_token %}
+            {{ form.otp_token }}
+
+            {% if form.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {% trans 'Missing or invalid security key.' %}
+                </div>
+            {% endif %}
+
+            <input class="btn btn-lg btn-primary btn-block" type="submit"
+                   value="{% trans "Insert your security key" %}">
+        </form>
+    {% else %}
+        <p>{% trans "Error: you can't use a security key on this account." %}</p>
+    {% endif %}
+
+    {% if have_totp or have_static %}
+        <p>{% trans "Try another way" %}</p>
+        <ul>
+            {% if have_totp %}
+                <li><a href="{% url "otp_totp_check" %}">{% trans "Use a code from your authentication app" %}</a></li>
+            {% endif %}
+            {% if have_static %}
+                <li><a href="{% url "otp_static_check" %}">{% trans "Use a one time emergency code" %}</a></li>
+            {% endif %}
+        </ul>
+    {% endif %}
+
+    <div class="text-center">
+        <a href="{% url 'logout' %}" class="btn-sm btn-link">{% trans 'Cancel' %}</a>
+    </div>
+{% endblock %}
+
+{% block aside_illustration %}
+    <img src="{% static "user_setup.svg" %}" alt="Signup steps illustration">
+{% endblock %}
+
+
+{% block footer %}
+    {% if have_fido2 %}
+        <script type="application/javascript">
+            'use strict';
+            fetch('{% url 'otp_fido2_api_login_begin' %}', {method: 'POST',})
+                    .then(function (response) {
+                        if (response.ok) return response.arrayBuffer();
+                        throw new Error('No credential available to authenticate!');
+                    })
+                    .then(CBOR.decode)
+                    .then(function (options) {
+                        return navigator.credentials.get(options);
+                    })
+                    .then(function (assertion) {
+                        const response = CBOR.encode({
+                            "credentialId": new Uint8Array(assertion.rawId),
+                            "authenticatorData": new Uint8Array(assertion.response.authenticatorData),
+                            "clientDataJSON": new Uint8Array(assertion.response.clientDataJSON),
+                            "signature": new Uint8Array(assertion.response.signature)
+                        });
+                        let otp_token = document.getElementById("id_otp_token");
+                        otp_token.value = btoa(String.fromCharCode.apply(null, new Uint8Array(response)));
+                        let form = document.getElementById("user-form");
+                        form.submit();
+                    });
+        </script>
+    {% endif %}
+{% endblock %}
+

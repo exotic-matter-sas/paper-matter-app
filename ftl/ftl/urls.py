@@ -66,6 +66,12 @@ urlpatterns = [
     # The activation key can make use of any character from the URL-safe base64 alphabet, plus the colon as a separator.
     url(r'^accounts/activate/(?P<activation_key>[-:\w]+)/$', ActivationView.as_view(),
         name='django_registration_activate'),
+
+    # OTP
+    path('accounts/2fa/', include('ftl.otp_plugins.otp_ftl.urls')),
+
+    # OAuth2 Provider
+    path('oauth2/', include('ftl.urls_oauth2', namespace='oauth2_provider')),
 ]
 
 if settings.DEBUG and settings.DEV_MODE:

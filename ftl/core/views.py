@@ -8,9 +8,8 @@ from pathlib import Path
 
 import filetype
 from django.conf import settings
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.postgres.search import SearchQuery
-from django.contrib.postgres.search import SearchRank
+from django.contrib.auth.decorators import login_required
+from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.core.files.base import ContentFile
 from django.db import IntegrityError, transaction
 from django.db.models import F
@@ -20,12 +19,14 @@ from django.utils.decorators import method_decorator
 from django.utils.http import http_date
 from django.utils.text import slugify
 from django.views import View
+from django_otp.decorators import otp_required
 from mptt.exceptions import InvalidMove
 from rest_framework import generics, views, serializers, filters
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 
 from core.errors import get_api_error
+from core.ftl_mixins import FTLUserContextDataMixin
 from core.models import FTLDocument, FTLFolder
 from core.processing.ftl_processing import FTLDocumentProcessing
 from core.serializers import FTLDocumentSerializer, FTLFolderSerializer
@@ -43,16 +44,12 @@ class WebSearchQuery(SearchQuery):
     SEARCH_TYPES = {**SearchQuery.SEARCH_TYPES, 'web': 'websearch_to_tsquery'}
 
 
-class HomeView(LoginRequiredMixin, View):
+@method_decorator(login_required, name='dispatch')
+@method_decorator(otp_required(if_configured=True), name='dispatch')
+class HomeView(FTLUserContextDataMixin, View):
 
     def get(self, request, *args, **kwargs):
-        context = {
-            'org_name': request.session['org_name'],
-            # ftl_account is exposed to javascript through json_script filter in home.html template
-            'ftl_account': {'name': request.user.get_username(),  # get_username now return email
-                            'isSuperUser': request.user.is_superuser},
-        }
-        return render(request, 'core/home.html', context)
+        return render(request, 'core/home.html', self.get_context_data())
 
 
 # API

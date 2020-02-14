@@ -1,0 +1,64 @@
+{% extends "ftl/main_with_aside.html" %}
+{% load i18n %}
+{% load static %}
+{% load add_attr %}
+
+{% block title %}{% trans "Two-step Verification" %}{% endblock %}
+
+{% block main_content %}
+    <h1 class="text-primary">
+        {% trans "Two-step Verification" %}
+    </h1>
+
+    <p>{% trans "This extra step shows that it’s really you trying to sign in" %}</p>
+
+    {% if form.otp_device.field.choices %}
+        <form method="post" id="user-form">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="id_otp_device">{{ form.otp_device.label }}</label>
+                {{ form.otp_device|add_attr:'{"class":"form-control"}' }}
+                <small class="form-text text-muted">{{ form.otp_device.help_text }}</small>
+            </div>
+
+            <div class="form-group">
+                <label for="id_otp_token">{{ form.otp_token.label }}</label>
+                <input type="text" name="otp_token" value="" required="required" id="id_otp_token"
+                       placeholder="XXXXXXXX" pattern="[a-zA-Z0-9]*" autofocus="autofocus"
+                       class="form-control{% if form.errors %} is-invalid{% endif %}" autocomplete="no">
+                <small class="form-text text-muted">{{ form.otp_token.help_text }}</small>
+            </div>
+
+            {% if form.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {% trans 'Incorrect code' %}
+                </div>
+            {% endif %}
+
+            <input class="btn btn-lg btn-primary btn-block" type="submit" value="{% trans "Verify" %}">
+        </form>
+    {% else %}
+        <p>{% trans "Error: you can't use emergency code on this account." %}</p>
+    {% endif %}
+
+    {% if have_fido2 or have_totp %}
+        <p>{% trans "Try another way" %}</p>
+        <ul>
+            {% if have_fido2 %}
+                <li><a href="{% url "otp_fido2_check" %}">{% trans "Use your security key" %}</a></li>
+            {% endif %}
+            {% if have_totp %}
+                <li><a href="{% url "otp_totp_check" %}">{% trans "Use a code from your authentication app" %}</a></li>
+            {% endif %}
+        </ul>
+    {% endif %}
+
+    <div class="text-center">
+        <a href="{% url 'logout' %}" class="btn-sm btn-link">{% trans 'Cancel' %}</a>
+    </div>
+{% endblock %}
+
+{% block aside_illustration %}
+    <img src="{% static "user_setup.svg" %}" alt="Signup steps illustration">
+{% endblock %}

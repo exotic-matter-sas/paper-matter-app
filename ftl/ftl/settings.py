@@ -35,12 +35,12 @@ SECRET_KEY = 'NOT SECURE'
 CRON_SECRET_KEY = 'not-secure'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = []
 
 # This param allow app to run with an unbuilt frontend
-DEV_MODE = False
+DEV_MODE = True
 
 # Custom user auth model
 AUTH_USER_MODEL = 'core.FTLUser'
@@ -56,7 +56,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.postgres',
     'django_registration',
+    'django_otp',
+    'django_otp.plugins.otp_totp',
+    'django_otp.plugins.otp_static',
+    'ftl.otp_plugins.otp_ftl',
     'mptt',
+    'oauth2_provider',
     'rest_framework',
     'webpack_loader',
     'ftl',
@@ -69,6 +74,7 @@ INSTALLED_APPS = [
 if DEBUG and DEV_MODE:
     INSTALLED_APPS += [
         'debug_toolbar',
+        'sslserver'
     ]
 
 MIDDLEWARE = [
@@ -78,6 +84,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django_otp.middleware.OTPMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'ftl.ftl_setup_middleware.FTLSetupMiddleware'
@@ -175,6 +182,11 @@ LOGIN_URL = 'login'
 # Redirect user to this url after login by default
 LOGIN_REDIRECT_URL = '/app'
 
+# Redirect when 2fa is needed
+OTP_LOGIN_URL = '/accounts/2fa/check'
+OTP_TOTP_ISSUER = "Paper Matter"
+FIDO2_RP_NAME = "Paper Matter"
+
 # Default settings for browser used for functional tests
 DEFAULT_TEST_BROWSER = 'chrome'
 TEST_BROWSER_HEADLESS = True
@@ -193,8 +205,9 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
+        'ftl.otp_plugins.otp_ftl.middleware.FTLSessionAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'ftl.ftl_oauth2_auth.FTLOAuth2Authentication'
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'DEFAULT_PERMISSION_CLASSES': (
@@ -216,6 +229,12 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+}
+
+# OAuth2 Provider
+OAUTH2_PROVIDER = {
+    # TODO to be completed with more
+    'SCOPES': {'read': 'Read scope', 'write': 'Write scope'}
 }
 
 WEBPACK_LOADER = {

@@ -1,8 +1,12 @@
+#  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+#  Licensed under the BSL License. See LICENSE in the project root for license information.
+
 from datetime import timedelta
 
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
@@ -14,26 +18,27 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views import View
 from django.views.generic import FormView
+from django_otp.decorators import otp_required
 
 from account.forms import EmailSendForm
+from core.ftl_mixins import FTLUserContextDataMixin
 from core.models import FTLUser
 
 
-# FIXME secure these pages with 2FA when available
-
-class AccountView(LoginRequiredMixin, View):
+@method_decorator(login_required, name='dispatch')
+@method_decorator(otp_required(if_configured=True), name='dispatch')
+class AccountView(FTLUserContextDataMixin, View):
     def get(self, request, *args, **kwargs):
-        context = {
-            'ftl_account': {'name': request.user.get_username(),  # get_username now return email
-                            'isSuperUser': request.user.is_superuser},
-        }
-        return render(request, 'account/account_index.html', context)
+        return render(request, 'account/account_index.html', self.get_context_data())
 
 
-class AccountEmailChangeView(LoginRequiredMixin, SuccessMessageMixin, FormView):
+@method_decorator(login_required, name='dispatch')
+@method_decorator(otp_required(if_configured=True), name='dispatch')
+class AccountEmailChangeView(LoginRequiredMixin, SuccessMessageMixin, FTLUserContextDataMixin, FormView):
     template_name = "account/account_email.html"
     email_change_subject = "account/account_email_change_subject.txt"
     email_warn_subject = "account/account_email_warn_subject.txt"
@@ -42,12 +47,6 @@ class AccountEmailChangeView(LoginRequiredMixin, SuccessMessageMixin, FormView):
     form_class = EmailSendForm
     success_url = reverse_lazy('account_index')
     success_message = _("A confirmation email has been sent.")
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['ftl_account'] = {'name': self.request.user.get_username(),
-                                  'isSuperUser': self.request.user.is_superuser}
-        return context
 
     def get_email_context(self, activation_key):
         scheme = 'https' if self.request.is_secure() else 'http'
@@ -103,6 +102,8 @@ class AccountEmailChangeView(LoginRequiredMixin, SuccessMessageMixin, FormView):
         return super().form_valid(form)
 
 
+@method_decorator(login_required, name='dispatch')
+@method_decorator(otp_required(if_configured=True), name='dispatch')
 class AccountEmailChangeValidateView(LoginRequiredMixin, View):
     success_message = _("Email successfully updated.")
     expired_message = _("The link expired. Please try again.")
@@ -134,7 +135,9 @@ class AccountEmailChangeValidateView(LoginRequiredMixin, View):
         return HttpResponseRedirect(reverse_lazy('account_index'))
 
 
-class AccountPasswordView(LoginRequiredMixin, FormView):
+@method_decorator(login_required, name='dispatch')
+@method_decorator(otp_required(if_configured=True), name='dispatch')
+class AccountPasswordView(LoginRequiredMixin, FTLUserContextDataMixin, FormView):
     template_name = "account/account_password.html"
     form_class = PasswordChangeForm
     success_url = reverse_lazy('account_index')
@@ -144,12 +147,6 @@ class AccountPasswordView(LoginRequiredMixin, FormView):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['ftl_account'] = {'name': self.request.user.get_username(),
-                                  'isSuperUser': self.request.user.is_superuser}
-        return context
 
     def form_valid(self, form):
         form.save()

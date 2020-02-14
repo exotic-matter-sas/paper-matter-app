@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-19 17:24+0000\n"
+"POT-Creation-Date: 2020-02-12 19:51+0000\n"
 "PO-Revision-Date: 2020-01-19 22:08+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -29,10 +29,6 @@ msgstr "Revenir à l'application"
 #: account/templates/account/account_base.html:61
 msgid "Settings"
 msgstr "Paramètres"
-
-#: account/templates/account/account_base.html:87
-msgid "Email"
-msgstr "Email"
 
 #: account/templates/account/account_base.html:91
 msgid "Password"
@@ -92,7 +88,7 @@ msgstr ""
 "\n"
 "Un email de confirmation sera envoyé à votre nouvelle adresse. Veuillez "
 "cliquer sur le lien contenu dans l'email pour valider votre nouvelle "
-"adresse. Attention, ce lien expire dans 10 minutes."
+"adresse. Attention, ce lien expirera dans 10 minutes."
 
 #: account/templates/account/account_email.html:21
 msgid "New email"
@@ -145,42 +141,67 @@ msgstr "Sécurité: notification de changement de l'adresse email"
 #: account/templates/account/account_index.html:24
 msgid ""
 "\n"
-"                            Update your email or profile information\n"
+"                            Keep your contact email up-to-date\n"
 "                        "
 msgstr ""
 "\n"
-"Mettre à jour votre adresse email ou votre profil"
+"Gardez votre email de contact à jour"
 
-#: account/templates/account/account_index.html:36
+#: account/templates/account/account_index.html:37
 msgid ""
 "\n"
-"                            Update your password regularly or enable 2FA\n"
-"                        "
+"                                For more security: update your password "
+"regularly\n"
+"                            "
 msgstr ""
 "\n"
-"Mettre à jour votre mot de passe ou activer le 2FA"
+"Pour plus de sécurité : changez régulièrement de mot de passe"
+
+#: account/templates/account/account_index.html:41
+msgid ""
+"\n"
+"                                For more security: update your password "
+"regularly and enable 2FA\n"
+"                            "
+msgstr ""
+"\n"
+"Pour plus de sécurité : changez régulièrement de mot de passe et activez le "
+"2FA"
 
 #: account/templates/account/account_password.html:8
 msgid "Change your password"
 msgstr "Modifier votre mot de passe"
 
-#: account/templates/account/account_password.html:10
+#: account/templates/account/account_password.html:12
 msgid ""
 "\n"
-"                    Your account is protected only with your password. Don't "
-"share it with others websites.\n"
-"                    <a href=\"#\">Please also consider enabling Two factor "
-"authentication for increased security\n"
-"                        (soon)</a>.\n"
-"                "
+"                        Your account is protected with your password and Two "
+"Factor authentication. You account\n"
+"                        security is greatly increased!\n"
+"                    "
 msgstr ""
 "\n"
-"Votre compte est protégé uniquement par votre mot de passe. Ne le partager "
-"pas avec d'autres sites. <a href=\"#\">Penser aussi à activer "
-"l'authentification à deux facteurs pour augmenter la sécurité de votre "
-"compte (bientôt).</a>"
+"Votre compte est protégé par votre mot de passe et l'authentification à deux "
+"facteurs. La sécurité de votre compte est optimale."
 
 #: account/templates/account/account_password.html:17
+#, python-format
+msgid ""
+"\n"
+"                        Your account is protected only with your password. "
+"Don't share it with others websites.\n"
+"                        <a href=\"%(the_url)s\">Please also consider "
+"enabling Two factor authentication for increased\n"
+"                            security</a>.\n"
+"                    "
+msgstr ""
+"\n"
+"Votre compte est protégé uniquement par votre mot de passe. Ne le partagez "
+"pas avec d'autres sites. <a href=\"%(the_url)s\">Pensez aussi à activer "
+"l'authentification à deux facteurs pour augmenter la sécurité de votre "
+"compte.</a>"
+
+#: .\account\templates\account\account_password.html:19
 #, python-format
 msgid ""
 "\n"

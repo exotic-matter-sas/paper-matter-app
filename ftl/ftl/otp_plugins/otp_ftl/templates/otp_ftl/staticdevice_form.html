@@ -1,0 +1,29 @@
+{% extends 'account/account_base.html' %}
+{% load i18n %}
+
+{% block account %}
+    <h3 class="text-primary">{% trans "Generate emergency two factor codes" %}</h3>
+    <p class="font-italic">
+        {% blocktrans %}
+            We highly recommend you generate a set of emergency code too in case you have lost your mobile phone or
+            security key.
+        {% endblocktrans %}
+    </p>
+    <p class="highlight">
+        {% blocktrans %}
+            For security reasons, each code will only work one (1) time. <br/> Please keep those codes in a safe place.
+        {% endblocktrans %}
+    </p>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="id_name">{% trans 'Emergency codes name' %}</label>
+            <input type="text" name="name" placeholder="{% trans 'Safe deposit box emergency codes' %}"
+                   required="required" id="id_name" class="form-control" autofocus="autofocus">
+            <small class="form-text text-muted">{% trans 'Could be its storage location or a clue to remember it' %}</small>
+        </div>
+        <a class="btn btn-secondary float-left" href="{% url 'otp_list' %}">{% trans 'Cancel' %}</a>
+        <input class="btn btn-primary float-right" type="submit" value="{% trans 'Next' %}">
+    </form>
+{% endblock %}
