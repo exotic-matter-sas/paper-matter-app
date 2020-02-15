@@ -31,6 +31,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     cron \
     supervisor \
     curl \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
 ADD ftl/requirements.txt /app/requirements.txt
