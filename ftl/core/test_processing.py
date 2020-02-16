@@ -4,7 +4,6 @@
 from concurrent.futures import wait as wait_futures
 from unittest.mock import Mock, patch
 
-import langid
 from django.test import TestCase
 from langid.langid import LanguageIdentifier
 from tika import parser
