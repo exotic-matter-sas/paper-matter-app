@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-12 09:49+0000\n"
-"PO-Revision-Date: 2019-03-05 17:20+0100\n"
+"POT-Creation-Date: 2020-02-17 14:25+0100\n"
+"PO-Revision-Date: 2020-02-17 14:25+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -16,13 +16,13 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 2.0.6\n"
+"X-Generator: Poedit 2.3\n"
 
-#: ftl/forms.py:24
+#: .\ftl\forms.py:27
 msgid "Organization name"
 msgstr "Nom de l'organisation"
 
-#: ftl/forms.py:26
+#: .\ftl\forms.py:29
 msgid ""
 "It's the name of your Paper Matter personal workspace, try to choose "
 "something unique (eg. based on your first and last name or company name)."
@@ -31,138 +31,138 @@ msgstr ""
 "choisir quelque chose d'unique (ex : basé sur votre nom et prénom ou nom "
 "d'entreprise)."
 
-#: ftl/forms.py:43
+#: .\ftl\forms.py:46
 msgid "Organization already exists"
 msgstr "L'organisation existe déjà"
 
-#: ftl/signals/handlers.py:8
+#: .\ftl\signals\handlers.py:11
 msgid "Your session has expired or have been invalidated. Please log back in."
 msgstr "Votre session a expiré ou a été invalidée. Veuillez vous reconnecter."
 
-#: ftl/signals/handlers.py:10
+#: .\ftl\signals\handlers.py:13
 msgid "You have been logged out. See you!"
 msgstr "Vous êtes déconnecté. À bientôt !"
 
-#: ftl/templates/ftl/base_email_body.txt:1
+#: .\ftl\templates\ftl\base_email_body.txt:1
 msgid "Hello!"
 msgstr "Bonjour !"
 
-#: ftl/templates/ftl/base_email_body.txt:5
+#: .\ftl\templates\ftl\base_email_body.txt:5
 msgid "The Paper Matter team"
 msgstr "L'équipe Paper Matter"
 
-#: ftl/templates/ftl/django_registration/activation_complete.html:5
+#: .\ftl\templates\ftl\django_registration\activation_complete.html:5
 msgid "Account activated"
 msgstr "Compte activé"
 
-#: ftl/templates/ftl/django_registration/activation_complete.html:8
+#: .\ftl\templates\ftl\django_registration\activation_complete.html:8
 msgid "Account activated!"
-msgstr "Compte activé!"
+msgstr "Compte activé !"
 
-#: ftl/templates/ftl/django_registration/activation_complete.html:9
+#: .\ftl\templates\ftl\django_registration\activation_complete.html:9
 msgid "Your account has been activated, thank you! You may log in."
 msgstr "Votre compte a été activé, vous pouvez maintenant vous y connecter."
 
-#: ftl/templates/ftl/django_registration/activation_complete.html:10
+#: .\ftl\templates\ftl\django_registration\activation_complete.html:10
 msgid "Login to your account here:"
 msgstr "Connectez-vous à votre compte :"
 
-#: ftl/templates/ftl/django_registration/activation_complete.html:10
+#: .\ftl\templates\ftl\django_registration\activation_complete.html:10
 msgid "login page"
 msgstr "page de connexion"
 
-#: ftl/templates/ftl/django_registration/activation_email_body.txt:4
+#: .\ftl\templates\ftl\django_registration\activation_email_body.txt:4
 msgid ""
 "An account on Paper Matter has been created with this email. Follow the link "
 "below to\n"
 "activate your account:"
 msgstr ""
-"An account on Paper Matter has been created with this email. Follow the link "
-"below to\n"
-"activate your account:"
+"Un compte sur Paper Matter a été créé avec cet e-mail. Suivez le lien ci-"
+"dessous pour\n"
+"activez votre compte :"
 
-#: ftl/templates/ftl/django_registration/activation_email_body.txt:9
+#: .\ftl\templates\ftl\django_registration\activation_email_body.txt:9
 #, python-format
-msgid "The link will expire in %(expiration_days)s days "
-msgstr "Le lien expirera dans %(expiration_days)s jours"
+msgid "The link will expire in %(expiration_days)s days."
+msgstr "Le lien expirera dans %(expiration_days)s jours."
 
-#: ftl/templates/ftl/django_registration/activation_email_subject.txt:4
+#: .\ftl\templates\ftl\django_registration\activation_email_subject.txt:4
 msgid "Activate your account"
 msgstr "Activer votre compte"
 
-#: ftl/templates/ftl/django_registration/activation_failed.html:5
+#: .\ftl\templates\ftl\django_registration\activation_failed.html:5
 msgid "Account could not be activated"
 msgstr "Le compte n'a pu être activé"
 
-#: ftl/templates/ftl/django_registration/activation_failed.html:8
+#: .\ftl\templates\ftl\django_registration\activation_failed.html:8
 msgid "We could not activate the account..."
 msgstr "Nous n'avons pu activer le compte..."
 
-#: ftl/templates/ftl/oauth2_provider/authorize.html:9
+#: .\ftl\templates\ftl\oauth2_provider\authorize.html:9
 msgid "Authorize"
 msgstr "Autoriser"
 
-#: ftl/templates/ftl/oauth2_provider/authorize.html:18
+#: .\ftl\templates\ftl\oauth2_provider\authorize.html:18
 msgid "Application requires following permissions"
 msgstr "L'application requiert les permissions suivantes"
 
-#: ftl/templates/ftl/registration/create_org_and_ftluser.html:5
-#: ftl/templates/ftl/registration/signup.html:5
-#: ftl/templates/ftl/registration/signup.html:12
+#: .\ftl\templates\ftl\registration\create_org_and_ftluser.html:5
+#: .\ftl\templates\ftl\registration\signup.html:5
+#: .\ftl\templates\ftl\registration\signup.html:12
 msgid "Signup"
 msgstr "Inscription"
 
-#: ftl/templates/ftl/registration/create_org_and_ftluser.html:9
+#: .\ftl\templates\ftl\registration\create_org_and_ftluser.html:9
 msgid "Create your account"
 msgstr "Créez votre compte"
 
-#: ftl/templates/ftl/registration/create_org_and_ftluser.html:12
+#: .\ftl\templates\ftl\registration\create_org_and_ftluser.html:12
 msgid "Create account"
 msgstr "Créer le compte"
 
-#: ftl/templates/ftl/registration/login.html:5
-#: ftl/templates/ftl/registration/login.html:9
-#: ftl/templates/ftl/registration/login.html:34
+#: .\ftl\templates\ftl\registration\login.html:5
+#: .\ftl\templates\ftl\registration\login.html:9
+#: .\ftl\templates\ftl\registration\login.html:34
 msgid "Login"
 msgstr "Se connecter"
 
-#: ftl/templates/ftl/registration/login.html:15
-#: ftl/templates/ftl/registration/login.html:16
+#: .\ftl\templates\ftl\registration\login.html:15
+#: .\ftl\templates\ftl\registration\login.html:16
 msgid "Email"
 msgstr "Email"
 
-#: ftl/templates/ftl/registration/login.html:24
-#: ftl/templates/ftl/registration/login.html:25
+#: .\ftl\templates\ftl\registration\login.html:24
+#: .\ftl\templates\ftl\registration\login.html:25
 msgid "Password"
 msgstr "Mot de passe"
 
-#: ftl/templates/ftl/registration/login.html:27
+#: .\ftl\templates\ftl\registration\login.html:27
 msgid "Forgot password?"
 msgstr "Mot de passe oublié ?"
 
-#: ftl/templates/ftl/registration/password_change_done.html:4
-#: ftl/templates/ftl/registration/password_change_form.html:4
+#: .\ftl\templates\ftl\registration\password_change_done.html:4
+#: .\ftl\templates\ftl\registration\password_change_form.html:4
 msgid "Change password"
 msgstr "Modifier mon mot de passe"
 
-#: ftl/templates/ftl/registration/password_change_done.html:8
+#: .\ftl\templates\ftl\registration\password_change_done.html:8
 msgid "Password changed!"
 msgstr "Le mot de passe a été modifié !"
 
-#: ftl/templates/ftl/registration/password_change_form.html:7
-#: ftl/templates/ftl/registration/password_change_form.html:47
+#: .\ftl\templates\ftl\registration\password_change_form.html:7
+#: .\ftl\templates\ftl\registration\password_change_form.html:47
 msgid "Change my password"
 msgstr "Modifier mon mot de passe"
 
-#: ftl/templates/ftl/registration/password_change_form.html:13
+#: .\ftl\templates\ftl\registration\password_change_form.html:13
 msgid "Please correct the error below."
 msgstr "Merci de corriger l'erreur indiquée ci-dessous."
 
-#: ftl/templates/ftl/registration/password_change_form.html:14
+#: .\ftl\templates\ftl\registration\password_change_form.html:14
 msgid "Please correct the errors below."
 msgstr "Merci de corriger les erreurs indiquées ci-dessous."
 
-#: ftl/templates/ftl/registration/password_change_form.html:19
+#: .\ftl\templates\ftl\registration\password_change_form.html:19
 msgid ""
 "Please enter your old password, for security's sake, and then enter your new "
 "password twice so we can verify you typed it in correctly."
@@ -170,16 +170,16 @@ msgstr ""
 "Pour des raisons de sécurité merci de saisir votre ancien mot de passe, "
 "saisissez ensuite le nouveau deux fois."
 
-#: ftl/templates/ftl/registration/password_reset_confirm.html:5
+#: .\ftl\templates\ftl\registration\password_reset_confirm.html:5
 msgid "New password"
 msgstr "Nouveau mot de passe :"
 
-#: ftl/templates/ftl/registration/password_reset_confirm.html:10
-#: ftl/templates/ftl/registration/password_reset_subject.txt:4
+#: .\ftl\templates\ftl\registration\password_reset_confirm.html:10
+#: .\ftl\templates\ftl\registration\password_reset_subject.txt:4
 msgid "Set new password"
 msgstr "Définition du nouveau mot de passe"
 
-#: ftl/templates/ftl/registration/password_reset_confirm.html:11
+#: .\ftl\templates\ftl\registration\password_reset_confirm.html:11
 msgid ""
 "Please enter your new password twice so we can verify you typed it in "
 "correctly."
@@ -187,12 +187,12 @@ msgstr ""
 "Veuillez saisir votre nouveau mot de passe deux pour vérifier qu'il n'y a "
 "pas d'erreur."
 
-#: ftl/templates/ftl/registration/password_reset_confirm.html:14
-#: ftl/templates/ftl/registration/password_reset_form.html:13
+#: .\ftl\templates\ftl\registration\password_reset_confirm.html:14
+#: .\ftl\templates\ftl\registration\password_reset_form.html:13
 msgid "Reset my password"
 msgstr "Réinitialiser mon mot de passe"
 
-#: ftl/templates/ftl/registration/password_reset_confirm.html:17
+#: .\ftl\templates\ftl\registration\password_reset_confirm.html:17
 msgid ""
 "The password reset link was invalid, possibly because it has already been "
 "used.  Please request a new password reset."
@@ -201,11 +201,11 @@ msgstr ""
 "que celui-ci est déjà été utilisé.Veuillez renouveler la demande de "
 "réinitialisation."
 
-#: ftl/templates/ftl/registration/password_reset_confirm.html:18
+#: .\ftl\templates\ftl\registration\password_reset_confirm.html:18
 msgid "Back"
 msgstr "Retour"
 
-#: ftl/templates/ftl/registration/password_reset_email.html:4
+#: .\ftl\templates\ftl\registration\password_reset_email.html:4
 #, python-format
 msgid ""
 "You're receiving this email because you requested a password reset for your "
@@ -216,12 +216,12 @@ msgstr ""
 "mot de passe pour votre compte sur %(site_name)s.\n"
 "Cliquez sur ce lien pour définir le nouveau mot de passe :\n"
 
-#: ftl/templates/ftl/registration/password_reset_form.html:5
-#: ftl/templates/ftl/registration/password_reset_form.html:9
+#: .\ftl\templates\ftl\registration\password_reset_form.html:5
+#: .\ftl\templates\ftl\registration\password_reset_form.html:9
 msgid "Reset password"
 msgstr "Réinitialiser mon mot de passe"
 
-#: ftl/templates/ftl/registration/password_reset_form.html:10
+#: .\ftl\templates\ftl\registration\password_reset_form.html:10
 msgid ""
 "Forgotten your password? Enter your email address below, and we'll email "
 "instructions for setting a new one."
@@ -229,7 +229,7 @@ msgstr ""
 "Mot de passe oublié ? Saisissez votre email ci-dessous et nous vous "
 "enverrons les instructions pour en définir un nouveau."
 
-#: ftl/templates/ftl/registration/signup.html:9
+#: .\ftl\templates\ftl\registration\signup.html:9
 #, python-format
 msgid ""
 "Create your account in <span class=\"highlight\">%(org_name)s</span> "
@@ -238,15 +238,15 @@ msgstr ""
 "Créez votre compte dans l'organisation <span class=\"highlight\">"
 "%(org_name)s</span>"
 
-#: ftl/templates/ftl/registration/signup_success.html:5
+#: .\ftl\templates\ftl\registration\signup_success.html:5
 msgid "Signup succeed"
 msgstr "Inscription réussie"
 
-#: ftl/templates/ftl/registration/signup_success.html:8
+#: .\ftl\templates\ftl\registration\signup_success.html:8
 msgid "One more thing..."
 msgstr "Une dernière chose..."
 
-#: ftl/templates/ftl/registration/signup_success.html:9
+#: .\ftl\templates\ftl\registration\signup_success.html:9
 msgid ""
 "Please <span class='highlight'>verify your email</span> to activate your "
 "account."
@@ -254,15 +254,15 @@ msgstr ""
 "Merci de <span class='highlight'>vérifier votre email</span> pour activer "
 "votre compte."
 
-#: ftl/templates/ftl/registration/signup_success.html:10
+#: .\ftl\templates\ftl\registration\signup_success.html:10
 msgid "Once your account has been activated, you can pursue to:"
 msgstr "Une fois votre compte activé, vous pourrez vous rendre sur :"
 
-#: ftl/templates/ftl/registration/signup_success.html:10
+#: .\ftl\templates\ftl\registration\signup_success.html:10
 msgid "Login page"
 msgstr "Page de connexion"
 
-#: ftl/views.py:55
+#: .\ftl\views.py:58
 msgid ""
 "We’ve emailed you instructions for setting your password, if an account "
 "exists with the email you entered. You should receive them shortly (check "
@@ -272,13 +272,13 @@ msgstr ""
 "réinitialiser votre mot de passe vous ont été envoyées. Vous devriez les "
 "recevoir rapidement (vérifiez votre dossier spam si ce n'est pas le cas)."
 
-#: ftl/views.py:61
+#: .\ftl\views.py:64
 msgid "Your password has been set. You may go ahead and log in now."
 msgstr ""
 "Votre mot de passe a bien été enregistré, vous pouvez vous connecter avec "
 "celui-ci."
 
-#: ftl/views.py:72
+#: .\ftl\views.py:75
 msgid ""
 "Your email has been verified, thank you! You may go ahead and log in now."
 msgstr ""
