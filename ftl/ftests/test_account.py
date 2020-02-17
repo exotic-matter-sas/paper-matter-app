@@ -78,6 +78,11 @@ class AccountPageTests(LoginPage, AccountPages):
 
         self.assertIn('Password updated!', self.get_elem_text("div.text-center"))
 
+        # Check notice email
+        self.assertIn(self.user.email, mail.outbox[0].to)
+        self.assertIn('notice of password change', mail.outbox[0].subject.lower())
+        self.assertIn('Someone requested to change the password', mail.outbox[0].body)
+
         # Logout
         self.visit(LoginPage.logout_url)
 
