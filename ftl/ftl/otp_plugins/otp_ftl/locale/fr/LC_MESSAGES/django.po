@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-14 15:40+0100\n"
-"PO-Revision-Date: 2020-02-14 15:51+0100\n"
+"POT-Creation-Date: 2020-02-17 17:49+0100\n"
+"PO-Revision-Date: 2020-02-17 17:51+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -72,8 +72,11 @@ msgstr ""
 
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_confirm_delete.html:14
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_update.html:15
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_form.html:57
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_check.html:48
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_form.html:59
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\staticdevice_check.html:58
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\staticdevice_form.html:26
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\totpdevice_check.html:58
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\totpdevice_detail.html:30
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\totpdevice_form.html:32
 msgid "Cancel"
@@ -159,20 +162,6 @@ msgstr ""
 "besoin de votre mot de passe habituel et du code de validation qui sera "
 "affiché sur votre téléphone (ou de votre clé de sécurité)."
 
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_list.html:128
-#, python-format
-msgid ""
-"\n"
-"                    Please use <a href=\"%(the_url)s\" class=\"alert-link"
-"\">the import app</a> before enabling 2FA (the\n"
-"                    app doesn't support 2FA yet).\n"
-"                "
-msgstr ""
-"\n"
-"Penser à utiliser <a href=\"%(the_url)s\" class=\"alert-link\">le logiciel "
-"d'import</a> avant d'activer l'authentification à deux facteurs "
-"(l'application ne le supporte pas encore)."
-
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_list.html:135
 msgid "There is no two factor device registered with this account."
 msgstr ""
@@ -247,12 +236,6 @@ msgstr "Utiliser un code affiché sur votre app d'authentification"
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\totpdevice_check.html:52
 msgid "Use a one time emergency code"
 msgstr "Utiliser un code à usage unique"
-
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_check.html:47
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\staticdevice_check.html:57
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\totpdevice_check.html:57
-msgid "Log out"
-msgstr ""
 
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_detail.html:5
 msgid "Your security key has been added!"
@@ -353,24 +336,28 @@ msgstr ""
 "peut être d'un bug"
 
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_form.html:50
+msgid "You cannot register the same key multiple time"
+msgstr "Vous ne pouvez pas enregistrer la même clé plusieurs fois"
+
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_form.html:52
 msgid ""
 "An unknown error occured during key registration, you may have found a bug"
 msgstr ""
 "Une erreur inconnue est survenue durant l'enregistrement de la clé, il "
 "s'agit peut être d'un bug"
 
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_form.html:52
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_form.html:54
 msgid ""
 "An unexpected error occured during key registration, you may have found a bug"
 msgstr ""
 "Une erreur inattendue est survenue durant l'enregistrement de la clé, il "
 "s'agit peut être d'un bug"
 
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_form.html:54
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_form.html:56
 msgid "error code: "
 msgstr "code erreur : "
 
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_form.html:58
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_form.html:60
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\staticdevice_form.html:27
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\totpdevice_form.html:33
 msgid "Next"
@@ -516,3 +503,15 @@ msgid ""
 msgstr ""
 "Nom de l'appareil sur lequel l'appli sera installée, pour vous aider à "
 "l'identifier plus tard."
+
+#~ msgid ""
+#~ "\n"
+#~ "                    Please use <a href=\"%(the_url)s\" class=\"alert-link"
+#~ "\">the import app</a> before enabling 2FA (the\n"
+#~ "                    app doesn't support 2FA yet).\n"
+#~ "                "
+#~ msgstr ""
+#~ "\n"
+#~ "Penser à utiliser <a href=\"%(the_url)s\" class=\"alert-link\">le "
+#~ "logiciel d'import</a> avant d'activer l'authentification à deux facteurs "
+#~ "(l'application ne le supporte pas encore)."

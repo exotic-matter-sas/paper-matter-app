@@ -44,8 +44,10 @@
                     {% endblocktrans %}
                 {% elif request.GET.error == 'network' %}
                     {% trans 'A network error occurred during key registration, try again' %}
-                {% elif request.GET.error == 'cbor-decode' or request.GET.error == 'cbor-encode'%}
+                {% elif request.GET.error == 'cbor-decode' or request.GET.error == 'cbor-encode' %}
                     {% trans 'An internal error occured during key registration, you may have found a bug' %}
+                {% elif request.GET.error == 'duplicate-key' %}
+                    {% trans 'You cannot register the same key multiple time' %}
                 {% elif request.GET.error == 'unknown-generic' or request.GET.error == 'unknown-generic' %}
                     {% trans 'An unknown error occured during key registration, you may have found a bug' %}
                 {% elif request.GET.error == 'unexpected' %}
@@ -75,86 +77,87 @@
             fetch('{% url 'otp_fido2_api_register_begin' %}', {
                 method: 'POST',
             })
-                .then(function (response) {
-                    if (response.ok) {
-                        return response.arrayBuffer();
-                    } else {
-                        throw new Error('RegistrationBeginApiError');
-                    }
-                })
-                .then(function(value){
-                    try {
-                        return CBOR.decode(value);
-                    } catch (e) {
-                        throw new Error('CBORDecodeError');
-                    }
-                })
-                .then(function (options) {
-                    return navigator.credentials.create(options);
-                    }
-                )
-                .then(function (attestation) {
-                    const deviceName = document.getElementById("id_name").value;
-                    try{
-                        return CBOR.encode({
+                    .then(function (response) {
+                        if (response.ok) {
+                            return response.arrayBuffer();
+                        } else {
+                            throw new Error('RegistrationBeginApiError');
+                        }
+                    })
+                    .then(function (value) {
+                        try {
+                            return CBOR.decode(value);
+                        } catch (e) {
+                            throw new Error('CBORDecodeError');
+                        }
+                    })
+                    .then(function (options) {
+                                return navigator.credentials.create(options);
+                            }
+                    )
+                    .then(function (attestation) {
+                        const deviceName = document.getElementById("id_name").value;
+                        try {
+                            return CBOR.encode({
                                 "attestationObject": new Uint8Array(attestation.response.attestationObject),
                                 "clientDataJSON": new Uint8Array(attestation.response.clientDataJSON),
                                 "name": deviceName,
                             })
-                    } catch (e) {
-                        throw new Error('CBOREncodeError')
-                    }
-                })
-                .then(function (body) {
-                    return fetch('{% url 'otp_fido2_api_register_finish' %}', {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/cbor'},
-                        body: body
-                    });
-                })
-                .then(function (response) {
-                    if (response.ok) {
-                        window.location = '{% url 'otp_fido2_success'  %}';
-                    } else {
-                        // could occurred when page isn't loaded in https
-                        throw new Error('RegistrationFinishApiError');
-                    }
-                }).catch(function (error) {
-                    let errorCode;
-                    console.error(error);
-
-                    if('name' in error){
-                        if (error.name === 'AbortError'){
-                            errorCode = 'abort'
-                        } else if (error.name === 'NotAllowedError'){
-                            errorCode = 'not-allowed'
+                        } catch (e) {
+                            throw new Error('CBOREncodeError')
                         }
-                        else if (error.name === 'TypeError' && 'message' in error &&
-                                error.message.includes('NetworkError')){
-                            errorCode = 'network'
-                        } else if (error.name === 'Error'){
-                            if ('message' in error){
-                                if (error.message === 'RegistrationBeginApiError') {
-                                    errorCode = 'registration-begin-api'
-                                } else if (error.message === 'RegistrationFinishApiError') {
-                                    errorCode = 'registration-finish-api'
-                                } else if (error.message === 'CBORDecodeError') {
-                                    errorCode = 'cbor-decode'
-                                } else if (error.message === 'CBOREncodeError') {
-                                    errorCode = 'cbor-encode'
+                    })
+                    .then(function (body) {
+                        return fetch('{% url 'otp_fido2_api_register_finish' %}', {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/cbor'},
+                            body: body
+                        });
+                    })
+                    .then(function (response) {
+                        if (response.ok) {
+                            window.location = '{% url 'otp_fido2_success'  %}';
+                        } else {
+                            // could occur when page isn't loaded in https
+                            throw new Error('RegistrationFinishApiError');
+                        }
+                    })
+                    .catch(function (error) {
+                        let errorCode;
+
+                        if ('name' in error) {
+                            if (error.name === 'AbortError') {
+                                errorCode = 'abort'
+                            } else if (error.name === 'InvalidStateError' && 'message' in error &&
+                                    error.message.includes('already registered')) {
+                                errorCode = 'duplicate-key'
+                            } else if (error.name === 'NotAllowedError') {
+                                errorCode = 'not-allowed'
+                            } else if (error.name === 'TypeError' && 'message' in error &&
+                                    error.message.includes('NetworkError')) {
+                                errorCode = 'network'
+                            } else if (error.name === 'Error') {
+                                if ('message' in error) {
+                                    if (error.message === 'RegistrationBeginApiError') {
+                                        errorCode = 'registration-begin-api'
+                                    } else if (error.message === 'RegistrationFinishApiError') {
+                                        errorCode = 'registration-finish-api'
+                                    } else if (error.message === 'CBORDecodeError') {
+                                        errorCode = 'cbor-decode'
+                                    } else if (error.message === 'CBOREncodeError') {
+                                        errorCode = 'cbor-encode'
+                                    }
+                                } else {
+                                    errorCode = 'unknown-generic'
                                 }
                             } else {
-                                errorCode = 'unknown-generic'
+                                errorCode = 'unexpected'
                             }
+                        } else {
+                            errorCode = 'unknown-nameless'
                         }
-                        else {
-                            errorCode = 'unexpected'
-                        }
-                    } else {
-                        errorCode = 'unknown-nameless'
-                    }
-                    window.location = `{% url 'otp_fido2_add' %}?error=${errorCode}`;
-                });
+                        window.location = `{% url 'otp_fido2_add' %}?error=${errorCode}`;
+                    });
         });
     </script>
 {% endblock %}

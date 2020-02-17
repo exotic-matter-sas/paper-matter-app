@@ -69,12 +69,14 @@ def fido2_api_register_begin(request):
     rp = PublicKeyCredentialRpEntity(get_domain(request), settings.FIDO2_RP_NAME)
     fido2 = Fido2Server(rp)
 
+    all_devices = Fido2Device.objects.filter(user=request.user)
+
     registration_data, state = fido2.register_begin({
         "id": request.user.email.encode(),
         "name": request.user.email,
         "displayName": request.user.email,
         "icon": ""
-    })
+    }, credentials=[AttestedCredentialData(cbor2.loads(d.authenticator_data)) for d in all_devices])
 
     request.session[FIDO2_REGISTER_STATE] = state
 
