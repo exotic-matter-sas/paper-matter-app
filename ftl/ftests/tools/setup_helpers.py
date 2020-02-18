@@ -4,9 +4,13 @@
 import os
 import tempfile
 
+from django_otp.plugins.otp_static.models import StaticDevice, StaticToken
+from django_otp.plugins.otp_totp.models import TOTPDevice
+
 from core.models import FTLOrg, FTLUser, FTLDocument, FTLFolder, permissions_names_to_objects, FTL_PERMISSIONS_USER
 from core.processing.proc_pgsql_tsvector import FTLSearchEnginePgSQLTSVector
 from ftests.tools import test_values as tv
+from ftl.otp_plugins.otp_ftl.models import Fido2Device
 from ftl.settings import BASE_DIR
 
 
@@ -73,3 +77,33 @@ def setup_temporary_file():
     f.write(b'Hello world!')  # Actual content doesn't matter
     f.close()
     return f
+
+
+def setup_2fa_static_device(ftl_user, name='My emergency codes', codes_list=None, confirmed=True):
+    static_device = StaticDevice.objects.create(
+        user=ftl_user,
+        name=name,
+        confirmed=confirmed
+    )
+
+    if codes_list:
+        for code in codes_list:
+            StaticToken.objects.create(token=code, device=static_device)
+
+    return static_device
+
+
+def setup_2fa_totp_device(ftl_user, name='My smartphone', confirmed=True):
+    return TOTPDevice.objects.create(
+        user=ftl_user,
+        name=name,
+        confirmed=confirmed
+    )
+
+
+def setup_2fa_fido2_device(ftl_user, name='My security key', confirmed=True):
+    return Fido2Device.objects.create(
+        user=ftl_user,
+        name=name,
+        confirmed=confirmed
+    )

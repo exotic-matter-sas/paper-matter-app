@@ -8,6 +8,7 @@ class AccountPages(BasePage):
     index_url = '/accounts/'
     update_email_url = '/accounts/email'
     update_password_url = '/accounts/password'
+    two_factors_authentication_url = '/accounts/2fa/'
 
     success_notification = '.alert.alert-success'
     error_notification = '.alert.alert-error'
@@ -24,6 +25,34 @@ class AccountPages(BasePage):
     new_password_confirmation_input = '#password-update-form #id_new_password2'
     submit_new_password_input = '#password-update-form [type="submit"]'
 
+    # 2fa pages
+    # static device
+    emergency_codes_divs = '.static-device-item'
+    add_emergency_codes_button = '#add-emergency-codes'
+    rename_emergency_codes_buttons = '.rename-emergency-codes'
+    delete_emergency_codes_buttons = '.delete-emergency-codes'
+    # totp device
+    auth_app_divs = '.totp-device-item'
+    add_auth_app_button = '#add-auth-app'
+    rename_auth_app_buttons = '.rename-auth-app'
+    delete_auth_app_buttons = '.delete-auth-app'
+    created_codes_list = '#emergency-code-to-print li'
+    print_button = 'a[onclick="print()"]'
+    # fido2 device
+    security_key_divs = '.fido2-device-item'
+    add_security_key_button = '#add-security-key'
+    rename_security_key_buttons = '.rename-security-key'
+    delete_security_key_buttons = '.delete-security-key'
+    # 2fa form
+    device_name_input = '#id_name'
+    cancel_button = '.btn-secondary'
+    confirm_button = '.btn-primary, .btn-danger'
+    # 2fa check pages
+    check_pages_title = 'h1'
+    check_pages_device_label = 'form#user-form label'
+    check_pages_device_input = '#id_otp_device'
+    check_pages_alternatives_list = '#alternatives-list li'
+
     def update_email(self, new_email):
         self.get_elem(self.new_email_input).send_keys(new_email)
         self.get_elem(self.submit_new_email_input).click()
@@ -33,3 +62,17 @@ class AccountPages(BasePage):
         self.get_elem(self.new_password_input).send_keys(new_password)
         self.get_elem(self.new_password_confirmation_input).send_keys(new_password)
         self.get_elem(self.submit_new_password_input).click()
+
+    def add_emergency_codes_set(self, codes_set_name):
+        self.get_elem(self.add_emergency_codes_button).click()
+        self.get_elem(self.device_name_input).send_keys(codes_set_name)
+        self.get_elem(self.confirm_button).click()
+
+    def rename_emergency_codes_set(self, new_name, set_index=0):
+        self.get_elems(self.rename_emergency_codes_buttons)[set_index].click()
+        self.get_elem(self.device_name_input).send_keys(new_name)
+        self.get_elem(self.confirm_button).click()
+
+    def delete_emergency_codes_set(self, set_index=0):
+        self.get_elems(self.delete_emergency_codes_buttons)[set_index].click()
+        self.get_elem(self.confirm_button).click()
