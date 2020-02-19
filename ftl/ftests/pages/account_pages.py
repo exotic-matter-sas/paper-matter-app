@@ -31,13 +31,16 @@ class AccountPages(BasePage):
     add_emergency_codes_button = '#add-emergency-codes'
     rename_emergency_codes_buttons = '.rename-emergency-codes'
     delete_emergency_codes_buttons = '.delete-emergency-codes'
+    created_codes_list = '#emergency-code-to-print li'
+    print_button = 'a[onclick="print()"]'
     # totp device
     auth_app_divs = '.totp-device-item'
     add_auth_app_button = '#add-auth-app'
+    unconfirmed_badges = '.totp-device-item a.badge-danger'
+    totp_code_setup_input = '#id_otp_token'
     rename_auth_app_buttons = '.rename-auth-app'
     delete_auth_app_buttons = '.delete-auth-app'
-    created_codes_list = '#emergency-code-to-print li'
-    print_button = 'a[onclick="print()"]'
+    qr_code_image = 'img[src*="qrcode"]'
     # fido2 device
     security_key_divs = '.fido2-device-item'
     add_security_key_button = '#add-security-key'
@@ -51,6 +54,7 @@ class AccountPages(BasePage):
     check_pages_title = 'h1'
     check_pages_device_label = 'form#user-form label'
     check_pages_device_input = '#id_otp_device'
+    check_pages_code_input = '#id_otp_token'
     check_pages_alternatives_list = '#alternatives-list li'
 
     def update_email(self, new_email):
@@ -75,4 +79,18 @@ class AccountPages(BasePage):
 
     def delete_emergency_codes_set(self, set_index=0):
         self.get_elems(self.delete_emergency_codes_buttons)[set_index].click()
+        self.get_elem(self.confirm_button).click()
+
+    def add_auth_app(self, device_name):
+        self.get_elem(self.add_auth_app_button).click()
+        self.get_elem(self.device_name_input).send_keys(device_name)
+        self.get_elem(self.confirm_button).click()
+
+    def rename_auth_app(self, new_name, set_index=0):
+        self.get_elems(self.rename_auth_app_buttons)[set_index].click()
+        self.get_elem(self.device_name_input).send_keys(new_name)
+        self.get_elem(self.confirm_button).click()
+
+    def delete_auth_app(self, set_index=0):
+        self.get_elems(self.delete_auth_app_buttons)[set_index].click()
         self.get_elem(self.confirm_button).click()

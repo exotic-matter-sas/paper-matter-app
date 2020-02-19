@@ -93,12 +93,18 @@ def setup_2fa_static_device(ftl_user, name='My emergency codes', codes_list=None
     return static_device
 
 
-def setup_2fa_totp_device(ftl_user, name='My smartphone', confirmed=True):
-    return TOTPDevice.objects.create(
-        user=ftl_user,
-        name=name,
-        confirmed=confirmed
-    )
+def setup_2fa_totp_device(ftl_user, name='My smartphone', secret_key=None, confirmed=True):
+
+    kwargs = {
+        'user': ftl_user,
+        'name': name,
+        'confirmed': confirmed
+    }
+
+    if secret_key:
+        kwargs['key'] = secret_key
+
+    return TOTPDevice.objects.create(**kwargs)
 
 
 def setup_2fa_fido2_device(ftl_user, name='My security key', confirmed=True):

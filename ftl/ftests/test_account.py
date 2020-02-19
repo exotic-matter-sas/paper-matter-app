@@ -3,10 +3,11 @@
 
 import re
 from unittest import skipIf
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 
 from django.core import mail
 from django_otp.middleware import OTPMiddleware
+from django_otp.oath import TOTP
 from selenium.common.exceptions import NoSuchElementException
 
 from ftests.pages.account_pages import AccountPages
@@ -22,6 +23,14 @@ def mocked_verify_user(self, request, user):
     user.is_verified = lambda: True
     user.otp_device = 'fake_device'
     return user
+
+
+def mocked_totp_time_setter(self, value):
+    self._time = TotpDevice2FATests.secret_time
+
+
+totp_time_setter_mock = Mock(wraps=TOTP.time.fset, side_effect=mocked_totp_time_setter)
+totp_time_property_mock = TOTP.time.setter(totp_time_setter_mock)
 
 
 class BasicAccountPagesTests(LoginPage, AccountPages):
@@ -205,6 +214,149 @@ class StaticDevice2FATests(LoginPage, AccountPages):
         self.middleware_patcher.stop()
         # Also remove totp device created during setup
         self.required_totp_device.delete()
+
+        # When user login again there is no 2FA check page as there is no 2fa devices set
+        self.log_user()
+        self.assertIn('home', self.head_title)
+
+
+class TotpDevice2FATests(LoginPage, AccountPages):
+    secret_time = 1582109713.4242425
+    secret_key = 'f679758a45fa55cd14b583c8505bf4d12eb76f27'
+    valid_token = '954370'  # value get from TOTP.token() in debug mode with the 2 settings above
+
+    def setUp(self, **kwargs):
+        # first org, admin, user are already created, user is already logged to 2FA account page
+        super().setUp()
+        self.org = setup_org()
+        setup_admin(self.org)
+        self.user = setup_user(self.org)
+        # mock OTPMiddleware._verify_user() to skip check page
+        self.middleware_patcher = patch.object(OTPMiddleware, '_verify_user', mocked_verify_user)
+        self.middleware_patcher.start()
+        self.addCleanup(patch.stopall)  # ensure mock is remove after each test, even if the test crash
+
+        self.visit(LoginPage.url)
+        self.log_user()
+        self.visit(AccountPages.two_factors_authentication_url)
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_add_auth_app_unconfirmed(self):
+        # User add a auth app
+        device_name = 'My precious yPhone xD'
+        self.add_auth_app(device_name)
+
+        # User can see qr code to scan
+        self.get_elem(self.qr_code_image)
+
+        # User have lost its smartphone under its pillow, he click on the cancel button
+        self.get_elem(self.cancel_button).click()
+
+        # Totp device appears in the list as not confirmed
+        self.assertIn('not confirmed', self.get_elem_text(self.auth_app_divs).lower())
+
+        # User logout
+        self.visit(self.logout_url)
+
+        # Remove middleware mock, to restore check pages
+        self.middleware_patcher.stop()
+
+        # User log again
+        self.log_user()
+
+        # There is no 2FA check as totp device setup isn't complete
+        self.assertIn('home', self.head_title)
+
+    @patch.object(TOTP, 'time', totp_time_property_mock)
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_add_auth_app_confirmed(self):
+        # User has already add an unconfirmed auth app
+        device_name = 'My precious yPhone xD'
+        setup_2fa_totp_device(self.user, device_name, secret_key=self.secret_key, confirmed=False)
+        self.visit(AccountPages.two_factors_authentication_url)  # refresh page
+
+        # User resume its totp device setup
+        self.get_elem(self.unconfirmed_badges).click()
+
+        # User can see qr code to scan
+        self.get_elem(self.qr_code_image)
+
+        # User scan the QR code and input generated code
+        self.get_elem(self.totp_code_setup_input).send_keys(self.valid_token)
+        self.get_elem(self.confirm_button).click()
+
+        # User go back to 2fa index page and can see the auth app he just added
+        self.get_elem(self.cancel_button).click()
+        self.assertIn(device_name, self.get_elem_text(self.auth_app_divs))
+        self.assertNotIn('not confirmed', self.get_elem_text(self.auth_app_divs).lower(),
+                         'The totp device should be confirmed')
+
+        # User logout
+        self.visit(self.logout_url)
+
+        # Remove middleware mock, to restore check pages
+        self.middleware_patcher.stop()
+
+        # User login again, the 2fa check page appears.
+        self.log_user()
+
+        # Check page appears ask for totp
+        self.assertIn('authenticator app', self.get_elem_text(self.check_pages_device_label).lower())
+
+        # No alternative 2FA are shown
+        with self.assertRaises(NoSuchElementException):
+            self.get_elem(self.check_pages_alternatives_list)
+
+        # User can complete login using a valid 2FA code
+        self.get_elem(self.check_pages_code_input).send_keys(self.valid_token)
+        self.get_elem(self.confirm_button).click()
+        self.assertIn('home', self.head_title)
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_rename_auth_app(self):
+        # User has already add an unconfirmed auth app
+        old_device_name = 'Nokia 3310'
+        setup_2fa_totp_device(self.user, old_device_name)
+        self.visit(AccountPages.two_factors_authentication_url)  # refresh page
+
+        # User rename existing emergency code
+        new_device_name = 'My precious yPhone xD'
+        self.rename_auth_app(new_name=new_device_name)
+
+        # User see the set name have been updated in the device list
+        self.assertNotIn(old_device_name, self.get_elem_text(self.auth_app_divs))
+        self.assertIn(new_device_name, self.get_elem_text(self.auth_app_divs))
+
+        # User logout
+        self.visit(self.logout_url)
+
+        # Remove middleware mock, to restore check pages
+        self.middleware_patcher.stop()
+
+        # User login again, the 2fa check page appears.
+        self.log_user()
+
+        # The new device name is available in the select
+        self.assertEqual(new_device_name, self.get_elem_text(self.check_pages_device_input))
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_delete_auth_app(self):
+        # User has already add an unconfirmed auth app
+        setup_2fa_totp_device(self.user)
+        self.visit(AccountPages.two_factors_authentication_url)  # refresh page
+
+        # User delete existing emergency code
+        self.delete_auth_app()
+
+        # User see the set have been remove from the device list
+        with self.assertRaises(NoSuchElementException):
+            self.get_elem(self.auth_app_divs)
+
+        # User logout
+        self.visit(self.logout_url)
+
+        # Remove middleware mock, to restore check pages
+        self.middleware_patcher.stop()
 
         # When user login again there is no 2FA check page as there is no 2fa devices set
         self.log_user()
