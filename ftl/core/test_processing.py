@@ -4,7 +4,6 @@
 from concurrent.futures import wait as wait_futures
 from unittest.mock import Mock, patch
 
-import langid
 from django.test import TestCase
 from langid.langid import LanguageIdentifier
 from tika import parser
@@ -15,6 +14,7 @@ from core.processing.ftl_processing import FTLDocumentProcessing, FTLDocProcessi
 from core.processing.proc_lang import FTLLangDetectorLangId
 from core.processing.proc_pgsql_tsvector import FTLSearchEnginePgSQLTSVector, SEARCH_VECTOR
 from core.processing.proc_tika import FTLTextExtractionTika
+from core.signals import pre_ftl_processing
 from ftl.settings import DEFAULT_FILE_STORAGE
 
 
@@ -120,6 +120,13 @@ class DocumentProcessingTests(TestCase):
         self.assertIn(mocked_plugin_1.__class__.__name__, error_logs.output[0])
         self.assertNotIn(mocked_plugin_2.__class__.__name__, error_logs.output[1])
         self.assertIn(mocked_plugin_3.__class__.__name__, error_logs.output[1])
+
+    @patch.object(pre_ftl_processing, 'send')
+    def test_process_signal_sent(self, mocked_signal):
+        doc = Mock()
+        processing = self.processing.apply_processing(doc)
+        wait_futures([processing], timeout=5)
+        mocked_signal.assert_called_once_with(sender=ProcTest, document=doc)
 
 
 class ProcLangTests(TestCase):

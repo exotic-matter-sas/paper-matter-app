@@ -6,6 +6,7 @@ from concurrent.futures.thread import ThreadPoolExecutor
 from pydoc import locate
 
 from core.errors import PluginUnsupportedStorage
+from core.signals import pre_ftl_processing
 from ftl.settings import DEFAULT_FILE_STORAGE
 
 logger = logging.getLogger(__name__)
@@ -44,6 +45,7 @@ class FTLDocumentProcessing:
         for plugin in self.plugins:
             try:
                 logger.debug(f'Executing plugin {plugin.__class__.__name__} on {ftl_doc.pid}')
+                pre_ftl_processing.send(sender=plugin.__class__, document=ftl_doc)
                 plugin.process(ftl_doc, plugins_all or ".".join(
                     [plugin.__class__.__module__, plugin.__class__.__qualname__]) in plugins_forced)
             except Exception:
