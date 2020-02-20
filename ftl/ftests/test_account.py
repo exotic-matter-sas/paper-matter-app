@@ -6,6 +6,7 @@ from unittest import skipIf
 from unittest.mock import patch, Mock
 
 from django.core import mail
+from django.http import HttpResponse
 from django_otp.middleware import OTPMiddleware
 from django_otp.oath import TOTP
 from selenium.common.exceptions import NoSuchElementException
@@ -15,7 +16,8 @@ from ftests.pages.base_page import NODE_SERVER_RUNNING
 from ftests.pages.user_login_page import LoginPage
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_2fa_totp_device, \
-    setup_2fa_static_device
+    setup_2fa_static_device, setup_2fa_fido2_device
+from ftl.otp_plugins.otp_ftl import views_fido2
 from ftl.settings import DEV_MODE
 
 
@@ -29,8 +31,11 @@ def mocked_totp_time_setter(self, value):
     self._time = TotpDevice2FATests.secret_time
 
 
-totp_time_setter_mock = Mock(wraps=TOTP.time.fset, side_effect=mocked_totp_time_setter)
-totp_time_property_mock = TOTP.time.setter(totp_time_setter_mock)
+# These mocks need to be defined before Django (or test?) start
+totp_time_setter = Mock(wraps=TOTP.time.fset)
+totp_time_property = TOTP.time.setter(totp_time_setter)
+mocked_fido2_api_register_begin = Mock(wraps=views_fido2.fido2_api_register_begin)
+views_fido2.fido2_api_register_begin = mocked_fido2_api_register_begin
 
 
 class BasicAccountPagesTests(LoginPage, AccountPages):
@@ -148,7 +153,7 @@ class StaticDevice2FATests(LoginPage, AccountPages):
         self.assertIn(set_name, self.get_elem_text(self.emergency_codes_divs))
 
         # User logout
-        self.visit(self.logout_url)
+        self.get_elem(self.logout_button).click()
 
         # Remove middleware mock, to restore check pages
         self.middleware_patcher.stop()
@@ -180,7 +185,7 @@ class StaticDevice2FATests(LoginPage, AccountPages):
         self.assertIn(new_set_name, self.get_elem_text(self.emergency_codes_divs))
 
         # User logout
-        self.visit(self.logout_url)
+        self.get_elem(self.logout_button).click()
 
         # Remove middleware mock, to restore check pages
         self.middleware_patcher.stop()
@@ -208,7 +213,7 @@ class StaticDevice2FATests(LoginPage, AccountPages):
             self.get_elem(self.emergency_codes_divs)
 
         # User logout
-        self.visit(self.logout_url)
+        self.get_elem(self.logout_button).click()
 
         # Remove middleware mock, to restore check pages
         self.middleware_patcher.stop()
@@ -235,6 +240,7 @@ class TotpDevice2FATests(LoginPage, AccountPages):
         self.middleware_patcher = patch.object(OTPMiddleware, '_verify_user', mocked_verify_user)
         self.middleware_patcher.start()
         self.addCleanup(patch.stopall)  # ensure mock is remove after each test, even if the test crash
+        self.addCleanup(totp_time_setter.reset_mock, side_effect=True)
 
         self.visit(LoginPage.url)
         self.log_user()
@@ -242,7 +248,7 @@ class TotpDevice2FATests(LoginPage, AccountPages):
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_add_auth_app_unconfirmed(self):
-        # User add a auth app
+        # User add an auth app
         device_name = 'My precious yPhone xD'
         self.add_auth_app(device_name)
 
@@ -256,7 +262,7 @@ class TotpDevice2FATests(LoginPage, AccountPages):
         self.assertIn('not confirmed', self.get_elem_text(self.auth_app_divs).lower())
 
         # User logout
-        self.visit(self.logout_url)
+        self.get_elem(self.logout_button).click()
 
         # Remove middleware mock, to restore check pages
         self.middleware_patcher.stop()
@@ -267,9 +273,12 @@ class TotpDevice2FATests(LoginPage, AccountPages):
         # There is no 2FA check as totp device setup isn't complete
         self.assertIn('home', self.head_title)
 
-    @patch.object(TOTP, 'time', totp_time_property_mock)
+    @patch.object(TOTP, 'time', totp_time_property)
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_add_auth_app_confirmed(self):
+        # Make TOTP.time setter set a hard coded secret_time to always be able to confirm app with the same valid_token
+        totp_time_setter.side_effect = mocked_totp_time_setter
+
         # User has already add an unconfirmed auth app
         device_name = 'My precious yPhone xD'
         setup_2fa_totp_device(self.user, device_name, secret_key=self.secret_key, confirmed=False)
@@ -292,7 +301,7 @@ class TotpDevice2FATests(LoginPage, AccountPages):
                          'The totp device should be confirmed')
 
         # User logout
-        self.visit(self.logout_url)
+        self.get_elem(self.logout_button).click()
 
         # Remove middleware mock, to restore check pages
         self.middleware_patcher.stop()
@@ -328,7 +337,7 @@ class TotpDevice2FATests(LoginPage, AccountPages):
         self.assertIn(new_device_name, self.get_elem_text(self.auth_app_divs))
 
         # User logout
-        self.visit(self.logout_url)
+        self.get_elem(self.logout_button).click()
 
         # Remove middleware mock, to restore check pages
         self.middleware_patcher.stop()
@@ -353,7 +362,123 @@ class TotpDevice2FATests(LoginPage, AccountPages):
             self.get_elem(self.auth_app_divs)
 
         # User logout
-        self.visit(self.logout_url)
+        self.get_elem(self.logout_button).click()
+
+        # Remove middleware mock, to restore check pages
+        self.middleware_patcher.stop()
+
+        # When user login again there is no 2FA check page as there is no 2fa devices set
+        self.log_user()
+        self.assertIn('home', self.head_title)
+
+
+class Fido2Device2FATests(LoginPage, AccountPages):
+    def setUp(self, **kwargs):
+        # first org, admin, user are already created, user is already logged to 2FA account page
+        super().setUp()
+        self.org = setup_org()
+        setup_admin(self.org)
+        self.user = setup_user(self.org)
+        # mock OTPMiddleware._verify_user() to skip check page
+        self.middleware_patcher = patch.object(OTPMiddleware, '_verify_user', mocked_verify_user)
+        self.middleware_patcher.start()
+        self.addCleanup(patch.stopall)  # ensure mock is remove after each test, even if the test crash
+        self.addCleanup(mocked_fido2_api_register_begin.reset_mock, return_value=True)
+
+        self.visit(LoginPage.url)
+        self.log_user()
+        self.visit(AccountPages.two_factors_authentication_url)
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_add_security_key_fail_and_trigger_error(self):
+        # make fido2 api return a fake value for js code to fail quickly during device registration
+        mocked_fido2_api_register_begin.return_value = HttpResponse('error')
+
+        # User add a security key
+        key_name = 'O Key'
+        self.add_security_key(key_name)
+
+        # User should be prompted by browser to enter its key (can't be really tested)
+        self.assertEqual(1, mocked_fido2_api_register_begin.call_count)
+        self.assertIn('cbor-decode', self.get_elem_text(self.error_message))
+
+        # User have to go back to the list as an error occurred
+        self.get_elem(self.cancel_button).click()
+
+        # No device have been added to the list
+        with self.assertRaises(NoSuchElementException):
+            self.get_elem(self.security_key_divs)
+
+        # User logout
+        self.get_elem(self.logout_button).click()
+
+        # Remove middleware mock, to restore check pages
+        self.middleware_patcher.stop()
+
+        # User log again
+        self.log_user()
+
+        # There is no 2FA check as fido2 device setup have fail
+        self.assertIn('home', self.head_title)
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_security_key_added(self):
+        # User has already added a security key
+        key_name = 'O Key'
+        setup_2fa_fido2_device(self.user, name=key_name)
+        self.visit(AccountPages.two_factors_authentication_url)  # refresh page
+
+        # User can see the security key in the list
+        self.assertIn(key_name, self.get_elem_text(self.security_key_divs))
+
+        # User logout
+        self.get_elem(self.logout_button).click()
+
+        # Remove middleware mock, to restore check pages
+        self.middleware_patcher.stop()
+
+        # User login again, the 2fa check page appears.
+        self.log_user()
+
+        # Check page appears ask for fido2
+        self.assertIn('security key', self.get_elem_text(self.confirm_button).lower())
+
+        # No alternative 2FA are shown
+        with self.assertRaises(NoSuchElementException):
+            self.get_elem(self.check_pages_alternatives_list)
+
+        # User can complete login using a valid security key (can't be tested)
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_rename_security_key(self):
+        # User has already added a security key
+        old_key_name = 'MO Key'
+        setup_2fa_fido2_device(self.user, name=old_key_name)
+        self.visit(AccountPages.two_factors_authentication_url)  # refresh page
+
+        # User rename existing security key
+        new_key_name = 'O Key'
+        self.rename_security_key(new_name=new_key_name)
+
+        # User see the key name have been updated in the device list
+        self.assertNotIn(old_key_name, self.get_elem_text(self.security_key_divs))
+        self.assertIn(new_key_name, self.get_elem_text(self.security_key_divs))
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_delete_security_key(self):
+        # User has already added a security key
+        setup_2fa_fido2_device(self.user)
+        self.visit(AccountPages.two_factors_authentication_url)  # refresh page
+
+        # User delete existing emergency code
+        self.delete_security_key()
+
+        # User see the set have been remove from the device list
+        with self.assertRaises(NoSuchElementException):
+            self.get_elem(self.security_key_divs)
+
+        # User logout
+        self.get_elem(self.logout_button).click()
 
         # Remove middleware mock, to restore check pages
         self.middleware_patcher.stop()

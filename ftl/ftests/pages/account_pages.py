@@ -15,6 +15,8 @@ class AccountPages(BasePage):
 
     page_title = 'h3'
 
+    logout_button = 'a[href="/logout/"]'
+
     # Change email page
     new_email_input = '#email-update-form #id_email'
     submit_new_email_input = '#email-update-form [type="submit"]'
@@ -44,6 +46,7 @@ class AccountPages(BasePage):
     # fido2 device
     security_key_divs = '.fido2-device-item'
     add_security_key_button = '#add-security-key'
+    error_message = '#fido-form .alert-danger'
     rename_security_key_buttons = '.rename-security-key'
     delete_security_key_buttons = '.delete-security-key'
     # 2fa form
@@ -93,4 +96,18 @@ class AccountPages(BasePage):
 
     def delete_auth_app(self, set_index=0):
         self.get_elems(self.delete_auth_app_buttons)[set_index].click()
+        self.get_elem(self.confirm_button).click()
+
+    def add_security_key(self, key_name):
+        self.get_elem(self.add_security_key_button).click()
+        self.get_elem(self.device_name_input).send_keys(key_name)
+        self.get_elem(self.confirm_button).click()
+
+    def rename_security_key(self, new_name, set_index=0):
+        self.get_elems(self.rename_security_key_buttons)[set_index].click()
+        self.get_elem(self.device_name_input).send_keys(new_name)
+        self.get_elem(self.confirm_button).click()
+
+    def delete_security_key(self, set_index=0):
+        self.get_elems(self.delete_security_key_buttons)[set_index].click()
         self.get_elem(self.confirm_button).click()
