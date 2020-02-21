@@ -8,6 +8,7 @@ from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
 from django.utils.http import is_safe_url
 from django.views import View
+from django.views.generic import DeleteView
 from django_otp import devices_for_user
 from django_otp.decorators import otp_required
 from django_otp.plugins.otp_static.models import StaticDevice
@@ -93,3 +94,31 @@ class FTLBaseCheckView(LoginView):
     def form_valid(self, form):
         self.request.session.set_expiry(self.request.session.get('saved_expiration', settings.SESSION_COOKIE_AGE))
         return super().form_valid(form)
+
+
+class FTLBaseDeleteView(FTLUserContextDataMixin, DeleteView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        have_fido2 = Fido2Device.objects.filter(user=self.request.user, confirmed=True)
+        if self.model is Fido2Device:
+            have_fido2 = have_fido2.exclude(pk=self.object.pk)
+        have_fido2 = have_fido2.exists()
+
+        have_totp = TOTPDevice.objects.filter(user=self.request.user, confirmed=True)
+        if self.model is TOTPDevice:
+            have_totp = have_totp.exclude(pk=self.object.pk)
+        have_totp.exists()
+
+        context['last_otp'] = not have_fido2 and not have_totp
+        return context
+
+    def delete(self, request, *args, **kwargs):
+        delete = super().delete(request, *args, **kwargs)
+
+        if self.get_context_data()['last_otp']:
+            Fido2Device.objects.filter(user=self.request.user).delete()
+            TOTPDevice.objects.filter(user=self.request.user).delete()
+            StaticDevice.objects.filter(user=self.request.user).delete()
+
+        return delete
