@@ -368,6 +368,9 @@ class TotpDevice2FATests(LoginPage, AccountPages):
         self.get_elem(self.totp_code_setup_input).send_keys(self.valid_token)
         self.get_elem(self.confirm_button).click()
 
+        # User is invited to add a emergency code as backup
+        self.assertIn('emergency codes', self.get_elem_text(self.device_name_label).lower())
+
         # User go back to 2fa index page and can see the auth app he just added
         self.get_elem(self.cancel_button).click()
         self.assertIn(device_name, self.get_elem_text(self.auth_app_divs))
@@ -393,6 +396,31 @@ class TotpDevice2FATests(LoginPage, AccountPages):
         # User can complete login using a valid 2FA code
         self.enter_2fa_code(self.valid_token)
         self.assertIn('home', self.head_title)
+
+    @patch.object(TOTP, 'time', totp_time_property)
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_add_auth_app_with_emergency_code_already_set(self):
+        # Make TOTP.time setter set a hard coded secret_time to always be able to confirm app with the same valid_token
+        totp_time_setter.side_effect = mocked_totp_time_setter
+        setup_2fa_static_device(self.user) # emergency code already set
+
+        # User has already add an unconfirmed auth app
+        device_name = 'My precious yPhone xD'
+        setup_2fa_totp_device(self.user, device_name, secret_key=self.secret_key, confirmed=False)
+        self.visit(AccountPages.two_factors_authentication_url)  # refresh page
+
+        # User resume its totp device setup
+        self.get_elem(self.unconfirmed_badges).click()
+
+        # User can see qr code to scan
+        self.get_elem(self.qr_code_image)
+
+        # User scan the QR code and input generated code
+        self.get_elem(self.totp_code_setup_input).send_keys(self.valid_token)
+        self.get_elem(self.confirm_button).click()
+
+        # User has already a "emergency codes set" set, so he get redirected to 2FA devices list
+        self.wait_for_elem_to_show(self.auth_app_divs)
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_rename_auth_app(self):

@@ -51,6 +51,7 @@ class AccountPages(BasePage):
     rename_security_key_buttons = '.rename-security-key'
     delete_security_key_buttons = '.delete-security-key'
     # 2fa forms
+    device_name_label = 'label[for="id_name"]'
     device_name_input = '#id_name'
     cancel_button = '.btn-secondary, .btn-link'
     confirm_button = '.btn-primary, .btn-danger'
