@@ -13,6 +13,7 @@ from selenium.common.exceptions import NoSuchElementException
 
 from ftests.pages.account_pages import AccountPages
 from ftests.pages.base_page import NODE_SERVER_RUNNING
+from ftests.pages.home_page import HomePage
 from ftests.pages.user_login_page import LoginPage
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_2fa_totp_device, \
@@ -145,7 +146,7 @@ class StaticDevice2FATests(LoginPage, AccountPages):
         self.add_emergency_codes_set(set_name)
 
         # User can see and print its codes from the confirmation page
-        self.assertEqual(10, len(self.get_elems_text(self.created_codes_list)))
+        self.assertEqual(10, len(self.get_elems_text(self.emergency_codes_lists)))
         self.assertIn('print', self.get_elem_text(self.print_button).lower())
 
         # User go back to 2fa index page and can see the set he just added
@@ -168,6 +169,79 @@ class StaticDevice2FATests(LoginPage, AccountPages):
         # User click and emergency code alternative and corresponding check page is displayed
         self.get_elem(self.check_pages_alternatives_list).click()
         self.assertIn('emergency codes', self.get_elem_text(self.check_pages_device_label).lower())
+
+    def test_use_emergency_code(self):
+        # User already added an emergency code set and used 9 of the 10 codes of the set
+        # User is logged out
+        code_left = self.codes_list[0]
+        first_set_name = 'First set'
+        setup_2fa_static_device(self.user, first_set_name, [code_left])
+        self.visit(self.logout_url)
+        self.middleware_patcher.stop()  # Remove middleware mock, to restore check pages
+
+        # User login to its account using the last emergency code
+        self.log_user()
+        self.get_elem(self.check_pages_alternatives_list).click()
+        self.enter_2fa_code(code_left)
+
+        # User see red badges next to its email, inside dropdown menu, and next to 2FA menu
+        # He click on them to know what's wrong
+        self.get_elem(self.no_code_left_badges).click()
+        self.get_elems(self.no_code_left_badges)[1].click()
+        self.get_elem(self.no_code_left_badges).click()
+
+        # He can see that all the codes of the set have been used, too bad
+        self.assertIn('invalid', self.get_elem_text(self.emergency_codes_divs).lower())
+        with self.assertRaises(NoSuchElementException):
+            self.get_elem(self.emergency_codes_lists)
+
+        # User logout
+        self.visit(self.logout_url)
+
+        # On next login and 2FA check, emergency code could no more be used as the only available set is empty
+        # TODO dont display empty code set as an alternative ?
+        self.log_user()
+        self.get_elem(self.check_pages_alternatives_list).click()
+        self.assertIn('error', self.get_elem_text('body').lower())
+
+        # User cancel check
+        self.get_elem(self.cancel_button).click()
+
+        # If totp device is removed and user log again there is no check made as it only remain an empty emergency codes
+        # set
+        self.required_totp_device.delete()
+        # TODO currently a check is made and user is stuck out of its account because he can't give a code of an empty
+        #  set
+        # self.log_user()
+        # self.assertIn('home', self.head_title)
+        #
+        # # User cancel check
+        # self.get_elem(self.cancel_button).click()
+
+        # If another set is added only the new set appears in the codes set select
+        second_set_name = 'Second set'
+        setup_2fa_static_device(self.user, second_set_name, self.codes_list)
+
+        self.log_user()
+        self.assertNotIn(first_set_name, self.get_elems_text(self.check_pages_device_select_options))
+        self.assertIn(second_set_name, self.get_elems_text(self.check_pages_device_select_options))
+
+        # User complete login using a code of the new set and finally remove the old empty code set (at least!)
+        used_code = self.codes_list[3]
+        self.enter_2fa_code(used_code)
+
+        self.visit(self.two_factors_authentication_url)
+        self.delete_emergency_codes_set()
+
+        # The red badges are no more displayed on account page or home page
+        with self.assertRaises(NoSuchElementException):
+            self.get_elem(self.no_code_left_badges)
+
+        self.visit(HomePage.url)
+        self.get_elem(HomePage.profile_name).click()
+
+        with self.assertRaises(NoSuchElementException):
+            self.get_elem(self.no_code_left_badges)
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_rename_emergency_code_set(self):
@@ -317,8 +391,7 @@ class TotpDevice2FATests(LoginPage, AccountPages):
             self.get_elem(self.check_pages_alternatives_list)
 
         # User can complete login using a valid 2FA code
-        self.get_elem(self.check_pages_code_input).send_keys(self.valid_token)
-        self.get_elem(self.confirm_button).click()
+        self.enter_2fa_code(self.valid_token)
         self.assertIn('home', self.head_title)
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")

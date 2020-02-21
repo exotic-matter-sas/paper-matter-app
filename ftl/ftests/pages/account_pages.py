@@ -33,8 +33,9 @@ class AccountPages(BasePage):
     add_emergency_codes_button = '#add-emergency-codes'
     rename_emergency_codes_buttons = '.rename-emergency-codes'
     delete_emergency_codes_buttons = '.delete-emergency-codes'
-    created_codes_list = '#emergency-code-to-print li'
+    emergency_codes_lists = '#emergency-code-to-print li, .static-device-item code'
     print_button = 'a[onclick="print()"]'
+    no_code_left_badges = '.otp-warning'
     # totp device
     auth_app_divs = '.totp-device-item'
     add_auth_app_button = '#add-auth-app'
@@ -49,15 +50,17 @@ class AccountPages(BasePage):
     error_message = '#fido-form .alert-danger'
     rename_security_key_buttons = '.rename-security-key'
     delete_security_key_buttons = '.delete-security-key'
-    # 2fa form
+    # 2fa forms
     device_name_input = '#id_name'
-    cancel_button = '.btn-secondary'
+    cancel_button = '.btn-secondary, .btn-link'
     confirm_button = '.btn-primary, .btn-danger'
     # 2fa check pages
     check_pages_title = 'h1'
     check_pages_device_label = 'form#user-form label'
     check_pages_device_input = '#id_otp_device'
+    check_pages_device_select_options = '#id_otp_device option'
     check_pages_code_input = '#id_otp_token'
+    # id_otp_device option
     check_pages_alternatives_list = '#alternatives-list li'
 
     def update_email(self, new_email):
@@ -110,4 +113,8 @@ class AccountPages(BasePage):
 
     def delete_security_key(self, set_index=0):
         self.get_elems(self.delete_security_key_buttons)[set_index].click()
+        self.get_elem(self.confirm_button).click()
+
+    def enter_2fa_code(self, code):
+        self.get_elem(self.check_pages_code_input).send_keys(code)
         self.get_elem(self.confirm_button).click()
