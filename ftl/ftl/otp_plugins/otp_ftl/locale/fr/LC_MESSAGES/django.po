@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-14 15:40+0100\n"
+"POT-Creation-Date: 2020-02-21 16:59+0000\n"
 "PO-Revision-Date: 2020-02-14 15:51+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -70,12 +70,28 @@ msgstr ""
 "\n"
 "Êtes-vous sûr de vouloir supprimer<br/> « %(name)s » ?"
 
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_confirm_delete.html:14
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_update.html:15
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_form.html:57
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\staticdevice_form.html:26
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\totpdevice_detail.html:30
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\totpdevice_form.html:32
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_confirm_delete.html:16
+msgid ""
+"\n"
+"                        This is the last 2FA device you have. Deleting it "
+"will disable 2FA on your account (not\n"
+"                        recommended).\n"
+"                    "
+msgstr ""
+"\n"
+"Vous allez supprimer le dernier appareil d'authentification, cela aura pour "
+"conséquence de désactiver l'authentification à 2 facteurs sur votre compte (déconseillé).\n"
+"                                    "
+
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_confirm_delete.html:24
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_update.html:15
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_check.html:36
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_form.html:57
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_check.html:46
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_form.html:26
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_check.html:46
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_detail.html:35
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_form.html:32
 msgid "Cancel"
 msgstr "Annuler"
 
@@ -159,21 +175,7 @@ msgstr ""
 "besoin de votre mot de passe habituel et du code de validation qui sera "
 "affiché sur votre téléphone (ou de votre clé de sécurité)."
 
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_list.html:128
-#, python-format
-msgid ""
-"\n"
-"                    Please use <a href=\"%(the_url)s\" class=\"alert-link"
-"\">the import app</a> before enabling 2FA (the\n"
-"                    app doesn't support 2FA yet).\n"
-"                "
-msgstr ""
-"\n"
-"Penser à utiliser <a href=\"%(the_url)s\" class=\"alert-link\">le logiciel "
-"d'import</a> avant d'activer l'authentification à deux facteurs "
-"(l'application ne le supporte pas encore)."
-
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\device_list.html:135
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/device_list.html:140
 msgid "There is no two factor device registered with this account."
 msgstr ""
 "Il n'y a aucun appareil d'authentification à deux facteurs configuré sur "
@@ -248,13 +250,7 @@ msgstr "Utiliser un code affiché sur votre app d'authentification"
 msgid "Use a one time emergency code"
 msgstr "Utiliser un code à usage unique"
 
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_check.html:47
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\staticdevice_check.html:57
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\totpdevice_check.html:57
-msgid "Log out"
-msgstr ""
-
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_detail.html:5
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_detail.html:5
 msgid "Your security key has been added!"
 msgstr "Votre clé de sécurité a été ajoutée !"
 
@@ -376,8 +372,9 @@ msgstr "code erreur : "
 msgid "Next"
 msgstr "Suivant"
 
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\staticdevice_check.html:35
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\totpdevice_check.html:35
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/staticdevice_check.html:35
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_check.html:35
+#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/totpdevice_detail.html:32
 msgid "Incorrect code"
 msgstr "Code incorrect"
 
