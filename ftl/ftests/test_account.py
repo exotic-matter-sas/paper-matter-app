@@ -421,7 +421,7 @@ class TotpDevice2FATests(LoginPage, AccountPages):
     def test_add_auth_app_with_emergency_code_already_set(self):
         # Make TOTP.time setter set a hard coded secret_time to always be able to confirm app with the same valid_token
         totp_time_setter.side_effect = mocked_totp_time_setter
-        setup_2fa_static_device(self.user) # emergency code already set
+        setup_2fa_static_device(self.user)  # emergency code already set
 
         # User has already add an unconfirmed auth app and resume its totp device setup
         device_name = 'My precious yPhone xD'
