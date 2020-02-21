@@ -464,11 +464,11 @@ class TotpDevice2FATests(LoginPage, AccountPages):
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_delete_auth_app(self):
-        # User has already add an unconfirmed auth app
+        # User has already added an auth app
         setup_2fa_totp_device(self.user)
         self.visit(AccountPages.two_factors_authentication_url)  # refresh page
 
-        # User delete existing emergency code
+        # User delete existing auth app
         self.delete_auth_app()
 
         # User see the set have been remove from the device list
@@ -484,6 +484,20 @@ class TotpDevice2FATests(LoginPage, AccountPages):
         # When user login again there is no 2FA check page as there is no 2fa devices set
         self.log_user()
         self.assertIn('home', self.head_title)
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_delete_auth_app_with_emergency_code(self):
+        # User has already added an auth app and a emergency codes set
+        setup_2fa_totp_device(self.user)
+        setup_2fa_static_device(self.user)
+        self.visit(AccountPages.two_factors_authentication_url)  # refresh page
+
+        # User delete existing auth app
+        self.get_elems(self.delete_auth_app_buttons)[0].click()
+
+        # A warning message appears to inform user 2FA will be completely disable as emergency code are only available
+        # when another 2fa device type is set
+        self.assertIn('last 2FA device', self.get_elem_text(self.delete_warning))
 
 
 class Fido2Device2FATests(LoginPage, AccountPages):
@@ -584,7 +598,7 @@ class Fido2Device2FATests(LoginPage, AccountPages):
         setup_2fa_fido2_device(self.user)
         self.visit(AccountPages.two_factors_authentication_url)  # refresh page
 
-        # User delete existing emergency code
+        # User delete existing security key
         self.delete_security_key()
 
         # User see the set have been remove from the device list
@@ -600,3 +614,17 @@ class Fido2Device2FATests(LoginPage, AccountPages):
         # When user login again there is no 2FA check page as there is no 2fa devices set
         self.log_user()
         self.assertIn('home', self.head_title)
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_delete_security_key_with_emergency_code(self):
+        # User has already added a security key and a emergency codes set
+        setup_2fa_fido2_device(self.user)
+        setup_2fa_static_device(self.user)
+        self.visit(AccountPages.two_factors_authentication_url)  # refresh page
+
+        # User delete existing security key
+        self.get_elems(self.delete_security_key_buttons)[0].click()
+
+        # A warning message appears to inform user 2FA will be completely disable as emergency code are only available
+        # when another 2fa device type is set
+        self.assertIn('last 2FA device', self.get_elem_text(self.delete_warning))

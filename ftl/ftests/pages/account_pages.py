@@ -54,6 +54,7 @@ class AccountPages(BasePage):
     error_message = '.alert-danger'
     cancel_button = '.btn-secondary, .btn-link'
     confirm_button = '.btn-primary, .btn-danger'
+    delete_warning = '.text-danger'
     # 2fa check pages
     check_pages_title = 'h1'
     check_pages_device_label = 'form#user-form label'

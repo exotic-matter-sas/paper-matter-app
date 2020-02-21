@@ -10,6 +10,7 @@ from django.core import mail
 from django.db.models import Func, F
 from django_otp.middleware import OTPMiddleware
 from django_otp.oath import TOTP
+from selenium.common.exceptions import NoSuchElementException
 
 from core import views
 from core.models import FTLDocument
@@ -259,3 +260,12 @@ class UserSetupAll2FA(LoginPage, AccountPages):
                 self.get_elems(self.check_pages_alternatives_list)[i].click()
         self.enter_2fa_code(TotpDevice2FATests.valid_token)
         self.assertIn('home', self.head_title)
+
+        # user delete its security key 2FA
+        self.visit(self.two_factors_authentication_url)
+        # User delete existing security key
+        self.get_elems(self.delete_security_key_buttons)[0].click()
+
+        # There is no special warning about it, as there is auth app 2fa left
+        with self.assertRaises(NoSuchElementException):
+            self.get_elem(self.delete_warning)
