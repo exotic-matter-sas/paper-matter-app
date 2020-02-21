@@ -40,19 +40,18 @@ class AccountPages(BasePage):
     auth_app_divs = '.totp-device-item'
     add_auth_app_button = '#add-auth-app'
     unconfirmed_badges = '.totp-device-item a.badge-danger'
-    totp_code_setup_input = '#id_otp_token'
     rename_auth_app_buttons = '.rename-auth-app'
     delete_auth_app_buttons = '.delete-auth-app'
     qr_code_image = 'img[src*="qrcode"]'
     # fido2 device
     security_key_divs = '.fido2-device-item'
     add_security_key_button = '#add-security-key'
-    error_message = '#fido-form .alert-danger'
     rename_security_key_buttons = '.rename-security-key'
     delete_security_key_buttons = '.delete-security-key'
     # 2fa forms
     device_name_label = 'label[for="id_name"]'
     device_name_input = '#id_name'
+    error_message = '.alert-danger'
     cancel_button = '.btn-secondary, .btn-link'
     confirm_button = '.btn-primary, .btn-danger'
     # 2fa check pages
