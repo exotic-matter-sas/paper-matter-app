@@ -199,7 +199,6 @@ class StaticDevice2FATests(LoginPage, AccountPages):
         self.visit(self.logout_url)
 
         # On next login and 2FA check, emergency code could no more be used as the only available set is empty
-        # TODO dont display empty code set as an alternative ?
         self.log_user()
         self.get_elem(self.check_pages_alternatives_list).click()
         self.assertIn('error', self.get_elem_text('body').lower())
@@ -207,22 +206,12 @@ class StaticDevice2FATests(LoginPage, AccountPages):
         # User cancel check
         self.get_elem(self.cancel_button).click()
 
-        # If totp device is removed and user log again there is no check made as it only remain an empty emergency codes
-        # set
-        self.required_totp_device.delete()
-        # TODO currently a check is made and user is stuck out of its account because he can't give a code of an empty
-        #  set
-        # self.log_user()
-        # self.assertIn('home', self.head_title)
-        #
-        # # User cancel check
-        # self.get_elem(self.cancel_button).click()
-
         # If another set is added only the new set appears in the codes set select
         second_set_name = 'Second set'
         setup_2fa_static_device(self.user, second_set_name, self.codes_list)
 
         self.log_user()
+        self.get_elem(self.check_pages_alternatives_list).click()
         self.assertNotIn(first_set_name, self.get_elems_text(self.check_pages_device_select_options))
         self.assertIn(second_set_name, self.get_elems_text(self.check_pages_device_select_options))
 
@@ -242,6 +231,7 @@ class StaticDevice2FATests(LoginPage, AccountPages):
 
         with self.assertRaises(NoSuchElementException):
             self.get_elem(self.no_code_left_badges)
+
 
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_rename_emergency_code_set(self):
@@ -280,7 +270,12 @@ class StaticDevice2FATests(LoginPage, AccountPages):
         self.visit(self.two_factors_authentication_url)  # refresh page
 
         # User delete existing emergency code
-        self.delete_emergency_codes_set()
+        self.get_elems(self.delete_emergency_codes_buttons)[0].click()
+
+        # There is no special warning about it, as there there is auth app 2fa left
+        with self.assertRaises(NoSuchElementException):
+            self.get_elem(self.delete_warning)
+        self.get_elem(self.confirm_button).click()
 
         # User see the set have been remove from the device list
         with self.assertRaises(NoSuchElementException):

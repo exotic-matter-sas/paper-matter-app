@@ -62,7 +62,7 @@ class AccountPages(BasePage):
     check_pages_device_select_options = '#id_otp_device option'
     check_pages_code_input = '#id_otp_token'
     # id_otp_device option
-    check_pages_alternatives_list = '#alternatives-list li'
+    check_pages_alternatives_list = '#alternatives-list li a'
 
     def update_email(self, new_email):
         self.get_elem(self.new_email_input).send_keys(new_email)
