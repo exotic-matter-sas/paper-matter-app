@@ -11,7 +11,7 @@ from django.views import View
 from django.views.generic import DeleteView
 from django_otp import devices_for_user
 from django_otp.decorators import otp_required
-from django_otp.plugins.otp_static.models import StaticDevice
+from django_otp.plugins.otp_static.models import StaticDevice, StaticToken
 from django_otp.plugins.otp_totp.models import TOTPDevice
 
 from core.ftl_mixins import FTLUserContextDataMixin
@@ -65,7 +65,7 @@ class FTLBaseCheckView(LoginView):
         context = super().get_context_data(**kwargs)
         context['have_fido2'] = Fido2Device.objects.filter(user=self.request.user, confirmed=True).exists()
         context['have_totp'] = TOTPDevice.objects.filter(user=self.request.user, confirmed=True).exists()
-        context['have_static'] = StaticDevice.objects.filter(user=self.request.user, confirmed=True).exists()
+        context['have_static'] = StaticToken.objects.filter(device__user=self.request.user).exists()
         return context
 
     def get_success_url(self):

@@ -198,10 +198,10 @@ class StaticDevice2FATests(LoginPage, AccountPages):
         # User logout
         self.visit(self.logout_url)
 
-        # On next login and 2FA check, emergency code could no more be used as the only available set is empty
+        # On next login and 2FA check, emergency code are no more available as the only available set is empty
         self.log_user()
-        self.get_elem(self.check_pages_alternatives_list).click()
-        self.assertIn('error', self.get_elem_text('body').lower())
+        with self.assertRaises(NoSuchElementException):
+            self.get_elem(self.check_pages_alternatives_list)
 
         # User cancel check
         self.get_elem(self.cancel_button).click()
