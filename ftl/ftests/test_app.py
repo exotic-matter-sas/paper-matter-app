@@ -512,7 +512,7 @@ class SearchTests(LoginPage, HomePage, DocumentViewerModal):
         self.get_elem(self.folders_list_buttons).click()
         self.wait_folder_list_loaded()
         self.search_documents('this text doesn\'t exist')
-        time.sleep(1)  # Force additional wait to make test pass on CI
+        self.wait_for_elem_to_disappear(self.document_list_loader)
 
         with self.assertRaises(NoSuchElementException, msg='No document should be found by this search query'):
             self.get_elems(self.documents_thumbnails)

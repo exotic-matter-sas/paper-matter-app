@@ -81,8 +81,10 @@ class AccountPages(BasePage):
 
     def rename_emergency_codes_set(self, new_name, set_index=0):
         self.get_elems(self.rename_emergency_codes_buttons)[set_index].click()
+        self.wait_for_elem_to_disappear(self.rename_emergency_codes_buttons)
         self.get_elem(self.device_name_input).send_keys(new_name)
         self.get_elem(self.confirm_button).click()
+        self.wait_for_elem_to_disappear(self.device_name_input)
 
     def delete_emergency_codes_set(self, set_index=0):
         self.get_elems(self.delete_emergency_codes_buttons)[set_index].click()
@@ -95,8 +97,10 @@ class AccountPages(BasePage):
 
     def rename_auth_app(self, new_name, set_index=0):
         self.get_elems(self.rename_auth_app_buttons)[set_index].click()
+        self.wait_for_elem_to_disappear(self.rename_auth_app_buttons)
         self.get_elem(self.device_name_input).send_keys(new_name)
         self.get_elem(self.confirm_button).click()
+        self.wait_for_elem_to_disappear(self.device_name_input)
 
     def delete_auth_app(self, set_index=0):
         self.get_elems(self.delete_auth_app_buttons)[set_index].click()
@@ -109,8 +113,10 @@ class AccountPages(BasePage):
 
     def rename_security_key(self, new_name, set_index=0):
         self.get_elems(self.rename_security_key_buttons)[set_index].click()
+        self.wait_for_elem_to_disappear(self.rename_security_key_buttons)
         self.get_elem(self.device_name_input).send_keys(new_name)
         self.get_elem(self.confirm_button).click()
+        self.wait_for_elem_to_disappear(self.device_name_input)
 
     def delete_security_key(self, set_index=0):
         self.get_elems(self.delete_security_key_buttons)[set_index].click()

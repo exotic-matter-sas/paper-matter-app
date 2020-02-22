@@ -250,12 +250,14 @@ class StaticDevice2FATests(LoginPage, AccountPages):
 
         # User logout
         self.get_elem(self.logout_button).click()
+        self.wait_for_elem_to_disappear(self.logout_button)
 
         # Remove middleware mock, to restore check pages
         self.middleware_patcher.stop()
 
         # User login again, the 2fa check page appears.
         self.log_user()
+        self.wait_for_elem_to_disappear(self.login_submit_input)
 
         # Check page appears ask for totp, user click on emergency code alternative
         self.get_elem(self.check_pages_alternatives_list).click()
@@ -447,12 +449,14 @@ class TotpDevice2FATests(LoginPage, AccountPages):
 
         # User logout
         self.get_elem(self.logout_button).click()
+        self.wait_for_elem_to_disappear(self.logout_button)
 
         # Remove middleware mock, to restore check pages
         self.middleware_patcher.stop()
 
         # User login again, the 2fa check page appears.
         self.log_user()
+        self.wait_for_elem_to_disappear(self.login_submit_input)
 
         # The new device name is available in the select
         self.assertEqual(new_device_name, self.get_elem_text(self.check_pages_device_input))
@@ -522,6 +526,7 @@ class Fido2Device2FATests(LoginPage, AccountPages):
         self.add_security_key(key_name)
 
         # User should be prompted by browser to enter its key (can't be really tested)
+        self.wait_for_elem_to_show(self.error_message)
         self.assertEqual(1, mocked_fido2_api_register_begin.call_count)
         self.assertIn('cbor-decode', self.get_elem_text(self.error_message))
 
@@ -534,12 +539,14 @@ class Fido2Device2FATests(LoginPage, AccountPages):
 
         # User logout
         self.get_elem(self.logout_button).click()
+        self.wait_for_elem_to_disappear(self.logout_button)
 
         # Remove middleware mock, to restore check pages
         self.middleware_patcher.stop()
 
         # User log again
         self.log_user()
+        self.wait_for_elem_to_disappear(self.login_submit_input)
 
         # There is no 2FA check as fido2 device setup have fail
         self.assertIn('home', self.head_title)
@@ -584,6 +591,7 @@ class Fido2Device2FATests(LoginPage, AccountPages):
         self.rename_security_key(new_name=new_key_name)
 
         # User see the key name have been updated in the device list
+        self.wait_for_elem_to_show(self.security_key_divs)
         self.assertNotIn(old_key_name, self.get_elem_text(self.security_key_divs))
         self.assertIn(new_key_name, self.get_elem_text(self.security_key_divs))
 
