@@ -492,7 +492,7 @@ class SearchTests(LoginPage, HomePage, DocumentViewerModal):
 
         # User search something that isn't present in his document
         self.search_documents('this text doesn\'t exist')
-        time.sleep(1)  # Force additional wait to make test pass on CI
+        self.wait_documents_list_loaded()
 
         with self.assertRaises(NoSuchElementException, msg='No document should be found by this search query'):
             self.get_elems(self.documents_thumbnails)
