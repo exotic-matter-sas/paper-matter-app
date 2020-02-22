@@ -32,9 +32,13 @@
         <p>{% trans "Error: you can't use a security key on this account." %}</p>
     {% endif %}
 
+    <div class="text-center">
+        <a href="{% url 'logout' %}" class="btn-sm btn-link">{% trans 'Cancel' %}</a>
+    </div>
+
     {% if have_totp or have_static %}
         <p>{% trans "Try another way" %}</p>
-        <ul>
+        <ul id="alternatives-list">
             {% if have_totp %}
                 <li><a href="{% url "otp_totp_check" %}">{% trans "Use a code from your authentication app" %}</a></li>
             {% endif %}
@@ -44,9 +48,6 @@
         </ul>
     {% endif %}
 
-    <div class="text-center">
-        <a href="{% url 'logout' %}" class="btn-sm btn-link">{% trans 'Cancel' %}</a>
-    </div>
 {% endblock %}
 
 {% block aside_illustration %}

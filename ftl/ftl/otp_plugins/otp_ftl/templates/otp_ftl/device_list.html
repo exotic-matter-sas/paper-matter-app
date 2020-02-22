@@ -10,9 +10,10 @@
             <h4 class="">{% trans 'Emergency codes' %}</h4>
             <div>
                 {% for static_device in static_devices %}
-                    <div class="border bg-white p-3 my-1">
+                    <div class="border bg-white p-3 my-1 static-device-item">
                         <h5 class="d-inline-block">{{ static_device.name }}</h5>
-                        <a href="{% url 'otp_static_update' static_device.id %}" class="btn btn-link pl-1">
+                        <a href="{% url 'otp_static_update' static_device.id %}"
+                           class="btn btn-link pl-1 rename-emergency-codes">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"
                                  style="width:1.125em;vertical-align:0;">
                                 <title>{% trans 'Rename' %}</title>
@@ -24,7 +25,7 @@
                             <span class="badge badge-danger">{% trans 'Invalid' %}</span>
                         {% endif %}
                         <a href="{% url "otp_static_delete" static_device.id %}"
-                           class="btn btn-danger btn-sm float-right">
+                           class="delete-emergency-codes btn btn-danger btn-sm float-right">
                             {% trans 'Delete' %}
                         </a>
 
@@ -44,7 +45,7 @@
                 {% endfor %}
             </div>
             <div class="text-right">
-                <a href="{% url "otp_static_add" %}" class="btn btn-secondary btn-sm my-3">
+                <a href="{% url "otp_static_add" %}" id="add-emergency-codes" class="btn btn-secondary btn-sm my-3">
                     {% trans 'Generate emergency two factor codes' %}</a>
             </div>
         </div>
@@ -53,10 +54,11 @@
             <h4>{% trans 'Authenticator apps' %}</h4>
             <div>
                 {% for totp_device in totp_devices %}
-                    <div class="border bg-white p-3 my-1 d-flex flex-row justify-content-between align-items-center">
+                    <div class="border bg-white p-3 my-1 d-flex flex-row justify-content-between align-items-center totp-device-item">
                         <div class="mx-2">
                             <h5 class="d-inline-block">{{ totp_device.name }}</h5>
-                            <a href="{% url 'otp_totp_update' totp_device.id %}" class="btn btn-link pl-1">
+                            <a href="{% url 'otp_totp_update' totp_device.id %}"
+                               class="btn btn-link pl-1 rename-auth-app">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"
                                      style="width:1.125em;vertical-align:0;">
                                     <title>{% trans 'Rename' %}</title>
@@ -72,7 +74,8 @@
                             {% endif %}
                         </div>
                         <div class="mx-2">
-                            <a href="{% url "otp_totp_delete"  totp_device.id %}" class="btn btn-danger btn-sm">
+                            <a href="{% url "otp_totp_delete"  totp_device.id %}"
+                               class="delete-auth-app btn btn-danger btn-sm">
                                 {% trans 'Delete' %}</a>
                         </div>
 
@@ -80,7 +83,7 @@
                 {% endfor %}
             </div>
             <div class="text-right">
-                <a href="{% url "otp_totp_add" %}" class="btn btn-secondary btn-sm my-3">
+                <a href="{% url "otp_totp_add" %}" id="add-auth-app" class="btn btn-secondary btn-sm my-3">
                     {% trans 'Add an authenticator app' %}</a>
             </div>
         </div>
@@ -89,11 +92,12 @@
             <h4>{% trans 'Security keys (U2F/FIDO2)' %}</h4>
             <div>
                 {% for fido2_device in fido2_devices %}
-                    <div class="border bg-white p-3 my-1 d-flex flex-row justify-content-between align-items-center">
+                    <div class="border bg-white p-3 my-1 d-flex flex-row justify-content-between align-items-center fido2-device-item">
                         <div class="mx-2">
                             <h5 class="d-inline-block"
                                 title="{{ fido2_device.persistent_id }}">{{ fido2_device.name }}</h5>
-                            <a href="{% url 'otp_fido2_update' fido2_device.id %}" class="btn btn-link pl-1">
+                            <a href="{% url 'otp_fido2_update' fido2_device.id %}"
+                               class="btn btn-link pl-1 rename-security-key">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"
                                      style="width:1.125em;vertical-align:0;">
                                     <title>{% trans 'Rename' %}</title>
@@ -103,14 +107,15 @@
                             </a>
                         </div>
                         <div class="mx-2">
-                            <a href="{% url "otp_fido2_delete" fido2_device.id %}" class="btn btn-danger btn-sm">
+                            <a href="{% url "otp_fido2_delete" fido2_device.id %}"
+                               class="delete-security-key btn btn-danger btn-sm">
                                 {% trans 'Delete' %}</a>
                         </div>
                     </div>
                 {% endfor %}
             </div>
             <div class="text-right">
-                <a href="{% url "otp_fido2_add" %}"
+                <a href="{% url "otp_fido2_add" %}" id="add-security-key"
                    class="btn btn-secondary btn-sm my-3">{% trans 'Add a security key' %}</a>
             </div>
         </div>
@@ -135,8 +140,16 @@
         <p class="highlight">{% trans "There is no two factor device registered with this account." %}</p>
 
         <ul>
-            <li><a href="{% url "otp_totp_add" %}">{% trans 'Add an authentication app (recommended)' %}</a></li>
-            <li><a href="{% url "otp_fido2_add" %}">{% trans 'Add a security key (U2F/FIDO2)' %}</a></li>
+            <li>
+                <a href="{% url "otp_totp_add" %}" id="add-auth-app">
+                    {% trans 'Add an authentication app (recommended)' %}
+                </a>
+            </li>
+            <li>
+                <a href="{% url "otp_fido2_add" %}" id="add-security-key">
+                    {% trans 'Add a security key (U2F/FIDO2)' %}
+                </a>
+            </li>
         </ul>
     {% endif %}
 {% endblock %}

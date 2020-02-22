@@ -80,11 +80,11 @@
           <template slot="button-content">
             <font-awesome-icon v-if="account.isSuperUser" icon="crown" class="super-user" title="Super User"/>
             <em id="email">{{ account.name }}</em>
-            <b-badge v-if="account.otp_warning" variant="danger" class="m-1">&nbsp;!</b-badge>
+            <b-badge v-if="account.otp_warning" variant="danger" class="m-1 otp-warning" pill="true">!</b-badge>
           </template>
           <b-dropdown-item href="/accounts">
             {{ $t('Settings') }}
-            <b-badge v-if="account.otp_warning" variant="danger" class="m-1">&nbsp;!</b-badge>
+            <b-badge v-if="account.otp_warning" variant="danger" class="m-1 otp-warning" pill="true">!</b-badge>
           </b-dropdown-item>
           <b-dropdown-item href="/logout">{{ $t('Sign Out') }}</b-dropdown-item>
         </b-nav-item-dropdown>
