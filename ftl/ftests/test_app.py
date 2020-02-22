@@ -511,8 +511,9 @@ class SearchTests(LoginPage, HomePage, DocumentViewerModal):
         # User open the folder and then search something that isn't present in its document
         self.get_elem(self.folders_list_buttons).click()
         self.wait_folder_list_loaded()
+        self.wait_documents_list_loaded()
         self.search_documents('this text doesn\'t exist')
-        self.wait_for_elem_to_disappear(self.document_list_loader)
+        self.wait_documents_list_loaded()
 
         with self.assertRaises(NoSuchElementException, msg='No document should be found by this search query'):
             self.get_elems(self.documents_thumbnails)
