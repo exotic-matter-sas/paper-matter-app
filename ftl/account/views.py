@@ -5,10 +5,9 @@ from datetime import timedelta
 
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import PasswordChangeView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.sites.shortcuts import get_current_site
 from django.core import signing
@@ -38,7 +37,7 @@ class AccountView(FTLUserContextDataMixin, View):
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(otp_required(if_configured=True), name='dispatch')
-class AccountEmailChangeView(LoginRequiredMixin, SuccessMessageMixin, FTLUserContextDataMixin, FormView):
+class AccountEmailChangeView(SuccessMessageMixin, FTLUserContextDataMixin, FormView):
     template_name = "account/account_email.html"
     email_change_subject = "account/account_email_change_subject.txt"
     email_warn_subject = "account/account_email_warn_subject.txt"
@@ -104,7 +103,7 @@ class AccountEmailChangeView(LoginRequiredMixin, SuccessMessageMixin, FTLUserCon
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(otp_required(if_configured=True), name='dispatch')
-class AccountEmailChangeValidateView(LoginRequiredMixin, View):
+class AccountEmailChangeValidateView(View):
     success_message = _("Email successfully updated.")
     expired_message = _("The link expired. Please try again.")
     incorrect_signature = _("Could not validate your email. Please try again.")
@@ -137,20 +136,28 @@ class AccountEmailChangeValidateView(LoginRequiredMixin, View):
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(otp_required(if_configured=True), name='dispatch')
-class AccountPasswordView(LoginRequiredMixin, FTLUserContextDataMixin, FormView):
+class AccountPasswordView(FTLUserContextDataMixin, SuccessMessageMixin, PasswordChangeView):
     template_name = "account/account_password.html"
     form_class = PasswordChangeForm
     success_url = reverse_lazy('account_index')
     success_message = _("Password updated!")
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user
-        return kwargs
+    email_warn_subject = "account/account_password_warn_subject.txt"
+    email_warn_body = "account/account_password_warn_body.txt"
 
     def form_valid(self, form):
-        form.save()
-        # Force update session data
-        update_session_auth_hash(self.request, form.user)
-        messages.success(self.request, self.success_message)
+        # Email sent to the current address for notification
+        subject_warn = render_to_string(
+            template_name=self.email_warn_subject,
+            context={},
+            request=self.request
+        )
+        subject_warn = ''.join(subject_warn.splitlines())
+        message_warn = render_to_string(
+            template_name=self.email_warn_body,
+            context={},
+            request=self.request
+        )
+
+        self.request.user.email_user(subject_warn, message_warn, settings.DEFAULT_FROM_EMAIL)
+
         return super().form_valid(form)

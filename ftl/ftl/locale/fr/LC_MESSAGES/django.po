@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-17 14:25+0100\n"
-"PO-Revision-Date: 2020-02-17 14:25+0100\n"
+"POT-Creation-Date: 2020-02-24 10:22+0000\n"
+"PO-Revision-Date: 2019-03-05 17:20+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -43,9 +43,9 @@ msgstr "Votre session a expiré ou a été invalidée. Veuillez vous reconnecter
 msgid "You have been logged out. See you!"
 msgstr "Vous êtes déconnecté. À bientôt !"
 
-#: .\ftl\templates\ftl\base_email_body.txt:1
-msgid "Hello!"
-msgstr "Bonjour !"
+#: ftl/templates/ftl/base_email_body.txt:1
+msgid "Hello"
+msgstr "Bonjour"
 
 #: .\ftl\templates\ftl\base_email_body.txt:5
 msgid "The Paper Matter team"
