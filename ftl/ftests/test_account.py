@@ -81,7 +81,7 @@ class AccountPageTests(LoginPage, AccountPages):
         # Check notice email
         self.assertIn(self.user.email, mail.outbox[0].to)
         self.assertIn('notice of password change', mail.outbox[0].subject.lower())
-        self.assertIn('Someone requested to change the password', mail.outbox[0].body)
+        self.assertIn('The password of your Paper Matter account has been updated', mail.outbox[0].body)
 
         # Logout
         self.visit(LoginPage.logout_url)
