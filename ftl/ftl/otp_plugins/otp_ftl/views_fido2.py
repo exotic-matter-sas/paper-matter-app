@@ -76,7 +76,9 @@ def fido2_api_register_begin(request):
         "name": request.user.email,
         "displayName": request.user.email,
         "icon": ""
-    }, credentials=[AttestedCredentialData(cbor2.loads(d.authenticator_data)) for d in all_devices])
+        },
+        # Pass existing fido2 credentials to prevent duplicate
+        credentials=[AttestedCredentialData(cbor2.loads(d.authenticator_data)) for d in all_devices])
 
     request.session[FIDO2_REGISTER_STATE] = state
 

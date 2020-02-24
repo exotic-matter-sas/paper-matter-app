@@ -336,8 +336,8 @@ msgstr ""
 "peut être d'un bug"
 
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_form.html:50
-msgid "You cannot register the same key multiple time"
-msgstr "Vous ne pouvez pas enregistrer la même clé plusieurs fois"
+msgid "This key is already registred"
+msgstr "Cette clé est déjà enregistrée"
 
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_form.html:52
 msgid ""

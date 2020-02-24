@@ -47,7 +47,7 @@
                 {% elif request.GET.error == 'cbor-decode' or request.GET.error == 'cbor-encode' %}
                     {% trans 'An internal error occured during key registration, you may have found a bug' %}
                 {% elif request.GET.error == 'duplicate-key' %}
-                    {% trans 'You cannot register the same key multiple time' %}
+                    {% trans 'This key is already registred' %}
                 {% elif request.GET.error == 'unknown-generic' or request.GET.error == 'unknown-generic' %}
                     {% trans 'An unknown error occured during key registration, you may have found a bug' %}
                 {% elif request.GET.error == 'unexpected' %}
