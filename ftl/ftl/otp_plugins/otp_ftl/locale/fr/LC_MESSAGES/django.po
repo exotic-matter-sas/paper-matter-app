@@ -250,7 +250,7 @@ msgstr "Utiliser un code affiché sur votre app d'authentification"
 msgid "Use a one time emergency code"
 msgstr "Utiliser un code à usage unique"
 
-#: ftl/otp_plugins/otp_ftl/templates/otp_ftl/fido2device_detail.html:5
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_detail.html:5
 msgid "Your security key has been added!"
 msgstr "Votre clé de sécurité a été ajoutée !"
 
@@ -349,24 +349,28 @@ msgstr ""
 "peut être d'un bug"
 
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_form.html:50
+msgid "This key is already registred"
+msgstr "Cette clé est déjà enregistrée"
+
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_form.html:52
 msgid ""
 "An unknown error occured during key registration, you may have found a bug"
 msgstr ""
 "Une erreur inconnue est survenue durant l'enregistrement de la clé, il "
 "s'agit peut être d'un bug"
 
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_form.html:52
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_form.html:54
 msgid ""
 "An unexpected error occured during key registration, you may have found a bug"
 msgstr ""
 "Une erreur inattendue est survenue durant l'enregistrement de la clé, il "
 "s'agit peut être d'un bug"
 
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_form.html:54
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_form.html:56
 msgid "error code: "
 msgstr "code erreur : "
 
-#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_form.html:58
+#: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\fido2device_form.html:60
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\staticdevice_form.html:27
 #: .\ftl\otp_plugins\otp_ftl\templates\otp_ftl\totpdevice_form.html:33
 msgid "Next"
@@ -513,3 +517,15 @@ msgid ""
 msgstr ""
 "Nom de l'appareil sur lequel l'appli sera installée, pour vous aider à "
 "l'identifier plus tard."
+
+#~ msgid ""
+#~ "\n"
+#~ "                    Please use <a href=\"%(the_url)s\" class=\"alert-link"
+#~ "\">the import app</a> before enabling 2FA (the\n"
+#~ "                    app doesn't support 2FA yet).\n"
+#~ "                "
+#~ msgstr ""
+#~ "\n"
+#~ "Penser à utiliser <a href=\"%(the_url)s\" class=\"alert-link\">le "
+#~ "logiciel d'import</a> avant d'activer l'authentification à deux facteurs "
+#~ "(l'application ne le supporte pas encore)."
