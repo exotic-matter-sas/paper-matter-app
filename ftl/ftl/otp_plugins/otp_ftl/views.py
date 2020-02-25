@@ -1,7 +1,6 @@
 #  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
 
-from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.shortcuts import render, redirect
@@ -45,11 +44,15 @@ class ListOTPDevices(FTLUserContextDataMixin, View):
 @method_decorator(login_required, name='dispatch')
 class OTPCheckView(View):
     def get(self, request, *args, **kwargs):
+        # Reduce session expiration to 10 minutes during 2FA check (in case user afk).
+        request.session.set_expiry(600)
+
         devices = list((d.persistent_id, d.name) for d in devices_for_user(request.user))
         _next = request.GET.get('next', None)
         if _next:
             request.session['next'] = _next
 
+        # Redirect to available device check page, from most secure to less secure one
         if [d for d in devices if Fido2Device.model_label() in d[0]]:
             return redirect('otp_fido2_check', *args, **kwargs)
 
@@ -86,13 +89,9 @@ class FTLBaseCheckView(LoginView):
         kwargs['user'] = self.request.user
         return kwargs
 
-    def get(self, request, *args, **kwargs):
-        request.session['saved_expiration'] = request.session.get_expiry_age()
-        request.session.set_expiry(600)
-        return super().get(request, *args, **kwargs)
-
     def form_valid(self, form):
-        self.request.session.set_expiry(self.request.session.get('saved_expiration', settings.SESSION_COOKIE_AGE))
+        # Restore session expiration to default value
+        self.request.session.set_expiry(None)
         return super().form_valid(form)
 
 

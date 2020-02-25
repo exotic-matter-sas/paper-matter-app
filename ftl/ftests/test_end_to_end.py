@@ -2,6 +2,7 @@
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
 
 import os
+from datetime import datetime, timezone, timedelta
 from unittest import skipIf, skip
 from unittest.mock import patch
 
@@ -101,7 +102,7 @@ class NewUserAddDocumentInsideFolder(SignupPages, LoginPage, HomePage, DocumentV
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     @patch.object(FTLDocumentProcessing, 'apply_processing')
     @skip("Multi users feature disabled")
-    def test_new_user_add_document_inside_folder(self,  mock_apply_processing):
+    def test_new_user_add_document_inside_folder(self, mock_apply_processing):
         # first org, admin, are already created
         org = setup_org()
         setup_admin(org=org)
