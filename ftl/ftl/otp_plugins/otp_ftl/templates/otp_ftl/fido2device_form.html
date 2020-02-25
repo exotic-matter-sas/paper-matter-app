@@ -129,7 +129,10 @@
                             if (error.name === 'AbortError') {
                                 errorCode = 'abort'
                             } else if (error.name === 'InvalidStateError' && 'message' in error &&
-                                    error.message.includes('already registered')) {
+                                    // Chrome 80 error
+                                    (error.message.includes('already registered') ||
+                                    // Firefox 73 error
+                                    error.message.includes('use an object that is not, or is no longer, usable'))) {
                                 errorCode = 'duplicate-key'
                             } else if (error.name === 'NotAllowedError') {
                                 errorCode = 'not-allowed'
