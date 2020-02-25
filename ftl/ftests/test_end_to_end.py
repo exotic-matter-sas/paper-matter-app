@@ -2,16 +2,21 @@
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
 
 import os
+from datetime import datetime, timezone, timedelta
 from unittest import skipIf, skip
 from unittest.mock import patch
 
 from django import db
 from django.core import mail
 from django.db.models import Func, F
+from django_otp.middleware import OTPMiddleware
+from django_otp.oath import TOTP
+from selenium.common.exceptions import NoSuchElementException
 
 from core import views
 from core.models import FTLDocument
 from core.processing.ftl_processing import FTLDocumentProcessing
+from ftests.pages.account_pages import AccountPages
 from ftests.pages.base_page import NODE_SERVER_RUNNING
 from ftests.pages.django_admin_home_page import AdminHomePage
 from ftests.pages.django_admin_login_page import AdminLoginPage
@@ -20,8 +25,10 @@ from ftests.pages.home_page import HomePage
 from ftests.pages.setup_pages import SetupPages
 from ftests.pages.signup_pages import SignupPages
 from ftests.pages.user_login_page import LoginPage
+from ftests.test_account import mocked_verify_user, totp_time_setter, mocked_totp_time_setter, totp_time_property, \
+    TotpDevice2FATests
 from ftests.tools import test_values as tv
-from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user
+from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_2fa_fido2_device, setup_2fa_totp_device
 from ftl.settings import BASE_DIR, DEV_MODE
 
 
@@ -95,7 +102,7 @@ class NewUserAddDocumentInsideFolder(SignupPages, LoginPage, HomePage, DocumentV
     @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     @patch.object(FTLDocumentProcessing, 'apply_processing')
     @skip("Multi users feature disabled")
-    def test_new_user_add_document_inside_folder(self,  mock_apply_processing):
+    def test_new_user_add_document_inside_folder(self, mock_apply_processing):
         # first org, admin, are already created
         org = setup_org()
         setup_admin(org=org)
@@ -199,3 +206,67 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage, DocumentViewerModal):
         # the second uploaded document appears in search results
         self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
         self.assertEqual(new_title, self.get_elem_text(self.first_document_title))
+
+
+class UserSetupAll2FA(LoginPage, AccountPages):
+    def setUp(self, **kwargs):
+        # first org, admin, user are already created, user is already logged to 2FA account page
+        super().setUp()
+        self.org = setup_org()
+        setup_admin(self.org)
+        self.user = setup_user(self.org)
+        # mock OTPMiddleware._verify_user() to skip check page
+        self.middleware_patcher = patch.object(OTPMiddleware, '_verify_user', mocked_verify_user)
+        self.middleware_patcher.start()
+        self.addCleanup(patch.stopall)  # ensure mock is remove after each test, even if the test crash
+        self.addCleanup(totp_time_setter.reset_mock, side_effect=True)
+
+        self.visit(LoginPage.url)
+        self.log_user()
+        self.visit(AccountPages.two_factors_authentication_url)
+
+    @patch.object(TOTP, 'time', totp_time_property)
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    def test_user_setup_all_2fa(self):
+        # Make TOTP.time setter set a hard coded secret_time to always be able to confirm app with the same valid_token
+        totp_time_setter.side_effect = mocked_totp_time_setter
+
+        # User add an auth app (can't be really added in this test)
+        setup_2fa_totp_device(self.user, secret_key=TotpDevice2FATests.secret_key)
+        self.visit(AccountPages.two_factors_authentication_url)  # refresh page
+
+        # User add emergency code too
+        self.add_emergency_codes_set('My emergency codes')
+
+        # Finally, user add a security key (can't be really added in this test)
+        setup_2fa_fido2_device(self.user)
+        self.visit(AccountPages.two_factors_authentication_url)  # refresh page
+
+        # The 3 2FA devices appears in the list
+        self.assertEqual(1, len(self.get_elems(self.auth_app_divs)))
+        self.assertEqual(1, len(self.get_elems(self.emergency_codes_divs)))
+        self.assertEqual(1, len(self.get_elems(self.security_key_divs)))
+
+        # User logout and login
+        self.get_elem(self.logout_button).click()
+        self.middleware_patcher.stop()  # Remove middleware mock, to restore check pages
+        self.log_user()
+
+        # The 2FA check page appears with all device available
+        self.assertEqual(2, len(self.get_elems(self.check_pages_alternatives_list)))
+
+        # Login using totp
+        for i, item_text in enumerate(self.get_elems_text(self.check_pages_alternatives_list)):
+            if 'authentication app' in item_text:
+                self.get_elems(self.check_pages_alternatives_list)[i].click()
+        self.enter_2fa_code(TotpDevice2FATests.valid_token)
+        self.assertIn('home', self.head_title)
+
+        # user delete its security key 2FA
+        self.visit(self.two_factors_authentication_url)
+        # User delete existing security key
+        self.get_elems(self.delete_security_key_buttons)[0].click()
+
+        # There is no special warning about it, as there is auth app 2fa left
+        with self.assertRaises(NoSuchElementException):
+            self.get_elem(self.delete_warning)

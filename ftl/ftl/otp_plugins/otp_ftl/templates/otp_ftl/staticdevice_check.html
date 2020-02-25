@@ -42,9 +42,13 @@
         <p>{% trans "Error: you can't use emergency code on this account." %}</p>
     {% endif %}
 
+    <div class="text-center">
+        <a href="{% url 'logout' %}" class="btn-sm btn-link">{% trans 'Cancel' %}</a>
+    </div>
+
     {% if have_fido2 or have_totp %}
         <p>{% trans "Try another way" %}</p>
-        <ul>
+        <ul id="alternatives-list">
             {% if have_fido2 %}
                 <li><a href="{% url "otp_fido2_check" %}">{% trans "Use your security key" %}</a></li>
             {% endif %}
@@ -54,9 +58,6 @@
         </ul>
     {% endif %}
 
-    <div class="text-center">
-        <a href="{% url 'logout' %}" class="btn-sm btn-link">{% trans 'Cancel' %}</a>
-    </div>
 {% endblock %}
 
 {% block aside_illustration %}

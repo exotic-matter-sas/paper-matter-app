@@ -35,12 +35,12 @@ SECRET_KEY = 'NOT SECURE'
 CRON_SECRET_KEY = 'not-secure'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
 # This param allow app to run with an unbuilt frontend
-DEV_MODE = True
+DEV_MODE = False
 
 # Custom user auth model
 AUTH_USER_MODEL = 'core.FTLUser'

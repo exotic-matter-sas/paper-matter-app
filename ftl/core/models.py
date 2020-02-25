@@ -137,6 +137,7 @@ class FTLDocument(models.Model):
     md5 = models.CharField(max_length=32, null=True)
     deleted = models.BooleanField(default=False)
     ocrized = models.BooleanField(default=False)
+    ocr_retry = models.IntegerField(default=0)
 
     class Meta:
         indexes = [

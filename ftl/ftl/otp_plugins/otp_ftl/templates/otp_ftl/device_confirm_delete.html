@@ -10,6 +10,16 @@
                     Are you sure you want to delete<br/> "{{ name }}"?
                 {% endblocktrans %}
             </h4>
+
+            {% if last_otp %}
+                <p class="text-center text-danger">
+                    {% blocktrans %}
+                        This is the last 2FA device you have. Deleting it will disable 2FA on your account (not
+                        recommended).
+                    {% endblocktrans %}
+                </p>
+            {% endif %}
+
             <div class="mt-4">
                 <a class="btn btn-secondary float-left" href="{% url 'otp_list' %}">{% trans 'Cancel' %}</a>
                 <input type="submit" class="btn btn-danger float-right" value="{% trans 'Delete' %}">

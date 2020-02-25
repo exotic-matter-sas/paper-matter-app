@@ -93,7 +93,7 @@
                             <a href="{% url 'otp_list' %}"
                                class="{% if 'otp' in view_name %}active {% endif %}list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                                 {% trans 'Two factor authentication' %}
-                                {% if ftl_account.otp_warning %}<span class="badge badge-danger badge-pill">!</span>{% endif %}
+                                {% if ftl_account.otp_warning %}<span class="badge badge-danger badge-pill otp-warning">!</span>{% endif %}
                             </a>
                             <a href="{% url 'account_index' %}"
                                class="{% if view_name == 'XXX' %}active {% endif %}list-group-item list-group-item-action disabled">

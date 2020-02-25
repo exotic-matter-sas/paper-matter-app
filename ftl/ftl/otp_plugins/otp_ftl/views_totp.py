@@ -9,7 +9,7 @@ from django.http import HttpResponse
 from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
 from django.views import View
-from django.views.generic import FormView, DeleteView, DetailView, UpdateView
+from django.views.generic import FormView, DetailView, UpdateView
 from django.views.generic.detail import SingleObjectMixin
 from django_otp.decorators import otp_required
 from django_otp.plugins.otp_static.models import StaticDevice
@@ -17,7 +17,7 @@ from django_otp.plugins.otp_totp.models import TOTPDevice
 
 from core.ftl_mixins import FTLUserContextDataMixin
 from ftl.otp_plugins.otp_ftl.forms import TOTPDeviceForm, TOTPDeviceCheckForm, TOTPDeviceConfirmForm
-from ftl.otp_plugins.otp_ftl.views import FTLBaseCheckView
+from ftl.otp_plugins.otp_ftl.views import FTLBaseCheckView, FTLBaseDeleteView
 
 
 @method_decorator(login_required, name='dispatch')
@@ -121,7 +121,7 @@ class TOPTDeviceViewQRCode(View):
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(otp_required(if_configured=True), name='dispatch')
-class TOTPDeviceDelete(FTLUserContextDataMixin, DeleteView):
+class TOTPDeviceDelete(FTLBaseDeleteView):
     template_name = 'otp_ftl/device_confirm_delete.html'
     model = TOTPDevice
     success_url = reverse_lazy('otp_list')

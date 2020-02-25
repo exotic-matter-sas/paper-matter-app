@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-12 19:51+0000\n"
-"PO-Revision-Date: 2020-01-19 22:08+0100\n"
+"POT-Creation-Date: 2020-02-24 10:22+0000\n"
+"PO-Revision-Date: 2020-02-17 14:51+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -16,41 +16,41 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 2.2.4\n"
+"X-Generator: Poedit 2.3\n"
 
-#: account/templates/account/account_base.html:5
+#: .\account\templates\account\account_base.html:5
 msgid "Account management"
 msgstr "Mon compte"
 
-#: account/templates/account/account_base.html:56
+#: .\account\templates\account\account_base.html:56
 msgid "Return to app"
 msgstr "Revenir à l'application"
 
-#: account/templates/account/account_base.html:61
+#: .\account\templates\account\account_base.html:61
 msgid "Settings"
 msgstr "Paramètres"
 
-#: account/templates/account/account_base.html:91
+#: .\account\templates\account\account_base.html:91
 msgid "Password"
 msgstr "Mot de passe"
 
-#: account/templates/account/account_base.html:95
+#: .\account\templates\account\account_base.html:95
 msgid "Two factor authentication"
 msgstr "Authentification à deux facteurs"
 
-#: account/templates/account/account_base.html:99
+#: .\account\templates\account\account_base.html:100
 msgid "Data export"
 msgstr "Exporter ses données"
 
-#: account/templates/account/account_base.html:102
+#: .\account\templates\account\account_base.html:103
 msgid "Delete account"
 msgstr "Supprimer mon compte"
 
-#: account/templates/account/account_base.html:106
+#: .\account\templates\account\account_base.html:107
 msgid "Paper Matter settings"
 msgstr "Paramètres de Paper Matter"
 
-#: account/templates/account/account_base.html:117
+#: .\account\templates\account\account_base.html:119
 msgid ""
 "\n"
 "            Paper Matter, open source software. Made with ❤ by\n"
@@ -64,11 +64,11 @@ msgstr ""
 "\"_blank\" href=\"https://www.exotic-matter.fr\">Exotic <span class="
 "\"highlight\">Matter</span></a>"
 
-#: account/templates/account/account_email.html:8
+#: .\account\templates\account\account_email.html:8
 msgid "Change your email"
 msgstr "Modifier votre email"
 
-#: account/templates/account/account_email.html:10
+#: .\account\templates\account\account_email.html:10
 msgid ""
 "Keep your email updated. You might receive important notice about your "
 "account."
@@ -76,7 +76,7 @@ msgstr ""
 "Garder votre adresse email à jour. Vous pouvez recevoir des informations "
 "importantes à propos de votre compte."
 
-#: account/templates/account/account_email.html:13
+#: .\account\templates\account\account_email.html:13
 msgid ""
 "\n"
 "                    An confirmation email will be sent to your new address. "
@@ -90,15 +90,15 @@ msgstr ""
 "cliquer sur le lien contenu dans l'email pour valider votre nouvelle "
 "adresse. Attention, ce lien expirera dans 10 minutes."
 
-#: account/templates/account/account_email.html:21
+#: .\account\templates\account\account_email.html:21
 msgid "New email"
 msgstr "Nouvelle adresse email"
 
-#: account/templates/account/account_email.html:33
+#: .\account\templates\account\account_email.html:33
 msgid "Next"
 msgstr "Suivant"
 
-#: account/templates/account/account_email_change_body.txt:5
+#: .\account\templates\account\account_email_change_body.txt:5
 msgid ""
 "\n"
 "An request has been made to change your email linked to your Paper Matter "
@@ -109,7 +109,7 @@ msgstr ""
 "Vous avez demandé à modifier votre adresse email relié à votre compte Paper "
 "Matter. Merci de cliquer sur le lien suivant pour valider.\n"
 
-#: account/templates/account/account_email_change_body.txt:12
+#: .\account\templates\account\account_email_change_body.txt:12
 #, python-format
 msgid ""
 "\n"
@@ -118,11 +118,11 @@ msgstr ""
 "\n"
 "Ce lien expirera dans %(expiration_minutes)s minutes.\n"
 
-#: account/templates/account/account_email_change_subject.txt:5
+#: .\account\templates\account\account_email_change_subject.txt:5
 msgid "Validate your new email!"
 msgstr "Valider votre nouvelle adresse email !"
 
-#: account/templates/account/account_email_warn_body.txt:5
+#: .\account\templates\account\account_email_warn_body.txt:5
 msgid ""
 "\n"
 "Someone requested to change the email address linked to your Paper Matter "
@@ -134,11 +134,11 @@ msgstr ""
 "compte Paper Matter. Si vous n'en êtes pas l'origine, changer IMMÉDIATEMENT "
 "votre mot de passe.\n"
 
-#: account/templates/account/account_email_warn_subject.txt:5
+#: .\account\templates\account\account_email_warn_subject.txt:5
 msgid "Account security: notice of email change"
 msgstr "Sécurité: notification de changement de l'adresse email"
 
-#: account/templates/account/account_index.html:24
+#: .\account\templates\account\account_index.html:24
 msgid ""
 "\n"
 "                            Keep your contact email up-to-date\n"
@@ -147,7 +147,7 @@ msgstr ""
 "\n"
 "Gardez votre email de contact à jour"
 
-#: account/templates/account/account_index.html:37
+#: .\account\templates\account\account_index.html:37
 msgid ""
 "\n"
 "                                For more security: update your password "
@@ -157,7 +157,7 @@ msgstr ""
 "\n"
 "Pour plus de sécurité : changez régulièrement de mot de passe"
 
-#: account/templates/account/account_index.html:41
+#: .\account\templates\account\account_index.html:41
 msgid ""
 "\n"
 "                                For more security: update your password "
@@ -168,11 +168,11 @@ msgstr ""
 "Pour plus de sécurité : changez régulièrement de mot de passe et activez le "
 "2FA"
 
-#: account/templates/account/account_password.html:8
+#: .\account\templates\account\account_password.html:8
 msgid "Change your password"
 msgstr "Modifier votre mot de passe"
 
-#: account/templates/account/account_password.html:12
+#: .\account\templates\account\account_password.html:12
 msgid ""
 "\n"
 "                        Your account is protected with your password and Two "
@@ -184,7 +184,7 @@ msgstr ""
 "Votre compte est protégé par votre mot de passe et l'authentification à deux "
 "facteurs. La sécurité de votre compte est optimale."
 
-#: account/templates/account/account_password.html:17
+#: .\account\templates\account\account_password.html:17
 #, python-format
 msgid ""
 "\n"
@@ -201,7 +201,7 @@ msgstr ""
 "l'authentification à deux facteurs pour augmenter la sécurité de votre "
 "compte.</a>"
 
-#: .\account\templates\account\account_password.html:19
+#: .\account\templates\account\account_password.html:25
 #, python-format
 msgid ""
 "\n"
@@ -216,42 +216,58 @@ msgstr ""
 "aléatoires en incluant des caractères spéciaux (!#%%?) ou une phrase "
 "comprenant 5 ou 6 mots séparés par un espace est suffisant."
 
-#: account/templates/account/account_password.html:26
+#: .\account\templates\account\account_password.html:34
 msgid "Old password"
 msgstr "Ancien mot de passe"
 
-#: account/templates/account/account_password.html:38
+#: .\account\templates\account\account_password.html:46
 msgid "New password"
 msgstr "Nouveau mot de passe"
 
-#: account/templates/account/account_password.html:50
+#: .\account\templates\account\account_password.html:58
 msgid "Confirm new password"
 msgstr "Confirmer nouveau mot de passe"
 
-#: account/templates/account/account_password.html:60
+#: .\account\templates\account\account_password.html:68
 msgid "Update my password"
 msgstr "Modifier votre mot de passe"
 
-#: account/views.py:44
+#: account/templates/account/account_password_warn_body.txt:4
+msgid ""
+"\n"
+"The password of your Paper Matter account has been updated. If you did not "
+"request this change, please IMMEDIATELY reset your account password by using "
+"the \"Forgot password\" page.\n"
+msgstr ""
+"\n"
+"Le mot de passe de votre compte Paper Matter a été mis à jour. Si vous "
+"n’avez pas demandé ce changement, veuillez IMMÉDIATEMENT réinitialisez votre"
+"mot de passe en utilisant la page \"Mot de passe oublié\".\n"
+
+#: .\account\templates\account\account_password_warn_subject.txt:5
+msgid "Account security: notice of password change"
+msgstr "Sécurité du compte : avis de changement de mot de passe"
+
+#: .\account\views.py:48
 msgid "A confirmation email has been sent."
 msgstr "Un email de confirmation a été envoyé."
 
-#: account/views.py:65
+#: .\account\views.py:63
 msgid "Email is already used by someone else."
 msgstr "Cette adresse est déjà utilisée."
 
-#: account/views.py:107
+#: .\account\views.py:107
 msgid "Email successfully updated."
 msgstr "L'adresse a été mise à jour."
 
-#: account/views.py:108
+#: .\account\views.py:108
 msgid "The link expired. Please try again."
 msgstr "Le lien de validation a expiré. Merci de réessayer."
 
-#: account/views.py:109
+#: .\account\views.py:109
 msgid "Could not validate your email. Please try again."
 msgstr "Impossible de valider votre adresse. Veuillez réessayer."
 
-#: account/views.py:137
+#: .\account\views.py:143
 msgid "Password updated!"
 msgstr "Mot de passe mis à jour !"

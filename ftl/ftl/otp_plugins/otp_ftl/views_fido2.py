@@ -10,7 +10,7 @@ from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import DeleteView, TemplateView, UpdateView
+from django.views.generic import TemplateView, UpdateView
 from django_otp.decorators import otp_required
 from fido2.client import ClientData
 from fido2.ctap2 import AttestationObject, AttestedCredentialData
@@ -19,7 +19,7 @@ from fido2.server import PublicKeyCredentialRpEntity, Fido2Server
 from core.ftl_mixins import FTLUserContextDataMixin
 from ftl.otp_plugins.otp_ftl.forms import Fido2DeviceCheckForm
 from ftl.otp_plugins.otp_ftl.models import Fido2Device
-from ftl.otp_plugins.otp_ftl.views import FTLBaseCheckView
+from ftl.otp_plugins.otp_ftl.views import FTLBaseCheckView, FTLBaseDeleteView
 
 FIDO2_REGISTER_STATE = 'fido2_register_state'
 FIDO2_LOGIN_STATE = 'fido2_login_state'
@@ -56,7 +56,7 @@ class Fido2DeviceAdd(FTLUserContextDataMixin, View):
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(otp_required(if_configured=True), name='dispatch')
-class Fido2DeviceDelete(FTLUserContextDataMixin, DeleteView):
+class Fido2DeviceDelete(FTLBaseDeleteView):
     template_name = 'otp_ftl/device_confirm_delete.html'
     model = Fido2Device
     success_url = reverse_lazy("otp_list")
