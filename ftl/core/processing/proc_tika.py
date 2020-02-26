@@ -21,7 +21,7 @@ class FTLTextExtractionTika(FTLDocProcessingBase):
             parsed_txt = parser.from_buffer(ftl_doc.binary.read())
 
             if 'metadata' in parsed_txt and 'xmpTPg:NPages' in parsed_txt['metadata']:
-                ftl_doc.count_pages = parsed_txt['metadata']['xmpTPg:NPages']
+                ftl_doc.count_pages = int(parsed_txt['metadata']['xmpTPg:NPages'])
                 ftl_doc.save()
             else:
                 logger.warning(f'{self.log_prefix} Pages number can\'t be retrieved for document {ftl_doc.pid}')
