@@ -261,10 +261,10 @@ msgstr "Une dernière chose..."
 
 #: .\ftl\templates\ftl\registration\signup_success.html:9
 msgid ""
-"Please <span class='highlight'>verify your email</span> to activate your "
+"Please <span class='highlight'>verify your email inbox</span> to activate your "
 "account."
 msgstr ""
-"Merci de <span class='highlight'>vérifier votre email</span> pour activer "
+"Merci de <span class='highlight'>vérifier votre boite email</span> pour activer "
 "votre compte."
 
 #: .\ftl\templates\ftl\registration\signup_success.html:10
