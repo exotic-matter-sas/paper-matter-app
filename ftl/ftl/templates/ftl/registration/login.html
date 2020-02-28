@@ -5,6 +5,14 @@
 {% block title %}{% trans 'Login' %}{% endblock %}
 
 {% block main_content_vcenter %}
+    {% if messages %}
+        <ul id="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
     <form id="login-form" action="{{ app_path }}" method="post">
         <h1 class="text-primary">{% trans 'Login' %}</h1>
 
@@ -34,13 +42,6 @@
         <input class="btn btn-lg btn-primary btn-block mb-3" type="submit" value="{% trans 'Login' %}">
         {% if form.non_field_errors %}
             <div class="alert alert-danger">{{ form.non_field_errors }}</div>
-        {% endif %}
-        {% if messages %}
-            <ul id="messages">
-                {% for message in messages %}
-                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                {% endfor %}
-            </ul>
         {% endif %}
     </form>
 {% endblock %}
