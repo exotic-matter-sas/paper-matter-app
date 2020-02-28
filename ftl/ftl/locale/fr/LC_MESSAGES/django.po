@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-28 10:17+0000\n"
+"POT-Creation-Date: 2020-02-28 10:57+0000\n"
 "PO-Revision-Date: 2019-03-05 17:20+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -233,8 +233,12 @@ msgstr ""
 "mot de passe pour votre compte sur %(site_name)s.\n"
 "Cliquez sur ce lien pour définir le nouveau mot de passe :\n"
 
-#: .\ftl\templates\ftl\registration\password_reset_form.html:5
-#: .\ftl\templates\ftl\registration\password_reset_form.html:9
+#: ftl/templates/ftl/registration/password_reset_email.html:8
+msgid "If you don't requested this change, you can ignore this email."
+msgstr "Si vous n'êtes pas à l'origine de la demande, vous pouvez ignorer cet email."
+
+#: ftl/templates/ftl/registration/password_reset_form.html:5
+#: ftl/templates/ftl/registration/password_reset_form.html:9
 msgid "Reset password"
 msgstr "Réinitialiser mon mot de passe"
 
