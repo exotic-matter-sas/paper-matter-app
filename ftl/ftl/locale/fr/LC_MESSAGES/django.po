@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-24 10:22+0000\n"
+"POT-Creation-Date: 2020-02-27 00:07+0000\n"
 "PO-Revision-Date: 2019-03-05 17:20+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -94,11 +94,24 @@ msgstr "Activer votre compte"
 msgid "Account could not be activated"
 msgstr "Le compte n'a pu être activé"
 
-#: .\ftl\templates\ftl\django_registration\activation_failed.html:8
+#: ftl/templates/ftl/django_registration/activation_failed.html:8
+#: ftl/templates/ftl/django_registration/activation_failed.html:19
 msgid "We could not activate the account..."
 msgstr "Nous n'avons pu activer le compte..."
 
-#: .\ftl\templates\ftl\oauth2_provider\authorize.html:9
+#: ftl/templates/ftl/django_registration/activation_failed.html:14
+msgid "The account you attempted to activate is invalid."
+msgstr "Le compte que vous essayez d'activer n'est pas valide."
+
+#: ftl/templates/ftl/django_registration/activation_failed.html:15
+msgid "This account has expired."
+msgstr "Ce compte a expiré."
+
+#: ftl/templates/ftl/django_registration/activation_failed.html:16
+msgid "The activation key you provided is invalid."
+msgstr "La clé d'activation fournie n'est pas valide."
+
+#: ftl/templates/ftl/oauth2_provider/authorize.html:9
 msgid "Authorize"
 msgstr "Autoriser"
 
