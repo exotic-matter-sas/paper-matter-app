@@ -26,9 +26,11 @@
         </b-button>
       </b-col>
       <b-col class="d-none d-md-flex align-items-center justify-content-center" md="2">
-        <a class="text-center" href="https://welcome.papermatter.app/import-export"
+        <a id="import-folder-link" class="text-center" href="https://welcome.papermatter.app/import-export"
+           target="_blank"
            :title="$t('Import a folder or a large amount of documents using the local import client')">
           {{ $t('Import a folder')}}
+          <font-awesome-icon icon="external-link-alt" size="sm"/>
         </a>
       </b-col>
     </b-row>
