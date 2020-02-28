@@ -5,15 +5,15 @@
 {% block title %}{% trans 'Login' %}{% endblock %}
 
 {% block main_content_vcenter %}
-    {% if messages %}
-        <ul id="messages">
-            {% for message in messages %}
-                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-
     <form id="login-form" action="{{ app_path }}" method="post">
+        {% if messages %}
+            <ul id="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
         <h1 class="text-primary">{% trans 'Login' %}</h1>
 
         {% csrf_token %}
