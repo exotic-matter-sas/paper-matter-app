@@ -47,7 +47,6 @@
       FTLTreeItem
     },
     props: {
-      start: Number,
       sourceFolder: {type: Number, default: -1} // to hide source folder in folder list
     },
 
