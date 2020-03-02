@@ -11,7 +11,7 @@
         <b-col id="left-panel" md="8">
           <b-row>
             <b-col>
-              <b-breadcrumb class="breadcrumb-ftl" :items="breadcrumb"/>
+              <b-breadcrumb class="breadcrumb-ftl" :items="breadcrumb" @click="unselectFolder"/>
             </b-col>
           </b-row>
           <b-row v-if="foldersLoading">
