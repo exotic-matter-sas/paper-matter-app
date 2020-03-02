@@ -6,7 +6,7 @@
 <template>
   <b-row>
     <b-col id="moving-folders">
-      <ul v-if="folders.length">
+      <ul class="pl-3" v-if="folders.length > 0 && folders[0].children.length > 0">
         <FTLTreeItem
           class="item"
           v-for="folder in folders"
@@ -15,8 +15,15 @@
           :source-folder="sourceFolder"
         ></FTLTreeItem>
       </ul>
-      <ul v-else>
-        <li class="text-muted">{{ $t('No other folder.') }}</li>
+      <ul class="pl-3" v-else-if="lastFolderListingFailed">
+        <li class="text-danger">
+          {{ $t('Folders can\'t be loaded') }}
+        </li>
+      </ul>
+      <ul class="pl-3" v-else>
+        <li class="text-muted">
+          {{ $t('No folder created yet') }}
+        </li>
       </ul>
     </b-col>
   </b-row>
@@ -24,8 +31,10 @@
 
 <i18n>
   fr:
-    No other folder.: Pas d'autres dossiers.
+    No folder created yet: Vous n'avez pas encore créé de dossier
+    Folders can't be loaded: Les dossiers n'ont pu être chargés
     Unable to refresh folders list: La liste des dossiers n'a pu être rafraichie
+    Root: Racine
 </i18n>
 
 <script>
@@ -39,50 +48,44 @@
     },
     props: {
       start: Number,
-      root: {type: Boolean, default: true},
-      sourceFolder: {type: Number, default: -1}
+      sourceFolder: {type: Number, default: -1} // to hide source folder in folder list
     },
 
     data() {
       return {
-        folders: []
+        folders: [],
+        lastFolderListingFailed: false,
       }
     },
 
     mounted() {
       const vi = this;
-      let qs = '';
-
-      if (this.start) {
-        qs = '?level=' + this.start;
-      }
+      vi.lastFolderListingFailed = false;
 
       axios
-        .get("/app/api/v1/folders" + qs)
+        .get("/app/api/v1/folders")
         .then(response => {
-            if (!vi.root) {
-              // Add a static root
-              vi.folders.push({id: null, name: vi.$t('Root')});
-            }
-
-            vi.folders = vi.folders
-              .concat(
-                response.data
-                  .filter(function (e) {
-                    return e.id !== vi.sourceFolder;
-                  })
-                  .map(function (e) {
-                    return {id: e.id, name: e.name, has_descendant: e.has_descendant, children: []}
-                  })
-              );
-          }
-        )
-        .catch(error => vi.mixinAlert(vi.$t('Unable to refresh folders list'), true));
+            let rootFolder = {id: null, name: vi.$t('Root'), has_descendant: true, is_root: true};
+            rootFolder.children = response.data
+              .filter(function (e) {
+                return e.id !== vi.sourceFolder;
+              })
+              .map(function (e) {
+                return {id: e.id, name: e.name, has_descendant: e.has_descendant, children: []}
+              });
+            vi.folders.push(rootFolder);
+        })
+        .catch(error => vi.lastFolderListingFailed = true )
     }
   }
 </script>
 
 <style scoped>
+  ul{
+    list-style: none;
+    margin-bottom: 0;
+  }
+
   .item {
     cursor: pointer;
   }
