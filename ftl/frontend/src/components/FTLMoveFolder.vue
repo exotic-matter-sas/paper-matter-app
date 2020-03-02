@@ -73,7 +73,6 @@
 
     methods: {
       moveFolder: function () {
-        console.log('current folder:', this.folder);
         if(this.folder.parent === this.selectedMoveTargetFolder.id){
           this.mixinAlertWarning(this.$t('Selected folder is already located in this folder.'));
         } else {
