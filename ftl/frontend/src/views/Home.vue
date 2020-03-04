@@ -157,6 +157,7 @@
     Deselect all documents: Désélectionner tous les documents
     Move to folder: Déplacer vers le dossier
     Delete documents: Supprimer les documents
+    Unable to refresh folders list: Erreur lors du chargement de la liste des dossiers
 </i18n>
 
 <script>
@@ -370,7 +371,7 @@
           .get("/app/api/v1/folders" + qs)
           .then(response => {
             vi.folders = response.data;
-          }).catch(error => vi.mixinAlert("Unable to refresh folders list", true));
+          }).catch(error => vi.mixinAlert(this.$t('Unable to refresh folders list'), true));
       },
 
       folderCreated: function (folder) {

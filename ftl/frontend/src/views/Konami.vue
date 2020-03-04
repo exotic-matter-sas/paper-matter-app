@@ -9,11 +9,11 @@
       <b-row align-h="center" class="m-2 text-center">
         <b-col>
           <b-button id="generate-missing-thumbnails" variant="primary" @click="generateMissingThumbnail"
-                    v-if="thumbnailProgress === 0">Generate missing
-            thumbnail
+                    v-if="thumbnailProgress === 0">
+            {{ $t('Generate missing thumbnail') }}
           </b-button>
           <div v-if="thumbnailProgress > 0">
-            <h5 class="mt-3">Thumbnail generation in progress...</h5>
+            <h5 class="mt-3">{{ $t('Thumbnail generation in progress...') }}</h5>
             <b-progress :max="max" show-progressanimated>
               <b-progress-bar :value="thumbnailProgress">
                 <strong>{{ thumbnailProgress }} / {{ max }}</strong>
@@ -25,6 +25,18 @@
     </b-container>
   </main>
 </template>
+
+<i18n>
+  fr:
+    Generate missing thumbnail: Générer les miniatures manquantes
+    Thumbnail generation in progress...: Génération des miniatures en cours...
+    Unable to load more document: Erreur lors du chargement de la suite des documents
+    Unable to refresh documents list: Erreur lors du chargement de la liste des documents
+    Thumbnail created: Miniature générée
+    Unable to create thumbnail: Erreur lors de la génération de la miniature
+    An unknown error occurred while creating missing thumbnails: Une erreur inconnue est survenue duramt la génération des miniatures manquantes
+    Finished processing missing thumbnails: Génération des miniatures manquantes terminée
+</i18n>
 
 <script>
   import FTLThumbnailGenMixin from "@/components/FTLThumbnailGenMixin";
@@ -57,9 +69,9 @@
                 if (doc['thumbnail_available'] === false) {
                   await vi.createThumbnailForDocument(doc)
                     .then(response => {
-                      vi.mixinAlert("Thumbnail created!");
+                      vi.mixinAlert(this.$t('Thumbnail created'));
                     })
-                    .catch(error => vi.mixinAlert("Unable to create thumbnail", true));
+                    .catch(error => vi.mixinAlert(this.$t('Unable to create thumbnail'), true));
                 }
               }
 
@@ -72,10 +84,10 @@
             }
           })
           .catch(error => {
-            vi.mixinAlert("An unknown error occurred while creating missing thumbnails", true)
+            vi.mixinAlert(this.$t('An unknown error occurred while creating missing thumbnails'), true)
           })
           .then(() => {
-            vi.mixinAlert("Finished processing missing thumbnails");
+            vi.mixinAlert(this.$t('Finished processing missing thumbnails'));
             vi.thumbnailProgress = 0;
             vi.max = 100;
           });

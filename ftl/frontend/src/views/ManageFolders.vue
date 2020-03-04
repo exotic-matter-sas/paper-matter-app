@@ -117,6 +117,7 @@
     Unable to get folder details: Les détails du dossier n'ont pu être récupérés
     Unable to refresh folders list: La liste des dossiers n'a pu être rafraichie
     Creation date: Date de création
+    Could not open folder: Erreur lors de l'ouverture du dossier
 </i18n>
 
 <script>
@@ -273,7 +274,7 @@
               this.updateFolders(response.data);
             })
             .catch(() => {
-              this.mixinAlert("Could not open this folder", true);
+              this.mixinAlert(this.$t('Could not open folder'), true);
               this.foldersLoading = false
             });
         }

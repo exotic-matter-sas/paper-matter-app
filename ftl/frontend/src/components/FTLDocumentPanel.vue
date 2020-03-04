@@ -99,6 +99,9 @@
       ouvrir le document à la place.
     Open PDF: Ouvrir le PDF
     Open PDF in a new tab: Ouvrir le PDF dans un nouvel onglet
+    Thumbnail updated: Miniature mis à jour
+    Unable to create thumbnail: Erreur lors de la génération de la miniature
+    Unable to show document: Erreur lors de l'affichage du document
 </i18n>
 
 <script>
@@ -179,13 +182,13 @@
             if (!response.data.thumbnail_available) {
               this.createThumbnailForDocument(this.currentOpenDoc)
                 .then(response => {
-                  this.mixinAlert("Thumbnail updated!");
+                  this.mixinAlert(this.$t('Thumbnail updated'));
                 })
-                .catch(error => this.mixinAlert("Unable to create thumbnail", true));
+                .catch(error => this.mixinAlert(this.$t('Unable to create thumbnail'), true));
             }
           })
           .catch(error => {
-            this.mixinAlert("Unable to show document.", true)
+            this.mixinAlert(this.$t('Unable to show document'), true)
           });
       },
 
