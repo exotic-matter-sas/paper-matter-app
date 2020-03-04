@@ -266,7 +266,8 @@
         }));
 
         // Add total documents count after current folder name
-        paths[paths.length - 1].text = `${paths[paths.length - 1].text} (${this.count})`;
+        paths[paths.length - 1].text =
+          this.count > 0 ? `${paths[paths.length - 1].text} (${this.count})` : `${paths[paths.length - 1].text}`;
 
         return paths
       },
