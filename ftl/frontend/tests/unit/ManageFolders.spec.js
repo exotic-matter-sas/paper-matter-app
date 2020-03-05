@@ -17,10 +17,14 @@ import FTLRenameFolder from "../../src/components/FTLRenameFolder";
 import FTLSelectableFolder from "../../src/components/FTLSelectableFolder";
 import FTLNewFolder from "../../src/components/FTLNewFolder";
 import FTLMoveFolder from "../../src/components/FTLMoveFolder";
+import cloneDeep from "lodash.clonedeep";
+import storeConfig from "@/store/storeConfig";
+import Vuex from "vuex";
 
 const localVue = createLocalVue();
 
 localVue.use(BootstrapVue); // avoid bootstrap vue warnings
+localVue.use(Vuex);
 localVue.component('font-awesome-icon', jest.fn()); // avoid font awesome warnings
 
 localVue.prototype.$t = (text, args = '') => {
@@ -59,8 +63,11 @@ const mockedUpdateFolders = jest.fn();
 const mockedUpdateFoldersFromUrl = jest.fn();
 const mockedBreadcrumb = jest.fn();
 const mockedGetCurrentFolder = jest.fn();
+const mockedFolderMoved = jest.fn();
 const mockedFolderDeleted = jest.fn();
 const mockedFolderUpdated = jest.fn();
+const mockedFTLTreeItemSelected = jest.fn();
+const mockedSelectMoveTargetFolder = jest.fn();
 
 const mountedMocks = {
   updateFolders: mockedUpdateFolders,
@@ -167,49 +174,31 @@ describe('ManageFolders computed', () => {
   });
 });
 
-describe('ManageFolders watcher call proper methods', () => {
-  let wrapper;
-  // defined const specific to this describe here
-  beforeEach(() => {
-    // set mocked component methods return value before shallowMount
-    wrapper = shallowMount(ManageFolders, {
-      localVue,
-      methods: mountedMocks,
-      propsData: {}
-    });
-    jest.clearAllMocks(); // Reset mock call count done by mounted
-  });
-
-  it('folder watcher call proper methods', () => {
-    const newFolder = tv.FOLDER_PROPS_VARIANT;
-    //when a new folder is set
-    wrapper.setData({folder: newFolder});
-
-    //then
-    expect(mockedUpdateFoldersFromUrl).toHaveBeenCalledTimes(1);
-    expect(mockedUpdateFoldersFromUrl).toHaveBeenCalledWith(newFolder);
-
-    //when the same folder is set
-    wrapper.setData({folder: newFolder, previousLevels: [tv.FOLDER_PROPS_VARIANT]});
-
-    //then nothing new happens
-    expect(mockedUpdateFoldersFromUrl).toHaveBeenCalledTimes(1);
-
-    //when the folder is undefined
-    wrapper.setData({folder: undefined});
-
-    //then
-    expect(wrapper.vm.previousLevels).toEqual([]);
-    expect(mockedUpdateFolders).toHaveBeenCalledTimes(1);
-  });
-});
-
 describe('ManageFolders methods', () => {
   let wrapper;
+  let storeConfigCopy;
+  let store;
   beforeEach(() => {
-    // set mocked component methods return value before shallowMount
+    mockedFTLTreeItemSelected.mockReturnValue(false);
+    storeConfigCopy = cloneDeep(storeConfig);
+    store = new Vuex.Store(
+      Object.assign(
+        storeConfigCopy,
+        {
+          mutations:
+            {
+              selectMoveTargetFolder: mockedSelectMoveTargetFolder
+            },
+          getters:
+            {
+              FTLTreeItemSelected: () => mockedFTLTreeItemSelected
+            }
+        }
+      )
+    );
     wrapper = shallowMount(ManageFolders, {
       localVue,
+      store,
       methods: Object.assign(
         {
           unselectFolder: mockedUnselectFolder,
@@ -284,6 +273,105 @@ describe('ManageFolders methods', () => {
     expect(mockedUpdateFolders).toHaveBeenCalledTimes(1);
     expect(mockedUpdateFolders).toHaveBeenCalledWith(mockedGetFolderDetailsResponse.data);
   });
+  it('folderMoved remove folder from list and deselect folder', () => {
+    // given
+    const folderToMove = tv.FOLDER_PROPS_VARIANT;
+    const originalFoldersList = [tv.FOLDER_PROPS, folderToMove];
+    const originalFoldersListLength = originalFoldersList.length;
+    wrapper.setData({folders: originalFoldersList});
+
+    // when
+    wrapper.vm.folderMoved({folder: folderToMove});
+
+    // then
+    expect(wrapper.vm.folders.length).toBe(originalFoldersListLength - 1);
+    expect(mockedUnselectFolder).toHaveBeenCalledTimes(1);
+  });
+  it('folderDeleted remove folder from list and deselect folder', () => {
+    // given
+    const folderToDelete = tv.FOLDER_PROPS_VARIANT;
+    const originalFoldersList = [tv.FOLDER_PROPS, folderToDelete];
+    const originalFoldersListLength = originalFoldersList.length;
+    wrapper.setData({folders: originalFoldersList});
+
+    // when
+    wrapper.vm.folderDeleted({folder: folderToDelete});
+
+    // then
+    expect(wrapper.vm.folders.length).toBe(originalFoldersListLength - 1);
+    expect(mockedUnselectFolder).toHaveBeenCalledTimes(1);
+  });
+  it('folderDeleted commit change to vue store if selected folder match deleted one', () => {
+    // given selected folder does NOT match deleted one
+    const folderToDelete = tv.FOLDER_PROPS_VARIANT;
+    const originalFoldersList = [tv.FOLDER_PROPS, folderToDelete];
+    wrapper.setData({folders: originalFoldersList});
+
+    // when
+    wrapper.vm.folderDeleted({folder: folderToDelete});
+
+    // then
+    expect(mockedSelectMoveTargetFolder).toBeCalledTimes(0);
+
+    // given selected folder DOES match deleted one
+    mockedFTLTreeItemSelected.mockReturnValue(true);
+    wrapper.setData({folders: originalFoldersList});
+
+    // when
+    wrapper.vm.folderDeleted({folder: folderToDelete});
+
+    // then
+    expect(mockedSelectMoveTargetFolder).toBeCalledTimes(1);
+    expect(mockedSelectMoveTargetFolder).toHaveBeenNthCalledWith(
+      1,
+      storeConfigCopy.state,
+      null
+    );
+  });
+  it('folderUpdated update folder in list', () => {
+    // given
+    const folderToUpdate = tv.FOLDER_PROPS_VARIANT;
+    const originalFoldersList = [tv.FOLDER_PROPS, folderToUpdate];
+    const originalFoldersListLength = originalFoldersList.length;
+    wrapper.setData({folders: originalFoldersList});
+
+    // when
+    const folderUpdated = Object.assign({}, folderToUpdate); // shallow copy
+    const updatedName = 'bingo!';
+    folderUpdated.name = updatedName;
+    wrapper.vm.folderUpdated({folder: folderUpdated});
+
+    // then
+    expect(wrapper.vm.folders.length).toBe(originalFoldersListLength);
+    expect(wrapper.vm.folders[1].name).not.toBe(folderToUpdate.name);
+    expect(wrapper.vm.folders[1].name).toBe(updatedName);
+  });
+  it('folder watcher call proper methods', () => {
+    // reset folder value
+    wrapper.setData({folder: null});
+    mockedUpdateFoldersFromUrl.mockClear();
+
+    const newFolder = tv.FOLDER_PROPS_VARIANT;
+    //when a new folder is set
+    wrapper.setData({folder: newFolder});
+
+    //then
+    expect(mockedUpdateFoldersFromUrl).toHaveBeenCalledTimes(1);
+    expect(mockedUpdateFoldersFromUrl).toHaveBeenCalledWith(newFolder);
+
+    //when the same folder is set
+    wrapper.setData({folder: newFolder, previousLevels: [tv.FOLDER_PROPS_VARIANT]});
+
+    //then nothing new happens
+    expect(mockedUpdateFoldersFromUrl).toHaveBeenCalledTimes(1);
+
+    //when the folder is undefined
+    wrapper.setData({folder: undefined});
+
+    //then
+    expect(wrapper.vm.previousLevels).toEqual([]);
+    expect(mockedUpdateFolders).toHaveBeenCalledTimes(1);
+  });
 });
 
 describe('ManageFolders methods call api', () => {
@@ -346,7 +434,7 @@ describe('ManageFolders methods call api', () => {
     axios.get.mockResolvedValue(mockedGetFolderDetailsResponse);
     wrapper.setMethods({updateFoldersFromUrl: ManageFolders.methods.updateFoldersFromUrl});
 
-    // when folder in url is already the one selected
+    // when folder in url IS already the one selected
     wrapper.setData({folderDetail: folder});
     wrapper.vm.updateFoldersFromUrl(folder.id);
     await flushPromises();
@@ -354,11 +442,11 @@ describe('ManageFolders methods call api', () => {
     // then no API call is made
     expect(axios.get).not.toHaveBeenCalled();
 
-    // when folder in url is already the one selected
+    // when folder in url is NOT already the one selected
     wrapper.vm.updateFoldersFromUrl(tv.FOLDER_PROPS_VARIANT.id);
     await flushPromises();
 
-    // then no API call is made
+    // then API call is made
     expect(axios.get).toHaveBeenCalledTimes(1);
     expect(axios.get).toHaveBeenCalledWith('/app/api/v1/folders/' + tv.FOLDER_PROPS_VARIANT.id);
   });
@@ -425,38 +513,7 @@ describe('ManageFolders methods error handling', () => {
 
     // then mixinAlert is called with proper message
     expect(mockedMixinAlert).toHaveBeenCalledTimes(1);
-    expect(mockedMixinAlert.mock.calls[0][0]).toContain('open this folder');
-  });
-  it('folderDeleted remove folder from list', () => {
-    // given
-    const folderToDelete = tv.FOLDER_PROPS_VARIANT;
-    const originalFoldersList = [tv.FOLDER_PROPS, folderToDelete];
-    const originalFoldersListLength = originalFoldersList.length;
-    wrapper.setData({folders: originalFoldersList});
-
-    // when
-    wrapper.vm.folderDeleted({folder: folderToDelete});
-
-    // then
-    expect(wrapper.vm.folders.length).toBe(originalFoldersListLength - 1);
-  });
-  it('folderUpdated update folder in list', () => {
-    // given
-    const folderToUpdate = tv.FOLDER_PROPS_VARIANT;
-    const originalFoldersList = [tv.FOLDER_PROPS, folderToUpdate];
-    const originalFoldersListLength = originalFoldersList.length;
-    wrapper.setData({folders: originalFoldersList});
-
-    // when
-    const folderUpdated = Object.assign({}, folderToUpdate); // shallow copy
-    const updatedName = 'bingo!';
-    folderUpdated.name = updatedName;
-    wrapper.vm.folderUpdated({folder: folderUpdated});
-
-    // then
-    expect(wrapper.vm.folders.length).toBe(originalFoldersListLength);
-    expect(wrapper.vm.folders[1].name).not.toBe(folderToUpdate.name);
-    expect(wrapper.vm.folders[1].name).toBe(updatedName);
+    expect(mockedMixinAlert.mock.calls[0][0]).toContain('open folder');
   });
 });
 
@@ -472,6 +529,7 @@ describe('Event received and handled by component', () => {
           refreshFolder: mockedRefreshFolder,
           navigateToFolder: mockedNavigateToFolder,
           getFolderDetail: mockedGetFolderDetail,
+          folderMoved: mockedFolderMoved,
           folderDeleted: mockedFolderDeleted,
           folderUpdated: mockedFolderUpdated
         },
@@ -553,7 +611,7 @@ describe('Event received and handled by component', () => {
     expect(mockedFolderDeleted).toHaveBeenCalledTimes(1);
     expect(mockedFolderDeleted).toHaveBeenCalledWith({folder: folder});
   });
-  it('event-folder-moved call folderDeleted', async () => {
+  it('event-folder-moved call folderMoved', async () => {
     // Need to defined folderDetail for FTLRenameFolder to appears
     wrapper.setData({folderDetail: folder});
 
@@ -561,7 +619,7 @@ describe('Event received and handled by component', () => {
     wrapper.find(FTLMoveFolder).vm.$emit('event-folder-moved', {folder: folder, target_folder: targetFolder});
 
     // then
-    expect(mockedFolderDeleted).toHaveBeenCalledTimes(1);
-    expect(mockedFolderDeleted).toHaveBeenCalledWith({folder: folder, target_folder: targetFolder});
+    expect(mockedFolderMoved).toHaveBeenCalledTimes(1);
+    expect(mockedFolderMoved).toHaveBeenCalledWith({folder: folder, target_folder: targetFolder});
   });
 });

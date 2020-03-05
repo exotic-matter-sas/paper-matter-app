@@ -161,8 +161,9 @@ describe('Home computed', () => {
   });
 
   it('breadcrumb return proper format', () => {
+    const fakeCount = 42;
     const fakeLevels = [tv.FOLDER_PROPS, tv.FOLDER_PROPS_VARIANT];
-    wrapper.setData({previousLevels: fakeLevels});
+    wrapper.setData({count: fakeCount, previousLevels: fakeLevels});
 
     // when
     const breadcrumbData = wrapper.vm.breadcrumb;
@@ -178,7 +179,7 @@ describe('Home computed', () => {
         to: {path: '/home/' + fakePath}
       },
       {
-        text: fakeLevels[1].name + ' (0)',
+        text: fakeLevels[1].name + ` (${fakeCount})`,
         to: {path: '/home/' + fakePath}
       },
     ];

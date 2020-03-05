@@ -104,7 +104,7 @@
       <FTLMoveFolder
         v-if="folderDetail"
         :folder="folderDetail"
-        @event-folder-moved="folderDeleted"/>
+        @event-folder-moved="folderMoved"/>
     </b-container>
   </main>
 </template>
@@ -280,21 +280,37 @@
         }
       },
 
-      folderDeleted: function (event) {
-        const folder = event.folder;
-        const foundIndex = this.folders.findIndex(x => x.id === folder.id);
-        this.folders.splice(foundIndex, 1);
+      folderMoved: function (event) {
+        const folderIndex = this._getFolderIndexFromId(event.folder.id);
+        this.folders.splice(folderIndex, 1);
 
         this.unselectFolder();
       },
 
+      folderDeleted: function (event) {
+        const folderId = event.folder.id;
+        const folderIndex = this._getFolderIndexFromId(folderId);
+        this.folders.splice(folderIndex, 1);
+
+        this.unselectFolder();
+
+        // if deleted folder match the one set for selectMoveTargetFolder, reset this state
+        if(this.$store.getters.FTLTreeItemSelected(folderId)){
+          this.$store.commit('selectMoveTargetFolder', null);
+        }
+      },
+
       folderUpdated: function (event) {
         const folder = event.folder;
-        const foundIndex = this.folders.findIndex(x => x.id === folder.id);
-        this.$set(this.folders, foundIndex, folder); // to be reactive, see https://vuejs.org/v2/guide/list.html#Caveats
+        const folderIndex = this._getFolderIndexFromId(folder.id);
+        this.$set(this.folders, folderIndex, folder); // to be reactive, see https://vuejs.org/v2/guide/list.html#Caveats
         if (this.folderDetail && this.folderDetail.id === folder.id) {
           this.folderDetail = folder;
         }
+      },
+
+      _getFolderIndexFromId(folderId) {
+        return this.folders.findIndex(x => x.id === folderId);
       }
     }
   }
