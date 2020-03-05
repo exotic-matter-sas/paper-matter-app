@@ -19,6 +19,7 @@
     "bootstrap-vue": "^2.1.0",
     "core-js": "^3.3.2",
     "dompurify": "^2.0.7",
+    "driver.js": "^0.9.8",
     "marked": "^0.7.0",
     "moment": "^2.24.0",
     "pdfjs-dist": "^2.2.228",

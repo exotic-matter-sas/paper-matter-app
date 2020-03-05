@@ -166,6 +166,7 @@
   import FTLDocument from "@/components/FTLDocument";
   import FTLUpload from "@/components/FTLUpload";
   import axios from 'axios';
+  import Driver from 'driver.js';
 
   export default {
     name: 'home',
@@ -207,6 +208,18 @@
 
       // Clear the selected documents
       this.$store.commit("unselectAllDocuments");
+      this.$nextTick(function () {
+        const driver = new Driver({
+          animate: false
+        });
+        driver.highlight({
+          element: '#upload-section',
+          popover: {
+            title: 'Title for the Popover',
+            description: 'Description for it',
+          }
+        });
+      });
     },
 
     watch: {
