@@ -15,9 +15,9 @@
 
 <i18n>
   en:
-    label: Paper Matter, source available software. Made with ❤ by {em}.
+    label: Paper Matter, made with ❤ by {em}.
   fr:
-    label: Paper Matter, logiciel au code source disponible. Soigneusement conçu
+    label: Paper Matter, soigneusement conçu
       par {em} en France.
 </i18n>
 
