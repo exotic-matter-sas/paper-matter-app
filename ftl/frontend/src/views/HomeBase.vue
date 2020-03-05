@@ -6,6 +6,13 @@
 <template>
   <div></div>
 </template>
+
+<i18n>
+  fr:
+    Unable to load more document: Erreur lors du chargement de la suite des documents
+    Unable to refresh documents list: Erreur lors du chargement de la liste des documents
+</i18n>
+
 <script>
   import {mapState} from 'vuex'
   import axios from 'axios';
@@ -80,7 +87,7 @@
             vi.moreDocs = response.data['next'];
           }).catch(error => {
           this.moreDocsLoading = false;
-          vi.mixinAlert("Unable to load more document.", true);
+          vi.mixinAlert(this.$t('Unable to load more document'), true);
         });
       },
 
@@ -110,7 +117,7 @@
             this.moreDocs = response.data['next'];
           }).catch(error => {
           this.docsLoading = false;
-          this.mixinAlert("Unable to refresh documents list.", true);
+          this.mixinAlert(this.$t('Unable to refresh documents list'), true);
         });
       },
 

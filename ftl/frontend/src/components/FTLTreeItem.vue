@@ -5,22 +5,32 @@
 
 <template>
   <li class="folder-tree-item">
-    <span
-      :class="{bold: item.has_descendant, selected: $store.getters.FTLTreeItemSelected(item.id)}">
-      <span class="target-folder-name" @click="selectFolder">{{ item.name }}&nbsp;</span>
-      <span class="expand-folder-child" v-if="item.has_descendant && !loading" @click="toggle">[{{ isOpen ? '-' : '+' }}]</span>
+    <span @click.prevent="selectFolder" @dblclick.prevent="toggle"
+          class="px-1"
+          :class="{'font-weight-bold': item.has_descendant, selected: $store.getters.FTLTreeItemSelected(item.id)}">
+      <span class="target-folder-name">
+        <font-awesome-icon :icon="isOpen || item.is_root ? 'folder-open' : 'folder'"/>
+        {{ item.name }}
+      </span>
       <b-spinner :class="{'d-none': !loading}" small></b-spinner>
     </span>
-
-    <ul v-show="isOpen" v-if="item.has_descendant">
-      <FTLTreeItem
-        class="item"
-        v-for="folder in item.children"
-        :key="folder.id"
-        :item="folder"
-        :source-folder="sourceFolder">
-      </FTLTreeItem>
-    </ul>
+    <span class="expand-folder-child" v-if="item.has_descendant && !loading && !item.is_root" @click="toggle">
+      [{{ isOpen ? '-' : '+' }}]
+    </span>
+      <ul class="pl-3" v-show="isOpen || item.is_root" v-if="item.has_descendant">
+        <FTLTreeItem
+          class="item"
+          v-for="folder in item.children"
+          :key="folder.id"
+          :item="folder"
+          :source-folder="sourceFolder"
+        ></FTLTreeItem>
+      </ul>
+      <ul class="pl-3" v-else-if="lastFolderListingFailed">
+        <li class="text-danger">
+          {{ $t('Folders can\'t be loaded') }}
+        </li>
+      </ul>
   </li>
 </template>
 
@@ -40,6 +50,7 @@
         type: Object,
         required: true
       },
+       // to hide source folder in folder list
       sourceFolder: {
         type: Number,
         required: true
@@ -49,7 +60,8 @@
     data() {
       return {
         loading: false,
-        isOpen: false
+        isOpen: false,
+        lastFolderListingFailed: false,
       }
     },
 
@@ -77,6 +89,7 @@
       updateMovingFolder: function (level = null) {
         const vi = this;
         let qs = '';
+        vi.lastFolderListingFailed = false;
 
         if (level) {
           qs = '?level=' + level;
@@ -95,7 +108,7 @@
                 })
             }
           )
-          .catch(error => vi.mixinAlert(vi.$t('Unable to refresh folders list'), true))
+          .catch(error => vi.lastFolderListingFailed = true )
           .finally(() => this.loading = false);
       }
     }
@@ -104,8 +117,9 @@
 
 
 <style scoped lang="scss">
-  .bold {
-    font-weight: bold;
+  ul{
+    list-style: none;
+    user-select: none;
   }
 
   .item {
@@ -114,5 +128,9 @@
 
   .selected {
     background: map_get($theme-colors, 'active');
+  }
+
+  svg {
+    vertical-align: -0.125em;
   }
 </style>

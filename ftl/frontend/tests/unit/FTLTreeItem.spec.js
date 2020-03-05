@@ -221,7 +221,7 @@ describe('FTLTreeItem methods error handling', () => {
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
 
-  it('updateMovingFolder call mixinAlert in case of error', async () => {
+  it('updateMovingFolder set lastFolderListingFailed in case of error', async () => {
     // force an error
     axios.get.mockRejectedValue('fakeError');
 
@@ -230,7 +230,6 @@ describe('FTLTreeItem methods error handling', () => {
     await flushPromises();
 
     // then mixinAlert is called with proper message
-    expect(mockedMixinAlert).toHaveBeenCalledTimes(1);
-    expect(mockedMixinAlert.mock.calls[0][0]).toContain('refresh folders');
+    expect(wrapper.vm.lastFolderListingFailed).toBe(true);
   });
 });

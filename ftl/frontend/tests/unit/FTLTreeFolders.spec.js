@@ -79,48 +79,6 @@ describe('Component mounted without props', () => {
   });
 });
 
-describe('Component mounted with start props', () => {
-  let wrapper;
-  const start = 4242;
-  beforeEach(() => {
-    axios.get.mockClear();
-    axios.get.mockResolvedValue(mockedGetFoldersListResponse);
-    wrapper = shallowMount(FTLTreeFolders, {
-      localVue,
-      propsData: { start, sourceFolder }
-    });
-  });
-
-  it('mounted with start props call api', async () => {
-    // when mounted
-    await flushPromises();
-
-    // then
-    expect(axios.get).toHaveBeenCalledWith('/app/api/v1/folders?level=' + start);
-    expect(axios.get).toHaveBeenCalledTimes(1);
-  });
-});
-
-describe('Component mounted with root props false', () => {
-  let wrapper;
-  const root = false;
-  beforeEach(() => {
-    axios.get.mockResolvedValue(mockedGetFoldersListResponse);
-    wrapper = shallowMount(FTLTreeFolders, {
-      localVue,
-      propsData: { root, sourceFolder }
-    });
-  });
-
-  it('mounted root props append data to folders data', async () => {
-    // when mounted
-    await flushPromises();
-
-    // then
-    expect(wrapper.vm.folders).toContainEqual({id: null, name: 'Root'});
-  });
-});
-
 describe('Component mounted with sourceFolder props', () => {
   let wrapper;
   const sourceFolder = tv.FOLDER_PROPS_VARIANT.id;
@@ -158,7 +116,6 @@ describe('Component API error handling', () => {
     await flushPromises();
 
     // then mixinAlert is called with proper message
-    expect(mockedMixinAlert).toHaveBeenCalledTimes(1);
-    expect(mockedMixinAlert.mock.calls[0][0]).toContain('refresh folders');
+    expect(wrapper.vm.lastFolderListingFailed).toBe(true);
   });
 });

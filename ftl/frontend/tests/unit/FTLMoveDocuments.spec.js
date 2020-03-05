@@ -70,18 +70,6 @@ describe('Component template', () => {
     const elem = wrapper.find(elementSelector);
     expect(elem.is(elementSelector)).toBe(true);
   });
-
-  it('renders properly template data for 1 document', () => {
-    expect(wrapper.text()).toContain(documentProp.title);
-  });
-
-  it('renders properly template data for several documents', () => {
-    // overwrite docs prop with only 1 doc
-    const documentsList = [documentProp, tv.DOCUMENT_PROPS_VARIANT];
-    wrapper.setData({ docs: documentsList});
-
-    expect(wrapper.text()).toContain(documentsList.length);
-  });
 });
 
 describe('FTLMoveDocuments computed', () => {

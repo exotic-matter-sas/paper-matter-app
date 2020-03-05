@@ -26,9 +26,11 @@
         </b-button>
       </b-col>
       <b-col class="d-none d-md-flex align-items-center justify-content-center" md="2">
-        <a class="text-center" href="https://welcome.papermatter.app/import-export"
+        <a id="import-folder-link" class="text-center" href="https://welcome.papermatter.app/import-export"
+           target="_blank"
            :title="$t('Import a folder or a large amount of documents using the local import client')">
           {{ $t('Import a folder')}}
+          <font-awesome-icon icon="external-link-alt" size="sm"/>
         </a>
       </b-col>
     </b-row>
@@ -52,6 +54,9 @@
     Import a folder: Importer un dossier
     Import a folder or a large amount of documents using the local import client: Importer un dossier ou un grand
       nombre de documents en utilisant le client d'import local
+    Unable to create thumbnail: Erreur lors de la génération de la miniature
+    Document uploaded: Document ajouté
+    Could not upload document: Erreur lors de l'ajout du document
 </i18n>
 <script>
   import axios from 'axios';
@@ -110,7 +115,7 @@
             let thumb = await createThumbFromFile(file);
             formData.append('thumbnail', thumb);
           } catch (e) {
-            vi.mixinAlert("Error creating thumbnail", true);
+            vi.mixinAlert(this.$t('Unable to create thumbnail'), true);
           }
 
           const updatedAxiosConfig = Object.assign({}, axiosConfig, {onUploadProgress: this.refreshUploadProgression});
@@ -118,9 +123,9 @@
             .post('/app/api/v1/documents/upload', formData, updatedAxiosConfig)
             .then(response => {
               vi.$emit('event-new-upload', {doc: response.data}); // Event for refresh documents list
-              vi.mixinAlert("Document uploaded");
+              vi.mixinAlert(this.$t('Document uploaded'));
             })
-            .catch(error => vi.mixinAlert("Could not upload document", true));
+            .catch(error => vi.mixinAlert(this.$t('Could not upload document'), true));
           vi.uploadedFilesCount++;
         }
 

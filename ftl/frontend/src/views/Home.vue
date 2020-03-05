@@ -58,7 +58,7 @@
 
       <b-row v-show="selectedDocumentsHome.length" class="mb-3" id="action-selected-documents">
         <b-col>
-          <b-button id="select-all-documents" variant="outline-primary" title="Select all documents displayed"
+          <b-button id="select-all-documents" variant="outline-primary" :title="$t('Select all documents displayed')"
                     @click="$store.commit('selectDocuments', docs)">
             {{ $t('Select all') }}
           </b-button>
@@ -67,16 +67,17 @@
           <span
             class="text-muted d-none d-sm-inline">{{ $tc('| 1 document: | {n} documents:', selectedDocumentsHome.length) }}</span>
           <b-button id="unselect-all-documents" @click="$store.commit('unselectAllDocuments')"
-                    title="Unselect documents">
+                    :title="$t('Deselect all documents')">
             <font-awesome-icon icon="window-close" class="d-sm-none"/>
             <span class="d-none d-sm-inline">{{ $t('Cancel') }}</span>
           </b-button>
-          <b-button id="move-documents" variant="primary" v-b-modal="'modal-move-documents'" title="Move to folder">
+          <b-button id="move-documents" variant="primary" v-b-modal="'modal-move-documents'"
+                    :title="$t('Move to folder')">
             <font-awesome-icon icon="folder-open" class="d-sm-none"/>
             <span class="d-none d-sm-inline">{{ $t('Move') }}</span>
           </b-button>
           <b-button id="delete-documents" variant="danger" v-b-modal="'modal-delete-documents'"
-                    title="Delete documents">
+                    :title="$t('Delete documents')">
             <font-awesome-icon icon="trash" class="d-sm-none"/>
             <span class="d-none d-sm-inline">{{ $t('Delete') }}</span>
           </b-button>
@@ -152,6 +153,11 @@
     "| Show more documents (1 remaining) | Show more documents ({n} remaining)": "| Afficher plus de documents (1 restant) | Afficher plus de documents ({n} restants)"
     No more documents in this folder: Aucun document restant à afficher
     Could not open this folder.: Impossible d'ouvrir ce dossier.
+    Select all documents displayed: Sélectionner tous les documents affichés
+    Deselect all documents: Désélectionner tous les documents
+    Move to folder: Déplacer vers le dossier
+    Delete documents: Supprimer les documents
+    Unable to refresh folders list: Erreur lors du chargement de la liste des dossiers
 </i18n>
 
 <script>
@@ -260,7 +266,8 @@
         }));
 
         // Add total documents count after current folder name
-        paths[paths.length - 1].text = `${paths[paths.length - 1].text} (${this.count})`;
+        paths[paths.length - 1].text =
+          this.count > 0 ? `${paths[paths.length - 1].text} (${this.count})` : `${paths[paths.length - 1].text}`;
 
         return paths
       },
@@ -365,7 +372,7 @@
           .get("/app/api/v1/folders" + qs)
           .then(response => {
             vi.folders = response.data;
-          }).catch(error => vi.mixinAlert("Unable to refresh folders list", true));
+          }).catch(error => vi.mixinAlert(this.$t('Unable to refresh folders list'), true));
       },
 
       folderCreated: function (folder) {
