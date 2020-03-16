@@ -17,7 +17,7 @@ DATABASES = {
     }
 }
 
-DEFAULT_TEST_BROWSER = 'chrome'
+DEFAULT_TEST_BROWSER = 'firefox'
 
 DEV_MODE = False
 
