@@ -88,6 +88,7 @@ class BasePage(LIVE_SERVER):
             mime_type_list = 'application/octet-stream'
             profile.set_preference('browser.helperApps.neverAsk.openFile', mime_type_list)
             profile.set_preference('browser.helperApps.neverAsk.saveToDisk', mime_type_list)
+            profile.update_preferences()
 
             options = FirefoxOptions()
             if TEST_BROWSER_HEADLESS:
