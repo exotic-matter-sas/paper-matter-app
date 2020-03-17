@@ -10,33 +10,33 @@
           :class="{'font-weight-bold': item.has_descendant, selected: $store.getters.FTLTreeItemSelected(item.id)}">
       <span class="target-folder-name">
         <font-awesome-icon :icon="isOpen || item.is_root ? 'folder-open' : 'folder'"/>
-        {{ item.name }}
+        &nbsp;{{ item.name }}&nbsp;
       </span>
       <b-spinner :class="{'d-none': !loading}" small></b-spinner>
     </span>
     <span class="expand-folder-child" v-if="item.has_descendant && !loading && !item.is_root" @click="toggle">
       [{{ isOpen ? '-' : '+' }}]
     </span>
-      <ul class="pl-3" v-show="isOpen || item.is_root" v-if="item.has_descendant">
-        <FTLTreeItem
-          class="item"
-          v-for="folder in item.children"
-          :key="folder.id"
-          :item="folder"
-          :source-folder="sourceFolder"
-        ></FTLTreeItem>
-      </ul>
-      <ul class="pl-3" v-else-if="lastFolderListingFailed">
-        <li class="text-danger">
-          {{ $t('Folders can\'t be loaded') }}
-        </li>
-      </ul>
+    <ul class="pl-3" v-show="isOpen || item.is_root" v-if="children in item && item.children.length > 0">
+      <FTLTreeItem
+        class="item"
+        v-for="folder in item.children"
+        :key="folder.id"
+        :item="folder"
+        :source-folder="sourceFolder"
+      ></FTLTreeItem>
+    </ul>
+    <ul class="pl-3" v-else-if="lastFolderListingFailed">
+      <li class="text-danger">
+        {{ $t('Folders can\'t be loaded') }}
+      </li>
+    </ul>
   </li>
 </template>
 
 <i18n>
   fr:
-    Unable to refresh folders list: La liste des dossiers n'a pu être rafraichie
+    Folders can't be loaded: Les dossiers n'ont pu être chargés
 </i18n>
 
 <script>
@@ -67,14 +67,17 @@
 
     methods: {
       toggle: function () {
-        this.isOpen = !this.isOpen;
+        if (this.item.has_descendant && !this.loading && !this.item.is_root){
+          this.isOpen = !this.isOpen;
+          this.lastFolderListingFailed = false;
 
-        if (this.item.has_descendant && this.isOpen) {
-          this.updateMovingFolder(this.item.id);
-        }
+          if (this.item.has_descendant && this.isOpen) {
+            this.listItemChildren(this.item.id);
+          }
 
-        if (!this.isOpen) {
-          this.item.children = [];
+          if (!this.isOpen) {
+            this.item.children = [];
+          }
         }
       },
 
@@ -86,7 +89,7 @@
         }
       },
 
-      updateMovingFolder: function (level = null) {
+      listItemChildren: function (level = null) {
         const vi = this;
         let qs = '';
         vi.lastFolderListingFailed = false;

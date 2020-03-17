@@ -33,7 +33,6 @@
   fr:
     No folder created yet: Vous n'avez pas encore créé de dossier
     Folders can't be loaded: Les dossiers n'ont pu être chargés
-    Unable to refresh folders list: La liste des dossiers n'a pu être rafraichie
     Root: Racine
 </i18n>
 
@@ -83,6 +82,7 @@
   ul{
     list-style: none;
     margin-bottom: 0;
+    user-select: none;
   }
 
   .item {
