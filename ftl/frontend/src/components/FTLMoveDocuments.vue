@@ -115,10 +115,7 @@
               // nb could be equal to 0 due decrement which happen when folder is moved to its current location
               this.mixinAlert(this.$tc('No move needed. | One document moved successfully. | {n} documents moved successfully.',
                 responses.length));
-              // if nb equal to 0 we need to manually close the modal as no event is emitted
-              if (nb === 0){
-                this.$bvModal.hide(this.id)
-              }
+              this.$bvModal.hide(this.id)
             } else {
               this.mixinAlertWarning(
                 this.$tc('No document could be moved. | One document moved successfully ({remain} couldn\'t). | {n} documents moved successfully ({remain} couldn\'t).',

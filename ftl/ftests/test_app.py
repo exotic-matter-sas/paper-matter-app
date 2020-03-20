@@ -647,7 +647,7 @@ class DocumentsBatchActionsTests(LoginPage, HomePage, MoveDocumentsModal):
         self.assertCountEqual([self.doc3.title], self.get_elems_text(self.documents_titles))
 
 
-class DocumentViewerModalTests(LoginPage, HomePage, DocumentViewerModal):
+class DocumentViewerModalTests(LoginPage, HomePage, DocumentViewerModal, MoveDocumentsModal):
     def setUp(self, **kwargs):
         # first org, admin, user are already created, user is already logged on home page
         super().setUp()
@@ -774,6 +774,31 @@ class DocumentViewerModalTests(LoginPage, HomePage, DocumentViewerModal):
         self.browser.switch_to.window(new_window)
         time.sleep(0.5)  # wait for browser to load viewer
         self.assertIn(f'{document.pid}/doc.pdf', self.browser.current_url)
+
+    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @patch.object(FTLDocumentProcessing, 'apply_processing')
+    def test_move_document(self, mock_apply_processing):
+        # User has already created a folder and added and opened a document
+        folder = setup_folder(self.org)
+        document = setup_document(self.org, self.user)
+        self.refresh_documents_list()
+        self.open_first_document()
+
+        # User click on move button and select the target folder
+        self.get_elem(self.move_document_button).click()
+        self.move_document(folder.name)
+
+        # User close document
+        self.close_document()
+
+        # User see the documents to move have disappear from the current folder
+        with self.assertRaises(NoSuchElementException, msg='Document should have been moved from this folder'):
+            self.get_elem(self.documents_titles)
+
+        # User see the documents in the proper folder
+        self.get_elem(self.folders_list_buttons).click()
+        self.wait_documents_list_loaded()
+        self.assertCountEqual([document.title], self.get_elems_text(self.documents_titles))
 
 
 class ManageFoldersPageTests(LoginPage, ManageFolderPage):

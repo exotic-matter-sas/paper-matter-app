@@ -85,6 +85,7 @@
             .then(response => {
               this.$emit('event-folder-moved', {'folder': this.folder, 'target_folder': this.selectedMoveTargetFolder});
               this.$store.commit('selectMoveTargetFolder', null);
+              this.$bvModal.hide(this.id)
             })
             .catch(error => {
               this.mixinAlert(this.$t('Could not move folder'), true)
