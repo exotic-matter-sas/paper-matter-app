@@ -11,7 +11,7 @@
     </span>
     <div @click.prevent="selectFolder" @dblclick.prevent="toggle"
             :class="{'font-weight-bold': item.has_descendant, selected: $store.getters.FTLTreeItemSelected(item.id)}">
-      <span class="target-folder-name m-2">
+      <span class="target-folder-name mx-2" :title="item.name">
         <font-awesome-icon :icon="isOpen || item.is_root ? 'folder-open' : 'folder'"/>
         &nbsp;{{ item.name }}&nbsp;
       </span>
@@ -139,5 +139,12 @@
 
   svg {
     vertical-align: -0.125em;
+  }
+
+  .target-folder-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
   }
 </style>
