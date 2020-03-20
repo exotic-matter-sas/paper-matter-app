@@ -11,11 +11,11 @@
           multiple
           ref="fileUploadField"
           v-model="files"
-          :state="files.length > 0"
+          :state="files.length > 0 || null"
           :placeholder="$t('Upload document')"
           :drop-placeholder="$t('Drop file here...')"
           :browse-text="$t('Browse')"
-          accept="application/pdf"
+          :accept="ftlAccount['supported_exts'].join(', ')"
         ></b-form-file>
       </b-col>
       <b-col cols="12" md="2">
@@ -62,6 +62,7 @@
   import axios from 'axios';
   import {createThumbFromFile} from "@/thumbnailGenerator";
   import {axiosConfig} from "@/constants";
+  import {mapState} from "vuex";
 
   export default {
     name: "FTLUpload",
@@ -80,6 +81,10 @@
         currentUploadProgress: 0,
         globalUploadProgress: 0,
       }
+    },
+
+    computed: {
+      ...mapState(['ftlAccount']) // generate vuex computed getter
     },
 
     methods: {
@@ -110,12 +115,14 @@
           }
           formData.append('json', JSON.stringify(jsonData));
 
-          // thumbnail generation
-          try {
-            let thumb = await createThumbFromFile(file);
-            formData.append('thumbnail', thumb);
-          } catch (e) {
-            vi.mixinAlert(this.$t('Unable to create thumbnail'), true);
+          if (file.type === 'application/pdf') {
+            // thumbnail generation
+            try {
+              let thumb = await createThumbFromFile(file);
+              formData.append('thumbnail', thumb);
+            } catch (e) {
+              vi.mixinAlert(this.$t('Unable to create thumbnail'), true);
+            }
           }
 
           const updatedAxiosConfig = Object.assign({}, axiosConfig, {onUploadProgress: this.refreshUploadProgression});

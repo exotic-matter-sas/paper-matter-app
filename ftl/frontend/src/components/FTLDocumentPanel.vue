@@ -33,7 +33,7 @@
     </template>
     <b-container class="h-100" fluid>
       <b-row class="h-100">
-        <b-col md="8">
+        <b-col md="8" v-if="currentOpenDoc.type === 'application/pdf'">
           <div v-if="!isIOS" class="h-100 embed-responsive doc-pdf" id="pdfviewer">
             <iframe v-if="currentOpenDoc.pid" class="embed-responsive-item"
                     :src="viewerUrl">
@@ -45,11 +45,18 @@
             </span>
           </div>
         </b-col>
+        <b-col md="8" v-else>
+          <div>
+            <span class="text-muted">
+              {{ $t('Viewer not available on this device, open the document instead.') }}
+            </span>
+          </div>
+        </b-col>
         <b-col>
           <b-row>
             <b-col class="mb-1">
               <b-button id="open-pdf" class="mx-1 mb-1" variant="primary"
-                        :href="`/app/uploads/` + currentOpenDoc.pid + `/doc.pdf`"
+                        :href="`/app/uploads/` + currentOpenDoc.pid + `/doc`"
                         target="_blank" :title="$t('Open PDF in a new tab')">
                 {{ $t('Open PDF') }}
                 <font-awesome-icon icon="external-link-alt" size="sm"/>
@@ -179,7 +186,7 @@
           .then(response => {
             this.currentOpenDoc = response.data;
 
-            if (!response.data.thumbnail_available) {
+            if (!response.data.thumbnail_available && response.data.type === 'application/pdf') {
               this.createThumbnailForDocument(this.currentOpenDoc)
                 .then(response => {
                   this.mixinAlert(this.$t('Thumbnail updated'));

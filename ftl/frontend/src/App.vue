@@ -29,13 +29,14 @@
       }
     },
 
-    mounted() {
+    mounted: function () {
       // get account value from Django core/home.html template
       let ftlAccountElem = document.getElementById('ftlAccount');
       if (ftlAccountElem) {
         this.account = JSON.parse(ftlAccountElem.textContent);
+        this.$store.commit("setFtlAccount", this.account);
       }
-      // get account value from Django core/home.html template
+      // get locale value from Django core/home.html template
       const localeElem = document.getElementById('locale');
       if (localeElem) {
         this.$i18n.locale = JSON.parse(localeElem.textContent);

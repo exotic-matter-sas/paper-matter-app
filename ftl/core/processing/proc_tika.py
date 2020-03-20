@@ -11,6 +11,18 @@ logger = logging.getLogger(__name__)
 
 
 class FTLTextExtractionTika(FTLDocProcessingBase):
+    supported_filetypes = [
+        'application/pdf',
+        'text/plain',
+        'application/rtf',
+        'application/msword',
+        'application/vnd.ms-excel',
+        'application/vnd.ms-powerpoint',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.openxmlformats-officedocument.presentationml.slide',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ]
+
     def __init__(self):
         self.log_prefix = f'[{self.__class__.__name__}]'
 
@@ -22,9 +34,12 @@ class FTLTextExtractionTika(FTLDocProcessingBase):
 
             if 'metadata' in parsed_txt and 'xmpTPg:NPages' in parsed_txt['metadata']:
                 ftl_doc.count_pages = int(parsed_txt['metadata']['xmpTPg:NPages'])
-                ftl_doc.save()
+
             else:
                 logger.warning(f'{self.log_prefix} Pages number can\'t be retrieved for document {ftl_doc.pid}')
+                ftl_doc.count_pages = 1
+
+            ftl_doc.save()
         else:
             logger.debug(f'{self.log_prefix} Skipping Tika extract (page count) for document {ftl_doc.pid}')
 

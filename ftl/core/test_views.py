@@ -20,10 +20,7 @@ class CorePagesTests(TestCase):
 
     def test_home_returns_correct_html(self):
         response = self.client.get('/app/')
-        self.assertContains(
-            response,
-            f'<script id="ftlAccount" type="application/json">{{"name": "{self.user.email}", "isSuperUser": false, "otp_warning": false}}'
-            f'</script>')
+        self.assertContains(response, f'<script id="ftlAccount" type="application/json">')
         self.assertContains(response, '<div id="app">')
         self.assertTemplateUsed(response, 'core/home.html')
 
@@ -31,7 +28,18 @@ class CorePagesTests(TestCase):
         response = self.client.get('/app/')
         # self.assertEqual(response.context['org_name'], self.org.name)
         self.assertEqual(response.context['ftl_account'],
-                         {'name': self.user.email, 'isSuperUser': False, 'otp_warning': False})
+                         {'name': self.user.email, 'isSuperUser': False, 'otp_warning': False,
+                          'supported_exts': ['.pdf',
+                                             '.txt',
+                                             '.rtf',
+                                             '.doc',
+                                             '.xls',
+                                             '.ppt',
+                                             '.docx',
+                                             '.xlsx',
+                                             '.pptx']
+                          }
+                         )
 
 
 class DownloadDocumentTests(TestCase):

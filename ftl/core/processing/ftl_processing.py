@@ -43,14 +43,17 @@ class FTLDocumentProcessing:
         errors = list()
         # for each registered processing plugin, apply processing
         for plugin in self.plugins:
-            try:
-                logger.debug(f'Executing plugin {plugin.__class__.__name__} on {ftl_doc.pid}')
-                pre_ftl_processing.send(sender=plugin.__class__, document=ftl_doc)
-                plugin.process(ftl_doc, plugins_all or ".".join(
-                    [plugin.__class__.__module__, plugin.__class__.__qualname__]) in plugins_forced)
-            except Exception:
-                errors.append(plugin.__class__.__name__)
-                logger.exception(f'Error while processing {ftl_doc.pid} with plugin {plugin.__class__.__name__}')
+            if ftl_doc.type in plugin.supported_filetypes or '*' in plugin.supported_filetypes:
+                try:
+                    logger.debug(f'Executing plugin {plugin.__class__.__name__} on {ftl_doc.pid}')
+                    pre_ftl_processing.send(sender=plugin.__class__, document=ftl_doc)
+                    plugin.process(ftl_doc, plugins_all or ".".join(
+                        [plugin.__class__.__module__, plugin.__class__.__qualname__]) in plugins_forced)
+                except Exception:
+                    errors.append(plugin.__class__.__name__)
+                    logger.exception(f'Error while processing {ftl_doc.pid} with plugin {plugin.__class__.__name__}')
+            else:
+                logger.debug(f'Skipping plugin {plugin.__class__.__name__} on {ftl_doc.pid} (mimetype not supported)')
 
         if errors:
             logger.error(f'{ftl_doc.pid} was processed by {len(self.plugins)} plugins ({len(errors)} failing: '
@@ -66,6 +69,8 @@ class FTLDocumentProcessing:
 
 
 class FTLDocProcessingBase:
+    supported_filetypes = []  # mimetype of supported file format or * for all
+
     def process(self, ftl_doc, force):
         raise NotImplementedError
 

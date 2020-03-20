@@ -22,6 +22,7 @@ class ProcTest(FTLDocProcessingBase):
     """
     Mocked test processing class
     """
+    supported_filetypes = ['*']
 
     def process(self, ftl_doc, force):
         pass
@@ -49,6 +50,9 @@ class DocumentProcessingTests(TestCase):
         mock_plugin_1 = Mock()
         mock_plugin_2 = Mock()
 
+        mock_plugin_1.supported_filetypes = ['*']
+        mock_plugin_2.supported_filetypes = ['*']
+
         self.processing.plugins = list()
         self.processing.plugins.append(mock_plugin_1)
         self.processing.plugins.append(mock_plugin_2)
@@ -63,6 +67,9 @@ class DocumentProcessingTests(TestCase):
     def test_apply_processing_force_list(self):
         mock_plugin_1 = Mock()
         mock_plugin_2 = Mock(spec=ProcTest)
+
+        mock_plugin_1.supported_filetypes = ['*']
+        mock_plugin_2.supported_filetypes = ['*']
 
         self.processing.plugins = list()
         self.processing.plugins.append(mock_plugin_1)
@@ -81,6 +88,10 @@ class DocumentProcessingTests(TestCase):
         mock_plugin_1 = Mock()
         mock_plugin_2 = Mock()
         mock_plugin_3 = Mock()
+
+        mock_plugin_1.supported_filetypes = ['*']
+        mock_plugin_2.supported_filetypes = ['*']
+        mock_plugin_3.supported_filetypes = ['*']
 
         self.processing.plugins = list()
         self.processing.plugins.append(mock_plugin_1)
@@ -105,6 +116,10 @@ class DocumentProcessingTests(TestCase):
         mocked_plugin_3 = Mock()
         mocked_plugin_3.__class__.__name__ = 'Badaboum!'
         mocked_plugin_3.process.side_effect = Exception(mocked_plugin_3.__class__.__name__)
+
+        mocked_plugin_1.supported_filetypes = ['*']
+        mocked_plugin_2.supported_filetypes = ['*']
+        mocked_plugin_3.supported_filetypes = ['*']
 
         self.processing.plugins = [mocked_plugin_1, mocked_plugin_2, mocked_plugin_3]
         mocked_doc = Mock()

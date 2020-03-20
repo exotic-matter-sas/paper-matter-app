@@ -55,9 +55,9 @@ class FTLDocumentSerializer(serializers.ModelSerializer):
     class Meta:
         model = FTLDocument
         fields = ('pid', 'title', 'note', 'created', 'edited', 'ftl_folder', 'thumbnail_binary', 'thumbnail_available',
-                  'thumbnail_url', 'is_processed', 'path', 'md5', 'size', 'ocrized')
+                  'thumbnail_url', 'is_processed', 'path', 'md5', 'size', 'ocrized', 'type')
         read_only_fields = ('pid', 'created', 'edited', 'thumbnail_available', 'thumbnail_url', 'is_processed', 'path',
-                            'md5', 'size', 'ocrized')
+                            'md5', 'size', 'ocrized', 'type')
 
 
 class FTLFolderSerializer(serializers.ModelSerializer):

@@ -34,5 +34,9 @@ export default {
 
   changeSortHome: function (state, value) {
     state.sortHome = value;
+  },
+
+  setFtlAccount: function (state, value) {
+    state.ftlAccount = value;
   }
 }

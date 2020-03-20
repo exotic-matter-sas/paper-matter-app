@@ -315,6 +315,21 @@ if DEFAULT_FILE_STORAGE == FTLStorages.GCS or FTLPlugins.OCR_GOOGLE_VISION_SYNC 
     if DEFAULT_FILE_STORAGE == FTLStorages.GCS:
         GS_BUCKET_NAME = os.environ.get('GCS_BUCKET_NAME')
 
+"""
+SUPPORTED DOCUMENTS TYPES
+"""
+FTL_SUPPORTED_FILETYPES = [
+    '.pdf',
+    '.txt',
+    '.rtf',
+    '.doc',
+    '.xls',
+    '.ppt',
+    '.docx',
+    '.xlsx',
+    '.pptx',
+]
+
 # ==================================================
 # No settings under this line
 # Auto import local `settings_local.py` if available

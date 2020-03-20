@@ -11,13 +11,19 @@ import FTLUpload from "../../src/components/FTLUpload";
 import flushPromises from 'flush-promises';
 import {axiosConfig} from "../../src/constants";
 import {createThumbFromFile} from '../../src/thumbnailGenerator'
+import cloneDeep from "lodash.clonedeep";
+import storeConfig from "@/store/storeConfig";
+import Vuex from "vuex";
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue); // to avoid warning on tests execution
+localVue.use(Vuex);
 localVue.prototype.$t = (text) => {
   return text;
 }; // i18n mock
-localVue.prototype.$tc = (text, args='') => {return text + args};// i18n mock
+localVue.prototype.$tc = (text, args = '') => {
+  return text + args
+};// i18n mock
 localVue.prototype.$moment = () => {
   return {fromNow: jest.fn()}
 };
@@ -32,8 +38,15 @@ jest.mock('../../src/thumbnailGenerator', () => ({
 }));
 
 describe('FTLUpload template', () => {
+  let storeConfigCopy;
+  let store;
+
+  storeConfigCopy = cloneDeep(storeConfig);
+  store = new Vuex.Store(storeConfigCopy);
+
   const wrapper = shallowMount(FTLUpload, {
     localVue,
+    store,
     propsData: {currentFolder: tv.FOLDER_PROPS}
   });
 
@@ -50,24 +63,30 @@ describe('FTLUpload script', () => {
     config: axiosConfig
   };
   let formData = new FormData();
-  formData.append('file', null);
+  formData.append('file', {type: 'application/pdf'});
   formData.append('json', JSON.stringify({'ftl_folder': tv.FOLDER_PROPS.id}));
   formData.append('thumbnail', 'base64str');
   let wrapper;
+  let storeConfigCopy;
+  let store;
 
   beforeEach(() => {
     axios.post.mockResolvedValue(mockedPostResponse);
     createThumbFromFile.mockResolvedValue("base64str");
 
+    storeConfigCopy = cloneDeep(storeConfig);
+    store = new Vuex.Store(storeConfigCopy);
+
     wrapper = shallowMount(FTLUpload, {
       localVue,
+      store,
       propsData: {currentFolder: tv.FOLDER_PROPS},
     });
     axios_upload_conf = {
       onUploadProgress: wrapper.vm.refreshUploadProgression
     };
     Object.assign(axios_upload_conf, axiosConfig); // merge upload specific conf with generic crsf conf
-    wrapper.setData({files: [null]})
+    wrapper.setData({files: [{type: 'application/pdf'}]})
   });
 
   it('uploadDocument call api', async () => {

@@ -23,6 +23,8 @@ class FTLOCRGoogleVisionAsync(FTLOCRBase):
     Doc: https://cloud.google.com/vision/docs/reference/rest/v1/files/asyncBatchAnnotate
     """
 
+    supported_filetypes = ['application/pdf']
+
     def __init__(self, credentials=settings.GS_CREDENTIALS, gcs_bucket_name=settings.GS_BUCKET_NAME):
         super().__init__()
         self.gcs_bucket_name = gcs_bucket_name

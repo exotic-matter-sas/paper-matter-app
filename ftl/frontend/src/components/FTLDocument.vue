@@ -7,8 +7,11 @@
   <b-col cols="12" mb="4" sm="6" md="4" lg="3" xl="2" class="mb-3 document-thumbnail" :id="doc.pid"
          @click.ctrl="toggleSelection">
     <div class="card" :class="{'selected': $store.getters.FTLDocumentSelected(doc.pid)}">
-      <div class="card-img-top" slot="aside"
+      <div v-if="doc.thumbnail_available" class="card-img-top" slot="aside"
            :style="{'background-image': 'url(' + doc.thumbnail_url + ')'}"
+           @click.exact="$emit('event-open-doc', doc.pid)"></div>
+      <div v-else class="card-img-top" slot="aside"
+           :style="{'background-color': 'whitesmoke'}"
            @click.exact="$emit('event-open-doc', doc.pid)"></div>
       <b-card-body>
         <b-button class="float-right download-button" variant="secondary" size="sm" :href="'uploads/' + doc.pid">
@@ -32,9 +35,9 @@
 </template>
 
 <i18n>
-    fr:
-      Use CTRL + left click for quick selection: Utiliser CTRL + clic gauche pour une sélection rapide
-      Processing document, it cannot be searched yet.: Document en cours d'indexation, il ne peut pas être recherché.
+  fr:
+    Use CTRL + left click for quick selection: Utiliser CTRL + clic gauche pour une sélection rapide
+    Processing document, it cannot be searched yet.: Document en cours d'indexation, il ne peut pas être recherché.
 </i18n>
 
 <script>
