@@ -6,7 +6,7 @@
 <template>
   <b-row>
     <b-col id="moving-folders">
-      <ul class="pl-3" v-if="folders.length > 0 && folders[0].children.length > 0">
+      <ul class="pl-0" v-if="folders.length > 0 && folders[0].children.length > 0">
         <FTLTreeItem
           class="item"
           v-for="folder in folders"
@@ -15,12 +15,12 @@
           :source-folder="sourceFolder"
         ></FTLTreeItem>
       </ul>
-      <ul class="pl-3" v-else-if="lastFolderListingFailed">
+      <ul class="pl-0" v-else-if="lastFolderListingFailed">
         <li class="text-danger">
           {{ $t('Folders can\'t be loaded') }}
         </li>
       </ul>
-      <ul class="pl-3" v-else>
+      <ul class="pl-0" v-else>
         <li class="text-muted">
           {{ $t('No folder created yet') }}
         </li>

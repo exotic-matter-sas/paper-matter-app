@@ -5,19 +5,18 @@
 
 <template>
   <li class="folder-tree-item">
-    <span @click.prevent="selectFolder" @dblclick.prevent="toggle"
-          class="px-1"
-          :class="{'font-weight-bold': item.has_descendant, selected: $store.getters.FTLTreeItemSelected(item.id)}">
-      <span class="target-folder-name">
+    <span class="expand-folder-child" v-if="item.has_descendant && !item.is_root" @click="toggle">
+      <b-spinner v-if="loading" small></b-spinner>
+      <font-awesome-icon v-else :icon="isOpen ? ['far', 'minus-square'] : ['far', 'plus-square']"/>
+    </span>
+    <div @click.prevent="selectFolder" @dblclick.prevent="toggle"
+            :class="{'font-weight-bold': item.has_descendant, selected: $store.getters.FTLTreeItemSelected(item.id)}">
+      <span class="target-folder-name m-2">
         <font-awesome-icon :icon="isOpen || item.is_root ? 'folder-open' : 'folder'"/>
         &nbsp;{{ item.name }}&nbsp;
       </span>
-      <b-spinner :class="{'d-none': !loading}" small></b-spinner>
-    </span>
-    <span class="expand-folder-child" v-if="item.has_descendant && !loading && !item.is_root" @click="toggle">
-      [{{ isOpen ? '-' : '+' }}]
-    </span>
-    <ul class="pl-3" v-show="isOpen || item.is_root" v-if="children in item && item.children.length > 0">
+    </div>
+    <ul class="pl-4" v-show="isOpen || item.is_root" v-if="'children' in item && item.children.length > 0">
       <FTLTreeItem
         class="item"
         v-for="folder in item.children"
@@ -26,7 +25,7 @@
         :source-folder="sourceFolder"
       ></FTLTreeItem>
     </ul>
-    <ul class="pl-3" v-else-if="lastFolderListingFailed">
+    <ul class="pl-4" v-else-if="lastFolderListingFailed">
       <li class="text-danger">
         {{ $t('Folders can\'t be loaded') }}
       </li>
@@ -127,6 +126,11 @@
 
   .item {
     cursor: pointer;
+  }
+
+  .expand-folder-child{
+    position: absolute;
+    margin-left: -1rem;
   }
 
   .selected {
