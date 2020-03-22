@@ -14,7 +14,9 @@
     <b-container fluid>
       <b-row>
         <b-col>
-          <FTLTreeFolders :source-folder="folder.id"/>
+          <FTLTreeFolders :folder-to-disable="folder.parent"
+                          :folder-to-disable-message="$t('current location')"
+                          :folder-to-hide="folder.id"/>
         </b-col>
       </b-row>
     </b-container>
@@ -39,6 +41,7 @@
   fr:
     Move "{0}" to "{1}": Déplacer « {0} » vers « {1} »
     Move "{0}" to...: Déplacer « {0} » vers ...
+    current location: emplacement actuel
     "Selected folder: {0}": "Dossier sélectionné : {0}"
     No folder selected: Aucun dossier sélectionné
     Could not move folder: Le dossier n'a pu être déplacé

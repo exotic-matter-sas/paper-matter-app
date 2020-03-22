@@ -12,7 +12,9 @@
           v-for="folder in folders"
           :key="folder.id"
           :item="folder"
-          :source-folder="sourceFolder"
+          :folder-to-disable="folderToDisable"
+          :folder-to-disable-message="folderToDisableMessage"
+          :folder-to-hide="folderToHide"
         ></FTLTreeItem>
       </ul>
       <ul class="pl-0" v-else-if="lastFolderListingFailed">
@@ -46,7 +48,12 @@
       FTLTreeItem
     },
     props: {
-      sourceFolder: {type: Number, default: -1} // to hide source folder in folder list
+      // to disable a folder selection
+      folderToDisable: {default: -1},
+      // to display an informative message next to the disabled folder
+      folderToDisableMessage: {type: String, default: null},
+      // to hide a folder from the list (eg. when moving a folder it can't be move to itself or one of its child)
+      folderToHide: {default: -1},
     },
 
     data() {
@@ -66,7 +73,7 @@
             let rootFolder = {id: null, name: vi.$t('Root'), has_descendant: true, is_root: true};
             rootFolder.children = response.data
               .filter(function (e) {
-                return e.id !== vi.sourceFolder;
+                return e.id !== vi.folderToHide;
               })
               .map(function (e) {
                 return {id: e.id, name: e.name, has_descendant: e.has_descendant, children: []}

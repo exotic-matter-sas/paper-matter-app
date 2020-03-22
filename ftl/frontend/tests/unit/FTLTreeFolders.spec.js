@@ -37,7 +37,7 @@ const mockedGetFoldersListResponse = {
   config: axiosConfig
 };
 
-const sourceFolder = 1;
+const folderToHide = 1;
 
 describe('Component template', () => {
   let wrapper;
@@ -45,7 +45,7 @@ describe('Component template', () => {
     axios.get.mockResolvedValue(mockedGetFoldersListResponse);
     wrapper = shallowMount(FTLTreeFolders, {
       localVue,
-      propsData: { sourceFolder }
+      propsData: { folderToHide }
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
@@ -65,7 +65,7 @@ describe('Component mounted without props', () => {
     axios.get.mockResolvedValue(mockedGetFoldersListResponse);
     wrapper = shallowMount(FTLTreeFolders, {
       localVue,
-      propsData: { sourceFolder }
+      propsData: { folderToHide }
     });
   });
 
@@ -79,24 +79,24 @@ describe('Component mounted without props', () => {
   });
 });
 
-describe('Component mounted with sourceFolder props', () => {
+describe('Component mounted with folderToHide props', () => {
   let wrapper;
-  const sourceFolder = tv.FOLDER_PROPS_VARIANT.id;
+  const folderToHide = tv.FOLDER_PROPS_VARIANT.id;
   beforeEach(() => {
     axios.get.mockResolvedValue(mockedGetFoldersListResponse);
     wrapper = shallowMount(FTLTreeFolders, {
       localVue,
-      propsData: { sourceFolder }
+      propsData: { folderToHide }
     });
   });
 
-  it('sourceFolder is filtered out from the GetFoldersListResponse', async () => {
+  it('folderToHide is filtered out from the GetFoldersListResponse', async () => {
     // when mounted
     await flushPromises();
 
     // then
     wrapper.vm.folders.forEach(function(folder){
-      expect(folder.id).not.toBe(sourceFolder);
+      expect(folder.id).not.toBe(folderToHide);
     });
   });
 });
@@ -107,7 +107,7 @@ describe('Component API error handling', () => {
     axios.get.mockRejectedValue('fakeError');
     wrapper = shallowMount(FTLTreeFolders, {
       localVue,
-      propsData: { sourceFolder }
+      propsData: { folderToHide }
     });
   });
 

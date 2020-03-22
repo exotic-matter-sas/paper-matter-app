@@ -50,7 +50,7 @@ const mockedFTLTreeItemSelected = jest.fn();
 
 const item = tv.FOLDER_TREE_ITEM;
 const itemWithDescendant = tv.FOLDER_TREE_ITEM_WITH_DESCENDANT;
-const sourceFolder = 1;
+const folderToHide = 1;
 
 describe('FTLTreeItem template', () => {
   let wrapper;
@@ -66,7 +66,7 @@ describe('FTLTreeItem template', () => {
       computed: {
         selected: mockedSelected
       },
-      propsData: {item, sourceFolder},
+      propsData: {item, folderToHide},
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
@@ -111,7 +111,7 @@ describe('FTLTreeItem methods call proper methods', () => {
       methods: {
         listItemChildren: mockedListItemChildren
       },
-      propsData: {item: itemWithDescendant, sourceFolder},
+      propsData: {item: itemWithDescendant, folderToHide},
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
@@ -168,7 +168,7 @@ describe('FTLTreeItem methods call api', () => {
       computed: {
         selected: mockedSelected
       },
-      propsData: {item, sourceFolder},
+      propsData: {item, folderToHide},
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
@@ -186,11 +186,11 @@ describe('FTLTreeItem methods call api', () => {
     expect(axios.get).toHaveBeenCalledTimes(1);
   });
 
-  it('listItemChildren filter api response based on sourceFolder', async () => {
+  it('listItemChildren filter api response based on folderToHide', async () => {
     axios.get.mockResolvedValue(mockedGetFoldersListResponse);
     const level = 'level';
-    const newSourceFolder = tv.FOLDER_PROPS_VARIANT.id;
-    wrapper.setProps({sourceFolder: newSourceFolder});
+    const newFolderToHide = tv.FOLDER_PROPS_VARIANT.id;
+    wrapper.setProps({folderToHide: newFolderToHide});
 
     // when
     wrapper.vm.listItemChildren(level);
@@ -198,7 +198,7 @@ describe('FTLTreeItem methods call api', () => {
 
     // then
     wrapper.vm.item.children.forEach(function (folder) {
-      expect(folder.id).not.toBe(newSourceFolder);
+      expect(folder.id).not.toBe(newFolderToHide);
     });
   });
 });
@@ -216,7 +216,7 @@ describe('FTLTreeItem methods error handling', () => {
       computed: {
         selected: mockedSelected
       },
-      propsData: {item, sourceFolder},
+      propsData: {item, folderToHide},
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });

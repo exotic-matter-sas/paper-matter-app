@@ -13,7 +13,8 @@
     <b-container fluid>
       <b-row>
         <b-col>
-          <FTLTreeFolders/>
+          <FTLTreeFolders :folder-to-disable="folderToDisable"
+                          :folder-to-disable-message="$t('current location')"/>
         </b-col>
       </b-row>
     </b-container>
@@ -38,6 +39,7 @@
   fr:
     "| Move \"{documentTitle}\" to: | Move {n} documents to:": "| Déplacer « {documentTitle} » vers : | Déplacer {n} documents vers :"
     "Selected folder: {0}": "Dossier sélectionné : {0}"
+    current location: emplacement actuel
     No folder selected: Aucun dossier sélectionné
     Document moved successfully.: Le document a été déplacé avec succès.
     "No move needed. | One document moved successfully. | {n} documents moved successfully.": "Aucun déplacement nécessaire. | Un document déplacé. | {n} documents déplacés."
@@ -75,6 +77,14 @@
     },
 
     computed: {
+      folderToDisable: function () {
+        // we only disable the source folder when one doc is selected (as several docs can have several sources)
+        if (this.docs.length === 1) {
+          return this.docs[0].ftl_folder;
+        } else {
+          return -1;
+        }
+      },
       ...mapState(['selectedMoveTargetFolder']) // generate vuex computed getter
     },
 
