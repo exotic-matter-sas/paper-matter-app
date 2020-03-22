@@ -13,23 +13,24 @@
     <b-container fluid>
       <b-row>
         <b-col>
-          <FTLTreeFolders/>
+          <FTLTreeFolders :folder-to-disable="folderToDisable"
+                          :folder-to-disable-message="$t('current location')"/>
         </b-col>
       </b-row>
     </b-container>
     <template slot="modal-footer">
-          <div class="flex-grow-1 text-muted text-left font-italic">
-            <span v-if="selectedMoveTargetFolder">
-              {{ $t('Selected folder: {0}', [selectedMoveTargetFolder.name] )}}
-            </span>
-            <span v-else>{{$t('No folder selected')}}</span>
-          </div>
-          <b-button variant="secondary" @click.prevent="$bvModal.hide(id)">
-            {{ $t('Cancel') }}
-          </b-button>
-          <b-button variant="primary" @click.prevent="moveDocument" :disabled="!selectedMoveTargetFolder">
-            {{ $t('OK') }}
-          </b-button>
+      <div id="selected-folder-label" class="flex-grow-1 text-muted text-left font-italic">
+        <span v-if="selectedMoveTargetFolder" :title="selectedMoveTargetFolder.name">
+          {{ $t('Selected folder: {0}', [selectedMoveTargetFolder.name] )}}
+        </span>
+        <span v-else>{{$t('No folder selected')}}</span>
+      </div>
+      <b-button variant="secondary" @click.prevent="$bvModal.hide(id)">
+        {{ $t('Cancel') }}
+      </b-button>
+      <b-button variant="primary" @click.prevent="moveDocument" :disabled="!selectedMoveTargetFolder">
+        {{ $t('OK') }}
+      </b-button>
     </template>
   </b-modal>
 </template>
@@ -38,6 +39,7 @@
   fr:
     "| Move \"{documentTitle}\" to: | Move {n} documents to:": "| Déplacer « {documentTitle} » vers : | Déplacer {n} documents vers :"
     "Selected folder: {0}": "Dossier sélectionné : {0}"
+    current location: emplacement actuel
     No folder selected: Aucun dossier sélectionné
     Document moved successfully.: Le document a été déplacé avec succès.
     "No move needed. | One document moved successfully. | {n} documents moved successfully.": "Aucun déplacement nécessaire. | Un document déplacé. | {n} documents déplacés."
@@ -75,6 +77,14 @@
     },
 
     computed: {
+      folderToDisable: function () {
+        // we only disable the source folder when one doc is selected (as several docs can have several sources)
+        if (this.docs.length === 1) {
+          return this.docs[0].ftl_folder;
+        } else {
+          return -1;
+        }
+      },
       ...mapState(['selectedMoveTargetFolder']) // generate vuex computed getter
     },
 
@@ -115,10 +125,7 @@
               // nb could be equal to 0 due decrement which happen when folder is moved to its current location
               this.mixinAlert(this.$tc('No move needed. | One document moved successfully. | {n} documents moved successfully.',
                 responses.length));
-              // if nb equal to 0 we need to manually close the modal as no event is emitted
-              if (nb === 0){
-                this.$bvModal.hide(this.id)
-              }
+              this.$bvModal.hide(this.id)
             } else {
               this.mixinAlertWarning(
                 this.$tc('No document could be moved. | One document moved successfully ({remain} couldn\'t). | {n} documents moved successfully ({remain} couldn\'t).',
@@ -131,4 +138,10 @@
 </script>
 
 <style scoped>
+  #selected-folder-label{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+  }
 </style>

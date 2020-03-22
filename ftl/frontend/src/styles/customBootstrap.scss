@@ -66,6 +66,19 @@ button svg {
     overflow: hidden;
 }
 
+.modal-title{
+    overflow-wrap: anywhere;
+}
+
+a.disabled{
+    color: map_get($theme-colors, 'light-gray');
+    cursor: default;
+
+    &:hover{
+        text-decoration: none;
+    }
+}
+
 // LOGIN PAGE
 // ==========
 #login-form {

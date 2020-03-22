@@ -6,21 +6,23 @@
 <template>
   <b-row>
     <b-col id="moving-folders">
-      <ul class="pl-3" v-if="folders.length > 0 && folders[0].children.length > 0">
+      <ul class="pl-0" v-if="folders.length > 0 && folders[0].children.length > 0">
         <FTLTreeItem
           class="item"
           v-for="folder in folders"
           :key="folder.id"
           :item="folder"
-          :source-folder="sourceFolder"
+          :folder-to-disable="folderToDisable"
+          :folder-to-disable-message="folderToDisableMessage"
+          :folder-to-hide="folderToHide"
         ></FTLTreeItem>
       </ul>
-      <ul class="pl-3" v-else-if="lastFolderListingFailed">
+      <ul class="pl-0" v-else-if="lastFolderListingFailed">
         <li class="text-danger">
           {{ $t('Folders can\'t be loaded') }}
         </li>
       </ul>
-      <ul class="pl-3" v-else>
+      <ul class="pl-0" v-else>
         <li class="text-muted">
           {{ $t('No folder created yet') }}
         </li>
@@ -33,7 +35,6 @@
   fr:
     No folder created yet: Vous n'avez pas encore créé de dossier
     Folders can't be loaded: Les dossiers n'ont pu être chargés
-    Unable to refresh folders list: La liste des dossiers n'a pu être rafraichie
     Root: Racine
 </i18n>
 
@@ -47,7 +48,12 @@
       FTLTreeItem
     },
     props: {
-      sourceFolder: {type: Number, default: -1} // to hide source folder in folder list
+      // to disable a folder selection
+      folderToDisable: {default: -1},
+      // to display an informative message next to the disabled folder
+      folderToDisableMessage: {type: String, default: null},
+      // to hide a folder from the list (eg. when moving a folder it can't be move to itself or one of its child)
+      folderToHide: {default: -1},
     },
 
     data() {
@@ -67,7 +73,7 @@
             let rootFolder = {id: null, name: vi.$t('Root'), has_descendant: true, is_root: true};
             rootFolder.children = response.data
               .filter(function (e) {
-                return e.id !== vi.sourceFolder;
+                return e.id !== vi.folderToHide;
               })
               .map(function (e) {
                 return {id: e.id, name: e.name, has_descendant: e.has_descendant, children: []}
@@ -83,6 +89,7 @@
   ul{
     list-style: none;
     margin-bottom: 0;
+    user-select: none;
   }
 
   .item {

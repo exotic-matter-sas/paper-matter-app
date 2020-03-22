@@ -43,14 +43,14 @@ const mockedGetFoldersListResponse = {
   config: axiosConfig
 };
 
-const mockedUpdateMovingFolder = jest.fn();
+const mockedListItemChildren = jest.fn();
 const mockedSelected = jest.fn();
 const mockedSelectMoveTargetFolder = jest.fn();
 const mockedFTLTreeItemSelected = jest.fn();
 
 const item = tv.FOLDER_TREE_ITEM;
 const itemWithDescendant = tv.FOLDER_TREE_ITEM_WITH_DESCENDANT;
-const sourceFolder = 1;
+const folderToHide = 1;
 
 describe('FTLTreeItem template', () => {
   let wrapper;
@@ -66,7 +66,7 @@ describe('FTLTreeItem template', () => {
       computed: {
         selected: mockedSelected
       },
-      propsData: {item, sourceFolder},
+      propsData: {item, folderToHide},
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
@@ -109,9 +109,9 @@ describe('FTLTreeItem methods call proper methods', () => {
         selected: mockedSelected
       },
       methods: {
-        updateMovingFolder: mockedUpdateMovingFolder
+        listItemChildren: mockedListItemChildren
       },
-      propsData: {item: itemWithDescendant, sourceFolder},
+      propsData: {item: itemWithDescendant, folderToHide},
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
@@ -122,8 +122,8 @@ describe('FTLTreeItem methods call proper methods', () => {
 
     //then
     expect(wrapper.vm.isOpen).toBe(true);
-    expect(mockedUpdateMovingFolder).toHaveBeenCalledTimes(1);
-    expect(mockedUpdateMovingFolder).toHaveBeenCalledWith(item.id);
+    expect(mockedListItemChildren).toHaveBeenCalledTimes(1);
+    expect(mockedListItemChildren).toHaveBeenCalledWith(item.id);
 
     //when calling toggle for the second time
     wrapper.vm.toggle();
@@ -131,7 +131,7 @@ describe('FTLTreeItem methods call proper methods', () => {
     //then
     expect(wrapper.vm.isOpen).toBe(false);
     expect(wrapper.vm.item.children).toEqual([]);
-    expect(mockedUpdateMovingFolder).toHaveBeenCalledTimes(1);
+    expect(mockedListItemChildren).toHaveBeenCalledTimes(1);
   });
   it('selectFolder commit to Vuex store', () => {
     // when
@@ -168,17 +168,17 @@ describe('FTLTreeItem methods call api', () => {
       computed: {
         selected: mockedSelected
       },
-      propsData: {item, sourceFolder},
+      propsData: {item, folderToHide},
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
 
-  it('updateMovingFolder call api', async () => {
+  it('listItemChildren call api', async () => {
     axios.get.mockResolvedValue(mockedGetFoldersListResponse);
     const level = 'level';
 
     // when
-    wrapper.vm.updateMovingFolder(level);
+    wrapper.vm.listItemChildren(level);
     await flushPromises();
 
     // then
@@ -186,19 +186,19 @@ describe('FTLTreeItem methods call api', () => {
     expect(axios.get).toHaveBeenCalledTimes(1);
   });
 
-  it('updateMovingFolder filter api response based on sourceFolder', async () => {
+  it('listItemChildren filter api response based on folderToHide', async () => {
     axios.get.mockResolvedValue(mockedGetFoldersListResponse);
     const level = 'level';
-    const newSourceFolder = tv.FOLDER_PROPS_VARIANT.id;
-    wrapper.setProps({sourceFolder: newSourceFolder});
+    const newFolderToHide = tv.FOLDER_PROPS_VARIANT.id;
+    wrapper.setProps({folderToHide: newFolderToHide});
 
     // when
-    wrapper.vm.updateMovingFolder(level);
+    wrapper.vm.listItemChildren(level);
     await flushPromises();
 
     // then
     wrapper.vm.item.children.forEach(function (folder) {
-      expect(folder.id).not.toBe(newSourceFolder);
+      expect(folder.id).not.toBe(newFolderToHide);
     });
   });
 });
@@ -216,17 +216,17 @@ describe('FTLTreeItem methods error handling', () => {
       computed: {
         selected: mockedSelected
       },
-      propsData: {item, sourceFolder},
+      propsData: {item, folderToHide},
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
 
-  it('updateMovingFolder set lastFolderListingFailed in case of error', async () => {
+  it('listItemChildren set lastFolderListingFailed in case of error', async () => {
     // force an error
     axios.get.mockRejectedValue('fakeError');
 
     // when
-    wrapper.vm.updateMovingFolder();
+    wrapper.vm.listItemChildren();
     await flushPromises();
 
     // then mixinAlert is called with proper message
