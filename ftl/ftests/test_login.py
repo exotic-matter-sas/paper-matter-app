@@ -4,6 +4,7 @@
 import re
 from unittest import skipIf
 
+from django.conf import settings
 from django.core import mail
 
 from ftests.pages.base_page import NODE_SERVER_RUNNING
@@ -12,7 +13,6 @@ from ftests.pages.home_page import HomePage
 from ftests.pages.user_login_page import LoginPage
 from ftests.pages.user_reset_password_pages import ResetPasswordPages
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user
-from ftl.settings import DEV_MODE
 
 
 class LoginPageTests(LoginPage, HomePage, AdminLoginPage):
@@ -24,13 +24,13 @@ class LoginPageTests(LoginPage, HomePage, AdminLoginPage):
         # User have already created its account
         self.user = setup_user(org=org)
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_first_user_can_login(self):
         # User login and is redirected to the home page
         self.visit(LoginPage.url)
         self.log_user()
 
-        # He can see it's email on it
+        # He can see its email on it
         self.assertIn('home', self.head_title)
         self.assertIn(self.user.email, self.get_elem(self.profile_name).text)
 

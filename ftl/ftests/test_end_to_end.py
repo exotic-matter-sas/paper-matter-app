@@ -2,11 +2,11 @@
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
 
 import os
-from datetime import datetime, timezone, timedelta
 from unittest import skipIf, skip
 from unittest.mock import patch
 
 from django import db
+from django.conf import settings
 from django.core import mail
 from django.db.models import Func, F
 from django_otp.middleware import OTPMiddleware
@@ -29,11 +29,11 @@ from ftests.test_account import mocked_verify_user, totp_time_setter, mocked_tot
     TotpDevice2FATests
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_2fa_fido2_device, setup_2fa_totp_device
-from ftl.settings import BASE_DIR, DEV_MODE
+from ftl.settings import BASE_DIR
 
 
 class InitialSetupTest(SetupPages, SignupPages, LoginPage, HomePage):
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     @skip("Multi users feature disabled")
     def test_end_to_end_setup(self):
         # Admin have just install Paper Matter and display it for the first time
@@ -66,7 +66,7 @@ class InitialSetupTest(SetupPages, SignupPages, LoginPage, HomePage):
 
 
 class SecondOrgSetup(AdminLoginPage, AdminHomePage, SignupPages, LoginPage, HomePage):
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     @skip("Multi users feature disabled")
     def test_second_org_setup(self):
         # first org, admin, first user are already created
@@ -99,7 +99,7 @@ class SecondOrgSetup(AdminLoginPage, AdminHomePage, SignupPages, LoginPage, Home
 
 
 class NewUserAddDocumentInsideFolder(SignupPages, LoginPage, HomePage, DocumentViewerModal):
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     @patch.object(FTLDocumentProcessing, 'apply_processing')
     @skip("Multi users feature disabled")
     def test_new_user_add_document_inside_folder(self, mock_apply_processing):
@@ -143,7 +143,7 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage, DocumentViewerModal):
         views.ftl_doc_processing.executor.submit(db.connections.close_all)
         super().tearDown()
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_upload_doc_wait_tika_indexation_and_search_for_doc(self):
         # User upload 2 documents
         self.upload_documents()
@@ -171,7 +171,7 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage, DocumentViewerModal):
         self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
         self.assertEqual(second_document_title, self.get_elem(self.first_document_title).text)
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_search_renamed_doc(self):
         # User upload 2 documents
         self.upload_documents()
@@ -226,7 +226,7 @@ class UserSetupAll2FA(LoginPage, AccountPages):
         self.visit(AccountPages.two_factors_authentication_url)
 
     @patch.object(TOTP, 'time', totp_time_property)
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_user_setup_all_2fa(self):
         # Make TOTP.time setter set a hard coded secret_time to always be able to confirm app with the same valid_token
         totp_time_setter.side_effect = mocked_totp_time_setter

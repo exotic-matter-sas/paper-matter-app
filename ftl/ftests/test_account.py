@@ -5,6 +5,7 @@ import re
 from unittest import skipIf
 from unittest.mock import patch, Mock
 
+from django.conf import settings
 from django.core import mail
 from django.http import HttpResponse
 from django_otp.middleware import OTPMiddleware
@@ -19,7 +20,6 @@ from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_2fa_totp_device, \
     setup_2fa_static_device, setup_2fa_fido2_device
 from ftl.otp_plugins.otp_ftl import views_fido2
-from ftl.settings import DEV_MODE
 
 
 def mocked_verify_user(self, request, user):
@@ -49,7 +49,7 @@ class BasicAccountPagesTests(LoginPage, AccountPages):
         self.visit(LoginPage.url)
         self.log_user()
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_change_email(self):
         # Go to account management / email change
         self.visit(AccountPages.update_email_url)
@@ -92,7 +92,7 @@ class BasicAccountPagesTests(LoginPage, AccountPages):
         self.assertIn('home', self.head_title,
                       'User login should success using its new email')
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_change_password(self):
         # Go to account management / password change
         self.visit(AccountPages.update_password_url)
@@ -144,7 +144,7 @@ class StaticDevice2FATests(LoginPage, AccountPages):
 
         self.visit(AccountPages.two_factors_authentication_url)
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_add_emergency_code_set(self):
         # User add an emergency codes set
         set_name = 'My precious emergency code'
@@ -237,8 +237,7 @@ class StaticDevice2FATests(LoginPage, AccountPages):
         with self.assertRaises(NoSuchElementException):
             self.get_elem(self.no_code_left_badges)
 
-
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_rename_emergency_code_set(self):
         # User already added an emergency code set
         old_set_name = 'Old set name'
@@ -270,7 +269,7 @@ class StaticDevice2FATests(LoginPage, AccountPages):
         # The new code set name is available in the select
         self.assertEqual(new_set_name, self.get_elem_text(self.check_pages_device_input))
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_delete_emergency_code_set(self):
         # User already added an emergency code set
         setup_2fa_static_device(self.user, codes_list=self.codes_list)
@@ -323,7 +322,7 @@ class TotpDevice2FATests(LoginPage, AccountPages):
         self.log_user()
         self.visit(AccountPages.two_factors_authentication_url)
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_add_auth_app_unconfirmed(self):
         # User add an auth app
         device_name = 'My precious yPhone xD'
@@ -351,7 +350,7 @@ class TotpDevice2FATests(LoginPage, AccountPages):
         self.assertIn('home', self.head_title)
 
     @patch.object(TOTP, 'time', totp_time_property)
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_add_auth_app_confirmed(self):
         # Make TOTP.time setter set a hard coded secret_time to always be able to confirm app with the same valid_token
         totp_time_setter.side_effect = mocked_totp_time_setter
@@ -400,11 +399,11 @@ class TotpDevice2FATests(LoginPage, AccountPages):
         self.assertIn('home', self.head_title)
 
     @patch.object(TOTP, 'time', totp_time_property)
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_add_auth_app_with_wrong_confirmation_code(self):
         # Make TOTP.time setter set a hard coded secret_time to always be able to confirm app with the same valid_token
         totp_time_setter.side_effect = mocked_totp_time_setter
-        setup_2fa_static_device(self.user) # emergency code already set
+        setup_2fa_static_device(self.user)  # emergency code already set
 
         # User has already add an unconfirmed auth app and resume its totp device setup
         device_name = 'My precious yPhone xD'
@@ -419,7 +418,7 @@ class TotpDevice2FATests(LoginPage, AccountPages):
         self.get_elem(self.error_message)
 
     @patch.object(TOTP, 'time', totp_time_property)
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_add_auth_app_with_emergency_code_already_set(self):
         # Make TOTP.time setter set a hard coded secret_time to always be able to confirm app with the same valid_token
         totp_time_setter.side_effect = mocked_totp_time_setter
@@ -437,7 +436,7 @@ class TotpDevice2FATests(LoginPage, AccountPages):
         # User has already a "emergency codes set" set, so he get redirected to 2FA devices list
         self.wait_for_elem_to_show(self.auth_app_divs)
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_rename_auth_app(self):
         # User has already add an unconfirmed auth app
         old_device_name = 'Nokia 3310'
@@ -466,7 +465,7 @@ class TotpDevice2FATests(LoginPage, AccountPages):
         # The new device name is available in the select
         self.assertEqual(new_device_name, self.get_elem_text(self.check_pages_device_input))
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_delete_auth_app(self):
         # User has already added an auth app
         setup_2fa_totp_device(self.user)
@@ -489,7 +488,7 @@ class TotpDevice2FATests(LoginPage, AccountPages):
         self.log_user()
         self.assertIn('home', self.head_title)
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_delete_auth_app_with_emergency_code(self):
         # User has already added an auth app and a emergency codes set
         setup_2fa_totp_device(self.user)
@@ -521,7 +520,7 @@ class Fido2Device2FATests(LoginPage, AccountPages):
         self.log_user()
         self.visit(AccountPages.two_factors_authentication_url)
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_add_security_key_fail_and_trigger_error(self):
         # make fido2 api return a fake value for js code to fail quickly during device registration
         mocked_fido2_api_register_begin.return_value = HttpResponse('error')
@@ -556,7 +555,7 @@ class Fido2Device2FATests(LoginPage, AccountPages):
         # There is no 2FA check as fido2 device setup have fail
         self.assertIn('home', self.head_title)
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_security_key_added(self):
         # User has already added a security key
         key_name = 'O Key'
@@ -584,7 +583,7 @@ class Fido2Device2FATests(LoginPage, AccountPages):
 
         # User can complete login using a valid security key (can't be tested)
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_rename_security_key(self):
         # User has already added a security key
         old_key_name = 'MO Key'
@@ -600,7 +599,7 @@ class Fido2Device2FATests(LoginPage, AccountPages):
         self.assertNotIn(old_key_name, self.get_elem_text(self.security_key_divs))
         self.assertIn(new_key_name, self.get_elem_text(self.security_key_divs))
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_delete_security_key(self):
         # User has already added a security key
         setup_2fa_fido2_device(self.user)
@@ -623,7 +622,7 @@ class Fido2Device2FATests(LoginPage, AccountPages):
         self.log_user()
         self.assertIn('home', self.head_title)
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_delete_security_key_with_emergency_code(self):
         # User has already added a security key and a emergency codes set
         setup_2fa_fido2_device(self.user)
