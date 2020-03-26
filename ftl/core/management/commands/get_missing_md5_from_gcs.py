@@ -9,7 +9,7 @@ from core.models import FTLDocument
 
 
 class Command(BaseCommand):
-    help = "Update documents with MD5 from GCS"
+    help = "Get missing documents md5 from GCS"
 
     def handle(self, *args, **options):
         self.stdout.write(
