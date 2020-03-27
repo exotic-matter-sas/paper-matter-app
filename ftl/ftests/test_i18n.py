@@ -17,18 +17,11 @@ class I18nTests(SetupPages, LoginPage, HomePage):
         super().setUp(browser_locale=browser_locale)
 
     def test_i18n_are_working(self):
-        self.visit('about:config', absolute_url=True)
-        self.get_elem('#warningButton').click()
-        self.get_elem('#about-config-search').send_keys('intl.accept_languages')
-        self.wait_for_elem_to_show('#prefs')
-        self.screenshot_page()
         self.visit(self.root_url)
-        # self.assertIn('administrateur', self.head_title,
-        #               '"administrator" should be translated as "administrateur"')
-        self.screenshot_page()
+        self.assertIn('administrateur', self.head_title,
+                      '"administrator" should be translated as "administrateur"')
 
     @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
-    @skip("Disabled, not working properly")
     def test_js_i18n_are_working(self):
         # first org, admin, user are already created, user is already logged on home page
         self.org = setup_org()
