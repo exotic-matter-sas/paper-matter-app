@@ -80,7 +80,7 @@ class BasePage(LIVE_SERVER):
         if browser == 'firefox':
             profile = webdriver.FirefoxProfile()
             # Set browser language for web pages
-            profile.set_preference('intl.accept_languages', browser_locale)
+            # profile.set_preference('intl.accept_languages', browser_locale)
 
             # Set default browser download dir and remove download prompt
             profile.set_preference('browser.download.dir', self._download_dir.name)
