@@ -365,6 +365,12 @@
         let qs = '';
 
         if (level) {
+          if ('has_descendant' in level && level.has_descendant === false) {
+            // Avoid doing an API request when we know there are no descendant
+            vi.folders = [];
+            return;
+          }
+
           qs = '?level=' + level.id;
         }
 
