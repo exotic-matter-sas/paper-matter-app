@@ -68,7 +68,8 @@ test-fast-python:
   script:
     - export DJANGO_SETTINGS_MODULE=ftl.settings_tests
     - source venv/bin/activate && cd ftl
-    - python3 manage.py test -v 2 --exclude-tag=slow
+#    - python3 manage.py test -v 2 --exclude-tag=slow
+    - python3 manage.py test ftests.test_i18n.I18nTests.test_i18n_are_working -v 2 --tag=slow
 
 test-slow-python:
   stage: test
