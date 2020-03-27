@@ -31,14 +31,14 @@ compile-frontend:
     - npm ci
     - npm run build
 
-#test-frontend-js:
-#  stage: test
-#  image: node:lts-alpine
-#  dependencies:
-#    - compile-frontend
-#  script:
-#    - cd ftl/frontend
-#    - npm run test:unit
+test-frontend-js:
+  stage: test
+  image: node:lts-alpine
+  dependencies:
+    - compile-frontend
+  script:
+    - cd ftl/frontend
+    - npm run test:unit
 
 compile-backend:
   stage: build-backend
@@ -58,17 +58,17 @@ compile-backend:
     - python3 manage.py compilemessages
     - python3 manage.py collectstatic
 
-#test-fast-python:
-#  stage: test
-#  image: registry.gitlab.com/exotic-matter/ftl-base-image-ci:latest
-#  services:
-#    - postgres:11-alpine
-#  dependencies:
-#    - compile-backend
-#  script:
-#    - export DJANGO_SETTINGS_MODULE=ftl.settings_tests
-#    - source venv/bin/activate && cd ftl
-#    - python3 manage.py test -v 2 --exclude-tag=slow
+test-fast-python:
+  stage: test
+  image: registry.gitlab.com/exotic-matter/ftl-base-image-ci:latest
+  services:
+    - postgres:11-alpine
+  dependencies:
+    - compile-backend
+  script:
+    - export DJANGO_SETTINGS_MODULE=ftl.settings_tests
+    - source venv/bin/activate && cd ftl
+    - python3 manage.py test -v 2 --exclude-tag=slow
 
 test-slow-python:
   stage: test
@@ -80,14 +80,13 @@ test-slow-python:
   script:
     - export DJANGO_SETTINGS_MODULE=ftl.settings_tests
     - source venv/bin/activate && cd ftl
-    #    - python3 manage.py test -v 2 --tag=slow
-    - python3 manage.py test ftests.test_i18n.I18nTests.test_i18n_are_working -v 2 --tag=slow
+    - python3 manage.py test -v 2 --tag=slow
   artifacts:
     name: "tests_screenshots"
     paths:
       - ftl/ftests/tests_screenshots
   allow_failure: false
-#  when: manual
+  when: manual
 
 build-docker:
   stage: docker

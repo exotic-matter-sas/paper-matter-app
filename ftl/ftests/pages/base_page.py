@@ -20,7 +20,6 @@ from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.support import expected_conditions as Ec
 from selenium.webdriver.support.wait import WebDriverWait
 
-from ftl.settings import BASE_DIR
 
 if 'CI' in os.environ:
     LIVE_SERVER = LiveServerTestCase
@@ -72,7 +71,7 @@ class BasePage(LIVE_SERVER):
         self.root_url = ''
 
         self._download_dir = None
-        self._tests_screenshots_path = os.path.join(BASE_DIR, 'ftests', 'tests_screenshots')
+        self._tests_screenshots_path = os.path.join(settings.BASE_DIR, 'ftests', 'tests_screenshots')
 
     def setUp(self, browser=settings.DEFAULT_TEST_BROWSER, browser_locale='en'):
         self._download_dir = TemporaryDirectory()
