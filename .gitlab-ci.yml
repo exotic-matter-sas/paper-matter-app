@@ -81,6 +81,10 @@ test-slow-python:
     - export DJANGO_SETTINGS_MODULE=ftl.settings_tests
     - source venv/bin/activate && cd ftl
     - python3 manage.py test -v 2 --tag=slow
+  artifacts:
+    name: "tests_screenshots"
+    paths:
+      - ftl/ftests/tests_screenshots
   allow_failure: false
   when: manual
 
