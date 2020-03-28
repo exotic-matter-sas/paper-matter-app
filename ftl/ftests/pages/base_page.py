@@ -8,6 +8,7 @@ import urllib.error
 import urllib.request
 from tempfile import TemporaryDirectory
 
+from django.conf import settings
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.core import mail
 from django.test import LiveServerTestCase, tag
@@ -19,8 +20,6 @@ from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.support import expected_conditions as Ec
 from selenium.webdriver.support.wait import WebDriverWait
 
-from ftl.settings import DEFAULT_TEST_BROWSER, TEST_BROWSER_HEADLESS, DEV_MODE, BROWSER_BINARY_PATH, \
-    DEFAULT_GECKODRIVER_PATH, DEFAULT_CHROMEDRIVER_PATH
 
 if 'CI' in os.environ:
     LIVE_SERVER = LiveServerTestCase
@@ -33,7 +32,7 @@ def is_node_server_running():
     """
     Check if Node server is running
     """
-    if DEV_MODE and 'CI' not in os.environ:
+    if settings.DEV_MODE and 'CI' not in os.environ:
         try:
             urllib.request.urlopen('http://localhost:8080/')
             return True
@@ -46,7 +45,7 @@ def is_node_server_running():
 # Display a warning if Node server not running during test execution
 NODE_SERVER_RUNNING = is_node_server_running()
 red_message = '\x1b[1;31m{}\033[0m'
-if DEV_MODE and not is_node_server_running() and 'CI' not in os.environ:
+if settings.DEV_MODE and not is_node_server_running() and 'CI' not in os.environ:
     print(red_message.
           format('WARNING: Node server NOT running: all tests related to JS frontend will be skipped.'))
     input("Run Node server now if you want to run all tests, press Enter to continue...")
@@ -72,8 +71,9 @@ class BasePage(LIVE_SERVER):
         self.root_url = ''
 
         self._download_dir = None
+        self._tests_screenshots_path = os.path.join(settings.BASE_DIR, 'ftests', 'tests_screenshots')
 
-    def setUp(self, browser=DEFAULT_TEST_BROWSER, browser_locale='en'):
+    def setUp(self, browser=settings.DEFAULT_TEST_BROWSER, browser_locale='en'):
         self._download_dir = TemporaryDirectory()
 
         if browser == 'firefox':
@@ -90,12 +90,12 @@ class BasePage(LIVE_SERVER):
             profile.set_preference('browser.helperApps.neverAsk.saveToDisk', mime_type_list)
 
             options = FirefoxOptions()
-            if TEST_BROWSER_HEADLESS:
+            if settings.TEST_BROWSER_HEADLESS:
                 options.headless = True
-            if BROWSER_BINARY_PATH:
-                options.binary_location = BROWSER_BINARY_PATH
+            if settings.BROWSER_BINARY_PATH:
+                options.binary_location = settings.BROWSER_BINARY_PATH
 
-            self.browser = webdriver.Firefox(executable_path=DEFAULT_GECKODRIVER_PATH, firefox_profile=profile,
+            self.browser = webdriver.Firefox(executable_path=settings.DEFAULT_GECKODRIVER_PATH, firefox_profile=profile,
                                              firefox_options=options)
         elif browser == 'chrome':
             options = ChromeOptions()
@@ -110,17 +110,17 @@ class BasePage(LIVE_SERVER):
                 'profile.default_content_setting_values.automatic_downloads': 1
             }
 
-            if TEST_BROWSER_HEADLESS:
+            if settings.TEST_BROWSER_HEADLESS:
                 options.add_argument('--headless')
                 options.add_argument('--no-sandbox')
                 options.add_argument('--disable-dev-shm-usage')
                 if platform.system() == 'Windows':  # Needed due to Chrome bug
                     options.add_argument('--disable-gpu')
-            if BROWSER_BINARY_PATH:
-                options.binary_location = BROWSER_BINARY_PATH
+            if settings.BROWSER_BINARY_PATH:
+                options.binary_location = settings.BROWSER_BINARY_PATH
 
             options.add_experimental_option('prefs', chrome_profile)
-            self.browser = webdriver.Chrome(executable_path=DEFAULT_CHROMEDRIVER_PATH, chrome_options=options)
+            self.browser = webdriver.Chrome(executable_path=settings.DEFAULT_CHROMEDRIVER_PATH, chrome_options=options)
         else:
             raise ValueError('Unsupported browser, allowed: firefox, chrome')
 
@@ -155,6 +155,12 @@ class BasePage(LIVE_SERVER):
 
     def refresh_page(self):
         self.browser.refresh()
+
+    """
+    For debug purpose
+    """
+    def screenshot_page(self):
+        self.browser.save_screenshot(os.path.join(self._tests_screenshots_path, f'{self.id()}-{int(time.time())}.png'))
 
     def get_elem(self, css_selector, is_visible=True):
         elem = self.browser.find_element_by_css_selector(css_selector)

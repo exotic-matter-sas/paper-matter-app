@@ -7,6 +7,7 @@ from string import ascii_lowercase
 from unittest import skipIf
 from unittest.mock import patch
 
+from django.conf import settings
 from selenium.common.exceptions import NoSuchElementException
 
 from core.processing.ftl_processing import FTLDocumentProcessing
@@ -19,7 +20,7 @@ from ftests.pages.user_login_page import LoginPage
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user, setup_document, setup_folder, \
     setup_temporary_file
-from ftl.settings import DEV_MODE, BASE_DIR, DEFAULT_TEST_BROWSER, TEST_BROWSER_HEADLESS
+from ftl.settings import BASE_DIR
 
 
 class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
@@ -32,7 +33,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         self.visit(LoginPage.url)
         self.log_user()
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     @patch.object(FTLDocumentProcessing, 'apply_processing')
     def test_upload_document_to_root(self, mock_apply_processing):
         # User upload a document
@@ -41,7 +42,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         # Document appears as the first document of the list
         self.assertEqual(tv.DOCUMENT1_TITLE, self.get_elem_text(self.first_document_title))
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     @patch.object(FTLDocumentProcessing, 'apply_processing')
     def test_upload_document_to_subfolder(self, mock_apply_processing):
         # User has already created a folder
@@ -59,7 +60,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         with self.assertRaises(NoSuchElementException):
             self.get_elem(self.first_document_title)
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     @patch.object(FTLDocumentProcessing, 'apply_processing')
     def test_upload_documents_to_root(self, mock_apply_processing):
         # User upload several documents
@@ -73,7 +74,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         # Document appears as the first document of the list
         self.assertEqual(3, len(self.get_elems(self.documents_thumbnails)))
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_display_document(self):
         # User has already added a document
         setup_document(self.org, self.user)
@@ -88,7 +89,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
 
         self.assertEqual(pdf_viewer_iframe_title, 'PDF.js viewer')
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_create_folder(self):
         # User create a folder
         self.create_folder()
@@ -96,7 +97,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         # The folder properly appears in the folder list
         self.assertEqual(tv.FOLDER1_NAME, self.get_elem_text(self.folders_list_buttons))
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_create_folder_with_name_already_used(self):
         # A folder already exist
         existing_folder = setup_folder(self.org)
@@ -114,7 +115,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
                       'An error message should have been displayed to user to tell him folder creation failed because'
                       ' of duplicate name')
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_create_folder_tree(self):
         # User create a folder at root level
         self.create_folder(tv.FOLDER1_NAME)
@@ -137,7 +138,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         self.assertEqual(tv.FOLDER3_NAME, self.get_elem_text(self.folders_list_buttons))
         self.get_elem(self.folders_list_buttons).click()
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_visit_url_with_search_query(self):
         # User have already added 2 documents
         setup_document(self.org, self.user)
@@ -156,7 +157,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         self.assertEqual(second_document_title, self.get_elem_text(self.search_input),
                          'Search input should be prefilled with search query')
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_visit_url_with_folder_id(self):
         # User already created a 3 levels folder three (a > b > c) and have added a document inside c folder
         folder_a = setup_folder(self.org)
@@ -171,7 +172,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         self.assertEqual(document.title, self.get_elem_text(self.first_document_title),
                          'Setup document title should appears in folder C')
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_folder_navigation_using_browser_previous_and_next(self):
         # User already created a 3 levels folder three (a > b > c) and have added a document inside each of them
         # plus one at root level
@@ -215,7 +216,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         self.assertEqual(document_c.title, self.get_elem_text(self.first_document_title),
                          'Setup document title should appears in folder c')
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_documents_list_pagination(self):
         # User has already added 21 documents
         for i in range(21):
@@ -249,7 +250,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         with self.assertRaises(NoSuchElementException):
             self.get_elem(self.more_documents_button)
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_sort_documents_list(self):
         # append 1 at the end to not have the same order for date and alphabetical
         document_title_to_create = list(ascii_lowercase) + ['1']
@@ -294,7 +295,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         self.assertIn('Relevance', self.get_elem_text(self.sort_dropdown_button))
         self.assertEqual(self.get_elems_text(self.documents_titles), relevance_order)
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_sort_doc_cache_policy(self):
         # User has already added 21 docs to root and 21 docs to a sub_folder
         document_title_to_create = list(ascii_lowercase) \
@@ -358,12 +359,12 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         # Default sort is back to recent first
         self.assertIn('Recent', self.get_elem_text(self.sort_dropdown_button))
 
-    @skipIf(DEFAULT_TEST_BROWSER == 'firefox',
+    @skipIf(settings.DEFAULT_TEST_BROWSER == 'firefox',
             'Due to a Firefox bug, download can\'t be automated for file with Content-Disposition header set to '
             'attachment.'
             '\nRef: https://bugzilla.mozilla.org/show_bug.cgi?id=453455'
             '\nPossible workaround: https://bugzilla.mozilla.org/show_bug.cgi?id=453455#c150')
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_download_document_from_list(self):
         # User has already added a document
         document_name = 'doc_name1'
@@ -376,7 +377,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         # Downloaded file name match document name
         self.assertEqual(file_name, document_name + '.pdf')
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_unselect_documents(self):
         # Ensure that documents selected are unselected when switching pages
         folder_a = setup_folder(self.org, "Folder A")
@@ -414,7 +415,7 @@ class SearchTests(LoginPage, HomePage, DocumentViewerModal):
         self.visit(LoginPage.url)
         self.log_user()
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_search_document_by_its_title(self):
         # User have already added 2 documents
         setup_document(self.org, self.user)
@@ -428,7 +429,7 @@ class SearchTests(LoginPage, HomePage, DocumentViewerModal):
         self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
         self.assertEqual(second_document_title, self.get_elem_text(self.first_document_title))
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_search_document_by_its_note(self):
         # User have already added 2 documents
         setup_document(self.org, self.user)
@@ -443,7 +444,7 @@ class SearchTests(LoginPage, HomePage, DocumentViewerModal):
         self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
         self.assertEqual(second_document_title, self.get_elem_text(self.first_document_title))
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_search_apply_to_all_folders(self):
         # User have added 3 documents in 3 different folders
         folder_a = setup_folder(self.org)
@@ -470,7 +471,7 @@ class SearchTests(LoginPage, HomePage, DocumentViewerModal):
         self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 4,
                          'Search should apply to all folders')
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_search_document_by_its_content(self):
         # User have already added 2 documents
         setup_document(self.org, self.user)
@@ -485,7 +486,7 @@ class SearchTests(LoginPage, HomePage, DocumentViewerModal):
         self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
         self.assertEqual(second_document_title, self.get_elem_text(self.first_document_title))
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_search_not_found(self):
         # User have already added 1 document
         setup_document(self.org, self.user)
@@ -500,7 +501,7 @@ class SearchTests(LoginPage, HomePage, DocumentViewerModal):
         self.assertIn('No result found', self.get_elem_text(self.documents_list_container),
                       'A message should indicate no documents were found')
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_search_not_found_from_a_folder(self):
         # User have already added 1 document and 1 folder
         setup_document(self.org, self.user)
@@ -521,7 +522,7 @@ class SearchTests(LoginPage, HomePage, DocumentViewerModal):
         self.assertIn('No result found', self.get_elem_text(self.documents_list_container),
                       'A message should indicate no documents were found')
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_search_open_close_document(self):
         # User have already added 2 documents inside sub folder
         sub_folder = setup_folder(self.org)
@@ -539,7 +540,7 @@ class SearchTests(LoginPage, HomePage, DocumentViewerModal):
         # The search result is still displayed after closing the first document
         self.assertEqual(self.get_elems_text(self.documents_titles), [doc_first_result.title, doc_second_result.title])
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_search_advanced_syntax(self):
         # See https://www.postgresql.org/docs/11/textsearch-controls.html#id-1.5.11.6.4.11 for advanced search syntax
         # User have already added 2 documents inside sub folder
@@ -597,7 +598,7 @@ class DocumentsBatchActionsTests(LoginPage, HomePage, MoveDocumentsModal):
         # refresh page to see documents
         self.visit(HomePage.url)
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_select_documents(self):
         # User select doc1 and doc2
         docs_to_select = ['doc1', 'doc2']
@@ -611,7 +612,7 @@ class DocumentsBatchActionsTests(LoginPage, HomePage, MoveDocumentsModal):
         with self.assertRaises(NoSuchElementException):
             self.get_elem(self.batch_toolbar)
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_move_documents(self):
         # User select doc1 and doc2
         docs_to_move = ['doc1', 'doc2']
@@ -629,7 +630,7 @@ class DocumentsBatchActionsTests(LoginPage, HomePage, MoveDocumentsModal):
         self.wait_documents_list_loaded()
         self.assertCountEqual(docs_to_move, self.get_elems_text(self.documents_titles))
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_delete_documents(self):
         # User select doc1 and doc2
         docs_to_delete = ['doc1', 'doc2']
@@ -657,7 +658,7 @@ class DocumentViewerModalTests(LoginPage, HomePage, DocumentViewerModal, MoveDoc
         self.visit(LoginPage.url)
         self.log_user()
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_visit_url_with_document_pid(self):
         # User have already added 2 documents
         setup_document(self.org, self.user)
@@ -672,7 +673,7 @@ class DocumentViewerModalTests(LoginPage, HomePage, DocumentViewerModal, MoveDoc
                       self.get_elem_text(self.document_title),
                       'Setup document title should match opened document')
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_visit_url_with_folder_id_and_document_pid(self):
         # User already created a 3 levels folder three (a > b > c) and have added a document inside c folder
         folder_a = setup_folder(self.org)
@@ -694,7 +695,7 @@ class DocumentViewerModalTests(LoginPage, HomePage, DocumentViewerModal, MoveDoc
         self.assertEqual(document.title, self.get_elem_text(self.first_document_title),
                          'Setup document title should appears in folder C')
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     @patch.object(FTLDocumentProcessing, 'apply_processing')
     def test_rename_document(self, mock_apply_processing):
         # User has already added and opened a document
@@ -711,7 +712,7 @@ class DocumentViewerModalTests(LoginPage, HomePage, DocumentViewerModal, MoveDoc
         self.close_document()
         self.assertEqual(self.get_elem_text(self.first_document_title), new_doc_title)
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     @patch.object(FTLDocumentProcessing, 'apply_processing')
     def test_annotate_document(self, mock_apply_processing):
         # User has already added and opened a document
@@ -726,7 +727,7 @@ class DocumentViewerModalTests(LoginPage, HomePage, DocumentViewerModal, MoveDoc
         # Document note is properly updated in pdf viewer
         self.assertEqual(self.get_elem_text(self.note_text), new_doc_note)
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     @patch.object(FTLDocumentProcessing, 'apply_processing')
     def test_delete_document(self, mock_apply_processing):
         # User has already added and opened a document
@@ -746,13 +747,13 @@ class DocumentViewerModalTests(LoginPage, HomePage, DocumentViewerModal, MoveDoc
         with self.assertRaises(NoSuchElementException):
             self.get_elem(self.first_document_title)
 
-    @skipIf(DEFAULT_TEST_BROWSER == 'chrome' and TEST_BROWSER_HEADLESS,
+    @skipIf(settings.DEFAULT_TEST_BROWSER == 'chrome' and settings.TEST_BROWSER_HEADLESS,
             "Headless chrome doesn't support extensions and it seem it doesn't support PDF preview too (browser freeze"
             " after switching to tab with PDF preview).\n"
             "Refs:\n"
             " - https://bugs.chromium.org/p/chromedriver/issues/detail?id=1961\n"
             " - https://bugs.chromium.org/p/chromium/issues/detail?id=706008")
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_open_document(self):
         # User has already added and opened a document
         document_name = 'doc_name1'
@@ -811,7 +812,7 @@ class ManageFoldersPageTests(LoginPage, ManageFolderPage):
         self.visit(ManageFolderPage.url)
         self.log_user()
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_create_folder(self):
         # User create 3 folders at root
         folders_to_create = ['folder 1', 'folder 2', 'folder 3']
@@ -821,7 +822,7 @@ class ManageFoldersPageTests(LoginPage, ManageFolderPage):
         # Folder appears in the list with the proper order
         self.assertEqual(folders_to_create, self.get_elems_text(self.folders_title))
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_create_folder_tree(self):
         # User create a folder tree of 3 levels :
         # folder 1
@@ -849,7 +850,7 @@ class ManageFoldersPageTests(LoginPage, ManageFolderPage):
         self.assertEqual('Root\n' + '\n'.join(folders_to_create), self.get_elem_text(self.breadcrumb),
                          'Breadcrumb should show all folders created on the deepest level')
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_select_folder(self):
         # User have already created 2 folders
         folder_to_select_name = 'folder 1'
@@ -865,7 +866,7 @@ class ManageFoldersPageTests(LoginPage, ManageFolderPage):
         # The selected folder name appears in the right panel
         self.assertEqual(folder_to_select_name, self.get_elem_text(self.selected_folder_name))
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_rename_selected_folder(self):
         # User have already created 2 folders
         folder_to_rename_name = 'rename me plz'
@@ -890,7 +891,7 @@ class ManageFoldersPageTests(LoginPage, ManageFolderPage):
         self.assertEqual(folder_renamed_name, self.get_elem_text(self.selected_folder_name),
                          'The selected folder name should be still visible and updated')
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_move_selected_folder(self):
         # User have already created 2 folders
         folder_to_move_name = 'move me plz'
@@ -917,7 +918,7 @@ class ManageFoldersPageTests(LoginPage, ManageFolderPage):
         self.assertIn(folder_to_move_name, folder_title_list,
                       'Moved folder should appears in target folder')
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     def test_delete_selected_folder(self):
         # User have already created 2 folders
         folder_to_delete_name = 'delete me plz'

@@ -97,3 +97,4 @@ ftl/ftl/settings*
 ftl/uploads/
 ftl/assets/
 !ftl/assets/README.md
+ftl/ftests/tests_screenshots/*.png
