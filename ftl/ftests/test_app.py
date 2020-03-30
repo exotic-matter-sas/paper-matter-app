@@ -776,7 +776,7 @@ class DocumentViewerModalTests(LoginPage, HomePage, DocumentViewerModal, MoveDoc
         time.sleep(0.5)  # wait for browser to load viewer
         self.assertIn(f'{document.pid}/doc.pdf', self.browser.current_url)
 
-    @skipIf(DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
+    @skipIf(settings.DEV_MODE and not NODE_SERVER_RUNNING, "Node not running, this test can't be run")
     @patch.object(FTLDocumentProcessing, 'apply_processing')
     def test_move_document(self, mock_apply_processing):
         # User has already created a folder and added and opened a document
