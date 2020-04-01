@@ -17,15 +17,20 @@ module.exports = {
     extract: true,
     loaderOptions: {
       sass: {
-        prependData: `@import "@/styles/customBootstrap.scss";`
+        prependData: `@import "@/styles/_variables.scss";`
       }
     }
   },
 
   chainWebpack: config => {
-
-    config.entry('app')
-      .add('@/styles/customBootstrap.scss');
+    config.entry('common')
+      .add('@/styles/common.scss');
+    config.entry('core')
+      .add('@/styles/core.scss');
+    config.entry('account')
+      .add('@/styles/account.scss');
+    config.entry('login')
+      .add('@/styles/login.scss');
 
     // Built app broken if omitted
     config.optimization

@@ -1,6 +1,6 @@
 {% load i18n %}
 {% load static %}
-{% load render_bundle from webpack_loader %}
+{% load webpack_loader %}
 
 <!DOCTYPE html>
 <html lang="{{ request.LANGUAGE_CODE }}">
@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <title>Paper Matter - {% block title %}{% endblock %}</title>
     <link rel="shortcut icon" href="{% static "favicon-32.png" %}">
-    {% render_bundle 'app' 'css' %}
+    {% render_bundle 'common' 'css' %}
     {% block head %}{% endblock %}
 </head>
 {% block body %}{% endblock %}

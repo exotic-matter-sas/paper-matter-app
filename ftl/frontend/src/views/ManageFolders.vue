@@ -295,7 +295,7 @@
         this.unselectFolder();
 
         // if deleted folder match the one set for selectMoveTargetFolder, reset this state
-        if(this.$store.getters.FTLTreeItemSelected(folderId)){
+        if (this.$store.getters.FTLTreeItemSelected(folderId)) {
           this.$store.commit('selectMoveTargetFolder', null);
         }
       },
@@ -317,6 +317,10 @@
 </script>
 
 <style scoped lang="scss">
+  @import '~bootstrap/scss/_functions.scss';
+  @import '~bootstrap/scss/_variables.scss';
+  @import '~bootstrap/scss/_mixins.scss';
+
   #create-folder {
     cursor: pointer;
     border: 3px solid transparent;

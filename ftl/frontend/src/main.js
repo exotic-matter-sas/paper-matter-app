@@ -40,6 +40,8 @@ import Vuex from 'vuex';
 import storeConfig from "./store/storeConfig";
 import i18n from './i18n';
 
+import './styles/_variables.scss';
+
 Vue.config.productionTip = false;
 
 // Font Awesome icons definition

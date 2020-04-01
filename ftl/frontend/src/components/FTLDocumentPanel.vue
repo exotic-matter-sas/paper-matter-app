@@ -222,6 +222,7 @@
   }
 </script>
 <style lang="scss">
+  // Don't use `scoped` on this style because the document viewer is styled from the main app component
   $document-viewer-padding: 2em;
 
   #document-viewer {

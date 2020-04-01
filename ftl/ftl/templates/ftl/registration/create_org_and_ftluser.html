@@ -1,8 +1,10 @@
 {% extends "ftl/main_with_aside.html" %}
 {% load i18n %}
 {% load static %}
+{% load webpack_loader %}
 
 {% block title %}{% trans "Signup" %}{% endblock %}
+{% block head %}{% render_bundle 'login' 'css' %}{% endblock %}
 
 {% block main_content %}
     <form method="post" id="organization-form">

@@ -154,6 +154,10 @@
 </script>
 
 <style scoped lang="scss">
+  @import '~bootstrap/scss/_functions.scss';
+  @import '~bootstrap/scss/_variables.scss';
+  @import '~bootstrap/scss/_mixins.scss';
+
   #search-input {
     width: 150px;
     transition: width 0.5s cubic-bezier(.77, 0, .18, 1);

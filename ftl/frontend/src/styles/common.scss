@@ -1,0 +1,57 @@
+/*!
+ * Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
+ * Licensed under the BSL License. See LICENSE in the project root for license information.
+ */
+
+@import "variables";
+@import '~bootstrap/scss/bootstrap';
+@import '~bootstrap-vue/src/index.scss';
+
+body {
+    background: whitesmoke !important;
+}
+
+
+
+.highlight {
+    color: map_get($theme-colors, 'active');
+    font-weight: bold;
+}
+
+.breadcrumb-ftl {
+    color: map_get($theme-colors, 'primary');
+    font-weight: bold;
+    font-size: 0.8em;
+
+    .active {
+        color: map_get($theme-colors, 'active');
+    }
+
+    .active + li {
+        color: $gray-700;
+        font-weight: normal;
+    }
+}
+
+button svg {
+    vertical-align: -0.125em;
+}
+
+.b-form-file label {
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.modal-title {
+    overflow-wrap: anywhere;
+}
+
+a.disabled {
+    color: map_get($theme-colors, 'light-gray');
+    cursor: default;
+
+    &:hover {
+        text-decoration: none;
+    }
+}
+

@@ -1,8 +1,10 @@
 {% extends "ftl/main_vcenter_with_aside.html" %}
 {% load i18n %}
 {% load static %}
+{% load webpack_loader %}
 
 {% block title %}{% trans 'Login' %}{% endblock %}
+{% block head %}{% render_bundle 'login' 'css' %}{% endblock %}
 
 {% block main_content_vcenter %}
     <form id="login-form" action="{{ app_path }}" method="post">
