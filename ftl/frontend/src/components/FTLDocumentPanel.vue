@@ -55,10 +55,10 @@
         <b-col>
           <b-row>
             <b-col class="mb-1">
-              <b-button id="open-pdf" class="mx-1 mb-1" variant="primary"
+              <b-button id="open-document" class="mx-1 mb-1" variant="primary"
                         :href="`/app/uploads/` + currentOpenDoc.pid + `/doc`"
-                        target="_blank" :title="$t('Open PDF in a new tab')">
-                {{ $t('Open PDF') }}
+                        target="_blank" :title="$t('Open document in a new tab')">
+                {{ $t('Open document') }}
                 <font-awesome-icon icon="external-link-alt" size="sm"/>
               </b-button>
               <b-button id="move-document" class="mx-1 mb-1" variant="secondary" v-b-modal="'modal-move-document'">
@@ -104,8 +104,8 @@
     Rename document: Renommer le document
     Viewer not available on this device, open the document instead.: Visualisateur indisponible pour cet appareil,
       ouvrir le document à la place.
-    Open PDF: Ouvrir le PDF
-    Open PDF in a new tab: Ouvrir le PDF dans un nouvel onglet
+    Open document: Ouvrir le document
+    Open document in a new tab: Ouvrir le document dans un nouvel onglet
     Thumbnail updated: Miniature mis à jour
     Unable to create thumbnail: Erreur lors de la génération de la miniature
     Unable to show document: Erreur lors de l'affichage du document

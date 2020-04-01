@@ -90,7 +90,7 @@ class DownloadView(views.APIView):
             return response
 
 
-class ViewPDF(DownloadView):
+class ViewDocument(DownloadView):
     def get(self, request, *args, **kwargs):
         doc, doc_ext, title = self._get_doc(request, *args, **kwargs)
 
