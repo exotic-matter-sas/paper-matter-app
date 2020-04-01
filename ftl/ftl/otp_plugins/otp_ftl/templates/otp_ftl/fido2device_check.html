@@ -1,9 +1,13 @@
 {% extends "ftl/main_with_aside.html" %}
 {% load i18n %}
 {% load static %}
+{% load webpack_loader %}
 
 {% block title %}{% trans "Two-step Verification" %}{% endblock %}
-{% block head %}
+
+{% block head %}{% render_bundle 'login' 'css' %}{% endblock %}
+
+{% block js_script_head %}
     <script type="application/javascript" src="{% static 'cbor.js' %}"></script>
 {% endblock %}
 

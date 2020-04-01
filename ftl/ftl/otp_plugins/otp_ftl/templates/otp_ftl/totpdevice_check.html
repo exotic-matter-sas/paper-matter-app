@@ -2,8 +2,11 @@
 {% load i18n %}
 {% load static %}
 {% load add_attr %}
+{% load webpack_loader %}
 
 {% block title %}{% trans "Two-step Verification" %}{% endblock %}
+
+{% block head %}{% render_bundle 'login' 'css' %}{% endblock %}
 
 {% block main_content %}
     <h1 class="text-primary">
