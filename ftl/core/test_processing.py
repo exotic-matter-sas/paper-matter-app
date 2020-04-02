@@ -2,7 +2,7 @@
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
 
 from concurrent.futures import wait as wait_futures
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, patch, call
 
 from django.test import TestCase
 from langid.langid import LanguageIdentifier
@@ -135,6 +135,34 @@ class DocumentProcessingTests(TestCase):
         self.assertIn(mocked_plugin_1.__class__.__name__, error_logs.output[0])
         self.assertNotIn(mocked_plugin_2.__class__.__name__, error_logs.output[1])
         self.assertIn(mocked_plugin_3.__class__.__name__, error_logs.output[1])
+
+    def test_supported_type(self):
+        mock_plugin_1 = Mock()
+        mock_plugin_2 = Mock()
+        mock_plugin_3 = Mock()
+
+        mock_plugin_1.supported_filetypes = ['application/pdf']
+        mock_plugin_2.supported_filetypes = ['*']
+        mock_plugin_3.supported_filetypes = ['text/plain']
+
+        self.processing.plugins = list()
+        self.processing.plugins.append(mock_plugin_1)
+        self.processing.plugins.append(mock_plugin_2)
+        self.processing.plugins.append(mock_plugin_3)
+
+        doc1 = Mock()
+        doc1.type = 'application/pdf'
+        future = self.processing.apply_processing(doc1)
+        wait_futures([future], timeout=10)
+
+        doc2 = Mock()
+        doc2.type = 'text/plain'
+        future = self.processing.apply_processing(doc2)
+        wait_futures([future], timeout=10)
+
+        mock_plugin_1.process.assert_has_calls([call(doc1, False)])
+        mock_plugin_2.process.assert_has_calls([call(doc1, False), call(doc2, False)])
+        mock_plugin_3.process.assert_has_calls([call(doc2, False)])
 
     @patch.object(pre_ftl_processing, 'send')
     def test_process_signal_sent(self, mocked_signal):
