@@ -13,7 +13,13 @@ import {
   faEdit,
   faExclamationCircle,
   faExternalLinkAlt,
+  faFile,
+  faFileAlt,
   faFileDownload,
+  faFileExcel,
+  faFilePdf,
+  faFilePowerpoint,
+  faFileWord,
   faFolder,
   faFolderOpen,
   faFolderPlus,
@@ -25,10 +31,7 @@ import {
   faTrash,
   faWindowClose
 } from '@fortawesome/free-solid-svg-icons';
-import {
-  faPlusSquare,
-  faMinusSquare,
-} from '@fortawesome/free-regular-svg-icons';
+import {faMinusSquare, faPlusSquare,} from '@fortawesome/free-regular-svg-icons';
 import {faMarkdown} from '@fortawesome/free-brands-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
 
@@ -45,7 +48,7 @@ Vue.config.productionTip = false;
 // Font Awesome icons definition
 library.add(faHome, faFolder, faFolderOpen, faSearch, faWindowClose, faTrash, faFileDownload, faFolderPlus, faSync,
   faLevelUpAlt, faCrown, faEdit, faSort, faExclamationCircle, faMarkdown, faExternalLinkAlt, faPlusSquare,
-  faMinusSquare);
+  faMinusSquare, faFilePdf, faFileWord, faFileExcel, faFile, faFilePowerpoint, faFileAlt);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.use(BootstrapVue);
 

@@ -15,7 +15,7 @@
            @click.exact="$emit('event-open-doc', doc.pid)"></div>
       <b-card-body>
         <b-button class="float-right download-button" variant="secondary" size="sm" :href="'uploads/' + doc.pid">
-          <font-awesome-icon icon="file-download" :alt="$t('Download')"/>
+          <font-awesome-icon :icon="getIcon" :alt="$t('Download')"/>
         </b-button>
         <b-card-title class="text-truncate document-title"
                       @click.exact="$emit('event-open-doc', doc.pid)"
@@ -52,7 +52,18 @@
     data() {
       return {
         timer: null,
-        timeout_spinner: false
+        timeout_spinner: false,
+        icons: {
+          'application/pdf': 'file-pdf',
+          'text/plain': 'file-alt',
+          'application/rtf': 'file-alt',
+          'application/msword': 'file-word',
+          'application/vnd.ms-excel': 'file-excel',
+          'application/vnd.ms-powerpoint': 'file-powerpoint',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'file-word',
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'file-excel',
+          'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'file-powerpoint'
+        }
       }
     },
 
@@ -65,6 +76,16 @@
     beforeDestroy() {
       if (this.timer) {
         clearTimeout(this.timer);
+      }
+    },
+
+    computed: {
+      getIcon: function () {
+        if (this.doc.type in this.icons) {
+          return this.icons[this.doc.type]
+        } else {
+          return 'file'
+        }
       }
     },
 
