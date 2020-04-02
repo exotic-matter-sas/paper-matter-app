@@ -12,7 +12,11 @@
            @click.exact="$emit('event-open-doc', doc.pid)"></div>
       <div v-else class="card-img-top" slot="aside"
            :style="{'background-color': 'whitesmoke'}"
-           @click.exact="$emit('event-open-doc', doc.pid)"></div>
+           @click.exact="$emit('event-open-doc', doc.pid)">
+        <div class="p-3 doc-icon">
+          <font-awesome-icon size="6x" :icon="getIcon" :alt="$t('Download')"/>
+        </div>
+      </div>
       <b-card-body>
         <b-button class="float-right download-button" variant="secondary" size="sm" :href="'uploads/' + doc.pid">
           <font-awesome-icon :icon="getIcon" :alt="$t('Download')"/>
@@ -183,5 +187,9 @@
       right: 0.75rem;
       bottom: 0.75rem;
     }
+  }
+
+  .doc-icon {
+    opacity: 0.1;
   }
 </style>
