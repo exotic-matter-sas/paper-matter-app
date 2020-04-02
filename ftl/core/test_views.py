@@ -37,7 +37,11 @@ class CorePagesTests(TestCase):
                                              '.ppt',
                                              '.docx',
                                              '.xlsx',
-                                             '.pptx']
+                                             '.pptx',
+                                             '.odt',
+                                             '.odp',
+                                             '.ods'
+                                             ]
                           }
                          )
 
