@@ -6,7 +6,7 @@
 {% block head %}
     {{ ftl_account|json_script:"ftlAccount" }}
     {{ request.LANGUAGE_CODE|json_script:"locale" }}
-    {% render_bundle 'core' 'css' %}
+    {% render_bundle 'common_logged_in' 'css' %}
     {% render_bundle 'account' 'css' %}
 {% endblock %}
 

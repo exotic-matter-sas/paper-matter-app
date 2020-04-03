@@ -31,12 +31,12 @@ module.exports = {
 
     config.entry('common')
       .add('@/styles/common.scss');
-    config.entry('core')
-      .add('@/styles/core.scss');
+    config.entry('common_logged_in')
+      .add('@/styles/common_logged_in.scss');
+    config.entry('common_logged_out')
+      .add('@/styles/common_logged_out.scss');
     config.entry('account')
       .add('@/styles/account.scss');
-    config.entry('login')
-      .add('@/styles/login.scss');
 
     // Built app broken if omitted
     config.optimization

@@ -5,7 +5,7 @@
 
 {% block title %}{% trans "Two-step Verification" %}{% endblock %}
 
-{% block head %}{% render_bundle 'login' 'css' %}{% endblock %}
+{% block head %}{% render_bundle 'common_logged_out' 'css' %}{% endblock %}
 
 {% block js_script_head %}
     <script type="application/javascript" src="{% static 'cbor.js' %}"></script>
