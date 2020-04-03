@@ -5,6 +5,7 @@
 
 // Use `vue-cli-service inspect` to display output webpack.config.js
 const BundleTracker = require("webpack-bundle-tracker");
+const webpack = require('webpack');
 
 module.exports = {
   publicPath: process.env.NODE_ENV === 'production' ? "/assets/" : "/local/",
@@ -22,7 +23,12 @@ module.exports = {
     }
   },
 
+  productionSourceMap: false,
+
   chainWebpack: config => {
+    config.plugin('skip-moment-locale')
+      .use(webpack.ContextReplacementPlugin, [/moment[/\\]locale$/, /en|fr/]);
+
     config.entry('common')
       .add('@/styles/common.scss');
     config.entry('core')
