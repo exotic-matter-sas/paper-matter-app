@@ -247,6 +247,13 @@
         vi.foldersLoading = true;
 
         if (folder) {
+          if ('has_descendant' in folder && folder.has_descendant === false) {
+            // Avoid doing an API request when we know there are no descendant
+            vi.folders = [];
+            vi.foldersLoading = false;
+            return;
+          }
+
           qs = '?level=' + folder.id;
         }
 
@@ -295,7 +302,7 @@
         this.unselectFolder();
 
         // if deleted folder match the one set for selectMoveTargetFolder, reset this state
-        if(this.$store.getters.FTLTreeItemSelected(folderId)){
+        if (this.$store.getters.FTLTreeItemSelected(folderId)) {
           this.$store.commit('selectMoveTargetFolder', null);
         }
       },
