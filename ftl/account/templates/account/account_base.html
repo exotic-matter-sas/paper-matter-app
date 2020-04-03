@@ -6,6 +6,8 @@
 {% block head %}
     {{ ftl_account|json_script:"ftlAccount" }}
     {{ request.LANGUAGE_CODE|json_script:"locale" }}
+    {% render_bundle 'common_logged_in' 'css' %}
+    {% render_bundle 'account' 'css' %}
 {% endblock %}
 
 {% block body %}
@@ -93,7 +95,8 @@
                             <a href="{% url 'otp_list' %}"
                                class="{% if 'otp' in view_name %}active {% endif %}list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                                 {% trans 'Two factor authentication' %}
-                                {% if ftl_account.otp_warning %}<span class="badge badge-danger badge-pill otp-warning">!</span>{% endif %}
+                                {% if ftl_account.otp_warning %}
+                                    <span class="badge badge-danger badge-pill otp-warning">!</span>{% endif %}
                             </a>
                             <a href="{% url 'account_index' %}"
                                class="{% if view_name == 'XXX' %}active {% endif %}list-group-item list-group-item-action disabled">

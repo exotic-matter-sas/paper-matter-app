@@ -2,7 +2,7 @@
 {% load static %}
 {% load i18n %}
 
-{% block head %}
+{% block js_script_head %}
     <script type="application/javascript" src="{% static 'cbor.js' %}"></script>
 {% endblock %}
 
@@ -131,8 +131,8 @@
                             } else if (error.name === 'InvalidStateError' && 'message' in error &&
                                     // Chrome 80 error
                                     (error.message.includes('already registered') ||
-                                    // Firefox 73 error
-                                    error.message.includes('use an object that is not, or is no longer, usable'))) {
+                                            // Firefox 73 error
+                                            error.message.includes('use an object that is not, or is no longer, usable'))) {
                                 errorCode = 'duplicate-key'
                             } else if (error.name === 'NotAllowedError') {
                                 errorCode = 'not-allowed'

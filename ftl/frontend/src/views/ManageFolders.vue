@@ -324,6 +324,10 @@
 </script>
 
 <style scoped lang="scss">
+  @import '~bootstrap/scss/_functions.scss';
+  @import '~bootstrap/scss/_variables.scss';
+  @import '~bootstrap/scss/_mixins.scss';
+
   #create-folder {
     cursor: pointer;
     border: 3px solid transparent;
