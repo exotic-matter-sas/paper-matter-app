@@ -6,6 +6,7 @@
 import Vue from 'vue';
 import {
   BadgePlugin,
+  BreadcrumbPlugin,
   ButtonPlugin,
   CardPlugin,
   CollapsePlugin,
@@ -84,6 +85,7 @@ Vue.use(TabsPlugin);
 Vue.use(FormFilePlugin);
 Vue.use(ProgressPlugin);
 Vue.use(ToastPlugin);
+Vue.use(BreadcrumbPlugin);
 
 // Moment JS for nice date
 Vue.prototype.$moment = moment;
