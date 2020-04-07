@@ -14,7 +14,8 @@ def get_api_error(code):
 ERROR_CODES_DETAILS = {
     'folder_name_unique_for_org_level': _('A folder with this name already exist'),
     'folder_parent_invalid': _('A folder can\'t be move inside one of its children'),
-    'ftl_folder_not_found': _('Specified ftl_folder doesn\'t exist')
+    'ftl_folder_not_found': _('Specified ftl_folder doesn\'t exist'),
+    'ftl_document_md5_mismatch': _('Document have been corrupted during upload, please retry')
 }
 
 

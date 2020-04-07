@@ -206,6 +206,7 @@ Rename or move an existing folder.
     - **ignore_thumbnail_generation_error**: if set to `false` and sent **thumbnail** is corrupt or not properly formatted upload request will fail (if omitted or `true`, error will be ignored and document will be uploaded without thumbnail, it's the default behavior as some browsers may not support thumbnail generation using canvas)
     - **title**: document title, string (if omitted or `null`, pdf file name will be used as document title)
     - **note**: document note, string (if omitted or `null`, no note will be set)
+    - **md5**: document md5, it is recommended to provide this field for server to perform an integrity check to assert no corruption occurred during the upload process, a specific error is return on integrity check fail, string (if omitted or `null`, no integrity check is made)
 - _**thumbnail** (optional): thumbnail to display in the documents list, thumbnail should be a PNG image encoded as data uri `data:image/png;base64,...` (if omitted thumbnail will be generated on next document display from web interface, recommended format is half the size of the original document)_
 ```
 -----------------------------197247801933990060269089656
@@ -262,6 +263,7 @@ Content-Disposition: form-data; name="json"
 | Status | details | code |
 | ----- | ----- | ----- |
 | 400 | Specified ftl_folder doesn't exist | ftl_folder_not_found |
+| 400 | Document have been corrupted during upload, please retry | ftl_document_md5_mismatch |
 
 ### List documents
 **GET /api/v1/documents**
