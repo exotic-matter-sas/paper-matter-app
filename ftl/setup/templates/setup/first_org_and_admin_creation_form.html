@@ -1,8 +1,10 @@
 {% extends "ftl/main_with_aside.html" %}
 {% load i18n %}
 {% load static %}
+{% load webpack_loader %}
 
 {% block title %}{% trans 'Create first organization and administrator' %}{% endblock %}
+{% block head %}{% render_bundle 'common_logged_out' 'css' %}{% endblock %}
 
 {% block main_content %}
     <form method="post" id="admin-form">
