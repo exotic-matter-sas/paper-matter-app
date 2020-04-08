@@ -1,6 +1,5 @@
 #  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
-
 import logging
 import pathlib
 import uuid
@@ -165,7 +164,7 @@ class FTLDocument(models.Model):
             try:
                 binary.delete(False)
             except Exception as e:
-                # ex is very broad but it can be anything depending of the storage backend
+                # except is very broad but it can be anything depending of the storage backend
 
                 # Django FILE_SYSTEM storage doesn't raise an exception if file doesn't exist
                 # https://docs.djangoproject.com/en/3.0/ref/files/storage/#django.core.files.storage.FileSystemStorage.directory_permissions_mode
