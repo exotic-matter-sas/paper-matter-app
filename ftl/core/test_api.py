@@ -6,6 +6,7 @@ import os
 from unittest.mock import patch
 
 from django.contrib import messages
+from django.db import transaction
 from django.test import override_settings
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -235,10 +236,11 @@ class DocumentsTests(APITestCase):
         documents_list = FTLDocument.objects.all()
         initial_docs_count = documents_list.count()
 
-        with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'test.pdf'), mode='rb') as fp:
-            client_post = self.client.post('/app/api/v1/documents/upload',
-                                           {'json': '{"md5": "hi there!"}',
-                                            'file': fp})
+        with transaction.atomic():
+            with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'test.pdf'), mode='rb') as fp:
+                client_post = self.client.post('/app/api/v1/documents/upload',
+                                               {'json': '{"md5": "hi there!"}',
+                                                'file': fp})
         self.assertEqual(client_post.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(client_post.data['code'], 'ftl_document_md5_mismatch')
 
