@@ -233,8 +233,7 @@ class DocumentsTests(APITestCase):
 
     @patch.object(FTLDocumentProcessing, 'apply_processing')
     def test_upload_document_incorrect_md5(self, mock_apply_processing):
-        documents_list = FTLDocument.objects.all()
-        initial_docs_count = documents_list.count()
+        initial_docs_count = FTLDocument.objects.count()
 
         with transaction.atomic():
             with open(os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'test.pdf'), mode='rb') as fp:
@@ -244,7 +243,7 @@ class DocumentsTests(APITestCase):
         self.assertEqual(client_post.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(client_post.data['code'], 'ftl_document_md5_mismatch')
 
-        final_docs_count = documents_list.count()
+        final_docs_count = FTLDocument.objects.count()
 
         self.assertEqual(initial_docs_count, final_docs_count, 'No document should have been added as upload fail')
 
