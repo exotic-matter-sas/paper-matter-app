@@ -21,6 +21,8 @@ class CorePagesTests(TestCase):
     def test_home_returns_correct_html(self):
         response = self.client.get('/app/')
         self.assertContains(response, f'<script id="ftlAccount" type="application/json">')
+        self.assertContains(response, f'"name": "{self.user.email}"')
+        self.assertContains(response, f'"isSuperUser": false')
         self.assertContains(response, '<div id="app">')
         self.assertTemplateUsed(response, 'core/home.html')
 
