@@ -14,7 +14,7 @@
            :style="{'background-color': 'whitesmoke'}"
            @click.exact="$emit('event-open-doc', doc.pid)">
         <div class="p-3 doc-icon">
-          <font-awesome-icon size="6x" :icon="getIcon" :alt="$t('Download')"/>
+          <font-awesome-icon size="6x" :icon="getIcon"/>
         </div>
       </div>
       <b-card-body>
