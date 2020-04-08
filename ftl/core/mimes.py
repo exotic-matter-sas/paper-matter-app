@@ -5,14 +5,14 @@ from typing import Optional
 
 from django.conf import settings
 
-MIMETYPES = {}
+MIMETYPES_EXT_DICT = {}
 
-for ext in settings.FTL_SUPPORTED_FILETYPES:
+for ext in settings.FTL_SUPPORTED_DOCUMENTS_TYPES:
     mime, _ = mimetypes.guess_type(f"document{ext}")
-    MIMETYPES[mime] = ext
+    MIMETYPES_EXT_DICT[mime] = ext
 
 
 def mimetype_to_ext(mime: str) -> Optional[str]:
-    if mime not in MIMETYPES:
+    if mime not in MIMETYPES_EXT_DICT:
         return None  # File is not supported
-    return MIMETYPES[mime]
+    return MIMETYPES_EXT_DICT[mime]

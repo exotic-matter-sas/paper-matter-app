@@ -15,6 +15,6 @@ class FTLUserContextDataMixin(ContextMixin):
                                   'otp_warning': any(
                                       [True for d in devices_for_user(self.request.user, confirmed=None) if
                                        (isinstance(d, StaticDevice) and not d.token_set.exists()) or not d.confirmed]),
-                                  'supported_exts': settings.FTL_SUPPORTED_FILETYPES
+                                  'supported_exts': settings.FTL_SUPPORTED_DOCUMENTS_TYPES
                                   }
         return context

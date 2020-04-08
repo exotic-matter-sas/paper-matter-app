@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 class FTLTextExtractionTika(FTLDocProcessingBase):
-    supported_filetypes = [
+    supported_documents_types = [
         'application/pdf',
         'text/plain',
         'application/rtf',

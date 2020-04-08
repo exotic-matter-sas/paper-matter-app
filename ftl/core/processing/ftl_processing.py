@@ -43,7 +43,7 @@ class FTLDocumentProcessing:
         errors = list()
         # for each registered processing plugin, apply processing
         for plugin in self.plugins:
-            if ftl_doc.type in plugin.supported_filetypes or '*' in plugin.supported_filetypes:
+            if ftl_doc.type in plugin.supported_documents_types or '*' in plugin.supported_documents_types:
                 try:
                     logger.debug(f'Executing plugin {plugin.__class__.__name__} on {ftl_doc.pid}')
                     pre_ftl_processing.send(sender=plugin.__class__, document=ftl_doc)
@@ -69,7 +69,7 @@ class FTLDocumentProcessing:
 
 
 class FTLDocProcessingBase:
-    supported_filetypes = []  # mimetype of supported file format or * for all
+    supported_documents_types = []  # mimetype of supported file format or * for all
 
     def process(self, ftl_doc, force):
         raise NotImplementedError

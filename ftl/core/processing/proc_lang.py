@@ -33,7 +33,7 @@ COUNTRY_CODE_INDEX = {
 
 
 class FTLLangDetectorLangId(FTLDocProcessingBase):
-    supported_filetypes = ['*']
+    supported_documents_types = ['*']
 
     def __init__(self):
         self.log_prefix = f'[{self.__class__.__name__}]'

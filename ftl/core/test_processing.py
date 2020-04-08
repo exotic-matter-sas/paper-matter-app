@@ -22,7 +22,7 @@ class ProcTest(FTLDocProcessingBase):
     """
     Mocked test processing class
     """
-    supported_filetypes = ['*']
+    supported_documents_types = ['*']
 
     def process(self, ftl_doc, force):
         pass
@@ -50,8 +50,8 @@ class DocumentProcessingTests(TestCase):
         mock_plugin_1 = Mock()
         mock_plugin_2 = Mock()
 
-        mock_plugin_1.supported_filetypes = ['*']
-        mock_plugin_2.supported_filetypes = ['*']
+        mock_plugin_1.supported_documents_types = ['*']
+        mock_plugin_2.supported_documents_types = ['*']
 
         self.processing.plugins = list()
         self.processing.plugins.append(mock_plugin_1)
@@ -68,8 +68,8 @@ class DocumentProcessingTests(TestCase):
         mock_plugin_1 = Mock()
         mock_plugin_2 = Mock(spec=ProcTest)
 
-        mock_plugin_1.supported_filetypes = ['*']
-        mock_plugin_2.supported_filetypes = ['*']
+        mock_plugin_1.supported_documents_types = ['*']
+        mock_plugin_2.supported_documents_types = ['*']
 
         self.processing.plugins = list()
         self.processing.plugins.append(mock_plugin_1)
@@ -89,9 +89,9 @@ class DocumentProcessingTests(TestCase):
         mock_plugin_2 = Mock()
         mock_plugin_3 = Mock()
 
-        mock_plugin_1.supported_filetypes = ['*']
-        mock_plugin_2.supported_filetypes = ['*']
-        mock_plugin_3.supported_filetypes = ['*']
+        mock_plugin_1.supported_documents_types = ['*']
+        mock_plugin_2.supported_documents_types = ['*']
+        mock_plugin_3.supported_documents_types = ['*']
 
         self.processing.plugins = list()
         self.processing.plugins.append(mock_plugin_1)
@@ -117,9 +117,9 @@ class DocumentProcessingTests(TestCase):
         mocked_plugin_3.__class__.__name__ = 'Badaboum!'
         mocked_plugin_3.process.side_effect = Exception(mocked_plugin_3.__class__.__name__)
 
-        mocked_plugin_1.supported_filetypes = ['*']
-        mocked_plugin_2.supported_filetypes = ['*']
-        mocked_plugin_3.supported_filetypes = ['*']
+        mocked_plugin_1.supported_documents_types = ['*']
+        mocked_plugin_2.supported_documents_types = ['*']
+        mocked_plugin_3.supported_documents_types = ['*']
 
         self.processing.plugins = [mocked_plugin_1, mocked_plugin_2, mocked_plugin_3]
         mocked_doc = Mock()
@@ -141,9 +141,9 @@ class DocumentProcessingTests(TestCase):
         mock_plugin_2 = Mock()
         mock_plugin_3 = Mock()
 
-        mock_plugin_1.supported_filetypes = ['application/pdf']
-        mock_plugin_2.supported_filetypes = ['*']
-        mock_plugin_3.supported_filetypes = ['text/plain']
+        mock_plugin_1.supported_documents_types = ['application/pdf']
+        mock_plugin_2.supported_documents_types = ['*']
+        mock_plugin_3.supported_documents_types = ['text/plain']
 
         self.processing.plugins = list()
         self.processing.plugins.append(mock_plugin_1)
