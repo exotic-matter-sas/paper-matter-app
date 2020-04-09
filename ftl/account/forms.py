@@ -23,5 +23,5 @@ class DeleteAccountForm(forms.Form):
     def clean_password(self):
         ck_password = self.cleaned_data["password"]
         if not self.user.check_password(ck_password):
-            raise forms.ValidationError("Incorrect password")
+            raise forms.ValidationError(_("Incorrect password"))
         return ck_password

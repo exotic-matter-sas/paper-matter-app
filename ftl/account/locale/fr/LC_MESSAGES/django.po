@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-24 10:22+0000\n"
-"PO-Revision-Date: 2020-02-17 14:51+0100\n"
+"POT-Creation-Date: 2020-04-09 15:22+0200\n"
+"PO-Revision-Date: 2020-04-09 15:22+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -18,39 +18,44 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.3\n"
 
+#: .\account\forms.py:14 .\account\templates\account\account_base.html:93
+#: .\account\templates\account\account_delete.html:27
+msgid "Password"
+msgstr "Mot de passe"
+
+#: .\account\forms.py:26
+msgid "Incorrect password"
+msgstr "Mot de passe incorrect"
+
 #: .\account\templates\account\account_base.html:5
 msgid "Account management"
 msgstr "Mon compte"
 
-#: .\account\templates\account\account_base.html:56
+#: .\account\templates\account\account_base.html:58
 msgid "Return to app"
 msgstr "Revenir à l'application"
 
-#: .\account\templates\account\account_base.html:61
+#: .\account\templates\account\account_base.html:63
 msgid "Settings"
 msgstr "Paramètres"
 
-#: .\account\templates\account\account_base.html:91
-msgid "Password"
-msgstr "Mot de passe"
-
-#: .\account\templates\account\account_base.html:95
+#: .\account\templates\account\account_base.html:97
 msgid "Two factor authentication"
 msgstr "Authentification à deux facteurs"
 
-#: .\account\templates\account\account_base.html:100
+#: .\account\templates\account\account_base.html:103
 msgid "Data export"
 msgstr "Exporter ses données"
 
-#: .\account\templates\account\account_base.html:103
+#: .\account\templates\account\account_base.html:106
 msgid "Delete account"
 msgstr "Supprimer mon compte"
 
-#: .\account\templates\account\account_base.html:107
+#: .\account\templates\account\account_base.html:110
 msgid "Paper Matter settings"
 msgstr "Paramètres de Paper Matter"
 
-#: .\account\templates\account\account_base.html:119
+#: .\account\templates\account\account_base.html:122
 msgid ""
 "\n"
 "            Paper Matter, made with ❤ by\n"
@@ -60,9 +65,47 @@ msgid ""
 "        "
 msgstr ""
 "\n"
-"Paper Matter, soigneusement conçu par <a id=\"em-link\" target="
-"\"_blank\" href=\"https://www.exotic-matter.fr\">Exotic <span class="
-"\"highlight\">Matter</span></a>  en France."
+"Paper Matter, soigneusement conçu par <a id=\"em-link\" target=\"_blank\" "
+"href=\"https://www.exotic-matter.fr\">Exotic <span class=\"highlight"
+"\">Matter</span></a>  en France."
+
+#: .\account\templates\account\account_delete.html:9
+msgid "Your are about to delete your Paper Matter account."
+msgstr "Vous êtes sur le point de supprimer votre compte Paper Matter."
+
+#: .\account\templates\account\account_delete.html:12
+msgid ""
+"Every document and folders will be immediately marked for deletion and the "
+"account\n"
+"                        will be deactivated. Be aware that the email you "
+"used to register will not be accepted for a new\n"
+"                        account.\n"
+"                    "
+msgstr ""
+"Tous les documents et dossiers seront immédiatement marqués pour suppression "
+"et votre compte sera désactivé. Attention, l'email que vous avez utilisé "
+"pour vous inscrire ne sera pas réutilisable par la création d'un nouveau "
+"compte."
+
+#: .\account\templates\account\account_delete.html:18
+msgid ""
+"Please download any documents before proceeding. This process is not "
+"reversible."
+msgstr ""
+"Pensez à télécharger vos documents avant de continuer. Ce processus est "
+"irréversible."
+
+#: .\account\templates\account\account_delete.html:25
+msgid "Password validation"
+msgstr "Validation du mot de passe"
+
+#: .\account\templates\account\account_delete.html:29
+msgid "Please provide your account password to continue"
+msgstr "Veuillez indiquer votre mot de passe pour continuer"
+
+#: .\account\templates\account\account_delete.html:44
+msgid "Delete my account immediately"
+msgstr "Supprimer mon compte immédiatement"
 
 #: .\account\templates\account\account_email.html:8
 msgid "Change your email"
@@ -94,7 +137,7 @@ msgstr ""
 msgid "New email"
 msgstr "Nouvelle adresse email"
 
-#: .\account\templates\account\account_email.html:33
+#: .\account\templates\account\account_email.html:34
 msgid "Next"
 msgstr "Suivant"
 
@@ -232,7 +275,7 @@ msgstr "Confirmer nouveau mot de passe"
 msgid "Update my password"
 msgstr "Modifier votre mot de passe"
 
-#: account/templates/account/account_password_warn_body.txt:4
+#: .\account\templates\account\account_password_warn_body.txt:4
 msgid ""
 "\n"
 "The password of your Paper Matter account has been updated. If you did not "
@@ -241,8 +284,8 @@ msgid ""
 msgstr ""
 "\n"
 "Le mot de passe de votre compte Paper Matter a été mis à jour. Si vous "
-"n’avez pas demandé ce changement, veuillez IMMÉDIATEMENT réinitialisez votre"
-"mot de passe en utilisant la page \"Mot de passe oublié\".\n"
+"n’avez pas demandé ce changement, veuillez IMMÉDIATEMENT réinitialisez "
+"votremot de passe en utilisant la page \"Mot de passe oublié\".\n"
 
 #: .\account\templates\account\account_password_warn_subject.txt:5
 msgid "Account security: notice of password change"
@@ -271,3 +314,7 @@ msgstr "Impossible de valider votre adresse. Veuillez réessayer."
 #: .\account\views.py:143
 msgid "Password updated!"
 msgstr "Mot de passe mis à jour !"
+
+#: .\account\views.py:170
+msgid "Your account was deleted."
+msgstr "Votre compte a été supprimé."

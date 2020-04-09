@@ -6,13 +6,16 @@
     <div class="row no-gutters">
         <div class="col text-justify">
             <div class="alert-danger rounded p-2">
-                <h3><strong>Your are about to delete your Paper Matter account.</strong></h3>
+                <h3><strong>{% trans 'Your are about to delete your Paper Matter account.' %}</strong></h3>
 
-                <p class="lead">Every document and folders will be immediately marked for deletion and the account will
-                    be deactivated. Be aware that the email you used to register will not be accepted for a new
-                    account.</p>
+                <p class="lead">
+                    {% blocktrans %}Every document and folders will be immediately marked for deletion and the account
+                        will be deactivated. Be aware that the email you used to register will not be accepted for a new
+                        account.
+                    {% endblocktrans %}
+                </p>
 
-                <p>Please download any documents before proceeding. This process is not reversible.</p>
+                <p>{% trans 'Please download any documents before proceeding. This process is not reversible.' %}</p>
             </div>
 
             <form id="account-delete" action="" method="post">
