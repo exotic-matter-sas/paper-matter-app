@@ -253,7 +253,8 @@ Content-Disposition: form-data; name="json"
   ],
   "md5":"d85fce92a5789f66f58096402da6b98f",
   "size":123,
-  "ocrized": true
+  "ocrized": true,
+  "type": "application/pdf"
 }
 ```
 
@@ -320,7 +321,8 @@ OR
       ],
       "md5":"d85fce92a5789f66f58096402da6b98f",
       "size":123,
-      "ocrized": true
+      "ocrized": true,
+      "type": "application/pdf"
     },
     {
       "pid":"6d3a6286-7c1c-45f6-86c9-6452fa2928fa",
@@ -343,7 +345,8 @@ OR
       ],
       "md5":"d85fce92a5789f66f58096402da6b98f",
       "size":123,
-      "ocrized": true
+      "ocrized": true,
+      "type": "application/pdf"
     }
   ]
 }
@@ -386,7 +389,8 @@ Rename, annotate, move a document (or set its thumbnail).
   ],
   "md5":"d85fce92a5789f66f58096402da6b98f",
   "size":123,
-  "ocrized": true
+  "ocrized": true,
+  "type": "application/pdf"
 }
 ```
 
