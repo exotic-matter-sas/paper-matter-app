@@ -33,24 +33,22 @@
     </template>
     <b-container class="h-100" fluid>
       <b-row class="h-100">
-        <b-col md="8" v-if="currentOpenDoc.type === 'application/pdf'">
-          <div v-if="!isIOS" class="h-100 embed-responsive doc-pdf" id="pdfviewer">
+        <b-col md="8" v-if="currentOpenDoc.type === 'application/pdf' && !isIOS">
+          <div class="h-100 embed-responsive doc-pdf" id="pdfviewer">
             <iframe v-if="currentOpenDoc.pid" class="embed-responsive-item"
                     :src="viewerUrl">
             </iframe>
           </div>
-          <div v-else>
-            <span class="text-muted">
-              {{ $t('Viewer not available on this device, open the document instead.') }}
-            </span>
-          </div>
         </b-col>
-        <b-col md="8" v-else>
-          <div>
-            <span class="text-muted">
+        <b-col md="6" v-else id="viewer-disabled" class="d-flex align-items-center">
+          <b-row class="m-2 w-100 text-muted font-italic">
+            <b-col v-if="isIOS">
               {{ $t('Viewer not available on this device, open the document instead.') }}
-            </span>
-          </div>
+            </b-col>
+            <b-col v-else class="text-muted">
+              {{ $t('Viewer not available for this document type, open the document instead.') }}
+            </b-col>
+          </b-row>
         </b-col>
         <b-col>
           <b-row>
@@ -103,7 +101,9 @@
   fr:
     Rename document: Renommer le document
     Viewer not available on this device, open the document instead.: Visualisateur indisponible pour cet appareil,
-      ouvrir le document à la place.
+      ouvrez le document à la place.
+    Viewer not available for this document type, open the document instead.: Visualisateur indisponible pour ce type de
+      document, ouvrez le document à la place.
     Open document: Ouvrir le document
     Open document in a new tab: Ouvrir le document dans un nouvel onglet
     Thumbnail updated: Miniature mis à jour
@@ -296,6 +296,12 @@
 
     .modal-content {
       height: calc(100vh - (#{$document-viewer-padding} * 2));
+    }
+
+    #viewer-disabled{
+      background-color: rgba(0, 0, 0, 0.06);
+      text-align: center;
+      user-select: none;
     }
   }
 </style>
