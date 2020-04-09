@@ -10,11 +10,10 @@
       <div v-if="doc.thumbnail_available" class="card-img-top" slot="aside"
            :style="{'background-image': 'url(' + doc.thumbnail_url + ')'}"
            @click.exact="$emit('event-open-doc', doc.pid)"></div>
-      <div v-else class="card-img-top" slot="aside"
-           :style="{'background-color': 'whitesmoke'}"
+      <div v-else class="card-img-top thumb-unavailable" slot="aside"
            @click.exact="$emit('event-open-doc', doc.pid)">
         <div class="p-3 doc-icon">
-          <font-awesome-icon size="6x" :icon="getIcon"/>
+          <font-awesome-icon class="d-block mx-auto" size="10x" :icon="getIcon"/>
         </div>
       </div>
       <b-card-body>
@@ -149,13 +148,17 @@
     border-bottom: 1px solid rgba(0, 0, 0, 0.125);
   }
 
+  .card-img-top.thumb-unavailable {
+    background-color: rgba(0, 0, 0, 0.03);
+  }
+
   .card-title {
     cursor: pointer;
     font-size: 1.1rem;
     margin-bottom: 0;
   }
 
-  .card-img-top:hover {
+  .card-img-top:not(.thumb-unavailable):hover {
     background-position: bottom;
     box-shadow: inset 0 10px 30px -30px #0A0A0A;
   }
