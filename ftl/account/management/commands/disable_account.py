@@ -3,6 +3,7 @@
 from django.core.management import BaseCommand
 from django_otp import devices_for_user
 
+from account import signals
 from core.models import FTLFolder, FTLDocument, FTLUser, FTLOrg
 
 
@@ -16,6 +17,8 @@ class Command(BaseCommand):
         org = FTLOrg.objects.get(slug=options["org_slug"])
 
         self.stdout.write(self.style.MIGRATE_HEADING(f"Purging account {org}..."))
+
+        signals.pre_account_disable.send(sender=self.__class__, org=org)
 
         # Delete folders recursively including documents
         folders = FTLFolder.objects.filter(org=org)
