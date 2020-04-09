@@ -10,7 +10,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.sites.shortcuts import get_current_site
-from django.core import signing
+from django.core import signing, management
 from django.core.mail import send_mail
 from django.core.signing import SignatureExpired, BadSignature
 from django.http import HttpResponseRedirect
@@ -23,7 +23,7 @@ from django.views import View
 from django.views.generic import FormView
 from django_otp.decorators import otp_required
 
-from account.forms import EmailSendForm
+from account.forms import EmailSendForm, DeleteAccountForm
 from core.ftl_mixins import FTLUserContextDataMixin
 from core.models import FTLUser
 
@@ -158,6 +158,24 @@ class AccountPasswordView(FTLUserContextDataMixin, SuccessMessageMixin, Password
             request=self.request
         )
 
-        self.request.user.email_user(subject_warn, message_warn, settings.DEFAULT_FROM_EMAIL)
+        return super().form_valid(form)
 
+
+@method_decorator(login_required, name="dispatch")
+@method_decorator(otp_required(if_configured=True), name="dispatch")
+class AccountDeleteView(SuccessMessageMixin, FormView):
+    template_name = "account/account_delete.html"
+    form_class = DeleteAccountForm
+    success_url = reverse_lazy("login")
+    success_message = _("Your account was deleted.")
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+    def form_valid(self, form):
+        management.call_command(
+            "disable_account", org_slug=self.request.user.org.slug
+        )
         return super().form_valid(form)

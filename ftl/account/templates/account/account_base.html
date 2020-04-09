@@ -101,8 +101,8 @@
                             <a href="{% url 'account_index' %}"
                                class="{% if view_name == 'XXX' %}active {% endif %}list-group-item list-group-item-action disabled">
                                 {% trans 'Data export' %}</a>
-                            <a href="{% url 'account_index' %}"
-                               class="{% if view_name == 'XXX' %}active {% endif %}list-group-item list-group-item-action disabled">
+                            <a href="{% url 'account_delete' %}"
+                               class="{% if view_name == 'account_delete' %}active {% endif %}list-group-item list-group-item-action">
                                 {% trans 'Delete account' %}
                             </a>
                             <a href="{% url 'account_index' %}"

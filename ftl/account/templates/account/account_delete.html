@@ -1,0 +1,48 @@
+{% extends "account/account_base.html" %}
+{% load i18n %}
+
+
+{% block account %}
+    <div class="row no-gutters">
+        <div class="col text-justify">
+            <div class="alert-danger rounded p-2">
+                <h3><strong>Your are about to delete your Paper Matter account.</strong></h3>
+
+                <p class="lead">Every document and folders will be immediately marked for deletion and the account will
+                    be deactivated. Be aware that the email you used to register will not be accepted for a new
+                    account.</p>
+
+                <p>Please download any documents before proceeding. This process is not reversible.</p>
+            </div>
+
+            <form id="account-delete" action="" method="post">
+                {% csrf_token %}
+
+                <div class="form-group my-2">
+                    <label for="password">{% trans 'Password validation' %}</label>
+                    <input id="password" name="password" type="password" class="form-control my-1"
+                           placeholder="{% trans 'Password' %}" required>
+                    <small class="form-text text-muted">
+                        {% trans 'Please provide your account password to continue' %}
+                    </small>
+                </div>
+                {% if form.password.errors %}
+                    <div class="my-4 alert alert-danger">
+                        {% if form.password.errors %}
+                            {% for error in form.password.errors %}
+                                <spa>{{ error|escape }}</spa>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+                <p class="text-center">
+                    <button type="submit" class="btn btn-danger my-4 ">
+                        {% trans 'Delete my account immediately' %}
+                    </button>
+                </p>
+
+            </form>
+        </div>
+    </div>
+{% endblock %}
