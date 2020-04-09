@@ -15,7 +15,7 @@
           :placeholder="$t('Upload document')"
           :drop-placeholder="$t('Drop file here...')"
           :browse-text="$t('Browse')"
-          :accept="ftlAccount['supported_exts'].join(', ')"
+          :accept="exts.join(', ')"
         ></b-form-file>
       </b-col>
       <b-col cols="12" md="2">
@@ -84,6 +84,15 @@
     },
 
     computed: {
+      exts: function () {
+        const list_exts = [];
+
+        for (const [k, v] of Object.entries(this.ftlAccount['supported_exts'])) {
+          list_exts.push(v);
+        }
+
+        return list_exts;
+      },
       ...mapState(['ftlAccount']) // generate vuex computed getter
     },
 

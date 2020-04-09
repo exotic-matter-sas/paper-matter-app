@@ -20,7 +20,7 @@
           </b-link>
           <div id="document-title-separator" class="float-left">/</div>
           <div id="document-title" class="float-left" :title="currentOpenDoc.title">
-            {{ currentOpenDoc.title }}
+            {{ currentOpenDoc.title }}&nbsp;<span class="font-weight-light">{{ ext }}</span>
           </div>
           <b-button id="rename-document" class="float-left" v-b-modal="'modal-rename-document'" variant="link">
             <font-awesome-icon icon="edit" :title="$t('Rename document')"/>
@@ -118,6 +118,7 @@
   import FTLDeleteDocuments from "@/components/FTLDeleteDocuments";
   import FTLThumbnailGenMixin from "@/components/FTLThumbnailGenMixin";
   import FTLNote from "@/components/FTLNote";
+  import {mapState} from "vuex";
 
   export default {
     name: "FTLDocumentPanel",
@@ -175,6 +176,14 @@
           return {text: this.$t('Root'), to: {name: 'home'}};
         }
       },
+      ext: function () {
+        if (this.currentOpenDoc.type in this.ftlAccount['supported_exts']) {
+          return this.ftlAccount['supported_exts'][this.currentOpenDoc.type];
+        } else {
+          return "";
+        }
+      },
+      ...mapState(['ftlAccount']) // generate vuex computed getter
     },
 
     methods: {
@@ -298,7 +307,7 @@
       height: calc(100vh - (#{$document-viewer-padding} * 2));
     }
 
-    #viewer-disabled{
+    #viewer-disabled {
       background-color: rgba(0, 0, 0, 0.06);
       text-align: center;
       user-select: none;
