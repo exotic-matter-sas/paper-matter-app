@@ -19,8 +19,9 @@
             {{ parent_folder.text }}
           </b-link>
           <div id="document-title-separator" class="float-left">/</div>
-          <div id="document-title" class="float-left" :title="currentOpenDoc.title">
-            {{ currentOpenDoc.title }}&nbsp;<span class="font-weight-light">{{ ext }}</span>
+          <div id="document-title" class="float-left" :title="currentOpenDoc.title+ext">
+            <span>{{ currentOpenDoc.title }}</span>
+            <small>{{ ext }}</small>
           </div>
           <b-button id="rename-document" class="float-left" v-b-modal="'modal-rename-document'" variant="link">
             <font-awesome-icon icon="edit" :title="$t('Rename document')"/>
@@ -268,6 +269,7 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      padding-left: 0;
 
 
       &:hover {

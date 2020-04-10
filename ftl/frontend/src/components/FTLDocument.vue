@@ -20,11 +20,12 @@
         <b-button class="float-right download-button" variant="secondary" size="sm" :href="'uploads/' + doc.pid">
           <font-awesome-icon :icon="getIcon" :alt="$t('Download')"/>
         </b-button>
-        <b-card-title class="text-truncate document-title"
-                      @click.exact="$emit('event-open-doc', doc.pid)"
-        >
-          <span :title="doc.title">{{ doc.title }}</span>
-        </b-card-title>
+        <h4 class="card-title text-truncate document-title"
+            :title="doc.title+ext"
+            @click.exact="$emit('event-open-doc', doc.pid)">
+          <span>{{ doc.title }}</span>
+          <small>{{ ext }}</small>
+        </h4>
       </b-card-body>
       <b-card-footer :title="$moment(doc.created).format('LLLL')">
         <b-form-checkbox :checked="$store.getters.FTLDocumentSelected(doc.pid)" @change="toggleSelection"
@@ -44,6 +45,8 @@
 </i18n>
 
 <script>
+  import {mapState} from "vuex";
+
   export default {
     props: {
       doc: {
@@ -89,7 +92,15 @@
         } else {
           return 'file'
         }
-      }
+      },
+      ext: function () {
+        if (this.doc.type in this.ftlAccount['supported_exts']) {
+          return this.ftlAccount['supported_exts'][this.doc.type];
+        } else {
+          return "";
+        }
+      },
+      ...mapState(['ftlAccount']) // generate vuex computed getter
     },
 
     methods: {
