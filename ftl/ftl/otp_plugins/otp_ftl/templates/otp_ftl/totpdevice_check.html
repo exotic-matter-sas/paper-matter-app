@@ -2,8 +2,11 @@
 {% load i18n %}
 {% load static %}
 {% load add_attr %}
+{% load webpack_loader %}
 
 {% block title %}{% trans "Two-step Verification" %}{% endblock %}
+
+{% block head %}{% render_bundle 'common_logged_out' 'css' %}{% endblock %}
 
 {% block main_content %}
     <h1 class="text-primary">
@@ -43,7 +46,7 @@
     {% endif %}
 
     <div class="text-center">
-        <a href="{% url 'logout' %}" class="btn-sm btn-link">{% trans 'Cancel' %}</a>
+        <a href="{% url 'logout' %}" class="btn btn-sm btn-link">{% trans 'Cancel' %}</a>
     </div>
 
     {% if have_fido2 or have_static %}

@@ -5,6 +5,7 @@
 
 // Use `vue-cli-service inspect` to display output webpack.config.js
 const BundleTracker = require("webpack-bundle-tracker");
+const webpack = require('webpack');
 
 module.exports = {
   publicPath: process.env.NODE_ENV === 'production' ? "/assets/" : "/local/",
@@ -17,15 +18,25 @@ module.exports = {
     extract: true,
     loaderOptions: {
       sass: {
-        prependData: `@import "@/styles/customBootstrap.scss";`
+        prependData: `@import "@/styles/_variables.scss";`
       }
     }
   },
 
-  chainWebpack: config => {
+  productionSourceMap: false,
 
-    config.entry('app')
-      .add('@/styles/customBootstrap.scss');
+  chainWebpack: config => {
+    config.plugin('skip-moment-locale')
+      .use(webpack.ContextReplacementPlugin, [/moment[/\\]locale$/, /en|fr/]);
+
+    config.entry('common')
+      .add('@/styles/common.scss');
+    config.entry('common_logged_in')
+      .add('@/styles/common_logged_in.scss');
+    config.entry('common_logged_out')
+      .add('@/styles/common_logged_out.scss');
+    config.entry('account')
+      .add('@/styles/account.scss');
 
     // Built app broken if omitted
     config.optimization

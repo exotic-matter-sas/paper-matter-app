@@ -46,10 +46,32 @@
 </script>
 
 <style lang="scss">
+  @import '~bootstrap/scss/_functions.scss';
+  @import '~bootstrap/scss/_variables.scss';
+  @import '~bootstrap/scss/_mixins.scss';
+
   #app {
     min-height: 100vh;
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  // ANIMATIONS
+  @keyframes unspin {
+    to {
+      transform: rotate(-0.5turn);
+    }
+  }
+
+  @keyframes slide-down {
+    from {
+      transform: translateY(-30px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0px);
+      opacity: 1;
+    }
   }
 </style>

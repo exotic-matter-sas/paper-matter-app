@@ -1,8 +1,10 @@
 {% extends "ftl/main_vcenter_with_aside.html" %}
 {% load i18n %}
 {% load static %}
+{% load webpack_loader %}
 
 {% block title %}{% trans 'Setup completed' %}{% endblock %}
+{% block head %}{% render_bundle 'common_logged_out' 'css' %}{% endblock %}
 
 {% block main_content_vcenter %}
     <h1 class="text-primary">{% trans "Congratulations!" %}</h1>

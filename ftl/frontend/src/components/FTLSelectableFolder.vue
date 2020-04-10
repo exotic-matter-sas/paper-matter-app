@@ -93,7 +93,11 @@
   }
 </style>
 
-<style lang="scss">
+<style scoped lang="scss">
+  @import '~bootstrap/scss/_functions.scss';
+  @import '~bootstrap/scss/_variables.scss';
+  @import '~bootstrap/scss/_mixins.scss';
+
   .folder .custom-control {
     margin-left: -1.5rem;
 

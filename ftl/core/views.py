@@ -228,6 +228,10 @@ class FileUploadView(views.APIView):
                 md5.update(data)
             ftl_doc.md5 = md5.hexdigest()
 
+            if 'md5' in payload and payload['md5']:
+                if payload['md5'] != ftl_doc.md5:
+                    raise serializers.ValidationError(get_api_error('ftl_document_md5_mismatch'))
+
             ftl_doc.org = self.request.user.org
 
             if 'title' in payload and payload['title']:
@@ -253,8 +257,8 @@ class FileUploadView(views.APIView):
                     ftl_doc.thumbnail_binary = ContentFile(_extract_binary_from_data_uri(request.POST['thumbnail']),
                                                            'thumb.png')
                 except ValueError as e:
-                    if 'ignore_thumbnail_generation_error' in payload and \
-                        not payload['ignore_thumbnail_generation_error']:
+                    if 'ignore_thumbnail_generation_error' in payload and not\
+                            payload['ignore_thumbnail_generation_error']:
                         raise e
                     else:
                         pass

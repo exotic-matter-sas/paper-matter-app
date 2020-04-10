@@ -365,6 +365,12 @@
         let qs = '';
 
         if (level) {
+          if ('has_descendant' in level && level.has_descendant === false) {
+            // Avoid doing an API request when we know there are no descendant
+            vi.folders = [];
+            return;
+          }
+
           qs = '?level=' + level.id;
         }
 
@@ -383,6 +389,10 @@
 </script>
 
 <style scoped lang="scss">
+  @import '~bootstrap/scss/_functions.scss';
+  @import '~bootstrap/scss/_variables.scss';
+  @import '~bootstrap/scss/_mixins.scss';
+
   #documents-list-loader {
     width: 3em;
     height: 3em;

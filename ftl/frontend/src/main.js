@@ -4,7 +4,27 @@
  */
 
 import Vue from 'vue';
-import BootstrapVue from 'bootstrap-vue';
+import {
+  BadgePlugin,
+  BreadcrumbPlugin,
+  ButtonPlugin,
+  CardPlugin,
+  CollapsePlugin,
+  FormCheckboxPlugin,
+  FormFilePlugin,
+  FormGroupPlugin,
+  FormInputPlugin,
+  FormTextareaPlugin,
+  InputGroupPlugin,
+  LayoutPlugin,
+  LinkPlugin,
+  ModalPlugin,
+  NavbarPlugin,
+  ProgressPlugin,
+  SpinnerPlugin,
+  TabsPlugin,
+  ToastPlugin
+} from 'bootstrap-vue';
 import App from './App.vue';
 
 import {library} from '@fortawesome/fontawesome-svg-core';
@@ -50,7 +70,28 @@ library.add(faHome, faFolder, faFolderOpen, faSearch, faWindowClose, faTrash, fa
   faLevelUpAlt, faCrown, faEdit, faSort, faExclamationCircle, faMarkdown, faExternalLinkAlt, faPlusSquare,
   faMinusSquare, faFilePdf, faFileWord, faFileExcel, faFile, faFilePowerpoint, faFileAlt);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
-Vue.use(BootstrapVue);
+
+// Selective use of BootstrapVue for less code bundled
+// Vue.use(BootstrapVue);
+Vue.use(LayoutPlugin);
+Vue.use(FormGroupPlugin);
+Vue.use(ModalPlugin);
+Vue.use(CardPlugin);
+Vue.use(SpinnerPlugin);
+Vue.use(ButtonPlugin);
+Vue.use(FormCheckboxPlugin);
+Vue.use(LinkPlugin);
+Vue.use(NavbarPlugin);
+Vue.use(CollapsePlugin);
+Vue.use(InputGroupPlugin);
+Vue.use(FormInputPlugin);
+Vue.use(BadgePlugin);
+Vue.use(FormTextareaPlugin);
+Vue.use(TabsPlugin);
+Vue.use(FormFilePlugin);
+Vue.use(ProgressPlugin);
+Vue.use(ToastPlugin);
+Vue.use(BreadcrumbPlugin);
 
 // Moment JS for nice date
 Vue.prototype.$moment = moment;
