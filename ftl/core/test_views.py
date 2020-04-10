@@ -31,19 +31,17 @@ class CorePagesTests(TestCase):
         # self.assertEqual(response.context['org_name'], self.org.name)
         self.assertEqual(response.context['ftl_account'],
                          {'name': self.user.email, 'isSuperUser': False, 'otp_warning': False,
-                          'supported_exts': ['.pdf',
-                                             '.txt',
-                                             '.rtf',
-                                             '.doc',
-                                             '.xls',
-                                             '.ppt',
-                                             '.docx',
-                                             '.xlsx',
-                                             '.pptx',
-                                             '.odt',
-                                             '.odp',
-                                             '.ods'
-                                             ]
+                          'supported_exts': {"application/pdf": ".pdf",
+                                             "text/plain": ".txt",
+                                             "application/msword": ".doc",
+                                             "application/vnd.ms-excel": ".xls",
+                                             "application/vnd.ms-powerpoint": ".ppt",
+                                             "application/vnd.openxmlformats-officedocument.wordprocessingml.document": ".docx",
+                                             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": ".xlsx",
+                                             "application/vnd.openxmlformats-officedocument.presentationml.presentation": ".pptx",
+                                             "application/vnd.oasis.opendocument.text": ".odt",
+                                             "application/vnd.oasis.opendocument.presentation": ".odp",
+                                             "application/vnd.oasis.opendocument.spreadsheet": ".ods"}
                           }
                          )
 
