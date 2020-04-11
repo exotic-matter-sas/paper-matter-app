@@ -20,6 +20,7 @@ class FTLOCRAwsTextract(FTLOCRBase):
     API LIMITATION: only english language supported
     Doc: https://docs.aws.amazon.com/fr_fr/textract/latest/dg/API_StartDocumentAnalysis.html
     """
+    supported_documents_types = ['application/pdf']
 
     def __init__(self, aws_bucket=settings.AWS_STORAGE_BUCKET_NAME):
         super().__init__()

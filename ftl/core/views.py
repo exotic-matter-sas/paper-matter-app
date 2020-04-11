@@ -6,7 +6,7 @@ import urllib
 from base64 import b64decode
 from pathlib import Path
 
-import filetype
+import magic
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.postgres.search import SearchQuery, SearchRank
@@ -27,6 +27,7 @@ from rest_framework.response import Response
 
 from core.errors import get_api_error
 from core.ftl_mixins import FTLUserContextDataMixin
+from core.mimes import mimetype_to_ext
 from core.models import FTLDocument, FTLFolder
 from core.processing.ftl_processing import FTLDocumentProcessing
 from core.serializers import FTLDocumentSerializer, FTLFolderSerializer
@@ -89,7 +90,7 @@ class DownloadView(views.APIView):
             return response
 
 
-class ViewPDF(DownloadView):
+class ViewDocument(DownloadView):
     def get(self, request, *args, **kwargs):
         doc, doc_ext, title = self._get_doc(request, *args, **kwargs)
 
@@ -99,7 +100,7 @@ class ViewPDF(DownloadView):
 
             return HttpResponseRedirect(f'{doc.binary.url}&{urlencode}')
         else:
-            response = HttpResponse(doc.binary, 'application/pdf')
+            response = HttpResponse(doc.binary, doc.type)
             response['Content-Disposition'] = 'inline'
             return response
 
@@ -198,8 +199,9 @@ class FileUploadView(views.APIView):
 
         file_obj = request.FILES['file']
 
-        kind = filetype.guess(file_obj)
-        if not kind or kind.mime != "application/pdf":
+        mime = magic.from_buffer(file_obj.read(2048), mime=True)
+        extension = mimetype_to_ext(mime)
+        if not extension:
             return HttpResponseBadRequest()
 
         payload = json.loads(request.POST['json'])
@@ -219,6 +221,7 @@ class FileUploadView(views.APIView):
             ftl_doc.ftl_user = self.request.user
             ftl_doc.binary = file_obj
             ftl_doc.size = file_obj.size
+            ftl_doc.type = mime
 
             md5 = hashlib.md5()
             for data in ftl_doc.binary.chunks():
@@ -234,14 +237,14 @@ class FileUploadView(views.APIView):
             if 'title' in payload and payload['title']:
                 ftl_doc.title = payload['title']
             else:
-                if file_obj.name.lower().endswith(f'.{kind.extension}'):
-                    ftl_doc.title = file_obj.name[:-(len(f'.{kind.extension}'))]
+                if file_obj.name.lower().endswith(extension):
+                    ftl_doc.title = file_obj.name[:-(len(extension))]
                 else:
                     ftl_doc.title = file_obj.name
 
             # The actual name of the file doesn't matter because we use a random UUID. On the contrary, the extension
             # is important.
-            ftl_doc.binary.name = f'document.{kind.extension}'
+            ftl_doc.binary.name = f'document{extension}'
 
             if 'created' in payload and payload['created']:
                 ftl_doc.created = payload['created']

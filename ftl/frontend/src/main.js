@@ -33,7 +33,13 @@ import {
   faEdit,
   faExclamationCircle,
   faExternalLinkAlt,
+  faFile,
+  faFileAlt,
   faFileDownload,
+  faFileExcel,
+  faFilePdf,
+  faFilePowerpoint,
+  faFileWord,
   faFolder,
   faFolderOpen,
   faFolderPlus,
@@ -62,7 +68,7 @@ Vue.config.productionTip = false;
 // Font Awesome icons definition
 library.add(faHome, faFolder, faFolderOpen, faSearch, faWindowClose, faTrash, faFileDownload, faFolderPlus, faSync,
   faLevelUpAlt, faCrown, faEdit, faSort, faExclamationCircle, faMarkdown, faExternalLinkAlt, faPlusSquare,
-  faMinusSquare);
+  faMinusSquare, faFilePdf, faFileWord, faFileExcel, faFile, faFilePowerpoint, faFileAlt);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 
 // Selective use of BootstrapVue for less code bundled

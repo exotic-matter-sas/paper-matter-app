@@ -22,6 +22,7 @@ class FTLOCRGoogleVisionSync(FTLOCRBase):
     API LIMITATION: only the first 5 pages document will be OCRised.
     Doc: https://cloud.google.com/vision/docs/reference/rest/v1/files/annotate
     """
+    supported_documents_types = ['application/pdf']
 
     def __init__(self, credentials=settings.GS_CREDENTIALS):
         super().__init__()

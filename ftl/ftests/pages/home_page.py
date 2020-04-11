@@ -47,9 +47,9 @@ class HomePage(BasePage):
     documents_thumbnails = '.document-thumbnail'
     documents_download_buttons = '.document-thumbnail .download-button'
     documents_checkboxes = '.document-thumbnail .custom-checkbox'
-    documents_titles = '.document-thumbnail .card-title'
-    first_document_title = '.document-thumbnail:first-child .card-title'
-    last_document_title = '.document-thumbnail:last-child .card-title'
+    documents_titles = '.document-thumbnail .card-title span'
+    first_document_title = '.document-thumbnail:first-child .card-title span'
+    last_document_title = '.document-thumbnail:last-child .card-title span'
 
     more_documents_button = '#more-documents'
     more_documents_loader = '#more-documents .loader'

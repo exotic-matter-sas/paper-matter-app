@@ -11,6 +11,21 @@ logger = logging.getLogger(__name__)
 
 
 class FTLTextExtractionTika(FTLDocProcessingBase):
+    supported_documents_types = [
+        'application/pdf',
+        'text/plain',
+        'application/rtf',
+        'application/msword',
+        'application/vnd.ms-excel',
+        'application/vnd.ms-powerpoint',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.openxmlformats-officedocument.presentationml.slide',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/vnd.oasis.opendocument.text',
+        'application/vnd.oasis.opendocument.presentation',
+        'application/vnd.oasis.opendocument.spreadsheet',
+    ]
+
     def __init__(self):
         self.log_prefix = f'[{self.__class__.__name__}]'
 

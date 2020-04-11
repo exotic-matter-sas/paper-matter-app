@@ -19,8 +19,9 @@
             {{ parent_folder.text }}
           </b-link>
           <div id="document-title-separator" class="float-left">/</div>
-          <div id="document-title" class="float-left" :title="currentOpenDoc.title">
-            {{ currentOpenDoc.title }}
+          <div id="document-title" class="float-left" :title="currentOpenDoc.title+ext">
+            <span>{{ currentOpenDoc.title }}</span>
+            <small>{{ ext }}</small>
           </div>
           <b-button id="rename-document" class="float-left" v-b-modal="'modal-rename-document'" variant="link">
             <font-awesome-icon icon="edit" :title="$t('Rename document')"/>
@@ -33,25 +34,30 @@
     </template>
     <b-container class="h-100" fluid>
       <b-row class="h-100">
-        <b-col md="8">
-          <div v-if="!isIOS" class="h-100 embed-responsive doc-pdf" id="pdfviewer">
+        <b-col md="8" v-if="currentOpenDoc.type === 'application/pdf' && !isIOS">
+          <div class="h-100 embed-responsive doc-pdf" id="pdfviewer">
             <iframe v-if="currentOpenDoc.pid" class="embed-responsive-item"
                     :src="viewerUrl">
             </iframe>
           </div>
-          <div v-else>
-            <span class="text-muted">
+        </b-col>
+        <b-col md="6" v-else id="viewer-disabled" class="d-flex align-items-center">
+          <b-row class="m-2 w-100 text-muted font-italic">
+            <b-col v-if="isIOS">
               {{ $t('Viewer not available on this device, open the document instead.') }}
-            </span>
-          </div>
+            </b-col>
+            <b-col v-else class="text-muted">
+              {{ $t('Viewer not available for this document type, open the document instead.') }}
+            </b-col>
+          </b-row>
         </b-col>
         <b-col>
           <b-row>
             <b-col class="mb-1">
-              <b-button id="open-pdf" class="mx-1 mb-1" variant="primary"
-                        :href="`/app/uploads/` + currentOpenDoc.pid + `/doc.pdf`"
-                        target="_blank" :title="$t('Open PDF in a new tab')">
-                {{ $t('Open PDF') }}
+              <b-button id="open-document" class="mx-1 mb-1" variant="primary"
+                        :href="`/app/uploads/` + currentOpenDoc.pid + `/doc`"
+                        target="_blank" :title="$t('Open document in a new tab')">
+                {{ $t('Open document') }}
                 <font-awesome-icon icon="external-link-alt" size="sm"/>
               </b-button>
               <b-button id="move-document" class="mx-1 mb-1" variant="secondary" v-b-modal="'modal-move-document'">
@@ -96,9 +102,11 @@
   fr:
     Rename document: Renommer le document
     Viewer not available on this device, open the document instead.: Visualisateur indisponible pour cet appareil,
-      ouvrir le document à la place.
-    Open PDF: Ouvrir le PDF
-    Open PDF in a new tab: Ouvrir le PDF dans un nouvel onglet
+      ouvrez le document à la place.
+    Viewer not available for this document type, open the document instead.: Visualisateur indisponible pour ce type de
+      document, ouvrez le document à la place.
+    Open document: Ouvrir le document
+    Open document in a new tab: Ouvrir le document dans un nouvel onglet
     Thumbnail updated: Miniature mis à jour
     Unable to create thumbnail: Erreur lors de la génération de la miniature
     Unable to show document: Erreur lors de l'affichage du document
@@ -111,6 +119,7 @@
   import FTLDeleteDocuments from "@/components/FTLDeleteDocuments";
   import FTLThumbnailGenMixin from "@/components/FTLThumbnailGenMixin";
   import FTLNote from "@/components/FTLNote";
+  import {mapState} from "vuex";
 
   export default {
     name: "FTLDocumentPanel",
@@ -168,6 +177,14 @@
           return {text: this.$t('Root'), to: {name: 'home'}};
         }
       },
+      ext: function () {
+        if (this.currentOpenDoc.type in this.ftlAccount['supported_exts']) {
+          return this.ftlAccount['supported_exts'][this.currentOpenDoc.type];
+        } else {
+          return "";
+        }
+      },
+      ...mapState(['ftlAccount']) // generate vuex computed getter
     },
 
     methods: {
@@ -179,7 +196,7 @@
           .then(response => {
             this.currentOpenDoc = response.data;
 
-            if (!response.data.thumbnail_available) {
+            if (!response.data.thumbnail_available && response.data.type === 'application/pdf') {
               this.createThumbnailForDocument(this.currentOpenDoc)
                 .then(response => {
                   this.mixinAlert(this.$t('Thumbnail updated'));
@@ -253,6 +270,7 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      padding-left: 0;
 
 
       &:hover {
@@ -290,6 +308,12 @@
 
     .modal-content {
       height: calc(100vh - (#{$document-viewer-padding} * 2));
+    }
+
+    #viewer-disabled {
+      background-color: rgba(0, 0, 0, 0.06);
+      text-align: center;
+      user-select: none;
     }
   }
 </style>

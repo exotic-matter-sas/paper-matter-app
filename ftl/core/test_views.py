@@ -20,10 +20,9 @@ class CorePagesTests(TestCase):
 
     def test_home_returns_correct_html(self):
         response = self.client.get('/app/')
-        self.assertContains(
-            response,
-            f'<script id="ftlAccount" type="application/json">{{"name": "{self.user.email}", "isSuperUser": false, "otp_warning": false}}'
-            f'</script>')
+        self.assertContains(response, f'<script id="ftlAccount" type="application/json">')
+        self.assertContains(response, f'"name": "{self.user.email}"')
+        self.assertContains(response, f'"isSuperUser": false')
         self.assertContains(response, '<div id="app">')
         self.assertTemplateUsed(response, 'core/home.html')
 
@@ -31,7 +30,21 @@ class CorePagesTests(TestCase):
         response = self.client.get('/app/')
         # self.assertEqual(response.context['org_name'], self.org.name)
         self.assertEqual(response.context['ftl_account'],
-                         {'name': self.user.email, 'isSuperUser': False, 'otp_warning': False})
+                         {'name': self.user.email, 'isSuperUser': False, 'otp_warning': False,
+                          'supported_exts': {"application/pdf": ".pdf",
+                                             "text/plain": ".txt",
+                                             "application/rtf": ".rtf",
+                                             "application/msword": ".doc",
+                                             "application/vnd.ms-excel": ".xls",
+                                             "application/vnd.ms-powerpoint": ".ppt",
+                                             "application/vnd.openxmlformats-officedocument.wordprocessingml.document": ".docx",
+                                             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": ".xlsx",
+                                             "application/vnd.openxmlformats-officedocument.presentationml.presentation": ".pptx",
+                                             "application/vnd.oasis.opendocument.text": ".odt",
+                                             "application/vnd.oasis.opendocument.presentation": ".odp",
+                                             "application/vnd.oasis.opendocument.spreadsheet": ".ods"}
+                          }
+                         )
 
 
 class DownloadDocumentTests(TestCase):

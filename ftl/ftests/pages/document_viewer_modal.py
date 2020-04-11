@@ -8,11 +8,11 @@ class DocumentViewerModal(BasePage):
     url = '/app/#/home?doc={}'
 
     page_body = '#document-viewer'
-    document_title = '#document-title'
+    document_title = '#document-title span'
 
     rename_document_button = '#rename-document'
     close_document_button = '#document-viewer .close'
-    open_pdf_button = '#open-pdf'
+    open_pdf_button = '#open-document'
     move_document_button = '#move-document'
     delete_document_button = '#delete-document'
 

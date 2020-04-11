@@ -32,6 +32,9 @@ Archiving documents solution
     python -m pip install -r requirements.txt
     python -m pip install -r requirements_dev.txt
 
+##### Install additional modules for Windows or Mac OSX
+    python -m pip install -r requirements_dev[win|osx].txt
+
 ### Install Node modules
  
     cd ftl/frontend

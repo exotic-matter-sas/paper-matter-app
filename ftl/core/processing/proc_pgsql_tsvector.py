@@ -12,6 +12,8 @@ SEARCH_VECTOR = SearchVector('content_text', weight='C', config=F('language')) \
 
 
 class FTLSearchEnginePgSQLTSVector(FTLDocProcessingBase):
+    supported_documents_types = ['*']
+
     def process(self, ftl_doc, force):
         if force or not ftl_doc.tsvector:
             ftl_doc.tsvector = SEARCH_VECTOR

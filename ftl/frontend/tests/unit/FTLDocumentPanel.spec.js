@@ -15,6 +15,9 @@ import FTLDocumentPanel from "../../src/components/FTLDocumentPanel";
 import FTLNote from "@/components/FTLNote";
 import FTLRenameDocument from "@/components/FTLRenameDocument";
 import FTLMoveDocuments from "@/components/FTLMoveDocuments";
+import cloneDeep from "lodash.clonedeep";
+import storeConfig from "@/store/storeConfig";
+import Vuex from "vuex";
 
 // Create clean Vue instance and set installed package to avoid warning
 const localVue = createLocalVue();
@@ -22,13 +25,17 @@ const localVue = createLocalVue();
 // Mock BootstrapVue prototypes here (eg. localVue.prototype.$bvModal = {msgBoxConfirm: jest.fn()}; )
 localVue.prototype.$bvModal = {show: jest.fn(), hide: jest.fn()};
 localVue.use(BootstrapVue); // avoid bootstrap vue warnings
+localVue.use(Vuex);
 localVue.component('font-awesome-icon', jest.fn()); // avoid font awesome warnings
 
 // Mock prototype and mixin bellow
 localVue.prototype.$t = (text, args = '') => {
   return text + args
 };// i18n mock
-localVue.prototype.$tc = (text, args='') => {return text + args};// i18n mock
+localVue.prototype.$tc = (text, args = '') => {
+  return text + args
+};// i18n mock
+localVue.prototype.$store = {commit: jest.fn()}; // vuex mock
 localVue.prototype.$moment = () => {
   return {fromNow: jest.fn(), format: jest.fn()}
 }; // moment mock
@@ -73,11 +80,14 @@ const docProps = tv.DOCUMENT_PROPS;
 // TEMPLATE
 describe('FTLDocumentPanel template', () => {
   let wrapper;
+  let storeConfigCopy = cloneDeep(storeConfig);
+  let store = new Vuex.Store(storeConfigCopy);
   // defined const specific to this describe here
   beforeEach(() => {
     // set mocked component methods return value before shallowMount
     wrapper = shallowMount(FTLDocumentPanel, {
       localVue,
+      store,
       methods: mountedMocks,
       propsData: {pid: docProps.pid},
     });
@@ -99,10 +109,13 @@ describe('FTLDocumentPanel template', () => {
 // MOUNTED
 describe('FTLDocumentPanel mounted', () => {
   let wrapper;
+  let storeConfigCopy = cloneDeep(storeConfig);
+  let store = new Vuex.Store(storeConfigCopy);
 
   it('mounted call openDocument', () => {
     wrapper = shallowMount(FTLDocumentPanel, {
       localVue,
+      store,
       methods: mountedMocks,
       propsData: {pid: docProps.pid},
     });
@@ -114,10 +127,13 @@ describe('FTLDocumentPanel mounted', () => {
 // COMPUTED
 describe('FTLDocumentPanel computed', () => {
   let wrapper;
+  let storeConfigCopy = cloneDeep(storeConfig);
+  let store = new Vuex.Store(storeConfigCopy);
   // defined const specific to this describe here
   beforeEach(() => {
     wrapper = shallowMount(FTLDocumentPanel, {
       localVue,
+      store,
       methods: mountedMocks,
       propsData: {pid: docProps.pid, search: "my search"},
     });
@@ -148,11 +164,14 @@ describe('FTLDocumentPanel computed', () => {
 // METHODS
 describe('FTLDocumentPanel methods', () => {
   let wrapper;
+  let storeConfigCopy = cloneDeep(storeConfig);
+  let store = new Vuex.Store(storeConfigCopy);
   // defined const specific to this describe here
   beforeEach(() => {
     // set mocked component methods return value before shallowMount
     wrapper = shallowMount(FTLDocumentPanel, {
       localVue,
+      store,
       methods: Object.assign(
         {createThumbnailForDocument: mockedCreateThumbnailForDocument},
         mountedMocks
@@ -305,11 +324,14 @@ describe('FTLDocumentPanel methods', () => {
 // EVENT
 describe('Event received and handled by component', () => {
   let wrapper;
+  let storeConfigCopy = cloneDeep(storeConfig);
+  let store = new Vuex.Store(storeConfigCopy);
   // defined const specific to this describe here
   beforeEach(() => {
     // set mocked component methods return value before shallowMount
     wrapper = shallowMount(FTLDocumentPanel, {
       localVue,
+      store,
       methods: Object.assign(
         {
           documentNoteUpdated: mockedDocumentNoteUpdated,

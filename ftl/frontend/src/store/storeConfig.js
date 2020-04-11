@@ -10,7 +10,13 @@ const state = {
   selectedMoveTargetFolder: null,
   panelSelectedFolder: null,
   selectedDocumentsHome: [],
-  sortHome: 'recent'
+  sortHome: 'recent',
+  ftlAccount: {
+    'name': '...',
+    'isSuperUser': false,
+    'otp_warning': false,
+    'supported_exts': [],
+  }
 };
 
 export default {
