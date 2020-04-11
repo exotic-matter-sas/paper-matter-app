@@ -158,6 +158,8 @@ class AccountPasswordView(FTLUserContextDataMixin, SuccessMessageMixin, Password
             request=self.request
         )
 
+        self.request.user.email_user(subject_warn, message_warn, settings.DEFAULT_FROM_EMAIL)
+
         return super().form_valid(form)
 
 
@@ -168,6 +170,8 @@ class AccountDeleteView(SuccessMessageMixin, FormView):
     form_class = DeleteAccountForm
     success_url = reverse_lazy("login")
     success_message = _("Your account was deleted.")
+    email_warn_subject = "account/account_delete_warn_subject.txt"
+    email_warn_body = "account/account_delete_warn_body.txt"
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -178,4 +182,19 @@ class AccountDeleteView(SuccessMessageMixin, FormView):
         management.call_command(
             "disable_account", org_slug=self.request.user.org.slug
         )
+
+        subject_warn = render_to_string(
+            template_name=self.email_warn_subject,
+            context={},
+            request=self.request
+        )
+        subject_warn = ''.join(subject_warn.splitlines())
+        message_warn = render_to_string(
+            template_name=self.email_warn_body,
+            context={},
+            request=self.request
+        )
+
+        self.request.user.email_user(subject_warn, message_warn, settings.DEFAULT_FROM_EMAIL)
+
         return super().form_valid(form)
