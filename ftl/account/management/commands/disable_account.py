@@ -2,6 +2,7 @@
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
 from django.core.management import BaseCommand
 from django_otp import devices_for_user
+from oauth2_provider.models import get_application_model
 
 from account import signals
 from core.models import FTLFolder, FTLDocument, FTLUser, FTLOrg
@@ -35,9 +36,15 @@ class Command(BaseCommand):
         self.stdout.write(f"Disable all users in {org}...")
         users = FTLUser.objects.filter(org=org)
         for user in users:
+            # Delete otp devices
             two_fa_devices = devices_for_user(user, None)
             for fa_device in two_fa_devices:
                 fa_device.delete()
 
+            # Delete oauth2 app and tokens
+            get_application_model().objects.filter(user=user).delete()
+
+            # Disable user and set a random password just in case
             user.is_active = False
+            user.set_unusable_password()
             user.save()
