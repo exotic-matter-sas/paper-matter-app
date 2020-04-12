@@ -9,33 +9,32 @@ from ftests.tools import test_values as tv
 
 
 class FtlUserCreationFormTests(TestCase):
-
     def setUp(self):
         self.org = setup_org()
 
     def test_form_render_email_input(self):
         """Form render email input"""
         form = FTLUserCreationForm()
-        self.assertIn('Email address', form.as_p())
+        self.assertIn("Email address", form.as_p())
 
     def test_form_refuse_blank_email(self):
         """Form refuse blank email"""
-        form = FTLUserCreationForm(data={
-            'email': '',
-            'password1': tv.USER1_PASS,
-            'password2': tv.USER1_PASS,
-        })
+        form = FTLUserCreationForm(
+            data={"email": "", "password1": tv.USER1_PASS, "password2": tv.USER1_PASS,}
+        )
         self.assertFalse(form.is_valid())
-        self.assertIn('email', form.errors)
+        self.assertIn("email", form.errors)
 
     def test_form_refuse_non_unique_email(self):
         """Form refuse non unique email"""
         setup_user(self.org, email=tv.USER1_EMAIL)
 
-        form = FTLUserCreationForm(data={
-            'email': tv.USER1_EMAIL,
-            'password1': tv.USER2_PASS,
-            'password2': tv.USER2_PASS,
-        })
+        form = FTLUserCreationForm(
+            data={
+                "email": tv.USER1_EMAIL,
+                "password1": tv.USER2_PASS,
+                "password2": tv.USER2_PASS,
+            }
+        )
         self.assertFalse(form.is_valid())
-        self.assertIn('email', form.errors)
+        self.assertIn("email", form.errors)

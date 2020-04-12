@@ -16,7 +16,6 @@ class HttpResponseNoContent(HttpResponse):
 
 
 class CronView(View):
-
     def _ok(self):
         return HttpResponseNoContent()
 
@@ -31,7 +30,7 @@ class CronView(View):
         # (they remove X-header from the source automatically to avoid spoofing)
         # In case we are in a basic deployment, the App Engine header is emulated
 
-        if 'X-Appengine-Cron' in request.headers:
+        if "X-Appengine-Cron" in request.headers:
             cron = self.handle(request, args, kwargs)
 
             if cron:
@@ -50,7 +49,7 @@ class BatchDeleteDocument(CronView):
         docs_to_delete = FTLDocument.objects.filter(deleted=True)
 
         for doc in docs_to_delete:
-            logger.info(f'Deleting {doc.pid} ...')
+            logger.info(f"Deleting {doc.pid} ...")
             doc.delete()
 
         return True

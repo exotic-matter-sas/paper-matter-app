@@ -14,7 +14,11 @@ class FTLSessionAuthentication(SessionAuthentication):
         response = super().authenticate(request)
 
         # response[0] is the user
-        if response and response[0] and (not user_has_device(response[0]) or response[0].is_verified()):
+        if (
+            response
+            and response[0]
+            and (not user_has_device(response[0]) or response[0].is_verified())
+        ):
             return response
         else:
             return None

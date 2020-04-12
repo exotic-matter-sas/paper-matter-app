@@ -9,18 +9,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0004_ftldocument_deleted'),
+        ("core", "0004_ftldocument_deleted"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='ftldocument',
-            name='md5',
+            model_name="ftldocument",
+            name="md5",
             field=models.CharField(max_length=32, null=True),
         ),
         migrations.AddField(
-            model_name='ftldocument',
-            name='size',
+            model_name="ftldocument",
+            name="size",
             field=models.BigIntegerField(default=0),
         ),
     ]

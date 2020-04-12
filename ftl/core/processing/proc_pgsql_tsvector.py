@@ -6,13 +6,15 @@ from django.db.models import F
 
 from core.processing.ftl_processing import FTLDocProcessingBase
 
-SEARCH_VECTOR = SearchVector('content_text', weight='C', config=F('language')) \
-                        + SearchVector('note', weight='B', config=F('language')) \
-                        + SearchVector('title', weight='A', config=F('language'))
+SEARCH_VECTOR = (
+    SearchVector("content_text", weight="C", config=F("language"))
+    + SearchVector("note", weight="B", config=F("language"))
+    + SearchVector("title", weight="A", config=F("language"))
+)
 
 
 class FTLSearchEnginePgSQLTSVector(FTLDocProcessingBase):
-    supported_documents_types = ['*']
+    supported_documents_types = ["*"]
 
     def process(self, ftl_doc, force):
         if force or not ftl_doc.tsvector:

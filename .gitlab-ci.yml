@@ -11,11 +11,19 @@ services:
   - docker:dind
 
 stages:
+  - backend-analysis
   - build-frontend
   - build-backend
   - docker
   - test
   - deploy
+
+check-backend:
+  stage: backend-analysis
+  image: python:3.7-slim
+  script:
+    - pip3 install black
+    - black --check .
 
 compile-frontend:
   stage: build-frontend

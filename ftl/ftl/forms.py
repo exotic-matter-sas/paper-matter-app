@@ -8,7 +8,12 @@ from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from django_registration.forms import RegistrationForm
 
-from core.models import FTLUser, FTLOrg, permissions_names_to_objects, FTL_PERMISSIONS_USER
+from core.models import (
+    FTLUser,
+    FTLOrg,
+    permissions_names_to_objects,
+    FTL_PERMISSIONS_USER,
+)
 
 
 class FTLUserCreationForm(RegistrationForm):
@@ -24,22 +29,31 @@ class FTLCreateOrgAndFTLUser(RegistrationForm):
     """
     Form for org creation with first user
     """
-    org_name = forms.CharField(label=_('Organization name'), max_length=100,
-                               widget=forms.TextInput(attrs={'autofocus': ''}),
-                               help_text=_('It\'s the name of your Paper Matter personal workspace, try to choose '
-                                           'something unique (eg. based on your first and last name or company name).'))
+
+    org_name = forms.CharField(
+        label=_("Organization name"),
+        max_length=100,
+        widget=forms.TextInput(attrs={"autofocus": ""}),
+        help_text=_(
+            "It's the name of your Paper Matter personal workspace, try to choose "
+            "something unique (eg. based on your first and last name or company name)."
+        ),
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # remove default autofocus on email field
-        del self.fields['email'].widget.attrs['autofocus']
+        del self.fields["email"].widget.attrs["autofocus"]
 
     class Meta(RegistrationForm.Meta):
         model = FTLUser
-        fields = ("org_name", "email",)
+        fields = (
+            "org_name",
+            "email",
+        )
 
     def clean_org_name(self):
-        name_ = self.cleaned_data['org_name']
+        name_ = self.cleaned_data["org_name"]
         slug = slugify(name_)
         org_exists = FTLOrg.objects.filter(slug=slug)
         if org_exists:
@@ -49,7 +63,7 @@ class FTLCreateOrgAndFTLUser(RegistrationForm):
     def save(self, commit=True):
         user = super().save(commit=False)
 
-        org_name_cleaned = self.cleaned_data['org_name']
+        org_name_cleaned = self.cleaned_data["org_name"]
         ftl_org = FTLOrg()
         ftl_org.name = org_name_cleaned
         ftl_org.slug = slugify(org_name_cleaned)
@@ -67,8 +81,8 @@ class FTLCreateOrgAndFTLUser(RegistrationForm):
 
 
 class FTLAuthenticationForm(AuthenticationForm):
-    username = EmailField(widget=forms.TextInput(attrs={'autofocus': True}))
+    username = EmailField(widget=forms.TextInput(attrs={"autofocus": True}))
 
     def clean_username(self):
-        email_ = self.cleaned_data['username']
+        email_ = self.cleaned_data["username"]
         return email_.lower()

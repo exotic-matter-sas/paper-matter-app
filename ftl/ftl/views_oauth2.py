@@ -5,6 +5,6 @@ from django_otp.decorators import otp_required
 from oauth2_provider import views
 
 
-@method_decorator(otp_required(if_configured=True), name='dispatch')
+@method_decorator(otp_required(if_configured=True), name="dispatch")
 class FTLAuthorizationView(views.AuthorizationView):
     pass

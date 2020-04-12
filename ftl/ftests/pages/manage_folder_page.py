@@ -6,28 +6,28 @@ from ftests.tools import test_values as tv
 
 
 class ManageFolderPage(BasePage):
-    url = '/app/#/folders'
+    url = "/app/#/folders"
 
-    breadcrumb = '.breadcrumb'
+    breadcrumb = ".breadcrumb"
 
-    main_loader = '.left-panel .spinner-border'
+    main_loader = ".left-panel .spinner-border"
 
-    folders_list = '.folder'
-    folders_icons = '.folder .icon'
-    folders_title = '.folder label'
-    create_folder_button = '#create-folder'
+    folders_list = ".folder"
+    folders_icons = ".folder .icon"
+    folders_title = ".folder label"
+    create_folder_button = "#create-folder"
 
-    right_panel = '#right-panel'
-    right_panel_loader = '#right-panel .spinner-border'
+    right_panel = "#right-panel"
+    right_panel_loader = "#right-panel .spinner-border"
 
-    selected_folder_name = '#selected-folder-name'
-    rename_selected_folder_button = '#rename-selected-folder'
-    move_selected_folder_button = '#move-selected-folder'
-    delete_selected_folder_button = '#delete-selected-folder'
+    selected_folder_name = "#selected-folder-name"
+    rename_selected_folder_button = "#rename-selected-folder"
+    move_selected_folder_button = "#move-selected-folder"
+    delete_selected_folder_button = "#delete-selected-folder"
 
     # Move folder modal
-    modal_move_folder = '#modal-move-folder'
-    modal_move_folder_target_list = '.target-folder-name'
+    modal_move_folder = "#modal-move-folder"
+    modal_move_folder_target_list = ".target-folder-name"
 
     def visit(self, url, absolute_url=False):
         super().visit(url, absolute_url)

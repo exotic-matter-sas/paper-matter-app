@@ -7,18 +7,20 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0006_ftldocument_ocr'),
+        ("core", "0006_ftldocument_ocr"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='ftldocument',
-            name='ocr_retry',
+            model_name="ftldocument",
+            name="ocr_retry",
             field=models.IntegerField(default=0),
         ),
         migrations.AlterField(
-            model_name='ftldocument',
-            name='thumbnail_binary',
-            field=models.FileField(max_length=256, null=True, upload_to=core.models._get_name_thumb),
+            model_name="ftldocument",
+            name="thumbnail_binary",
+            field=models.FileField(
+                max_length=256, null=True, upload_to=core.models._get_name_thumb
+            ),
         ),
     ]
