@@ -66,10 +66,18 @@ _To run local as https (required to test 2fa fido2 devices) use `python manage.p
 [black](https://black.readthedocs.io/en/stable/index.html) is required for all Python files. There is a hard check on the CI
 for this and it will fail if the Python code is not properly formatted. Please refer to the official site for setup.
 
+    # reformat all Python files
+    cd ftl
+    python -m black .
+
 #### HTML, Javascript, CSS, SCSS, VueJS, JSON in `frontend` app
 
 [Prettier](https://prettier.io/) is required for all files in the `frontend` app. There is also a hard check on the CI
 for this. Please refer to the official site for setup.
+
+    # reformat all js files
+    cd ftl/frontend
+    npx prettier --write .
 
 #### Django Template HTML
 
