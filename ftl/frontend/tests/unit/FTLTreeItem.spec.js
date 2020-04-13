@@ -3,13 +3,13 @@
  * Licensed under the BSL License. See LICENSE in the project root for license information.
  */
 
-import {createLocalVue, shallowMount} from '@vue/test-utils';
+import { createLocalVue, shallowMount } from "@vue/test-utils";
 
-import axios from 'axios';
+import axios from "axios";
 import BootstrapVue from "bootstrap-vue";
 import flushPromises from "flush-promises"; // needed for async tests
-import * as tv from './../tools/testValues.js'
-import {axiosConfig} from "../../src/constants";
+import * as tv from "./../tools/testValues.js";
+import { axiosConfig } from "../../src/constants";
 
 import FTLTreeItem from "@/components/FTLTreeItem";
 import Vuex from "vuex";
@@ -20,27 +20,29 @@ const localVue = createLocalVue();
 
 localVue.use(BootstrapVue); // avoid bootstrap vue warnings
 localVue.use(Vuex);
-localVue.component('font-awesome-icon', jest.fn()); // avoid font awesome warnings
+localVue.component("font-awesome-icon", jest.fn()); // avoid font awesome warnings
 
-localVue.prototype.$t = (text, args = '') => {
-  return text + args
-};// i18n mock
-localVue.prototype.$tc = (text, args='') => {return text + args};// i18n mock
+localVue.prototype.$t = (text, args = "") => {
+  return text + args;
+}; // i18n mock
+localVue.prototype.$tc = (text, args = "") => {
+  return text + args;
+}; // i18n mock
 localVue.prototype.$moment = () => {
-  return {fromNow: jest.fn()}
+  return { fromNow: jest.fn() };
 }; // moment mock
-localVue.prototype.$router = {push: jest.fn()}; // router mock
+localVue.prototype.$router = { push: jest.fn() }; // router mock
 const mockedMixinAlert = jest.fn();
-localVue.mixin({methods: {mixinAlert: mockedMixinAlert}}); // mixinAlert mock
+localVue.mixin({ methods: { mixinAlert: mockedMixinAlert } }); // mixinAlert mock
 
-jest.mock('axios', () => ({
+jest.mock("axios", () => ({
   get: jest.fn(),
 }));
 
 const mockedGetFoldersListResponse = {
   data: [tv.FOLDER_PROPS, tv.FOLDER_PROPS_VARIANT],
   status: 200,
-  config: axiosConfig
+  config: axiosConfig,
 };
 
 const mockedListItemChildren = jest.fn();
@@ -52,7 +54,7 @@ const item = tv.FOLDER_TREE_ITEM;
 const itemWithDescendant = tv.FOLDER_TREE_ITEM_WITH_DESCENDANT;
 const folderToHide = 1;
 
-describe('FTLTreeItem template', () => {
+describe("FTLTreeItem template", () => {
   let wrapper;
   let storeConfigCopy;
   let store;
@@ -64,15 +66,15 @@ describe('FTLTreeItem template', () => {
       localVue,
       store,
       computed: {
-        selected: mockedSelected
+        selected: mockedSelected,
       },
-      propsData: {item, folderToHide},
+      propsData: { item, folderToHide },
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
 
-  it('renders properly FTLTreeItem template', () => {
-    const elementSelector = '.folder-tree-item';
+  it("renders properly FTLTreeItem template", () => {
+    const elementSelector = ".folder-tree-item";
     const elem = wrapper.find(elementSelector);
 
     expect(elem.is(elementSelector)).toBe(true);
@@ -80,7 +82,7 @@ describe('FTLTreeItem template', () => {
   });
 });
 
-describe('FTLTreeItem methods call proper methods', () => {
+describe("FTLTreeItem methods call proper methods", () => {
   let wrapper;
   let storeConfigCopy;
   let store;
@@ -88,35 +90,30 @@ describe('FTLTreeItem methods call proper methods', () => {
     mockedFTLTreeItemSelected.mockReturnValue(false);
     storeConfigCopy = cloneDeep(storeConfig);
     store = new Vuex.Store(
-      Object.assign(
-        storeConfigCopy,
-        {
-          mutations:
-            {
-              selectMoveTargetFolder: mockedSelectMoveTargetFolder
-            },
-          getters:
-            {
-              FTLTreeItemSelected: () => mockedFTLTreeItemSelected
-            }
-        }
-      )
+      Object.assign(storeConfigCopy, {
+        mutations: {
+          selectMoveTargetFolder: mockedSelectMoveTargetFolder,
+        },
+        getters: {
+          FTLTreeItemSelected: () => mockedFTLTreeItemSelected,
+        },
+      })
     );
     wrapper = shallowMount(FTLTreeItem, {
       localVue,
       store,
       computed: {
-        selected: mockedSelected
+        selected: mockedSelected,
       },
       methods: {
-        listItemChildren: mockedListItemChildren
+        listItemChildren: mockedListItemChildren,
       },
-      propsData: {item: itemWithDescendant, folderToHide},
+      propsData: { item: itemWithDescendant, folderToHide },
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
 
-  it('toggle call proper methods', () => {
+  it("toggle call proper methods", () => {
     //when calling toggle for the first time
     wrapper.vm.toggle();
 
@@ -133,7 +130,7 @@ describe('FTLTreeItem methods call proper methods', () => {
     expect(wrapper.vm.item.children).toEqual([]);
     expect(mockedListItemChildren).toHaveBeenCalledTimes(1);
   });
-  it('selectFolder commit to Vuex store', () => {
+  it("selectFolder commit to Vuex store", () => {
     // when
     wrapper.vm.selectFolder();
 
@@ -142,7 +139,7 @@ describe('FTLTreeItem methods call proper methods', () => {
     expect(mockedSelectMoveTargetFolder).toHaveBeenNthCalledWith(
       1,
       storeConfigCopy.state,
-      {id: itemWithDescendant.id, name: itemWithDescendant.name}
+      { id: itemWithDescendant.id, name: itemWithDescendant.name }
     );
 
     // when
@@ -151,11 +148,15 @@ describe('FTLTreeItem methods call proper methods', () => {
 
     // then
     expect(mockedSelectMoveTargetFolder).toBeCalledTimes(2);
-    expect(mockedSelectMoveTargetFolder).toHaveBeenNthCalledWith(2, storeConfigCopy.state, null);
+    expect(mockedSelectMoveTargetFolder).toHaveBeenNthCalledWith(
+      2,
+      storeConfigCopy.state,
+      null
+    );
   });
 });
 
-describe('FTLTreeItem methods call api', () => {
+describe("FTLTreeItem methods call api", () => {
   let wrapper;
   let storeConfigCopy;
   let store;
@@ -166,31 +167,33 @@ describe('FTLTreeItem methods call api', () => {
       localVue,
       store,
       computed: {
-        selected: mockedSelected
+        selected: mockedSelected,
       },
-      propsData: {item, folderToHide},
+      propsData: { item, folderToHide },
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
 
-  it('listItemChildren call api', async () => {
+  it("listItemChildren call api", async () => {
     axios.get.mockResolvedValue(mockedGetFoldersListResponse);
-    const level = 'level';
+    const level = "level";
 
     // when
     wrapper.vm.listItemChildren(level);
     await flushPromises();
 
     // then
-    expect(axios.get).toHaveBeenCalledWith('/app/api/v1/folders?level=' + level);
+    expect(axios.get).toHaveBeenCalledWith(
+      "/app/api/v1/folders?level=" + level
+    );
     expect(axios.get).toHaveBeenCalledTimes(1);
   });
 
-  it('listItemChildren filter api response based on folderToHide', async () => {
+  it("listItemChildren filter api response based on folderToHide", async () => {
     axios.get.mockResolvedValue(mockedGetFoldersListResponse);
-    const level = 'level';
+    const level = "level";
     const newFolderToHide = tv.FOLDER_PROPS_VARIANT.id;
-    wrapper.setProps({folderToHide: newFolderToHide});
+    wrapper.setProps({ folderToHide: newFolderToHide });
 
     // when
     wrapper.vm.listItemChildren(level);
@@ -203,7 +206,7 @@ describe('FTLTreeItem methods call api', () => {
   });
 });
 
-describe('FTLTreeItem methods error handling', () => {
+describe("FTLTreeItem methods error handling", () => {
   let wrapper;
   let storeConfigCopy;
   let store;
@@ -214,16 +217,16 @@ describe('FTLTreeItem methods error handling', () => {
       localVue,
       store,
       computed: {
-        selected: mockedSelected
+        selected: mockedSelected,
       },
-      propsData: {item, folderToHide},
+      propsData: { item, folderToHide },
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
 
-  it('listItemChildren set lastFolderListingFailed in case of error', async () => {
+  it("listItemChildren set lastFolderListingFailed in case of error", async () => {
     // force an error
-    axios.get.mockRejectedValue('fakeError');
+    axios.get.mockRejectedValue("fakeError");
 
     // when
     wrapper.vm.listItemChildren();

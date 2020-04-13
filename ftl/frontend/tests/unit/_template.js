@@ -3,16 +3,16 @@
  * Licensed under the BSL License. See LICENSE in the project root for license information.
  */
 
-import {createLocalVue, shallowMount} from '@vue/test-utils';
+import { createLocalVue, shallowMount } from "@vue/test-utils";
 
-import axios from 'axios';
+import axios from "axios";
 import BootstrapVue from "bootstrap-vue";
 import flushPromises from "flush-promises"; // needed for async tests
-import Vuex from 'vuex'; // TODO import Vuex if needed
+import Vuex from "vuex"; // TODO import Vuex if needed
 import cloneDeep from "lodash.clonedeep"; // TODO import cloneDeep util if Vuex needed
 
-import * as tv from './../tools/testValues.js'
-import {axiosConfig} from "../../src/constants";
+import * as tv from "./../tools/testValues.js";
+import { axiosConfig } from "../../src/constants";
 
 import Home from "../../src/views/Home"; // TODO import tested component here
 // TODO Import all needed Vue components here
@@ -23,28 +23,38 @@ const localVue = createLocalVue();
 // Mock BootstrapVue prototypes here (eg. localVue.prototype.$bvModal = {msgBoxConfirm: jest.fn()}; )
 localVue.use(BootstrapVue); // avoid bootstrap vue warnings
 localVue.use(Vuex); // TODO use Vuex store if needed
-localVue.component('font-awesome-icon', jest.fn()); // avoid font awesome warnings
+localVue.component("font-awesome-icon", jest.fn()); // avoid font awesome warnings
 
 // Mock prototype and mixin bellow
-localVue.prototype.$t = (text, args='') => {return text + args};// i18n mock
-localVue.prototype.$tc = (text, args='') => {return text + args};// i18n mock
-localVue.prototype.$moment = () => {return {fromNow: jest.fn(), format: jest.fn()}}; // moment mock
-localVue.prototype.$router = {push: jest.fn()}; // router mock
+localVue.prototype.$t = (text, args = "") => {
+  return text + args;
+}; // i18n mock
+localVue.prototype.$tc = (text, args = "") => {
+  return text + args;
+}; // i18n mock
+localVue.prototype.$moment = () => {
+  return { fromNow: jest.fn(), format: jest.fn() };
+}; // moment mock
+localVue.prototype.$router = { push: jest.fn() }; // router mock
 const mockedRouteName = jest.fn();
-localVue.prototype.$route = {get name() { return mockedRouteName()}}; // router attribute mock
+localVue.prototype.$route = {
+  get name() {
+    return mockedRouteName();
+  },
+}; // router attribute mock
 const mockedMixinAlert = jest.fn();
-localVue.mixin({methods: {mixinAlert: mockedMixinAlert}}); // mixinAlert mock
+localVue.mixin({ methods: { mixinAlert: mockedMixinAlert } }); // mixinAlert mock
 
 // TODO mock thumbnail generation if needed (when test add documents)
-import {createThumbFromUrl} from '../../src/thumbnailGenerator';
+import { createThumbFromUrl } from "../../src/thumbnailGenerator";
 import storeConfig from "@/store/storeConfig";
-jest.mock('../../src/thumbnailGenerator', () => ({
+jest.mock("../../src/thumbnailGenerator", () => ({
   __esModule: true,
-  createThumbFromUrl: jest.fn()
+  createThumbFromUrl: jest.fn(),
 }));
 
 // mock calls to api requests
-jest.mock('axios', () => ({
+jest.mock("axios", () => ({
   get: jest.fn(),
   // TODO add additional http word here if needed (post, patch...)
 }));
@@ -53,7 +63,7 @@ jest.mock('axios', () => ({
 const mockedGetResponseA = {
   data: tv.DOCUMENT_PROPS,
   status: 200,
-  config: axiosConfig
+  config: axiosConfig,
 };
 
 // TODO mock tested component methods, computed, getters, mutations here
@@ -72,7 +82,7 @@ const mountedMocks = {
 };
 
 // TODO Generic tests structure example
-describe('Component first type of test', () => {
+describe("Component first type of test", () => {
   let wrapper;
   // defined const specific to this describe here
   beforeEach(() => {
@@ -90,24 +100,23 @@ describe('Component first type of test', () => {
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
 
-  it('sync test', () => {
+  it("sync test", () => {
     // define const specific to this test here
     // define mocked library return value here
     // set required component component data here
-
     // when method is called / event is emitted...
     // then expect something
   });
 
-  it('async test', async () => {
+  it("async test", async () => {
     // when method is called / event is emitted...
     await flushPromises(); // wait all pending promises are resolved/rejected
     // then expect something
   });
 
-  it('unmock a method mocked in beforeEach to test it', () => {
+  it("unmock a method mocked in beforeEach to test it", () => {
     // restore original method to test it
-    wrapper.setMethods({methodB: Home.methods.methodB});
+    wrapper.setMethods({ methodB: Home.methods.methodB });
     // when method is called / event is emitted...
     // then expect something
   });
@@ -115,35 +124,37 @@ describe('Component first type of test', () => {
 
 // TODO add as many additional describe block and tests as needed to group tests by type, commons ones below
 // TEMPLATE
-describe('Component template', () => {
-  it('renders properly text', () => {
-    expect(wrapper.text()).toContain('text displayed in template');
+describe("Component template", () => {
+  it("renders properly text", () => {
+    expect(wrapper.text()).toContain("text displayed in template");
   });
   // or
-  it('renders properly html element', () => {
-    const elementSelector= '#element-id';
+  it("renders properly html element", () => {
+    const elementSelector = "#element-id";
     const elem = wrapper.find(elementSelector);
     expect(elem.is(elementSelector)).toBe(true);
   });
   // or
-  it('renders properly component data', async () => {
-    delete tv.DOCUMENT_PROPS.note;// remove unwanted data here
-    Object.values(tv.DOCUMENT_PROPS).forEach(function(documentData){ expect(wrapper.html()).toContain(documentData) });
+  it("renders properly component data", async () => {
+    delete tv.DOCUMENT_PROPS.note; // remove unwanted data here
+    Object.values(tv.DOCUMENT_PROPS).forEach(function (documentData) {
+      expect(wrapper.html()).toContain(documentData);
+    });
   });
 });
 
 // COMPUTED
-describe('Component computed', () => {
-  it('computedA return proper format', () => {});
+describe("Component computed", () => {
+  it("computedA return proper format", () => {});
 });
 
 // METHODS
-describe('Component methods/watcher call proper methods', () => {
-  it('methodA call proper methods', () => {});
+describe("Component methods/watcher call proper methods", () => {
+  it("methodA call proper methods", () => {});
 });
 
-describe('Component methods call api', () => {
-  it('methodA call api', async () => {
+describe("Component methods call api", () => {
+  it("methodA call api", async () => {
     axios.get.mockResolvedValue(mockedGetResponseA);
 
     // when
@@ -151,19 +162,19 @@ describe('Component methods call api', () => {
     await flushPromises();
 
     // then
-    expect(axios.get).toBeCalledWith('/app/api/v1/request/');
+    expect(axios.get).toBeCalledWith("/app/api/v1/request/");
     expect(axios.get).toBeCalledTimes(1);
   });
 });
 
-describe('Component methods/watcher return proper value', () => {
-  it('methodA return proper value', () => {});
+describe("Component methods/watcher return proper value", () => {
+  it("methodA return proper value", () => {});
 });
 
-describe('Component methods error handling', () => {
-  it('methodA call mixinAlert in case of API error', async () => {
+describe("Component methods error handling", () => {
+  it("methodA call mixinAlert in case of API error", async () => {
     // force an API error
-    axios.get.mockRejectedValue('fakeError');
+    axios.get.mockRejectedValue("fakeError");
 
     // when
     wrapper.vm.methodA();
@@ -171,14 +182,14 @@ describe('Component methods error handling', () => {
 
     // then mixinAlert is called with proper message
     expect(mockedMixinAlert).toBeCalledTimes(1);
-    expect(mockedMixinAlert.mock.calls[0][0]).toContain('Alert message');
+    expect(mockedMixinAlert.mock.calls[0][0]).toContain("Alert message");
   });
 });
 
 // EVENT
-describe('Event emitted by component', () => {
-  it('event-a emitted when calling methodA', async () => {
-    const testedEvent = 'event-a';
+describe("Event emitted by component", () => {
+  it("event-a emitted when calling methodA", async () => {
+    const testedEvent = "event-a";
 
     // when
     wrapper.vm.methodA();
@@ -187,14 +198,14 @@ describe('Event emitted by component', () => {
     // then
     expect(wrapper.emitted(testedEvent)).toBeTruthy();
     expect(wrapper.emitted(testedEvent).length).toBe(1);
-    expect(wrapper.emitted(testedEvent)[0]).toEqual(['eventArg1']);
+    expect(wrapper.emitted(testedEvent)[0]).toEqual(["eventArg1"]);
   });
 });
 
-describe('Event received and handled by component', () => {
-  it('event-b call methodB', async () => {
+describe("Event received and handled by component", () => {
+  it("event-b call methodB", async () => {
     // when (called by event)
-    wrapper.find(EventsComponent).vm.$emit('tested-event', argEvent);
+    wrapper.find(EventsComponent).vm.$emit("tested-event", argEvent);
 
     // then method called
     expect(mockedMethodA).toHaveBeenCalledWith(argEvent);
@@ -202,7 +213,7 @@ describe('Event received and handled by component', () => {
 });
 
 // VUEX
-describe('Vuex tests', () => {
+describe("Vuex tests", () => {
   let wrapper;
   let storeConfigCopy;
   let store;
@@ -210,16 +221,17 @@ describe('Vuex tests', () => {
   beforeEach(() => {
     storeConfigCopy = cloneDeep(storeConfig); // deep copy storeConfig for tests not to pollute it
     store = new Vuex.Store(
-      Object.assign( // overwrite some mutations and getter to replace them with mocks
+      Object.assign(
+        // overwrite some mutations and getter to replace them with mocks
         storeConfigCopy,
         {
           mutations: {
-            mutationA: mockedMutationA
+            mutationA: mockedMutationA,
           },
           getters: {
             getterWithParamA: () => mockedGetterWithParamA, // see https://vuex.vuejs.org/guide/getters.html#method-style-access
-            getterWithoutParamA: mockedGetterWithoutParamA
-          }
+            getterWithoutParamA: mockedGetterWithoutParamA,
+          },
         }
       )
     );
@@ -230,13 +242,16 @@ describe('Vuex tests', () => {
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
 
-  it('methodA commit change to store', () => {
+  it("methodA commit change to store", () => {
     // when
     mockedGetterWithParamA.mockReturnValue(true);
     wrapper.vm.methodA();
 
     // then
     expect(mockedMutationA).toBeCalledTimes(1);
-    expect(mockedMutationA).toBeCalledWith(storeConfigCopy.state, 'mutationParam1'); // set mutationParam1 as undefined if there is no params
+    expect(mockedMutationA).toBeCalledWith(
+      storeConfigCopy.state,
+      "mutationParam1"
+    ); // set mutationParam1 as undefined if there is no params
   });
 });

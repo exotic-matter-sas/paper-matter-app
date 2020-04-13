@@ -1,10 +1,10 @@
 {
-    "Root": "Racine",
-    "Cancel": "Annuler",
-    "Move": "Déplacer",
-    "Delete": "Supprimer",
-    "Download": "Télécharger",
-    "Create": "Créer",
-    "Save": "Sauvegarder",
-    "Rename": "Renommer"
+  "Root": "Racine",
+  "Cancel": "Annuler",
+  "Move": "Déplacer",
+  "Delete": "Supprimer",
+  "Download": "Télécharger",
+  "Create": "Créer",
+  "Save": "Sauvegarder",
+  "Rename": "Renommer"
 }

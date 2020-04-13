@@ -5,30 +5,39 @@
 
 // Usage of global mixin https://vuejs.org/v2/guide/mixins.html#Global-Mixin
 // Each method should be prefixed with mixin to warn the developer that this method is coming from a mixin
-const mixinAlert = function (message, error = false, error_details = null, title = "Notification") {
+const mixinAlert = function (
+  message,
+  error = false,
+  error_details = null,
+  title = "Notification"
+) {
   if (error_details != null) {
     message += ` (${error_details})`;
   }
 
   this.$root.$bvToast.toast(message, {
     title: title,
-    variant: error ? 'danger' : 'success',
+    variant: error ? "danger" : "success",
     solid: true,
-    toaster: 'b-toaster-bottom-right'
+    toaster: "b-toaster-bottom-right",
   });
 };
 
-const mixinAlertWarning = function (message, error_details = null, title = "Notification") {
+const mixinAlertWarning = function (
+  message,
+  error_details = null,
+  title = "Notification"
+) {
   if (error_details != null) {
     message += ` (${error_details})`;
   }
 
   this.$root.$bvToast.toast(message, {
     title: title,
-    variant: 'warning',
+    variant: "warning",
     solid: true,
-    toaster: 'b-toaster-bottom-right'
+    toaster: "b-toaster-bottom-right",
   });
 };
 
-export {mixinAlert, mixinAlertWarning};
+export { mixinAlert, mixinAlertWarning };

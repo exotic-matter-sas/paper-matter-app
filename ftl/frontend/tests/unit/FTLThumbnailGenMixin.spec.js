@@ -3,59 +3,60 @@
  * Licensed under the BSL License. See LICENSE in the project root for license information.
  */
 
-import {createLocalVue, shallowMount} from "@vue/test-utils";
+import { createLocalVue, shallowMount } from "@vue/test-utils";
 import FTLThumbnailGenMixin from "@/components/FTLThumbnailGenMixin";
 import BootstrapVue from "bootstrap-vue";
-import axios from 'axios';
-import {axiosConfig} from "../../src/constants";
-import {createThumbFromUrl} from '../../src/thumbnailGenerator';
-import * as tv from './../tools/testValues.js';
+import axios from "axios";
+import { axiosConfig } from "../../src/constants";
+import { createThumbFromUrl } from "../../src/thumbnailGenerator";
+import * as tv from "./../tools/testValues.js";
 import flushPromises from "flush-promises"; // needed for async tests
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue); // to avoid warning on tests execution
-localVue.component('font-awesome-icon', jest.fn()); // avoid font awesome warning
+localVue.component("font-awesome-icon", jest.fn()); // avoid font awesome warning
 localVue.prototype.$t = (text) => {
   return text;
 }; // i18n mock
-localVue.prototype.$tc = (text, args='') => {return text + args};// i18n mock
+localVue.prototype.$tc = (text, args = "") => {
+  return text + args;
+}; // i18n mock
 localVue.prototype.$moment = () => {
-  return {fromNow: jest.fn()}
+  return { fromNow: jest.fn() };
 };
-localVue.prototype.$router = {push: jest.fn()}; // router mock
+localVue.prototype.$router = { push: jest.fn() }; // router mock
 const mockedMixinAlert = jest.fn();
-localVue.mixin({methods: {mixinAlert: mockedMixinAlert}}); // mixin alert
+localVue.mixin({ methods: { mixinAlert: mockedMixinAlert } }); // mixin alert
 
-jest.mock('../../src/thumbnailGenerator', () => ({
+jest.mock("../../src/thumbnailGenerator", () => ({
   __esModule: true,
-  createThumbFromUrl: jest.fn()
+  createThumbFromUrl: jest.fn(),
 }));
 
-jest.mock('axios', () => ({
+jest.mock("axios", () => ({
   get: jest.fn(),
   post: jest.fn(),
-  patch: jest.fn()
+  patch: jest.fn(),
 }));
 
 const mockedUpdateDocumentResponse = {
   data: tv.DOCUMENT_PROPS,
   status: 200,
-  config: axiosConfig
+  config: axiosConfig,
 };
 
-describe('FTLThumbnailGenMixin methods', () => {
+describe("FTLThumbnailGenMixin methods", () => {
   let wrapper;
   axios.patch.mockResolvedValue(mockedUpdateDocumentResponse);
   beforeEach(() => {
     createThumbFromUrl.mockResolvedValue("base64str");
     wrapper = shallowMount(FTLThumbnailGenMixin, {
-        localVue,
-      }
-    );
+      localVue,
+    });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
 
-  it('createThumbnailForDocument call proper methods and api', async () => {
+  it("createThumbnailForDocument call proper methods and api", async () => {
     axios.patch.mockResolvedValue(mockedUpdateDocumentResponse);
 
     // when
@@ -66,13 +67,13 @@ describe('FTLThumbnailGenMixin methods', () => {
     expect(createThumbFromUrl).toBeCalledTimes(1);
     expect(axios.patch).toBeCalledTimes(1);
     expect(axios.patch).toHaveBeenCalledWith(
-      '/app/api/v1/documents/' + tv.DOCUMENT_PROPS.pid,
-      {'thumbnail_binary': 'base64str'},
+      "/app/api/v1/documents/" + tv.DOCUMENT_PROPS.pid,
+      { thumbnail_binary: "base64str" },
       axiosConfig
     );
   });
 
-  it('createThumbnailForDocument handle error on createThumbFromUrl', async () => {
+  it("createThumbnailForDocument handle error on createThumbFromUrl", async () => {
     // Expect a rejected promise is returned
     expect.assertions(1);
 
@@ -80,8 +81,9 @@ describe('FTLThumbnailGenMixin methods', () => {
     createThumbFromUrl.mockRejectedValue("fakeError");
 
     // Test catch
-    wrapper.vm.createThumbnailForDocument(tv.DOCUMENT_PROPS)
-      .catch(e => expect(e).toMatch("Unable to create thumbnail"));
+    wrapper.vm
+      .createThumbnailForDocument(tv.DOCUMENT_PROPS)
+      .catch((e) => expect(e).toMatch("Unable to create thumbnail"));
     await flushPromises();
   });
 });

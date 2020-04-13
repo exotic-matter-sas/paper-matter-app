@@ -8,12 +8,18 @@
     <b-container>
       <b-row align-h="center" class="m-2 text-center">
         <b-col>
-          <b-button id="generate-missing-thumbnails" variant="primary" @click="generateMissingThumbnail"
-                    v-if="thumbnailProgress === 0">
-            {{ $t('Generate missing thumbnail') }}
+          <b-button
+            id="generate-missing-thumbnails"
+            variant="primary"
+            @click="generateMissingThumbnail"
+            v-if="thumbnailProgress === 0"
+          >
+            {{ $t("Generate missing thumbnail") }}
           </b-button>
           <div v-if="thumbnailProgress > 0">
-            <h5 class="mt-3">{{ $t('Thumbnail generation in progress...') }}</h5>
+            <h5 class="mt-3">
+              {{ $t("Thumbnail generation in progress...") }}
+            </h5>
             <b-progress :max="max" show-progressanimated>
               <b-progress-bar :value="thumbnailProgress">
                 <strong>{{ thumbnailProgress }} / {{ max }}</strong>
@@ -39,62 +45,69 @@
 </i18n>
 
 <script>
-  import FTLThumbnailGenMixin from "@/components/FTLThumbnailGenMixin";
-  import axios from 'axios';
+import FTLThumbnailGenMixin from "@/components/FTLThumbnailGenMixin";
+import axios from "axios";
 
-  export default {
-    name: 'Konami',
-    mixins: [FTLThumbnailGenMixin],
+export default {
+  name: "Konami",
+  mixins: [FTLThumbnailGenMixin],
 
-    data() {
-      return {
-        thumbnailProgress: 0,
-        max: 100
-      }
-    },
+  data() {
+    return {
+      thumbnailProgress: 0,
+      max: 100,
+    };
+  },
 
-    methods: {
-      generateMissingThumbnail: function () {
-        const vi = this;
+  methods: {
+    generateMissingThumbnail: function () {
+      const vi = this;
 
-        axios
-          .get("/app/api/v1/documents?flat=true")
-          .then(async response => {
-            let documents = response.data;
-            vi.max = response.data.count;
+      axios
+        .get("/app/api/v1/documents?flat=true")
+        .then(async (response) => {
+          let documents = response.data;
+          vi.max = response.data.count;
 
-            while (documents !== null && documents.results.length > 0) {
-              for (const doc of documents.results) {
-                vi.thumbnailProgress += 1;
-                if (doc['thumbnail_available'] === false) {
-                  await vi.createThumbnailForDocument(doc)
-                    .then(response => {
-                      vi.mixinAlert(this.$t('Thumbnail created'));
-                    })
-                    .catch(error => vi.mixinAlert(this.$t('Unable to create thumbnail'), true));
-                }
-              }
-
-              if (documents.next == null) {
-                documents = null;
-              } else {
-                let resp = await axios.get(documents.next);
-                documents = await resp.data;
+          while (documents !== null && documents.results.length > 0) {
+            for (const doc of documents.results) {
+              vi.thumbnailProgress += 1;
+              if (doc["thumbnail_available"] === false) {
+                await vi
+                  .createThumbnailForDocument(doc)
+                  .then((response) => {
+                    vi.mixinAlert(this.$t("Thumbnail created"));
+                  })
+                  .catch((error) =>
+                    vi.mixinAlert(this.$t("Unable to create thumbnail"), true)
+                  );
               }
             }
-          })
-          .catch(error => {
-            vi.mixinAlert(this.$t('An unknown error occurred while creating missing thumbnails'), true)
-          })
-          .then(() => {
-            vi.mixinAlert(this.$t('Finished processing missing thumbnails'));
-            vi.thumbnailProgress = 0;
-            vi.max = 100;
-          });
-      }
-    }
-  }
+
+            if (documents.next == null) {
+              documents = null;
+            } else {
+              let resp = await axios.get(documents.next);
+              documents = await resp.data;
+            }
+          }
+        })
+        .catch((error) => {
+          vi.mixinAlert(
+            this.$t(
+              "An unknown error occurred while creating missing thumbnails"
+            ),
+            true
+          );
+        })
+        .then(() => {
+          vi.mixinAlert(this.$t("Finished processing missing thumbnails"));
+          vi.thumbnailProgress = 0;
+          vi.max = 100;
+        });
+    },
+  },
+};
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

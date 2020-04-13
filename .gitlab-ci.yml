@@ -11,15 +11,23 @@ services:
   - docker:dind
 
 stages:
-  - backend-analysis
+  - code-analysis
   - build-frontend
   - build-backend
   - docker
   - test
   - deploy
 
+
+check-frontend:
+  stage: code-analysis
+  image: node:lts-alpine
+  script:
+    - cd ftl/frontend
+    - npx prettier@2.0.4 . --check
+
 check-backend:
-  stage: backend-analysis
+  stage: code-analysis
   image: python:3.7-slim
   script:
     - pip3 install black

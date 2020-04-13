@@ -10,26 +10,26 @@
 
 // ACCOUNT PAGES
 #account-side-menu {
-    border-bottom: 1px solid #dee2e6;
+  border-bottom: 1px solid #dee2e6;
 }
 
 @include media-breakpoint-up(md) {
-    #account-side-menu {
-        border-right: 1px solid #dee2e6;
-        border-bottom: 0;
-        margin-bottom: 0;
-    }
+  #account-side-menu {
+    border-right: 1px solid #dee2e6;
+    border-bottom: 0;
+    margin-bottom: 0;
+  }
 }
 
 @media print {
-    #emergency-code-to-print {
-        list-style: none;
-        padding-left: 0;
-        font-size: 2rem;
-        line-height: 3rem;
+  #emergency-code-to-print {
+    list-style: none;
+    padding-left: 0;
+    font-size: 2rem;
+    line-height: 3rem;
 
-        code {
-            color: black !important;
-        }
+    code {
+      color: black !important;
     }
+  }
 }

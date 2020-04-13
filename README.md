@@ -60,10 +60,10 @@ _To run local as https (required to test 2fa fido2 devices) use `python manage.p
 #### Python
 [black](https://black.readthedocs.io/en/stable/index.html) is required for all Python files. There is hard check on the CI
 for this and it will fail if the Python code is not properly formatted. Please refer to the official site for setup.
-#### Javascript
-Default formatter of IntellJ
-#### HTML
-Default formatter of IntellJ
+#### HTML, Javascript, CSS, SCSS, VueJS, JSON in `frontend` app
+[Prettier](https://prettier.io/) is required but not checked.
+#### Django Template HTML
+Default formatter of IntellJ/PyCharm
 
 ### Tests
 
