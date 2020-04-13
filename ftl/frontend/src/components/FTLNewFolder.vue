@@ -37,7 +37,7 @@
 <i18n>
   fr:
     Create a new folder: Créer un nouveau dossier
-    The folder will be created in "{0}" folder.: Le dossier sera créé dans « {0} ».
+    The folder will be created in '{0}' folder.: Le dossier sera créé dans « {0} ».
     Name of the folder: Nom du dossier
     Folder "{0}" created: Dossier « {0} » créé avec succès
     Unable to create new folder: La création du dossier a échoué

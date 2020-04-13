@@ -38,7 +38,7 @@
   fr:
     Rename document: Renommer le document
     The new name of the document: Le nouveau nom du document
-    The document will be renamed to "{0}".: Le document sera renommé « {0} ».
+    The document will be renamed to '{0}'.: Le document sera renommé « {0} ».
     Document successfully renamed.: Le document a été renommé avec succès.
     Could not rename document.: Le document n'a pas pu être renommé.
 </i18n>
