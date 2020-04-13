@@ -4,52 +4,51 @@
  */
 
 @import "variables";
-@import '~bootstrap/scss/bootstrap';
-@import '~bootstrap-vue/src/index.scss';
+@import "~bootstrap/scss/bootstrap";
+@import "~bootstrap-vue/src/index.scss";
 
 body {
-    background: $light !important;
+  background: $light !important;
 }
 
 .highlight {
-    color: map_get($theme-colors, 'active');
-    font-weight: bold;
+  color: map_get($theme-colors, "active");
+  font-weight: bold;
 }
 
 .breadcrumb-ftl {
-    color: map_get($theme-colors, 'primary');
-    font-weight: bold;
-    font-size: 0.8em;
+  color: map_get($theme-colors, "primary");
+  font-weight: bold;
+  font-size: 0.8em;
 
-    .active {
-        color: map_get($theme-colors, 'active');
-    }
+  .active {
+    color: map_get($theme-colors, "active");
+  }
 
-    .active + li {
-        color: $gray-700;
-        font-weight: normal;
-    }
+  .active + li {
+    color: $gray-700;
+    font-weight: normal;
+  }
 }
 
 button svg {
-    vertical-align: -0.125em;
+  vertical-align: -0.125em;
 }
 
 .b-form-file label {
-    white-space: nowrap;
-    overflow: hidden;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .modal-title {
-    overflow-wrap: anywhere;
+  overflow-wrap: anywhere;
 }
 
 a.disabled {
-    color: map_get($theme-colors, 'light-gray');
-    cursor: default;
+  color: map_get($theme-colors, "light-gray");
+  cursor: default;
 
-    &:hover {
-        text-decoration: none;
-    }
+  &:hover {
+    text-decoration: none;
+  }
 }
-

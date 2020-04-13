@@ -15,9 +15,9 @@ class SetupState:
 def _redirect_to_setup_step_to_complete(admin_state):
     """Logic to redirect user to appropriate view if required setup state isn't met"""
     if admin_state:
-        return redirect('login')
+        return redirect("login")
     else:
-        return redirect('setup:create_admin')
+        return redirect("setup:create_admin")
 
 
 class FTLSetupMiddleware:
@@ -39,7 +39,7 @@ class FTLSetupMiddleware:
         # The setup views will only allow setup if the following flag is present.
         # As such, when the setup is completed, the middleware will not load and the setup views will not have the flag
         # and will denied access to setup views.
-        request.session['ftl_setup_middleware'] = True
+        request.session["ftl_setup_middleware"] = True
 
         response = self.get_response(request)
 
@@ -49,10 +49,10 @@ class FTLSetupMiddleware:
         return response
 
     def process_view(self, request, view_func, view_args, view_kwargs):
-        if 'ftl_setup_state' in view_kwargs:
+        if "ftl_setup_state" in view_kwargs:
             state_error = True
             none_state = not self.admin_state
-            ftl_setup_state_ = view_kwargs['ftl_setup_state']
+            ftl_setup_state_ = view_kwargs["ftl_setup_state"]
 
             if ftl_setup_state_ == SetupState.none:
                 if none_state:
@@ -61,8 +61,10 @@ class FTLSetupMiddleware:
                 if self.admin_state:
                     state_error = False
             else:
-                raise ValueError(f'excepted_setup_state is not valid, accepted value are:'
-                                 f'{[attr for attr in dir(SetupState) if not attr.startswith("_")]}')
+                raise ValueError(
+                    f"excepted_setup_state is not valid, accepted value are:"
+                    f'{[attr for attr in dir(SetupState) if not attr.startswith("_")]}'
+                )
 
             if state_error:
                 return _redirect_to_setup_step_to_complete(self.admin_state)

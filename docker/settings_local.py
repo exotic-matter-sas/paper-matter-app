@@ -8,37 +8,37 @@ from google.oauth2 import service_account
 
 from ftl.enums import FTLStorages, FTLPlugins
 
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'CHANGEME')
-CRON_SECRET_KEY = os.getenv('CRON_SECRET_KEY', 'CHANGEME')
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "CHANGEME")
+CRON_SECRET_KEY = os.getenv("CRON_SECRET_KEY", "CHANGEME")
 DEBUG = bool(strtobool(os.getenv("DJANGO_DEBUG", "False")))
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["*"]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'ftl.ftl_setup_middleware.FTLSetupMiddleware'
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "ftl.ftl_setup_middleware.FTLSetupMiddleware",
 ]
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME', 'postgres'),
-        'USER': os.getenv('DB_USER', 'postgres'),
-        'PASSWORD': os.getenv('DB_PASSWORD', 'postgres'),
-        'HOST': os.getenv('DB_HOST', 'postgres'),
-        'PORT': os.getenv('DB_PORT', '5432'),
-        'ATOMIC_REQUESTS': True
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("DB_NAME", "postgres"),
+        "USER": os.getenv("DB_USER", "postgres"),
+        "PASSWORD": os.getenv("DB_PASSWORD", "postgres"),
+        "HOST": os.getenv("DB_HOST", "postgres"),
+        "PORT": os.getenv("DB_PORT", "5432"),
+        "ATOMIC_REQUESTS": True,
     }
 }
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 """
 DOCUMENT BINARY STORAGE
@@ -61,10 +61,8 @@ DOCUMENT PROCESSING PLUGINS (order is important)
 FTL_DOC_PROCESSING_PLUGINS = [
     # Extract text of non scanned documents (required)
     FTLPlugins.TEXT_EXTRACTION_TIKA,
-
     # Detect lang (required for search feature)
     FTLPlugins.LANG_DETECTOR_LANGID,
-
     # Search feature (required)
     FTLPlugins.SEARCH_ENGINE_PGSQL_TSVECTOR,
 ]
@@ -79,16 +77,20 @@ if DEFAULT_FILE_STORAGE == FTLStorages.AWS_S3:  # Amazon S3 storage
     AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
     AWS_S3_ENDPOINT_URL = os.getenv("AWS_S3_ENDPOINT_URL")
     AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME")
-    AWS_DEFAULT_ACL = 'private'
+    AWS_DEFAULT_ACL = "private"
     S3_USE_SIGV4 = True
-if DEFAULT_FILE_STORAGE == FTLStorages.GCS or \
-        FTLPlugins.OCR_GOOGLE_VISION_SYNC in FTL_DOC_PROCESSING_PLUGINS:
+if (
+    DEFAULT_FILE_STORAGE == FTLStorages.GCS
+    or FTLPlugins.OCR_GOOGLE_VISION_SYNC in FTL_DOC_PROCESSING_PLUGINS
+):
     import json
 
-    credentials_raw = json.loads(os.environ.get('GCS_CREDENTIALS_CONTENT'))
-    GS_CREDENTIALS = service_account.Credentials.from_service_account_info(credentials_raw)
+    credentials_raw = json.loads(os.environ.get("GCS_CREDENTIALS_CONTENT"))
+    GS_CREDENTIALS = service_account.Credentials.from_service_account_info(
+        credentials_raw
+    )
     if DEFAULT_FILE_STORAGE == FTLStorages.GCS:
-        GS_BUCKET_NAME = os.environ.get('GCS_BUCKET_NAME')
+        GS_BUCKET_NAME = os.environ.get("GCS_BUCKET_NAME")
 
 # Email settings
 EMAIL_HOST = os.getenv("EMAIL_HOST")
@@ -96,4 +98,4 @@ EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 EMAIL_PORT = int(os.getenv("EMAIL_PORT", 25))
 EMAIL_USE_SSL = True
-DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", 'noreply@localhost')
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "noreply@localhost")

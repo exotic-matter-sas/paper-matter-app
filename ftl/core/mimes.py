@@ -6,7 +6,9 @@ from typing import Optional
 from django.conf import settings
 
 MIMETYPES_EXT_DICT = {}
-MIMETYPES_OVERRIDE = {".rtf": "application/rtf"}  # to get the same mimetypes when running Python on different OS
+MIMETYPES_OVERRIDE = {
+    ".rtf": "application/rtf"
+}  # to get the same mimetypes when running Python on different OS
 
 for ext in set(settings.FTL_SUPPORTED_DOCUMENTS_TYPES):
     _ext = ext.lower()

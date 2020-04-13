@@ -10,155 +10,163 @@
 // MAIN WITH ASIDE PAGES
 // ==========
 #main-with-aside {
-    width: 100%;
-    max-width: 520px;
-    padding: 15px;
-    margin: auto;
+  width: 100%;
+  max-width: 520px;
+  padding: 15px;
+  margin: auto;
 }
 
 @include media-breakpoint-up(md) {
-    #main-with-aside {
-        min-height: 100vh;
-    }
+  #main-with-aside {
+    min-height: 100vh;
+  }
 }
 
 aside {
-    $max-width-aside-content: 310px;
+  $max-width-aside-content: 310px;
 
-    #logo-container {
-        display: none;
-        position: absolute;
-        width: 100%;
-        left: 0;
-        z-index: $zindex-sticky;
+  #logo-container {
+    display: none;
+    position: absolute;
+    width: 100%;
+    left: 0;
+    z-index: $zindex-sticky;
 
-        & > div {
-            display: inherit;
-            position: static;
-            width: 100%;
-            max-width: $max-width-aside-content;
-            padding: 10% 0 45% 0;
-            margin: auto;
-            background: linear-gradient(to bottom, map_get($theme-colors, 'dark') 50%, rgba(0, 0, 0, 0) 100%);
+    & > div {
+      display: inherit;
+      position: static;
+      width: 100%;
+      max-width: $max-width-aside-content;
+      padding: 10% 0 45% 0;
+      margin: auto;
+      background: linear-gradient(
+        to bottom,
+        map_get($theme-colors, "dark") 50%,
+        rgba(0, 0, 0, 0) 100%
+      );
 
-            #logo {
-                display: inherit;
-                $logo_width: 35%;
-                width: $logo_width;
-                margin: auto;
-            }
-        }
-    }
-
-    #aside-illustration img {
-        width: 100%;
-        max-width: $max-width-aside-content;
+      #logo {
+        display: inherit;
+        $logo_width: 35%;
+        width: $logo_width;
         margin: auto;
-        display: block;
+      }
     }
+  }
+
+  #aside-illustration img {
+    width: 100%;
+    max-width: $max-width-aside-content;
+    margin: auto;
+    display: block;
+  }
 }
 
 @include media-breakpoint-up(md) {
-    aside {
-        #logo-container {
-            display: block;
-        }
-
-        #aside-illustration {
-            min-height: 100vh;
-        }
+  aside {
+    #logo-container {
+      display: block;
     }
+
+    #aside-illustration {
+      min-height: 100vh;
+    }
+  }
 }
 
 // LOGIN PAGE
 // ==========
 #login-form {
-    .form-label-group {
-        position: relative;
-        margin-bottom: 1rem;
+  .form-label-group {
+    position: relative;
+    margin-bottom: 1rem;
 
-        input, label {
-            height: 3.125rem;
-            padding: .75rem;
-        }
-
-        input:not(:placeholder-shown) {
-            padding-top: 1.25rem;
-            padding-bottom: .25rem;
-        }
-
-        input:not(:placeholder-shown) ~ label {
-            padding-top: .25rem;
-            padding-bottom: .25rem;
-            font-size: 12px;
-            color: #777;
-        }
-
-        label {
-            position: absolute;
-            top: 0;
-            left: 0;
-            display: block;
-            width: 100%;
-            margin-bottom: 0;
-            line-height: 1.5;
-            color: #495057;
-            pointer-events: none;
-            cursor: text;
-            border: 1px solid transparent;
-            border-radius: .25rem;
-            transition: all .1s ease-in-out;
-        }
+    input,
+    label {
+      height: 3.125rem;
+      padding: 0.75rem;
     }
 
-    ul {
-        list-style: none;
-        padding-left: 0;
-        text-align: justify;
-        margin-bottom: 0;
+    input:not(:placeholder-shown) {
+      padding-top: 1.25rem;
+      padding-bottom: 0.25rem;
     }
 
-    .alert-danger li {
-        border-top: 1px solid lighten($danger, 20%);
-        margin-top: 0.5em;
-        padding-top: 0.5em;
-
-        &:first-child {
-            margin-top: 0;
-            padding-top: 0;
-            border-top: none;
-        }
+    input:not(:placeholder-shown) ~ label {
+      padding-top: 0.25rem;
+      padding-bottom: 0.25rem;
+      font-size: 12px;
+      color: #777;
     }
+
+    label {
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: block;
+      width: 100%;
+      margin-bottom: 0;
+      line-height: 1.5;
+      color: #495057;
+      pointer-events: none;
+      cursor: text;
+      border: 1px solid transparent;
+      border-radius: 0.25rem;
+      transition: all 0.1s ease-in-out;
+    }
+  }
+
+  ul {
+    list-style: none;
+    padding-left: 0;
+    text-align: justify;
+    margin-bottom: 0;
+  }
+
+  .alert-danger li {
+    border-top: 1px solid lighten($danger, 20%);
+    margin-top: 0.5em;
+    padding-top: 0.5em;
+
+    &:first-child {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: none;
+    }
+  }
 }
 
 // SETUP PAGES + SIGNUP PAGE + RESET PASSWORD PAGES
 // ==========
-#organization-form, #admin-form, #user-form, #password-reset-form,
+#organization-form,
+#admin-form,
+#user-form,
+#password-reset-form,
 #password-reset-confirm {
-    label {
-        color: map_get($theme-colors, 'primary');
-        display: block;
-    }
+  label {
+    color: map_get($theme-colors, "primary");
+    display: block;
+  }
 
-    input {
-        display: block;
-        margin-bottom: 1em;
-        width: 100%;
-    }
+  input {
+    display: block;
+    margin-bottom: 1em;
+    width: 100%;
+  }
 
-    br {
-        display: none;
-    }
+  br {
+    display: none;
+  }
 
-    .helptext {
-        font-size: 0.9em;
-        display: block;
-        color: $gray-700;
-        font-style: italic;
-        margin-bottom: 1em;
-    }
+  .helptext {
+    font-size: 0.9em;
+    display: block;
+    color: $gray-700;
+    font-style: italic;
+    margin-bottom: 1em;
+  }
 
-    .errorlist {
-        color: $danger
-    }
+  .errorlist {
+    color: $danger;
+  }
 }

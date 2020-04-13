@@ -16,18 +16,31 @@ admin.site.register(FTLFolder, MPTTModelAdmin)
 @admin.register(FTLUser)
 class UserAdmin(BaseUserAdmin):
     fieldsets = (
-        (None, {'fields': ('org', 'email', 'password')}),
-        (_('Personal info'), {'fields': ('first_name', 'last_name')}),
-        (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
-                                       'groups', 'user_permissions')}),
-        (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
+        (None, {"fields": ("org", "email", "password")}),
+        (_("Personal info"), {"fields": ("first_name", "last_name")}),
+        (
+            _("Permissions"),
+            {
+                "fields": (
+                    "is_active",
+                    "is_staff",
+                    "is_superuser",
+                    "groups",
+                    "user_permissions",
+                )
+            },
+        ),
+        (_("Important dates"), {"fields": ("last_login", "date_joined")}),
     )
     add_fieldsets = (
-        (None, {
-            'classes': ('wide',),
-            'fields': ('org', 'email', 'password1', 'password2',),
-        }),
+        (
+            None,
+            {
+                "classes": ("wide",),
+                "fields": ("org", "email", "password1", "password2",),
+            },
+        ),
     )
-    list_display = ('org', 'email', 'first_name', 'last_name', 'is_staff')
-    search_fields = ('org__name', 'email', 'first_name', 'last_name')
-    ordering = ('email',)
+    list_display = ("org", "email", "first_name", "last_name", "is_staff")
+    search_fields = ("org__name", "email", "first_name", "last_name")
+    ordering = ("email",)

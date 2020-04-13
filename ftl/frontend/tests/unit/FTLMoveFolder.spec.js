@@ -3,31 +3,37 @@
  * Licensed under the BSL License. See LICENSE in the project root for license information.
  */
 
-import {createLocalVue, shallowMount} from '@vue/test-utils';
+import { createLocalVue, shallowMount } from "@vue/test-utils";
 
-import axios from 'axios';
+import axios from "axios";
 import BootstrapVue from "bootstrap-vue";
 import flushPromises from "flush-promises"; // needed for async tests
 
-import * as tv from './../tools/testValues.js'
-import {axiosConfig} from "../../src/constants";
+import * as tv from "./../tools/testValues.js";
+import { axiosConfig } from "../../src/constants";
 
 import FTLMoveFolder from "../../src/components/FTLMoveFolder";
 
 const localVue = createLocalVue();
 
 localVue.use(BootstrapVue); // avoid bootstrap vue warnings
-localVue.component('font-awesome-icon', jest.fn()); // avoid font awesome warnings
+localVue.component("font-awesome-icon", jest.fn()); // avoid font awesome warnings
 
-localVue.prototype.$t = (text, args) => {return text + ' ' + args}; // i18n mock
-localVue.prototype.$tc = (text, args='') => {return text + args};// i18n mock
-localVue.prototype.$moment = () => {return {fromNow: jest.fn()}}; // moment mock
-localVue.prototype.$router = {push: jest.fn()}; // router mock
+localVue.prototype.$t = (text, args) => {
+  return text + " " + args;
+}; // i18n mock
+localVue.prototype.$tc = (text, args = "") => {
+  return text + args;
+}; // i18n mock
+localVue.prototype.$moment = () => {
+  return { fromNow: jest.fn() };
+}; // moment mock
+localVue.prototype.$router = { push: jest.fn() }; // router mock
 const mockedMixinAlert = jest.fn();
-localVue.mixin({methods: {mixinAlert: mockedMixinAlert}}); // mixinAlert mock
+localVue.mixin({ methods: { mixinAlert: mockedMixinAlert } }); // mixinAlert mock
 
 // mock calls to api requests
-jest.mock('axios', () => ({
+jest.mock("axios", () => ({
   patch: jest.fn(),
 }));
 
@@ -40,42 +46,42 @@ const mockedSelectedMoveTargetFolder = jest.fn();
 
 const folderProps = tv.FOLDER_PROPS;
 
-describe('Component template', () => {
+describe("Component template", () => {
   let wrapper;
   beforeEach(() => {
     // set mocked component methods return value before shallowMount
     wrapper = shallowMount(FTLMoveFolder, {
       localVue,
       propsData: {
-        folder: folderProps
+        folder: folderProps,
       },
       computed: {
         selectedMoveTargetFolder: mockedSelectedMoveTargetFolder,
-      }
+      },
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
 
-  it('renders properly template text', async () => {
-    expect(wrapper.text()).toContain('No folder selected');
+  it("renders properly template text", async () => {
+    expect(wrapper.text()).toContain("No folder selected");
   });
 
-  it('renders properly html element', () => {
-    const elementSelector= '#modal-move-folder';
+  it("renders properly html element", () => {
+    const elementSelector = "#modal-move-folder";
     const elem = wrapper.find(elementSelector);
     expect(elem.is(elementSelector)).toBe(true);
   });
 });
 
-describe('FTLMoveFolder computed', () => {
+describe("FTLMoveFolder computed", () => {
   let wrapper;
 
-  it('selectedMoveTargetFolder return value from $store', () => {
+  it("selectedMoveTargetFolder return value from $store", () => {
     // TODO test call to vuex store here
   });
 });
 
-describe('Component methods call api', () => {
+describe("Component methods call api", () => {
   let wrapper;
   beforeEach(() => {
     axios.patch.mockResolvedValue(mockedMoveFolderResponse);
@@ -86,29 +92,29 @@ describe('Component methods call api', () => {
       propsData: { folder: folderProps },
       computed: {
         selectedMoveTargetFolder: mockedSelectedMoveTargetFolder,
-      }
+      },
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
 
-  it('moveFolder call api', async () => {
+  it("moveFolder call api", async () => {
     // when
     wrapper.vm.moveFolder();
 
     // then
     expect(axios.patch).toHaveBeenCalledWith(
-      '/app/api/v1/folders/'+ folderProps.id,
-      {parent: tv.FOLDER_PROPS_VARIANT.id},
+      "/app/api/v1/folders/" + folderProps.id,
+      { parent: tv.FOLDER_PROPS_VARIANT.id },
       axiosConfig
-      );
+    );
     expect(axios.patch).toHaveBeenCalledTimes(1);
   });
 });
 
-describe('Component methods error handling', () => {
+describe("Component methods error handling", () => {
   let wrapper;
   beforeEach(() => {
-    axios.patch.mockRejectedValue('fakeError');
+    axios.patch.mockRejectedValue("fakeError");
     mockedSelectedMoveTargetFolder.mockReturnValue(tv.FOLDER_PROPS_VARIANT);
 
     wrapper = shallowMount(FTLMoveFolder, {
@@ -116,12 +122,12 @@ describe('Component methods error handling', () => {
       propsData: { folder: folderProps },
       computed: {
         selectedMoveTargetFolder: mockedSelectedMoveTargetFolder,
-      }
+      },
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
 
-  it('moveFolder call mixinAlert in case of error', async () => {
+  it("moveFolder call mixinAlert in case of error", async () => {
     // force an error
 
     // when
@@ -130,11 +136,11 @@ describe('Component methods error handling', () => {
 
     // then mixinAlert is called with proper message
     expect(mockedMixinAlert).toHaveBeenCalledTimes(1);
-    expect(mockedMixinAlert.mock.calls[0][0]).toContain('move folder');
+    expect(mockedMixinAlert.mock.calls[0][0]).toContain("move folder");
   });
 });
 
-describe('Event emitted by component', () => {
+describe("Event emitted by component", () => {
   let wrapper;
   beforeEach(() => {
     axios.patch.mockResolvedValue(mockedMoveFolderResponse);
@@ -145,13 +151,13 @@ describe('Event emitted by component', () => {
       propsData: { folder: folderProps },
       computed: {
         selectedMoveTargetFolder: mockedSelectedMoveTargetFolder,
-      }
+      },
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
 
-  it('event-folder-moved emitted when calling moveFolder', async () => {
-    const testedEvent = 'event-folder-moved';
+  it("event-folder-moved emitted when calling moveFolder", async () => {
+    const testedEvent = "event-folder-moved";
 
     // when
     wrapper.vm.moveFolder();
@@ -160,9 +166,11 @@ describe('Event emitted by component', () => {
     // then
     expect(wrapper.emitted(testedEvent)).toBeTruthy();
     expect(wrapper.emitted(testedEvent).length).toBe(1);
-    expect(wrapper.emitted(testedEvent)[0]).toEqual([{
-      folder : folderProps,
-      target_folder : mockedSelectedMoveTargetFolder()
-    }]);
+    expect(wrapper.emitted(testedEvent)[0]).toEqual([
+      {
+        folder: folderProps,
+        target_folder: mockedSelectedMoveTargetFolder(),
+      },
+    ]);
   });
 });

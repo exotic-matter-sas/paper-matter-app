@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0007_auto_20200219_1136'),
+        ("core", "0007_auto_20200219_1136"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='ftldocument',
-            name='type',
-            field=models.CharField(default='application/pdf', max_length=255),
+            model_name="ftldocument",
+            name="type",
+            field=models.CharField(default="application/pdf", max_length=255),
         ),
     ]

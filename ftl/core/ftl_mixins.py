@@ -10,12 +10,18 @@ from core import mimes
 class FTLUserContextDataMixin(ContextMixin):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['org_name'] = self.request.session['org_name'],
-        context['ftl_account'] = {'name': self.request.user.get_username(),
-                                  'isSuperUser': self.request.user.is_superuser,
-                                  'otp_warning': any(
-                                      [True for d in devices_for_user(self.request.user, confirmed=None) if
-                                       (isinstance(d, StaticDevice) and not d.token_set.exists()) or not d.confirmed]),
-                                  'supported_exts': mimes.MIMETYPES_EXT_DICT
-                                  }
+        context["org_name"] = (self.request.session["org_name"],)
+        context["ftl_account"] = {
+            "name": self.request.user.get_username(),
+            "isSuperUser": self.request.user.is_superuser,
+            "otp_warning": any(
+                [
+                    True
+                    for d in devices_for_user(self.request.user, confirmed=None)
+                    if (isinstance(d, StaticDevice) and not d.token_set.exists())
+                    or not d.confirmed
+                ]
+            ),
+            "supported_exts": mimes.MIMETYPES_EXT_DICT,
+        }
         return context

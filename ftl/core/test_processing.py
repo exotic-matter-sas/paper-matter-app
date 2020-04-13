@@ -10,9 +10,16 @@ from tika import parser
 
 from core.errors import PluginUnsupportedStorage
 from core.processing import ftl_processing
-from core.processing.ftl_processing import FTLDocumentProcessing, FTLDocProcessingBase, FTLOCRBase
+from core.processing.ftl_processing import (
+    FTLDocumentProcessing,
+    FTLDocProcessingBase,
+    FTLOCRBase,
+)
 from core.processing.proc_lang import FTLLangDetectorLangId
-from core.processing.proc_pgsql_tsvector import FTLSearchEnginePgSQLTSVector, SEARCH_VECTOR
+from core.processing.proc_pgsql_tsvector import (
+    FTLSearchEnginePgSQLTSVector,
+    SEARCH_VECTOR,
+)
 from core.processing.proc_tika import FTLTextExtractionTika
 from core.signals import pre_ftl_processing
 from ftl.settings import DEFAULT_FILE_STORAGE
@@ -22,7 +29,8 @@ class ProcTest(FTLDocProcessingBase):
     """
     Mocked test processing class
     """
-    supported_documents_types = ['*']
+
+    supported_documents_types = ["*"]
 
     def process(self, ftl_doc, force):
         pass
@@ -30,7 +38,7 @@ class ProcTest(FTLDocProcessingBase):
 
 class DocumentProcessingTests(TestCase):
     def setUp(self):
-        configured_plugins = ['core.test_processing.ProcTest']
+        configured_plugins = ["core.test_processing.ProcTest"]
         self.processing = FTLDocumentProcessing(configured_plugins)
 
     def test_plugins_loading(self):
@@ -44,14 +52,16 @@ class DocumentProcessingTests(TestCase):
         doc = Mock()
         self.processing.apply_processing(doc)
 
-        self.processing.executor.submit.assert_called_once_with(self.processing._handle, doc, False)
+        self.processing.executor.submit.assert_called_once_with(
+            self.processing._handle, doc, False
+        )
 
     def test_apply_processing_force_boolean(self):
         mock_plugin_1 = Mock()
         mock_plugin_2 = Mock()
 
-        mock_plugin_1.supported_documents_types = ['*']
-        mock_plugin_2.supported_documents_types = ['*']
+        mock_plugin_1.supported_documents_types = ["*"]
+        mock_plugin_2.supported_documents_types = ["*"]
 
         self.processing.plugins = list()
         self.processing.plugins.append(mock_plugin_1)
@@ -68,16 +78,25 @@ class DocumentProcessingTests(TestCase):
         mock_plugin_1 = Mock()
         mock_plugin_2 = Mock(spec=ProcTest)
 
-        mock_plugin_1.supported_documents_types = ['*']
-        mock_plugin_2.supported_documents_types = ['*']
+        mock_plugin_1.supported_documents_types = ["*"]
+        mock_plugin_2.supported_documents_types = ["*"]
 
         self.processing.plugins = list()
         self.processing.plugins.append(mock_plugin_1)
         self.processing.plugins.append(mock_plugin_2)
 
         doc = Mock()
-        future = self.processing.apply_processing(doc, [".".join(
-            [mock_plugin_2.__class__.__module__, mock_plugin_2.__class__.__qualname__]), ])
+        future = self.processing.apply_processing(
+            doc,
+            [
+                ".".join(
+                    [
+                        mock_plugin_2.__class__.__module__,
+                        mock_plugin_2.__class__.__qualname__,
+                    ]
+                ),
+            ],
+        )
 
         wait_futures([future], timeout=10)
 
@@ -89,9 +108,9 @@ class DocumentProcessingTests(TestCase):
         mock_plugin_2 = Mock()
         mock_plugin_3 = Mock()
 
-        mock_plugin_1.supported_documents_types = ['*']
-        mock_plugin_2.supported_documents_types = ['*']
-        mock_plugin_3.supported_documents_types = ['*']
+        mock_plugin_1.supported_documents_types = ["*"]
+        mock_plugin_2.supported_documents_types = ["*"]
+        mock_plugin_3.supported_documents_types = ["*"]
 
         self.processing.plugins = list()
         self.processing.plugins.append(mock_plugin_1)
@@ -109,24 +128,28 @@ class DocumentProcessingTests(TestCase):
     def test_handle_error_handling(self):
         # Given
         mocked_plugin_1 = Mock()
-        mocked_plugin_1.__class__.__name__ = 'Boum!'
-        mocked_plugin_1.process.side_effect = Exception(mocked_plugin_1.__class__.__name__)
+        mocked_plugin_1.__class__.__name__ = "Boum!"
+        mocked_plugin_1.process.side_effect = Exception(
+            mocked_plugin_1.__class__.__name__
+        )
         mocked_plugin_2 = Mock()
-        mocked_plugin_2.__class__.__name__ = 'OK'
+        mocked_plugin_2.__class__.__name__ = "OK"
         mocked_plugin_3 = Mock()
-        mocked_plugin_3.__class__.__name__ = 'Badaboum!'
-        mocked_plugin_3.process.side_effect = Exception(mocked_plugin_3.__class__.__name__)
+        mocked_plugin_3.__class__.__name__ = "Badaboum!"
+        mocked_plugin_3.process.side_effect = Exception(
+            mocked_plugin_3.__class__.__name__
+        )
 
-        mocked_plugin_1.supported_documents_types = ['*']
-        mocked_plugin_2.supported_documents_types = ['*']
-        mocked_plugin_3.supported_documents_types = ['*']
+        mocked_plugin_1.supported_documents_types = ["*"]
+        mocked_plugin_2.supported_documents_types = ["*"]
+        mocked_plugin_3.supported_documents_types = ["*"]
 
         self.processing.plugins = [mocked_plugin_1, mocked_plugin_2, mocked_plugin_3]
         mocked_doc = Mock()
 
         # When
         logger_name = ftl_processing.logger.name
-        with self.assertLogs(logger_name, 'ERROR') as error_logs:
+        with self.assertLogs(logger_name, "ERROR") as error_logs:
             future = self.processing.apply_processing(mocked_doc)
             wait_futures([future], timeout=10)
 
@@ -141,9 +164,9 @@ class DocumentProcessingTests(TestCase):
         mock_plugin_2 = Mock()
         mock_plugin_3 = Mock()
 
-        mock_plugin_1.supported_documents_types = ['application/pdf']
-        mock_plugin_2.supported_documents_types = ['*']
-        mock_plugin_3.supported_documents_types = ['text/plain']
+        mock_plugin_1.supported_documents_types = ["application/pdf"]
+        mock_plugin_2.supported_documents_types = ["*"]
+        mock_plugin_3.supported_documents_types = ["text/plain"]
 
         self.processing.plugins = list()
         self.processing.plugins.append(mock_plugin_1)
@@ -151,12 +174,12 @@ class DocumentProcessingTests(TestCase):
         self.processing.plugins.append(mock_plugin_3)
 
         doc1 = Mock()
-        doc1.type = 'application/pdf'
+        doc1.type = "application/pdf"
         future = self.processing.apply_processing(doc1)
         wait_futures([future], timeout=10)
 
         doc2 = Mock()
-        doc2.type = 'text/plain'
+        doc2.type = "text/plain"
         future = self.processing.apply_processing(doc2)
         wait_futures([future], timeout=10)
 
@@ -164,7 +187,7 @@ class DocumentProcessingTests(TestCase):
         mock_plugin_2.process.assert_has_calls([call(doc1, False), call(doc2, False)])
         mock_plugin_3.process.assert_has_calls([call(doc2, False)])
 
-    @patch.object(pre_ftl_processing, 'send')
+    @patch.object(pre_ftl_processing, "send")
     def test_process_signal_sent(self, mocked_signal):
         doc = Mock()
         processing = self.processing.apply_processing(doc)
@@ -173,24 +196,24 @@ class DocumentProcessingTests(TestCase):
 
 
 class ProcLangTests(TestCase):
-    @patch.object(LanguageIdentifier, 'from_modelstring')
+    @patch.object(LanguageIdentifier, "from_modelstring")
     def test_process(self, mocked_from_modelstring):
         lang = FTLLangDetectorLangId()
         mocked_classify = lang.identifier.classify
-        mocked_classify.return_value = ('fr', 1.0)
+        mocked_classify.return_value = ("fr", 1.0)
 
         doc = Mock()
         lang.process(doc, True)
 
         mocked_classify.assert_called_once_with(doc.content_text)
-        self.assertEqual('french', doc.language)
+        self.assertEqual("french", doc.language)
         doc.save.assert_called_once()
 
-    @patch.object(LanguageIdentifier, 'from_modelstring')
+    @patch.object(LanguageIdentifier, "from_modelstring")
     def test_process_unsupported_lang(self, mocked_from_modelstring):
         lang = FTLLangDetectorLangId()
         mocked_classify = lang.identifier.classify
-        mocked_classify.return_value = ('zz', 1.0)
+        mocked_classify.return_value = ("zz", 1.0)
 
         doc = Mock()
         lang.process(doc, True)
@@ -198,11 +221,11 @@ class ProcLangTests(TestCase):
         mocked_classify.assert_called_once_with(doc.content_text)
         doc.save.assert_called_once()
 
-    @patch.object(LanguageIdentifier, 'from_modelstring')
+    @patch.object(LanguageIdentifier, "from_modelstring")
     def test_process_langid_confidence_too_low(self, mocked_from_modelstring):
         lang = FTLLangDetectorLangId()
         mocked_classify = lang.identifier.classify
-        mocked_classify.return_value = ('en', 0.1)
+        mocked_classify.return_value = ("en", 0.1)
 
         doc = Mock()
         lang.process(doc, True)
@@ -210,13 +233,13 @@ class ProcLangTests(TestCase):
         mocked_classify.assert_called_once_with(doc.content_text)
         doc.save.assert_called_once()
 
-    @patch.object(LanguageIdentifier, 'from_modelstring')
+    @patch.object(LanguageIdentifier, "from_modelstring")
     def test_process_value_exists(self, mocked_from_modelstring):
         lang = FTLLangDetectorLangId()
         mocked_classify = lang.identifier.classify
 
         doc = Mock()
-        doc.language = 'french'
+        doc.language = "french"
         lang.process(doc, False)
 
         mocked_classify.assert_not_called()
@@ -224,15 +247,9 @@ class ProcLangTests(TestCase):
 
 
 class ProcTikaTests(TestCase):
-
-    @patch.object(parser, 'from_buffer')
+    @patch.object(parser, "from_buffer")
     def test_process(self, mocked_from_buffer):
-        indexed_text = {
-            "content": "indexed text",
-            "metadata": {
-                "xmpTPg:NPages": 42
-            }
-        }
+        indexed_text = {"content": "indexed text", "metadata": {"xmpTPg:NPages": 42}}
         mocked_from_buffer.return_value = indexed_text
 
         tika = FTLTextExtractionTika()
@@ -240,16 +257,16 @@ class ProcTikaTests(TestCase):
         tika.process(doc, True)
 
         mocked_from_buffer.assert_called_once_with(doc.binary.read())
-        self.assertEqual(doc.content_text, indexed_text['content'])
-        self.assertEqual(doc.count_pages, indexed_text['metadata']['xmpTPg:NPages'])
+        self.assertEqual(doc.content_text, indexed_text["content"])
+        self.assertEqual(doc.count_pages, indexed_text["metadata"]["xmpTPg:NPages"])
         doc.save.assert_called()
         self.assertEqual(doc.save.call_count, 2)
 
-    @patch.object(parser, 'from_buffer')
+    @patch.object(parser, "from_buffer")
     def test_process_value_exists(self, mocked_from_buffer):
         tika = FTLTextExtractionTika()
         doc = Mock()
-        doc.content_text = 'indexed text'
+        doc.content_text = "indexed text"
         doc.count_pages = 42
         tika.process(doc, False)
 
@@ -258,7 +275,6 @@ class ProcTikaTests(TestCase):
 
 
 class ProcPGsqlTests(TestCase):
-
     def test_process(self):
         pgsql = FTLSearchEnginePgSQLTSVector()
         doc = Mock()
@@ -280,17 +296,16 @@ class ProcPGsqlTests(TestCase):
 
 
 class FTLOCRBaseTests(TestCase):
-
-    @patch.object(FTLOCRBase, '_extract_text')
+    @patch.object(FTLOCRBase, "_extract_text")
     def test_process(self, mocked_extract_text):
-        expected_extracted_text = 'bingo!'
+        expected_extracted_text = "bingo!"
         mocked_extract_text.return_value = expected_extracted_text
         base_ocr = FTLOCRBase()
         base_ocr.supported_storages.append(DEFAULT_FILE_STORAGE)
 
         # When doc do not have a content text
         mocked_doc = Mock()
-        mocked_doc.content_text = ''
+        mocked_doc.content_text = ""
 
         base_ocr.process(mocked_doc, False)
 
@@ -301,7 +316,7 @@ class FTLOCRBaseTests(TestCase):
 
         # When doc already have a content text
         mocked_extract_text.reset_mock()
-        original_doc_content = ':)'
+        original_doc_content = ":)"
         mocked_doc = Mock()
         mocked_doc.content_text = original_doc_content
 
@@ -312,14 +327,14 @@ class FTLOCRBaseTests(TestCase):
         self.assertEqual(mocked_doc.content_text, original_doc_content)
         mocked_doc.save.assert_not_called()
 
-    @patch.object(FTLOCRBase, '_extract_text')
+    @patch.object(FTLOCRBase, "_extract_text")
     def test_process_with_invalid_storage(self, mocked_extract_text):
         base_ocr = FTLOCRBase()
 
         # When DEFAULT_FILE_STORAGE does not match supported storages
-        base_ocr.supported_storages.append('this.is.not.the.default.storage')
+        base_ocr.supported_storages.append("this.is.not.the.default.storage")
         mocked_doc = Mock()
-        mocked_doc.content_text = ''
+        mocked_doc.content_text = ""
 
         # Then PluginUnsupportedStorage is raised
         with self.assertRaises(PluginUnsupportedStorage):

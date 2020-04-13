@@ -22,99 +22,280 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('auth', '0011_update_proxy_permissions'),
+        ("auth", "0011_update_proxy_permissions"),
     ]
 
     operations = [
         CITextExtension(),
         migrations.CreateModel(
-            name='FTLUser',
+            name="FTLUser",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('password', models.CharField(max_length=128, verbose_name='password')),
-                ('last_login', models.DateTimeField(blank=True, null=True, verbose_name='last login')),
-                ('is_superuser', models.BooleanField(default=False, help_text='Designates that this user has all permissions without explicitly assigning them.', verbose_name='superuser status')),
-                ('first_name', models.CharField(blank=True, max_length=30, verbose_name='first name')),
-                ('last_name', models.CharField(blank=True, max_length=150, verbose_name='last name')),
-                ('is_staff', models.BooleanField(default=False, help_text='Designates whether the user can log into this admin site.', verbose_name='staff status')),
-                ('is_active', models.BooleanField(default=True, help_text='Designates whether this user should be treated as active. Unselect this instead of deleting accounts.', verbose_name='active')),
-                ('date_joined', models.DateTimeField(default=django.utils.timezone.now, verbose_name='date joined')),
-                ('username', models.CharField(blank=True, error_messages={'unique': 'A user with that username already exists.'}, help_text='Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.', max_length=150, null=True, unique=True, validators=[django.contrib.auth.validators.UnicodeUsernameValidator()], verbose_name='username')),
-                ('email', models.EmailField(error_messages={'unique': 'A user with that email already exists.'}, help_text='Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.', max_length=256, unique=True, validators=[django.core.validators.EmailValidator()], verbose_name='email address')),
-                ('groups', models.ManyToManyField(blank=True, help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.', related_name='user_set', related_query_name='user', to='auth.Group', verbose_name='groups')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("password", models.CharField(max_length=128, verbose_name="password")),
+                (
+                    "last_login",
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="last login"
+                    ),
+                ),
+                (
+                    "is_superuser",
+                    models.BooleanField(
+                        default=False,
+                        help_text="Designates that this user has all permissions without explicitly assigning them.",
+                        verbose_name="superuser status",
+                    ),
+                ),
+                (
+                    "first_name",
+                    models.CharField(
+                        blank=True, max_length=30, verbose_name="first name"
+                    ),
+                ),
+                (
+                    "last_name",
+                    models.CharField(
+                        blank=True, max_length=150, verbose_name="last name"
+                    ),
+                ),
+                (
+                    "is_staff",
+                    models.BooleanField(
+                        default=False,
+                        help_text="Designates whether the user can log into this admin site.",
+                        verbose_name="staff status",
+                    ),
+                ),
+                (
+                    "is_active",
+                    models.BooleanField(
+                        default=True,
+                        help_text="Designates whether this user should be treated as active. Unselect this instead of deleting accounts.",
+                        verbose_name="active",
+                    ),
+                ),
+                (
+                    "date_joined",
+                    models.DateTimeField(
+                        default=django.utils.timezone.now, verbose_name="date joined"
+                    ),
+                ),
+                (
+                    "username",
+                    models.CharField(
+                        blank=True,
+                        error_messages={
+                            "unique": "A user with that username already exists."
+                        },
+                        help_text="Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.",
+                        max_length=150,
+                        null=True,
+                        unique=True,
+                        validators=[
+                            django.contrib.auth.validators.UnicodeUsernameValidator()
+                        ],
+                        verbose_name="username",
+                    ),
+                ),
+                (
+                    "email",
+                    models.EmailField(
+                        error_messages={
+                            "unique": "A user with that email already exists."
+                        },
+                        help_text="Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.",
+                        max_length=256,
+                        unique=True,
+                        validators=[django.core.validators.EmailValidator()],
+                        verbose_name="email address",
+                    ),
+                ),
+                (
+                    "groups",
+                    models.ManyToManyField(
+                        blank=True,
+                        help_text="The groups this user belongs to. A user will get all permissions granted to each of their groups.",
+                        related_name="user_set",
+                        related_query_name="user",
+                        to="auth.Group",
+                        verbose_name="groups",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'user',
-                'verbose_name_plural': 'users',
-                'abstract': False,
+                "verbose_name": "user",
+                "verbose_name_plural": "users",
+                "abstract": False,
             },
-            managers=[
-                ('objects', core.models.FTLUserManager()),
+            managers=[("objects", core.models.FTLUserManager()),],
+        ),
+        migrations.CreateModel(
+            name="FTLOrg",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=128)),
+                ("slug", models.SlugField(max_length=128, unique=True)),
+                ("created", models.DateTimeField(auto_now_add=True)),
             ],
         ),
         migrations.CreateModel(
-            name='FTLOrg',
+            name="FTLFolder",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=128)),
-                ('slug', models.SlugField(max_length=128, unique=True)),
-                ('created', models.DateTimeField(auto_now_add=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "name",
+                    django.contrib.postgres.fields.citext.CICharField(max_length=128),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                ("lft", models.PositiveIntegerField(db_index=True, editable=False)),
+                ("rght", models.PositiveIntegerField(db_index=True, editable=False)),
+                ("tree_id", models.PositiveIntegerField(db_index=True, editable=False)),
+                ("level", models.PositiveIntegerField(db_index=True, editable=False)),
+                (
+                    "org",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="core.FTLOrg"
+                    ),
+                ),
+                (
+                    "parent",
+                    mptt.fields.TreeForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="children",
+                        to="core.FTLFolder",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='FTLFolder',
+            name="FTLDocument",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', django.contrib.postgres.fields.citext.CICharField(max_length=128)),
-                ('created', models.DateTimeField(auto_now_add=True)),
-                ('lft', models.PositiveIntegerField(db_index=True, editable=False)),
-                ('rght', models.PositiveIntegerField(db_index=True, editable=False)),
-                ('tree_id', models.PositiveIntegerField(db_index=True, editable=False)),
-                ('level', models.PositiveIntegerField(db_index=True, editable=False)),
-                ('org', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='core.FTLOrg')),
-                ('parent', mptt.fields.TreeForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='children', to='core.FTLFolder')),
-            ],
-        ),
-        migrations.CreateModel(
-            name='FTLDocument',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('pid', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False)),
-                ('title', models.TextField()),
-                ('note', models.TextField(blank=True)),
-                ('content_text', models.TextField(blank=True)),
-                ('count_pages', models.IntegerField(blank=True, null=True)),
-                ('binary', models.FileField(max_length=256, null=True, upload_to=core.models._get_name_binary)),
-                ('created', models.DateTimeField(default=django.utils.timezone.now)),
-                ('edited', models.DateTimeField(auto_now=True)),
-                ('tsvector', django.contrib.postgres.search.SearchVectorField(blank=True)),
-                ('language', models.CharField(default='english', max_length=64)),
-                ('thumbnail_binary', models.FileField(max_length=256, null=True, upload_to=core.models._get_name_binary)),
-                ('ftl_folder', mptt.fields.TreeForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='core.FTLFolder')),
-                ('ftl_user', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to=settings.AUTH_USER_MODEL)),
-                ('org', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.FTLOrg')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "pid",
+                    models.UUIDField(db_index=True, default=uuid.uuid4, editable=False),
+                ),
+                ("title", models.TextField()),
+                ("note", models.TextField(blank=True)),
+                ("content_text", models.TextField(blank=True)),
+                ("count_pages", models.IntegerField(blank=True, null=True)),
+                (
+                    "binary",
+                    models.FileField(
+                        max_length=256,
+                        null=True,
+                        upload_to=core.models._get_name_binary,
+                    ),
+                ),
+                ("created", models.DateTimeField(default=django.utils.timezone.now)),
+                ("edited", models.DateTimeField(auto_now=True)),
+                (
+                    "tsvector",
+                    django.contrib.postgres.search.SearchVectorField(blank=True),
+                ),
+                ("language", models.CharField(default="english", max_length=64)),
+                (
+                    "thumbnail_binary",
+                    models.FileField(
+                        max_length=256,
+                        null=True,
+                        upload_to=core.models._get_name_binary,
+                    ),
+                ),
+                (
+                    "ftl_folder",
+                    mptt.fields.TreeForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="core.FTLFolder",
+                    ),
+                ),
+                (
+                    "ftl_user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "org",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT, to="core.FTLOrg"
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='ftluser',
-            name='org',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='core.FTLOrg'),
+            model_name="ftluser",
+            name="org",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="core.FTLOrg"
+            ),
         ),
         migrations.AddField(
-            model_name='ftluser',
-            name='user_permissions',
-            field=models.ManyToManyField(blank=True, help_text='Specific permissions for this user.', related_name='user_set', related_query_name='user', to='auth.Permission', verbose_name='user permissions'),
+            model_name="ftluser",
+            name="user_permissions",
+            field=models.ManyToManyField(
+                blank=True,
+                help_text="Specific permissions for this user.",
+                related_name="user_set",
+                related_query_name="user",
+                to="auth.Permission",
+                verbose_name="user permissions",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='ftlfolder',
-            constraint=models.UniqueConstraint(fields=('name', 'level', 'org_id'), name='folder_name_unique_for_org_level'),
+            model_name="ftlfolder",
+            constraint=models.UniqueConstraint(
+                fields=("name", "level", "org_id"),
+                name="folder_name_unique_for_org_level",
+            ),
         ),
         migrations.AddIndex(
-            model_name='ftldocument',
-            index=models.Index(fields=['org', 'pid'], name='core_ftldoc_org_id_7dd81f_idx'),
+            model_name="ftldocument",
+            index=models.Index(
+                fields=["org", "pid"], name="core_ftldoc_org_id_7dd81f_idx"
+            ),
         ),
         migrations.AddIndex(
-            model_name='ftldocument',
-            index=models.Index(fields=['org', 'ftl_folder'], name='core_ftldoc_org_id_891978_idx'),
+            model_name="ftldocument",
+            index=models.Index(
+                fields=["org", "ftl_folder"], name="core_ftldoc_org_id_891978_idx"
+            ),
         ),
     ]

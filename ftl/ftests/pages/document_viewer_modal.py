@@ -5,24 +5,24 @@ from ftests.pages.base_page import BasePage
 
 
 class DocumentViewerModal(BasePage):
-    url = '/app/#/home?doc={}'
+    url = "/app/#/home?doc={}"
 
-    page_body = '#document-viewer'
-    document_title = '#document-title span'
+    page_body = "#document-viewer"
+    document_title = "#document-title span"
 
-    rename_document_button = '#rename-document'
-    close_document_button = '#document-viewer .close'
-    open_pdf_button = '#open-document'
-    move_document_button = '#move-document'
-    delete_document_button = '#delete-document'
+    rename_document_button = "#rename-document"
+    close_document_button = "#document-viewer .close"
+    open_pdf_button = "#open-document"
+    move_document_button = "#move-document"
+    delete_document_button = "#delete-document"
 
-    edit_note_button = '#edit-note'
-    note_textarea = '#note-textarea'
-    note_text = '#note'
-    save_note_button = '#save-note'
+    edit_note_button = "#edit-note"
+    note_textarea = "#note-textarea"
+    note_text = "#note"
+    save_note_button = "#save-note"
 
-    pdf_viewer_iframe = '#document-viewer iframe'
-    document_viewer_panel = '#document-viewer'
+    pdf_viewer_iframe = "#document-viewer iframe"
+    document_viewer_panel = "#document-viewer"
 
     def rename_document(self, document_name):
         self.wait_for_elem_to_show(self.rename_document_button)
