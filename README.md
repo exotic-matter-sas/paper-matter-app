@@ -23,6 +23,7 @@ Archiving documents solution
  * Firefox or Chrome (to run functional tests)
  * Node.js LTS
  * Java 8+ (for documents indexing)
+ * Black (Python code formatter)
 
  * _Under Linux, you may need additional tools to build Python modules which includes C code:_
    * _apt-get install build-essential python3-dev libpq-dev_
@@ -54,6 +55,15 @@ Second terminal
 
 
 _To run local as https (required to test 2fa fido2 devices) use `python manage.py runsslserver` instead. You **must have** `DEBUG` and `DEV_MODE` set to `True` in `settings.py` (set them in your `settings_local.py` wont work, unfortunately) and you may have to use `localhost` domain (in place of the usual ip) in order your browser accept to load the app._
+
+### Code formatting
+#### Python
+[black](https://black.readthedocs.io/en/stable/index.html) is required for all Python files. There is hard check on the CI
+for this and it will fail if the Python code is not properly formatted. Please refer to the official site for setup.
+#### Javascript
+Default formatter of IntellJ
+#### HTML
+Default formatter of IntellJ
 
 ### Tests
 
