@@ -2,8 +2,7 @@
 {% load i18n %}
 
 {% block body %}
-{% blocktrans %}
-As requested, your Paper Matter account has been purged and deleted.
+{% blocktrans %}As requested, your Paper Matter account has been purged and deleted.
 We are sorry that the service didn't meet your expectations :(.
 {% endblocktrans %}
 {% endblock %}
