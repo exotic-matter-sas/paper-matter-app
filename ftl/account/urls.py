@@ -14,5 +14,6 @@ urlpatterns = [
         name="account_email_validate",
     ),
     path("password", views.AccountPasswordView.as_view(), name="account_password"),
+    path("export", views.AccountExportView.as_view(), name="account_export"),
     path("delete", views.AccountDeleteView.as_view(), name="account_delete"),
 ]

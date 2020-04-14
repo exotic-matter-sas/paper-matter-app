@@ -1,0 +1,21 @@
+{% extends "account/account_base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block account %}
+    <div class="row no-gutters">
+        <div class="col text-justify">
+            <h3 class="text-primary">{% trans 'Export your documents and associated data' %}</h3>
+            <p class="font-italic">
+                {% trans 'You can download the Import - Export software to easily export all your documents and their related metadata (title, note, date...).' %}
+            </p>
+            <div>
+                <img class="w-50 d-block mx-auto my-3" src="{% static "export_data.svg" %}" alt="Export document illustration">
+            </div>
+            <a href="https://welcome.papermatter.app/import-export/" target="_blank"
+               class="btn btn-primary my-4 btn float-right">
+                {% trans "Download export software" %}
+            </a>
+        </div>
+    </div>
+{% endblock %}

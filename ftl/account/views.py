@@ -168,7 +168,14 @@ class AccountPasswordView(
 
 @method_decorator(login_required, name="dispatch")
 @method_decorator(otp_required(if_configured=True), name="dispatch")
-class AccountDeleteView(SuccessMessageMixin, FormView):
+class AccountExportView(FTLUserContextDataMixin, View):
+    def get(self, request, *args, **kwargs):
+        return render(request, "account/account_export.html", self.get_context_data())
+
+
+@method_decorator(login_required, name="dispatch")
+@method_decorator(otp_required(if_configured=True), name="dispatch")
+class AccountDeleteView(SuccessMessageMixin, FTLUserContextDataMixin, FormView):
     template_name = "account/account_delete.html"
     form_class = DeleteAccountForm
     success_url = reverse_lazy("login")

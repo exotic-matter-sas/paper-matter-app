@@ -98,8 +98,8 @@
                                 {% if ftl_account.otp_warning %}
                                     <span class="badge badge-danger badge-pill otp-warning">!</span>{% endif %}
                             </a>
-                            <a href="{% url 'account_index' %}"
-                               class="{% if view_name == 'XXX' %}active {% endif %}list-group-item list-group-item-action disabled">
+                            <a href="{% url 'account_export' %}"
+                               class="{% if view_name == 'account_export' %}active {% endif %}list-group-item list-group-item-action">
                                 {% trans 'Data export' %}</a>
                             <a href="{% url 'account_delete' %}"
                                class="{% if view_name == 'account_delete' %}active {% endif %}list-group-item list-group-item-action">

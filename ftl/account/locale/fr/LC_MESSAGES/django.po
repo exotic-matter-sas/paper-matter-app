@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-14 14:37+0000\n"
+"POT-Creation-Date: 2020-04-14 16:17+0000\n"
 "PO-Revision-Date: 2020-04-11 16:41+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -97,11 +97,7 @@ msgstr ""
 "Pensez à <a href=\"#\">exporter vos documents</a> avant de continuer car "
 "cette action est irréversible."
 
-#: .\account\templates\account\account_delete.html:25
-msgid "Password validation"
-msgstr "Validation du mot de passe"
-
-#: .\account\templates\account\account_delete.html:29
+#: account/templates/account/account_delete.html:33
 msgid "Please provide your account password to continue"
 msgstr "Veuillez indiquer votre mot de passe pour continuer"
 
@@ -198,7 +194,23 @@ msgstr ""
 msgid "Account security: notice of email change"
 msgstr "Sécurité: notification de changement de l'adresse email"
 
-#: .\account\templates\account\account_index.html:24
+#: account/templates/account/account_export.html:8
+msgid "Export your documents and associated data"
+msgstr "Exportez vos documents et les données associées"
+
+#: account/templates/account/account_export.html:10
+msgid ""
+"You can download the Import - Export software to easily export all your "
+"documents and their related metadata (title, note, date...)."
+msgstr ""
+"Vous pouvez télécharger le logiciel d'Import - Export pour exporter facilement tous vos "
+"documents et leurs métadonnées associées (titre, note, date...)."
+
+#: account/templates/account/account_export.html:17
+msgid "Download export software"
+msgstr "Télécharger le logiciel d'export"
+
+#: account/templates/account/account_index.html:24
 msgid ""
 "\n"
 "                            Keep your contact email up-to-date\n"
