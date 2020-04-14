@@ -21,7 +21,7 @@ class Command(BaseCommand):
 
         signals.pre_account_disable.send(sender=self.__class__, org=org)
 
-        # Delete folders recursively including documents
+        # Delete folders inside Root recursively, including their documents
         folders = FTLFolder.objects.filter(org=org)
         for folder in folders:
             folder.delete()

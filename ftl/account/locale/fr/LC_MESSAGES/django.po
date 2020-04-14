@@ -312,7 +312,7 @@ msgstr ""
 "\n"
 "Le mot de passe de votre compte Paper Matter a été mis à jour. Si vous "
 "n’avez pas demandé ce changement, veuillez IMMÉDIATEMENT réinitialisez "
-"votremot de passe en utilisant la page \"Mot de passe oublié\".\n"
+"votre mot de passe en utilisant la page \"Mot de passe oublié\".\n"
 
 #: .\account\templates\account\account_password_warn_subject.txt:5
 msgid "Account security: notice of password change"
