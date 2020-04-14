@@ -108,12 +108,11 @@ msgstr "Supprimer mon compte immédiatement"
 #: .\account\templates\account\account_delete_warn_body.txt:5
 msgid ""
 "\n"
-"As requested, your Paper Matter account has been purged and deleted. We are "
-"sorry that the service didn't meet your\n"
-"expectations :(.\n"
+"As requested, your Paper Matter account has been purged and deleted.\n We are "
+"sorry that the service didn't meet your expectations :(.\n"
 msgstr ""
 "\n"
-"Suite à votre demande, votre compte Paper Matter a été vidé et supprimé. "
+"Suite à votre demande, votre compte Paper Matter a été vidé et supprimé.\n "
 "Nous sommes désolés que le service n'ait pas été à la hauteur :(.\n"
 
 #: .\account\templates\account\account_delete_warn_subject.txt:5
