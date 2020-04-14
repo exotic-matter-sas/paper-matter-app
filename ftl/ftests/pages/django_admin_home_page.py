@@ -6,13 +6,13 @@ from ftests.tools import test_values as tv
 
 
 class AdminHomePage(BasePage):
-    url = '/admin/'
+    url = "/admin/"
 
-    page_title = 'h1'
+    page_title = "h1"
 
-    create_org_link = '.model-ftlorg a.addlink'
-    org_name_input = '#id_name'
-    org_slug_input = '#id_slug'
+    create_org_link = ".model-ftlorg a.addlink"
+    org_name_input = "#id_name"
+    org_slug_input = "#id_slug"
     org_submit_input = 'input[type="submit"].default'
 
     def create_org(self, name=tv.ORG_NAME_1, slug=tv.ORG_SLUG_1):

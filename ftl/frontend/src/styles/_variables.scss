@@ -7,12 +7,12 @@ $em-purple: #313851;
 $em-orange: #f99947;
 
 $theme-colors: (
-    "primary": lighten($em-purple, 28%),
-    "secondary": #ced4da,
-    "dark": $em-purple,
-    "active": darken($em-orange, 10%),
-    "light-gray": #6c757d,
-    "dark-gray": #343a40
+  "primary": lighten($em-purple, 28%),
+  "secondary": #ced4da,
+  "dark": $em-purple,
+  "active": darken($em-orange, 10%),
+  "light-gray": #6c757d,
+  "dark-gray": #343a40,
 );
 
 $breadcrumb-divider: quote(">");

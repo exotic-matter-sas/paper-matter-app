@@ -11,7 +11,9 @@ class FTLOAuth2Authentication(OAuth2Authentication):
     def authenticate(self, request):
         authentication = super().authenticate(request)
 
-        if authentication is not None and self.is_client_credential_request(authentication):
+        if authentication is not None and self.is_client_credential_request(
+            authentication
+        ):
             access_token = authentication[1]
             user = access_token.application.user
             return user, access_token
@@ -20,4 +22,7 @@ class FTLOAuth2Authentication(OAuth2Authentication):
 
     def is_client_credential_request(self, authentication):
         access_token = authentication[1]
-        return access_token.application.authorization_grant_type == Application.GRANT_CLIENT_CREDENTIALS
+        return (
+            access_token.application.authorization_grant_type
+            == Application.GRANT_CLIENT_CREDENTIALS
+        )

@@ -3,8 +3,8 @@
  * Licensed under the BSL License. See LICENSE in the project root for license information.
  */
 
-import {createLocalVue, shallowMount} from '@vue/test-utils';
-import VueI18n from 'vue-i18n'
+import { createLocalVue, shallowMount } from "@vue/test-utils";
+import VueI18n from "vue-i18n";
 
 import BootstrapVue from "bootstrap-vue";
 
@@ -16,14 +16,16 @@ localVue.use(VueI18n);
 localVue.prototype.$t = (text) => {
   return text;
 }; // i18n mock
-localVue.prototype.$tc = (text, args='') => {return text + args};// i18n mock
+localVue.prototype.$tc = (text, args = "") => {
+  return text + args;
+}; // i18n mock
 
-describe('FTLFooter template', () => {
+describe("FTLFooter template", () => {
   const wrapper = shallowMount(FTLFooter, {
-    localVue: localVue
+    localVue: localVue,
   });
 
-  it('renders properly footer content', () => {
-    expect(wrapper.html()).toContain('<footer');
-  })
+  it("renders properly footer content", () => {
+    expect(wrapper.html()).toContain("<footer");
+  });
 });

@@ -3,7 +3,7 @@
  * Licensed under the BSL License. See LICENSE in the project root for license information.
  */
 
-import pdfjsLib from 'pdfjs-dist/webpack'
+import pdfjsLib from "pdfjs-dist/webpack";
 
 // pdfjsLib.disableWorker = true;
 window.URL = window.URL || window.webkitURL;
@@ -15,31 +15,43 @@ export const createThumbFromFile = function (file) {
 
 export const createThumbFromUrl = function (url) {
   return new Promise((resolve, reject) => {
-
     let loadingTask = pdfjsLib.getDocument(url);
-    loadingTask.promise.then(function (pdf) {
-      pdf.getPage(1).then(function (page) {
-        const canvas = document.createElement("canvas");
-        const context = canvas.getContext('2d');
+    loadingTask.promise
+      .then(function (pdf) {
+        pdf
+          .getPage(1)
+          .then(function (page) {
+            const canvas = document.createElement("canvas");
+            const context = canvas.getContext("2d");
 
-        let viewport = page.getViewport({scale: 0.5});
+            let viewport = page.getViewport({ scale: 0.5 });
 
-        canvas.height = viewport.height;
-        canvas.width = viewport.width;
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
 
-        let render = page.render({
-          canvasContext: context,
-          viewport: viewport
-        });
+            let render = page.render({
+              canvasContext: context,
+              viewport: viewport,
+            });
 
-        render.promise.then(function () {
-          resolve(canvas.toDataURL());
-        });
-      }).catch(function () {
-        reject("pdf thumb error: could not open page 1 of document " + url + ". Not a pdf ?");
+            render.promise.then(function () {
+              resolve(canvas.toDataURL());
+            });
+          })
+          .catch(function () {
+            reject(
+              "pdf thumb error: could not open page 1 of document " +
+                url +
+                ". Not a pdf ?"
+            );
+          });
+      })
+      .catch(function () {
+        reject(
+          "pdf thumb error: could not find or open document " +
+            url +
+            ". Not a pdf ?"
+        );
       });
-    }).catch(function () {
-      reject("pdf thumb error: could not find or open document " + url + ". Not a pdf ?");
-    });
   });
 };

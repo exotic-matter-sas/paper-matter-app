@@ -21,7 +21,7 @@ class ThumbnailField(serializers.FileField):
         except binascii.Error:
             self.fail("Could not decode base64 thumbnail")
 
-        return ContentFile(binary, 'thumb.png')
+        return ContentFile(binary, "thumb.png")
 
 
 class FTLDocumentSerializer(serializers.ModelSerializer):
@@ -39,7 +39,7 @@ class FTLDocumentSerializer(serializers.ModelSerializer):
             if settings.DEFAULT_FILE_STORAGE in [FTLStorages.GCS, FTLStorages.AWS_S3]:
                 return obj.thumbnail_binary.url
             else:
-                return reverse('api_thumbnail_url', kwargs={'pid': obj.pid})
+                return reverse("api_thumbnail_url", kwargs={"pid": obj.pid})
         else:
             return None
 
@@ -48,16 +48,44 @@ class FTLDocumentSerializer(serializers.ModelSerializer):
 
     def get_path(self, obj):
         if obj.ftl_folder:
-            return map(lambda e: {'id': e.id, 'name': e.name}, obj.ftl_folder.get_ancestors(include_self=True))
+            return map(
+                lambda e: {"id": e.id, "name": e.name},
+                obj.ftl_folder.get_ancestors(include_self=True),
+            )
         else:
             return []
 
     class Meta:
         model = FTLDocument
-        fields = ('pid', 'title', 'note', 'created', 'edited', 'ftl_folder', 'thumbnail_binary', 'thumbnail_available',
-                  'thumbnail_url', 'is_processed', 'path', 'md5', 'size', 'ocrized')
-        read_only_fields = ('pid', 'created', 'edited', 'thumbnail_available', 'thumbnail_url', 'is_processed', 'path',
-                            'size', 'ocrized')
+        fields = (
+            "pid",
+            "title",
+            "note",
+            "created",
+            "edited",
+            "ftl_folder",
+            "thumbnail_binary",
+            "thumbnail_available",
+            "thumbnail_url",
+            "is_processed",
+            "path",
+            "md5",
+            "size",
+            "ocrized",
+            "type",
+        )
+        read_only_fields = (
+            "pid",
+            "created",
+            "edited",
+            "thumbnail_available",
+            "thumbnail_url",
+            "is_processed",
+            "path",
+            "size",
+            "ocrized",
+            "type",
+        )
 
 
 class FTLFolderSerializer(serializers.ModelSerializer):
@@ -65,12 +93,14 @@ class FTLFolderSerializer(serializers.ModelSerializer):
     has_descendant = serializers.SerializerMethodField()
 
     def get_paths(self, obj):
-        return map(lambda e: {'id': e.id, 'name': e.name}, obj.get_ancestors(include_self=True))
+        return map(
+            lambda e: {"id": e.id, "name": e.name}, obj.get_ancestors(include_self=True)
+        )
 
     def get_has_descendant(self, obj):
         return obj.get_descendant_count() > 0
 
     class Meta:
         model = FTLFolder
-        fields = ('id', 'name', 'created', 'parent', 'paths', 'has_descendant')
-        read_only_fields = ('created', 'has_descendant')
+        fields = ("id", "name", "created", "parent", "paths", "has_descendant")
+        read_only_fields = ("created", "has_descendant")

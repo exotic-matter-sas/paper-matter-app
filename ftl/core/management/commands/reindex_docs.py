@@ -14,25 +14,25 @@ from ftl.enums import FTLPlugins
 
 
 class Command(BaseCommand):
-    help = 'Reindex all documents'
+    help = "Reindex all documents"
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--force',
-            action='append',
-            help='Force processing for the indicated plugin (can be specified multiple times, plugins list available in'
-                 ' ftl.enums.FTLPlugins',
+            "--force",
+            action="append",
+            help="Force processing for the indicated plugin (can be specified multiple times, plugins list available in"
+            " ftl.enums.FTLPlugins",
         )
 
     def handle(self, *args, **options):
         plugins_forced = list()
-        if options['force']:
-            for plugin in options['force']:
+        if options["force"]:
+            for plugin in options["force"]:
                 value = FTLPlugins.get_value(plugin)
                 if value:
                     self.stdout.write(
                         self.style.MIGRATE_HEADING(
-                            _('Forcing plugin %(value)s') % {'value': value}
+                            _("Forcing plugin %(value)s") % {"value": value}
                         )
                     )
                     plugins_forced.append(value)
@@ -46,27 +46,20 @@ class Command(BaseCommand):
         self.stdout.write(
             self.style.MIGRATE_HEADING(
                 ngettext(
-                    'Starting to reindex one document',
-                    'Starting to reindex %(count)s documents',
-                    documents_count
-                ) % {
-                    'count': documents_count
-                }
+                    "Starting to reindex one document",
+                    "Starting to reindex %(count)s documents",
+                    documents_count,
+                )
+                % {"count": documents_count}
             )
         )
 
         for doc in docs:
-            self.stdout.write(
-                _('Reindexing %(title)s') % {'title': doc.title}
-            )
+            self.stdout.write(_("Reindexing %(title)s") % {"title": doc.title})
 
             processing.apply_processing(doc, plugins_forced)
 
-            self.stdout.write(
-                self.style.SUCCESS(
-                    _('OK')
-                )
-            )
+            self.stdout.write(self.style.SUCCESS(_("OK")))
 
         # Wait for all processing done
         processing.executor.shutdown(True)
@@ -76,12 +69,10 @@ class Command(BaseCommand):
         self.stdout.write(
             self.style.SUCCESS(
                 ngettext(
-                    'One document successfully reindexed in %(time)s seconds',
-                    '%(count)s documents successfully reindexed in %(time)s seconds',
-                    documents_count
-                ) % {
-                    'count': documents_count,
-                    'time': round(end_time - start_time, 2)
-                }
+                    "One document successfully reindexed in %(time)s seconds",
+                    "%(count)s documents successfully reindexed in %(time)s seconds",
+                    documents_count,
+                )
+                % {"count": documents_count, "time": round(end_time - start_time, 2)}
             )
         )

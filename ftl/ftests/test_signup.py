@@ -26,7 +26,10 @@ class SignupPageTests(SignupPages):
         self.create_user(user_num=1)
 
         # Success page appears
-        self.assertIn('verify your email to activate your account', self.get_elem(self.main_panel).text)
+        self.assertIn(
+            "verify your email to activate your account",
+            self.get_elem(self.main_panel).text,
+        )
 
     @skip("Multi users feature disabled")
     def test_signup_to_second_org(self):
@@ -35,7 +38,10 @@ class SignupPageTests(SignupPages):
         self.create_user(user_num=2)
 
         # Success page appears
-        self.assertIn('verify your email to activate your account', self.get_elem(self.main_panel).text)
+        self.assertIn(
+            "verify your email to activate your account",
+            self.get_elem(self.main_panel).text,
+        )
 
     @skip("Multi users feature disabled")
     def test_signup_failed(self):
@@ -44,8 +50,8 @@ class SignupPageTests(SignupPages):
         self.get_elem(self.submit_input).click()
 
         # The browser refused form submission as all fields are set to required
-        self.assertIn('signup', self.head_title)
-        self.assertIn('Create your account', self.get_elem(self.page_title).text)
+        self.assertIn("signup", self.head_title)
+        self.assertIn("Create your account", self.get_elem(self.page_title).text)
 
     @skip("Multi users feature disabled")
     def test_signup_receive_activation_email(self):
@@ -55,8 +61,8 @@ class SignupPageTests(SignupPages):
 
         self.assertEqual(len(mail.outbox), 1)
         self.assertIn(tv.USER1_EMAIL, mail.outbox[0].to)
-        self.assertIn('activate your account', mail.outbox[0].subject.lower())
-        self.assertRegex(mail.outbox[0].body, 'https?://.+/accounts/activate/.+/')
+        self.assertIn("activate your account", mail.outbox[0].subject.lower())
+        self.assertRegex(mail.outbox[0].body, "https?://.+/accounts/activate/.+/")
 
     @skip("Multi users feature disabled")
     def test_signup_activate_account(self):
@@ -64,8 +70,10 @@ class SignupPageTests(SignupPages):
         self.visit_signup_page(self.org_1.slug)
         self.create_user(activate_user=True)
 
-        self.assertIn('Your email has been verified, thank you! You may go ahead and log in now.',
-                      self.get_elem_text(self.main_panel))
+        self.assertIn(
+            "Your email has been verified, thank you! You may go ahead and log in now.",
+            self.get_elem_text(self.main_panel),
+        )
 
     @skip("Multi users feature disabled")
     def test_signup_activate_account_failed(self):
@@ -74,8 +82,9 @@ class SignupPageTests(SignupPages):
         self.create_user()
 
         # User use a bad activation link
-        bad_activation_link = '/accounts/activate/B4dT0k3n/'
+        bad_activation_link = "/accounts/activate/B4dT0k3n/"
 
         self.visit(bad_activation_link)
-        self.assertIn('could not activate the account',
-                      self.get_elem_text(self.main_panel))
+        self.assertIn(
+            "could not activate the account", self.get_elem_text(self.main_panel)
+        )

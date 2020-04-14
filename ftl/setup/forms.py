@@ -10,24 +10,30 @@ from core.models import FTLUser, FTLOrg
 
 
 class FirstOrgAndAdminCreationForm(UserCreationForm):
-    org_name = forms.CharField(label=_('Organization name'), max_length=100,
-                               widget=forms.TextInput(attrs={'autofocus': ''}))
+    org_name = forms.CharField(
+        label=_("Organization name"),
+        max_length=100,
+        widget=forms.TextInput(attrs={"autofocus": ""}),
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # remove default autofocus on email field
-        del self.fields['email'].widget.attrs['autofocus']
+        del self.fields["email"].widget.attrs["autofocus"]
 
     class Meta(UserCreationForm.Meta):
         model = FTLUser
-        fields = ("org_name", "email",)
+        fields = (
+            "org_name",
+            "email",
+        )
 
     def clean_email(self):
-        email_ = self.cleaned_data['email']
+        email_ = self.cleaned_data["email"]
         return email_.lower()
 
     def clean_org_name(self):
-        name_ = self.cleaned_data['org_name']
+        name_ = self.cleaned_data["org_name"]
         slug = slugify(name_)
         org_exists = FTLOrg.objects.filter(slug=slug)
         if org_exists:
@@ -38,7 +44,7 @@ class FirstOrgAndAdminCreationForm(UserCreationForm):
         """Set extra attributes to create an admin user"""
         user = super().save(commit=False)
 
-        org_name_cleaned = self.cleaned_data['org_name']
+        org_name_cleaned = self.cleaned_data["org_name"]
 
         ftl_org = FTLOrg()
         ftl_org.name = org_name_cleaned

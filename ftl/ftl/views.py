@@ -13,23 +13,25 @@ from ftl.forms import FTLUserCreationForm, FTLCreateOrgAndFTLUser
 
 
 class CreateFTLUserFormView(RegistrationView):
-    template_name = 'ftl/registration/signup.html'
+    template_name = "ftl/registration/signup.html"
     form_class = FTLUserCreationForm
-    success_url = reverse_lazy('signup_success')
+    success_url = reverse_lazy("signup_success")
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
-        org = get_object_or_404(FTLOrg.objects.filter(slug=self.kwargs['org_slug']))
-        data['org_name'] = org.name
+        org = get_object_or_404(FTLOrg.objects.filter(slug=self.kwargs["org_slug"]))
+        data["org_name"] = org.name
         return data
 
     def form_valid(self, form):
-        org = get_object_or_404(FTLOrg, slug=self.kwargs['org_slug'])
+        org = get_object_or_404(FTLOrg, slug=self.kwargs["org_slug"])
         instance = form.save(commit=False)
         instance.org = org
         instance.save()
 
-        instance.user_permissions.set(permissions_names_to_objects(FTL_PERMISSIONS_USER))
+        instance.user_permissions.set(
+            permissions_names_to_objects(FTL_PERMISSIONS_USER)
+        )
 
         instance.save()
 
@@ -37,13 +39,14 @@ class CreateFTLUserFormView(RegistrationView):
 
 
 def signup_success(request):
-    return render(request, 'ftl/registration/signup_success.html')
+    return render(request, "ftl/registration/signup_success.html")
 
 
 class SetMessageAndRedirectView(RedirectView):
     """
     View for showing a flash message
     """
+
     message_type = messages.SUCCESS
     message = None
 
@@ -53,23 +56,26 @@ class SetMessageAndRedirectView(RedirectView):
 
 
 class PasswordResetAsked(SetMessageAndRedirectView):
-    url = reverse_lazy('login')
+    url = reverse_lazy("login")
     message = _(
-        'We’ve emailed you instructions for setting your password, if an account exists with the email '
-        'you entered. You should receive them shortly (check your spam folder if that\'s not the case).')
+        "We’ve emailed you instructions for setting your password, if an account exists with the email "
+        "you entered. You should receive them shortly (check your spam folder if that's not the case)."
+    )
 
 
 class PasswordResetDone(SetMessageAndRedirectView):
-    url = reverse_lazy('login')
-    message = _('Your password has been set. You may go ahead and log in now.')
+    url = reverse_lazy("login")
+    message = _("Your password has been set. You may go ahead and log in now.")
 
 
 class CreateOrgAndFTLUser(RegistrationView):
-    template_name = 'ftl/registration/create_org_and_ftluser.html'
+    template_name = "ftl/registration/create_org_and_ftluser.html"
     form_class = FTLCreateOrgAndFTLUser
-    success_url = reverse_lazy('signup_success')
+    success_url = reverse_lazy("signup_success")
 
 
 class AccountActivationSuccess(SetMessageAndRedirectView):
-    url = reverse_lazy('login')
-    message = _('Your email has been verified, thank you! You may go ahead and log in now.')
+    url = reverse_lazy("login")
+    message = _(
+        "Your email has been verified, thank you! You may go ahead and log in now."
+    )

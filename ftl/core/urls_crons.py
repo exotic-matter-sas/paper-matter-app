@@ -5,5 +5,9 @@ from django.urls import path
 from core import views_crons
 
 urlpatterns = [
-    path('batch-delete-documents', views_crons.BatchDeleteDocument.as_view(), name='cron-batch-delete-documents'),
+    path(
+        "batch-delete-documents",
+        views_crons.BatchDeleteDocument.as_view(),
+        name="cron-batch-delete-documents",
+    ),
 ]
