@@ -5,24 +5,28 @@
 {% block account %}
     <div class="row no-gutters">
         <div class="col text-justify">
-            <div class="alert-danger rounded p-2">
-                <h3><strong>{% trans 'Your are about to delete your Paper Matter account.' %}</strong></h3>
+            <h3 class="text-danger">
+                <strong>{% trans 'Your are about to delete your Paper Matter account' %}</strong>
+            </h3>
 
-                <p class="lead">
-                    {% blocktrans %}Every document and folders will be immediately marked for deletion and the account
-                        will be deactivated. Be aware that the email you used to register will not be accepted for a new
-                        account.
-                    {% endblocktrans %}
-                </p>
+            <p class="alert alert-danger">
+                {% blocktrans %}Every documents and folders will be immediately marked for deletion and the account will
+                    be deactivated. Be aware that the <b>email you used to register will not be accepted for a new
+                    account</b>.
+                {% endblocktrans %}
+            </p>
 
-                <p>{% trans 'Please download any documents before proceeding. This process is not reversible.' %}</p>
-            </div>
+            <p class="font-italic">
+{#                    {% url 'export' as export_url %}#}
+                {% blocktrans %}Please <a href="#">export your documents</a> before proceeding as this process is
+                    not reversible.
+                {% endblocktrans %}
+            </p>
 
             <form id="account-delete" action="" method="post">
                 {% csrf_token %}
 
                 <div class="form-group my-2">
-                    <label for="password">{% trans 'Password validation' %}</label>
                     <input id="password" name="password" type="password" class="form-control my-1"
                            placeholder="{% trans 'Password' %}" required>
                     <small class="form-text text-muted">
@@ -40,7 +44,7 @@
                 {% endif %}
 
                 <p class="text-center">
-                    <button type="submit" class="btn btn-danger my-4 ">
+                    <button type="submit" class="btn btn-danger my-4 btn float-right">
                         {% trans 'Delete my account immediately' %}
                     </button>
                 </p>

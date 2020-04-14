@@ -120,7 +120,7 @@ _Or alternatively `npx vue-cli-service test:unit`_
 
 3 - Update/complete translations in .po files
   
- 4 - Compile .mo files:
+4 - Compile .mo files:
 
     python manage.py compilemessages
 
