@@ -178,26 +178,22 @@ class AccountDeleteView(SuccessMessageMixin, FormView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user
+        kwargs["user"] = self.request.user
         return kwargs
 
     def form_valid(self, form):
-        management.call_command(
-            "disable_account", org_slug=self.request.user.org.slug
-        )
+        management.call_command("disable_account", org_slug=self.request.user.org.slug)
 
         subject_warn = render_to_string(
-            template_name=self.email_warn_subject,
-            context={},
-            request=self.request
+            template_name=self.email_warn_subject, context={}, request=self.request
         )
-        subject_warn = ''.join(subject_warn.splitlines())
+        subject_warn = "".join(subject_warn.splitlines())
         message_warn = render_to_string(
-            template_name=self.email_warn_body,
-            context={},
-            request=self.request
+            template_name=self.email_warn_body, context={}, request=self.request
         )
 
-        self.request.user.email_user(subject_warn, message_warn, settings.DEFAULT_FROM_EMAIL)
+        self.request.user.email_user(
+            subject_warn, message_warn, settings.DEFAULT_FROM_EMAIL
+        )
 
         return super().form_valid(form)
