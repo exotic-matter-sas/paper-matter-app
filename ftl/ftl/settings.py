@@ -323,6 +323,16 @@ FTL_SUPPORTED_DOCUMENTS_TYPES = [
     ".ods",
 ]
 
+"""
+Delete disabled accounts from instance
+=======================
+When the user requests a deletion of his/her account, we disable it and anonymize the account by default. Set to True to
+completely remove the account from the database.
+"""
+FTL_DELETE_DISABLED_ACCOUNTS = False
+FTL_SUFFIX_DELETED_ACCOUNT = "@disabled.pm.app"  # No need to change this
+
+
 # ==================================================
 # No settings under this line
 # Auto import local `settings_local.py` if available

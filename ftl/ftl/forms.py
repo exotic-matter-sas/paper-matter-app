@@ -1,7 +1,9 @@
 #  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
+import hashlib
 
 from django import forms
+from django.conf import settings
 from django.contrib.auth.forms import AuthenticationForm
 from django.forms import EmailField
 from django.utils.text import slugify
@@ -23,6 +25,16 @@ class FTLUserCreationForm(RegistrationForm):
 
     class Meta(RegistrationForm.Meta):
         model = FTLUser
+
+    def clean_email(self):
+        email_ = self.cleaned_data["email"]
+        h = hashlib.md5()
+        h.update(email_.encode("utf-8"))
+        if FTLUser.objects.filter(
+            email=f"{h.hexdigest()}{settings.FTL_SUFFIX_DELETED_ACCOUNT}"
+        ).exists():
+            raise forms.ValidationError(_("This email can't be used."))
+        return email_
 
 
 class FTLCreateOrgAndFTLUser(RegistrationForm):
@@ -59,6 +71,16 @@ class FTLCreateOrgAndFTLUser(RegistrationForm):
         if org_exists:
             raise forms.ValidationError(_("Organization already exists"))
         return name_
+
+    def clean_email(self):
+        email_ = self.cleaned_data["email"]
+        h = hashlib.md5()
+        h.update(email_.encode("utf-8"))
+        if FTLUser.objects.filter(
+            email=f"{h.hexdigest()}{settings.FTL_SUFFIX_DELETED_ACCOUNT}"
+        ).exists():
+            raise forms.ValidationError(_("This email can't be used."))
+        return email_
 
     def save(self, commit=True):
         user = super().save(commit=False)

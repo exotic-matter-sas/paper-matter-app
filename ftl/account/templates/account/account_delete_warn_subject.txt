@@ -2,5 +2,5 @@
 {% load i18n %}
 
 {% block content %}
-{% blocktrans %}Account security: your Paper Matter account has been deleted{% endblocktrans %}
+{% blocktrans %}your Paper Matter account has been deleted{% endblocktrans %}
 {% endblock %}

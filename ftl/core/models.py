@@ -48,6 +48,7 @@ class FTLOrg(models.Model):
     slug = models.SlugField(
         max_length=128, unique=True
     )  # URL of the org (unique auto create an index)
+    deleted = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

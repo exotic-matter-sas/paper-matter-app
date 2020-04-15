@@ -114,8 +114,8 @@ msgstr ""
 " Nous sommes désolés que le service n'ait pas été à la hauteur :(.\n"
 
 #: .\account\templates\account\account_delete_warn_subject.txt:5
-msgid "Account security: your Paper Matter account has been deleted"
-msgstr "Sécurité: votre compte Paper Matter a été supprimé"
+msgid "your Paper Matter account has been deleted"
+msgstr "votre compte Paper Matter a été supprimé"
 
 #: .\account\templates\account\account_email.html:8
 msgid "Change your email"
@@ -326,22 +326,22 @@ msgstr "Un email de confirmation a été envoyé."
 msgid "Email is already used by someone else."
 msgstr "Cette adresse est déjà utilisée."
 
-#: .\account\views.py:107
+#: .\account\views.py:109
 msgid "Email successfully updated."
 msgstr "L'adresse a été mise à jour."
 
-#: .\account\views.py:108
+#: .\account\views.py:110
 msgid "The link expired. Please try again."
 msgstr "Le lien de validation a expiré. Merci de réessayer."
 
-#: .\account\views.py:109
+#: .\account\views.py:111
 msgid "Could not validate your email. Please try again."
 msgstr "Impossible de valider votre adresse. Veuillez réessayer."
 
-#: .\account\views.py:143
+#: .\account\views.py:148
 msgid "Password updated!"
 msgstr "Mot de passe mis à jour !"
 
-#: .\account\views.py:172
+#: .\account\views.py:175
 msgid "Your account was deleted."
 msgstr "Votre compte a été supprimé."
