@@ -28,6 +28,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq-dev \
     libffi-dev \
     libssl-dev \
+    libmagic1 \
     cron \
     supervisor \
     curl \
