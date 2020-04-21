@@ -100,3 +100,6 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 EMAIL_PORT = int(os.getenv("EMAIL_PORT", 25))
 EMAIL_USE_SSL = True
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "noreply@localhost")
+
+# Redis for Celery
+CELERY_BROKER_URL = os.getenv("CELERY_REDIS_URL", "redis://redis:6379")

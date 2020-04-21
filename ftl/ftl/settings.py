@@ -323,6 +323,8 @@ FTL_SUPPORTED_DOCUMENTS_TYPES = [
     ".ods",
 ]
 
+CELERY_BROKER_URL = "redis://localhost:6379"
+
 # ==================================================
 # No settings under this line
 # Auto import local `settings_local.py` if available

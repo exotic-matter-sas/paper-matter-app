@@ -15,7 +15,8 @@ FROM python:3.7.4-slim
 # PORT is used by uwsgi config, it's mainly used by Heroku because they assign random port to app.
 ENV PORT 8000
 # Default cron secret key is not secure, it will automatically taken into account in the internal cronjob
-ENV CRON_SECRET_KEY CHANGEME
+ENV ENABLE_WEB false
+ENV ENABLE_WORKER false
 
 # Workaround for https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=863199
 RUN mkdir -p /usr/share/man/man1
@@ -40,6 +41,8 @@ ADD docker/requirements_deploy.txt /app/requirements_deploy.txt
 ADD docker/ftl_uwsgi.ini /app/ftl_uwsgi.ini
 ADD docker/settings_local.py /app/ftl/settings_local.py
 ADD docker/supervisord.conf /etc/supervisor/supervisord.conf
+ADD docker/ftl-web.sh /app/ftl-web.sh
+ADD docker/ftl-worker.sh /app/ftl-worker.sh
 
 ADD docker/cron-env-init.sh /tmp/cron-env-init.sh
 RUN chmod 0700 /tmp/cron-env-init.sh

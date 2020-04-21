@@ -35,11 +35,9 @@ from core.errors import get_api_error
 from core.ftl_mixins import FTLUserContextDataMixin
 from core.mimes import mimetype_to_ext
 from core.models import FTLDocument, FTLFolder
-from core.processing.ftl_processing import FTLDocumentProcessing
 from core.serializers import FTLDocumentSerializer, FTLFolderSerializer
+from core.tasks import apply_ftl_processing
 from ftl.enums import FTLStorages, FTLPlugins
-
-ftl_doc_processing = FTLDocumentProcessing(settings.FTL_DOC_PROCESSING_PLUGINS)
 
 
 def _extract_binary_from_data_uri(data_uri):
@@ -293,9 +291,11 @@ class FileUploadView(views.APIView):
 
             ftl_doc.save()
 
-        ftl_doc_processing.apply_processing(
-            ftl_doc, force=[FTLPlugins.LANG_DETECTOR_LANGID]
-        )
+        # ftl_doc_processing.apply_processing(
+        #     ftl_doc, force=[FTLPlugins.LANG_DETECTOR_LANGID]
+        # )
+
+        apply_ftl_processing.delay(ftl_doc.pk, force=[FTLPlugins.LANG_DETECTOR_LANGID])
 
         return Response(self.serializer_class(ftl_doc).data, status=201)
 
