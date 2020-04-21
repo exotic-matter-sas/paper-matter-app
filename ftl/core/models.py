@@ -4,6 +4,7 @@ import logging
 import pathlib
 import uuid
 
+from celery import Celery
 from django.conf import settings
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import User, AbstractUser, Permission
@@ -18,6 +19,7 @@ from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 from rest_framework.permissions import DjangoModelPermissions
 
+from ftl import celery
 from ftl.enums import FTLStorages
 
 logger = logging.getLogger(__name__)
@@ -158,10 +160,18 @@ class FTLDocument(models.Model):
     def __str__(self):
         return self.title
 
-    def mark_delete(self, *args, **kwargs):
+    def mark_delete(self, async_delete=True, *args, **kwargs):
         self.deleted = True
         self.ftl_folder = None
         self.save()
+
+        # We send the task manually instead of calling `core.tasks.delete_document`
+        # because of mutual import of FTLDocument
+        if async_delete:
+            celery.app.send_task(
+                "core.tasks.delete_document",
+                args=[self.pk, self.org.pk, self.ftl_user.pk],
+            )
 
     def delete(self, *args, **kwargs):
         """Override to ensure document file is deleted"""

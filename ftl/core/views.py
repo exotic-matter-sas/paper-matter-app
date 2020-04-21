@@ -176,7 +176,7 @@ class FTLDocumentDetail(generics.RetrieveUpdateDestroyAPIView):
 
         if need_processing:
             # only apply processing in case value changed, avoid processing when just moving document in folder
-            ftl_doc_processing.apply_processing(instance, list(force_processing))
+            apply_ftl_processing.delay(instance.pk, force=list(force_processing))
 
     def perform_destroy(self, instance):
         instance.mark_delete()
