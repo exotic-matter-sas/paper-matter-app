@@ -18,8 +18,12 @@ ENV PORT 8000
 ENV CRON_SECRET_KEY CHANGEME
 # Set to "true" to use this image as a web frontend
 ENV ENABLE_WEB false
+# Set to "true" to use this image as a worker
 ENV ENABLE_WORKER false
+# Set number of workers for async processing such as OCR
 ENV NB_WORKERS 1
+# Set time limit in seconds for each job in async processing (child process will be force restart)
+ENV JOB_TIMELIMIT 900
 
 # Workaround for https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=863199
 RUN mkdir -p /usr/share/man/man1
