@@ -17,6 +17,7 @@ ENV PORT 8000
 # Default cron secret key is not secure, it will automatically taken into account in the internal cronjob
 ENV ENABLE_WEB false
 ENV ENABLE_WORKER false
+ENV NB_WORKERS 1
 
 # Workaround for https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=863199
 RUN mkdir -p /usr/share/man/man1
