@@ -15,6 +15,8 @@ FROM python:3.7.4-slim
 # PORT is used by uwsgi config, it's mainly used by Heroku because they assign random port to app.
 ENV PORT 8000
 # Default cron secret key is not secure, it will automatically taken into account in the internal cronjob
+ENV CRON_SECRET_KEY CHANGEME
+# Set to "true" to use this image as a web frontend
 ENV ENABLE_WEB false
 ENV ENABLE_WORKER false
 ENV NB_WORKERS 1
