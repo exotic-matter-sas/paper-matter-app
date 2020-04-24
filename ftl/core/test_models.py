@@ -2,6 +2,7 @@
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
 
 import os
+from unittest.mock import patch
 
 from django.core.exceptions import ValidationError
 from django.test import TestCase
@@ -16,6 +17,7 @@ from ftests.tools.setup_helpers import (
     setup_document,
     setup_temporary_file,
 )
+from ftl import celery
 from .models import FTLUser, FTLDocument, FTLFolder
 
 
@@ -74,7 +76,8 @@ class FTLUserModelTest(TestCase):
         self.assertTrue(not os.path.exists(binary_f))
         self.assertTrue(not os.path.exists(thumbnail_f))
 
-    def test_delete_folders(self):
+    @patch.object(celery.app, "send_task")
+    def test_delete_folders(self, mock_send_task_delete_document):
         org = setup_org()
         setup_admin(org)
         user = setup_user(org)
