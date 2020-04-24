@@ -4,16 +4,7 @@ Archiving documents solution
 
 ## For users
 
-### Requirements
-
-- Python 3.7.3
-- PostgreSQL 11
-- Java 8+
-
-### Install Python modules
-
-    cd ftl
-    python -m pip install -r requirements.txt
+Please see `SELFHOSTING.md`.
 
 ## For developers
 
@@ -21,6 +12,7 @@ Archiving documents solution
 
 - Python 3.7
 - PostgreSQL 11
+- Redis 4.x
 - Firefox or Chrome (to run functional tests)
 - Node.js LTS
 - Java 8+ (for documents indexing)
