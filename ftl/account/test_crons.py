@@ -5,12 +5,11 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from core.models import FTLDocument, FTLUser, FTLOrg
+from core.models import FTLUser, FTLOrg
 from ftests.tools.setup_helpers import (
     setup_org,
     setup_admin,
     setup_folder,
-    setup_temporary_file,
     setup_document,
 )
 from ftl.settings import CRON_SECRET_KEY
