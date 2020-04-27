@@ -154,6 +154,28 @@ class BasicAccountPagesTests(LoginPage, AccountPages):
             "home", self.head_title, "User login should success using its new password"
         )
 
+    @skipIf(
+        settings.DEV_MODE and not NODE_SERVER_RUNNING,
+        "Node not running, this test can't be run",
+        )
+    def test_delete_account(self):
+        # User go to account management / password change
+        self.visit(AccountPages.delete_account_url)
+
+        # User submit is password to confirm account deletion
+        self.delete_account(tv.USER1_PASS)
+
+        # User has been redirected to login page with a message confirming the deletion
+        self.assertIn('account was deleted', self.get_elem_text(self.success_notification))
+
+        # User is no more able to login to its deleted account
+        self.log_user()
+        self.assertIn(
+            "email address and password",
+            self.get_elem_text(self.login_failed_div),
+            "User login should failed as its account should be deleted",
+        )
+
 
 class StaticDevice2FATests(LoginPage, AccountPages):
     codes_list = [
