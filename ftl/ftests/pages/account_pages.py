@@ -6,9 +6,10 @@ from ftests.pages.base_page import BasePage
 
 class AccountPages(BasePage):
     index_url = "/accounts/"
-    update_email_url = "/accounts/email"
-    update_password_url = "/accounts/password"
+    update_email_url = "/accounts/email/"
+    update_password_url = "/accounts/password/"
     two_factors_authentication_url = "/accounts/2fa/"
+    delete_account_url = "accounts/delete/"
 
     success_notification = ".alert.alert-success"
     error_notification = ".alert.alert-error"
