@@ -17,7 +17,7 @@
             </p>
 
             <p class="font-italic">
-                {% url 'account_export' as export_url %}
+                {% url 'account_import_export' as export_url %}
                 {% blocktrans %}Please <a href="{{ export_url }}">export your documents</a> before proceeding as this process is
                     not reversible.
                 {% endblocktrans %}

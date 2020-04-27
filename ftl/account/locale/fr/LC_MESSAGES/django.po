@@ -191,22 +191,22 @@ msgstr ""
 msgid "Account security: notice of email change"
 msgstr "Sécurité: notification de changement de l'adresse email"
 
-#: account/templates/account/account_export.html:8
-msgid "Export your documents and associated data"
-msgstr "Exportez vos documents et les données associées"
+#: account/templates/account/account_import_export.html:8
+msgid "Import or export your documents"
+msgstr "Importez ou exportez vos documents"
 
-#: account/templates/account/account_export.html:10
+#: account/templates/account/account_import_export.html:10
 msgid ""
-"You can download the Import - Export software to easily export all your "
+"You can download the Import - Export software to easily import or export all your "
 "documents and their related metadata (title, note, date...)."
 msgstr ""
-"Vous pouvez télécharger le logiciel d'Import - Export pour exporter "
+"Vous pouvez télécharger le logiciel d'Import - Export pour importer ou exporter "
 "facilement tous vos documents et leurs métadonnées associées (titre, note, "
 "date...)."
 
-#: account/templates/account/account_export.html:17
-msgid "Download export software"
-msgstr "Télécharger le logiciel d'export"
+#: account/templates/account/account_import_export.html:17
+msgid "Download import - export software"
+msgstr "Télécharger le logiciel d'import / export"
 
 #: account/templates/account/account_index.html:24
 msgid ""
