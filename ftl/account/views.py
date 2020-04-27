@@ -170,7 +170,9 @@ class AccountPasswordView(
 @method_decorator(otp_required(if_configured=True), name="dispatch")
 class AccountImportExportView(FTLUserContextDataMixin, View):
     def get(self, request, *args, **kwargs):
-        return render(request, "account/account_import_export.html", self.get_context_data())
+        return render(
+            request, "account/account_import_export.html", self.get_context_data()
+        )
 
 
 @method_decorator(login_required, name="dispatch")

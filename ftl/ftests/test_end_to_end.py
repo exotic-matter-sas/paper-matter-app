@@ -39,7 +39,11 @@ from ftests.tools.setup_helpers import (
     setup_user,
     setup_2fa_fido2_device,
     setup_2fa_totp_device,
-    setup_document, setup_folder, setup_2fa_static_device, setup_temporary_file)
+    setup_document,
+    setup_folder,
+    setup_2fa_static_device,
+    setup_temporary_file,
+)
 from ftl.settings import BASE_DIR, CRON_SECRET_KEY
 
 
@@ -343,9 +347,13 @@ class AccountDeletion(LoginPage, AccountPages):
         self.admin_org = setup_org(name="admin-org", slug="admin-org")
         self.admin = setup_admin(self.admin_org)
         self.user1_org = setup_org(name=tv.ORG_NAME_1, slug=tv.ORG_SLUG_1)
-        self.user1 = setup_user(self.user1_org, email=tv.USER1_EMAIL, password=tv.USER1_PASS)
+        self.user1 = setup_user(
+            self.user1_org, email=tv.USER1_EMAIL, password=tv.USER1_PASS
+        )
         self.user2_org = setup_org(name=tv.ORG_NAME_2, slug=tv.ORG_SLUG_2)
-        self.user2 = setup_user(self.user2_org, email=tv.USER2_EMAIL, password=tv.USER2_PASS)
+        self.user2 = setup_user(
+            self.user2_org, email=tv.USER2_EMAIL, password=tv.USER2_PASS
+        )
 
         # mock OTPMiddleware._verify_user() to skip check page
         self.middleware_patcher = patch.object(
@@ -360,32 +368,57 @@ class AccountDeletion(LoginPage, AccountPages):
         # user1 and user2 have added documents, folders, otp devices
         self.user1_resources = {}
         self.user1_resources["folder1"] = setup_folder(self.user1_org)
-        self.user1_resources["sub_folder1"] = setup_folder(self.user1_org, parent=self.user1_resources["folder1"])
-        self.user1_resources["doc1"] = setup_document(self.user1_org, ftl_user=self.user1,
-                                                      binary=setup_temporary_file().name)
+        self.user1_resources["sub_folder1"] = setup_folder(
+            self.user1_org, parent=self.user1_resources["folder1"]
+        )
+        self.user1_resources["doc1"] = setup_document(
+            self.user1_org, ftl_user=self.user1, binary=setup_temporary_file().name
+        )
         self.user1_resources["doc2"] = setup_document(
-            self.user1_org, ftl_user=self.user1, ftl_folder=self.user1_resources["folder1"],
-            binary=setup_temporary_file().name)
+            self.user1_org,
+            ftl_user=self.user1,
+            ftl_folder=self.user1_resources["folder1"],
+            binary=setup_temporary_file().name,
+        )
         self.user1_resources["doc3"] = setup_document(
-            self.user1_org, ftl_user=self.user1, ftl_folder=self.user1_resources["sub_folder1"],
-            binary=setup_temporary_file().name)
+            self.user1_org,
+            ftl_user=self.user1,
+            ftl_folder=self.user1_resources["sub_folder1"],
+            binary=setup_temporary_file().name,
+        )
         self.user1_resources["totp_device"] = setup_2fa_totp_device(
-            self.user1, secret_key=TotpDevice2FATests.secret_key)
+            self.user1, secret_key=TotpDevice2FATests.secret_key
+        )
         self.user1_resources["fido2_device"] = setup_2fa_fido2_device(self.user1)
-        self.user1_resources["static_device"] = setup_2fa_static_device(self.user1, codes_list=['AAA'])
+        self.user1_resources["static_device"] = setup_2fa_static_device(
+            self.user1, codes_list=["AAA"]
+        )
 
         self.user2_resources = {}
         self.user2_resources["folder1"] = setup_folder(self.user2_org)
-        self.user2_resources["sub_folder1"] = setup_folder(self.user2_org, parent=self.user2_resources["folder1"])
-        self.user2_resources["doc1"] = setup_document(self.user2_org, ftl_user=self.user2)
+        self.user2_resources["sub_folder1"] = setup_folder(
+            self.user2_org, parent=self.user2_resources["folder1"]
+        )
+        self.user2_resources["doc1"] = setup_document(
+            self.user2_org, ftl_user=self.user2
+        )
         self.user2_resources["doc2"] = setup_document(
-            self.user2_org, ftl_user=self.user2, ftl_folder=self.user2_resources["folder1"])
+            self.user2_org,
+            ftl_user=self.user2,
+            ftl_folder=self.user2_resources["folder1"],
+        )
         self.user2_resources["doc3"] = setup_document(
-            self.user2_org, ftl_user=self.user2, ftl_folder=self.user2_resources["sub_folder1"])
+            self.user2_org,
+            ftl_user=self.user2,
+            ftl_folder=self.user2_resources["sub_folder1"],
+        )
         self.user2_resources["totp_device"] = setup_2fa_totp_device(
-            self.user2, secret_key=TotpDevice2FATests.secret_key)
+            self.user2, secret_key=TotpDevice2FATests.secret_key
+        )
         self.user2_resources["fido2_device"] = setup_2fa_fido2_device(self.user2)
-        self.user2_resources["static_device"] = setup_2fa_static_device(self.user2, codes_list=['AAA'])
+        self.user2_resources["static_device"] = setup_2fa_static_device(
+            self.user2, codes_list=["AAA"]
+        )
 
         # user is already logged to account deletion page
         self.visit(LoginPage.url)
@@ -396,7 +429,7 @@ class AccountDeletion(LoginPage, AccountPages):
     @skipIf(
         settings.DEV_MODE and not NODE_SERVER_RUNNING,
         "Node not running, this test can't be run",
-        )
+    )
     def test_all_user_resources_are_deleted(self):
         # User submit account deletion form
         self.delete_account(tv.USER1_PASS)
@@ -414,8 +447,10 @@ class AccountDeletion(LoginPage, AccountPages):
 
         # All resources from user1 are deleted
         for resource in self.user1_resources.values():
-            with self.assertRaises(resource.DoesNotExist,
-                                   msg='All user1 resources should have been deleted alongside with its account'):
+            with self.assertRaises(
+                resource.DoesNotExist,
+                msg="All user1 resources should have been deleted alongside with its account",
+            ):
                 resource.refresh_from_db()
 
         # All resources from user2 are still present

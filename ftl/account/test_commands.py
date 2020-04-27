@@ -30,10 +30,15 @@ class AccountCommandsTests(TestCase):
         )
 
         self.org_no_delete = setup_org("Not delete A", "not-delete-a")
-        self.user_no_delete_a = setup_admin(self.org_no_delete, "admin@no-delete.com", "bbb")
+        self.user_no_delete_a = setup_admin(
+            self.org_no_delete, "admin@no-delete.com", "bbb"
+        )
         self.folder_no_delete = setup_folder(self.org_no_delete, "Folder 1 no delete")
         self.doc_no_delete = setup_document(
-            self.org_no_delete, self.user_no_delete_a, self.folder_no_delete, title="Doc 1 no delete"
+            self.org_no_delete,
+            self.user_no_delete_a,
+            self.folder_no_delete,
+            title="Doc 1 no delete",
         )
         self.devices_no_delete = setup_2fa_static_device(
             self.user_no_delete_a, codes_list=["AA1222", "BB1222"]
