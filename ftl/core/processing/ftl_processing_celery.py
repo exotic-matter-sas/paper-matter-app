@@ -24,4 +24,4 @@ class FTLDocumentProcessingCelery(FTLDocumentProcessing):
 
     def apply_processing(self, ftl_doc, force=False):
         logger.info(f"{ftl_doc.pid} submitted to docs processing")
-        self._handle(ftl_doc, force=False)
+        self._handle(ftl_doc, force=force)
