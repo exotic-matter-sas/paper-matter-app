@@ -2,20 +2,21 @@
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
 
 import os
+import threading
 from unittest import skipIf, skip
 from unittest.mock import patch
 
-from django import db
 from django.conf import settings
 from django.core import mail
 from django.db.models import Func, F
+from django.test import override_settings
 from django_otp.middleware import OTPMiddleware
 from django_otp.oath import TOTP
 from selenium.common.exceptions import NoSuchElementException
 
-from core import views
 from core.models import FTLDocument
 from core.processing.ftl_processing import FTLDocumentProcessing
+from core.tasks import apply_ftl_processing
 from ftests.pages.account_pages import AccountPages
 from ftests.pages.base_page import NODE_SERVER_RUNNING
 from ftests.pages.django_admin_home_page import AdminHomePage
@@ -40,6 +41,7 @@ from ftests.tools.setup_helpers import (
     setup_2fa_fido2_device,
     setup_2fa_totp_device,
 )
+from ftl.celery import app
 from ftl.settings import BASE_DIR
 
 
@@ -118,11 +120,11 @@ class SecondOrgSetup(AdminLoginPage, AdminHomePage, SignupPages, LoginPage, Home
 class NewUserAddDocumentInsideFolder(
     SignupPages, LoginPage, HomePage, DocumentViewerModal
 ):
+    @patch.object(apply_ftl_processing, "delay")
     @skipIf(
         settings.DEV_MODE and not NODE_SERVER_RUNNING,
         "Node not running, this test can't be run",
     )
-    @patch.object(FTLDocumentProcessing, "apply_processing")
     @skip("Multi users feature disabled")
     def test_new_user_add_document_inside_folder(self, mock_apply_processing):
         # first org, admin, are already created
@@ -152,7 +154,22 @@ class NewUserAddDocumentInsideFolder(
         self.assertEqual(pdf_viewer_iframe_title, "PDF.js viewer")
 
 
+@override_settings(CELERY_BROKER_URL="memory://localhost")
 class TikaDocumentIndexationAndSearch(LoginPage, HomePage, DocumentViewerModal):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        app.control.purge()
+        cls._worker = app.Worker(app=app, pool="solo", concurrency=1)
+        cls._thread = threading.Thread(target=cls._worker.start)
+        cls._thread.daemon = True
+        cls._thread.start()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls._worker.stop()
+        super().tearDownClass()
+
     def setUp(self, **kwargs):
         # first org, admin, user are already created, user is already logged on home page
         super().setUp()
@@ -161,11 +178,6 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage, DocumentViewerModal):
         self.user = setup_user(self.org)
         self.visit(LoginPage.url)
         self.log_user()
-
-    def tearDown(self):
-        """ Additional teardown required to shutdown indexation thread and associated DB connection"""
-        views.ftl_doc_processing.executor.submit(db.connections.close_all)
-        super().tearDown()
 
     @skipIf(
         settings.DEV_MODE and not NODE_SERVER_RUNNING,

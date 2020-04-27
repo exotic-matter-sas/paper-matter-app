@@ -83,7 +83,7 @@ class HomePage(BasePage):
             absolute_paths
         )
         self.get_elem(self.submit_document_upload_button).click()
-        self.wait_for_elem_to_disappear(self.document_upload_loader)
+        self.wait_for_elem_to_disappear(self.document_upload_loader, timeout=10)
         # Needed in case of several upload in a row as upload success trigger a notification that hide upload button
         self.close_all_notifications()
 
