@@ -27,7 +27,8 @@ https://docs.docker.com/storage/volumes/#backup-restore-or-migrate-data-volumes
 
 ### Custom Paper Matter settings
 
-You will need to rebuild the Docker image with the `docker/settings_local.py` customized.
+You need to bind mount the local path `/app/ftl/settings_local.py`
+and customize you own copy of the file `docker/settings_local.py`.
 
 ### Logs
 
