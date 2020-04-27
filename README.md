@@ -164,10 +164,13 @@ To use specific Django settings without modifying main `ftl/ftl/settings.py` fil
     - [Google Cloud Vision API (sync or async)](https://cloud.google.com/vision/docs/)
     - [Amazon Textract API](https://aws.amazon.com/textract/)
   - Document text extraction: [Apache Tika](https://tika.apache.org/)
-  - Document preview: [PDF.js](https://mozilla.github.io/pdf.js/)
+  - PDF documents preview: [PDF.js](https://mozilla.github.io/pdf.js/)
   - Search engine: [PostgreSQL tsvector](https://www.postgresql.org/docs/10/datatype-textsearch.html)
 
 - UI:
+  - CSS framework :
+    - [Sass](https://sass-lang.com/)
+    - [Bootstrap](https://getbootstrap.com/)
   - Logo police: [Quicksand](https://github.com/andrew-paglinawan/QuicksandFamily)
   - App Icons: [Font Awesome](https://fontawesome.com/)
   - SVG illustrations: [Undraw](https://undraw.co/)
