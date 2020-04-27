@@ -29,18 +29,18 @@ class AccountCommandsTests(TestCase):
             self.user_a, codes_list=["AA1222", "BB1222"]
         )
 
-    @override_settings(FTL_DELETE_DISABLED_ACCOUNTS=False)
-    def test_disable_account(self):
-        org_no_delete = setup_org("Not delete A", "not-delete-a")
-        user_no_delete_a = setup_admin(org_no_delete, "admin@no-delete.com", "bbb")
-        folder_no_delete = setup_folder(org_no_delete, "Folder 1 no delete")
-        doc_no_delete = setup_document(
-            org_no_delete, user_no_delete_a, folder_no_delete, title="Doc 1 no delete"
+        self.org_no_delete = setup_org("Not delete A", "not-delete-a")
+        self.user_no_delete_a = setup_admin(self.org_no_delete, "admin@no-delete.com", "bbb")
+        self.folder_no_delete = setup_folder(self.org_no_delete, "Folder 1 no delete")
+        self.doc_no_delete = setup_document(
+            self.org_no_delete, self.user_no_delete_a, self.folder_no_delete, title="Doc 1 no delete"
         )
-        devices_no_delete = setup_2fa_static_device(
-            user_no_delete_a, codes_list=["AA1222", "BB1222"]
+        self.devices_no_delete = setup_2fa_static_device(
+            self.user_no_delete_a, codes_list=["AA1222", "BB1222"]
         )
 
+    @override_settings(FTL_DELETE_DISABLED_ACCOUNTS=False)
+    def test_disable_account(self):
         management.call_command("disable_account", org_slug="to-delete-a")
 
         # org has been disabled
@@ -51,23 +51,13 @@ class AccountCommandsTests(TestCase):
         self.assertFalse(FTLOrg.objects.get(pk=self.org.pk).deleted)
 
         # org_no_delete was not
-        self.assertFalse(FTLDocument.objects.get(pk=doc_no_delete.pk).deleted)
-        self.assertTrue(FTLFolder.objects.filter(pk=folder_no_delete.pk).exists())
-        self.assertTrue(FTLUser.objects.get(pk=user_no_delete_a.pk).is_active)
-        self.assertTrue(list(devices_for_user(user_no_delete_a, confirmed=None)))
+        self.assertFalse(FTLDocument.objects.get(pk=self.doc_no_delete.pk).deleted)
+        self.assertTrue(FTLFolder.objects.filter(pk=self.folder_no_delete.pk).exists())
+        self.assertTrue(FTLUser.objects.get(pk=self.user_no_delete_a.pk).is_active)
+        self.assertTrue(list(devices_for_user(self.user_no_delete_a, confirmed=None)))
 
     @override_settings(FTL_DELETE_DISABLED_ACCOUNTS=True)
     def test_delete_account(self):
-        org_no_delete = setup_org("Not delete A", "not-delete-a")
-        user_no_delete_a = setup_admin(org_no_delete, "admin@no-delete.com", "bbb")
-        folder_no_delete = setup_folder(org_no_delete, "Folder 1 no delete")
-        doc_no_delete = setup_document(
-            org_no_delete, user_no_delete_a, folder_no_delete, title="Doc 1 no delete"
-        )
-        devices_no_delete = setup_2fa_static_device(
-            user_no_delete_a, codes_list=["AA1222", "BB1222"]
-        )
-
         management.call_command("disable_account", org_slug="to-delete-a")
 
         # org has been disabled
@@ -78,11 +68,11 @@ class AccountCommandsTests(TestCase):
         self.assertTrue(FTLOrg.objects.get(pk=self.org.pk).deleted)
 
         # org_no_delete was not
-        self.assertFalse(FTLDocument.objects.get(pk=doc_no_delete.pk).deleted)
-        self.assertTrue(FTLFolder.objects.filter(pk=folder_no_delete.pk).exists())
-        self.assertTrue(FTLUser.objects.get(pk=user_no_delete_a.pk).is_active)
-        self.assertTrue(list(devices_for_user(user_no_delete_a, confirmed=None)))
-        self.assertFalse(FTLOrg.objects.get(pk=org_no_delete.pk).deleted)
+        self.assertFalse(FTLDocument.objects.get(pk=self.doc_no_delete.pk).deleted)
+        self.assertTrue(FTLFolder.objects.filter(pk=self.folder_no_delete.pk).exists())
+        self.assertTrue(FTLUser.objects.get(pk=self.user_no_delete_a.pk).is_active)
+        self.assertTrue(list(devices_for_user(self.user_no_delete_a, confirmed=None)))
+        self.assertFalse(FTLOrg.objects.get(pk=self.org_no_delete.pk).deleted)
 
     @patch.object(post_account_disable, "send")
     @patch.object(pre_account_disable, "send")
