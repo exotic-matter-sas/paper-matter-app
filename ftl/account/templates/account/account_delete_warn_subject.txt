@@ -2,5 +2,5 @@
 {% load i18n %}
 
 {% block content %}
-{% blocktrans %}your Paper Matter account has been deleted{% endblocktrans %}
+{% blocktrans %}Your Paper Matter account has been deleted{% endblocktrans %}
 {% endblock %}

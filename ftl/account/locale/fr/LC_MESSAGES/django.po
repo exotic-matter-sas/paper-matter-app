@@ -114,8 +114,8 @@ msgstr ""
 " Nous sommes désolés que le service n'ait pas été à la hauteur :(.\n"
 
 #: .\account\templates\account\account_delete_warn_subject.txt:5
-msgid "your Paper Matter account has been deleted"
-msgstr "votre compte Paper Matter a été supprimé"
+msgid "Your Paper Matter account has been deleted"
+msgstr "Votre compte Paper Matter a été supprimé"
 
 #: .\account\templates\account\account_email.html:8
 msgid "Change your email"
