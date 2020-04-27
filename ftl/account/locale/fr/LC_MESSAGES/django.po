@@ -44,8 +44,8 @@ msgid "Two factor authentication"
 msgstr "Authentification à deux facteurs"
 
 #: .\account\templates\account\account_base.html:103
-msgid "Data export"
-msgstr "Exporter ses données"
+msgid "Data import / export"
+msgstr "Import / export des données"
 
 #: .\account\templates\account\account_base.html:106
 msgid "Delete account"
