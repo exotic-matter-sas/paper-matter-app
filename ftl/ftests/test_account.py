@@ -208,7 +208,7 @@ class StaticDevice2FATests(LoginPage, AccountPages):
         self.assertIn(set_name, self.get_elem_text(self.emergency_codes_divs))
 
         # User logout
-        self.get_elem(self.logout_button).click()
+        self.visit(LoginPage.logout_url)
 
         # Remove middleware mock, to restore check pages
         self.middleware_patcher.stop()
@@ -316,8 +316,7 @@ class StaticDevice2FATests(LoginPage, AccountPages):
         self.assertIn(new_set_name, self.get_elem_text(self.emergency_codes_divs))
 
         # User logout
-        self.get_elem(self.logout_button).click()
-        self.wait_for_elem_to_disappear(self.logout_button)
+        self.visit(LoginPage.logout_url)
 
         # Remove middleware mock, to restore check pages
         self.middleware_patcher.stop()
@@ -356,7 +355,7 @@ class StaticDevice2FATests(LoginPage, AccountPages):
             self.get_elem(self.emergency_codes_divs)
 
         # User logout
-        self.get_elem(self.logout_button).click()
+        self.visit(LoginPage.logout_url)
 
         # Remove middleware mock, to restore check pages
         self.middleware_patcher.stop()
@@ -415,7 +414,7 @@ class TotpDevice2FATests(LoginPage, AccountPages):
         self.assertIn("not confirmed", self.get_elem_text(self.auth_app_divs).lower())
 
         # User logout
-        self.get_elem(self.logout_button).click()
+        self.visit(LoginPage.logout_url)
 
         # Remove middleware mock, to restore check pages
         self.middleware_patcher.stop()
@@ -466,7 +465,7 @@ class TotpDevice2FATests(LoginPage, AccountPages):
         )
 
         # User logout
-        self.get_elem(self.logout_button).click()
+        self.visit(LoginPage.logout_url)
 
         # Remove middleware mock, to restore check pages
         self.middleware_patcher.stop()
@@ -555,8 +554,7 @@ class TotpDevice2FATests(LoginPage, AccountPages):
         self.assertIn(new_device_name, self.get_elem_text(self.auth_app_divs))
 
         # User logout
-        self.get_elem(self.logout_button).click()
-        self.wait_for_elem_to_disappear(self.logout_button)
+        self.visit(LoginPage.logout_url)
 
         # Remove middleware mock, to restore check pages
         self.middleware_patcher.stop()
@@ -587,7 +585,7 @@ class TotpDevice2FATests(LoginPage, AccountPages):
             self.get_elem(self.auth_app_divs)
 
         # User logout
-        self.get_elem(self.logout_button).click()
+        self.visit(LoginPage.logout_url)
 
         # Remove middleware mock, to restore check pages
         self.middleware_patcher.stop()
@@ -660,8 +658,7 @@ class Fido2Device2FATests(LoginPage, AccountPages):
             self.get_elem(self.security_key_divs)
 
         # User logout
-        self.get_elem(self.logout_button).click()
-        self.wait_for_elem_to_disappear(self.logout_button)
+        self.visit(LoginPage.logout_url)
 
         # Remove middleware mock, to restore check pages
         self.middleware_patcher.stop()
@@ -687,7 +684,7 @@ class Fido2Device2FATests(LoginPage, AccountPages):
         self.assertIn(key_name, self.get_elem_text(self.security_key_divs))
 
         # User logout
-        self.get_elem(self.logout_button).click()
+        self.visit(LoginPage.logout_url)
 
         # Remove middleware mock, to restore check pages
         self.middleware_patcher.stop()
@@ -740,7 +737,7 @@ class Fido2Device2FATests(LoginPage, AccountPages):
             self.get_elem(self.security_key_divs)
 
         # User logout
-        self.get_elem(self.logout_button).click()
+        self.visit(LoginPage.logout_url)
 
         # Remove middleware mock, to restore check pages
         self.middleware_patcher.stop()

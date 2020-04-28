@@ -10,7 +10,7 @@
         <b-col>
           <FTLUpload
             :currentFolder="getCurrentFolder"
-            @event-new-upload="documentsCreated"
+            @event-new-upload="documentsCreatedExtended"
           />
         </b-col>
       </b-row>
@@ -479,6 +479,21 @@ export default {
         .catch((error) => {
           this.mixinAlert(this.$t("Could not open this folder."), true);
         });
+    },
+
+    documentsCreatedExtended: function (event) {
+      const doc = event.doc;
+      // Only add document to interface if we are in the same folder, this should allow the user to navigate while uploading
+      if (this.folder) {
+        if (parseInt(this.folder, 10) === doc.ftl_folder) {
+          this.documentsCreated(event);
+        }
+      } else {
+        if (!doc.ftl_folder) {
+          // In root folder and document has no folder
+          this.documentsCreated(event);
+        }
+      }
     },
 
     updateDocuments: function () {

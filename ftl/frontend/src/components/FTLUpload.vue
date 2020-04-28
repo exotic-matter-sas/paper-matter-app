@@ -133,6 +133,8 @@ export default {
     uploadDocument: async function () {
       let vi = this;
       vi.uploading = true;
+      // Non reactive copy, avoid uploading in wrong folder while the user is navigating.
+      const folderForUpload = Object.assign({}, vi.currentFolder);
 
       for (const file of vi.files) {
         let formData = new FormData();
@@ -141,8 +143,8 @@ export default {
 
         // parent folder
         let jsonData = {};
-        if (vi.currentFolder != null) {
-          jsonData = { ftl_folder: vi.currentFolder.id };
+        if (folderForUpload != null) {
+          jsonData = { ftl_folder: folderForUpload.id };
         }
         formData.append("json", JSON.stringify(jsonData));
 
