@@ -25,6 +25,7 @@ from django_otp.decorators import otp_required
 
 from account.forms import EmailSendForm, DeleteAccountForm
 from core.ftl_mixins import FTLUserContextDataMixin
+from core.models import FTLUser
 
 
 @method_decorator(login_required, name="dispatch")
@@ -179,6 +180,16 @@ class AccountDeleteView(SuccessMessageMixin, FTLUserContextDataMixin, FormView):
     success_message = _("Your account was deleted.")
     email_warn_subject = "account/account_delete_warn_subject.txt"
     email_warn_body = "account/account_delete_warn_body.txt"
+
+    def get_context_data(self, **kwargs):
+        context_ = super().get_context_data(**kwargs)
+
+        count_admins = FTLUser.objects.filter(is_superuser=True).count()
+
+        if count_admins <= 1 and self.request.user.is_superuser:
+            context_["last_admin_no_delete"] = True
+
+        return context_
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()

@@ -9,47 +9,56 @@
                 <strong>{% trans 'Your are about to delete your Paper Matter account' %}</strong>
             </h3>
 
-            <p class="alert alert-danger">
-                {% blocktrans %}Every documents and folders will be immediately marked for deletion and the account will
-                    be deactivated. Be aware that the <b>email you used to register will not be accepted for a new
-                    account</b>.
-                {% endblocktrans %}
-            </p>
-
-            <p class="font-italic">
-                {% url 'account_import_export' as export_url %}
-                {% blocktrans %}Please <a href="{{ export_url }}">export your documents</a> before proceeding as this process is
-                    not reversible.
-                {% endblocktrans %}
-            </p>
-
-            <form id="account-delete-form" action="" method="post">
-                {% csrf_token %}
-
-                <div class="form-group my-2">
-                    <input id="password" name="password" type="password" class="form-control my-1"
-                           placeholder="{% trans 'Password' %}" required>
-                    <small class="form-text text-muted">
-                        {% trans 'Please provide your account password to continue' %}
-                    </small>
-                </div>
-                {% if form.password.errors %}
-                    <div class="my-4 alert alert-danger">
-                        {% if form.password.errors %}
-                            {% for error in form.password.errors %}
-                                <spa>{{ error|escape }}</spa>
-                            {% endfor %}
-                        {% endif %}
-                    </div>
-                {% endif %}
-
-                <p class="text-center">
-                    <button type="submit" class="btn btn-danger my-4 btn float-right">
-                        {% trans 'Delete my account immediately' %}
-                    </button>
+            {% if last_admin_no_delete %}
+                <strong>
+                    {% blocktrans %}
+                        Error: you can't delete this account as it holds the last administrator of your Paper Matter
+                        instance. To delete it, please login to the admin panel and create a new administrator, then come
+                        back here to delete this account.
+                    {% endblocktrans %}
+                </strong>
+            {% else %}
+                <p class="alert alert-danger">
+                    {% blocktrans %}Every document and folders will be immediately marked for deletion and the account
+                        will be deactivated. Be aware that the <b>email you used to register will not be accepted for
+                        a new account</b>.
+                    {% endblocktrans %}
                 </p>
 
-            </form>
+                <p class="font-italic">
+                    {% url 'account_import_export' as export_url %}
+                    {% blocktrans %}Please <a href="{{ export_url }}">export your documents</a> before proceeding as
+                        this process is not reversible.
+                    {% endblocktrans %}
+                </p>
+
+                <form id="account-delete-form" action="" method="post">
+                    {% csrf_token %}
+
+                    <div class="form-group my-2">
+                        <input id="password" name="password" type="password" class="form-control my-1"
+                               placeholder="{% trans 'Password' %}" required>
+                        <small class="form-text text-muted">
+                            {% trans 'Please provide your account password to continue' %}
+                        </small>
+                    </div>
+                    {% if form.password.errors %}
+                        <div class="my-4 alert alert-danger">
+                            {% if form.password.errors %}
+                                {% for error in form.password.errors %}
+                                    <spa>{{ error|escape }}</spa>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    {% endif %}
+
+                    <p class="text-center">
+                        <button type="submit" class="btn btn-danger my-4 btn float-right">
+                            {% trans 'Delete my account immediately' %}
+                        </button>
+                    </p>
+                </form>
+            {% endif %}
         </div>
     </div>
 {% endblock %}
