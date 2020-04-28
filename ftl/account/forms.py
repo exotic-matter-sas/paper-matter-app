@@ -18,6 +18,8 @@ class EmailSendForm(forms.Form):
 
         email_hash_validator(c_email)
 
+        return c_email
+
 
 class DeleteAccountForm(forms.Form):
     password = forms.CharField(

@@ -4,7 +4,7 @@
 APP_NAME = "Paper Matter"
 
 ADMIN_EMAIL = "admin@localhost.com"
-ADMIN_PASS = "a123456!"
+ADMIN_PASS = "a123456!a"
 
 ORG_NAME_1 = "Exotic Matter"
 ORG_SLUG_1 = "exotic-matter"
@@ -12,10 +12,10 @@ ORG_NAME_2 = "Mozilla"
 ORG_SLUG_2 = "mozilla"
 
 USER1_EMAIL = "user1@localhost.com"
-USER1_PASS = "a123456!"
+USER1_PASS = "a123456!1"
 
 USER2_EMAIL = "user2@localhost.com"
-USER2_PASS = "a123456!"
+USER2_PASS = "a123456!2"
 
 DOCUMENT1_TITLE = "test"
 DOCUMENT1_NOTE = "Document 1 note"
