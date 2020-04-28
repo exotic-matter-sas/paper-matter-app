@@ -326,10 +326,10 @@ FTL_SUPPORTED_DOCUMENTS_TYPES = [
 """
 Delete disabled accounts from instance
 =======================
-When the user requests a deletion of his/her account, we disable it and anonymize the account by default. Set to True to
-completely remove the account from the database.
+When the user requests a deletion of his/her account, we completely remove the account from the database by default.
+Set to False to disable it and anonymize the account.
 """
-FTL_DELETE_DISABLED_ACCOUNTS = False
+FTL_DELETE_DISABLED_ACCOUNTS = True
 FTL_SUFFIX_DELETED_ACCOUNT = "@disabled.pm.app"  # No need to change this
 FTL_SUFFIX_DELETED_ORG = "-disabled"  # No need to change this
 
