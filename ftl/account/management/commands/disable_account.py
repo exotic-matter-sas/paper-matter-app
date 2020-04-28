@@ -60,6 +60,8 @@ class Command(BaseCommand):
             user.first_name = ""
             user.last_name = ""
             user.is_active = False
+            user.is_staff = False
+            user.is_superuser = False
             user.set_unusable_password()
             user.save()
 
