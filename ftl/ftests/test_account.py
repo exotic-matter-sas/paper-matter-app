@@ -195,8 +195,7 @@ class BasicAccountPagesTests(LoginPage, AccountPages):
 
         # Can't delete the last administrator
         self.assertIn(
-            "holds the last administrator",
-            self.get_elem_text("body"),
+            "holds the last administrator", self.get_elem_text("body"),
         )
 
 
