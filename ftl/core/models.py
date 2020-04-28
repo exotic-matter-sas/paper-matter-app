@@ -1,5 +1,6 @@
 #  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
+import hashlib
 import logging
 import pathlib
 import uuid
@@ -9,6 +10,7 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import User, AbstractUser, Permission
 from django.contrib.postgres.fields.citext import CICharField
 from django.contrib.postgres.search import SearchVectorField
+from django.core.exceptions import ValidationError
 from django.core.validators import EmailValidator
 from django.db import models
 from django.db.models import UniqueConstraint, Q
@@ -42,11 +44,31 @@ def _get_name_thumb(instance, filename):
     return "uploads/" + str(uuid.uuid4()) + pathlib.Path(filename).suffix
 
 
+def email_hash_validator(email):
+    h = hashlib.md5()
+    h.update(email.encode("utf-8"))
+
+    if FTLUser.objects.filter(
+        email=f"{h.hexdigest()}{settings.FTL_SUFFIX_DELETED_ACCOUNT}"
+    ).exists():
+        raise ValidationError(_("This email can't be used."), "used_before")
+
+
+def org_hash_validator(org_slug):
+    h = hashlib.md5()
+    h.update(org_slug.encode("utf-8"))
+
+    if FTLOrg.objects.filter(
+        slug=f"{h.hexdigest()}{settings.FTL_SUFFIX_DELETED_ORG}"
+    ).exists():
+        raise ValidationError(_("This organization can't be used."), "used_before")
+
+
 # FTP orgs
 class FTLOrg(models.Model):
     name = models.CharField(max_length=128)
     slug = models.SlugField(
-        max_length=128, unique=True
+        max_length=128, unique=True, validators=[org_hash_validator]
     )  # URL of the org (unique auto create an index)
     deleted = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
@@ -106,7 +128,7 @@ class FTLUser(AbstractUser):
         help_text=_(
             "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only."
         ),
-        validators=[email_validator],
+        validators=[email_validator, email_hash_validator],
         error_messages={"unique": _("A user with that email already exists."),},
     )
 

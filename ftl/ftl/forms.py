@@ -1,9 +1,7 @@
 #  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
-import hashlib
 
 from django import forms
-from django.conf import settings
 from django.contrib.auth.forms import AuthenticationForm
 from django.forms import EmailField
 from django.utils.text import slugify
@@ -15,6 +13,7 @@ from core.models import (
     FTLOrg,
     permissions_names_to_objects,
     FTL_PERMISSIONS_USER,
+    org_hash_validator,
 )
 
 
@@ -25,16 +24,6 @@ class FTLUserCreationForm(RegistrationForm):
 
     class Meta(RegistrationForm.Meta):
         model = FTLUser
-
-    def clean_email(self):
-        email_ = self.cleaned_data["email"]
-        h = hashlib.md5()
-        h.update(email_.encode("utf-8"))
-        if FTLUser.objects.filter(
-            email=f"{h.hexdigest()}{settings.FTL_SUFFIX_DELETED_ACCOUNT}"
-        ).exists():
-            raise forms.ValidationError(_("This email can't be used."))
-        return email_
 
 
 class FTLCreateOrgAndFTLUser(RegistrationForm):
@@ -67,20 +56,15 @@ class FTLCreateOrgAndFTLUser(RegistrationForm):
     def clean_org_name(self):
         name_ = self.cleaned_data["org_name"]
         slug = slugify(name_)
-        org_exists = FTLOrg.objects.filter(slug=slug)
-        if org_exists:
-            raise forms.ValidationError(_("Organization already exists"))
-        return name_
 
-    def clean_email(self):
-        email_ = self.cleaned_data["email"]
-        h = hashlib.md5()
-        h.update(email_.encode("utf-8"))
-        if FTLUser.objects.filter(
-            email=f"{h.hexdigest()}{settings.FTL_SUFFIX_DELETED_ACCOUNT}"
-        ).exists():
-            raise forms.ValidationError(_("This email can't be used."))
-        return email_
+        if FTLOrg.objects.filter(slug=slug).exists():
+            raise forms.ValidationError(_("Organization already exists"))
+
+        # Validators in model are not called automatically. They are only if used with ModelForm.
+        # Here the model associated with ModelForm is FTLUser, so we have to manually validate the org slug.
+        org_hash_validator(slug)
+
+        return name_
 
     def save(self, commit=True):
         user = super().save(commit=False)

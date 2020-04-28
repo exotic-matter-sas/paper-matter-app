@@ -25,7 +25,6 @@ from django_otp.decorators import otp_required
 
 from account.forms import EmailSendForm, DeleteAccountForm
 from core.ftl_mixins import FTLUserContextDataMixin
-from core.models import FTLUser
 
 
 @method_decorator(login_required, name="dispatch")
@@ -58,10 +57,6 @@ class AccountEmailChangeView(SuccessMessageMixin, FTLUserContextDataMixin, FormV
 
     def form_valid(self, form):
         email_ = form.cleaned_data["email"]
-
-        if FTLUser.objects.filter(email=email_).exists():
-            form.add_error("email", _("Email is already used by someone else."))
-            return super().form_invalid(form)
 
         # Encode new email and sign it
         activation_key = signing.dumps(

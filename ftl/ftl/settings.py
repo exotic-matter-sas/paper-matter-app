@@ -331,6 +331,7 @@ completely remove the account from the database.
 """
 FTL_DELETE_DISABLED_ACCOUNTS = False
 FTL_SUFFIX_DELETED_ACCOUNT = "@disabled.pm.app"  # No need to change this
+FTL_SUFFIX_DELETED_ORG = "-disabled"  # No need to change this
 
 
 # ==================================================

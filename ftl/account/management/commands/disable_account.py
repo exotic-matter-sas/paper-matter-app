@@ -5,7 +5,6 @@ import hashlib
 from django.conf import settings
 from django.core.management import BaseCommand
 from django.utils.crypto import get_random_string
-from django.utils.text import slugify
 from django_otp import devices_for_user
 from oauth2_provider.models import get_application_model
 
@@ -54,13 +53,9 @@ class Command(BaseCommand):
             # Delete oauth2 app and tokens
             get_application_model().objects.filter(user=user).delete()
 
-            # Disable or delete user
-            if delete_account:
-                user.email = f"{get_random_string(32)}@disabled.pm.app"
-            else:
-                m = hashlib.md5()
-                m.update(user.email.encode("utf-8"))
-                user.email = f"{m.hexdigest()}@disabled.pm.app"
+            m = hashlib.md5()
+            m.update(user.email.encode("utf-8"))
+            user.email = f"{m.hexdigest()}{settings.FTL_SUFFIX_DELETED_ACCOUNT}"
 
             user.first_name = ""
             user.last_name = ""
@@ -68,8 +63,10 @@ class Command(BaseCommand):
             user.set_unusable_password()
             user.save()
 
-        org.name = get_random_string(length=32)
-        org.slug = slugify(org.name)
+        org.name = get_random_string(32)
+        m = hashlib.md5()
+        m.update(org.slug.encode("utf-8"))
+        org.slug = f"{m.hexdigest()}{settings.FTL_SUFFIX_DELETED_ORG}"
         org.deleted = delete_account  # flag for deletion later
         org.save()
 
