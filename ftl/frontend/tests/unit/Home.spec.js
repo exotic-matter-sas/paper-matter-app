@@ -95,6 +95,7 @@ const mockedBreadcrumb = jest.fn();
 const mockedUnselectAllDocumentsCommit = jest.fn();
 const mockedChangeSortHomeCommit = jest.fn();
 const mockedDocumentsCreated = jest.fn();
+const mockedDocumentsCreatedExtended = jest.fn();
 const mockedNavigateToDocument = jest.fn();
 const mockedDocumentClosed = jest.fn();
 const mockedDocumentUpdated = jest.fn();
@@ -656,6 +657,7 @@ describe("Home event handling", () => {
           folderCreated: mockedFolderCreated,
           updateFolders: mockedUpdateFolders,
           documentsCreated: mockedDocumentsCreated,
+          documentsCreatedExtended: mockedDocumentsCreatedExtended,
           navigateToDocument: mockedNavigateToDocument,
           documentClosed: mockedDocumentClosed,
           documentUpdated: mockedDocumentUpdated,
@@ -696,7 +698,7 @@ describe("Home event handling", () => {
     await flushPromises(); // wait all pending promises are resolved/rejected
 
     // then
-    expect(mockedDocumentsCreated).toHaveBeenCalledTimes(1);
+    expect(mockedDocumentsCreatedExtended).toHaveBeenCalledTimes(1);
   });
 
   it("event-open-doc call navigateToDocument", async () => {
