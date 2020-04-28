@@ -310,7 +310,7 @@ class UserSetupAll2FA(LoginPage, AccountPages):
         self.assertEqual(1, len(self.get_elems(self.security_key_divs)))
 
         # User logout and login
-        self.get_elem(self.logout_button).click()
+        self.visit(LoginPage.logout_url)
         self.middleware_patcher.stop()  # Remove middleware mock, to restore check pages
         self.log_user()
 
