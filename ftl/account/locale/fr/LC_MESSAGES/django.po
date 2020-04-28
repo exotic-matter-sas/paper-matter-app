@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-14 16:44+0000\n"
-"PO-Revision-Date: 2020-04-11 16:41+0200\n"
+"POT-Creation-Date: 2020-04-28 14:30+0200\n"
+"PO-Revision-Date: 2020-04-28 14:33+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -18,12 +18,16 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.3\n"
 
-#: .\account\forms.py:14 .\account\templates\account\account_base.html:93
-#: .\account\templates\account\account_delete.html:27
+#: .\account\forms.py:17
+msgid "Email is already used by someone else."
+msgstr "Cette adresse est déjà utilisée."
+
+#: .\account\forms.py:26 .\account\templates\account\account_base.html:93
+#: .\account\templates\account\account_delete.html:40
 msgid "Password"
 msgstr "Mot de passe"
 
-#: .\account\forms.py:26
+#: .\account\forms.py:38
 msgid "Incorrect password"
 msgstr "Mot de passe incorrect"
 
@@ -69,43 +73,60 @@ msgstr ""
 "href=\"https://www.exotic-matter.fr\">Exotic <span class=\"highlight"
 "\">Matter</span></a>  en France."
 
-#: account/templates/account/account_delete.html:9
+#: .\account\templates\account\account_delete.html:9
 msgid "Your are about to delete your Paper Matter account"
 msgstr "Vous êtes sur le point de supprimer votre compte Paper Matter"
 
-#: account/templates/account/account_delete.html:13
+#: .\account\templates\account\account_delete.html:14
 msgid ""
-"Every documents and folders will be immediately marked for deletion and the "
-"account will\n"
-"                    be deactivated. Be aware that the <b>email you used to "
-"register will not be accepted for a new\n"
-"                    account</b>.\n"
-"                "
+"\n"
+"                        Error: you can't delete this account as it holds the "
+"last administrator of your Paper Matter\n"
+"                        instance. To delete it, please login to the admin "
+"panel and create a new administrator, then come\n"
+"                        back here to delete this account.\n"
+"                    "
+msgstr ""
+"\n"
+"Erreur: vous ne pouvez pas supprimer cet compte car c'est le dernier "
+"administrateur de l'instance Paper Matter. Pour supprimer ce compte, "
+"veuillez-vous connecter au panneau d'administration et créer un nouvel "
+"utilisateur administrateur. Ensuite revenez ici pour supprimer ce compte."
+
+#: .\account\templates\account\account_delete.html:22
+msgid ""
+"Every document and folders will be immediately marked for deletion and the "
+"account\n"
+"                        will be deactivated. Be aware that the <b>email you "
+"used to register will not be accepted for\n"
+"                        a new account</b>.\n"
+"                    "
 msgstr ""
 "Tous les documents et dossiers seront immédiatement marqués pour suppression "
 "et votre compte sera désactivé. Attention, <b>l'email que vous avez utilisé "
 "pour vous inscrire ne sera pas réutilisable pour la création  d'un nouveau "
 "compte.</b>"
 
-#: account/templates/account/account_delete.html:21
+#: .\account\templates\account\account_delete.html:30
+#, python-format
 msgid ""
 "Please <a href=\"%(export_url)s\">export your documents</a> before "
-"proceeding as this process is\n"
-"                    not reversible.\n"
-"                "
+"proceeding as\n"
+"                        this process is not reversible.\n"
+"                    "
 msgstr ""
-"Pensez à <a href=\"%(export_url)s\">exporter vos documents</a> avant de continuer car "
-"cette action est irréversible."
+"Pensez à <a href=\"%(export_url)s\">exporter vos documents</a> avant de "
+"continuer car cette action est irréversible."
 
-#: account/templates/account/account_delete.html:33
+#: .\account\templates\account\account_delete.html:42
 msgid "Please provide your account password to continue"
 msgstr "Veuillez indiquer votre mot de passe pour continuer"
 
-#: .\account\templates\account\account_delete.html:44
+#: .\account\templates\account\account_delete.html:57
 msgid "Delete my account immediately"
 msgstr "Supprimer mon compte immédiatement"
 
-#: account/templates/account/account_delete_warn_body.txt:5
+#: .\account\templates\account\account_delete_warn_body.txt:5
 msgid ""
 "As requested, your Paper Matter account has been purged and deleted.\n"
 "We are sorry that the service didn't meet your expectations :(.\n"
@@ -191,24 +212,24 @@ msgstr ""
 msgid "Account security: notice of email change"
 msgstr "Sécurité: notification de changement de l'adresse email"
 
-#: account/templates/account/account_import_export.html:8
+#: .\account\templates\account\account_import_export.html:8
 msgid "Import or export your documents"
 msgstr "Importez ou exportez vos documents"
 
-#: account/templates/account/account_import_export.html:10
+#: .\account\templates\account\account_import_export.html:10
 msgid ""
-"You can download the Import - Export software to easily import or export all your "
-"documents and their related metadata (title, note, date...)."
+"You can download the Import - Export software to easily import or export all "
+"your documents and their related metadata (title, note, date...)."
 msgstr ""
-"Vous pouvez télécharger le logiciel d'Import - Export pour importer ou exporter "
-"facilement tous vos documents et leurs métadonnées associées (titre, note, "
-"date...)."
+"Vous pouvez télécharger le logiciel d'Import - Export pour importer ou "
+"exporter facilement tous vos documents et leurs métadonnées associées "
+"(titre, note, date...)."
 
-#: account/templates/account/account_import_export.html:17
+#: .\account\templates\account\account_import_export.html:17
 msgid "Download import - export software"
 msgstr "Télécharger le logiciel d'import / export"
 
-#: account/templates/account/account_index.html:24
+#: .\account\templates\account\account_index.html:24
 msgid ""
 "\n"
 "                            Keep your contact email up-to-date\n"
@@ -311,8 +332,8 @@ msgid ""
 msgstr ""
 "\n"
 "Le mot de passe de votre compte Paper Matter a été mis à jour. Si vous "
-"n’avez pas demandé ce changement, veuillez IMMÉDIATEMENT réinitialisez "
-"votre mot de passe en utilisant la page \"Mot de passe oublié\".\n"
+"n’avez pas demandé ce changement, veuillez IMMÉDIATEMENT réinitialisez votre "
+"mot de passe en utilisant la page \"Mot de passe oublié\".\n"
 
 #: .\account\templates\account\account_password_warn_subject.txt:5
 msgid "Account security: notice of password change"
@@ -322,26 +343,22 @@ msgstr "Sécurité du compte : avis de changement de mot de passe"
 msgid "A confirmation email has been sent."
 msgstr "Un email de confirmation a été envoyé."
 
-#: .\account\views.py:63
-msgid "Email is already used by someone else."
-msgstr "Cette adresse est déjà utilisée."
-
-#: .\account\views.py:109
+#: .\account\views.py:105
 msgid "Email successfully updated."
 msgstr "L'adresse a été mise à jour."
 
-#: .\account\views.py:110
+#: .\account\views.py:106
 msgid "The link expired. Please try again."
 msgstr "Le lien de validation a expiré. Merci de réessayer."
 
-#: .\account\views.py:111
+#: .\account\views.py:107
 msgid "Could not validate your email. Please try again."
 msgstr "Impossible de valider votre adresse. Veuillez réessayer."
 
-#: .\account\views.py:148
+#: .\account\views.py:144
 msgid "Password updated!"
 msgstr "Mot de passe mis à jour !"
 
-#: .\account\views.py:175
+#: .\account\views.py:180
 msgid "Your account was deleted."
 msgstr "Votre compte a été supprimé."
