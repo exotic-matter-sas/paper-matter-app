@@ -42,11 +42,11 @@ msgstr "Un dossier ne peut être déplacé dans un des dossiers qu'il contient"
 msgid "Specified ftl_folder doesn't exist"
 msgstr "Le ftl_folder spécifié n'existe pas"
 
-#: .\core\errors.py:16
+#: core/errors.py:16
 msgid "Document has been corrupted during upload, please retry"
-msgstr ""
+msgstr "Le document a été corrumpu durant son envoi, veuillez réessayer"
 
-#: .\core\management\commands\import_docs.py:29
+#: core/management/commands/import_docs.py:29
 #, python-format
 msgid "Starting mass import for %(email)s from %(path)s"
 msgstr "Début de l'import de masse pour %(email)s depuis %(path)s"
