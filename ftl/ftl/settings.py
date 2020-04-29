@@ -324,7 +324,6 @@ FTL_SUPPORTED_DOCUMENTS_TYPES = [
 ]
 
 CELERY_BROKER_URL = "redis://localhost:6379"
-CELERY_WORKER_HIJACK_ROOT_LOGGER = False
 
 # ==================================================
 # No settings under this line
