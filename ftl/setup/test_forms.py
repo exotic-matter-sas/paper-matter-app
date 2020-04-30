@@ -47,9 +47,9 @@ class FtlAdminCreationFormTests(TestCase):
         form = FirstOrgAndAdminCreationForm(
             data={
                 "org_name": tv.ORG_NAME_1,
-                "email": tv.ADMIN_EMAIL,
-                "password1": tv.ADMIN_PASS,
-                "password2": tv.ADMIN_PASS,
+                "email": tv.ADMIN1_EMAIL,
+                "password1": tv.ADMIN1_PASS,
+                "password2": tv.ADMIN1_PASS,
             }
         )
 

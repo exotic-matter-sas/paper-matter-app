@@ -340,7 +340,7 @@ class UserSetupAll2FA(LoginPage, AccountPages):
             self.get_elem(self.delete_warning)
 
 
-class AccountDeletion(LoginPage, AccountPages):
+class AccountDeletion(LoginPage, AccountPages, AdminLoginPage, AdminHomePage):
     def setUp(self, **kwargs):
         # orgs, admin, users are already created
         super().setUp()
@@ -365,7 +365,35 @@ class AccountDeletion(LoginPage, AccountPages):
         )  # ensure mock is remove after each test, even if the test crash
         self.addCleanup(totp_time_setter.reset_mock, side_effect=True)
 
-        # user1 and user2 have added documents, folders, otp devices
+        # admin, user1 and user2 have added documents, folders, otp devices
+        self.admin_resources = {}
+        self.admin_resources["folder1"] = setup_folder(self.admin_org)
+        self.admin_resources["sub_folder1"] = setup_folder(
+            self.admin_org, parent=self.admin_resources["folder1"]
+        )
+        self.admin_resources["doc1"] = setup_document(
+            self.admin_org, ftl_user=self.admin, binary=setup_temporary_file().name
+        )
+        self.admin_resources["doc2"] = setup_document(
+            self.admin_org,
+            ftl_user=self.admin,
+            ftl_folder=self.admin_resources["folder1"],
+            binary=setup_temporary_file().name,
+        )
+        self.admin_resources["doc3"] = setup_document(
+            self.admin_org,
+            ftl_user=self.admin,
+            ftl_folder=self.admin_resources["sub_folder1"],
+            binary=setup_temporary_file().name,
+        )
+        self.admin_resources["totp_device"] = setup_2fa_totp_device(
+            self.admin, secret_key=TotpDevice2FATests.secret_key
+        )
+        self.admin_resources["fido2_device"] = setup_2fa_fido2_device(self.admin)
+        self.admin_resources["static_device"] = setup_2fa_static_device(
+            self.admin, codes_list=["AAA"]
+        )
+
         self.user1_resources = {}
         self.user1_resources["folder1"] = setup_folder(self.user1_org)
         self.user1_resources["sub_folder1"] = setup_folder(
@@ -420,17 +448,17 @@ class AccountDeletion(LoginPage, AccountPages):
             self.user2, codes_list=["AAA"]
         )
 
-        # user is already logged to account deletion page
-        self.visit(LoginPage.url)
-        self.log_user(user_num=1)
-        self.visit(AccountPages.delete_account_url)
-
     @patch.object(TOTP, "time", totp_time_property)
     @skipIf(
         settings.DEV_MODE and not NODE_SERVER_RUNNING,
         "Node not running, this test can't be run",
     )
     def test_all_user_resources_are_deleted(self):
+        # user is already logged to account deletion page
+        self.visit(LoginPage.url)
+        self.log_user(user_num=1)
+        self.visit(AccountPages.delete_account_url)
+
         # User submit account deletion form
         self.delete_account(tv.USER1_PASS)
 
@@ -454,5 +482,60 @@ class AccountDeletion(LoginPage, AccountPages):
                 resource.refresh_from_db()
 
         # All resources from user2 are still present
+        for resource in self.user2_resources.values():
+            resource.refresh_from_db()
+
+    @patch.object(TOTP, "time", totp_time_property)
+    @skipIf(
+        settings.DEV_MODE and not NODE_SERVER_RUNNING,
+        "Node not running, this test can't be run",
+        )
+    def test_unique_admin_can_create_a_second_admin_and_delete_its_account(self):
+        # Admin is already logged to account deletion page
+        self.visit(LoginPage.url)
+        self.log_user(email=tv.ADMIN1_EMAIL, password=tv.ADMIN1_PASS)
+        self.visit(AccountPages.delete_account_url)
+
+        # Admin try to delete its account but can't as he is the only instance admin
+        self.assertIn(
+            "holds the last administrator", self.get_elem_text(self.error_message),
+        )
+        with self.assertRaises(NoSuchElementException):
+            self.get_elem(self.submit_account_deletion)
+
+        # Admin go to admin panel and create a new org and admin user in this org
+        self.visit(AdminLoginPage.url)
+        self.get_elem(self.create_org_link).click()
+        admin_org2_slug = self.create_org('admin-org2', 'admin-org2')
+        self.visit(AdminLoginPage.url)
+        self.get_elem(self.create_user_link).click()
+        self.create_user(admin_org2_slug, tv.ADMIN2_EMAIL, tv.ADMIN2_PASS, is_admin=True)
+
+        # Admin come back to account deletion page and can now delete its account
+        self.visit(AccountPages.delete_account_url)
+        self.delete_account(tv.ADMIN1_PASS)
+
+        # Faking the hourly /etc/cron.hourly/batch-delete-documents CRON call
+        self.client.get(
+            f"/crons/{CRON_SECRET_KEY}/batch-delete-documents",
+            HTTP_X_APPENGINE_CRON="true",
+        )
+        # Faking the daily CRON /etc/cron.daily/batch-delete-orgs
+        self.client.get(
+            f"/crons-account/{CRON_SECRET_KEY}/batch-delete-orgs",
+            HTTP_X_APPENGINE_CRON="true",
+        )
+
+        # All resources from Admin are deleted
+        for resource in self.admin_resources.values():
+            with self.assertRaises(
+                resource.DoesNotExist,
+                msg="All Admin resources should have been deleted alongside with its account",
+            ):
+                resource.refresh_from_db()
+
+        # All resources from user1 and user2 are still present
+        for resource in self.user1_resources.values():
+            resource.refresh_from_db()
         for resource in self.user2_resources.values():
             resource.refresh_from_db()

@@ -32,7 +32,7 @@ class SetupPages(BasePage):
         submit_input = self.get_elem(self.admin_submit_input)
 
         org_name_input.send_keys(tv.ORG_NAME_1)
-        email_address_input.send_keys(tv.ADMIN_EMAIL)
-        password_input.send_keys(tv.ADMIN_PASS)
-        password_confirmation_input.send_keys(tv.ADMIN_PASS)
+        email_address_input.send_keys(tv.ADMIN1_EMAIL)
+        password_input.send_keys(tv.ADMIN1_PASS)
+        password_confirmation_input.send_keys(tv.ADMIN1_PASS)
         submit_input.click()

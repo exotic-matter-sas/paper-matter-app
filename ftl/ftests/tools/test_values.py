@@ -3,8 +3,11 @@
 
 APP_NAME = "Paper Matter"
 
-ADMIN_EMAIL = "admin@localhost.com"
-ADMIN_PASS = "a123456!a"
+ADMIN1_EMAIL = "admin@localhost.com"
+ADMIN1_PASS = "a123456!a"
+
+ADMIN2_EMAIL = "admin2@localhost.com"
+ADMIN2_PASS = "a123456!b"
 
 ORG_NAME_1 = "Exotic Matter"
 ORG_SLUG_1 = "exotic-matter"

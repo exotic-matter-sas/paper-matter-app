@@ -21,6 +21,6 @@ class AdminLoginPage(BasePage):
         password_input = self.get_elem(self.admin_login_password_input)
         submit_input = self.get_elem(self.admin_login_submit_input)
 
-        email_input.send_keys(tv.ADMIN_EMAIL)
-        password_input.send_keys(tv.ADMIN_PASS)
+        email_input.send_keys(tv.ADMIN1_EMAIL)
+        password_input.send_keys(tv.ADMIN1_PASS)
         submit_input.click()

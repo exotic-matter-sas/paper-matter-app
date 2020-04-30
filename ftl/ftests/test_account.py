@@ -51,9 +51,8 @@ class BasicAccountPagesTests(LoginPage, AccountPages):
         super().setUp()
         self.org = setup_org()
         setup_admin(self.org)
-        # self.user = setup_user(self.org)
         self.visit(LoginPage.url)
-        self.log_user(email=tv.ADMIN_EMAIL, password=tv.ADMIN_PASS)
+        self.log_user(email=tv.ADMIN1_EMAIL, password=tv.ADMIN1_PASS)
 
     @skipIf(
         settings.DEV_MODE and not NODE_SERVER_RUNNING,
@@ -75,7 +74,7 @@ class BasicAccountPagesTests(LoginPage, AccountPages):
         self.assertEqual(len(mail.outbox), 2)
 
         # Check notice email
-        self.assertIn(tv.ADMIN_EMAIL, mail.outbox[0].to)
+        self.assertIn(tv.ADMIN1_EMAIL, mail.outbox[0].to)
         self.assertIn("notice of email change", mail.outbox[0].subject.lower())
         self.assertIn(
             "Someone requested to change the email address", mail.outbox[0].body
@@ -101,7 +100,7 @@ class BasicAccountPagesTests(LoginPage, AccountPages):
         self.visit(LoginPage.logout_url)
 
         # Ensure can't log with old email
-        self.log_user(email=tv.ADMIN_EMAIL, password=tv.ADMIN_PASS)
+        self.log_user(email=tv.ADMIN1_EMAIL, password=tv.ADMIN1_PASS)
         self.assertIn(
             "email address and password",
             self.get_elem_text(self.login_failed_div),
@@ -109,7 +108,7 @@ class BasicAccountPagesTests(LoginPage, AccountPages):
         )
 
         # User is able to login using its new email
-        self.log_user(email=tv.USER2_EMAIL, password=tv.ADMIN_PASS)
+        self.log_user(email=tv.USER2_EMAIL, password=tv.ADMIN1_PASS)
         self.assertIn(
             "home", self.head_title, "User login should success using its new email"
         )
@@ -124,12 +123,12 @@ class BasicAccountPagesTests(LoginPage, AccountPages):
 
         # Enter form data
         new_password = "new password"
-        self.update_password(tv.ADMIN_PASS, new_password)
+        self.update_password(tv.ADMIN1_PASS, new_password)
 
         self.assertIn("Password updated!", self.get_elem_text("div.text-center"))
 
         # Check notice email
-        self.assertIn(tv.ADMIN_EMAIL, mail.outbox[0].to)
+        self.assertIn(tv.ADMIN1_EMAIL, mail.outbox[0].to)
         self.assertIn("notice of password change", mail.outbox[0].subject.lower())
         self.assertIn(
             "The password of your Paper Matter account has been updated",
@@ -141,7 +140,7 @@ class BasicAccountPagesTests(LoginPage, AccountPages):
 
         # Ensure can't log with old password
         self.visit(LoginPage.url)
-        self.log_user(email=tv.ADMIN_EMAIL, password=tv.ADMIN_PASS)
+        self.log_user(email=tv.ADMIN1_EMAIL, password=tv.ADMIN1_PASS)
         self.assertIn(
             "email address and password",
             self.get_elem_text(self.login_failed_div),
@@ -149,7 +148,7 @@ class BasicAccountPagesTests(LoginPage, AccountPages):
         )
 
         # User is able to login using its new password
-        self.log_user(email=tv.ADMIN_EMAIL, password=new_password)
+        self.log_user(email=tv.ADMIN1_EMAIL, password=new_password)
         self.assertIn(
             "home", self.head_title, "User login should success using its new password"
         )
@@ -158,12 +157,11 @@ class BasicAccountPagesTests(LoginPage, AccountPages):
         settings.DEV_MODE and not NODE_SERVER_RUNNING,
         "Node not running, this test can't be run",
     )
-    def test_delete_account(self):
-        self.visit(LoginPage.logout_url)
-
-        # Create second org as we can't delete the first org with an administrator
+    def test_user_can_delete_account(self):
+        # Create an org and a non admin user, and login with it instead of the admin user
         second_org = setup_org("second org", "second-org")
         setup_user(second_org, "user@second.org", "aa")
+        self.visit(LoginPage.logout_url)
         self.log_user(email="user@second.org", password="aa")
 
         # User go to account management / password change
@@ -189,13 +187,43 @@ class BasicAccountPagesTests(LoginPage, AccountPages):
         settings.DEV_MODE and not NODE_SERVER_RUNNING,
         "Node not running, this test can't be run",
     )
-    def test_cant_delete_last_admin(self):
+    def test_unique_admin_cant_delete_account(self):
         # User go to account management / password change
         self.visit(AccountPages.delete_account_url)
 
         # Can't delete the last administrator
         self.assertIn(
-            "holds the last administrator", self.get_elem_text("body"),
+            "holds the last administrator", self.get_elem_text(self.error_message),
+        )
+        with self.assertRaises(NoSuchElementException):
+            self.get_elem(self.submit_account_deletion)
+
+    @skipIf(
+        settings.DEV_MODE and not NODE_SERVER_RUNNING,
+        "Node not running, this test can't be run",
+        )
+    def test_non_unique_admin_can_delete_account(self):
+        # Create a second admin in a second org
+        second_org = setup_org("second org", "second-org")
+        setup_admin(second_org, "user@second.org", "aa")
+
+        # Admin go to account management / password change
+        self.visit(AccountPages.delete_account_url)
+
+        # Admin submit password to confirm account deletion
+        self.delete_account(tv.ADMIN1_PASS)
+
+        # Admin has been redirected to login page with a message confirming the deletion
+        self.assertIn(
+            "account was deleted", self.get_elem_text(self.success_notification)
+        )
+
+        # Admin is no more able to login as a user to its deleted account
+        self.log_user(email=tv.ADMIN1_EMAIL, password=tv.ADMIN1_PASS)
+        self.assertIn(
+            "email address and password",
+            self.get_elem_text(self.login_failed_div),
+            "Admin login should failed as its account should be deleted",
         )
 
 

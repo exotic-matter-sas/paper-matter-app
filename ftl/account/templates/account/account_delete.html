@@ -10,13 +10,13 @@
             </h3>
 
             {% if last_admin_no_delete %}
-                <strong>
+                <p class="alert alert-danger">
                     {% blocktrans %}
-                        Error: you can't delete this account as it holds the last administrator of your Paper Matter
-                        instance. To delete it, please login to the admin panel and create a new administrator, then come
-                        back here to delete this account.
+                        <b>Error:</b> you can't delete this account as it holds the last administrator of your Paper
+                        Matter instance. To delete it, please login to the admin panel and create a new administrator,
+                        then come back here to delete this account.
                     {% endblocktrans %}
-                </strong>
+                </p>
             {% else %}
                 <p class="alert alert-danger">
                     {% blocktrans %}Every document and folders will be immediately marked for deletion and the account

@@ -54,7 +54,7 @@ class AdminLoginTests(AdminLoginPage):
 
         # Django admin display properly
         self.assertIn(
-            f"welcome, {tv.ADMIN_EMAIL}",
+            f"welcome, {tv.ADMIN1_EMAIL}",
             self.get_elem(self.django_admin_success_message).text.lower(),
         )
 
