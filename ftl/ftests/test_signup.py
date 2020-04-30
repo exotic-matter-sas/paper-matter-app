@@ -15,7 +15,7 @@ class SignupPageTests(SignupPages):
     def setUp(self, **kwargs):
         # first org and admin already created
         super().setUp()
-        self.admin_org = setup_org('admin org', 'admin-org')
+        self.admin_org = setup_org("admin org", "admin-org")
         setup_admin(org=self.admin_org)
 
     def test_first_user_signup(self):

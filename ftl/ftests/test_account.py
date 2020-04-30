@@ -161,7 +161,7 @@ class DeleteAccountPageTests(LoginPage, AccountPages, SignupPages):
     def setUp(self, **kwargs):
         # first org, admin, user are already created, user is already logged on home page
         super().setUp()
-        self.admin_org = setup_org(name='admin org 1', slug="admin-org-1")
+        self.admin_org = setup_org(name="admin org 1", slug="admin-org-1")
         setup_admin(self.admin_org)
         self.user_org = setup_org()
         self.user = setup_user(self.user_org)
@@ -171,7 +171,7 @@ class DeleteAccountPageTests(LoginPage, AccountPages, SignupPages):
     @skipIf(
         settings.DEV_MODE and not NODE_SERVER_RUNNING,
         "Node not running, this test can't be run",
-        )
+    )
     def test_user_can_delete_its_account(self):
         # normal user is logged
         self.log_user()
@@ -198,7 +198,7 @@ class DeleteAccountPageTests(LoginPage, AccountPages, SignupPages):
     @skipIf(
         settings.DEV_MODE and not NODE_SERVER_RUNNING,
         "Node not running, this test can't be run",
-        )
+    )
     def test_unique_admin_cant_delete_its_account(self):
         # admin user is logged
         self.log_user(email=tv.ADMIN1_EMAIL, password=tv.ADMIN1_PASS)
@@ -216,7 +216,7 @@ class DeleteAccountPageTests(LoginPage, AccountPages, SignupPages):
     @skipIf(
         settings.DEV_MODE and not NODE_SERVER_RUNNING,
         "Node not running, this test can't be run",
-        )
+    )
     def test_non_unique_admin_can_delete_its_account(self):
         # Create a second admin in a second org
         admin_org2 = setup_org("admin org 2", "admin-org-2")
@@ -247,7 +247,7 @@ class DeleteAccountPageTests(LoginPage, AccountPages, SignupPages):
     @skipIf(
         settings.DEV_MODE and not NODE_SERVER_RUNNING,
         "Node not running, this test can't be run",
-        )
+    )
     def test_disabled_account_cant_be_reused_with_signup(self):
         # normal user is logged
         self.log_user()
@@ -274,14 +274,19 @@ class DeleteAccountPageTests(LoginPage, AccountPages, SignupPages):
         self.create_user()
 
         # Org field and email field display an error
-        self.assertIn('organization can\'t be used.', self.get_elem_text(self.org_error_message).lower())
-        self.assertIn('email can\'t be used', self.get_elem_text(self.email_error_message).lower())
+        self.assertIn(
+            "organization can't be used.",
+            self.get_elem_text(self.org_error_message).lower(),
+        )
+        self.assertIn(
+            "email can't be used", self.get_elem_text(self.email_error_message).lower()
+        )
 
     @override_settings(FTL_DELETE_DISABLED_ACCOUNTS=False)
     @skipIf(
         settings.DEV_MODE and not NODE_SERVER_RUNNING,
         "Node not running, this test can't be run",
-        )
+    )
     def test_disabled_user_email_cant_be_reused_with_email_update(self):
         # normal user is logged
         self.log_user()
@@ -313,13 +318,16 @@ class DeleteAccountPageTests(LoginPage, AccountPages, SignupPages):
         self.update_email(tv.USER1_PASS)
 
         # Org field and email field display an error
-        self.assertIn('enter a valid email address', self.get_elem_text(self.error_message).lower())
+        self.assertIn(
+            "enter a valid email address",
+            self.get_elem_text(self.error_message).lower(),
+        )
 
     @override_settings(FTL_DELETE_DISABLED_ACCOUNTS=True)
     @skipIf(
         settings.DEV_MODE and not NODE_SERVER_RUNNING,
         "Node not running, this test can't be run",
-        )
+    )
     def test_deleted_account_can_be_reused(self):
         # normal user is logged
         self.log_user()
