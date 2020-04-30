@@ -11,10 +11,12 @@
 
             {% if last_admin_no_delete %}
                 <p class="alert alert-danger">
+                    {% url 'admin:index' as admin_url %}
                     {% blocktrans %}
                         <b>Error:</b> you can't delete this account as it holds the last administrator of your Paper
-                        Matter instance. To delete it, please login to the admin panel and create a new administrator,
-                        then come back here to delete this account.
+                        Matter instance. To delete it, please login to the <a href="{{ admin_url }}" target="_blank">
+                        admin panel</a>, create a new user in a new organization and finally add the permissions "Staff status"
+                        and "Super user" to him. Then refresh this page to delete this account.
                     {% endblocktrans %}
                 </p>
             {% else %}
