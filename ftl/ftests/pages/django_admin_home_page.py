@@ -36,11 +36,19 @@ class AdminHomePage(BasePage):
 
         return slug
 
-    def create_user(self, org_slug=tv.ORG_SLUG_1, email=tv.USER1_EMAIL, password=tv.USER1_PASS, is_admin=False):
+    def create_user(
+        self,
+        org_slug=tv.ORG_SLUG_1,
+        email=tv.USER1_EMAIL,
+        password=tv.USER1_PASS,
+        is_admin=False,
+    ):
         org_name_select = self.get_elem(self.org_name_select)
         user_email_input = self.get_elem(self.user_email_input)
         user_password_input = self.get_elem(self.user_password_input)
-        user_password_confirmation_input = self.get_elem(self.user_password_confirmation_input)
+        user_password_confirmation_input = self.get_elem(
+            self.user_password_confirmation_input
+        )
         submit_input = self.get_elem(self.submit_input)
 
         Select(org_name_select).select_by_visible_text(org_slug)

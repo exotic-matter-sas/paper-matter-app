@@ -201,7 +201,7 @@ class BasicAccountPagesTests(LoginPage, AccountPages):
     @skipIf(
         settings.DEV_MODE and not NODE_SERVER_RUNNING,
         "Node not running, this test can't be run",
-        )
+    )
     def test_non_unique_admin_can_delete_account(self):
         # Create a second admin in a second org
         second_org = setup_org("second org", "second-org")

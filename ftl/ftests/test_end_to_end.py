@@ -489,7 +489,7 @@ class AccountDeletion(LoginPage, AccountPages, AdminLoginPage, AdminHomePage):
     @skipIf(
         settings.DEV_MODE and not NODE_SERVER_RUNNING,
         "Node not running, this test can't be run",
-        )
+    )
     def test_unique_admin_can_create_a_second_admin_and_delete_its_account(self):
         # Admin is already logged to account deletion page
         self.visit(LoginPage.url)
@@ -506,10 +506,12 @@ class AccountDeletion(LoginPage, AccountPages, AdminLoginPage, AdminHomePage):
         # Admin go to admin panel and create a new org and admin user in this org
         self.visit(AdminLoginPage.url)
         self.get_elem(self.create_org_link).click()
-        admin_org2_slug = self.create_org('admin-org2', 'admin-org2')
+        admin_org2_slug = self.create_org("admin-org2", "admin-org2")
         self.visit(AdminLoginPage.url)
         self.get_elem(self.create_user_link).click()
-        self.create_user(admin_org2_slug, tv.ADMIN2_EMAIL, tv.ADMIN2_PASS, is_admin=True)
+        self.create_user(
+            admin_org2_slug, tv.ADMIN2_EMAIL, tv.ADMIN2_PASS, is_admin=True
+        )
 
         # Admin come back to account deletion page and can now delete its account
         self.visit(AccountPages.delete_account_url)
