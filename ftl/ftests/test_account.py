@@ -248,7 +248,7 @@ class DeleteAccountPageTests(LoginPage, AccountPages, SignupPages):
         settings.DEV_MODE and not NODE_SERVER_RUNNING,
         "Node not running, this test can't be run",
         )
-    def test_disabled_account_cant_be_reused(self):
+    def test_disabled_account_cant_be_reused_with_signup(self):
         # normal user is logged
         self.log_user()
 
@@ -276,6 +276,44 @@ class DeleteAccountPageTests(LoginPage, AccountPages, SignupPages):
         # Org field and email field display an error
         self.assertIn('organization can\'t be used.', self.get_elem_text(self.org_error_message).lower())
         self.assertIn('email can\'t be used', self.get_elem_text(self.email_error_message).lower())
+
+    @override_settings(FTL_DELETE_DISABLED_ACCOUNTS=False)
+    @skipIf(
+        settings.DEV_MODE and not NODE_SERVER_RUNNING,
+        "Node not running, this test can't be run",
+        )
+    def test_disabled_user_email_cant_be_reused_with_email_update(self):
+        # normal user is logged
+        self.log_user()
+
+        # User go to account management / password change
+        self.visit(AccountPages.delete_account_url)
+
+        # User submit password to confirm account deletion
+        self.delete_account(tv.USER1_PASS)
+
+        # Faking the hourly /etc/cron.hourly/batch-delete-documents CRON call
+        self.client.get(
+            f"/crons/{CRON_SECRET_KEY}/batch-delete-documents",
+            HTTP_X_APPENGINE_CRON="true",
+        )
+        # Faking the daily CRON /etc/cron.daily/batch-delete-orgs
+        self.client.get(
+            f"/crons-account/{CRON_SECRET_KEY}/batch-delete-orgs",
+            HTTP_X_APPENGINE_CRON="true",
+        )
+
+        # Admin user login
+        self.log_user(email=tv.ADMIN1_EMAIL, password=tv.ADMIN1_PASS)
+
+        # Admin go to account management / email change
+        self.visit(AccountPages.update_email_url)
+
+        # And try to update its email using the same used by the disabled user
+        self.update_email(tv.USER1_PASS)
+
+        # Org field and email field display an error
+        self.assertIn('enter a valid email address', self.get_elem_text(self.error_message).lower())
 
     @override_settings(FTL_DELETE_DISABLED_ACCOUNTS=True)
     @skipIf(
