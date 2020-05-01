@@ -36,6 +36,9 @@ urlpatterns = [
     path("setup/", include("setup.urls")),
     path("app/", include("core.urls")),
     path("crons/" + settings.CRON_SECRET_KEY + "/", include("core.urls_crons")),
+    path(
+        "crons-account/" + settings.CRON_SECRET_KEY + "/", include("account.urls_crons")
+    ),
     path("signup/", views.CreateOrgAndFTLUser.as_view(), name="signup_org_user"),
     path("signup/success/", views.signup_success, name="signup_success"),
     # Disabled until multi users feature is ready

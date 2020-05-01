@@ -13,6 +13,7 @@ from core.models import (
     FTLOrg,
     permissions_names_to_objects,
     FTL_PERMISSIONS_USER,
+    org_hash_validator,
 )
 
 
@@ -55,9 +56,14 @@ class FTLCreateOrgAndFTLUser(RegistrationForm):
     def clean_org_name(self):
         name_ = self.cleaned_data["org_name"]
         slug = slugify(name_)
-        org_exists = FTLOrg.objects.filter(slug=slug)
-        if org_exists:
+
+        if FTLOrg.objects.filter(slug=slug).exists():
             raise forms.ValidationError(_("Organization already exists"))
+
+        # Validators in model are not called automatically. They are only if used with ModelForm.
+        # Here the model associated with ModelForm is FTLUser, so we have to manually validate the org slug.
+        org_hash_validator(slug)
+
         return name_
 
     def save(self, commit=True):

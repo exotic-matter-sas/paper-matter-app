@@ -39,8 +39,12 @@ from ftests.tools.setup_helpers import (
     setup_user,
     setup_2fa_fido2_device,
     setup_2fa_totp_device,
+    setup_document,
+    setup_folder,
+    setup_2fa_static_device,
+    setup_temporary_file,
 )
-from ftl.settings import BASE_DIR
+from ftl.settings import BASE_DIR, CRON_SECRET_KEY
 
 
 class InitialSetupTest(SetupPages, SignupPages, LoginPage, HomePage):
@@ -334,3 +338,206 @@ class UserSetupAll2FA(LoginPage, AccountPages):
         # There is no special warning about it, as there is auth app 2fa left
         with self.assertRaises(NoSuchElementException):
             self.get_elem(self.delete_warning)
+
+
+class AccountDeletion(LoginPage, AccountPages, AdminLoginPage, AdminHomePage):
+    def setUp(self, **kwargs):
+        # orgs, admin, users are already created
+        super().setUp()
+        self.admin_org = setup_org(name="admin-org", slug="admin-org")
+        self.admin = setup_admin(self.admin_org)
+        self.user1_org = setup_org(name=tv.ORG_NAME_1, slug=tv.ORG_SLUG_1)
+        self.user1 = setup_user(
+            self.user1_org, email=tv.USER1_EMAIL, password=tv.USER1_PASS
+        )
+        self.user2_org = setup_org(name=tv.ORG_NAME_2, slug=tv.ORG_SLUG_2)
+        self.user2 = setup_user(
+            self.user2_org, email=tv.USER2_EMAIL, password=tv.USER2_PASS
+        )
+
+        # mock OTPMiddleware._verify_user() to skip check page
+        self.middleware_patcher = patch.object(
+            OTPMiddleware, "_verify_user", mocked_verify_user
+        )
+        self.middleware_patcher.start()
+        self.addCleanup(
+            patch.stopall
+        )  # ensure mock is remove after each test, even if the test crash
+        self.addCleanup(totp_time_setter.reset_mock, side_effect=True)
+
+        # admin, user1 and user2 have added documents, folders, otp devices
+        self.admin_resources = {}
+        self.admin_resources["folder1"] = setup_folder(self.admin_org)
+        self.admin_resources["sub_folder1"] = setup_folder(
+            self.admin_org, parent=self.admin_resources["folder1"]
+        )
+        self.admin_resources["doc1"] = setup_document(
+            self.admin_org, ftl_user=self.admin, binary=setup_temporary_file().name
+        )
+        self.admin_resources["doc2"] = setup_document(
+            self.admin_org,
+            ftl_user=self.admin,
+            ftl_folder=self.admin_resources["folder1"],
+            binary=setup_temporary_file().name,
+        )
+        self.admin_resources["doc3"] = setup_document(
+            self.admin_org,
+            ftl_user=self.admin,
+            ftl_folder=self.admin_resources["sub_folder1"],
+            binary=setup_temporary_file().name,
+        )
+        self.admin_resources["totp_device"] = setup_2fa_totp_device(
+            self.admin, secret_key=TotpDevice2FATests.secret_key
+        )
+        self.admin_resources["fido2_device"] = setup_2fa_fido2_device(self.admin)
+        self.admin_resources["static_device"] = setup_2fa_static_device(
+            self.admin, codes_list=["AAA"]
+        )
+
+        self.user1_resources = {}
+        self.user1_resources["folder1"] = setup_folder(self.user1_org)
+        self.user1_resources["sub_folder1"] = setup_folder(
+            self.user1_org, parent=self.user1_resources["folder1"]
+        )
+        self.user1_resources["doc1"] = setup_document(
+            self.user1_org, ftl_user=self.user1, binary=setup_temporary_file().name
+        )
+        self.user1_resources["doc2"] = setup_document(
+            self.user1_org,
+            ftl_user=self.user1,
+            ftl_folder=self.user1_resources["folder1"],
+            binary=setup_temporary_file().name,
+        )
+        self.user1_resources["doc3"] = setup_document(
+            self.user1_org,
+            ftl_user=self.user1,
+            ftl_folder=self.user1_resources["sub_folder1"],
+            binary=setup_temporary_file().name,
+        )
+        self.user1_resources["totp_device"] = setup_2fa_totp_device(
+            self.user1, secret_key=TotpDevice2FATests.secret_key
+        )
+        self.user1_resources["fido2_device"] = setup_2fa_fido2_device(self.user1)
+        self.user1_resources["static_device"] = setup_2fa_static_device(
+            self.user1, codes_list=["AAA"]
+        )
+
+        self.user2_resources = {}
+        self.user2_resources["folder1"] = setup_folder(self.user2_org)
+        self.user2_resources["sub_folder1"] = setup_folder(
+            self.user2_org, parent=self.user2_resources["folder1"]
+        )
+        self.user2_resources["doc1"] = setup_document(
+            self.user2_org, ftl_user=self.user2
+        )
+        self.user2_resources["doc2"] = setup_document(
+            self.user2_org,
+            ftl_user=self.user2,
+            ftl_folder=self.user2_resources["folder1"],
+        )
+        self.user2_resources["doc3"] = setup_document(
+            self.user2_org,
+            ftl_user=self.user2,
+            ftl_folder=self.user2_resources["sub_folder1"],
+        )
+        self.user2_resources["totp_device"] = setup_2fa_totp_device(
+            self.user2, secret_key=TotpDevice2FATests.secret_key
+        )
+        self.user2_resources["fido2_device"] = setup_2fa_fido2_device(self.user2)
+        self.user2_resources["static_device"] = setup_2fa_static_device(
+            self.user2, codes_list=["AAA"]
+        )
+
+    @patch.object(TOTP, "time", totp_time_property)
+    @skipIf(
+        settings.DEV_MODE and not NODE_SERVER_RUNNING,
+        "Node not running, this test can't be run",
+    )
+    def test_all_user_resources_are_deleted(self):
+        # user is already logged to account deletion page
+        self.visit(LoginPage.url)
+        self.log_user(user_num=1)
+        self.visit(AccountPages.delete_account_url)
+
+        # User submit account deletion form
+        self.delete_account(tv.USER1_PASS)
+
+        # Faking the hourly /etc/cron.hourly/batch-delete-documents CRON call
+        self.client.get(
+            f"/crons/{CRON_SECRET_KEY}/batch-delete-documents",
+            HTTP_X_APPENGINE_CRON="true",
+        )
+        # Faking the daily CRON /etc/cron.daily/batch-delete-orgs
+        self.client.get(
+            f"/crons-account/{CRON_SECRET_KEY}/batch-delete-orgs",
+            HTTP_X_APPENGINE_CRON="true",
+        )
+
+        # All resources from user1 are deleted
+        for resource in self.user1_resources.values():
+            with self.assertRaises(
+                resource.DoesNotExist,
+                msg="All user1 resources should have been deleted alongside with its account",
+            ):
+                resource.refresh_from_db()
+
+        # All resources from user2 are still present
+        for resource in self.user2_resources.values():
+            resource.refresh_from_db()
+
+    @patch.object(TOTP, "time", totp_time_property)
+    @skipIf(
+        settings.DEV_MODE and not NODE_SERVER_RUNNING,
+        "Node not running, this test can't be run",
+    )
+    def test_unique_admin_can_create_a_second_admin_and_delete_its_account(self):
+        # Admin is already logged to account deletion page
+        self.visit(LoginPage.url)
+        self.log_user(email=tv.ADMIN1_EMAIL, password=tv.ADMIN1_PASS)
+        self.visit(AccountPages.delete_account_url)
+
+        # Admin try to delete its account but can't as he is the only instance admin
+        self.assertIn(
+            "holds the last administrator", self.get_elem_text(self.error_message),
+        )
+        with self.assertRaises(NoSuchElementException):
+            self.get_elem(self.submit_account_deletion)
+
+        # Admin go to admin panel and create a new org and admin user in this org
+        self.visit(AdminLoginPage.url)
+        self.get_elem(self.create_org_link).click()
+        admin_org2_slug = self.create_org("admin-org2", "admin-org2")
+        self.visit(AdminLoginPage.url)
+        self.get_elem(self.create_user_link).click()
+        self.create_user(
+            admin_org2_slug, tv.ADMIN2_EMAIL, tv.ADMIN2_PASS, is_admin=True
+        )
+
+        # Admin come back to account deletion page and can now delete its account
+        self.visit(AccountPages.delete_account_url)
+        self.delete_account(tv.ADMIN1_PASS)
+
+        # Faking the hourly /etc/cron.hourly/batch-delete-documents CRON call
+        self.client.get(
+            f"/crons/{CRON_SECRET_KEY}/batch-delete-documents",
+            HTTP_X_APPENGINE_CRON="true",
+        )
+        # Faking the daily CRON /etc/cron.daily/batch-delete-orgs
+        self.client.get(
+            f"/crons-account/{CRON_SECRET_KEY}/batch-delete-orgs",
+            HTTP_X_APPENGINE_CRON="true",
+        )
+
+        # All resources from Admin are deleted
+        for resource in self.admin_resources.values():
+            with self.assertRaises(
+                resource.DoesNotExist,
+                msg="All Admin resources should have been deleted alongside with its account",
+            ):
+                resource.refresh_from_db()
+
+        # All resources from user1 and user2 are still present
+        for resource in self.user1_resources.values():
+            resource.refresh_from_db()
+        for resource in self.user2_resources.values():
+            resource.refresh_from_db()

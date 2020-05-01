@@ -54,43 +54,6 @@ class AdminLoginTests(AdminLoginPage):
 
         # Django admin display properly
         self.assertIn(
-            f"welcome, {tv.ADMIN_EMAIL}",
+            f"welcome, {tv.ADMIN1_EMAIL}",
             self.get_elem(self.django_admin_success_message).text.lower(),
         )
-
-
-class FirstUserSignupTest(SignupPages):
-    @skip("Multi users feature disabled")
-    def test_user_can_signup_to_first_organization(self):
-        """User can signup to first organization"""
-        # Admin user have already setup org and admin
-        # User go to signup page
-        org = setup_org()
-        setup_admin(org)
-
-        self.visit_signup_page(org.slug)
-
-        # The name of the first organization is displayed and user can create his account
-        self.assertIn(tv.ORG_NAME_1, self.get_elem(self.page_title).text)
-        self.create_user()
-
-        # Success message appears when account creation is complete
-        self.assertIn(
-            "verify your email to activate your account",
-            self.get_elem(self.main_panel).text,
-        )
-
-
-class FirstUserLoginTest(LoginPage):
-    def test_user_can_access_login_page_of_first_organization(self):
-        """User access login page of first organization"""
-        org = setup_org()
-        setup_admin(org)
-        setup_user(org)
-
-        # First user display the login page
-        self.visit(self.url)
-
-        # The login page is properly displayed
-        login_header = self.get_elem(self.page_title).text
-        self.assertIn("login", login_header.lower())

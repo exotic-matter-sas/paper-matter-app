@@ -8,6 +8,7 @@ from unittest.mock import patch, Mock
 from django.conf import settings
 from django.core import mail
 from django.http import HttpResponse
+from django.test import override_settings
 from django_otp.middleware import OTPMiddleware
 from django_otp.oath import TOTP
 from selenium.common.exceptions import NoSuchElementException
@@ -15,6 +16,7 @@ from selenium.common.exceptions import NoSuchElementException
 from ftests.pages.account_pages import AccountPages
 from ftests.pages.base_page import NODE_SERVER_RUNNING
 from ftests.pages.home_page import HomePage
+from ftests.pages.signup_pages import SignupPages
 from ftests.pages.user_login_page import LoginPage
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import (
@@ -26,6 +28,7 @@ from ftests.tools.setup_helpers import (
     setup_2fa_fido2_device,
 )
 from ftl.otp_plugins.otp_ftl import views_fido2
+from ftl.settings import CRON_SECRET_KEY
 
 
 def mocked_verify_user(self, request, user):
@@ -51,9 +54,8 @@ class BasicAccountPagesTests(LoginPage, AccountPages):
         super().setUp()
         self.org = setup_org()
         setup_admin(self.org)
-        self.user = setup_user(self.org)
         self.visit(LoginPage.url)
-        self.log_user()
+        self.log_user(email=tv.ADMIN1_EMAIL, password=tv.ADMIN1_PASS)
 
     @skipIf(
         settings.DEV_MODE and not NODE_SERVER_RUNNING,
@@ -75,7 +77,7 @@ class BasicAccountPagesTests(LoginPage, AccountPages):
         self.assertEqual(len(mail.outbox), 2)
 
         # Check notice email
-        self.assertIn(self.user.email, mail.outbox[0].to)
+        self.assertIn(tv.ADMIN1_EMAIL, mail.outbox[0].to)
         self.assertIn("notice of email change", mail.outbox[0].subject.lower())
         self.assertIn(
             "Someone requested to change the email address", mail.outbox[0].body
@@ -101,7 +103,7 @@ class BasicAccountPagesTests(LoginPage, AccountPages):
         self.visit(LoginPage.logout_url)
 
         # Ensure can't log with old email
-        self.log_user()
+        self.log_user(email=tv.ADMIN1_EMAIL, password=tv.ADMIN1_PASS)
         self.assertIn(
             "email address and password",
             self.get_elem_text(self.login_failed_div),
@@ -109,7 +111,7 @@ class BasicAccountPagesTests(LoginPage, AccountPages):
         )
 
         # User is able to login using its new email
-        self.log_user(email=tv.USER2_EMAIL)
+        self.log_user(email=tv.USER2_EMAIL, password=tv.ADMIN1_PASS)
         self.assertIn(
             "home", self.head_title, "User login should success using its new email"
         )
@@ -124,12 +126,12 @@ class BasicAccountPagesTests(LoginPage, AccountPages):
 
         # Enter form data
         new_password = "new password"
-        self.update_password(tv.USER1_PASS, new_password)
+        self.update_password(tv.ADMIN1_PASS, new_password)
 
         self.assertIn("Password updated!", self.get_elem_text("div.text-center"))
 
         # Check notice email
-        self.assertIn(self.user.email, mail.outbox[0].to)
+        self.assertIn(tv.ADMIN1_EMAIL, mail.outbox[0].to)
         self.assertIn("notice of password change", mail.outbox[0].subject.lower())
         self.assertIn(
             "The password of your Paper Matter account has been updated",
@@ -141,7 +143,7 @@ class BasicAccountPagesTests(LoginPage, AccountPages):
 
         # Ensure can't log with old password
         self.visit(LoginPage.url)
-        self.log_user()
+        self.log_user(email=tv.ADMIN1_EMAIL, password=tv.ADMIN1_PASS)
         self.assertIn(
             "email address and password",
             self.get_elem_text(self.login_failed_div),
@@ -149,9 +151,212 @@ class BasicAccountPagesTests(LoginPage, AccountPages):
         )
 
         # User is able to login using its new password
-        self.log_user(password=new_password)
+        self.log_user(email=tv.ADMIN1_EMAIL, password=new_password)
         self.assertIn(
             "home", self.head_title, "User login should success using its new password"
+        )
+
+
+class DeleteAccountPageTests(LoginPage, AccountPages, SignupPages):
+    def setUp(self, **kwargs):
+        # first org, admin, user are already created, user is already logged on home page
+        super().setUp()
+        self.admin_org = setup_org(name="admin org 1", slug="admin-org-1")
+        setup_admin(self.admin_org)
+        self.user_org = setup_org()
+        self.user = setup_user(self.user_org)
+
+        self.visit(LoginPage.url)
+
+    @skipIf(
+        settings.DEV_MODE and not NODE_SERVER_RUNNING,
+        "Node not running, this test can't be run",
+    )
+    def test_user_can_delete_its_account(self):
+        # normal user is logged
+        self.log_user()
+
+        # User go to account management / password change
+        self.visit(AccountPages.delete_account_url)
+
+        # User submit password to confirm account deletion
+        self.delete_account(tv.USER1_PASS)
+
+        # User has been redirected to login page with a message confirming the deletion
+        self.assertIn(
+            "account was deleted", self.get_elem_text(self.success_notification)
+        )
+
+        # User is no more able to login to its deleted account
+        self.log_user()
+        self.assertIn(
+            "email address and password",
+            self.get_elem_text(self.login_failed_div),
+            "User login should failed as its account should be deleted",
+        )
+
+    @skipIf(
+        settings.DEV_MODE and not NODE_SERVER_RUNNING,
+        "Node not running, this test can't be run",
+    )
+    def test_unique_admin_cant_delete_its_account(self):
+        # admin user is logged
+        self.log_user(email=tv.ADMIN1_EMAIL, password=tv.ADMIN1_PASS)
+
+        # User go to account management / password change
+        self.visit(AccountPages.delete_account_url)
+
+        # Can't delete the last administrator
+        self.assertIn(
+            "holds the last administrator", self.get_elem_text(self.error_message),
+        )
+        with self.assertRaises(NoSuchElementException):
+            self.get_elem(self.submit_account_deletion)
+
+    @skipIf(
+        settings.DEV_MODE and not NODE_SERVER_RUNNING,
+        "Node not running, this test can't be run",
+    )
+    def test_non_unique_admin_can_delete_its_account(self):
+        # Create a second admin in a second org
+        admin_org2 = setup_org("admin org 2", "admin-org-2")
+        setup_admin(admin_org2, tv.ADMIN2_EMAIL, tv.ADMIN2_PASS)
+        # admin1 user is logged
+        self.log_user(email=tv.ADMIN1_EMAIL, password=tv.ADMIN1_PASS)
+
+        # Admin go to account management / password change
+        self.visit(AccountPages.delete_account_url)
+
+        # Admin submit password to confirm account deletion
+        self.delete_account(tv.ADMIN1_PASS)
+
+        # Admin has been redirected to login page with a message confirming the deletion
+        self.assertIn(
+            "account was deleted", self.get_elem_text(self.success_notification)
+        )
+
+        # Admin is no more able to login as a user to its deleted account
+        self.log_user(email=tv.ADMIN1_EMAIL, password=tv.ADMIN1_PASS)
+        self.assertIn(
+            "email address and password",
+            self.get_elem_text(self.login_failed_div),
+            "Admin login should failed as its account should be deleted",
+        )
+
+    @override_settings(FTL_DELETE_DISABLED_ACCOUNTS=False)
+    @skipIf(
+        settings.DEV_MODE and not NODE_SERVER_RUNNING,
+        "Node not running, this test can't be run",
+    )
+    def test_disabled_account_cant_be_reused_with_signup(self):
+        # normal user is logged
+        self.log_user()
+
+        # User go to account management / password change
+        self.visit(AccountPages.delete_account_url)
+
+        # User submit password to confirm account deletion
+        self.delete_account(tv.USER1_PASS)
+
+        # Faking the hourly /etc/cron.hourly/batch-delete-documents CRON call
+        self.client.get(
+            f"/crons/{CRON_SECRET_KEY}/batch-delete-documents",
+            HTTP_X_APPENGINE_CRON="true",
+        )
+        # Faking the daily CRON /etc/cron.daily/batch-delete-orgs
+        self.client.get(
+            f"/crons-account/{CRON_SECRET_KEY}/batch-delete-orgs",
+            HTTP_X_APPENGINE_CRON="true",
+        )
+
+        # User try to recreate its account using the same email and org name
+        self.visit(SignupPages.url)
+        self.create_user()
+
+        # Org field and email field display an error
+        self.assertIn(
+            "organization can't be used.",
+            self.get_elem_text(self.org_error_message).lower(),
+        )
+        self.assertIn(
+            "email can't be used", self.get_elem_text(self.email_error_message).lower()
+        )
+
+    @override_settings(FTL_DELETE_DISABLED_ACCOUNTS=False)
+    @skipIf(
+        settings.DEV_MODE and not NODE_SERVER_RUNNING,
+        "Node not running, this test can't be run",
+    )
+    def test_disabled_user_email_cant_be_reused_with_email_update(self):
+        # normal user is logged
+        self.log_user()
+
+        # User go to account management / password change
+        self.visit(AccountPages.delete_account_url)
+
+        # User submit password to confirm account deletion
+        self.delete_account(tv.USER1_PASS)
+
+        # Faking the hourly /etc/cron.hourly/batch-delete-documents CRON call
+        self.client.get(
+            f"/crons/{CRON_SECRET_KEY}/batch-delete-documents",
+            HTTP_X_APPENGINE_CRON="true",
+        )
+        # Faking the daily CRON /etc/cron.daily/batch-delete-orgs
+        self.client.get(
+            f"/crons-account/{CRON_SECRET_KEY}/batch-delete-orgs",
+            HTTP_X_APPENGINE_CRON="true",
+        )
+
+        # Admin user login
+        self.log_user(email=tv.ADMIN1_EMAIL, password=tv.ADMIN1_PASS)
+
+        # Admin go to account management / email change
+        self.visit(AccountPages.update_email_url)
+
+        # And try to update its email using the same used by the disabled user
+        self.update_email(tv.USER1_PASS)
+
+        # Org field and email field display an error
+        self.assertIn(
+            "enter a valid email address",
+            self.get_elem_text(self.error_message).lower(),
+        )
+
+    @override_settings(FTL_DELETE_DISABLED_ACCOUNTS=True)
+    @skipIf(
+        settings.DEV_MODE and not NODE_SERVER_RUNNING,
+        "Node not running, this test can't be run",
+    )
+    def test_deleted_account_can_be_reused(self):
+        # normal user is logged
+        self.log_user()
+
+        # User go to account management / password change
+        self.visit(AccountPages.delete_account_url)
+
+        # User submit password to confirm account deletion
+        self.delete_account(tv.USER1_PASS)
+
+        # Faking the hourly /etc/cron.hourly/batch-delete-documents CRON call
+        self.client.get(
+            f"/crons/{CRON_SECRET_KEY}/batch-delete-documents",
+            HTTP_X_APPENGINE_CRON="true",
+        )
+        # Faking the daily CRON /etc/cron.daily/batch-delete-orgs
+        self.client.get(
+            f"/crons-account/{CRON_SECRET_KEY}/batch-delete-orgs",
+            HTTP_X_APPENGINE_CRON="true",
+        )
+
+        # User try to recreate its account using the same email and org name
+        self.visit(SignupPages.url)
+        self.create_user()
+
+        # Account has been created
+        self.assertIn(
+            "verify your email inbox to activate your account",
+            self.get_elem(self.main_panel).text,
         )
 
 

@@ -6,9 +6,10 @@ from ftests.pages.base_page import BasePage
 
 class AccountPages(BasePage):
     index_url = "/accounts/"
-    update_email_url = "/accounts/email"
-    update_password_url = "/accounts/password"
+    update_email_url = "/accounts/email/"
+    update_password_url = "/accounts/password/"
     two_factors_authentication_url = "/accounts/2fa/"
+    delete_account_url = "/accounts/delete/"
 
     success_notification = ".alert.alert-success"
     error_notification = ".alert.alert-error"
@@ -63,6 +64,10 @@ class AccountPages(BasePage):
     check_pages_code_input = "#id_otp_token"
     # id_otp_device option
     check_pages_alternatives_list = "#alternatives-list li a"
+
+    # Delete account page
+    confirm_password_input = "#account-delete-form #password"
+    submit_account_deletion = '#account-delete-form [type="submit"]'
 
     def update_email(self, new_email):
         self.get_elem(self.new_email_input).send_keys(new_email)
@@ -125,3 +130,7 @@ class AccountPages(BasePage):
     def enter_2fa_code(self, code):
         self.get_elem(self.check_pages_code_input).send_keys(code)
         self.get_elem(self.confirm_button).click()
+
+    def delete_account(self, confirmation_password):
+        self.get_elem(self.confirm_password_input).send_keys(confirmation_password)
+        self.get_elem(self.submit_account_deletion).click()

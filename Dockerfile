@@ -11,6 +11,7 @@ WORKDIR /app
 RUN npm run build
 
 
+
 FROM python:3.7.4-slim
 # PORT is used by uwsgi config, it's mainly used by Heroku because they assign random port to app.
 ENV PORT 8000
@@ -49,6 +50,9 @@ RUN chmod 0700 /etc/cron.d/ftl
 
 ADD docker/batch-delete-documents.sh /etc/cron.hourly/batch-delete-documents
 RUN chmod 0700 /etc/cron.hourly/batch-delete-documents
+
+ADD docker/batch-delete-orgs.sh /etc/cron.daily/batch-delete-orgs
+RUN chmod 0700 /etc/cron.daily/batch-delete-orgs
 
 RUN python3 -m pip install -r /app/requirements.txt --no-cache-dir && \
  python3 -m pip install -r /app/requirements_deploy.txt --no-cache-dir

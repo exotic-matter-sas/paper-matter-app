@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-28 10:57+0000\n"
+"POT-Creation-Date: 2020-04-28 07:39+0000\n"
 "PO-Revision-Date: 2019-03-05 17:20+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,7 +18,11 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.3\n"
 
-#: .\ftl\forms.py:27
+#: ftl/forms.py:36 ftl/forms.py:82
+msgid "This email can't be used."
+msgstr "Cet email ne peut pas être utilisé."
+
+#: ftl/forms.py:46
 msgid "Organization name"
 msgstr "Nom de l'organisation"
 
@@ -95,7 +99,6 @@ msgid "Account could not be activated"
 msgstr "Le compte n'a pu être activé"
 
 #: ftl/templates/ftl/django_registration/activation_failed.html:8
-#: ftl/templates/ftl/django_registration/activation_failed.html:19
 msgid "We could not activate the account..."
 msgstr "Nous n'avons pu activer le compte..."
 
@@ -235,7 +238,8 @@ msgstr ""
 
 #: ftl/templates/ftl/registration/password_reset_email.html:8
 msgid "If you don't requested this change, you can ignore this email."
-msgstr "Si vous n'êtes pas à l'origine de la demande, vous pouvez ignorer cet email."
+msgstr ""
+"Si vous n'êtes pas à l'origine de la demande, vous pouvez ignorer cet email."
 
 #: ftl/templates/ftl/registration/password_reset_form.html:5
 #: ftl/templates/ftl/registration/password_reset_form.html:9

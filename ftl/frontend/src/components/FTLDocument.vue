@@ -47,7 +47,7 @@
           class="float-right download-button"
           variant="secondary"
           size="sm"
-          :href="'uploads/' + doc.pid"
+          :href="`uploads/${doc.pid}/`"
         >
           <font-awesome-icon :icon="getIcon" :alt="$t('Download')" />
         </b-button>
