@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-30 13:48+0000\n"
-"PO-Revision-Date: 2020-04-28 14:33+0200\n"
+"POT-Creation-Date: 2020-05-01 15:22+0200\n"
+"PO-Revision-Date: 2020-05-01 15:24+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -23,7 +23,7 @@ msgid "Email is already used by someone else."
 msgstr "Cette adresse est déjà utilisée."
 
 #: .\account\forms.py:26 .\account\templates\account\account_base.html:93
-#: .\account\templates\account\account_delete.html:40
+#: .\account\templates\account\account_delete.html:44
 msgid "Password"
 msgstr "Mot de passe"
 
@@ -77,27 +77,30 @@ msgstr ""
 msgid "Your are about to delete your Paper Matter account"
 msgstr "Vous êtes sur le point de supprimer votre compte Paper Matter"
 
-#: account/templates/account/account_delete.html:15
+#: .\account\templates\account\account_delete.html:16
+#, python-format
 msgid ""
 "\n"
 "                        <b>Error:</b> you can't delete this account as it "
 "holds the last administrator of your Paper\n"
-"                        Matter instance. To delete it, please login to the "
-"<a href=\"%(admin_url)s\" target=\"_blank\">\n"
-"                        admin panel</a>, create a new user in a new organization and "
-"finally add the permissions \"Staff status\"\n"
-"                        and \"Super user\" to him. Then refresh this page to "
-"delete this account.\n"
+"                        Matter instance. To delete it, please <a href="
+"\"%(signup_url)s\">create a new account</a> then\n"
+"                        login to the <a href=\"%(admin_url)s\" target="
+"\"_blank\">admin panel</a> and finally add\n"
+"                        the permissions \"Staff status\" and \"Super user\" "
+"to him. Then refresh this page to delete this\n"
+"                        account.\n"
 "                    "
 msgstr ""
 "\n"
 "<b>Erreur:</b> vous ne pouvez pas supprimer ce compte car c'est le dernier "
-"administrateur de l'instance Paper Matter. Pour le supprimer, "
-"connectez-vous au <a href=\"%(admin_url)s\" target=\"_blank\">panneau d'administration</a>,"
-" créez un nouvel utilisateur dans une nouvelle organisation et ajoutez lui les permissions \"Statut équipe\" et"
-" \"Statut super-utilisateur\". Raffraichissez ensuite cette page pour supprimer ce compte."
+"administrateur de l'instance Paper Matter. Pour le supprimer, <a href="
+"\"%(signup_url)s\">créez un nouveau compte</a> puis connectez-vous au <a "
+"href=\"%(admin_url)s\" target=\"_blank\">panneau d'administration</a> et "
+"ajoutez lui les permissions \"Statut équipe\" et \"Statut super-utilisateur"
+"\". Raffraichissez ensuite cette page pour supprimer ce compte."
 
-#: .\account\templates\account\account_delete.html:22
+#: .\account\templates\account\account_delete.html:26
 msgid ""
 "Every document and folders will be immediately marked for deletion and the "
 "account\n"
@@ -111,7 +114,7 @@ msgstr ""
 "pour vous inscrire ne sera pas réutilisable pour la création  d'un nouveau "
 "compte.</b>"
 
-#: .\account\templates\account\account_delete.html:30
+#: .\account\templates\account\account_delete.html:34
 #, python-format
 msgid ""
 "Please <a href=\"%(export_url)s\">export your documents</a> before "
@@ -122,11 +125,11 @@ msgstr ""
 "Pensez à <a href=\"%(export_url)s\">exporter vos documents</a> avant de "
 "continuer car cette action est irréversible."
 
-#: .\account\templates\account\account_delete.html:42
+#: .\account\templates\account\account_delete.html:46
 msgid "Please provide your account password to continue"
 msgstr "Veuillez indiquer votre mot de passe pour continuer"
 
-#: .\account\templates\account\account_delete.html:57
+#: .\account\templates\account\account_delete.html:61
 msgid "Delete my account immediately"
 msgstr "Supprimer mon compte immédiatement"
 
