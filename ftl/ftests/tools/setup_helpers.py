@@ -25,7 +25,7 @@ def setup_org(name=tv.ORG_NAME_1, slug=tv.ORG_SLUG_1):
     return FTLOrg.objects.create(name=name, slug=slug,)
 
 
-def setup_admin(org, email=tv.ADMIN_EMAIL, password=tv.ADMIN_PASS):
+def setup_admin(org, email=tv.ADMIN1_EMAIL, password=tv.ADMIN1_PASS):
     return FTLUser.objects.create_superuser(org=org, email=email, password=password,)
 
 

@@ -10,7 +10,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.sites.shortcuts import get_current_site
-from django.core import signing
+from django.core import signing, management
 from django.core.mail import send_mail
 from django.core.signing import SignatureExpired, BadSignature
 from django.http import HttpResponseRedirect
@@ -23,7 +23,7 @@ from django.views import View
 from django.views.generic import FormView
 from django_otp.decorators import otp_required
 
-from account.forms import EmailSendForm
+from account.forms import EmailSendForm, DeleteAccountForm
 from core.ftl_mixins import FTLUserContextDataMixin
 from core.models import FTLUser
 
@@ -58,10 +58,6 @@ class AccountEmailChangeView(SuccessMessageMixin, FTLUserContextDataMixin, FormV
 
     def form_valid(self, form):
         email_ = form.cleaned_data["email"]
-
-        if FTLUser.objects.filter(email=email_).exists():
-            form.add_error("email", _("Email is already used by someone else."))
-            return super().form_invalid(form)
 
         # Encode new email and sign it
         activation_key = signing.dumps(
@@ -151,6 +147,58 @@ class AccountPasswordView(
 
     def form_valid(self, form):
         # Email sent to the current address for notification
+        subject_warn = render_to_string(
+            template_name=self.email_warn_subject, context={}, request=self.request
+        )
+        subject_warn = "".join(subject_warn.splitlines())
+        message_warn = render_to_string(
+            template_name=self.email_warn_body, context={}, request=self.request
+        )
+
+        self.request.user.email_user(
+            subject_warn, message_warn, settings.DEFAULT_FROM_EMAIL
+        )
+
+        return super().form_valid(form)
+
+
+@method_decorator(login_required, name="dispatch")
+@method_decorator(otp_required(if_configured=True), name="dispatch")
+class AccountImportExportView(FTLUserContextDataMixin, View):
+    def get(self, request, *args, **kwargs):
+        return render(
+            request, "account/account_import_export.html", self.get_context_data()
+        )
+
+
+@method_decorator(login_required, name="dispatch")
+@method_decorator(otp_required(if_configured=True), name="dispatch")
+class AccountDeleteView(SuccessMessageMixin, FTLUserContextDataMixin, FormView):
+    template_name = "account/account_delete.html"
+    form_class = DeleteAccountForm
+    success_url = reverse_lazy("login")
+    success_message = _("Your account was deleted.")
+    email_warn_subject = "account/account_delete_warn_subject.txt"
+    email_warn_body = "account/account_delete_warn_body.txt"
+
+    def get_context_data(self, **kwargs):
+        context_ = super().get_context_data(**kwargs)
+
+        count_admins = FTLUser.objects.filter(is_superuser=True).count()
+
+        if count_admins <= 1 and self.request.user.is_superuser:
+            context_["last_admin_no_delete"] = True
+
+        return context_
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+    def form_valid(self, form):
+        management.call_command("disable_account", org_slug=self.request.user.org.slug)
+
         subject_warn = render_to_string(
             template_name=self.email_warn_subject, context={}, request=self.request
         )

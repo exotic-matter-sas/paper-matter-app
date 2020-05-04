@@ -73,7 +73,7 @@ class DownloadDocumentTests(TestCase):
         doc = setup_document(self.org, self.user)
         setup_authenticated_session(self.client, self.org, self.user)
 
-        response = self.client.get(f"/app/uploads/{doc.pid}")
+        response = self.client.get(f"/app/uploads/{doc.pid}/")
 
         with open(doc.binary.path, "rb") as uploaded_doc:
             self.assertEqual(uploaded_doc.read(), response.content)
@@ -83,7 +83,7 @@ class DownloadDocumentTests(TestCase):
         doc = setup_document(self.org, self.user)
 
         # Trying to download the document when not logged returns an error
-        download_url = f"/app/uploads/{doc.pid}"
+        download_url = f"/app/uploads/{doc.pid}/"
         response = self.client.get(download_url)
         self.assertEqual(response.status_code, 403)
 
@@ -97,7 +97,7 @@ class DownloadDocumentTests(TestCase):
         setup_authenticated_session(self.client, org_2, user_2)
 
         # Trying to download the document of first org with a user of second org returns a 404
-        response = self.client.get(f"/app/uploads/{doc.pid}")
+        response = self.client.get(f"/app/uploads/{doc.pid}/")
         self.assertEqual(response.status_code, 404)
 
 

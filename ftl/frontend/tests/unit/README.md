@@ -154,7 +154,7 @@ await flushPromises(); // test have to be async to use await
 expect(mockedMixinAlert).toHaveBeenCalledTimes(1);
 ```
 
-**Utility:** check computed logic and returned format.
+**Utility:** check that all possible errors are properly catched.
 
 ## `.spec.js` template
 
@@ -174,7 +174,5 @@ To avoid common pitfalls (listed in next section), respect the structure used in
 
 ## Known issues
  - `wrapper.setData` cause "[Vue warn]: Avoid mutating a prop directly" warning during test run (no clean solution found to hide this warning for now)
- - `wrapper.setComputed` have been removed from vue-test-utils, it prevent us from restoring original computed at the start of the test (like was is done with methods), forcing us to shallowMount component in each test. But there could be better ways to do it, as described here: https://github.com/vuejs/vue-test-utils/issues/331#issuecomment-403087709
- - `watcher` seems non mocue warn]: Avoid mutating a prop directly" warning during test run (no clean solution found to hide this warning for now)
- - `wrapper.setComputed` have been removed from vue-test-utils, it prevent us from restoring original computed at the start of the test (like was is done with methods), forcing us to shallowMount component in each test. But there could be better ways to do it, as described here: https://github.com/vuejs/vue-test-utils/issues/331#issuecomment-403087709
- - `watcher` seems non mockable (when mocked using [the classic shallowMount options](https://vue-test-utils.vuejs.org/api/options.html#other-options), the way used for `methods`, it has no effect: mock functions aren't called)
+ - `wrapper.setComputed` have been removed from vue-test-utils, it prevent us from restoring original computed at the start of the test (like what is done with methods), forcing us to shallowMount component in each test. But there could be better ways to do it, as described here: https://github.com/vuejs/vue-test-utils/issues/331#issuecomment-403087709
+ - `watcher` seems non mockable (when mocked using [the classic shallowMount options](https://vue-test-utils.vuejs.org/api/options.html#other-options) or the the way used for `methods`, it has no effect: mock functions aren't called)

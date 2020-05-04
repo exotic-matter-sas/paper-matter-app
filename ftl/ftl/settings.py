@@ -323,6 +323,17 @@ FTL_SUPPORTED_DOCUMENTS_TYPES = [
     ".ods",
 ]
 
+"""
+Delete disabled accounts from instance
+=======================
+When the user requests a deletion of his/her account, we completely remove the account from the database by default.
+Set to False to disable it and anonymize the account.
+"""
+FTL_DELETE_DISABLED_ACCOUNTS = True
+FTL_SUFFIX_DELETED_ACCOUNT = "@disabled.pm.app"  # No need to change this
+FTL_SUFFIX_DELETED_ORG = "-disabled"  # No need to change this
+
+
 CELERY_BROKER_URL = "redis://localhost:6379"
 
 # ==================================================
