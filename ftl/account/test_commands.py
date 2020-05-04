@@ -9,6 +9,7 @@ from django_otp import devices_for_user
 from account.management.commands.disable_account import Command
 from account.signals import pre_account_disable, post_account_disable
 from core.models import FTLDocument, FTLFolder, FTLUser, FTLOrg
+from core.tasks import delete_document
 from ftests.tools.setup_helpers import (
     setup_org,
     setup_admin,
@@ -16,7 +17,6 @@ from ftests.tools.setup_helpers import (
     setup_folder,
     setup_2fa_static_device,
 )
-from ftl.settings import FTL_DELETE_DISABLED_ACCOUNTS
 
 
 class AccountCommandsTests(TestCase):
@@ -45,7 +45,8 @@ class AccountCommandsTests(TestCase):
         )
 
     @override_settings(FTL_DELETE_DISABLED_ACCOUNTS=False)
-    def test_disable_account(self):
+    @patch.object(delete_document, "delay")
+    def test_disable_account(self, mocked_delete_document):
         management.call_command("disable_account", org_slug="to-delete-a")
 
         # org has been disabled
@@ -62,7 +63,8 @@ class AccountCommandsTests(TestCase):
         self.assertTrue(list(devices_for_user(self.user_no_delete_a, confirmed=None)))
 
     @override_settings(FTL_DELETE_DISABLED_ACCOUNTS=True)
-    def test_delete_account(self):
+    @patch.object(delete_document, "delay")
+    def test_delete_account(self, mocked_delete_document):
         management.call_command("disable_account", org_slug="to-delete-a")
 
         # org has been disabled
@@ -79,9 +81,12 @@ class AccountCommandsTests(TestCase):
         self.assertTrue(list(devices_for_user(self.user_no_delete_a, confirmed=None)))
         self.assertFalse(FTLOrg.objects.get(pk=self.org_no_delete.pk).deleted)
 
+    @patch.object(delete_document, "delay")
     @patch.object(post_account_disable, "send")
     @patch.object(pre_account_disable, "send")
-    def test_signal_sent(self, mocked_signal_pre, mocked_signal_post):
+    def test_signal_sent(
+        self, mocked_signal_pre, mocked_signal_post, mocked_delete_document
+    ):
         management.call_command("disable_account", org_slug="to-delete-a")
         mocked_signal_pre.assert_called_once_with(sender=Command, org=self.org)
         mocked_signal_post.assert_called_once_with(sender=Command, org=self.org)
