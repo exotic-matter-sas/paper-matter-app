@@ -22,8 +22,7 @@ check-frontend:
   stage: code-analysis
   image: node:lts-alpine
   script:
-    - cd ftl/frontend
-    - npx prettier@2.0.4 . --check
+    - npx prettier@2.0.5 . --check
 
 check-backend:
   stage: code-analysis

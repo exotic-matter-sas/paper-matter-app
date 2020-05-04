@@ -9,6 +9,4 @@ repos:
     rev: 2.0.5
     hooks:
       - id: prettier
-        entry: prettier --check ftl/frontend
-        pass_filenames: false
-        require_serial: true
+        entry: prettier --check
