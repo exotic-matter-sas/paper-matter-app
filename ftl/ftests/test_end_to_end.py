@@ -191,7 +191,7 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage, DocumentViewerModal):
         second_document_title = "green"
         self.upload_documents(
             os.path.join(
-                BASE_DIR,
+                settings.BASE_DIR,
                 "ftests",
                 "tools",
                 "test_documents",
@@ -237,7 +237,11 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage, DocumentViewerModal):
         second_document_title = "green.pdf"
         self.upload_documents(
             os.path.join(
-                BASE_DIR, "ftests", "tools", "test_documents", second_document_title
+                settings.BASE_DIR,
+                "ftests",
+                "tools",
+                "test_documents",
+                second_document_title,
             )
         )
 
@@ -474,12 +478,12 @@ class AccountDeletion(LoginPage, AccountPages, AdminLoginPage, AdminHomePage):
 
         # Faking the hourly /etc/cron.hourly/batch-delete-documents CRON call
         self.client.get(
-            f"/crons/{CRON_SECRET_KEY}/batch-delete-documents",
+            f"/crons/{settings.CRON_SECRET_KEY}/batch-delete-documents",
             HTTP_X_APPENGINE_CRON="true",
         )
         # Faking the daily CRON /etc/cron.daily/batch-delete-orgs
         self.client.get(
-            f"/crons-account/{CRON_SECRET_KEY}/batch-delete-orgs",
+            f"/crons-account/{settings.CRON_SECRET_KEY}/batch-delete-orgs",
             HTTP_X_APPENGINE_CRON="true",
         )
 
@@ -529,12 +533,12 @@ class AccountDeletion(LoginPage, AccountPages, AdminLoginPage, AdminHomePage):
 
         # Faking the hourly /etc/cron.hourly/batch-delete-documents CRON call
         self.client.get(
-            f"/crons/{CRON_SECRET_KEY}/batch-delete-documents",
+            f"/crons/{settings.CRON_SECRET_KEY}/batch-delete-documents",
             HTTP_X_APPENGINE_CRON="true",
         )
         # Faking the daily CRON /etc/cron.daily/batch-delete-orgs
         self.client.get(
-            f"/crons-account/{CRON_SECRET_KEY}/batch-delete-orgs",
+            f"/crons-account/{settings.CRON_SECRET_KEY}/batch-delete-orgs",
             HTTP_X_APPENGINE_CRON="true",
         )
 
