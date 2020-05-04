@@ -44,6 +44,7 @@ from ftests.tools.setup_helpers import (
     setup_2fa_static_device,
     setup_temporary_file,
 )
+from ftl import celery
 from ftl.celery import app
 
 
@@ -467,7 +468,8 @@ class AccountDeletion(LoginPage, AccountPages, AdminLoginPage, AdminHomePage):
         settings.DEV_MODE and not NODE_SERVER_RUNNING,
         "Node not running, this test can't be run",
     )
-    def test_all_user_resources_are_deleted(self):
+    @patch.object(celery.app, "send_task")
+    def test_all_user_resources_are_deleted(self, mocked_send_task_delete_document):
         # user is already logged to account deletion page
         self.visit(LoginPage.url)
         self.log_user(user_num=1)
@@ -504,7 +506,10 @@ class AccountDeletion(LoginPage, AccountPages, AdminLoginPage, AdminHomePage):
         settings.DEV_MODE and not NODE_SERVER_RUNNING,
         "Node not running, this test can't be run",
     )
-    def test_unique_admin_can_create_a_second_admin_and_delete_its_account(self):
+    @patch.object(celery.app, "send_task")
+    def test_unique_admin_can_create_a_second_admin_and_delete_its_account(
+        self, mocked_send_task_delete_document
+    ):
         # Admin is already logged to account deletion page
         self.visit(LoginPage.url)
         self.log_user(email=tv.ADMIN1_EMAIL, password=tv.ADMIN1_PASS)
