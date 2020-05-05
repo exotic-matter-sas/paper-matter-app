@@ -1,0 +1,10 @@
+/*
+!ftl
+ftl/*
+!ftl/frontend
+ftl/frontend/__mock__
+ftl/frontend/dist
+ftl/frontend/node_modules
+ftl/frontend/pdfjs
+ftl/frontend/webpack-stats.json
+ftl/frontend/**/*.md

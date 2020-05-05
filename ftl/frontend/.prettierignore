@@ -1,6 +1,0 @@
-__mock__
-dist
-node_modules
-pdfjs
-webpack-stats.json
-*.md
