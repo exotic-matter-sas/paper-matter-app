@@ -1,0 +1,50 @@
+version: "2"
+
+services:
+  web:
+    image: exoticmatter/paper-matter-app
+    restart: always
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - "8000:8000"
+    environment:
+      DB_PASSWORD: "postgres"
+      CRON_SECRET_KEY: "CHANGEME"
+      DJANGO_SECRET_KEY: "CHANGEME"
+      ENABLE_WEB: "true"
+      # DJANGO_DEBUG: 'true'
+      # CRON_DISABLE: 'true'
+    volumes:
+      - "docs:/app/uploads"
+
+  worker:
+    image: exoticmatter/paper-matter-app
+    restart: always
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      DB_PASSWORD: "postgres"
+      CRON_DISABLE: "true"
+      ENABLE_WORKER: "true"
+      # NB_WORKERS: '1'
+    volumes:
+      - "docs:/app/uploads"
+
+  postgres:
+    image: postgres:11-alpine
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: "postgres"
+    volumes:
+      - "dbdata:/var/lib/postgresql/data"
+
+  redis:
+    image: redis:4-alpine
+    restart: always
+
+volumes:
+  dbdata:
+  docs:
