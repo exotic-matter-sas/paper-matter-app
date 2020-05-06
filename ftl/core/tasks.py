@@ -4,13 +4,13 @@
 from celery import shared_task
 
 from core.models import FTLDocument
-from core.processing.ftl_processing_celery import FTLDocumentProcessingCelery
+from core.processing.ftl_processing import FTLDocumentProcessing
 
 
 @shared_task
 def apply_ftl_processing(ftl_doc_pk, force):
     doc = FTLDocument.objects.get(pk=ftl_doc_pk)
-    ftl_document_processing_celery = FTLDocumentProcessingCelery()
+    ftl_document_processing_celery = FTLDocumentProcessing()
     ftl_document_processing_celery.apply_processing(doc, force)
 
 

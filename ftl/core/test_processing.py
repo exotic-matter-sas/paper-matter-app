@@ -46,15 +46,12 @@ class DocumentProcessingTests(TestCase):
         instance = self.processing.plugins[0]
         self.assertTrue(isinstance(instance, (ProcTest, FTLDocProcessingBase)))
 
-    def test_apply_processing(self):
-        self.processing.executor.submit = Mock()
-
+    @patch.object(FTLDocumentProcessing, "_handle")
+    def test_apply_processing(self, mocked_handle):
         doc = Mock()
         self.processing.apply_processing(doc)
 
-        self.processing.executor.submit.assert_called_once_with(
-            self.processing._handle, doc, False
-        )
+        mocked_handle.assert_called_once_with(doc, force=False)
 
     def test_apply_processing_force_boolean(self):
         mock_plugin_1 = Mock()
@@ -68,8 +65,7 @@ class DocumentProcessingTests(TestCase):
         self.processing.plugins.append(mock_plugin_2)
 
         doc = Mock()
-        future = self.processing.apply_processing(doc, True)
-        wait_futures([future], timeout=10)
+        self.processing.apply_processing(doc, True)
 
         mock_plugin_1.process.assert_called_once_with(doc, True)
         mock_plugin_2.process.assert_called_once_with(doc, True)
@@ -86,7 +82,7 @@ class DocumentProcessingTests(TestCase):
         self.processing.plugins.append(mock_plugin_2)
 
         doc = Mock()
-        future = self.processing.apply_processing(
+        self.processing.apply_processing(
             doc,
             [
                 ".".join(
@@ -97,8 +93,6 @@ class DocumentProcessingTests(TestCase):
                 ),
             ],
         )
-
-        wait_futures([future], timeout=10)
 
         mock_plugin_1.process.assert_called_once_with(doc, False)
         mock_plugin_2.process.assert_called_once_with(doc, True)
@@ -118,8 +112,7 @@ class DocumentProcessingTests(TestCase):
         self.processing.plugins.append(mock_plugin_3)
 
         doc = Mock()
-        future = self.processing.apply_processing(doc)
-        wait_futures([future], timeout=10)
+        self.processing.apply_processing(doc)
 
         mock_plugin_1.process.assert_called_once_with(doc, False)
         mock_plugin_2.process.assert_called_once_with(doc, False)
@@ -150,8 +143,7 @@ class DocumentProcessingTests(TestCase):
         # When
         logger_name = ftl_processing.logger.name
         with self.assertLogs(logger_name, "ERROR") as error_logs:
-            future = self.processing.apply_processing(mocked_doc)
-            wait_futures([future], timeout=10)
+            self.processing.apply_processing(mocked_doc)
 
         # Then
         self.assertEqual(len(error_logs.output), 3)
@@ -175,13 +167,11 @@ class DocumentProcessingTests(TestCase):
 
         doc1 = Mock()
         doc1.type = "application/pdf"
-        future = self.processing.apply_processing(doc1)
-        wait_futures([future], timeout=10)
+        self.processing.apply_processing(doc1)
 
         doc2 = Mock()
         doc2.type = "text/plain"
-        future = self.processing.apply_processing(doc2)
-        wait_futures([future], timeout=10)
+        self.processing.apply_processing(doc2)
 
         mock_plugin_1.process.assert_has_calls([call(doc1, False)])
         mock_plugin_2.process.assert_has_calls([call(doc1, False), call(doc2, False)])
@@ -190,8 +180,7 @@ class DocumentProcessingTests(TestCase):
     @patch.object(pre_ftl_processing, "send")
     def test_process_signal_sent(self, mocked_signal):
         doc = Mock()
-        processing = self.processing.apply_processing(doc)
-        wait_futures([processing], timeout=5)
+        self.processing.apply_processing(doc)
         mocked_signal.assert_called_once_with(sender=ProcTest, document=doc)
 
 
