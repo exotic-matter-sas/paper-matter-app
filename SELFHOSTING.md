@@ -25,6 +25,55 @@ Open your browser to http://localhost:8000 and follow instruction to create the 
 You should use the recommended Docker methods to backup the two volumes `dbdata` and `docs`.
 https://docs.docker.com/storage/volumes/#backup-restore-or-migrate-data-volumes
 
+### Available environment variable for Dockerfile
+
+#### Database configuration
+- DB_HOST = "postgres"
+- DB_PORT = "5432"
+- DB_NAME = "postgres"
+- DB_USER = "postgres"
+- DB_PASSWORD = "postgres"
+
+#### Default Django storage backend
+- DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
+
+#### Google Cloud JSON Service Account Key
+- GCS_CREDENTIALS_CONTENT = "CHANGEME"
+
+#### Google Cloud Storage bucket name
+- GCS_BUCKET_NAME = "CHANGEME"
+
+#### Configuration for outbound email
+- EMAIL_HOST = "CHANGEME"
+- EMAIL_HOST_USER = "CHANGEME"
+- EMAIL_HOST_PASSWORD = "CHANGEME"
+- EMAIL_PORT = "25"
+- DEFAULT_FROM_EMAIL = "noreply@localhost"
+
+#### Redis server for Celery
+- CELERY_REDIS_URL = "redis://redis:6379"
+
+#### CRON secret key (part of the URL)
+- CRON_SECRET_KEY = "CHANGEME"
+
+#### Django secret key
+- DJANGO_SECRET_KEY = "CHANGEME"
+
+#### Use image as web frontend
+- ENABLE_WEB = "true"
+
+#### Use image as worker
+- ENABLE_WORKER = "true"
+
+#### Enable Django DEBUG mode
+- DJANGO_DEBUG = "true"
+
+#### Disable internal cron engine in Docker image
+- CRON_DISABLE = "true"
+
+#### Number of workers to fork
+- NB_WORKERS = "1"
+
 ### Custom Paper Matter settings
 
 You need to bind mount the local path `/app/ftl/settings_local.py`
