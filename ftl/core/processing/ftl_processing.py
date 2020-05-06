@@ -2,9 +2,9 @@
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
 
 import logging
-from pydoc import locate
 
 from django.conf import settings
+from django.utils.module_loading import import_string
 
 from core.errors import PluginUnsupportedStorage
 from core.signals import pre_ftl_processing
@@ -26,34 +26,19 @@ class FTLDocumentProcessing:
     text extraction, etc.
     """
 
-    PLUGINS_PROC = list()
-
-    # Default list of configured plugins
-    for configured_plugin in settings.FTL_DOC_PROCESSING_PLUGINS:
-        my_class = locate(configured_plugin)
-
-        if (
-            issubclass(my_class, FTLDocProcessingBase)
-            and my_class is not FTLDocProcessingBase
-        ):
-            PLUGINS_PROC.append(my_class())
-
     def __init__(self, configured_plugins=None):
         self.plugins = list()
 
-        if configured_plugins:
-            for configured_plugin in configured_plugins:
-                my_class = locate(configured_plugin)
+        _configured_plugins = configured_plugins or settings.FTL_DOC_PROCESSING_PLUGINS
 
-                if (
-                    issubclass(my_class, FTLDocProcessingBase)
-                    and my_class is not FTLDocProcessingBase
-                ):
-                    self.plugins.append(my_class())
-        else:
-            self.plugins = (
-                FTLDocumentProcessing.PLUGINS_PROC
-            )  # Use existing plugins list
+        for configured_plugin in _configured_plugins:
+            my_class = import_string(configured_plugin)
+
+            if (
+                issubclass(my_class, FTLDocProcessingBase)
+                and my_class is not FTLDocProcessingBase
+            ):
+                self.plugins.append(my_class())
 
     def apply_processing(self, ftl_doc, force=False):
         self._handle(ftl_doc, force=force)
