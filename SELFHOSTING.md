@@ -9,11 +9,11 @@
 ### Basic deployment (no ocr)
 
 Copy the `docker-compose.sample.yml` to your directory of choice (don't forget to rename without `sample`).
-The configured default should work out of the box but it's recommended to change some settings like `CRON_SECRET_KEY` and `DB_PASSWORD`.
+The configured default should work out of the box but for security reasons it's highly recommended to change some settings like `CRON_SECRET_KEY` and `DB_PASSWORD`.
 
 Start the application with `docker-compose up -d`.
 
-Database migration is not automatic. You need to execute a migration command inside the container running the web frontend
+Then to setup the database, you need to execute a migration command inside the container running the web frontend
 code.
 
 Execute the following command to migrate database : `docker-compose exec web python3 manage.py migrate`.
@@ -76,8 +76,7 @@ https://docs.docker.com/storage/volumes/#backup-restore-or-migrate-data-volumes
 
 ### Custom Paper Matter settings
 
-You need to bind mount the local path `/app/ftl/settings_local.py`
-and customize you own copy of the file `docker/settings_local.py`.
+You need to bind mount the local path `/app/ftl/settings_local.py` and customize you own copy of the file `docker/settings_local.py`.
 
 ### Logs
 
