@@ -26,12 +26,10 @@ class FTLDocumentProcessing:
     text extraction, etc.
     """
 
-    def __init__(self, configured_plugins=None):
+    def __init__(self, configured_plugins=settings.FTL_DOC_PROCESSING_PLUGINS):
         self.plugins = list()
 
-        _configured_plugins = configured_plugins or settings.FTL_DOC_PROCESSING_PLUGINS
-
-        for configured_plugin in _configured_plugins:
+        for configured_plugin in configured_plugins:
             my_class = import_string(configured_plugin)
 
             if (
