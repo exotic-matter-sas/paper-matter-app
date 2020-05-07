@@ -8,8 +8,8 @@ from google.oauth2 import service_account
 
 from ftl.enums import FTLStorages, FTLPlugins
 
-SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "CHANGEME")
-CRON_SECRET_KEY = os.getenv("CRON_SECRET_KEY", "CHANGEME")
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "CHANGE-ME")
+CRON_SECRET_KEY = os.getenv("CRON_SECRET_KEY", "change-me")
 DEBUG = bool(strtobool(os.getenv("DJANGO_DEBUG", "False")))
 ALLOWED_HOSTS = ["*"]
 
@@ -94,9 +94,9 @@ if (
         GS_BUCKET_NAME = os.environ.get("GCS_BUCKET_NAME")
 
 # Email settings
-EMAIL_HOST = os.getenv("EMAIL_HOST")
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+EMAIL_HOST = os.getenv("EMAIL_HOST", "CHANGE-ME")
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "CHANGE-ME")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "CHANGE-ME")
 EMAIL_PORT = int(os.getenv("EMAIL_PORT", 25))
 EMAIL_USE_SSL = True
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "noreply@localhost")
