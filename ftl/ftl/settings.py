@@ -29,7 +29,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "NOT SECURE"
+SECRET_KEY = "NOT-SECURE"
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # Simple url string or URL encoded
@@ -228,8 +228,6 @@ WEBPACK_LOADER = {
         "STATS_FILE": os.path.join(BASE_DIR, "frontend", "webpack-stats.json"),
     }
 }
-
-ATOMIC_REQUESTS = True
 
 # Workaround for configuring a preloaded Tika
 os.environ["TIKA_SERVER_JAR"] = pathlib.Path(
