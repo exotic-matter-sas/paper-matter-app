@@ -25,9 +25,9 @@ ENV NB_WORKERS 1
 # Set time limit in seconds for each job in async processing (child process will be force restart)
 ENV JOB_TIMELIMIT 900
 
-# WARNING: NOT SECURED FOR PRODUCTION
+# WARNING: NOT SECURE FOR PRODUCTION
 # ===================================
-# For production use, additional ENV variables have to be define to update default security settings.
+# For production use, additional ENV variables have to be defined to update default security settings.
 # The recommanded way to set theses variables is to set them at runtime (either via docker command or via your
 # deployment method). Refer to SELFHOSTING.MD for the list of ENV available.
 

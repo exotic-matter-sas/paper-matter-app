@@ -10,12 +10,11 @@ services:
     ports:
       - "8000:8000"
     environment:
-      DB_PASSWORD: "postgres"
-      CRON_SECRET_KEY: "CHANGEME"
-      DJANGO_SECRET_KEY: "CHANGEME"
       ENABLE_WEB: "true"
-      # DJANGO_DEBUG: 'true'
-      # CRON_DISABLE: 'true'
+      # WARNING: NOT SECURE FOR PRODUCTION
+      # ===================================
+      # For production use, additional ENV variables have to be defined to update default security settings.
+      # Please read SELFHOSTING.md
     volumes:
       - "docs:/app/uploads"
 
@@ -26,10 +25,13 @@ services:
       - postgres
       - redis
     environment:
-      DB_PASSWORD: "postgres"
-      CRON_DISABLE: "true"
       ENABLE_WORKER: "true"
-      # NB_WORKERS: '1'
+      NB_WORKERS: '1'
+      CRON_DISABLE: "true"
+      # WARNING: NOT SECURE FOR PRODUCTION
+      # ===================================
+      # For production use, additional ENV variables have to be defined to update default security settings.
+      # Please read SELFHOSTING.md
     volumes:
       - "docs:/app/uploads"
 

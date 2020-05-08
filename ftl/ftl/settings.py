@@ -263,12 +263,12 @@ DEFAULT_FILE_STORAGE = FTLStorages.FILE_SYSTEM
 DOCUMENT PROCESSING PLUGINS (order is important)
 ================================================
 - Edit lines below to change enabled plugins
-    - Optional plugins required to install additional Python modules
+    - Check ftl.enums.FTLplugins docstring to see plugins list and know what's required for the desired plugin
     - Most OCR plugins required a specific DEFAULT_FILE_STORAGE
-    - Check ftl.constants.FTLplugins docstring to know what's required for the desired plugin
 - Only one plugin of each type should be enable at a time
 """
 FTL_DOC_PROCESSING_PLUGINS = [
+    # OCR plugins should be define here
     # Extract text of non scanned documents (required)
     FTLPlugins.TEXT_EXTRACTION_TIKA,
     # Detect lang (required for search feature)
