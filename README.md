@@ -4,16 +4,7 @@ Archiving documents solution
 
 ## For users
 
-### Requirements
-
-- Python 3.7.3
-- PostgreSQL 11
-- Java 8+
-
-### Install Python modules
-
-    cd ftl
-    python -m pip install -r requirements.txt
+Please see `SELFHOSTING.md`.
 
 ## For developers
 
@@ -21,6 +12,7 @@ Archiving documents solution
 
 - Python 3.7
 - PostgreSQL 11
+- Redis 4.x (used by Celery for queuing task)
 - Firefox or Chrome (to run functional tests)
 - Node.js LTS
 - Java 8+ (for documents indexing)
@@ -54,10 +46,19 @@ First terminal
 
 Second terminal
   
- cd ftl
-python manage.py runserver
+    cd ftl
+    python manage.py runserver
 
 _To run local as https (required to test 2fa fido2 devices) use `python manage.py runsslserver` instead. You **must have** `DEBUG` and `DEV_MODE` set to `True` in `settings.py` (set them in your `settings_local.py` wont work, unfortunately) and you may have to use `localhost` domain (in place of the usual ip) in order your browser accept to load the app._
+
+Third terminal
+  
+    redis-server
+
+Fourth terminal
+
+    cd ftl
+    python -m celery -A ftl worker -l info
 
 ### Code formatting
 

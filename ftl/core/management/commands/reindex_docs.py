@@ -3,13 +3,12 @@
 
 import time
 
-from django.conf import settings
 from django.core.management import BaseCommand
 from django.utils.translation import gettext as _
 from django.utils.translation import ngettext
 
 from core.models import FTLDocument
-from core.processing.ftl_processing import FTLDocumentProcessing
+from core.tasks import apply_ftl_processing
 from ftl.enums import FTLPlugins
 
 
@@ -37,7 +36,6 @@ class Command(BaseCommand):
                     )
                     plugins_forced.append(value)
 
-        processing = FTLDocumentProcessing(settings.FTL_DOC_PROCESSING_PLUGINS)
         docs = FTLDocument.objects.filter(deleted=False).all()
 
         start_time = time.time()
@@ -56,13 +54,8 @@ class Command(BaseCommand):
 
         for doc in docs:
             self.stdout.write(_("Reindexing %(title)s") % {"title": doc.title})
-
-            processing.apply_processing(doc, plugins_forced)
-
+            apply_ftl_processing.delay(doc.pk, force=plugins_forced)
             self.stdout.write(self.style.SUCCESS(_("OK")))
-
-        # Wait for all processing done
-        processing.executor.shutdown(True)
 
         end_time = time.time()
 

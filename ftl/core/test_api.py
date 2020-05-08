@@ -13,7 +13,7 @@ from rest_framework.test import APITestCase
 
 import core
 from core.models import FTLDocument, FTLFolder
-from core.processing.ftl_processing import FTLDocumentProcessing
+from core.tasks import apply_ftl_processing
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import (
     setup_org,
@@ -23,6 +23,7 @@ from ftests.tools.setup_helpers import (
     setup_folder,
     setup_temporary_file,
 )
+from ftl import celery
 from ftl.enums import FTLStorages, FTLPlugins
 from ftl.settings import BASE_DIR
 
@@ -195,7 +196,8 @@ class DocumentsTests(APITestCase):
         self.assertEqual(client_doc["ftl_folder"], ftl_document_first.ftl_folder)
 
     @override_settings(DEFAULT_FILE_STORAGE=FTLStorages.FILE_SYSTEM)
-    def test_delete_document(self):
+    @patch.object(celery.app, "send_task")
+    def test_delete_document(self, mock_send_task_delete_document):
         binary_f = setup_temporary_file().name
         document_to_be_deleted = FTLDocument.objects.create(
             org=self.org,
@@ -217,7 +219,7 @@ class DocumentsTests(APITestCase):
         # File has not been deleted.
         self.assertTrue(os.path.exists(binary_f))
 
-    @patch.object(FTLDocumentProcessing, "apply_processing")
+    @patch.object(apply_ftl_processing, "delay")
     def test_upload_document(self, mock_apply_processing):
         with open(
             os.path.join(BASE_DIR, "ftests", "tools", "test_documents", "test.pdf"),
@@ -236,7 +238,7 @@ class DocumentsTests(APITestCase):
         self.assertEqual(objects_get.note, client_doc["note"])
         self.assertIsNone(objects_get.ftl_folder)
 
-    @patch.object(FTLDocumentProcessing, "apply_processing")
+    @patch.object(apply_ftl_processing, "delay")
     def test_upload_document_correct_size(self, mock_apply_processing):
         with open(
             os.path.join(BASE_DIR, "ftests", "tools", "test_documents", "test.pdf"),
@@ -252,7 +254,7 @@ class DocumentsTests(APITestCase):
 
         self.assertEqual(objects_get.size, 20247)
 
-    @patch.object(FTLDocumentProcessing, "apply_processing")
+    @patch.object(apply_ftl_processing, "delay")
     def test_upload_document_correct_md5(self, mock_apply_processing):
         with open(
             os.path.join(BASE_DIR, "ftests", "tools", "test_documents", "test.pdf"),
@@ -268,7 +270,7 @@ class DocumentsTests(APITestCase):
 
         self.assertEqual(objects_get.md5, "2b0d9bcba3913d2d26b364630dab4c4b")
 
-    @patch.object(FTLDocumentProcessing, "apply_processing")
+    @patch.object(apply_ftl_processing, "delay")
     def test_upload_document_incorrect_md5(self, mock_apply_processing):
         initial_docs_count = FTLDocument.objects.count()
 
@@ -292,7 +294,7 @@ class DocumentsTests(APITestCase):
             "No document should have been added as upload fail",
         )
 
-    @patch.object(FTLDocumentProcessing, "apply_processing")
+    @patch.object(apply_ftl_processing, "delay")
     def test_upload_doc_with_creation_date(self, mock_apply_processing):
         creation_date = "2019-11-15T08:54:33.361913+00:00"
         with open(
@@ -307,7 +309,7 @@ class DocumentsTests(APITestCase):
         objects_get = FTLDocument.objects.get(pid=upload_doc["pid"])
         self.assertEqual(creation_date, objects_get.created.isoformat())
 
-    @patch.object(FTLDocumentProcessing, "apply_processing")
+    @patch.object(apply_ftl_processing, "delay")
     def test_upload_doc_with_title(self, mock_apply_processing):
         title = "My document 123"
         with open(
@@ -322,7 +324,7 @@ class DocumentsTests(APITestCase):
         objects_get = FTLDocument.objects.get(pid=upload_doc["pid"])
         self.assertEqual(title, objects_get.title)
 
-    @patch.object(FTLDocumentProcessing, "apply_processing")
+    @patch.object(apply_ftl_processing, "delay")
     def test_upload_doc_with_note(self, mock_apply_processing):
         note = "My document note 123"
         with open(
@@ -337,7 +339,7 @@ class DocumentsTests(APITestCase):
         objects_get = FTLDocument.objects.get(pid=upload_doc["pid"])
         self.assertEqual(note, objects_get.note)
 
-    @patch.object(FTLDocumentProcessing, "apply_processing")
+    @patch.object(apply_ftl_processing, "delay")
     def test_upload_document_wrong_format(self, mock_apply_processing):
         with open(
             os.path.join(
@@ -350,7 +352,7 @@ class DocumentsTests(APITestCase):
             )
         self.assertEqual(client_post.status_code, status.HTTP_400_BAD_REQUEST)
 
-    @patch.object(FTLDocumentProcessing, "apply_processing")
+    @patch.object(apply_ftl_processing, "delay")
     def test_upload_document_docx(self, mock_apply_processing):
         with open(
             os.path.join(BASE_DIR, "ftests", "tools", "test_documents", "word.docx"),
@@ -361,7 +363,7 @@ class DocumentsTests(APITestCase):
             )
         self.assertEqual(client_post.status_code, status.HTTP_201_CREATED)
 
-    @patch.object(FTLDocumentProcessing, "apply_processing")
+    @patch.object(apply_ftl_processing, "delay")
     def test_upload_document_xlsx(self, mock_apply_processing):
         with open(
             os.path.join(BASE_DIR, "ftests", "tools", "test_documents", "excel.xlsx"),
@@ -372,7 +374,7 @@ class DocumentsTests(APITestCase):
             )
         self.assertEqual(client_post.status_code, status.HTTP_201_CREATED)
 
-    @patch.object(FTLDocumentProcessing, "apply_processing")
+    @patch.object(apply_ftl_processing, "delay")
     def test_upload_document_txt(self, mock_apply_processing):
         with open(
             os.path.join(BASE_DIR, "ftests", "tools", "test_documents", "hello.txt"),
@@ -383,7 +385,7 @@ class DocumentsTests(APITestCase):
             )
         self.assertEqual(client_post.status_code, status.HTTP_201_CREATED)
 
-    @patch.object(FTLDocumentProcessing, "apply_processing")
+    @patch.object(apply_ftl_processing, "delay")
     def test_upload_doc_trigger_document_processing(self, mock_apply_processing):
         with open(
             os.path.join(BASE_DIR, "ftests", "tools", "test_documents", "test.pdf"),
@@ -394,9 +396,9 @@ class DocumentsTests(APITestCase):
 
         mock_apply_processing.assert_called_once()
         # Check argument is a FTLDocument
-        call = mock_apply_processing.call_args_list[0]
-        args, kwarg = call
-        self.assertTrue(isinstance(args[0], FTLDocument))
+        args, kwarg = mock_apply_processing.call_args_list[0]
+        self.assertTrue(isinstance(args[0], int))
+        self.assertTrue(isinstance(kwarg["force"], list))
 
     def test_document_in_folder(self):
         client_get = self.client.get(
@@ -412,7 +414,7 @@ class DocumentsTests(APITestCase):
         self.assertEqual(client_doc["note"], self.doc_in_folder.note)
         self.assertEqual(client_doc["ftl_folder"], self.first_level_folder.id)
 
-    @patch.object(FTLDocumentProcessing, "apply_processing")
+    @patch.object(apply_ftl_processing, "delay")
     def test_upload_document_in_folder(self, mock_apply_processing):
         post_body = {"ftl_folder": self.first_level_folder.id}
 
@@ -450,7 +452,7 @@ class DocumentsTests(APITestCase):
         self.assertEqual(client_doc_level["note"], client_doc["note"])
         self.assertEqual(client_doc_level["ftl_folder"], client_doc["ftl_folder"])
 
-    @patch.object(FTLDocumentProcessing, "apply_processing")
+    @patch.object(apply_ftl_processing, "delay")
     def test_rename_document_reapply_tsvector_proc(self, mock_apply_processing):
         client_get = self.client.patch(
             f"/app/api/v1/documents/{self.doc.pid}", {"title": "renamed"}, format="json"
@@ -459,11 +461,10 @@ class DocumentsTests(APITestCase):
 
         # tsvector processing should be forced on rename
         mock_apply_processing.assert_called_once()
-        call = mock_apply_processing.call_args_list[0]
-        args, kwarg = call
-        self.assertIn(FTLPlugins.SEARCH_ENGINE_PGSQL_TSVECTOR, args[1])
+        args, kwarg = mock_apply_processing.call_args_list[0]
+        self.assertIn(FTLPlugins.SEARCH_ENGINE_PGSQL_TSVECTOR, kwarg["force"])
 
-    @patch.object(FTLDocumentProcessing, "apply_processing")
+    @patch.object(apply_ftl_processing, "delay")
     def test_annotate_document_reapply_tsvector_proc(self, mock_apply_processing):
         client_get = self.client.patch(
             f"/app/api/v1/documents/{self.doc.pid}",
@@ -474,9 +475,8 @@ class DocumentsTests(APITestCase):
 
         # tsvector processing should be forced on rename
         mock_apply_processing.assert_called_once()
-        call = mock_apply_processing.call_args_list[0]
-        args, kwarg = call
-        self.assertIn(FTLPlugins.SEARCH_ENGINE_PGSQL_TSVECTOR, args[1])
+        args, kwarg = mock_apply_processing.call_args_list[0]
+        self.assertIn(FTLPlugins.SEARCH_ENGINE_PGSQL_TSVECTOR, kwarg["force"])
 
 
 class DocumentsSearchTests(APITestCase):
@@ -633,7 +633,8 @@ class FoldersTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_delete_folders_recursively(self):
+    @patch.object(celery.app, "send_task")
+    def test_delete_folders_recursively(self, mock_send_task_delete_document):
         # A
         # *  B
         # *  B2

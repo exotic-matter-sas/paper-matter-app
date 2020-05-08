@@ -16,7 +16,7 @@ from ftests.tools.setup_helpers import (
     setup_folder,
     setup_2fa_static_device,
 )
-from ftl.settings import FTL_DELETE_DISABLED_ACCOUNTS
+from ftl import celery
 
 
 class AccountCommandsTests(TestCase):
@@ -45,7 +45,8 @@ class AccountCommandsTests(TestCase):
         )
 
     @override_settings(FTL_DELETE_DISABLED_ACCOUNTS=False)
-    def test_disable_account(self):
+    @patch.object(celery.app, "send_task")
+    def test_disable_account(self, mocked_send_task_delete_document):
         management.call_command("disable_account", org_slug="to-delete-a")
 
         # org has been disabled
@@ -62,7 +63,8 @@ class AccountCommandsTests(TestCase):
         self.assertTrue(list(devices_for_user(self.user_no_delete_a, confirmed=None)))
 
     @override_settings(FTL_DELETE_DISABLED_ACCOUNTS=True)
-    def test_delete_account(self):
+    @patch.object(celery.app, "send_task")
+    def test_delete_account(self, mocked_send_task_delete_document):
         management.call_command("disable_account", org_slug="to-delete-a")
 
         # org has been disabled
@@ -79,9 +81,12 @@ class AccountCommandsTests(TestCase):
         self.assertTrue(list(devices_for_user(self.user_no_delete_a, confirmed=None)))
         self.assertFalse(FTLOrg.objects.get(pk=self.org_no_delete.pk).deleted)
 
+    @patch.object(celery.app, "send_task")
     @patch.object(post_account_disable, "send")
     @patch.object(pre_account_disable, "send")
-    def test_signal_sent(self, mocked_signal_pre, mocked_signal_post):
+    def test_signal_sent(
+        self, mocked_signal_pre, mocked_signal_post, mocked_send_task_delete_document
+    ):
         management.call_command("disable_account", org_slug="to-delete-a")
         mocked_signal_pre.assert_called_once_with(sender=Command, org=self.org)
         mocked_signal_post.assert_called_once_with(sender=Command, org=self.org)

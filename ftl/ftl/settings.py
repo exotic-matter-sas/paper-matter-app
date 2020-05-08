@@ -29,7 +29,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "NOT SECURE"
+SECRET_KEY = "NOT-SECURE"
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # Simple url string or URL encoded
@@ -229,8 +229,6 @@ WEBPACK_LOADER = {
     }
 }
 
-ATOMIC_REQUESTS = True
-
 # Workaround for configuring a preloaded Tika
 os.environ["TIKA_SERVER_JAR"] = pathlib.Path(
     os.path.join(BASE_DIR, "vendors", "tika-server-1.20.jar")
@@ -265,12 +263,12 @@ DEFAULT_FILE_STORAGE = FTLStorages.FILE_SYSTEM
 DOCUMENT PROCESSING PLUGINS (order is important)
 ================================================
 - Edit lines below to change enabled plugins
-    - Optional plugins required to install additional Python modules
+    - Check ftl.enums.FTLplugins docstring to see plugins list and know what's required for the desired plugin
     - Most OCR plugins required a specific DEFAULT_FILE_STORAGE
-    - Check ftl.constants.FTLplugins docstring to know what's required for the desired plugin
 - Only one plugin of each type should be enable at a time
 """
 FTL_DOC_PROCESSING_PLUGINS = [
+    # OCR plugins should be define here
     # Extract text of non scanned documents (required)
     FTLPlugins.TEXT_EXTRACTION_TIKA,
     # Detect lang (required for search feature)
@@ -333,6 +331,8 @@ FTL_DELETE_DISABLED_ACCOUNTS = True
 FTL_SUFFIX_DELETED_ACCOUNT = "@disabled.pm.app"  # No need to change this
 FTL_SUFFIX_DELETED_ORG = "-disabled"  # No need to change this
 
+
+CELERY_BROKER_URL = "redis://localhost:6379"
 
 # ==================================================
 # No settings under this line

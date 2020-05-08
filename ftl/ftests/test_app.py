@@ -10,7 +10,7 @@ from unittest.mock import patch
 from django.conf import settings
 from selenium.common.exceptions import NoSuchElementException
 
-from core.processing.ftl_processing import FTLDocumentProcessing
+from core.tasks import apply_ftl_processing
 from ftests.pages.base_page import NODE_SERVER_RUNNING
 from ftests.pages.document_viewer_modal import DocumentViewerModal
 from ftests.pages.home_page import HomePage
@@ -26,6 +26,7 @@ from ftests.tools.setup_helpers import (
     setup_folder,
     setup_temporary_file,
 )
+from ftl import celery
 from ftl.settings import BASE_DIR
 
 
@@ -43,7 +44,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         settings.DEV_MODE and not NODE_SERVER_RUNNING,
         "Node not running, this test can't be run",
     )
-    @patch.object(FTLDocumentProcessing, "apply_processing")
+    @patch.object(apply_ftl_processing, "delay")
     def test_upload_document_to_root(self, mock_apply_processing):
         # User upload a document
         self.upload_documents()
@@ -57,7 +58,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         settings.DEV_MODE and not NODE_SERVER_RUNNING,
         "Node not running, this test can't be run",
     )
-    @patch.object(FTLDocumentProcessing, "apply_processing")
+    @patch.object(apply_ftl_processing, "delay")
     def test_upload_document_to_subfolder(self, mock_apply_processing):
         # User has already created a folder
         setup_folder(self.org)
@@ -80,7 +81,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         settings.DEV_MODE and not NODE_SERVER_RUNNING,
         "Node not running, this test can't be run",
     )
-    @patch.object(FTLDocumentProcessing, "apply_processing")
+    @patch.object(apply_ftl_processing, "delay")
     def test_upload_documents_to_root(self, mock_apply_processing):
         # User upload several documents
         documents_to_upload = [
@@ -823,7 +824,8 @@ class DocumentsBatchActionsTests(LoginPage, HomePage, MoveDocumentsModal):
         settings.DEV_MODE and not NODE_SERVER_RUNNING,
         "Node not running, this test can't be run",
     )
-    def test_delete_documents(self):
+    @patch.object(celery.app, "send_task")
+    def test_delete_documents(self, mock_send_task_delete_document):
         # User select doc1 and doc2
         docs_to_delete = ["doc1", "doc2"]
         self.select_documents(docs_to_delete)
@@ -914,7 +916,7 @@ class DocumentViewerModalTests(
         settings.DEV_MODE and not NODE_SERVER_RUNNING,
         "Node not running, this test can't be run",
     )
-    @patch.object(FTLDocumentProcessing, "apply_processing")
+    @patch.object(apply_ftl_processing, "delay")
     def test_rename_document(self, mock_apply_processing):
         # User has already added and opened a document
         setup_document(self.org, self.user)
@@ -934,7 +936,7 @@ class DocumentViewerModalTests(
         settings.DEV_MODE and not NODE_SERVER_RUNNING,
         "Node not running, this test can't be run",
     )
-    @patch.object(FTLDocumentProcessing, "apply_processing")
+    @patch.object(apply_ftl_processing, "delay")
     def test_annotate_document(self, mock_apply_processing):
         # User has already added and opened a document
         setup_document(self.org, self.user)
@@ -952,8 +954,8 @@ class DocumentViewerModalTests(
         settings.DEV_MODE and not NODE_SERVER_RUNNING,
         "Node not running, this test can't be run",
     )
-    @patch.object(FTLDocumentProcessing, "apply_processing")
-    def test_delete_document(self, mock_apply_processing):
+    @patch.object(celery.app, "send_task")
+    def test_delete_document(self, mock_send_task_delete_document):
         # User has already added and opened a document
         setup_document(self.org, self.user, binary=setup_temporary_file().name)
         self.refresh_documents_list()
@@ -1009,7 +1011,7 @@ class DocumentViewerModalTests(
         settings.DEV_MODE and not NODE_SERVER_RUNNING,
         "Node not running, this test can't be run",
     )
-    @patch.object(FTLDocumentProcessing, "apply_processing")
+    @patch.object(apply_ftl_processing, "delay")
     def test_move_document(self, mock_apply_processing):
         # User has already created a folder and added and opened a document
         folder = setup_folder(self.org)

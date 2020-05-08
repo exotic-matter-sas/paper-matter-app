@@ -33,7 +33,8 @@ class FTLTextExtractionTika(FTLDocProcessingBase):
         parsed_txt = None
 
         if force or not ftl_doc.count_pages:
-            parsed_txt = parser.from_buffer(ftl_doc.binary.read())
+            with ftl_doc.binary.open("rb") as ff:
+                parsed_txt = parser.from_buffer(ff.read())
 
             if "metadata" in parsed_txt and "xmpTPg:NPages" in parsed_txt["metadata"]:
                 ftl_doc.count_pages = int(parsed_txt["metadata"]["xmpTPg:NPages"])
@@ -49,7 +50,8 @@ class FTLTextExtractionTika(FTLDocProcessingBase):
 
         if force or not ftl_doc.content_text:
             if not parsed_txt:
-                parsed_txt = parser.from_buffer(ftl_doc.binary.read())
+                with ftl_doc.binary.open("rb") as ff:
+                    parsed_txt = parser.from_buffer(ff.read())
 
             if "content" in parsed_txt and parsed_txt["content"]:
                 ftl_doc.content_text = parsed_txt["content"].strip()
