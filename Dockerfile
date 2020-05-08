@@ -31,6 +31,10 @@ ENV JOB_TIMELIMIT 900
 # The recommanded way to set theses variables is to set them at runtime (either via docker command or via your
 # deployment method). Refer to SELFHOSTING.MD for the list of ENV available.
 
+# Run the image as a non-root user
+RUN groupadd --gid 1000 ftl \
+    && useradd --uid 1000 --gid ftl --shell /bin/bash --create-home ftl
+
 # Workaround for https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=863199
 RUN mkdir -p /usr/share/man/man1
 
@@ -54,11 +58,16 @@ ADD docker/requirements_deploy.txt /app/requirements_deploy.txt
 ADD docker/ftl_uwsgi.ini /app/ftl_uwsgi.ini
 ADD docker/settings_local.py /app/ftl/settings_local.py
 ADD docker/supervisord.conf /etc/supervisor/supervisord.conf
-ADD docker/ftl-web.sh /app/ftl-web.sh
-ADD docker/ftl-worker.sh /app/ftl-worker.sh
+
+ADD --chown=ftl:ftl docker/ftl-web.sh /app/ftl-web.sh
+RUN chmod 0700 /app/ftl-web.sh
+
+ADD --chown=ftl:ftl docker/ftl-worker.sh /app/ftl-worker.sh
+RUN chmod 0700 /app/ftl-worker.sh
 
 ADD docker/cron-env-init.sh /tmp/cron-env-init.sh
 RUN chmod 0700 /tmp/cron-env-init.sh
+RUN chown root:root /tmp/cron-env-init.sh
 
 ADD docker/crontab /etc/cron.d/ftl
 RUN chmod 0700 /etc/cron.d/ftl
@@ -75,9 +84,6 @@ RUN python3 -m pip install -r /app/requirements.txt --no-cache-dir && \
 RUN apt-get remove --purge -y build-essential
 RUN apt-get autoremove -y
 
-# Run the image as a non-root user
-RUN groupadd --gid 1000 ftl \
-    && useradd --uid 1000 --gid ftl --shell /bin/bash --create-home ftl
 
 # Those RUN true commands are a workaround for https://github.com/moby/moby/issues/37965
 ADD --chown=ftl:ftl ftl /app/
@@ -99,6 +105,7 @@ RUN python3 manage.py collectstatic --no-input
 
 ENV FTLDATA /app/uploads
 RUN mkdir -p "$FTLDATA" && chown -R ftl:ftl "$FTLDATA" && chmod 777 "$FTLDATA"
+RUN chown -R ftl:ftl /app
 VOLUME /app/uploads
 
 # For local or standard use, must match the env var PORT value.
