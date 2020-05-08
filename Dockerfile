@@ -14,7 +14,7 @@ RUN npm run build
 
 FROM python:3.7.4-slim
 
-# PORT is used by uwsgi config, it's mainly used by Heroku because they assign random port to app.
+# Configure the listening PORT for the web frontend server (used by uwsgi)
 ENV PORT 8000
 # Set to "true" to use this image as a web frontend
 ENV ENABLE_WEB false
@@ -28,8 +28,8 @@ ENV JOB_TIMELIMIT 900
 # WARNING: NOT SECURED FOR PRODUCTION
 # ===================================
 # For production use, additional ENV variables have to be define to update default security settings.
-# The recommanded way to set theses variables is to use the docker-compose.sample.yml, as described in SELFHOSTING.MD.
-# If you don't want to use Docker Compose you can declare them bellow, refer to SELFHOSTING.MD for the list of ENV to declare
+# The recommanded way to set theses variables is to set them at runtime (either via docker command or via your
+# deployment method). Refer to SELFHOSTING.MD for the list of ENV available.
 
 # Workaround for https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=863199
 RUN mkdir -p /usr/share/man/man1
