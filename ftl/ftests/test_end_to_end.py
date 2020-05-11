@@ -222,6 +222,14 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage, DocumentViewerModal):
         # User search last uploaded document
         self.search_documents(second_document_title)
 
+        def celery_queue_wait(queue):
+            return len(list(queue.values())[0]) == 0
+
+        # wait for Celery queue to be empty (doc was processed)
+        self._wait_for_method_to_return(
+            app.control.inspect().active, 20, custom_return_validator=celery_queue_wait,
+        )
+
         # Only the second document appears in search results
         self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
         self.assertEqual(
@@ -276,6 +284,14 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage, DocumentViewerModal):
 
         # user search for document using its new title
         self.search_documents(new_title)
+
+        def celery_queue_wait(queue):
+            return len(list(queue.values())[0]) == 0
+
+        # wait for Celery queue to be empty (doc was processed)
+        self._wait_for_method_to_return(
+            app.control.inspect().active, 20, custom_return_validator=celery_queue_wait,
+        )
 
         # the second uploaded document appears in search results
         self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
