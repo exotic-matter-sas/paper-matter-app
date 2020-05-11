@@ -6,3 +6,4 @@ ftl/ftl/settings_*
 !ftl/ftl/settings.py
 **/test_*.py
 **/.git
+**/*.pyc
