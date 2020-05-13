@@ -8,13 +8,11 @@ from unittest.mock import patch
 
 from django.conf import settings
 from django.core import mail
-from django.db.models import Func, F
 from django.test import override_settings
 from django_otp.middleware import OTPMiddleware
 from django_otp.oath import TOTP
 from selenium.common.exceptions import NoSuchElementException
 
-from core.models import FTLDocument
 from core.tasks import apply_ftl_processing
 from ftests.pages.account_pages import AccountPages
 from ftests.pages.base_page import NODE_SERVER_RUNNING
@@ -201,34 +199,14 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage, DocumentViewerModal):
         )
 
         # User wait for document to be indexed
-        # TODO replace by a wait_for_element_to_disappear when a indexing indicator is implemented
-        queryset = FTLDocument.objects.annotate(
-            tsvector_length=Func(F("tsvector"), function="length")
-        )
-
-        def query_set_validator(query_set):
-            if len(query_set) == 2:
-                return True
-            else:
-                return False
-
         self._wait_for_method_to_return(
-            queryset.filter,
-            60,
-            custom_return_validator=query_set_validator,
-            tsvector_length__gt=0,
+            app.control.inspect().active,
+            20,
+            custom_return_validator=self.celery_waiter_return_validator,
         )
 
         # User search last uploaded document
         self.search_documents(second_document_title)
-
-        def celery_queue_wait(queue):
-            return len(list(queue.values())[0]) == 0
-
-        # wait for Celery queue to be empty (doc was processed)
-        self._wait_for_method_to_return(
-            app.control.inspect().active, 20, custom_return_validator=celery_queue_wait,
-        )
 
         # Only the second document appears in search results
         self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
@@ -254,27 +232,15 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage, DocumentViewerModal):
             )
         )
 
-        # User wait for document to be indexed
-        # TODO replace by a wait_for_element_to_disappear when a indexing indicator is implemented
-        queryset = FTLDocument.objects.annotate(
-            tsvector_length=Func(F("tsvector"), function="length")
-        )
-
-        def query_set_validator(query_set):
-            if len(query_set) == 2:
-                return True
-            else:
-                return False
-
-        self._wait_for_method_to_return(
-            queryset.filter,
-            60,
-            custom_return_validator=query_set_validator,
-            tsvector_length__gt=0,
-        )
-
         # Refresh page to display documents
         self.visit(HomePage.url)
+
+        # User wait for document to be indexed
+        self._wait_for_method_to_return(
+            app.control.inspect().active,
+            20,
+            custom_return_validator=self.celery_waiter_return_validator,
+        )
 
         # User open second document and rename it
         self.get_elem(self.first_document_title).click()
@@ -282,16 +248,15 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage, DocumentViewerModal):
         self.rename_document(new_title)
         self.close_document()
 
+        # User wait for document to be indexed
+        self._wait_for_method_to_return(
+            app.control.inspect().active,
+            20,
+            custom_return_validator=self.celery_waiter_return_validator,
+        )
+
         # user search for document using its new title
         self.search_documents(new_title)
-
-        def celery_queue_wait(queue):
-            return len(list(queue.values())[0]) == 0
-
-        # wait for Celery queue to be empty (doc was processed)
-        self._wait_for_method_to_return(
-            app.control.inspect().active, 20, custom_return_validator=celery_queue_wait,
-        )
 
         # the second uploaded document appears in search results
         self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
