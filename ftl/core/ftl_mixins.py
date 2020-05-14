@@ -22,6 +22,6 @@ class FTLUserContextDataMixin(ContextMixin):
                     or not d.confirmed
                 ]
             ),
-            "supported_exts": mimes.MIMETYPES_EXT_DICT,
+            "supported_exts": mimes.EXTS,
         }
         return context
