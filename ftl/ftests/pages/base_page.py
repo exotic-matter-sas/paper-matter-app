@@ -24,7 +24,6 @@ from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.support import expected_conditions as Ec
 from selenium.webdriver.support.wait import WebDriverWait
 
-
 if "CI" in os.environ:
     LIVE_SERVER = LiveServerTestCase
 else:
@@ -367,3 +366,10 @@ class BasePage(LIVE_SERVER):
 
         downloaded_filename = (set(current_content) - set(initial_content)).pop()
         return downloaded_filename
+
+    @staticmethod
+    def celery_waiter_return_validator(queue):
+        if queue is None:
+            return False
+        else:
+            return len(list(queue.values())[0]) == 0
