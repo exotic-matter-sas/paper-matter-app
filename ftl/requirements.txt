@@ -15,7 +15,7 @@ cbor2==4.1.2
 qrcode[pil]==6.1
 # latest master ref used as there is no recent tag available at the time (latest released done on Feb 15, 2018)
 git+https://github.com/jazzband/django-oauth-toolkit.git@38ac5179c4eb309bb0db99f6d87bbd76c2de1681
-python-magic==0.4.15
+puremagic==1.8
 celery[redis]==4.4.2
 
 # django-storages==1.9.1
