@@ -32,7 +32,6 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 
 from core.errors import get_api_error
-from core.ftl_mixins import FTLUserContextDataMixin
 from core.mimes import mimetype_to_ext
 from core.models import FTLDocument, FTLFolder
 from core.serializers import FTLDocumentSerializer, FTLFolderSerializer
@@ -51,9 +50,9 @@ class WebSearchQuery(SearchQuery):
 
 @method_decorator(login_required, name="dispatch")
 @method_decorator(otp_required(if_configured=True), name="dispatch")
-class HomeView(FTLUserContextDataMixin, View):
+class HomeView(View):
     def get(self, request, *args, **kwargs):
-        return render(request, "core/home.html", self.get_context_data())
+        return render(request, "core/home.html")
 
 
 # API
