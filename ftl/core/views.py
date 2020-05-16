@@ -216,8 +216,7 @@ class FileUploadView(views.APIView):
 
         file_obj = request.FILES["file"]
 
-        # Guess mimetype based on the first 1 MB of the document
-        mime = guess_mimetype(file_obj.read(int(1e6)), filename=file_obj.name)
+        mime = guess_mimetype(file_obj, filename=file_obj.name)
         extension = mimetype_to_ext(mime)
         if not extension:
             raise serializers.ValidationError(
