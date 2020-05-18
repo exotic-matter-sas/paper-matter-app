@@ -17,6 +17,20 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
+            "docs_pid",
+            nargs="+",
+            type=str,
+            action="append",
+            help="List of pids of documents to be reindexed. Use \"*\" for all documents (slow).",
+        )
+
+        parser.add_argument(
+            "--only-missing-search",
+            action="store_true",
+            help="Filter on documents which are missing search data",
+        )
+
+        parser.add_argument(
             "--force",
             action="append",
             help="Force processing for the indicated plugin (can be specified multiple times, plugins list available in"
@@ -24,6 +38,9 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        pids = options["docs_pid"][0]
+        all_docs = "*" in pids
+
         plugins_forced = list()
         if options["force"]:
             for plugin in options["force"]:
@@ -36,7 +53,23 @@ class Command(BaseCommand):
                     )
                     plugins_forced.append(value)
 
-        docs = FTLDocument.objects.filter(deleted=False).all()
+        query = FTLDocument.objects.filter(deleted=False)
+
+        if options["only_missing_search"]:
+            self.stdout.write(self.style.MIGRATE_HEADING("Only missing search data"))
+            query = query.filter(
+                tsvector__iexact=""
+            )  # Using default "=" operator result in an incorrect tsvector search query
+
+        if all_docs:
+            self.stdout.write(self.style.MIGRATE_HEADING("Reindexing ALL docs (slow)"))
+        else:
+            self.stdout.write(
+                self.style.MIGRATE_HEADING(f"Reindexing docs: {','.join(pids)}")
+            )
+            query = query.filter(pid__in=pids)
+
+        docs = query
 
         start_time = time.time()
         documents_count = len(docs)
