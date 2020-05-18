@@ -50,9 +50,9 @@ class WebSearchQuery(SearchQuery):
 
 @method_decorator(login_required, name="dispatch")
 @method_decorator(otp_required(if_configured=True), name="dispatch")
-class HomeView(FTLUserContextDataMixin, View):
+class HomeView(View):
     def get(self, request, *args, **kwargs):
-        return render(request, "core/home.html", self.get_context_data())
+        return render(request, "core/home.html")
 
 
 # API

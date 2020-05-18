@@ -24,20 +24,19 @@ from django.views.generic import FormView
 from django_otp.decorators import otp_required
 
 from account.forms import EmailSendForm, DeleteAccountForm
-from core.ftl_mixins import FTLUserContextDataMixin
 from core.models import FTLUser
 
 
 @method_decorator(login_required, name="dispatch")
 @method_decorator(otp_required(if_configured=True), name="dispatch")
-class AccountView(FTLUserContextDataMixin, View):
+class AccountView(View):
     def get(self, request, *args, **kwargs):
-        return render(request, "account/account_index.html", self.get_context_data())
+        return render(request, "account/account_index.html")
 
 
 @method_decorator(login_required, name="dispatch")
 @method_decorator(otp_required(if_configured=True), name="dispatch")
-class AccountEmailChangeView(SuccessMessageMixin, FTLUserContextDataMixin, FormView):
+class AccountEmailChangeView(SuccessMessageMixin, FormView):
     template_name = "account/account_email.html"
     email_change_subject = "account/account_email_change_subject.txt"
     email_warn_subject = "account/account_email_warn_subject.txt"
@@ -135,9 +134,7 @@ class AccountEmailChangeValidateView(View):
 
 @method_decorator(login_required, name="dispatch")
 @method_decorator(otp_required(if_configured=True), name="dispatch")
-class AccountPasswordView(
-    FTLUserContextDataMixin, SuccessMessageMixin, PasswordChangeView
-):
+class AccountPasswordView(SuccessMessageMixin, PasswordChangeView):
     template_name = "account/account_password.html"
     form_class = PasswordChangeForm
     success_url = reverse_lazy("account_index")
@@ -164,16 +161,14 @@ class AccountPasswordView(
 
 @method_decorator(login_required, name="dispatch")
 @method_decorator(otp_required(if_configured=True), name="dispatch")
-class AccountImportExportView(FTLUserContextDataMixin, View):
+class AccountImportExportView(View):
     def get(self, request, *args, **kwargs):
-        return render(
-            request, "account/account_import_export.html", self.get_context_data()
-        )
+        return render(request, "account/account_import_export.html")
 
 
 @method_decorator(login_required, name="dispatch")
 @method_decorator(otp_required(if_configured=True), name="dispatch")
-class AccountDeleteView(SuccessMessageMixin, FTLUserContextDataMixin, FormView):
+class AccountDeleteView(SuccessMessageMixin, FormView):
     template_name = "account/account_delete.html"
     form_class = DeleteAccountForm
     success_url = reverse_lazy("login")
