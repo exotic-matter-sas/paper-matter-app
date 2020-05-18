@@ -71,8 +71,6 @@ class Command(BaseCommand):
 
         docs = query
 
-        print(query.query)
-
         start_time = time.time()
         documents_count = len(docs)
 
