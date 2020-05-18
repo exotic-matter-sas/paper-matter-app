@@ -216,6 +216,9 @@ class FileUploadView(views.APIView):
 
         file_obj = request.FILES["file"]
 
+        if file_obj.size == 0:
+            return HttpResponseBadRequest()
+
         mime = guess_mimetype(file_obj, filename=file_obj.name)
         extension = mimetype_to_ext(mime)
         if not extension:
