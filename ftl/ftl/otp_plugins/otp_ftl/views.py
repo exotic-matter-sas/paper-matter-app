@@ -8,18 +8,18 @@ from django.utils.decorators import method_decorator
 from django.utils.http import is_safe_url
 from django.views import View
 from django.views.generic import DeleteView
+from django.views.generic.base import ContextMixin
 from django_otp import devices_for_user
 from django_otp.decorators import otp_required
 from django_otp.plugins.otp_static.models import StaticDevice, StaticToken
 from django_otp.plugins.otp_totp.models import TOTPDevice
 
-from core.ftl_mixins import FTLUserContextDataMixin
 from ftl.otp_plugins.otp_ftl.models import Fido2Device
 
 
 @method_decorator(login_required, name="dispatch")
 @method_decorator(otp_required(if_configured=True), name="dispatch")
-class ListOTPDevices(FTLUserContextDataMixin, View):
+class ListOTPDevices(ContextMixin, View):
     def get(self, request, *args, **kwargs):
         user = request.user
         # Static token
@@ -105,7 +105,7 @@ class FTLBaseCheckView(LoginView):
         return super().form_valid(form)
 
 
-class FTLBaseDeleteView(FTLUserContextDataMixin, DeleteView):
+class FTLBaseDeleteView(DeleteView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 

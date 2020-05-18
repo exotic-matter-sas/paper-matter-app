@@ -15,7 +15,6 @@ from django_otp.decorators import otp_required
 from django_otp.plugins.otp_static.models import StaticDevice
 from django_otp.plugins.otp_totp.models import TOTPDevice
 
-from core.ftl_mixins import FTLUserContextDataMixin
 from ftl.otp_plugins.otp_ftl.forms import (
     TOTPDeviceForm,
     TOTPDeviceCheckForm,
@@ -33,7 +32,7 @@ class TOTPDeviceCheck(FTLBaseCheckView):
 
 @method_decorator(login_required, name="dispatch")
 @method_decorator(otp_required(if_configured=True), name="dispatch")
-class TOTPDeviceDisplay(FTLUserContextDataMixin, DetailView):
+class TOTPDeviceDisplay(DetailView):
     template_name = "otp_ftl/totpdevice_detail.html"
     model = TOTPDevice
 
@@ -89,7 +88,7 @@ class TOTPDeviceDetail(View):
 
 @method_decorator(login_required, name="dispatch")
 @method_decorator(otp_required(if_configured=True), name="dispatch")
-class TOTPDeviceUpdate(FTLUserContextDataMixin, UpdateView):
+class TOTPDeviceUpdate(UpdateView):
     model = TOTPDevice
     fields = ["name"]
     template_name = "otp_ftl/device_update.html"
@@ -98,7 +97,7 @@ class TOTPDeviceUpdate(FTLUserContextDataMixin, UpdateView):
 
 @method_decorator(login_required, name="dispatch")
 @method_decorator(otp_required(if_configured=True), name="dispatch")
-class TOTPDeviceAdd(FTLUserContextDataMixin, FormView):
+class TOTPDeviceAdd(FormView):
     template_name = "otp_ftl/totpdevice_form.html"
     form_class = TOTPDeviceForm
 

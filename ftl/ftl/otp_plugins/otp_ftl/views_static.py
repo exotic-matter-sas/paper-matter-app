@@ -8,7 +8,6 @@ from django.views.generic import FormView, DeleteView, DetailView, UpdateView
 from django_otp.decorators import otp_required
 from django_otp.plugins.otp_static.models import StaticDevice
 
-from core.ftl_mixins import FTLUserContextDataMixin
 from ftl.otp_plugins.otp_ftl.forms import StaticDeviceForm, StaticDeviceCheckForm
 from ftl.otp_plugins.otp_ftl.views import FTLBaseCheckView
 
@@ -22,14 +21,14 @@ class StaticDeviceCheck(FTLBaseCheckView):
 
 @method_decorator(login_required, name="dispatch")
 @method_decorator(otp_required(if_configured=True), name="dispatch")
-class StaticDeviceDetail(FTLUserContextDataMixin, DetailView):
+class StaticDeviceDetail(DetailView):
     template_name = "otp_ftl/staticdevice_detail.html"
     model = StaticDevice
 
 
 @method_decorator(login_required, name="dispatch")
 @method_decorator(otp_required(if_configured=True), name="dispatch")
-class StaticDeviceUpdate(FTLUserContextDataMixin, UpdateView):
+class StaticDeviceUpdate(UpdateView):
     model = StaticDevice
     fields = ["name"]
     template_name = "otp_ftl/device_update.html"
@@ -38,7 +37,7 @@ class StaticDeviceUpdate(FTLUserContextDataMixin, UpdateView):
 
 @method_decorator(login_required, name="dispatch")
 @method_decorator(otp_required(if_configured=True), name="dispatch")
-class StaticDeviceAdd(FTLUserContextDataMixin, FormView):
+class StaticDeviceAdd(FormView):
     template_name = "otp_ftl/staticdevice_form.html"
     form_class = StaticDeviceForm
 
@@ -52,7 +51,7 @@ class StaticDeviceAdd(FTLUserContextDataMixin, FormView):
 
 @method_decorator(login_required, name="dispatch")
 @method_decorator(otp_required(if_configured=True), name="dispatch")
-class StaticDeviceDelete(FTLUserContextDataMixin, DeleteView):
+class StaticDeviceDelete(DeleteView):
     template_name = "otp_ftl/device_confirm_delete.html"
     model = StaticDevice
     success_url = reverse_lazy("otp_list")
