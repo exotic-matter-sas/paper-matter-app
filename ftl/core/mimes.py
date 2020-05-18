@@ -29,8 +29,13 @@ def mimetype_to_ext(mime: str) -> Optional[str]:
 def guess_mimetype(uploaded_file: UploadedFile, filename: str = None) -> Optional[str]:
     try:
         head, foot = _uploaded_file_obj_to_buffer(uploaded_file)
-        return puremagic.from_string(head + foot, mime=True, filename=filename)
+        _mime = puremagic.from_string(head + foot, mime=True, filename=filename)
     except puremagic.PureError:
+        _mime = None
+
+    if _mime:
+        return _mime
+    else:
         if filename and Path(filename).suffix in EXTS:
             return settings.FTL_SUPPORTED_DOCUMENTS_TYPES[
                 Path(filename).suffix.lower()
