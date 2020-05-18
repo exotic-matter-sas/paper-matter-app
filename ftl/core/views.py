@@ -31,7 +31,6 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 
 from core.errors import get_api_error
-from core.ftl_mixins import FTLUserContextDataMixin
 from core.mimes import mimetype_to_ext, guess_mimetype
 from core.models import FTLDocument, FTLFolder
 from core.serializers import FTLDocumentSerializer, FTLFolderSerializer
