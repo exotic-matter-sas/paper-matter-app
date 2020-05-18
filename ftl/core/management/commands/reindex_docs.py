@@ -21,7 +21,7 @@ class Command(BaseCommand):
             nargs="+",
             type=str,
             action="append",
-            help="List of pids of documents to be reindexed. Use \"*\" for all documents (slow).",
+            help='List of pids of documents to be reindexed. Use "*" for all documents (slow).',
         )
 
         parser.add_argument(
