@@ -311,8 +311,8 @@ FTL_SUPPORTED_DOCUMENTS_TYPES = {
     ".txt": ["text/plain"],
     ".rtf": ["application/rtf", "text/rtf"],
     ".doc": ["application/msword"],
-    ".xls": ["application/vnd.ms-excel"],
-    ".ppt": ["application/vnd.ms-powerpoint"],
+    ".xls": ["application/vnd.ms-excel", "application/excel"],
+    ".ppt": ["application/vnd.ms-powerpoint", "application/mspowerpoint"],
     ".docx": [
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     ],
