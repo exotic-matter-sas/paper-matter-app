@@ -15,6 +15,7 @@ ERROR_CODES_DETAILS = {
     "ftl_document_md5_mismatch": _(
         "Document has been corrupted during upload, please retry"
     ),
+    "ftl_document_type_unsupported": _("Unsupported document format"),
 }
 
 

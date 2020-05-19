@@ -15,7 +15,7 @@
           :placeholder="$t('Upload document')"
           :drop-placeholder="$t('Drop file here...')"
           :browse-text="$t('Browse')"
-          :accept="exts.join(', ')"
+          :accept="exts.join(',')"
         ></b-form-file>
       </b-col>
       <b-col cols="12" md="2">

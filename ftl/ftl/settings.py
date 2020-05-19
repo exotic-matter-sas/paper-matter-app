@@ -307,20 +307,24 @@ if (
 """
 SUPPORTED DOCUMENTS TYPES
 """
-FTL_SUPPORTED_DOCUMENTS_TYPES = [
-    ".pdf",
-    ".txt",
-    ".rtf",
-    ".doc",
-    ".xls",
-    ".ppt",
-    ".docx",
-    ".xlsx",
-    ".pptx",
-    ".odt",
-    ".odp",
-    ".ods",
-]
+FTL_SUPPORTED_DOCUMENTS_TYPES = {
+    ".pdf": ["application/pdf"],
+    ".txt": ["text/plain"],
+    ".rtf": ["application/rtf", "text/rtf"],
+    ".doc": ["application/msword"],
+    ".xls": ["application/vnd.ms-excel", "application/excel"],
+    ".ppt": ["application/vnd.ms-powerpoint", "application/mspowerpoint"],
+    ".docx": [
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    ],
+    ".xlsx": ["application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"],
+    ".pptx": [
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+    ],
+    ".odt": ["application/vnd.oasis.opendocument.text"],
+    ".odp": ["application/vnd.oasis.opendocument.presentation"],
+    ".ods": ["application/vnd.oasis.opendocument.spreadsheet"],
+}
 
 """
 Delete disabled accounts from instance

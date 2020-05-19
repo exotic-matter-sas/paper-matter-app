@@ -6,7 +6,6 @@ import urllib
 from base64 import b64decode
 from pathlib import Path
 
-import magic
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.postgres.search import SearchQuery, SearchRank
@@ -32,7 +31,7 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 
 from core.errors import get_api_error
-from core.mimes import mimetype_to_ext
+from core.mimes import mimetype_to_ext, guess_mimetype
 from core.models import FTLDocument, FTLFolder
 from core.serializers import FTLDocumentSerializer, FTLFolderSerializer
 from core.tasks import apply_ftl_processing
@@ -216,10 +215,15 @@ class FileUploadView(views.APIView):
 
         file_obj = request.FILES["file"]
 
-        mime = magic.from_buffer(file_obj.read(2048), mime=True)
+        if file_obj.size == 0:
+            return HttpResponseBadRequest()
+
+        mime = guess_mimetype(file_obj, filename=file_obj.name)
         extension = mimetype_to_ext(mime)
         if not extension:
-            return HttpResponseBadRequest()
+            raise serializers.ValidationError(
+                get_api_error("ftl_document_type_unsupported")
+            )
 
         payload = json.loads(request.POST["json"])
 
