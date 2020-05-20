@@ -36,7 +36,7 @@
         <a
           id="import-folder-link"
           class="text-center"
-          href="https://welcome.papermatter.app/import-export"
+          href="https://welcome.papermatter.app/downloads"
           target="_blank"
           :title="
             $t(
