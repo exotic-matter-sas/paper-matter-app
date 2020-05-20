@@ -133,6 +133,7 @@ export default {
       const doc = event.doc;
       const foundIndex = this.docs.findIndex((x) => x.pid === doc.pid);
       this.docs.splice(foundIndex, 1);
+      this.count--;
       // remove from selection
       this.$store.commit("unselectDocument", doc);
       // if last doc in the list has been removed and there are more docs, refresh list
