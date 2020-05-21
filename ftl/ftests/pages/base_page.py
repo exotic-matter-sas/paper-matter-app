@@ -3,11 +3,13 @@
 
 import os
 import platform
+import secrets
 import time
 import urllib.error
 import urllib.request
 from tempfile import TemporaryDirectory
 
+from celery import shared_task
 from django.conf import settings
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.core import mail
@@ -324,6 +326,24 @@ class BasePage(LIVE_SERVER):
         validator = lambda text: True if text != elem_text else False
         self.wait_for_elem_text_to_be_valid(css_selector, validator, timeout)
 
+    def wait_celery_queue_to_be_empty(self, celery_worker, timeout=60):
+        rand_pid = secrets.token_hex(32)
+
+        def return_counter():
+            return celery_worker.stats()["total"][rand_pid]
+
+        def celery_waiter_return_validator(count):
+            return count == 1
+
+        dummy_task_for_test.apply_async(shadow=rand_pid)
+        # Wait for a celery worker to have processed our dummy task, meaning it has processed all previous tasks.
+        # This assumes the worker has only one process.
+        self._wait_for_method_to_return(
+            return_counter,
+            timeout,
+            custom_return_validator=celery_waiter_return_validator,
+        )
+
     def close_all_notifications(self):
         self.wait_for_elem_to_show(self.close_notification)
         notification_to_close = self.get_elems(self.close_notification)
@@ -367,9 +387,7 @@ class BasePage(LIVE_SERVER):
         downloaded_filename = (set(current_content) - set(initial_content)).pop()
         return downloaded_filename
 
-    @staticmethod
-    def celery_waiter_return_validator(queue):
-        if queue is None:
-            return False
-        else:
-            return len(list(queue.values())[0]) == 0
+
+@shared_task
+def dummy_task_for_test():
+    pass
