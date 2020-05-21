@@ -25,6 +25,8 @@ class HomePage(BasePage):
     submit_document_upload_button = "#upload-button"
     document_upload_loader = "#document-upload-loader"
 
+    breadcrumb_current_folder = ".breadcrumb-item.active"
+
     refresh_documents_button = "#refresh-documents"
 
     create_folder_button = "#create-folder"

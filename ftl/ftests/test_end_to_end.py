@@ -199,11 +199,7 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage, DocumentViewerModal):
         )
 
         # User wait for document to be indexed
-        self._wait_for_method_to_return(
-            app.control.inspect().active,
-            20,
-            custom_return_validator=self.celery_waiter_return_validator,
-        )
+        self.wait_celery_queue_to_be_empty(self._worker)
 
         # User search last uploaded document
         self.search_documents(second_document_title)
@@ -236,11 +232,7 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage, DocumentViewerModal):
         self.visit(HomePage.url)
 
         # User wait for document to be indexed
-        self._wait_for_method_to_return(
-            app.control.inspect().active,
-            20,
-            custom_return_validator=self.celery_waiter_return_validator,
-        )
+        self.wait_celery_queue_to_be_empty(self._worker)
 
         # User open second document and rename it
         self.get_elem(self.first_document_title).click()
@@ -249,11 +241,7 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage, DocumentViewerModal):
         self.close_document()
 
         # User wait for document to be indexed
-        self._wait_for_method_to_return(
-            app.control.inspect().active,
-            20,
-            custom_return_validator=self.celery_waiter_return_validator,
-        )
+        self.wait_celery_queue_to_be_empty(self._worker)
 
         # user search for document using its new title
         self.search_documents(new_title)

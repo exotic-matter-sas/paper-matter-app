@@ -802,6 +802,10 @@ class DocumentsBatchActionsTests(LoginPage, HomePage, MoveDocumentsModal):
         "Node not running, this test can't be run",
     )
     def test_move_documents(self):
+        # Document counter is 3
+        self.wait_documents_list_loaded()
+        self.assertIn("(3)", self.get_elem_text(self.breadcrumb_current_folder))
+
         # User select doc1 and doc2
         docs_to_move = ["doc1", "doc2"]
         self.select_documents(docs_to_move)
@@ -810,10 +814,11 @@ class DocumentsBatchActionsTests(LoginPage, HomePage, MoveDocumentsModal):
         self.get_elem(self.move_docs_batch_button).click()
         self.move_documents(self.folder.name)
 
-        # User see the documents to move have disappear from the current folder
+        # User see the documents to move have disappear from the current folder and the doc counter have been updated
         self.assertCountEqual(
             [self.doc3.title], self.get_elems_text(self.documents_titles)
         )
+        self.assertIn("(1)", self.get_elem_text(self.breadcrumb_current_folder))
 
         # User see the documents in the proper folder
         self.get_elem(self.folders_list_buttons).click()
