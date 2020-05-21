@@ -330,7 +330,10 @@ class BasePage(LIVE_SERVER):
         rand_pid = secrets.token_hex(32)
 
         def return_counter():
-            return celery_worker.stats()["total"][rand_pid]
+            if rand_pid in celery_worker.stats()["total"]:
+                return celery_worker.stats()["total"][rand_pid]
+            else:
+                return 0
 
         def celery_waiter_return_validator(count):
             return count == 1
