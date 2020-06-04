@@ -102,4 +102,18 @@ EMAIL_USE_SSL = True
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "noreply@localhost")
 
 # Redis for Celery
-CELERY_BROKER_URL = os.getenv("CELERY_REDIS_URL", "redis://redis:6379")
+CELERY_BROKER_URL = os.getenv("CELERY_REDIS_URL", "redis://redis:6379/0")
+
+# Redis for cache backend
+CACHE_REDIS_URL = os.getenv("CACHE_REDIS_URL", "redis://redis:6379/15")
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": f"{CACHE_REDIS_URL}",
+        "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"},
+    }
+}
+
+# Then use Redis cache as session backend too
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
