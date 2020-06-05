@@ -309,7 +309,8 @@ OR
       "created":"2019-08-19T15:03:03.504330Z",
       "edited":"2019-08-19T15:03:06.844287Z",
       "ftl_folder":12,
-      "thumbnail_available":false,
+      "thumbnail_available":true,
+      "thumbnail_url": "/app/api/v1/documents/4c092ae2-2c91-4759-9123-5f4af7538f85/thumbnail.png",
       "is_processed":true,
       "path":[
         {
@@ -334,6 +335,7 @@ OR
       "edited":"2019-08-19T14:24:30.431466Z",
       "ftl_folder":12,
       "thumbnail_available":false,
+      "thumbnail_url": null,
       "is_processed":true,
       "path":[
         {
@@ -353,7 +355,41 @@ OR
   ]
 }
 ```
-If there is too many results, results will be paginated. To get the next page results you have to call the url specified in `next` field (or set an additional `page` query string with desired page number).
+If there is too many results, results will be paginated. To get the next page results you have to call the url specified in `next` field (or set an additional `page` query string with desired page number, page start at `1`).
+
+### Get one document
+**GET /api/v1/documents/`document_pid`**
+
+**Response** `200`
+
+```json
+{
+  "pid":"4c092ae2-2c91-4759-9123-5f4af7538f85",
+  "title":"file.pdf",
+  "note":"",
+  "created":"2019-08-19T15:03:03.504330Z",
+  "edited":"2019-08-19T15:03:06.844287Z",
+  "ftl_folder":12,
+  "thumbnail_available":false,
+  "is_processed":true,
+  "thumbnail_url": "/app/api/v1/documents/4c092ae2-2c91-4759-9123-5f4af7538f85/thumbnail.png",
+  "path":[
+    {
+      "id":34,
+      "name":"a"
+    },
+    {
+      "id":35,
+      "name":"b"
+    }
+  ],
+  "md5":"d85fce92a5789f66f58096402da6b98f",
+  "size":123,
+  "ocrized": true,
+  "type": "application/pdf"
+}
+```
+Return the same data than **List documents** request but for a single document.
 
 ### Update a document
 **PATCH /api/v1/documents/`document_pid`**
