@@ -3,3 +3,4 @@ boto3==1.12.15
 google-cloud-storage==1.26.0
 google-cloud-vision==1.0.0
 uwsgi==2.0.18
+django-redis==4.12.1
