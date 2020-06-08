@@ -25,10 +25,10 @@
           <div
             id="document-title"
             class="float-left"
-            :title="currentOpenDoc.title + ext"
+            :title="currentOpenDoc.title + currentOpenDoc.ext"
           >
             <span>{{ currentOpenDoc.title }}</span>
-            <small>{{ ext }}</small>
+            <small>{{ currentOpenDoc.ext }}</small>
           </div>
           <b-button
             id="rename-document"
@@ -242,14 +242,6 @@ export default {
         return { text: this.$t("Root"), to: { name: "home" } };
       }
     },
-    ext: function () {
-      if (this.currentOpenDoc.type in this.ftlAccount["supported_exts"]) {
-        return this.ftlAccount["supported_exts"][this.currentOpenDoc.type];
-      } else {
-        return "";
-      }
-    },
-    ...mapState(["ftlAccount"]), // generate vuex computed getter
   },
 
   methods: {
