@@ -9,6 +9,7 @@ from django.core.files.base import ContentFile
 from django.urls import reverse
 from rest_framework import serializers
 
+from core.mimes import mimetype_to_ext
 from core.models import FTLDocument, FTLFolder
 from ftl.enums import FTLStorages
 
@@ -30,6 +31,7 @@ class FTLDocumentSerializer(serializers.ModelSerializer):
     thumbnail_url = serializers.SerializerMethodField()
     is_processed = serializers.SerializerMethodField()
     path = serializers.SerializerMethodField()
+    ext = serializers.SerializerMethodField()
 
     def get_thumbnail_available(self, obj):
         return bool(obj.thumbnail_binary)
@@ -55,6 +57,9 @@ class FTLDocumentSerializer(serializers.ModelSerializer):
         else:
             return []
 
+    def get_ext(self, obj):
+        return mimetype_to_ext(obj.type)
+
     class Meta:
         model = FTLDocument
         fields = (
@@ -73,6 +78,7 @@ class FTLDocumentSerializer(serializers.ModelSerializer):
             "size",
             "ocrized",
             "type",
+            "ext",
         )
         read_only_fields = (
             "pid",
@@ -85,6 +91,7 @@ class FTLDocumentSerializer(serializers.ModelSerializer):
             "size",
             "ocrized",
             "type",
+            "ext",
         )
 
 

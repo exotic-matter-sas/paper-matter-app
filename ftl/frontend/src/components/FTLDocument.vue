@@ -53,11 +53,11 @@
         </b-button>
         <h4
           class="card-title text-truncate document-title"
-          :title="doc.title + ext"
+          :title="doc.title + doc.ext"
           @click.exact="$emit('event-open-doc', doc.pid)"
         >
           <span>{{ doc.title }}</span>
-          <small>{{ ext }}</small>
+          <small>{{ doc.ext }}</small>
         </h4>
       </b-card-body>
       <b-card-footer :title="$moment(doc.created).format('LLLL')">
@@ -137,14 +137,6 @@ export default {
         return "file";
       }
     },
-    ext: function () {
-      if (this.doc.type in this.ftlAccount["supported_exts"]) {
-        return this.ftlAccount["supported_exts"][this.doc.type];
-      } else {
-        return "";
-      }
-    },
-    ...mapState(["ftlAccount"]), // generate vuex computed getter
   },
 
   methods: {
