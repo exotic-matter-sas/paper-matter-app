@@ -3,6 +3,8 @@
 
 from datetime import timedelta
 
+from axes.helpers import get_client_ip_address
+from axes.models import AccessLog
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -21,7 +23,9 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views import View
 from django.views.generic import FormView
+from django.views.generic.base import ContextMixin
 from django_otp.decorators import otp_required
+from ua_parser import user_agent_parser
 
 from account.forms import EmailSendForm, DeleteAccountForm
 from core.models import FTLUser
@@ -32,6 +36,28 @@ from core.models import FTLUser
 class AccountView(View):
     def get(self, request, *args, **kwargs):
         return render(request, "account/account_index.html")
+
+
+@method_decorator(login_required, name="dispatch")
+@method_decorator(otp_required(if_configured=True), name="dispatch")
+class AccountActivityView(ContextMixin, View):
+    def get(self, request, *args, **kwargs):
+        access_log = AccessLog.objects.filter(username=request.user.email)[:10]
+
+        access_log_parsed = []
+        current_ip = get_client_ip_address(request)
+
+        for access_log in access_log:
+            access_log.parsed = user_agent_parser.Parse(access_log.user_agent)
+            access_log.is_current = (
+                True if current_ip == access_log.ip_address else False
+            )
+            access_log_parsed.append(access_log)
+
+        context = self.get_context_data()
+        context["access_log"] = access_log_parsed
+
+        return render(request, "account/account_activity.html", context)
 
 
 @method_decorator(login_required, name="dispatch")

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-01 15:22+0200\n"
-"PO-Revision-Date: 2020-05-08 12:19+0200\n"
+"POT-Creation-Date: 2020-06-12 21:22+0200\n"
+"PO-Revision-Date: 2020-06-12 21:24+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -16,13 +16,13 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 2.3\n"
+"X-Generator: Poedit 2.3.1\n"
 
 #: .\account\forms.py:17
 msgid "Email is already used by someone else."
 msgstr "Cette adresse est déjà utilisée."
 
-#: .\account\forms.py:26 .\account\templates\account\account_base.html:93
+#: .\account\forms.py:26 .\account\templates\account\account_base.html:88
 #: .\account\templates\account\account_delete.html:44
 msgid "Password"
 msgstr "Mot de passe"
@@ -30,6 +30,34 @@ msgstr "Mot de passe"
 #: .\account\forms.py:38
 msgid "Incorrect password"
 msgstr "Mot de passe incorrect"
+
+#: .\account\templates\account\account_activity.html:8
+#: .\account\templates\account\account_base.html:92
+msgid "Account activity"
+msgstr "Activité du compte"
+
+#: .\account\templates\account\account_activity.html:10
+msgid "List of the last successful connections to your account."
+msgstr "Liste des dernières connexions réussies à votre compte."
+
+#: .\account\templates\account\account_activity.html:14
+#, python-format
+msgid ""
+"\n"
+"                    If you don't recognize a device, someone else may have "
+"access to your password.\n"
+"                    <a href=\"%(the_url)s\">Change it</a> to protect your "
+"account.\n"
+"                "
+msgstr ""
+"\n"
+"Si vous ne reconnaissez pas un appareil, quelqu’un d’autre a pu avoir accès "
+"à votre mot de passe. <a href=\"%(the_url)s\">Modifiez-le</a> pour protéger "
+"votre compte."
+
+#: .\account\templates\account\account_activity.html:23
+msgid "this device"
+msgstr "cet appareil"
 
 #: .\account\templates\account\account_base.html:5
 msgid "Account management"
@@ -43,23 +71,23 @@ msgstr "Revenir à l'application"
 msgid "Settings"
 msgstr "Paramètres"
 
-#: .\account\templates\account\account_base.html:97
+#: .\account\templates\account\account_base.html:96
 msgid "Two factor authentication"
 msgstr "Authentification à deux facteurs"
 
-#: .\account\templates\account\account_base.html:103
+#: .\account\templates\account\account_base.html:102
 msgid "Data import / export"
 msgstr "Import / export des données"
 
-#: .\account\templates\account\account_base.html:106
+#: .\account\templates\account\account_base.html:105
 msgid "Delete account"
 msgstr "Supprimer mon compte"
 
-#: .\account\templates\account\account_base.html:110
+#: .\account\templates\account\account_base.html:109
 msgid "Paper Matter settings"
 msgstr "Paramètres de Paper Matter"
 
-#: .\account\templates\account\account_base.html:122
+#: .\account\templates\account\account_base.html:121
 msgid ""
 "\n"
 "            Paper Matter, made with ❤ by\n"
@@ -346,26 +374,26 @@ msgstr ""
 msgid "Account security: notice of password change"
 msgstr "Sécurité du compte : avis de changement de mot de passe"
 
-#: .\account\views.py:48
+#: .\account\views.py:71
 msgid "A confirmation email has been sent."
 msgstr "Un email de confirmation a été envoyé."
 
-#: .\account\views.py:105
+#: .\account\views.py:128
 msgid "Email successfully updated."
 msgstr "L'adresse a été mise à jour."
 
-#: .\account\views.py:106
+#: .\account\views.py:129
 msgid "The link expired. Please try again."
 msgstr "Le lien de validation a expiré. Merci de réessayer."
 
-#: .\account\views.py:107
+#: .\account\views.py:130
 msgid "Could not validate your email. Please try again."
 msgstr "Impossible de valider votre adresse. Veuillez réessayer."
 
-#: .\account\views.py:144
+#: .\account\views.py:165
 msgid "Password updated!"
 msgstr "Mot de passe mis à jour !"
 
-#: .\account\views.py:180
+#: .\account\views.py:199
 msgid "Your account was deleted."
 msgstr "Votre compte a été supprimé."

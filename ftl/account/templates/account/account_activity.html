@@ -1,0 +1,29 @@
+{% extends "account/account_base.html" %}
+{% load i18n %}
+
+
+{% block account %}
+    <div class="row no-gutters">
+        <div class="col text-justify">
+            <h3 class="text-primary">{% trans "Account activity" %}</h3>
+            <p class="font-italic">
+                {% trans 'List of the last successful connections to your account.' %}
+            </p>
+            <p class="highlight">
+                {% url 'account_password' as the_url %}
+                {% blocktrans %}
+                    If you don't recognize a device, someone else may have access to your password.
+                    <a href="{{ the_url }}">Change it</a> to protect your account.
+                {% endblocktrans %}
+            </p>
+            <ul>
+                {% for access in access_log %}
+                    <li><strong>{{ access.attempt_time }}</strong> {{ access.ip_address }} {{ access.parsed.os.family }}
+                        ({{ access.parsed.user_agent.family }}) {% ifchanged access.is_current %}
+                            <span class="badge badge-pill badge-success">{% trans 'this device' %}</span>{% endifchanged %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endblock %}
