@@ -4,7 +4,6 @@
 import qrcode
 import qrcode.image.svg
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.views import LoginView
 from django.http import HttpResponse
 from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
@@ -21,6 +20,7 @@ from ftl.otp_plugins.otp_ftl.forms import (
     TOTPDeviceConfirmForm,
 )
 from ftl.otp_plugins.otp_ftl.views import FTLBaseCheckView, FTLBaseDeleteView
+from ftl.views_auth import LoginViewFTL
 
 
 @method_decorator(login_required, name="dispatch")
@@ -44,7 +44,7 @@ class TOTPDeviceDisplay(DetailView):
 
 @method_decorator(login_required, name="dispatch")
 @method_decorator(otp_required(if_configured=True), name="dispatch")
-class TOTPDeviceConfirm(SingleObjectMixin, LoginView):
+class TOTPDeviceConfirm(SingleObjectMixin, LoginViewFTL):
     template_name = "otp_ftl/totpdevice_detail.html"
     form_class = TOTPDeviceConfirmForm
     model = TOTPDevice

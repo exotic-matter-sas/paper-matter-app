@@ -2,7 +2,6 @@
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
 
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.views import LoginView
 from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
 from django.utils.http import is_safe_url
@@ -15,6 +14,7 @@ from django_otp.plugins.otp_static.models import StaticDevice, StaticToken
 from django_otp.plugins.otp_totp.models import TOTPDevice
 
 from ftl.otp_plugins.otp_ftl.models import Fido2Device
+from ftl.views_auth import LoginViewFTL
 
 
 @method_decorator(login_required, name="dispatch")
@@ -67,7 +67,7 @@ class OTPCheckView(View):
             return redirect("otp_static_check", *args, **kwargs)
 
 
-class FTLBaseCheckView(LoginView):
+class FTLBaseCheckView(LoginViewFTL):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["have_fido2"] = Fido2Device.objects.filter(
