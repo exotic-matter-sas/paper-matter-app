@@ -50,6 +50,7 @@ class HomePage(BasePage):
     documents_download_buttons = ".document-thumbnail .download-button"
     documents_checkboxes = ".document-thumbnail .custom-checkbox"
     documents_titles = ".document-thumbnail .card-title span"
+    first_document_thumb = ".document-thumbnail:first-child"
     first_document_title = ".document-thumbnail:first-child .card-title span"
     last_document_title = ".document-thumbnail:last-child .card-title span"
 
@@ -102,8 +103,8 @@ class HomePage(BasePage):
         self.wait_documents_list_loaded()
 
     def open_first_document(self):
-        first_document_title = self.get_elem(self.first_document_title)
-        first_document_title.click()
+        first_document_thumb = self.get_elem(self.first_document_thumb)
+        first_document_thumb.click()
         self.wait_for_elem_to_show(self.document_viewer_panel)
 
     def select_documents(self, documents_names):
