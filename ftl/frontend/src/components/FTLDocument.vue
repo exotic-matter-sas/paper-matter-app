@@ -14,6 +14,8 @@
     class="mb-3 document-thumbnail"
     :id="doc.pid"
     @click.ctrl="toggleSelection"
+    draggable="true"
+    v-on:dragstart="dragstart"
   >
     <div
       class="card"
@@ -154,6 +156,10 @@ export default {
 
     stop_spinner: function () {
       this.timeout_spinner = true;
+    },
+
+    dragstart: function (event) {
+      event.dataTransfer.setData("pid", this.doc.pid); // Only string data can be passed
     },
   },
 };

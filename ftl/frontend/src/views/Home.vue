@@ -62,6 +62,7 @@
             :key="folder.id"
             :folder="folder"
             @event-change-folder="navigateToFolder"
+            @event-document-moved="documentDeleted"
           />
 
           <b-dropdown
