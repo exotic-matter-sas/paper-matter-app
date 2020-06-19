@@ -58,7 +58,7 @@ export default {
     },
 
     drop: function (event) {
-      let pid = event.dataTransfer.getData("pid");
+      let pid = event.dataTransfer.getData("application/ftl-pid");
 
       if (pid) {
         this.docs.push({ pid: pid }); // Fake a doc
@@ -69,10 +69,12 @@ export default {
         this.moveDocument();
         this.docs.length = 0; // Clear docs array
       }
+
+      this.dragOver = false;
     },
 
     allowDrop: function (evt) {
-      // prevent default to allow drop (weird)
+      // element doesn't allow dropping by default, we need to prevent default to allow dropping.
       evt.preventDefault();
       this.dragOver = true;
     },

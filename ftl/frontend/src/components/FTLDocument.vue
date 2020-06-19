@@ -157,7 +157,7 @@ export default {
     },
 
     dragstart: function (event) {
-      event.dataTransfer.setData("pid", this.doc.pid); // Only string data can be passed
+      event.dataTransfer.setData("application/ftl-pid", this.doc.pid); // Only string data can be passed
     },
   },
 };
