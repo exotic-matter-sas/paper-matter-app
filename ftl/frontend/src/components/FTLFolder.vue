@@ -6,10 +6,12 @@
 <template>
   <b-button
     class="folder"
+    :class="{ 'border border-primary': dragOver }"
     :disabled="navigating"
     @click="navigate"
     v-on:drop="drop"
     v-on:dragover="allowDrop"
+    v-on:dragleave="leaveDrop"
   >
     <b-spinner
       id="folder-list-loader"
@@ -45,6 +47,7 @@ export default {
   data() {
     return {
       navigating: false,
+      dragOver: false,
     };
   },
 
@@ -69,7 +72,13 @@ export default {
     },
 
     allowDrop: function (evt) {
+      // prevent default to allow drop (weird)
       evt.preventDefault();
+      this.dragOver = true;
+    },
+
+    leaveDrop: function (evt) {
+      this.dragOver = false;
     },
   },
 };

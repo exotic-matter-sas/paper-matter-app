@@ -88,8 +88,6 @@
 </i18n>
 
 <script>
-import { mapState } from "vuex";
-
 export default {
   props: {
     doc: {
