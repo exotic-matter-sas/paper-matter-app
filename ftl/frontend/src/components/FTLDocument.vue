@@ -46,9 +46,9 @@
         <div class="d-flex align-items-center">
           <div class="text-truncate">
             <h4
-              class="p-1 card-title document-title border rounded"
-              :class="[rename ? 'border-secondary doc-rename' : 'border-light']"
-              :title="doc.title + doc.ext"
+              class="p-1 card-title document-title rounded"
+              :class="{'doc-rename': rename}"
+              :title="doc.title + doc.ext + '\n' +  $t('Click to rename')"
               @click.exact="$emit('event-rename-doc', doc)"
               v-b-hover="renameDocument"
             >
@@ -60,7 +60,6 @@
             v-show="rename"
             class="ml-auto"
             icon="edit"
-            :title="$t('Rename document')"
           />
           <b-button
             v-show="!rename"
@@ -178,7 +177,7 @@ export default {
 <style scoped lang="scss">
 .document-title {
   color: map_get($theme-colors, "primary");
-  /*line-height: calc(1.3rem + (0.25rem * 2) + (1px * 2));*/
+  border: 1px solid transparent;
 }
 
 .card {
@@ -261,5 +260,6 @@ export default {
 
 .doc-rename {
   cursor: text;
+  border-color: map_get($theme-colors, "secondary");
 }
 </style>
