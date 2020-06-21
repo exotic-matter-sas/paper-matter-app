@@ -37,8 +37,8 @@ msgid "Account activity"
 msgstr "Activité du compte"
 
 #: .\account\templates\account\account_activity.html:10
-msgid "List of the last successful connections to your account."
-msgstr "Liste des dernières connexions réussies à votre compte."
+msgid "See the last 10 successful connections to your account."
+msgstr "Visualisez les 10 dernières connexions réussies à votre compte."
 
 #: .\account\templates\account\account_activity.html:14
 #, python-format
@@ -56,8 +56,8 @@ msgstr ""
 "votre compte."
 
 #: .\account\templates\account\account_activity.html:23
-msgid "this device"
-msgstr "cet appareil"
+msgid "current device"
+msgstr "appareil actuel"
 
 #: .\account\templates\account\account_base.html:5
 msgid "Account management"
