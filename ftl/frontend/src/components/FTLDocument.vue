@@ -53,7 +53,7 @@
               class="p-1 card-title document-title rounded"
               :class="{ 'doc-rename': rename }"
               :title="doc.title + doc.ext + '\n' + $t('Click to rename')"
-              @click.exact="openDoc"
+              @click.exact="$emit('event-rename-doc', doc)"
               v-b-hover="renameDocument"
             >
               <span>{{ doc.title }}</span>
@@ -98,6 +98,8 @@
 </i18n>
 
 <script>
+import { mapState } from "vuex";
+
 export default {
   props: {
     doc: {
