@@ -480,7 +480,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
     @skipIf(
         settings.DEV_MODE and not NODE_SERVER_RUNNING,
         "Node not running, this test can't be run",
-        )
+    )
     def test_rename_document_from_list(self):
         # User has already added a document
         old_document_name = "doc_name1"
@@ -495,10 +495,14 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         self.accept_modal()
 
         # Document title have been properly updated
-        self.assertEqual(self.get_elem_text(self.first_document_title), new_document_name)
+        self.assertEqual(
+            self.get_elem_text(self.first_document_title), new_document_name
+        )
         # Even after documents list refresh
         self.refresh_documents_list()
-        self.assertEqual(self.get_elem_text(self.first_document_title), new_document_name)
+        self.assertEqual(
+            self.get_elem_text(self.first_document_title), new_document_name
+        )
 
     @skipIf(
         settings.DEV_MODE and not NODE_SERVER_RUNNING,

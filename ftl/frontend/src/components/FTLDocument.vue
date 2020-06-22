@@ -47,8 +47,8 @@
           <div class="text-truncate">
             <h4
               class="p-1 card-title document-title rounded"
-              :class="{'doc-rename': rename}"
-              :title="doc.title + doc.ext + '\n' +  $t('Click to rename')"
+              :class="{ 'doc-rename': rename }"
+              :title="doc.title + doc.ext + '\n' + $t('Click to rename')"
               @click.exact="$emit('event-rename-doc', doc)"
               v-b-hover="renameDocument"
             >
@@ -56,11 +56,7 @@
               <small>{{ doc.ext }}</small>
             </h4>
           </div>
-          <font-awesome-icon
-            v-show="rename"
-            class="ml-auto"
-            icon="edit"
-          />
+          <font-awesome-icon v-show="rename" class="ml-auto" icon="edit" />
           <b-button
             v-show="!rename"
             class="ml-auto download-button"
