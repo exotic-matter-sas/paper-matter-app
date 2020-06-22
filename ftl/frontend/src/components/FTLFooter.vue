@@ -17,10 +17,9 @@
 
 <i18n>
   en:
-    label: Paper Matter, made with ❤ by {em}.
+    label: Paper Matter, carefully crafted by {em} in France.
   fr:
-    label: Paper Matter, soigneusement conçu
-      par {em} en France.
+    label: Paper Matter, soigneusement conçu par {em} en France.
 </i18n>
 
 <style scoped>

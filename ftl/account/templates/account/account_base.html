@@ -100,9 +100,9 @@
                                class="{% if view_name == 'account_delete' %}active {% endif %}list-group-item list-group-item-action">
                                 {% trans 'Delete account' %}
                             </a>
-                            <a href="{% url 'account_index' %}"
-                               class="{% if view_name == 'XXX' %}active {% endif %}list-group-item list-group-item-action disabled">
-                                {% trans 'Paper Matter settings' %}</a>
+{#                            <a href="{% url 'account_index' %}"#}
+{#                               class="{% if view_name == 'XXX' %}active {% endif %}list-group-item list-group-item-action disabled">#}
+{#                                {% trans 'Paper Matter settings' %}</a>#}
                         {% endwith %}
                     </div>
                 </div>
@@ -115,7 +115,7 @@
     {% block before_footer %}{% endblock %}
     <footer class="footer mt-auto text-muted text-center d-print-none">
         {% blocktrans %}
-            Paper Matter, made with ❤ by
+            Paper Matter, carefully crafted by
             <a id="em-link" target="_blank" href="https://www.exotic-matter.fr">Exotic <span
                     class="highlight">Matter</span></a>
         {% endblocktrans %}

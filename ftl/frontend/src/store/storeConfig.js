@@ -11,6 +11,7 @@ const state = {
   panelSelectedFolder: null,
   selectedDocumentsHome: [],
   sortHome: "recent",
+  lastOpenedDocument: null,
   ftlAccount: {
     name: "...",
     isSuperUser: false,

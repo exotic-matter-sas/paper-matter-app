@@ -122,6 +122,8 @@ export default {
           this.docs = response.data["results"];
           this.count = response.data["count"];
           this.moreDocs = response.data["next"];
+          // Reset last opened doc
+          this.$store.commit("setLastOpenedDocument", null);
         })
         .catch((error) => {
           this.docsLoading = false;

@@ -3,6 +3,7 @@
 import logging
 from http import HTTPStatus
 
+from django.core import management
 from django.http import HttpResponse, HttpResponseServerError, HttpResponseForbidden
 from django.views import View
 
@@ -51,5 +52,12 @@ class BatchDeleteDocument(CronView):
         for doc in docs_to_delete:
             logger.info(f"Deleting {doc.pid} ...")
             doc.delete()
+
+        return True
+
+
+class BatchCleanOauthTokens(CronView):
+    def handle(self, request, *args, **kwargs):
+        management.call_command("cleartokens")
 
         return True

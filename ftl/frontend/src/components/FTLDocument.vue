@@ -17,7 +17,11 @@
   >
     <div
       class="card"
-      :class="{ selected: $store.getters.FTLDocumentSelected(doc.pid) }"
+      :class="{
+        selected: $store.getters.FTLDocumentSelected(doc.pid),
+        'last-selected':
+          isOpened && !$store.getters.FTLDocumentSelected(doc.pid),
+      }"
     >
       <div
         v-if="doc.thumbnail_available"
@@ -26,13 +30,13 @@
         :style="{
           'background-image': 'url(' + doc.thumbnail_url + ')',
         }"
-        @click.exact="$emit('event-open-doc', doc.pid)"
+        @click.exact="openDoc"
       ></div>
       <div
         v-else
         class="card-img-top thumb-unavailable"
         slot="aside"
-        @click.exact="$emit('event-open-doc', doc.pid)"
+        @click.exact="openDoc"
       >
         <div class="p-3 doc-icon">
           <font-awesome-icon
@@ -49,7 +53,7 @@
               class="p-1 card-title document-title rounded"
               :class="{ 'doc-rename': rename }"
               :title="doc.title + doc.ext + '\n' + $t('Click to rename')"
-              @click.exact="$emit('event-rename-doc', doc)"
+              @click.exact="openDoc"
               v-b-hover="renameDocument"
             >
               <span>{{ doc.title }}</span>
@@ -121,6 +125,7 @@ export default {
           "file-powerpoint",
       },
       rename: false,
+      opened: false,
     };
   },
 
@@ -144,10 +149,17 @@ export default {
         return "file";
       }
     },
+
+    isOpened: function () {
+      return this.doc.pid === this.lastOpenedDocument;
+    },
+
+    ...mapState(["lastOpenedDocument"]),
   },
 
   methods: {
     openDoc: function () {
+      this.$store.commit("setLastOpenedDocument", this.doc.pid);
       this.$emit("event-open-doc", this.doc.pid);
     },
 
@@ -183,6 +195,10 @@ export default {
   &:hover {
     border-color: map_get($theme-colors, "primary");
   }
+}
+
+.last-selected {
+  border-color: map_get($theme-colors, "active");
 }
 
 .selected {
