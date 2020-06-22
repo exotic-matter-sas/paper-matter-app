@@ -95,6 +95,7 @@
   fr:
     Use CTRL + left click for quick selection: Utiliser CTRL + clic gauche pour une sélection rapide
     Processing document, it cannot be searched yet.: Document en cours d'indexation, il ne peut pas être recherché.
+    Click to rename: Cliquer pour renommer
 </i18n>
 
 <script>
