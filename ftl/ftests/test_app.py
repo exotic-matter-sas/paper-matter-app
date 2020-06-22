@@ -480,6 +480,29 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
     @skipIf(
         settings.DEV_MODE and not NODE_SERVER_RUNNING,
         "Node not running, this test can't be run",
+        )
+    def test_rename_document_from_list(self):
+        # User has already added a document
+        old_document_name = "doc_name1"
+        setup_document(self.org, self.user, title=old_document_name)
+        self.refresh_documents_list()
+
+        # User click on the document title to rename it
+        new_document_name = "bingo!"
+        self.get_elem(self.first_document_title).click()
+        self.wait_for_elem_to_show(self.modal_input)
+        self.get_elem(self.modal_input).send_keys(new_document_name)
+        self.accept_modal()
+
+        # Document title have been properly updated
+        self.assertEqual(self.get_elem_text(self.first_document_title), new_document_name)
+        # Even after documents list refresh
+        self.refresh_documents_list()
+        self.assertEqual(self.get_elem_text(self.first_document_title), new_document_name)
+
+    @skipIf(
+        settings.DEV_MODE and not NODE_SERVER_RUNNING,
+        "Node not running, this test can't be run",
     )
     def test_unselect_documents(self):
         # Ensure that documents selected are unselected when switching pages
