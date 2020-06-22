@@ -357,6 +357,7 @@ Enable Django Axes to have login rate limit and account activity logging (IP add
 AXES_ENABLED = False
 AXES_FAILURE_LIMIT = 5
 AXES_COOLOFF_TIME = timedelta(minutes=10)
+AXES_LOCKOUT_TEMPLATE = "ftl/axes/locked.html"
 
 
 # ==================================================
