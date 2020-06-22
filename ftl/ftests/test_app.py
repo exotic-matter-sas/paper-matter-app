@@ -481,7 +481,8 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         settings.DEV_MODE and not NODE_SERVER_RUNNING,
         "Node not running, this test can't be run",
     )
-    def test_rename_document_from_list(self):
+    @patch.object(apply_ftl_processing, "delay")
+    def test_rename_document_from_list(self, mock_processing_delay):
         # User has already added a document
         old_document_name = "doc_name1"
         setup_document(self.org, self.user, title=old_document_name)
