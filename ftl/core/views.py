@@ -109,6 +109,11 @@ class ViewDocument(DownloadView):
             return HttpResponseRedirect(f"{doc.binary.url}&{urlencode}")
         else:
             response = HttpResponse(doc.binary, doc.type)
+            if doc.type == "text/plain":
+                response["Content-Type"] = f"text/plain; charset=utf-8"
+            else:
+                response["Content-Type"] = doc.type
+
             response["Content-Disposition"] = f'inline; filename="{title}"'
             return response
 
