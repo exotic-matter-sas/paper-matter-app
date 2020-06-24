@@ -24,6 +24,7 @@ import {
   SpinnerPlugin,
   TabsPlugin,
   ToastPlugin,
+  VBHoverPlugin,
 } from "bootstrap-vue";
 import App from "./App.vue";
 
@@ -118,6 +119,7 @@ Vue.use(FormFilePlugin);
 Vue.use(ProgressPlugin);
 Vue.use(ToastPlugin);
 Vue.use(BreadcrumbPlugin);
+Vue.use(VBHoverPlugin);
 
 // Moment JS for nice date
 Vue.prototype.$moment = moment;

@@ -33,6 +33,7 @@ export default {
       moreDocs: null,
       sort: null,
       count: 0,
+      currentRenameDoc: {},
     };
   },
 
@@ -92,6 +93,11 @@ export default {
         });
     },
 
+    renameDoc: function (doc) {
+      this.currentRenameDoc = doc;
+      this.$bvModal.show("modal-rename-document-home");
+    },
+
     _updateDocuments: function (query) {
       let queryString = {};
 
@@ -148,7 +154,7 @@ export default {
       const doc = event.doc;
 
       const foundIndex = this.docs.findIndex((x) => x.pid === doc.pid);
-      this.docs[foundIndex] = doc; // update doc in the list
+      this.$set(this.docs, foundIndex, doc); // update doc in the list (force reactivity)
     },
   },
 };

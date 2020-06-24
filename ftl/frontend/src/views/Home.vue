@@ -186,6 +186,7 @@
               :key="doc.pid"
               :doc="doc"
               @event-open-doc="navigateToDocument"
+              @event-rename-doc="renameDoc"
             />
           </b-row>
         </b-col>
@@ -244,6 +245,12 @@
         :docs="selectedDocumentsHome"
         @event-document-deleted="documentDeleted"
       />
+
+      <FTLRenameDocument
+        :doc="currentRenameDoc"
+        id="modal-rename-document-home"
+        @event-document-renamed="documentUpdated"
+      />
     </b-col>
   </main>
 </template>
@@ -280,6 +287,7 @@ import FTLDeleteDocuments from "@/components/FTLDeleteDocuments";
 import FTLMoveDocuments from "@/components/FTLMoveDocuments";
 import FTLDocument from "@/components/FTLDocument";
 import FTLUpload from "@/components/FTLUpload";
+import FTLRenameDocument from "@/components/FTLRenameDocument";
 import axios from "axios";
 
 export default {
@@ -294,6 +302,7 @@ export default {
     FTLMoveDocuments,
     FTLDocument,
     FTLUpload,
+    FTLRenameDocument,
   },
 
   props: ["folder"],

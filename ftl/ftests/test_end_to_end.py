@@ -235,7 +235,7 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage, DocumentViewerModal):
         self.wait_celery_queue_to_be_empty(self._worker)
 
         # User open second document and rename it
-        self.get_elem(self.first_document_title).click()
+        self.get_elem(self.first_document_thumb).click()
         new_title = "bingo!"
         self.rename_document(new_title)
         self.close_document()

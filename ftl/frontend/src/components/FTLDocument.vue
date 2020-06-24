@@ -47,22 +47,30 @@
         </div>
       </div>
       <b-card-body>
-        <b-button
-          class="float-right download-button"
-          variant="secondary"
-          size="sm"
-          :href="`uploads/${doc.pid}/`"
-        >
-          <font-awesome-icon :icon="getIcon" :alt="$t('Download')" />
-        </b-button>
-        <h4
-          class="card-title text-truncate document-title"
-          :title="doc.title + doc.ext"
-          @click.exact="openDoc"
-        >
-          <span>{{ doc.title }}</span>
-          <small>{{ doc.ext }}</small>
-        </h4>
+        <div class="d-flex align-items-center">
+          <div class="text-truncate">
+            <h4
+              class="p-1 card-title document-title rounded"
+              :class="{ 'doc-rename': rename }"
+              :title="doc.title + doc.ext + '\n' + $t('Click to rename')"
+              @click.exact="$emit('event-rename-doc', doc)"
+              v-b-hover="renameDocument"
+            >
+              <span>{{ doc.title }}</span>
+              <small>{{ doc.ext }}</small>
+            </h4>
+          </div>
+          <font-awesome-icon v-show="rename" class="ml-auto" icon="edit" />
+          <b-button
+            v-show="!rename"
+            class="ml-auto download-button"
+            variant="secondary"
+            size="sm"
+            :href="`uploads/${doc.pid}/`"
+          >
+            <font-awesome-icon :icon="getIcon" :alt="$t('Download')" />
+          </b-button>
+        </div>
       </b-card-body>
       <b-card-footer :title="$moment(doc.created).format('LLLL')">
         <b-form-checkbox
@@ -87,6 +95,7 @@
   fr:
     Use CTRL + left click for quick selection: Utiliser CTRL + clic gauche pour une sélection rapide
     Processing document, it cannot be searched yet.: Document en cours d'indexation, il ne peut pas être recherché.
+    Click to rename: Cliquer pour renommer
 </i18n>
 
 <script>
@@ -118,6 +127,7 @@ export default {
         "application/vnd.openxmlformats-officedocument.presentationml.presentation":
           "file-powerpoint",
       },
+      rename: false,
       opened: false,
     };
   },
@@ -167,6 +177,10 @@ export default {
     stop_spinner: function () {
       this.timeout_spinner = true;
     },
+
+    renameDocument: function (hovered) {
+      this.rename = hovered;
+    },
   },
 };
 </script>
@@ -174,7 +188,7 @@ export default {
 <style scoped lang="scss">
 .document-title {
   color: map_get($theme-colors, "primary");
-  line-height: calc(1.3rem + (0.25rem * 2) + (1px * 2));
+  border: 1px solid transparent;
 }
 
 .card {
@@ -257,5 +271,10 @@ export default {
 
 .doc-icon {
   opacity: 0.1;
+}
+
+.doc-rename {
+  cursor: text;
+  border-color: map_get($theme-colors, "secondary");
 }
 </style>
