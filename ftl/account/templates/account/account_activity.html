@@ -7,7 +7,7 @@
         <div class="col text-justify">
             <h3 class="text-primary">{% trans "Account activity" %}</h3>
             <p class="font-italic">
-                {% trans 'See the last ten successful connections to your account. All times are UTC.' %}
+                {% trans 'See the last ten successful connections to your account.' %}
             </p>
             <p class="highlight">
                 {% url 'account_password' as the_url %}
@@ -18,7 +18,7 @@
             </p>
             <ul>
                 {% for access in access_log %}
-                    <li><strong>{{ access.attempt_time }}</strong> {{ access.ip_address }} {{ access.parsed.os.family }}
+                    <li><strong>{{ access.attempt_time }}<sup><abbr title="Coordinated Universal Time">UTC</abbr></sup></strong> {{ access.ip_address }} {{ access.parsed.os.family }}
                         ({{ access.parsed.user_agent.family }}) {% ifchanged access.is_current %}
                             <span class="badge badge-pill badge-success">{% trans 'current device' %}</span>{% endifchanged %}
                     </li>

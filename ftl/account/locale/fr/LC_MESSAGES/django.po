@@ -38,10 +38,9 @@ msgstr "Activité du compte"
 
 #: .\account\templates\account\account_activity.html:10
 msgid ""
-"See the last ten successful connections to your account. All times are UTC."
+"See the last ten successful connections to your account."
 msgstr ""
-"Consultez les dix dernières connexions réussies à votre compte. Les heures "
-"sont données en UTC."
+"Consultez les dix dernières connexions réussies à votre compte."
 
 #: .\account\templates\account\account_activity.html:14
 #, python-format
