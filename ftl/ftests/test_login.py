@@ -6,6 +6,7 @@ from unittest import skipIf
 
 from django.conf import settings
 from django.core import mail
+from django.test import override_settings
 
 from ftests.pages.base_page import NODE_SERVER_RUNNING
 from ftests.pages.django_admin_login_page import AdminLoginPage
@@ -69,6 +70,22 @@ class LoginPageTests(LoginPage, HomePage, AdminLoginPage):
         self.visit(HomePage.url)
         self.assertIn("home", self.head_title)
         self.assertIn(self.admin.email, self.get_elem(self.profile_name).text)
+
+    @override_settings(AXES_ENABLED=True)
+    def test_account_locked(self):
+        self.visit(LoginPage.url)
+
+        self.log_user(password="wrongpassword")
+        self.log_user(password="wrongpassword")
+        self.log_user(password="wrongpassword")
+        self.log_user(password="wrongpassword")
+        self.log_user(password="wrongpassword")
+
+        self.assertIn("account locked", self.head_title)
+
+        self.visit(LoginPage.url)
+        self.log_user()
+        self.assertIn("account locked", self.head_title)
 
 
 class ForgotPasswordTests(LoginPage, ResetPasswordPages):

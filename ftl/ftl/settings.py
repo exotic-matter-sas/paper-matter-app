@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     "oauth2_provider",
     "rest_framework",
     "webpack_loader",
+    "axes",
     "ftl",
     "setup.apps.SetupConfig",
     "core.apps.CoreConfig",
@@ -74,6 +75,13 @@ INSTALLED_APPS = [
 
 if DEBUG and DEV_MODE:
     INSTALLED_APPS += ["debug_toolbar", "sslserver"]
+
+AUTHENTICATION_BACKENDS = [
+    # AxesBackend should be the first backend in the AUTHENTICATION_BACKENDS list.
+    "axes.backends.AxesBackend",
+    # Django ModelBackend is the default authentication backend.
+    "django.contrib.auth.backends.ModelBackend",
+]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -86,6 +94,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "ftl.ftl_setup_middleware.FTLSetupMiddleware",
+    "axes.middleware.AxesMiddleware",
 ]
 if DEBUG and DEV_MODE:
     MIDDLEWARE += [
@@ -336,8 +345,20 @@ FTL_DELETE_DISABLED_ACCOUNTS = True
 FTL_SUFFIX_DELETED_ACCOUNT = "@disabled.pm.app"  # No need to change this
 FTL_SUFFIX_DELETED_ORG = "-disabled"  # No need to change this
 
-
+"""
+Redis URL for Celery broker
+"""
 CELERY_BROKER_URL = "redis://localhost:6379"
+
+
+"""
+Enable Django Axes to have login rate limit and account activity logging (IP addresses and user agent).
+"""
+AXES_ENABLED = False
+AXES_FAILURE_LIMIT = 5
+AXES_COOLOFF_TIME = timedelta(minutes=10)
+AXES_LOCKOUT_TEMPLATE = "ftl/axes/locked.html"
+
 
 # ==================================================
 # No settings under this line

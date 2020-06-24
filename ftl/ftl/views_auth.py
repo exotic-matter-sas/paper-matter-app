@@ -1,18 +1,21 @@
 #  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
+from django.contrib.auth import login
+from django.contrib.auth.views import LoginView
+from django.http import HttpResponseRedirect
 
-# from django.contrib.auth.views import LoginView
-#
-#
-# class LoginViewFTL(LoginView):
-#     """
-#     Custom login view for setting some session variables
-#     (not used anymore, replaced by signals)
-#     """
-#
-#     def form_valid(self, form):
-#         valid = super().form_valid(form)
-#         org = self.request.user.org
-#         self.request.session['org_id'] = org.id
-#         self.request.session['org_name'] = org.name
-#         return valid
+
+class LoginViewFTL(LoginView):
+    """
+    Custom login view for setting authentication backend. Needed because we use multiple auth backend (Django axes for
+    rate limiting).
+    """
+
+    def form_valid(self, form):
+        """Security check complete. Log the user in."""
+        login(
+            self.request,
+            form.get_user(),
+            backend="django.contrib.auth.backends.ModelBackend",
+        )
+        return HttpResponseRedirect(self.get_success_url())

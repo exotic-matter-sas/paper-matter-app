@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-28 07:39+0000\n"
-"PO-Revision-Date: 2019-03-05 17:20+0100\n"
+"POT-Creation-Date: 2020-06-22 12:20+0200\n"
+"PO-Revision-Date: 2020-06-22 12:21+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 2.3\n"
+"X-Generator: Poedit 2.3.1\n"
 
 #: ftl/forms.py:36 ftl/forms.py:82
 msgid "This email can't be used."
@@ -47,7 +47,22 @@ msgstr "Votre session a expiré ou a été invalidée. Veuillez vous reconnecter
 msgid "You have been logged out. See you!"
 msgstr "Vous êtes déconnecté. À bientôt !"
 
-#: ftl/templates/ftl/base_email_body.txt:1
+#: .\ftl\templates\ftl\axes\locked.html:6
+msgid "Account locked"
+msgstr "Compte bloqué"
+
+#: .\ftl\templates\ftl\axes\locked.html:11
+msgid ""
+"\n"
+"            Your account has been locked for security purpose. Please try "
+"again later.\n"
+"        "
+msgstr ""
+"\n"
+"Votre compte a été verrouillé à des fins de sécurité. Merci de réessayer à "
+"nouveau plus tard."
+
+#: .\ftl\templates\ftl\base_email_body.txt:1
 msgid "Hello,"
 msgstr "Bonjour,"
 
