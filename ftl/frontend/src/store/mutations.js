@@ -43,4 +43,8 @@ export default {
   setFtlAccount: function (state, value) {
     state.ftlAccount = value;
   },
+
+  setLastOpenedDocument: function (state, value) {
+    state.lastOpenedDocument = value;
+  },
 };

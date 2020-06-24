@@ -5,22 +5,25 @@
 
 <template>
   <b-modal
-    id="modal-rename-document"
+    :id="id"
     :ok-disabled="!newDocumentName || newDocumentName === doc.title"
     @ok="renameDocument"
   >
     <template slot="modal-title">
       <span>{{ $t("Rename document") }}</span>
     </template>
-    <b-container fluid>
+    <b-container>
       <b-form-group
         id="fieldset-rename-document"
         :description="$t('The new name of the document')"
         :label="
-          $t('The document will be renamed to \'{0}\'.', [newDocumentName])
+          $t('The document will be renamed to \'{0}{1}\'.', [
+            newDocumentName,
+            doc.ext,
+          ])
         "
         label-for="rename-document-text"
-        class="text-truncate"
+        label-class="text-truncate"
       >
         <b-form-input
           id="rename-document-text"
@@ -38,7 +41,7 @@
   fr:
     Rename document: Renommer le document
     The new name of the document: Le nouveau nom du document
-    The document will be renamed to '{0}'.: Le document sera renommé « {0} ».
+    The document will be renamed to '{0}{1}'.: Le document sera renommé « {0}{1} ».
     Document successfully renamed.: Le document a été renommé avec succès.
     Could not rename document.: Le document n'a pas pu être renommé.
 </i18n>
@@ -51,6 +54,11 @@ export default {
   name: "FTLRenameDocument",
 
   props: {
+    // customize the id to allow multiple usage of this component at the same time
+    id: {
+      type: String,
+      default: "modal-rename-document",
+    },
     doc: {
       Object,
       required: true,
@@ -61,6 +69,14 @@ export default {
     return {
       newDocumentName: this.doc.title,
     };
+  },
+
+  watch: {
+    doc: function (newVal, oldVal) {
+      if (newVal.pid !== oldVal.pid) {
+        this.newDocumentName = newVal.title;
+      }
+    },
   },
 
   methods: {

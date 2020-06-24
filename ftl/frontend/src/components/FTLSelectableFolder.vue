@@ -17,7 +17,9 @@
     <b-row align-h="start" no-gutters>
       <b-col>
         <b-form-checkbox :id="'checkbox-folder-' + folder.id" v-model="state">
-          <span :title="folder.name">{{ folder.name }}</span>
+          <span :title="folder.name" class="text-wrap text-break">{{
+            folder.name
+          }}</span>
         </b-form-checkbox>
       </b-col>
     </b-row>

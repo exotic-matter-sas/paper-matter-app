@@ -10,4 +10,9 @@ urlpatterns = [
         views_crons.BatchDeleteDocument.as_view(),
         name="cron-batch-delete-documents",
     ),
+    path(
+        "batch-clean-oauth-tokens",
+        views_crons.BatchCleanOauthTokens.as_view(),
+        name="cron-batch-clean-oauth-tokens",
+    ),
 ]

@@ -187,6 +187,7 @@
               :key="doc.pid"
               :doc="doc"
               @event-open-doc="navigateToDocument"
+              @event-rename-doc="renameDoc"
             />
           </b-row>
         </b-col>
@@ -218,14 +219,6 @@
         </b-col>
       </b-row>
 
-      <b-row v-else-if="count > 0" class="my-3">
-        <b-col>
-          <p class="text-center">
-            {{ $t("No more documents in this folder") }}
-          </p>
-        </b-col>
-      </b-row>
-
       <!-- Pdf viewer popup -->
       <FTLDocumentPanel
         v-if="docPid"
@@ -253,6 +246,12 @@
         :docs="selectedDocumentsHome"
         @event-document-deleted="documentDeleted"
       />
+
+      <FTLRenameDocument
+        :doc="currentRenameDoc"
+        id="modal-rename-document-home"
+        @event-document-renamed="documentUpdated"
+      />
     </b-col>
   </main>
 </template>
@@ -270,7 +269,6 @@
     "| 1 document: | {n} documents:": "| 1 document : | {n} documents :"
     No document yet: Aucun document
     "| Show more documents (1 remaining) | Show more documents ({n} remaining)": "| Afficher plus de documents (1 restant) | Afficher plus de documents ({n} restants)"
-    No more documents in this folder: Aucun document restant à afficher
     Could not open this folder.: Impossible d'ouvrir ce dossier.
     Select all documents displayed: Sélectionner tous les documents affichés
     Deselect all documents: Désélectionner tous les documents
@@ -290,6 +288,7 @@ import FTLDeleteDocuments from "@/components/FTLDeleteDocuments";
 import FTLMoveDocuments from "@/components/FTLMoveDocuments";
 import FTLDocument from "@/components/FTLDocument";
 import FTLUpload from "@/components/FTLUpload";
+import FTLRenameDocument from "@/components/FTLRenameDocument";
 import axios from "axios";
 
 export default {
@@ -304,6 +303,7 @@ export default {
     FTLMoveDocuments,
     FTLDocument,
     FTLUpload,
+    FTLRenameDocument,
   },
 
   props: ["folder"],

@@ -158,7 +158,7 @@
 
 <i18n>
   fr:
-    Rename document: Renommer le document
+    Click to rename document: Cliquez pour renommer
     Viewer not available on this device, open the document instead.: Visualisateur indisponible pour cet appareil,
       ouvrez le document à la place.
     Viewer not available for this document type, open the document instead.: Visualisateur indisponible pour ce type de

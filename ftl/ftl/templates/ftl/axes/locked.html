@@ -1,0 +1,19 @@
+{% extends "ftl/main_vcenter_with_aside.html" %}
+{% load i18n %}
+{% load static %}
+{% load webpack_loader %}
+
+{% block title %}{% trans 'Account locked' %}{% endblock %}
+{% block head %}{% render_bundle 'common_logged_out' 'css' %}{% endblock %}
+
+{% block main_content_vcenter %}
+    <div class="alert alert-danger" role="alert">
+        {% blocktrans %}
+            Your account has been locked for security purpose. Please try again later.
+        {% endblocktrans %}
+    </div>
+{% endblock %}
+
+{% block aside_illustration %}
+    <img src="{% static "account_locked.svg" %}" alt="Account locked illustration">
+{% endblock %}

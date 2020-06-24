@@ -49,16 +49,18 @@
         </a>
       </b-col>
     </b-row>
-    <b-row>
+    <b-row class="mt-1">
       <b-col>
         <b-progress
           id="document-upload-loader"
           :class="{ 'd-none': !uploading }"
           :max="100"
-          :value="globalUploadProgress"
           variant="success"
-          show-progress
-        />
+        >
+          <b-progress-bar :value="globalUploadProgress">
+            <strong>{{ globalUploadProgress.toFixed(0) }} %</strong>
+          </b-progress-bar>
+        </b-progress>
       </b-col>
     </b-row>
   </section>
