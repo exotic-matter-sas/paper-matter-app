@@ -182,6 +182,10 @@ export default {
 
     dragstart: function (event) {
       event.dataTransfer.setData("application/ftl-pid", this.doc.pid); // Only string data can be passed
+      const img = new Image();
+      img.src =
+        "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=";
+      event.dataTransfer.setDragImage(img, 0, 0);
     },
 
     renameDocument: function (hovered) {

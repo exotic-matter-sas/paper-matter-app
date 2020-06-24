@@ -23,31 +23,15 @@
 </template>
 
 <script>
-import FTLMoveDocuments from "@/components/FTLMoveDocuments";
+import FTLDnDToFolderMixin from "@/components/FTLDnDToFolderMixin";
 
 export default {
   name: "FTLFolder",
-  mixins: [FTLMoveDocuments], // Reuse methods for moving documents
-
-  props: {
-    folder: {
-      type: Object,
-      required: true,
-    },
-
-    docs: {
-      type: Array,
-      required: false,
-      default: function () {
-        return [];
-      },
-    },
-  },
+  mixins: [FTLDnDToFolderMixin], // Reuse methods for moving documents
 
   data() {
     return {
       navigating: false,
-      dragOver: false,
     };
   },
 
@@ -55,32 +39,6 @@ export default {
     navigate: function () {
       this.navigating = true;
       this.$emit("event-change-folder", this.folder);
-    },
-
-    drop: function (event) {
-      let pid = event.dataTransfer.getData("application/ftl-pid");
-
-      if (pid) {
-        this.docs.push({ pid: pid }); // Fake a doc
-        this.$store.commit("selectMoveTargetFolder", {
-          id: this.folder.id,
-          name: this.folder.name,
-        });
-        this.moveDocument();
-        this.docs.length = 0; // Clear docs array
-      }
-
-      this.dragOver = false;
-    },
-
-    allowDrop: function (evt) {
-      // element doesn't allow dropping by default, we need to prevent default to allow dropping.
-      evt.preventDefault();
-      this.dragOver = true;
-    },
-
-    leaveDrop: function (evt) {
-      this.dragOver = false;
     },
   },
 };
