@@ -33,7 +33,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.breadcrumb-item a {
+.breadcrumb-item a,
+span {
   border: 1px solid transparent;
 }
 
