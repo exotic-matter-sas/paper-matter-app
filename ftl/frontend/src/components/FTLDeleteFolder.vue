@@ -30,6 +30,7 @@
           autofocus
           v-model="name"
           trim
+          @keyup.enter="name === folder.name && deleteFolder($event)"
         ></b-form-input>
       </b-form-group>
     </b-container>
@@ -72,6 +73,16 @@ export default {
       name: "",
       deleting: false,
     };
+  },
+
+  computed: {
+    canDelete: function () {
+      if (this.name === this.folder.name) {
+        return "keyup.enter";
+      } else {
+        return null;
+      }
+    },
   },
 
   methods: {
