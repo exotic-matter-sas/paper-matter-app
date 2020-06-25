@@ -8,7 +8,7 @@
     :text="text"
     :to="to"
     :active="active"
-    :class="{ 'border border-primary': dragOver }"
+    :class="{ 'drag-over': dragOver }"
     v-on:drop="drop"
     v-on:dragover="customAllowDrop"
     v-on:dragleave="leaveDrop"
@@ -31,3 +31,13 @@ export default {
   },
 };
 </script>
+
+<style scoped lang="scss">
+.breadcrumb-item a {
+  border: 1px solid transparent;
+}
+
+.drag-over a {
+  border-color: map_get($theme-colors, "active");
+}
+</style>
