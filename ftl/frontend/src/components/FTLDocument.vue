@@ -74,20 +74,33 @@
           </b-button>
         </div>
       </b-card-body>
-      <b-card-footer :title="$moment(doc.created).format('LLLL')">
-        <b-form-checkbox
-          :checked="$store.getters.FTLDocumentSelected(doc.pid)"
-          @change="toggleSelection"
-          :title="$t('Use CTRL + left click for quick selection')"
-        />
-        <small class="text-muted">{{ $moment(doc.created).fromNow() }}</small>
-        <div
-          v-if="!doc.is_processed && !timeout_spinner"
-          class="spinner-border spinner-border-sm text-primary"
-          role="status"
-          aria-hidden="true"
-          :title="$t('Processing document, it cannot be searched yet.')"
-        ></div>
+      <b-card-footer class="p-1">
+        <div class="d-flex align-items-center">
+          <font-awesome-icon
+            icon="grip-lines-vertical"
+            :alt="$t('Drag to folder to move document')"
+            :title="$t('Drag to folder to move document')"
+            class="ml-1 grab"
+          />
+          <b-form-checkbox
+            :checked="$store.getters.FTLDocumentSelected(doc.pid)"
+            @change="toggleSelection"
+            :title="$t('Use CTRL + left click for quick selection')"
+            class="ml-2"
+          />
+          <small
+            class="text-muted ml-1"
+            :title="$moment(doc.created).format('LLLL')"
+            >{{ $moment(doc.created).fromNow() }}</small
+          >
+          <div
+            v-if="!doc.is_processed && !timeout_spinner"
+            class="ml-auto mr-1 spinner-border spinner-border-sm text-primary"
+            role="status"
+            aria-hidden="true"
+            :title="$t('Processing document, it cannot be searched yet.')"
+          ></div>
+        </div>
       </b-card-footer>
     </div>
   </b-col>
@@ -98,6 +111,7 @@
     Use CTRL + left click for quick selection: Utiliser CTRL + clic gauche pour une sélection rapide
     Processing document, it cannot be searched yet.: Document en cours d'indexation, il ne peut pas être recherché.
     Click to rename: Cliquer pour renommer
+    Drag to folder to move document: Saisir pour déplacer le document
 </i18n>
 
 <script>
@@ -182,6 +196,7 @@ export default {
 
     dragstart: function (event) {
       event.dataTransfer.setData("application/ftl-pid", this.doc.pid); // Only string data can be passed
+      // Remove drag ghost image
       const img = new Image();
       img.src =
         "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=";
@@ -255,28 +270,29 @@ export default {
 }
 
 .card-footer {
-  text-align: center;
-  padding: 0.5rem 0.75rem;
+  /*text-align: center;*/
+  /*padding: 0.5rem 0.75rem;*/
   font-style: italic;
 
-  .custom-checkbox {
-    position: absolute;
-  }
+  /*.custom-checkbox {*/
+  /*  position: absolute;*/
+  /*}*/
 
   small {
     &::first-letter {
       text-transform: uppercase;
     }
-
-    display: inline-block;
-    vertical-align: 0.13rem;
   }
 
-  .spinner-border {
-    position: absolute;
-    right: 0.75rem;
-    bottom: 0.75rem;
-  }
+  /*  display: inline-block;*/
+  /*  vertical-align: 0.13rem;*/
+  /*}*/
+
+  /*.spinner-border {*/
+  /*  position: absolute;*/
+  /*  right: 0.75rem;*/
+  /*  bottom: 0.75rem;*/
+  /*}*/
 }
 
 .doc-icon {
@@ -286,5 +302,9 @@ export default {
 .doc-rename {
   cursor: text;
   border-color: map_get($theme-colors, "secondary");
+}
+
+.grab {
+  cursor: grabbing;
 }
 </style>

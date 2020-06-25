@@ -51,6 +51,7 @@ import {
   faSync,
   faTrash,
   faWindowClose,
+  faGripLinesVertical,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   faMinusSquare,
@@ -94,7 +95,8 @@ library.add(
   faFileExcel,
   faFile,
   faFilePowerpoint,
-  faFileAlt
+  faFileAlt,
+  faGripLinesVertical
 );
 Vue.component("font-awesome-icon", FontAwesomeIcon);
 
