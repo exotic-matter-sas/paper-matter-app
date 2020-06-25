@@ -179,14 +179,17 @@ describe("Home computed", () => {
     // then
     const expectedFormat = [
       {
+        id: null,
         text: "Root",
         to: { name: "home" },
       },
       {
+        id: fakeLevels[0].id,
         text: fakeLevels[0].name,
         to: { path: "/home/" + fakePath },
       },
       {
+        id: fakeLevels[1].id,
         text: fakeLevels[1].name + ` (${fakeCount})`,
         to: { path: "/home/" + fakePath },
       },
