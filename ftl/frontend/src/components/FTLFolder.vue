@@ -6,7 +6,7 @@
 <template>
   <b-button
     class="folder"
-    :class="{ 'border border-primary': dragOver }"
+    :class="{ 'border border-active': dragOver }"
     :disabled="navigating"
     @click="navigate"
     v-on:drop="drop"
