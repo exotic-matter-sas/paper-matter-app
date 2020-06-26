@@ -26,7 +26,11 @@
           onfocus="this.select()"
           v-model="newFolderName"
           trim
-          @keyup.enter="newFolderName && renameFolder($event)"
+          @keyup.enter="
+            newFolderName &&
+              newFolderName !== folder.name &&
+              renameFolder($event)
+          "
         ></b-form-input>
       </b-form-group>
     </b-container>
