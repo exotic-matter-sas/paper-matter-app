@@ -28,6 +28,7 @@
           autofocus
           v-model="newFolderName"
           trim
+          @keyup.enter="newFolderName && createNewFolder($event)"
         ></b-form-input>
       </b-form-group>
     </b-container>
@@ -90,6 +91,7 @@ export default {
             this.$t('Folder "{0}" created', [this.newFolderName])
           );
           this.newFolderName = "";
+          this.$bvModal.hide("modal-new-folder");
           this.$emit("event-folder-created", response.data);
         })
         .catch((error) => {
