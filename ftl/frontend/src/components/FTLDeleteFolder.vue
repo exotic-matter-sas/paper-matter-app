@@ -75,16 +75,6 @@ export default {
     };
   },
 
-  computed: {
-    canDelete: function () {
-      if (this.name === this.folder.name) {
-        return "keyup.enter";
-      } else {
-        return null;
-      }
-    },
-  },
-
   methods: {
     deleteFolder: function (bvModalEvt) {
       const vi = this;
