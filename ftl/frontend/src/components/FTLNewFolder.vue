@@ -64,6 +64,16 @@ export default {
     };
   },
 
+  computed: {
+    getParentName: function () {
+      if (this.parent == null) {
+        return this.$t("Root");
+      } else {
+        return this.parent.name;
+      }
+    },
+  },
+
   methods: {
     createNewFolder: function () {
       let postBody;
