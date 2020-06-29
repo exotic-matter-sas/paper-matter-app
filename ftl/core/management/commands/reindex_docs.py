@@ -87,7 +87,9 @@ class Command(BaseCommand):
 
         for doc in docs:
             self.stdout.write(_("Reindexing %(title)s") % {"title": doc.title})
-            apply_ftl_processing.delay(doc.pk, force=plugins_forced)
+            apply_ftl_processing.delay(
+                doc.pid, doc.org.pk, doc.ftl_user.pk, force=plugins_forced
+            )
             self.stdout.write(self.style.SUCCESS(_("OK")))
 
         end_time = time.time()

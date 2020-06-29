@@ -8,16 +8,18 @@ from core.processing.ftl_processing import FTLDocumentProcessing
 
 
 @shared_task
-def apply_ftl_processing(ftl_doc_pk, force):
-    doc = FTLDocument.objects.get(pk=ftl_doc_pk)
+def apply_ftl_processing(ftl_doc_pid, org_id, user_id, force):
+    doc = FTLDocument.objects.get(pid=ftl_doc_pid, org_id=org_id, ftl_user_id=user_id)
     ftl_document_processing = FTLDocumentProcessing()
     ftl_document_processing.apply_processing(doc, force)
 
 
 @shared_task
-def delete_document(ftl_doc_pk, org_id, user_id):
+def delete_document(ftl_doc_pid, org_id, user_id):
     try:
-        doc = FTLDocument.objects.get(pk=ftl_doc_pk, org_id=org_id, ftl_user_id=user_id)
+        doc = FTLDocument.objects.get(
+            pid=ftl_doc_pid, org_id=org_id, ftl_user_id=user_id
+        )
         doc.delete()
     except FTLDocument.DoesNotExist:
         pass

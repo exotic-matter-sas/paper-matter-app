@@ -3,10 +3,13 @@
 
 import json
 import os
+from contextlib import contextmanager
+from unittest import mock
 from unittest.mock import patch
+from uuid import UUID
 
 from django.contrib import messages
-from django.db import transaction
+from django.db import transaction, DEFAULT_DB_ALIAS
 from django.test import override_settings
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -391,13 +394,16 @@ class DocumentsTests(APITestCase):
             os.path.join(BASE_DIR, "ftests", "tools", "test_documents", "test.pdf"),
             "rb",
         ) as f:
-            body_post = {"json": "{}", "file": f}
-            self.client.post("/app/api/v1/documents/upload", body_post)
+            with execute_on_commit():
+                body_post = {"json": "{}", "file": f}
+                self.client.post("/app/api/v1/documents/upload", body_post)
 
         mock_apply_processing.assert_called_once()
         # Check argument is a FTLDocument
         args, kwarg = mock_apply_processing.call_args_list[0]
-        self.assertTrue(isinstance(args[0], int))
+        self.assertTrue(isinstance(args[0], UUID))
+        self.assertTrue(isinstance(args[1], int))
+        self.assertTrue(isinstance(args[2], int))
         self.assertTrue(isinstance(kwarg["force"], list))
 
     def test_document_in_folder(self):
@@ -454,9 +460,12 @@ class DocumentsTests(APITestCase):
 
     @patch.object(apply_ftl_processing, "delay")
     def test_rename_document_reapply_tsvector_proc(self, mock_apply_processing):
-        client_get = self.client.patch(
-            f"/app/api/v1/documents/{self.doc.pid}", {"title": "renamed"}, format="json"
-        )
+        with execute_on_commit():
+            client_get = self.client.patch(
+                f"/app/api/v1/documents/{self.doc.pid}",
+                {"title": "renamed"},
+                format="json",
+            )
         self.assertEqual(client_get.status_code, status.HTTP_200_OK)
 
         # tsvector processing should be forced on rename
@@ -466,11 +475,13 @@ class DocumentsTests(APITestCase):
 
     @patch.object(apply_ftl_processing, "delay")
     def test_annotate_document_reapply_tsvector_proc(self, mock_apply_processing):
-        client_get = self.client.patch(
-            f"/app/api/v1/documents/{self.doc.pid}",
-            {"note": "reannoted"},
-            format="json",
-        )
+        with execute_on_commit():
+            client_get = self.client.patch(
+                f"/app/api/v1/documents/{self.doc.pid}",
+                {"note": "reannoted"},
+                format="json",
+            )
+
         self.assertEqual(client_get.status_code, status.HTTP_200_OK)
 
         # tsvector processing should be forced on rename
@@ -723,3 +734,32 @@ class JWTAuthenticationTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIsNotNone(response.data["count"])
+
+
+@contextmanager
+def execute_on_commit(immediately=False, using=None):
+    """
+    Context manager capturing transaction.on_commit() calls and executing
+    them on exit or immediately if specified.
+
+    This is required when using a subclass of django.test.TestCase as all
+    tests are wrapped in a transaction that never gets committed.
+
+    Django issue: https://code.djangoproject.com/ticket/30457
+    """
+    for_alias = DEFAULT_DB_ALIAS if using is None else using
+    deferred = []
+
+    def side_effect(func, using=None):
+        alias = DEFAULT_DB_ALIAS if using is None else using
+        if alias != for_alias:
+            return
+        if immediately:
+            return func()
+        deferred.append(func)
+
+    with mock.patch("django.db.transaction.on_commit") as patch:
+        patch.side_effect = side_effect
+        yield patch
+    for func in deferred:
+        func()
