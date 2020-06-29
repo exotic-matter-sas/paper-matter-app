@@ -30,6 +30,7 @@
           autofocus
           v-model="name"
           trim
+          @keyup.enter="name === folder.name && deleteFolder($event)"
         ></b-form-input>
       </b-form-group>
     </b-container>

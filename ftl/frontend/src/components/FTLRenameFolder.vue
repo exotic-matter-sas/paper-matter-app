@@ -26,6 +26,11 @@
           onfocus="this.select()"
           v-model="newFolderName"
           trim
+          @keyup.enter="
+            newFolderName &&
+              newFolderName !== folder.name &&
+              renameFolder($event)
+          "
         ></b-form-input>
       </b-form-group>
     </b-container>
@@ -67,6 +72,7 @@ export default {
       axios
         .patch("/app/api/v1/folders/" + this.folder.id, body, axiosConfig)
         .then((response) => {
+          this.$bvModal.hide("modal-rename-folder");
           this.$emit("event-folder-renamed", {
             folder: response.data,
           });

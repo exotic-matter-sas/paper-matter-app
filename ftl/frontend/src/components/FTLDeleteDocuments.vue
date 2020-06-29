@@ -11,6 +11,7 @@
     :ok-title="$t('Delete')"
     :cancel-title="$t('Cancel')"
     @ok="deleteDocuments"
+    auto-focus-button="ok"
   >
     <span v-if="docs.length > 1">{{
       $t("Please confirm that you want to delete {0} documents?", [docs.length])
