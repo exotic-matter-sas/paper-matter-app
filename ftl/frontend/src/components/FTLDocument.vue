@@ -74,22 +74,16 @@
           </b-button>
         </div>
       </b-card-body>
-      <b-card-footer class="p-1">
-        <div class="d-flex align-items-center">
-          <font-awesome-icon
-            icon="grip-lines-vertical"
-            :alt="$t('Drag to folder to move document')"
-            :title="$t('Drag to folder to move document')"
-            class="ml-1 grab"
-          />
+      <b-card-footer class="p-0">
+        <div class="d-flex align-items-center p-2">
           <b-form-checkbox
             :checked="$store.getters.FTLDocumentSelected(doc.pid)"
             @change="toggleSelection"
             :title="$t('Use CTRL + left click for quick selection')"
-            class="ml-2"
+            class="ml-1"
           />
           <small
-            class="text-muted text-wrap ml-1"
+            class="text-muted text-wrap"
             :title="$moment(doc.created).format('LLLL')"
             >{{ $moment(doc.created).fromNow() }}</small
           >
@@ -270,29 +264,13 @@ export default {
 }
 
 .card-footer {
-  /*text-align: center;*/
-  /*padding: 0.5rem 0.75rem;*/
   font-style: italic;
-
-  /*.custom-checkbox {*/
-  /*  position: absolute;*/
-  /*}*/
 
   small {
     &::first-letter {
       text-transform: uppercase;
     }
   }
-
-  /*  display: inline-block;*/
-  /*  vertical-align: 0.13rem;*/
-  /*}*/
-
-  /*.spinner-border {*/
-  /*  position: absolute;*/
-  /*  right: 0.75rem;*/
-  /*  bottom: 0.75rem;*/
-  /*}*/
 }
 
 .doc-icon {
@@ -302,9 +280,5 @@ export default {
 .doc-rename {
   cursor: text;
   border-color: map_get($theme-colors, "secondary");
-}
-
-.grab {
-  cursor: grabbing;
 }
 </style>
