@@ -14,7 +14,7 @@
     class="mb-3 document-thumbnail"
     :id="doc.pid"
     @click.ctrl="toggleSelection"
-    draggable="true"
+    :draggable="selectedDocumentsHome.length === 0"
     v-on:dragstart="dragstart"
   >
     <div
@@ -89,7 +89,7 @@
             class="ml-2"
           />
           <small
-            class="text-muted ml-1"
+            class="text-muted text-wrap ml-1"
             :title="$moment(doc.created).format('LLLL')"
             >{{ $moment(doc.created).fromNow() }}</small
           >
@@ -173,7 +173,7 @@ export default {
       return this.doc.pid === this.lastOpenedDocument;
     },
 
-    ...mapState(["lastOpenedDocument"]),
+    ...mapState(["selectedDocumentsHome", "lastOpenedDocument"]),
   },
 
   methods: {
