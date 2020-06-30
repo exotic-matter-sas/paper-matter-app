@@ -3,7 +3,7 @@
 
 from datetime import timedelta
 
-from axes.helpers import get_client_ip_address
+from axes.helpers import get_client_ip_address, get_client_user_agent
 from axes.models import AccessLog
 from django.conf import settings
 from django.contrib import messages
@@ -42,16 +42,17 @@ class AccountView(View):
 @method_decorator(otp_required(if_configured=True), name="dispatch")
 class AccountActivityView(ContextMixin, View):
     def get(self, request, *args, **kwargs):
-        access_logs = AccessLog.objects.filter(username=request.user.email)[:10]
+        # When using 2FA, we have a duplicate access log. For now, exclude those from listing.
+        access_logs = (
+            AccessLog.objects.filter(username=request.user.email)
+            .exclude(path_info__icontains="2fa")
+            .order_by("-attempt_time")[:10]
+        )
 
         access_logs_parsed = []
-        current_ip = get_client_ip_address(request)
 
         for access_log in access_logs:
             access_log.parsed = user_agent_parser.Parse(access_log.user_agent)
-            access_log.is_current = (
-                True if current_ip == access_log.ip_address else False
-            )
             access_logs_parsed.append(access_log)
 
         context = self.get_context_data()
