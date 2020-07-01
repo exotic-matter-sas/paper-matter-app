@@ -206,6 +206,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "~bootstrap/scss/_functions.scss";
+@import "~bootstrap/scss/_variables.scss";
+@import "~bootstrap/scss/_mixins.scss";
+
 .document-title {
   color: map_get($theme-colors, "primary");
   border: 1px solid transparent;
@@ -286,5 +290,6 @@ export default {
 .checkbox-overlay-thumb {
   top: 0.25rem;
   right: 0;
+  z-index: calc(#{$zindex-sticky} - 1);
 }
 </style>
