@@ -3,7 +3,6 @@
 
 from datetime import timedelta
 
-from axes.helpers import get_client_ip_address, get_client_user_agent
 from axes.models import AccessLog
 from django.conf import settings
 from django.contrib import messages
