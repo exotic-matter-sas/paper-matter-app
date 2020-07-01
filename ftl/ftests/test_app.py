@@ -543,6 +543,68 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         ):
             self.get_elem(self.batch_toolbar)
 
+    @skipIf(
+        settings.DEV_MODE and not NODE_SERVER_RUNNING,
+        "Node not running, this test can't be run",
+        )
+    def test_drag_document_to_folder(self):
+        # User already created a folder and have added a document inside root
+        document_to_move = setup_document(self.org, self.user, title="document_to_move")
+        folder_a = setup_folder(self.org)
+        self.visit(HomePage.url)
+
+        # User drag n drop document_to_move to folder_a
+        self.wait_documents_list_loaded()
+        self.drag_n_drop_elem(self.get_elem(self.first_document_thumb), self.get_elem(self.folders_list_buttons))
+
+        # User see that the document have disappear from the list
+        self.wait_for_elem_to_disappear(self.first_document_thumb)
+        self.refresh_documents_list()
+        with self.assertRaises(NoSuchElementException):
+            self.get_elem(self.first_document_thumb)
+
+        # User open folder_a
+        self.get_elem(self.folders_list_buttons).click()
+        self.wait_documents_list_loaded()
+
+        # User see that its document have been moved to folder_a
+        self.assertEqual(
+            document_to_move.title,
+            self.get_elem_text(self.first_document_title),
+            "Document should have be moved into folder a",
+        )
+
+    def test_drag_document_to_breadcrumb(self):
+        # User already created a folder and have added a document inside it
+        folder_a = setup_folder(self.org)
+        document_to_move = setup_document(self.org, self.user, folder_a, title="document_to_move")
+        self.visit(HomePage.url)
+
+        # User open folder_a
+        self.wait_folder_list_loaded()
+        self.get_elem(self.folders_list_buttons).click()
+
+        # User drag n drop document_to_move to Root in breadcrumb
+        self.wait_documents_list_loaded()
+        self.drag_n_drop_elem(self.get_elem(self.first_document_thumb), self.get_elem(self.breadcrumb_first_folder))
+
+        # User see that the document have disappear from the list
+        self.wait_for_elem_to_disappear(self.first_document_thumb)
+        self.refresh_documents_list()
+        with self.assertRaises(NoSuchElementException):
+            self.get_elem(self.first_document_thumb)
+
+        # User come back to Root folder
+        self.visit(HomePage.url)
+        self.wait_documents_list_loaded()
+
+        # User see that its document have been moved to Root
+        self.assertEqual(
+            document_to_move.title,
+            self.get_elem_text(self.first_document_title),
+            "Document should have be moved into folder a",
+        )
+
 
 class SearchTests(LoginPage, HomePage, DocumentViewerModal):
     def setUp(self, **kwargs):
