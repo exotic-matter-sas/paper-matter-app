@@ -74,27 +74,20 @@
           </b-button>
         </div>
       </b-card-body>
-      <b-card-footer class="p-0">
-        <div class="d-flex align-items-center p-2">
-          <b-form-checkbox
-            :checked="$store.getters.FTLDocumentSelected(doc.pid)"
-            @change="toggleSelection"
-            :title="$t('Use CTRL + left click for quick selection')"
-            class="ml-1"
-          />
-          <small
-            class="text-muted text-wrap"
-            :title="$moment(doc.created).format('LLLL')"
-            >{{ $moment(doc.created).fromNow() }}</small
-          >
-          <div
-            v-if="!doc.is_processed && !timeout_spinner"
-            class="ml-auto mr-1 spinner-border spinner-border-sm text-primary"
-            role="status"
-            aria-hidden="true"
-            :title="$t('Processing document, it cannot be searched yet.')"
-          ></div>
-        </div>
+      <b-card-footer :title="$moment(doc.created).format('LLLL')">
+        <b-form-checkbox
+          :checked="$store.getters.FTLDocumentSelected(doc.pid)"
+          @change="toggleSelection"
+          :title="$t('Use CTRL + left click for quick selection')"
+        />
+        <small class="text-muted">{{ $moment(doc.created).fromNow() }}</small>
+        <div
+          v-if="!doc.is_processed && !timeout_spinner"
+          class="spinner-border spinner-border-sm text-primary"
+          role="status"
+          aria-hidden="true"
+          :title="$t('Processing document, it cannot be searched yet.')"
+        ></div>
       </b-card-footer>
     </div>
   </b-col>
@@ -264,12 +257,27 @@ export default {
 }
 
 .card-footer {
+  text-align: center;
+  padding: 0.5rem 0.75rem;
   font-style: italic;
+
+  .custom-checkbox {
+    position: absolute;
+  }
 
   small {
     &::first-letter {
       text-transform: uppercase;
     }
+
+    display: inline-block;
+    vertical-align: 0.13rem;
+  }
+
+  .spinner-border {
+    position: absolute;
+    right: 0.75rem;
+    bottom: 0.75rem;
   }
 }
 
