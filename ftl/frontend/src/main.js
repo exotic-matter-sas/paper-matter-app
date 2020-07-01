@@ -25,6 +25,7 @@ import {
   TabsPlugin,
   ToastPlugin,
   VBHoverPlugin,
+  TooltipPlugin
 } from "bootstrap-vue";
 import App from "./App.vue";
 
@@ -120,6 +121,7 @@ Vue.use(ProgressPlugin);
 Vue.use(ToastPlugin);
 Vue.use(BreadcrumbPlugin);
 Vue.use(VBHoverPlugin);
+Vue.use(TooltipPlugin);
 
 // Moment JS for nice date
 Vue.prototype.$moment = moment;

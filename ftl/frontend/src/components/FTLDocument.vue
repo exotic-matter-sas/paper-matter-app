@@ -27,8 +27,9 @@
     >
       <b-form-checkbox
         :checked="$store.getters.FTLDocumentSelected(doc.pid)"
+        v-b-tooltip.hover="{delay: 1000, placement: 'topleft'}"
+        :title="$t('You can also use CTRL + left click to select document')"
         @change="toggleSelection"
-        :title="$t('Use CTRL + left click for quick selection')"
         size="lg"
         class="position-absolute checkbox-overlay-thumb"
       />
@@ -103,7 +104,7 @@
 
 <i18n>
   fr:
-    Use CTRL + left click for quick selection: Utiliser CTRL + clic gauche pour une sélection rapide
+    You can also use CTRL + left click to select document: Vous pouvez aussi utiliser CTRL + clic gauche pour sélectionner le document
     Processing document, it cannot be searched yet.: Document en cours d'indexation, il ne peut pas être recherché.
     Click to rename: Cliquer pour renommer
     Drag to folder to move document: Saisir pour déplacer le document
