@@ -25,15 +25,13 @@
           isOpened && !$store.getters.FTLDocumentSelected(doc.pid),
       }"
     >
-      <div class="m-1 position-absolute checkbox-overlay-thumb">
-        <b-form-checkbox
-          :checked="$store.getters.FTLDocumentSelected(doc.pid)"
-          @change="toggleSelection"
-          :title="$t('Use CTRL + left click for quick selection')"
-          size="lg"
-          class="m-0 p-0"
-        />
-      </div>
+      <b-form-checkbox
+        :checked="$store.getters.FTLDocumentSelected(doc.pid)"
+        @change="toggleSelection"
+        :title="$t('Use CTRL + left click for quick selection')"
+        size="lg"
+        class="position-absolute checkbox-overlay-thumb"
+      />
       <div
         v-if="doc.thumbnail_available"
         class="card-img-top"
@@ -286,7 +284,7 @@ export default {
 }
 
 .checkbox-overlay-thumb {
-  top: 0.2rem;
+  top: 0.25rem;
   right: 0;
 }
 </style>
