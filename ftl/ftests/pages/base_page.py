@@ -404,6 +404,7 @@ class BasePage(LIVE_SERVER):
             js_to_execute = js_file.read()
             self.browser.execute_script(js_to_execute, elem_to_drag, elem_drop_zone)
 
+
 @shared_task
 def dummy_task_for_test():
     pass
