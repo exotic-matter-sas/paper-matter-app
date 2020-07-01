@@ -31,6 +31,11 @@
           onfocus="this.select()"
           v-model="newDocumentName"
           trim
+          @keyup.enter="
+            newDocumentName &&
+              newDocumentName !== doc.title &&
+              renameDocument($event)
+          "
         ></b-form-input>
       </b-form-group>
     </b-container>
@@ -89,6 +94,7 @@ export default {
           this.$emit("event-document-renamed", {
             doc: response.data,
           });
+          this.$bvModal.hide(this.id);
           this.mixinAlert(this.$t("Document successfully renamed."));
         })
         .catch((error) => {
