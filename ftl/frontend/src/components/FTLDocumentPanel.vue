@@ -135,7 +135,7 @@
     </b-container>
 
     <FTLMoveDocuments
-      v-if="currentOpenDoc"
+      v-if="currentOpenDoc.pid"
       id="modal-move-document"
       :docs="[currentOpenDoc]"
       @event-document-moved="documentMoved"
@@ -296,7 +296,7 @@ export default {
         doc: this.currentOpenDoc,
       });
       this.$router.push({ path: this.$route.path }, () => {});
-      this.currentOpenDoc = {};
+      this.currentOpenDoc = { path: [] };
     },
   },
 };
