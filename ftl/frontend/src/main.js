@@ -25,7 +25,7 @@ import {
   TabsPlugin,
   ToastPlugin,
   VBHoverPlugin,
-  TooltipPlugin
+  TooltipPlugin,
 } from "bootstrap-vue";
 import App from "./App.vue";
 
