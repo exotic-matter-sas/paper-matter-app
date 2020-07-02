@@ -4,7 +4,15 @@
   -->
 
 <template>
-  <b-button class="folder" :disabled="navigating" @click="navigate">
+  <b-button
+    class="folder"
+    :class="{ 'border border-active': dragOver }"
+    :disabled="navigating"
+    @click="navigate"
+    v-on:drop="drop"
+    v-on:dragover="allowDrop"
+    v-on:dragleave="leaveDrop"
+  >
     <b-spinner
       id="folder-list-loader"
       :class="{ 'd-none': !navigating }"
@@ -15,15 +23,11 @@
 </template>
 
 <script>
+import FTLDnDToFolderMixin from "@/components/FTLDnDToFolderMixin";
+
 export default {
   name: "FTLFolder",
-
-  props: {
-    folder: {
-      type: Object,
-      required: true,
-    },
-  },
+  mixins: [FTLDnDToFolderMixin], // Reuse methods for moving documents
 
   data() {
     return {

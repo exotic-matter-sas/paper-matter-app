@@ -14,6 +14,8 @@
     class="mb-3 document-thumbnail"
     :id="doc.pid"
     @click.ctrl="toggleSelection"
+    :draggable="selectedDocumentsHome.length === 0"
+    v-on:dragstart="dragstart"
   >
     <div
       class="card"
@@ -23,6 +25,12 @@
           isOpened && !$store.getters.FTLDocumentSelected(doc.pid),
       }"
     >
+      <b-form-checkbox
+        :checked="$store.getters.FTLDocumentSelected(doc.pid)"
+        @change="toggleSelection"
+        size="lg"
+        class="position-absolute checkbox-overlay-thumb"
+      />
       <div
         v-if="doc.thumbnail_available"
         class="card-img-top"
@@ -50,7 +58,7 @@
         <div class="d-flex align-items-center">
           <div class="text-truncate">
             <h4
-              class="p-1 card-title document-title rounded"
+              class="py-1 pr-1 card-title document-title rounded"
               :class="{ 'doc-rename': rename }"
               :title="doc.title + doc.ext + '\n' + $t('Click to rename')"
               @click.exact="$emit('event-rename-doc', doc)"
@@ -67,25 +75,27 @@
             variant="secondary"
             size="sm"
             :href="`uploads/${doc.pid}/`"
+            :title="$t('Download document')"
           >
             <font-awesome-icon :icon="getIcon" :alt="$t('Download')" />
           </b-button>
         </div>
       </b-card-body>
-      <b-card-footer :title="$moment(doc.created).format('LLLL')">
-        <b-form-checkbox
-          :checked="$store.getters.FTLDocumentSelected(doc.pid)"
-          @change="toggleSelection"
-          :title="$t('Use CTRL + left click for quick selection')"
-        />
-        <small class="text-muted">{{ $moment(doc.created).fromNow() }}</small>
-        <div
-          v-if="!doc.is_processed && !timeout_spinner"
-          class="spinner-border spinner-border-sm text-primary"
-          role="status"
-          aria-hidden="true"
-          :title="$t('Processing document, it cannot be searched yet.')"
-        ></div>
+      <b-card-footer class="p-0">
+        <div class="d-flex align-items-center justify-content-between p-2">
+          <small
+            class="ml-1 text-muted text-wrap"
+            :title="$moment(doc.created).format('LLLL')"
+            >{{ $moment(doc.created).fromNow() }}</small
+          >
+          <div
+            v-if="!doc.is_processed && !timeout_spinner"
+            class="mr-1 spinner-border spinner-border-sm text-primary"
+            role="status"
+            aria-hidden="true"
+            :title="$t('Processing document, it cannot be searched yet.')"
+          ></div>
+        </div>
       </b-card-footer>
     </div>
   </b-col>
@@ -93,9 +103,11 @@
 
 <i18n>
   fr:
-    Use CTRL + left click for quick selection: Utiliser CTRL + clic gauche pour une sélection rapide
+    You can also use CTRL + left click to select document: Vous pouvez aussi utiliser CTRL + clic gauche pour sélectionner le document
     Processing document, it cannot be searched yet.: Document en cours d'indexation, il ne peut pas être recherché.
     Click to rename: Cliquer pour renommer
+    Drag to folder to move document: Saisir pour déplacer le document
+    Download document: Télécharger le document
 </i18n>
 
 <script>
@@ -157,7 +169,7 @@ export default {
       return this.doc.pid === this.lastOpenedDocument;
     },
 
-    ...mapState(["lastOpenedDocument"]),
+    ...mapState(["selectedDocumentsHome", "lastOpenedDocument"]),
   },
 
   methods: {
@@ -178,6 +190,15 @@ export default {
       this.timeout_spinner = true;
     },
 
+    dragstart: function (event) {
+      event.dataTransfer.setData("application/ftl-pid", this.doc.pid); // Only string data can be passed
+      // Remove drag ghost image
+      const img = new Image();
+      img.src =
+        "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=";
+      event.dataTransfer.setDragImage(img, 0, 0);
+    },
+
     renameDocument: function (hovered) {
       this.rename = hovered;
     },
@@ -186,9 +207,21 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "~bootstrap/scss/_functions.scss";
+@import "~bootstrap/scss/_variables.scss";
+@import "~bootstrap/scss/_mixins.scss";
+
 .document-title {
   color: map_get($theme-colors, "primary");
   border: 1px solid transparent;
+  transition: padding 0.1s linear;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  &:hover {
+    padding-left: 0.25rem;
+  }
 }
 
 .card {
@@ -245,27 +278,12 @@ export default {
 }
 
 .card-footer {
-  text-align: center;
-  padding: 0.5rem 0.75rem;
   font-style: italic;
-
-  .custom-checkbox {
-    position: absolute;
-  }
 
   small {
     &::first-letter {
       text-transform: uppercase;
     }
-
-    display: inline-block;
-    vertical-align: 0.13rem;
-  }
-
-  .spinner-border {
-    position: absolute;
-    right: 0.75rem;
-    bottom: 0.75rem;
   }
 }
 
@@ -276,5 +294,11 @@ export default {
 .doc-rename {
   cursor: text;
   border-color: map_get($theme-colors, "secondary");
+}
+
+.checkbox-overlay-thumb {
+  top: 0.25rem;
+  right: 0;
+  z-index: calc(#{$zindex-sticky} - 1);
 }
 </style>

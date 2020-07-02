@@ -26,6 +26,8 @@ from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.support import expected_conditions as Ec
 from selenium.webdriver.support.wait import WebDriverWait
 
+from ftl.settings import BASE_DIR
+
 if "CI" in os.environ:
     LIVE_SERVER = LiveServerTestCase
 else:
@@ -389,6 +391,18 @@ class BasePage(LIVE_SERVER):
 
         downloaded_filename = (set(current_content) - set(initial_content)).pop()
         return downloaded_filename
+
+    def drag_n_drop_elem(self, elem_to_drag, elem_drop_zone):
+        # ActionChains(self.browser).drag_and_drop(elem_to_drag, elem_drop_zone)
+        # A work around is needed to perform a drag n drop with selenium due to a bug:
+        # https://github.com/SeleniumHQ/selenium/issues/8003
+
+        with open(
+            os.path.join(BASE_DIR, "ftests", "tools", "drag_n_drop_workaround.js"),
+            mode="r",
+        ) as js_file:
+            js_to_execute = js_file.read()
+            self.browser.execute_script(js_to_execute, elem_to_drag, elem_drop_zone)
 
 
 @shared_task

@@ -17,7 +17,18 @@
 
       <b-row class="my-3" id="breadcrumb" no-gutter>
         <b-col>
-          <b-breadcrumb class="breadcrumb-ftl m-0" :items="breadcrumb" />
+          <b-breadcrumb class="breadcrumb-ftl m-0">
+            <FTLBreadcrumbFolder
+              v-for="(item, index) in breadcrumb"
+              :key="item.id"
+              :id="item.id"
+              :text="item.text"
+              :to="item.to"
+              :active="index === breadcrumb.length - 1"
+              :folder="{ id: item.id, name: item.text }"
+              @event-document-moved="documentDeleted"
+            />
+          </b-breadcrumb>
         </b-col>
       </b-row>
 
@@ -62,6 +73,7 @@
             :key="folder.id"
             :folder="folder"
             @event-change-folder="navigateToFolder"
+            @event-document-moved="documentDeleted"
           />
 
           <b-dropdown
@@ -288,6 +300,7 @@ import FTLMoveDocuments from "@/components/FTLMoveDocuments";
 import FTLDocument from "@/components/FTLDocument";
 import FTLUpload from "@/components/FTLUpload";
 import FTLRenameDocument from "@/components/FTLRenameDocument";
+import FTLBreadcrumbFolder from "@/components/FTLBreadcrumbFolder";
 import axios from "axios";
 
 export default {
@@ -303,6 +316,7 @@ export default {
     FTLDocument,
     FTLUpload,
     FTLRenameDocument,
+    FTLBreadcrumbFolder,
   },
 
   props: ["folder"],
@@ -370,6 +384,7 @@ export default {
       let paths = [];
 
       paths.push({
+        id: null,
         text: this.$t("Root"),
         to: { name: "home" },
       });
@@ -377,6 +392,7 @@ export default {
       paths = paths.concat(
         this.previousLevels.map((e) => {
           return {
+            id: e.id,
             text: e.name,
             to: {
               path: "/home/" + vi.computeFolderUrlPath(e.id),

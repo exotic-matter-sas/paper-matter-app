@@ -294,7 +294,7 @@ describe("FTLDocumentPanel methods", () => {
     await flushPromises();
 
     // then
-    expect(wrapper.vm.currentOpenDoc).toEqual({});
+    expect(wrapper.vm.currentOpenDoc).toEqual({ path: [] });
     expect(wrapper.vm.$bvModal.hide).toBeCalledTimes(1);
     expect(wrapper.vm.$bvModal.hide).toBeCalledWith("document-viewer");
   });
