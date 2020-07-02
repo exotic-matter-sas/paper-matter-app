@@ -3,10 +3,14 @@
 
 import json
 import os
+from contextlib import contextmanager
+from unittest import mock
 from unittest.mock import patch
+from uuid import UUID
 
 from django.contrib import messages
-from django.db import transaction
+from django.db import transaction, DEFAULT_DB_ALIAS
+from django.http import HttpRequest
 from django.test import override_settings
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -46,7 +50,9 @@ class DocumentsTests(APITestCase):
             ftl_folder=self.first_level_folder,
         )
 
-        self.client.login(email=tv.USER1_EMAIL, password=tv.USER1_PASS)
+        self.client.login(
+            request=HttpRequest(), email=tv.USER1_EMAIL, password=tv.USER1_PASS
+        )
 
     def test_list_documents(self):
         ftl_document = FTLDocument.objects.get(pid=self.doc.pid)
@@ -157,7 +163,9 @@ class DocumentsTests(APITestCase):
         # First user logout and a second user of the same org login
         self.client.logout()
         setup_user(self.org, tv.USER2_EMAIL, tv.USER2_PASS)
-        self.client.login(email=tv.USER2_EMAIL, password=tv.USER2_PASS)
+        self.client.login(
+            request=HttpRequest(), email=tv.USER2_EMAIL, password=tv.USER2_PASS
+        )
 
         client_get = self.client.get("/app/api/v1/documents", format="json")
         self.assertEqual(client_get.status_code, status.HTTP_200_OK)
@@ -171,7 +179,9 @@ class DocumentsTests(APITestCase):
         self.client.logout()
         org2 = setup_org(tv.ORG_NAME_2, tv.ORG_SLUG_2)
         setup_user(org2, tv.USER2_EMAIL, tv.USER2_PASS)
-        self.client.login(email=tv.USER2_EMAIL, password=tv.USER2_PASS)
+        self.client.login(
+            request=HttpRequest(), email=tv.USER2_EMAIL, password=tv.USER2_PASS
+        )
 
         client_get = self.client.get("/app/api/v1/documents", format="json")
         self.assertEqual(client_get.status_code, status.HTTP_200_OK)
@@ -274,15 +284,15 @@ class DocumentsTests(APITestCase):
     def test_upload_document_incorrect_md5(self, mock_apply_processing):
         initial_docs_count = FTLDocument.objects.count()
 
-        with transaction.atomic():
-            with open(
-                os.path.join(BASE_DIR, "ftests", "tools", "test_documents", "test.pdf"),
-                mode="rb",
-            ) as fp:
-                client_post = self.client.post(
-                    "/app/api/v1/documents/upload",
-                    {"json": '{"md5": "hi there!"}', "file": fp},
-                )
+        with open(
+            os.path.join(BASE_DIR, "ftests", "tools", "test_documents", "test.pdf"),
+            mode="rb",
+        ) as fp:
+            client_post = self.client.post(
+                "/app/api/v1/documents/upload",
+                {"json": '{"md5": "hi there!"}', "file": fp},
+            )
+
         self.assertEqual(client_post.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(client_post.data["code"], "ftl_document_md5_mismatch")
 
@@ -391,13 +401,16 @@ class DocumentsTests(APITestCase):
             os.path.join(BASE_DIR, "ftests", "tools", "test_documents", "test.pdf"),
             "rb",
         ) as f:
-            body_post = {"json": "{}", "file": f}
-            self.client.post("/app/api/v1/documents/upload", body_post)
+            with execute_on_commit():
+                body_post = {"json": "{}", "file": f}
+                self.client.post("/app/api/v1/documents/upload", body_post)
 
         mock_apply_processing.assert_called_once()
         # Check argument is a FTLDocument
         args, kwarg = mock_apply_processing.call_args_list[0]
-        self.assertTrue(isinstance(args[0], int))
+        self.assertTrue(isinstance(args[0], UUID))
+        self.assertTrue(isinstance(args[1], int))
+        self.assertTrue(isinstance(args[2], int))
         self.assertTrue(isinstance(kwarg["force"], list))
 
     def test_document_in_folder(self):
@@ -454,9 +467,12 @@ class DocumentsTests(APITestCase):
 
     @patch.object(apply_ftl_processing, "delay")
     def test_rename_document_reapply_tsvector_proc(self, mock_apply_processing):
-        client_get = self.client.patch(
-            f"/app/api/v1/documents/{self.doc.pid}", {"title": "renamed"}, format="json"
-        )
+        with execute_on_commit():
+            client_get = self.client.patch(
+                f"/app/api/v1/documents/{self.doc.pid}",
+                {"title": "renamed"},
+                format="json",
+            )
         self.assertEqual(client_get.status_code, status.HTTP_200_OK)
 
         # tsvector processing should be forced on rename
@@ -466,11 +482,13 @@ class DocumentsTests(APITestCase):
 
     @patch.object(apply_ftl_processing, "delay")
     def test_annotate_document_reapply_tsvector_proc(self, mock_apply_processing):
-        client_get = self.client.patch(
-            f"/app/api/v1/documents/{self.doc.pid}",
-            {"note": "reannoted"},
-            format="json",
-        )
+        with execute_on_commit():
+            client_get = self.client.patch(
+                f"/app/api/v1/documents/{self.doc.pid}",
+                {"note": "reannoted"},
+                format="json",
+            )
+
         self.assertEqual(client_get.status_code, status.HTTP_200_OK)
 
         # tsvector processing should be forced on rename
@@ -485,7 +503,9 @@ class DocumentsSearchTests(APITestCase):
         setup_admin(self.org)
         self.user = setup_user(self.org)
 
-        self.client.login(email=tv.USER1_EMAIL, password=tv.USER1_PASS)
+        self.client.login(
+            request=HttpRequest(), email=tv.USER1_EMAIL, password=tv.USER1_PASS
+        )
 
     def test_list_documents_search_title(self):
         doc_to_search = setup_document(self.org, self.user, note="bingo!")
@@ -536,7 +556,9 @@ class FoldersTests(APITestCase):
             self.org, name="Second level folder", parent=self.folder_root
         )
 
-        self.client.login(email=tv.USER1_EMAIL, password=tv.USER1_PASS)
+        self.client.login(
+            request=HttpRequest(), email=tv.USER1_EMAIL, password=tv.USER1_PASS
+        )
 
     def test_folder_tree_root_level(self):
         client_get = self.client.get("/app/api/v1/folders", format="json")
@@ -723,3 +745,32 @@ class JWTAuthenticationTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIsNotNone(response.data["count"])
+
+
+@contextmanager
+def execute_on_commit(immediately=False, using=None):
+    """
+    Context manager capturing transaction.on_commit() calls and executing
+    them on exit or immediately if specified.
+
+    This is required when using a subclass of django.test.TestCase as all
+    tests are wrapped in a transaction that never gets committed.
+
+    Django issue: https://code.djangoproject.com/ticket/30457
+    """
+    for_alias = DEFAULT_DB_ALIAS if using is None else using
+    deferred = []
+
+    def side_effect(func, using=None):
+        alias = DEFAULT_DB_ALIAS if using is None else using
+        if alias != for_alias:
+            return
+        if immediately:
+            return func()
+        deferred.append(func)
+
+    with mock.patch("django.db.transaction.on_commit") as patch:
+        patch.side_effect = side_effect
+        yield patch
+    for func in deferred:
+        func()

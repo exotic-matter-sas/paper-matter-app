@@ -179,7 +179,14 @@ class FTLDocumentDetail(generics.RetrieveUpdateDestroyAPIView):
 
         if need_processing:
             # only apply processing in case value changed, avoid processing when just moving document in folder
-            apply_ftl_processing.delay(instance.pk, force=list(force_processing))
+            transaction.on_commit(
+                lambda: apply_ftl_processing.delay(
+                    instance.pid,
+                    instance.org.pk,
+                    instance.ftl_user.pk,
+                    force=list(force_processing),
+                )
+            )
 
     def perform_destroy(self, instance):
         instance.mark_delete()
@@ -207,7 +214,6 @@ class FTLDocumentThumbnail(views.APIView):
             return response
 
 
-@method_decorator(transaction.non_atomic_requests, name="dispatch")
 class FileUploadView(views.APIView):
     parser_classes = (MultiPartParser,)
     serializer_class = FTLDocumentSerializer
@@ -243,63 +249,69 @@ class FileUploadView(views.APIView):
         else:
             ftl_folder = None
 
-        with transaction.atomic():
-            ftl_doc = FTLDocument()
-            ftl_doc.ftl_folder = ftl_folder
-            ftl_doc.ftl_user = self.request.user
-            ftl_doc.binary = file_obj
-            ftl_doc.size = file_obj.size
-            ftl_doc.type = mime
+        ftl_doc = FTLDocument()
+        ftl_doc.ftl_folder = ftl_folder
+        ftl_doc.ftl_user = self.request.user
+        ftl_doc.binary = file_obj
+        ftl_doc.size = file_obj.size
+        ftl_doc.type = mime
 
-            md5 = hashlib.md5()
-            for data in ftl_doc.binary.chunks():
-                md5.update(data)
-            ftl_doc.md5 = md5.hexdigest()
+        md5 = hashlib.md5()
+        for data in ftl_doc.binary.chunks():
+            md5.update(data)
+        ftl_doc.md5 = md5.hexdigest()
 
-            if "md5" in payload and payload["md5"]:
-                if payload["md5"] != ftl_doc.md5:
-                    raise serializers.ValidationError(
-                        get_api_error("ftl_document_md5_mismatch")
-                    )
+        if "md5" in payload and payload["md5"]:
+            if payload["md5"] != ftl_doc.md5:
+                raise serializers.ValidationError(
+                    get_api_error("ftl_document_md5_mismatch")
+                )
 
-            ftl_doc.org = self.request.user.org
+        ftl_doc.org = self.request.user.org
 
-            if "title" in payload and payload["title"]:
-                ftl_doc.title = payload["title"]
+        if "title" in payload and payload["title"]:
+            ftl_doc.title = payload["title"]
+        else:
+            if file_obj.name.lower().endswith(extension):
+                ftl_doc.title = file_obj.name[: -(len(extension))]
             else:
-                if file_obj.name.lower().endswith(extension):
-                    ftl_doc.title = file_obj.name[: -(len(extension))]
+                ftl_doc.title = file_obj.name
+
+        # The actual name of the file doesn't matter because we use a random UUID. On the contrary, the extension
+        # is important.
+        ftl_doc.binary.name = f"document{extension}"
+
+        if "created" in payload and payload["created"]:
+            ftl_doc.created = payload["created"]
+
+        if "note" in payload and payload["note"]:
+            ftl_doc.note = payload["note"]
+
+        if "thumbnail" in request.POST and request.POST["thumbnail"]:
+            try:
+                ftl_doc.thumbnail_binary = ContentFile(
+                    _extract_binary_from_data_uri(request.POST["thumbnail"]),
+                    "thumb.png",
+                )
+            except ValueError as e:
+                if (
+                    "ignore_thumbnail_generation_error" in payload
+                    and not payload["ignore_thumbnail_generation_error"]
+                ):
+                    raise e
                 else:
-                    ftl_doc.title = file_obj.name
+                    pass
 
-            # The actual name of the file doesn't matter because we use a random UUID. On the contrary, the extension
-            # is important.
-            ftl_doc.binary.name = f"document{extension}"
+        ftl_doc.save()
 
-            if "created" in payload and payload["created"]:
-                ftl_doc.created = payload["created"]
-
-            if "note" in payload and payload["note"]:
-                ftl_doc.note = payload["note"]
-
-            if "thumbnail" in request.POST and request.POST["thumbnail"]:
-                try:
-                    ftl_doc.thumbnail_binary = ContentFile(
-                        _extract_binary_from_data_uri(request.POST["thumbnail"]),
-                        "thumb.png",
-                    )
-                except ValueError as e:
-                    if (
-                        "ignore_thumbnail_generation_error" in payload
-                        and not payload["ignore_thumbnail_generation_error"]
-                    ):
-                        raise e
-                    else:
-                        pass
-
-            ftl_doc.save()
-
-        apply_ftl_processing.delay(ftl_doc.pk, force=[FTLPlugins.LANG_DETECTOR_LANGID])
+        transaction.on_commit(
+            lambda: apply_ftl_processing.delay(
+                ftl_doc.pid,
+                ftl_doc.org.pk,
+                ftl_doc.ftl_user.pk,
+                force=[FTLPlugins.LANG_DETECTOR_LANGID],
+            )
+        )
 
         return Response(self.serializer_class(ftl_doc).data, status=201)
 
