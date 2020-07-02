@@ -60,7 +60,7 @@
         <div class="d-flex align-items-center">
           <div class="text-truncate">
             <h4
-              class="p-1 card-title document-title rounded"
+              class="py-1 pr-1 card-title document-title rounded"
               :class="{ 'doc-rename': rename }"
               :title="doc.title + doc.ext + '\n' + $t('Click to rename')"
               @click.exact="$emit('event-rename-doc', doc)"
@@ -77,6 +77,7 @@
             variant="secondary"
             size="sm"
             :href="`uploads/${doc.pid}/`"
+            :title="$t('Download document')"
           >
             <font-awesome-icon :icon="getIcon" :alt="$t('Download')" />
           </b-button>
@@ -108,6 +109,7 @@
     Processing document, it cannot be searched yet.: Document en cours d'indexation, il ne peut pas être recherché.
     Click to rename: Cliquer pour renommer
     Drag to folder to move document: Saisir pour déplacer le document
+    Download document: Télécharger le document
 </i18n>
 
 <script>
@@ -214,6 +216,14 @@ export default {
 .document-title {
   color: map_get($theme-colors, "primary");
   border: 1px solid transparent;
+  transition: padding 0.1s linear;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  &:hover {
+    padding-left: 0.25rem;
+  }
 }
 
 .card {
