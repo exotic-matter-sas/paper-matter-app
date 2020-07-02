@@ -27,8 +27,6 @@
     >
       <b-form-checkbox
         :checked="$store.getters.FTLDocumentSelected(doc.pid)"
-        v-b-tooltip.hover="{ delay: 1000, placement: 'topleft' }"
-        :title="$t('You can also use CTRL + left click to select document')"
         @change="toggleSelection"
         size="lg"
         class="position-absolute checkbox-overlay-thumb"
