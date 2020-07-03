@@ -25,12 +25,6 @@
           isOpened && !$store.getters.FTLDocumentSelected(doc.pid),
       }"
     >
-      <b-form-checkbox
-        :checked="$store.getters.FTLDocumentSelected(doc.pid)"
-        @change="toggleSelection"
-        size="lg"
-        class="position-absolute checkbox-overlay-thumb"
-      />
       <div
         v-if="doc.thumbnail_available"
         class="card-img-top"
@@ -54,6 +48,12 @@
           />
         </div>
       </div>
+      <b-form-checkbox
+        :checked="$store.getters.FTLDocumentSelected(doc.pid)"
+        @change="toggleSelection"
+        size="lg"
+        class="position-absolute checkbox-overlay-thumb"
+      />
       <b-card-body>
         <div class="d-flex align-items-center">
           <div class="text-truncate">
@@ -299,6 +299,5 @@ export default {
 .checkbox-overlay-thumb {
   top: 0.25rem;
   right: 0;
-  z-index: calc(#{$zindex-sticky} - 1);
 }
 </style>
