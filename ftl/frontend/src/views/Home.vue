@@ -351,10 +351,12 @@ export default {
     // Tour
     this.$nextTick(function () {
       const driver = new Driver({
-        animate: false,
+        // animate: false,
+        stageBackground: "transparent",
+        opacity: 0,
         allowClose: false,
-        overlayClickNext: true,
-        showButtons: false,
+        overlayClickNext: false,
+        showButtons: true,
         doneBtnText: this.$t("Done"),
         closeBtnText: this.$t("Close"),
         nextBtnText: this.$t("Next"),
@@ -386,7 +388,8 @@ export default {
             title: "Arborescence parcourue",
             description:
               "Votre fils d'ariane indiquant le chemin parcouru jusqu'au dossier actuel.",
-            position: "bottom-center",
+            position: "bottom",
+            offset: 20,
           },
         },
         {
@@ -395,7 +398,8 @@ export default {
             title: "Dossiers",
             description:
               "Vos dossiers du répertoire courant. Vous pouvez aussi créer un nouveau dossier ou revenir au dossier précédent.",
-            position: "bottom-center",
+            position: "bottom",
+            offset: 20,
           },
         },
         {
