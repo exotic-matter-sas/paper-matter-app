@@ -1,11 +1,21 @@
 {% extends "ftl/main_vcenter_with_aside.html" %}
 {% load i18n %}
 {% load static %}
+{% load webpack_loader %}
 
 {% block title %}{% trans 'Login' %}{% endblock %}
+{% block head %}{% render_bundle 'common_logged_out' 'css' %}{% endblock %}
 
 {% block main_content_vcenter %}
     <form id="login-form" action="{{ app_path }}" method="post">
+        {% if messages %}
+            <ul id="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
         <h1 class="text-primary">{% trans 'Login' %}</h1>
 
         {% csrf_token %}
@@ -35,16 +45,9 @@
         {% if form.non_field_errors %}
             <div class="alert alert-danger">{{ form.non_field_errors }}</div>
         {% endif %}
-        {% if messages %}
-            <ul id="messages">
-                {% for message in messages %}
-                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
     </form>
 {% endblock %}
 
 {% block aside_illustration %}
-    <img src="{% static "documents_unboxed.svg" %}" alt="Signup steps illustration">
+    <img src="{% static "documents_unboxed.svg" %}" alt="Man standing next to a folder with documents illustration">
 {% endblock %}

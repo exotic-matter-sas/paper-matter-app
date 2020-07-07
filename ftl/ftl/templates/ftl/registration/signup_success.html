@@ -1,12 +1,14 @@
 {% extends "ftl/main_vcenter_with_aside.html" %}
 {% load i18n %}
 {% load static %}
+{% load webpack_loader %}
 
 {% block title %}{% trans 'Signup succeed' %}{% endblock %}
+{% block head %}{% render_bundle 'common_logged_out' 'css' %}{% endblock %}
 
 {% block main_content_vcenter %}
     <h1 class="text-primary">{% trans "One more thing..." %}</h1>
-    <p>{% trans "Please <span class='highlight'>verify your email</span> to activate your account." %}</p>
+    <p>{% trans "Please <span class='highlight'>verify your email inbox</span> to activate your account." %}</p>
     <p>{% trans "Once your account has been activated, you can pursue to:" %} <br/> <a href="{% url 'login' %}" id="user-login">{% trans "Login page" %} ({% url 'login' %})</a></p>
 {% endblock %}
 

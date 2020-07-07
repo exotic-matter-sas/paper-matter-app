@@ -3,26 +3,32 @@
 
 import os
 import platform
+import secrets
 import time
 import urllib.error
 import urllib.request
 from tempfile import TemporaryDirectory
 
+from celery import shared_task
+from django.conf import settings
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.core import mail
 from django.test import LiveServerTestCase, tag
 from selenium import webdriver
-from selenium.common.exceptions import TimeoutException, NoSuchElementException, StaleElementReferenceException
+from selenium.common.exceptions import (
+    TimeoutException,
+    NoSuchElementException,
+    StaleElementReferenceException,
+)
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.support import expected_conditions as Ec
 from selenium.webdriver.support.wait import WebDriverWait
 
-from ftl.settings import DEFAULT_TEST_BROWSER, TEST_BROWSER_HEADLESS, DEV_MODE, BROWSER_BINARY_PATH, \
-    DEFAULT_GECKODRIVER_PATH, DEFAULT_CHROMEDRIVER_PATH
+from ftl.settings import BASE_DIR
 
-if 'CI' in os.environ:
+if "CI" in os.environ:
     LIVE_SERVER = LiveServerTestCase
 else:
     # Use StaticLiveServerTestCase when test running locally to not depend on collectstatic run
@@ -33,9 +39,9 @@ def is_node_server_running():
     """
     Check if Node server is running
     """
-    if DEV_MODE and 'CI' not in os.environ:
+    if settings.DEV_MODE and "CI" not in os.environ:
         try:
-            urllib.request.urlopen('http://localhost:8080/')
+            urllib.request.urlopen("http://localhost:8080/")
             return True
         except urllib.error.URLError:
             return False
@@ -45,84 +51,105 @@ def is_node_server_running():
 
 # Display a warning if Node server not running during test execution
 NODE_SERVER_RUNNING = is_node_server_running()
-red_message = '\x1b[1;31m{}\033[0m'
-if DEV_MODE and not is_node_server_running() and 'CI' not in os.environ:
-    print(red_message.
-          format('WARNING: Node server NOT running: all tests related to JS frontend will be skipped.'))
-    input("Run Node server now if you want to run all tests, press Enter to continue...")
-    NODE_SERVER_RUNNING = is_node_server_running()  # refresh value in case user hae just run Node
-    print(f'Continue with NODE_SERVER_RUNNING: {NODE_SERVER_RUNNING}')
+red_message = "\x1b[1;31m{}\033[0m"
+if settings.DEV_MODE and not is_node_server_running() and "CI" not in os.environ:
+    print(
+        red_message.format(
+            "WARNING: Node server NOT running: all tests related to JS frontend will be skipped."
+        )
+    )
+    input(
+        "Run Node server now if you want to run all tests, press Enter to continue..."
+    )
+    NODE_SERVER_RUNNING = (
+        is_node_server_running()
+    )  # refresh value in case user hae just run Node
+    print(f"Continue with NODE_SERVER_RUNNING: {NODE_SERVER_RUNNING}")
 
 
-@tag('slow')
+@tag("slow")
 class BasePage(LIVE_SERVER):
-    modal_input = '.modal-dialog input'
-    modal_accept_button = '.modal-dialog .modal-footer .btn-primary, .modal-dialog .modal-footer .btn-danger'
-    modal_reject_button = '.modal-dialog .modal-footer .btn-secondary'
+    modal_input = ".modal-dialog input"
+    modal_accept_button = ".modal-dialog .modal-footer .btn-primary, .modal-dialog .modal-footer .btn-danger"
+    modal_reject_button = ".modal-dialog .modal-footer .btn-secondary"
 
-    notification = '.b-toaster-slot .b-toast'
-    success_notification = '.b-toaster-slot .b-toast-success'
-    error_notification = '.b-toaster-slot .b-toast-danger'
-    close_notification = '.b-toaster-slot .b-toast .close'
+    notification = ".b-toaster-slot .b-toast"
+    success_notification = ".b-toaster-slot .b-toast-success"
+    error_notification = ".b-toaster-slot .b-toast-danger"
+    close_notification = ".b-toaster-slot .b-toast .close"
 
-    loader = '.loader'
+    loader = ".loader"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.root_url = ''
+        self.root_url = ""
 
         self._download_dir = None
+        self._tests_screenshots_path = os.path.join(
+            settings.BASE_DIR, "ftests", "tests_screenshots"
+        )
 
-    def setUp(self, browser=DEFAULT_TEST_BROWSER, browser_locale='en'):
+    def setUp(self, browser=settings.DEFAULT_TEST_BROWSER, browser_locale="en"):
         self._download_dir = TemporaryDirectory()
 
-        if browser == 'firefox':
+        if browser == "firefox":
             profile = webdriver.FirefoxProfile()
             # Set browser language for web pages
-            profile.set_preference('intl.accept_languages', browser_locale)
+            profile.set_preference("intl.accept_languages", browser_locale)
 
             # Set default browser download dir and remove download prompt
-            profile.set_preference('browser.download.dir', self._download_dir.name)
-            profile.set_preference('browser.download.folderList', 2)
-            profile.set_preference('browser.download.manager.showWhenStarting', False)
-            mime_type_list = 'application/octet-stream'
-            profile.set_preference('browser.helperApps.neverAsk.openFile', mime_type_list)
-            profile.set_preference('browser.helperApps.neverAsk.saveToDisk', mime_type_list)
+            profile.set_preference("browser.download.dir", self._download_dir.name)
+            profile.set_preference("browser.download.folderList", 2)
+            profile.set_preference("browser.download.manager.showWhenStarting", False)
+            mime_type_list = "application/octet-stream"
+            profile.set_preference(
+                "browser.helperApps.neverAsk.openFile", mime_type_list
+            )
+            profile.set_preference(
+                "browser.helperApps.neverAsk.saveToDisk", mime_type_list
+            )
 
             options = FirefoxOptions()
-            if TEST_BROWSER_HEADLESS:
+            if settings.TEST_BROWSER_HEADLESS:
                 options.headless = True
-            if BROWSER_BINARY_PATH:
-                options.binary_location = BROWSER_BINARY_PATH
+            if settings.BROWSER_BINARY_PATH:
+                options.binary_location = settings.BROWSER_BINARY_PATH
 
-            self.browser = webdriver.Firefox(executable_path=DEFAULT_GECKODRIVER_PATH, firefox_profile=profile,
-                                             firefox_options=options)
-        elif browser == 'chrome':
+            self.browser = webdriver.Firefox(
+                executable_path=settings.DEFAULT_GECKODRIVER_PATH,
+                firefox_profile=profile,
+                firefox_options=options,
+            )
+        elif browser == "chrome":
             options = ChromeOptions()
             # Set browser language for web pages
-            options.add_argument(f'--lang={browser_locale}')
+            options.add_argument(f"--lang={browser_locale}")
 
             # Set default browser download dir and remove download prompt
             chrome_profile = {
-                'download.default_directory': self._download_dir.name,
-                'savefile.default_directory': self._download_dir.name, 'download.prompt_for_download': False,
-                'download.directory_upgrade': True,
-                'profile.default_content_setting_values.automatic_downloads': 1
+                "download.default_directory": self._download_dir.name,
+                "savefile.default_directory": self._download_dir.name,
+                "download.prompt_for_download": False,
+                "download.directory_upgrade": True,
+                "profile.default_content_setting_values.automatic_downloads": 1,
             }
 
-            if TEST_BROWSER_HEADLESS:
-                options.add_argument('--headless')
-                options.add_argument('--no-sandbox')
-                options.add_argument('--disable-dev-shm-usage')
-                if platform.system() == 'Windows':  # Needed due to Chrome bug
-                    options.add_argument('--disable-gpu')
-            if BROWSER_BINARY_PATH:
-                options.binary_location = BROWSER_BINARY_PATH
+            if settings.TEST_BROWSER_HEADLESS:
+                options.add_argument("--headless")
+                options.add_argument("--no-sandbox")
+                options.add_argument("--disable-dev-shm-usage")
+                if platform.system() == "Windows":  # Needed due to Chrome bug
+                    options.add_argument("--disable-gpu")
+            if settings.BROWSER_BINARY_PATH:
+                options.binary_location = settings.BROWSER_BINARY_PATH
 
-            options.add_experimental_option('prefs', chrome_profile)
-            self.browser = webdriver.Chrome(executable_path=DEFAULT_CHROMEDRIVER_PATH, chrome_options=options)
+            options.add_experimental_option("prefs", chrome_profile)
+            self.browser = webdriver.Chrome(
+                executable_path=settings.DEFAULT_CHROMEDRIVER_PATH,
+                chrome_options=options,
+            )
         else:
-            raise ValueError('Unsupported browser, allowed: firefox, chrome')
+            raise ValueError("Unsupported browser, allowed: firefox, chrome")
 
         # Set a default window size
         self.browser.set_window_size(1024, 768)
@@ -156,6 +183,17 @@ class BasePage(LIVE_SERVER):
     def refresh_page(self):
         self.browser.refresh()
 
+    """
+    For debug purpose
+    """
+
+    def screenshot_page(self):
+        self.browser.save_screenshot(
+            os.path.join(
+                self._tests_screenshots_path, f"{self.id()}-{int(time.time())}.png"
+            )
+        )
+
     def get_elem(self, css_selector, is_visible=True):
         elem = self.browser.find_element_by_css_selector(css_selector)
         if elem.is_displayed() == is_visible:
@@ -170,13 +208,19 @@ class BasePage(LIVE_SERVER):
         else:
             raise NoSuchElementException()
 
-    def get_elem_text(self, css_selector, is_visible=True, web_element_instead_of_css_selector=False):
-        elem = css_selector if web_element_instead_of_css_selector else self.get_elem(css_selector, is_visible)
+    def get_elem_text(
+        self, css_selector, is_visible=True, web_element_instead_of_css_selector=False
+    ):
+        elem = (
+            css_selector
+            if web_element_instead_of_css_selector
+            else self.get_elem(css_selector, is_visible)
+        )
 
-        if elem.tag_name == 'input':
-            return elem.get_attribute('value')
-        elif elem.tag_name == 'select':
-            return elem.find_element_by_css_selector('option:checked').text
+        if elem.tag_name == "input":
+            return elem.get_attribute("value")
+        elif elem.tag_name == "select":
+            return elem.find_element_by_css_selector("option:checked").text
         else:
             return elem.text
 
@@ -187,15 +231,23 @@ class BasePage(LIVE_SERVER):
         if elems and elems[0].is_displayed() == is_visible:
             for elem in elems:
                 elems_text.append(
-                    self.get_elem_text(elem, is_visible, web_element_instead_of_css_selector=True)
+                    self.get_elem_text(
+                        elem, is_visible, web_element_instead_of_css_selector=True
+                    )
                 )
             return elems_text
         else:
             raise NoSuchElementException()
 
     @staticmethod
-    def _wait_for_method_to_return(method, timeout, *method_args, custom_return_validator=None,
-                                   expected_exception_types=(), **method_kwargs):
+    def _wait_for_method_to_return(
+        method,
+        timeout,
+        *method_args,
+        custom_return_validator=None,
+        expected_exception_types=(),
+        **method_kwargs,
+    ):
         """
         Wait for the given method to return a truthy value and return it
         If custom_return_validator is provided return value will be tested against the validator
@@ -220,14 +272,21 @@ class BasePage(LIVE_SERVER):
             if time.time() > end_time:
                 raise TimeoutException()
 
-    def _wait_for_method_to_raise_exception(self, method, timeout, exception_types, *method_args, **method_kwargs):
+    def _wait_for_method_to_raise_exception(
+        self, method, timeout, exception_types, *method_args, **method_kwargs
+    ):
         # Use always False validator to only return if expected condition is raised
         def function(val):
             return False
 
-        self._wait_for_method_to_return(method, timeout, *method_args, **method_kwargs,
-                                        custom_return_validator=function,
-                                        expected_exception_types=exception_types)
+        self._wait_for_method_to_return(
+            method,
+            timeout,
+            *method_args,
+            **method_kwargs,
+            custom_return_validator=function,
+            expected_exception_types=exception_types,
+        )
 
     def wait_for_elem_to_show(self, css_selector, timeout=2):
         WebDriverWait(self.browser, timeout).until(
@@ -236,18 +295,30 @@ class BasePage(LIVE_SERVER):
 
     def wait_for_elem_to_disappear(self, css_selector, timeout=2):
         try:
-            self._wait_for_method_to_raise_exception(self.get_elem, timeout,
-                                                     (NoSuchElementException, StaleElementReferenceException),
-                                                     css_selector)
+            self._wait_for_method_to_raise_exception(
+                self.get_elem,
+                timeout,
+                (NoSuchElementException, StaleElementReferenceException),
+                css_selector,
+            )
         except TimeoutException:
-            raise TimeoutException(f'The element "{css_selector}" doesn\'t disapear after {timeout}s')
+            raise TimeoutException(
+                f'The element "{css_selector}" doesn\'t disapear after {timeout}s'
+            )
 
     def wait_for_elem_text_to_be_valid(self, css_selector, validator, timeout=2):
         try:
-            self._wait_for_method_to_return(self.get_elem_text, timeout, css_selector, True,
-                                            custom_return_validator=validator)
+            self._wait_for_method_to_return(
+                self.get_elem_text,
+                timeout,
+                css_selector,
+                True,
+                custom_return_validator=validator,
+            )
         except TimeoutException:
-            raise TimeoutException(f'The element text "{css_selector}" doesn\'t turn to be valid after {timeout}s')
+            raise TimeoutException(
+                f'The element text "{css_selector}" doesn\'t turn to be valid after {timeout}s'
+            )
 
     def wait_for_elem_text_to_be(self, css_selector, elem_text, timeout=2):
         validator = lambda text: True if text == elem_text else False
@@ -257,6 +328,27 @@ class BasePage(LIVE_SERVER):
         validator = lambda text: True if text != elem_text else False
         self.wait_for_elem_text_to_be_valid(css_selector, validator, timeout)
 
+    def wait_celery_queue_to_be_empty(self, celery_worker, timeout=60):
+        rand_pid = secrets.token_hex(32)
+
+        def return_counter():
+            if rand_pid in celery_worker.stats()["total"]:
+                return celery_worker.stats()["total"][rand_pid]
+            else:
+                return 0
+
+        def celery_waiter_return_validator(count):
+            return count == 1
+
+        dummy_task_for_test.apply_async(shadow=rand_pid)
+        # Wait for a celery worker to have processed our dummy task, meaning it has processed all previous tasks.
+        # This assumes the worker has only one process.
+        self._wait_for_method_to_return(
+            return_counter,
+            timeout,
+            custom_return_validator=celery_waiter_return_validator,
+        )
+
     def close_all_notifications(self):
         self.wait_for_elem_to_show(self.close_notification)
         notification_to_close = self.get_elems(self.close_notification)
@@ -264,12 +356,11 @@ class BasePage(LIVE_SERVER):
             notification.click()
         self.wait_for_elem_to_disappear(self.notification)
 
-    def _finish_test_reminder(self, message='Finish test!', pause_test=False):
-        print(red_message.
-              format(message))
+    def _finish_test_reminder(self, message="Finish test!", pause_test=False):
+        print(red_message.format(message))
 
         if pause_test:
-            input(f'Test paused for debugging, press Enter to terminate')
+            input(f"Test paused for debugging, press Enter to terminate")
         self.fail(message)
 
     def accept_modal(self):
@@ -290,10 +381,30 @@ class BasePage(LIVE_SERVER):
         start_time = time.time()
         while len(initial_content) == len(current_content):
             if time.time() - start_time > timeout:
-                raise TimeoutException(f'No file downloaded after {timeout}s')
+                raise TimeoutException(f"No file downloaded after {timeout}s")
             time.sleep(0.2)
-            current_content = [e for e in os.listdir(self._download_dir.name)
-                               if not e.endswith(('.crdownload', '.tmp', '.'))]
+            current_content = [
+                e
+                for e in os.listdir(self._download_dir.name)
+                if not e.endswith((".crdownload", ".tmp", "."))
+            ]
 
         downloaded_filename = (set(current_content) - set(initial_content)).pop()
         return downloaded_filename
+
+    def drag_n_drop_elem(self, elem_to_drag, elem_drop_zone):
+        # ActionChains(self.browser).drag_and_drop(elem_to_drag, elem_drop_zone)
+        # A work around is needed to perform a drag n drop with selenium due to a bug:
+        # https://github.com/SeleniumHQ/selenium/issues/8003
+
+        with open(
+            os.path.join(BASE_DIR, "ftests", "tools", "drag_n_drop_workaround.js"),
+            mode="r",
+        ) as js_file:
+            js_to_execute = js_file.read()
+            self.browser.execute_script(js_to_execute, elem_to_drag, elem_drop_zone)
+
+
+@shared_task
+def dummy_task_for_test():
+    pass

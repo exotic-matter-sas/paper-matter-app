@@ -1,4 +1,6 @@
-django-storages==1.7.1
-boto3==1.9.183
-google-cloud-storage
-uwsgi
+django-storages==1.9.1
+boto3==1.12.15
+google-cloud-storage==1.26.0
+google-cloud-vision==1.0.0
+uwsgi==2.0.18
+django-redis==4.12.1

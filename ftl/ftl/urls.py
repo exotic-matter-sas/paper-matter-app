@@ -30,57 +30,70 @@ from ftl.ftl_setup_middleware import SetupState
 from ftl.views import PasswordResetAsked, PasswordResetDone
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path("admin/", admin.site.urls),
     # Need to be at the top, otherwise admin url resolve conflict with other urls
-
-    path('', RedirectView.as_view(url=reverse_lazy('home')), name='root'),
-    path('setup/', include('setup.urls')),
-    path('app/', include('core.urls')),
-    path('crons/' + settings.CRON_SECRET_KEY + '/', include('core.urls_crons')),
-
-    path('signup/', views.CreateOrgAndFTLUser.as_view(), name='signup_org_user'),
-    path('signup/success/', views.signup_success, name='signup_success'),
+    path("", RedirectView.as_view(url=reverse_lazy("home")), name="root"),
+    path("setup/", include("setup.urls")),
+    path("app/", include("core.urls")),
+    path("crons/" + settings.CRON_SECRET_KEY + "/", include("core.urls_crons")),
+    path(
+        "crons-account/" + settings.CRON_SECRET_KEY + "/", include("account.urls_crons")
+    ),
+    path("signup/", views.CreateOrgAndFTLUser.as_view(), name="signup_org_user"),
+    path("signup/success/", views.signup_success, name="signup_success"),
     # Disabled until multi users feature is ready
     # path('signup/<slug:org_slug>/', views.CreateFTLUserFormView.as_view(), name='signup_user'),
-
-    path('login/',
-         auth_views.LoginView.as_view(authentication_form=FTLAuthenticationForm, redirect_authenticated_user=True),
-         kwargs={"ftl_setup_state": SetupState.admin_created}, name='login'),
-    path('logout/', auth_views.logout_then_login, name='logout'),
-
-    path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
-    path('password_reset/done/', PasswordResetAsked.as_view(), name='password_reset_done'),
-    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
-    path('reset/done/', PasswordResetDone.as_view(), name='password_reset_complete'),
-
+    path(
+        "login/",
+        auth_views.LoginView.as_view(
+            authentication_form=FTLAuthenticationForm, redirect_authenticated_user=True
+        ),
+        kwargs={"ftl_setup_state": SetupState.admin_created},
+        name="login",
+    ),
+    path("logout/", auth_views.logout_then_login, name="logout"),
+    path(
+        "password_reset/", auth_views.PasswordResetView.as_view(), name="password_reset"
+    ),
+    path(
+        "password_reset/done/", PasswordResetAsked.as_view(), name="password_reset_done"
+    ),
+    path(
+        "reset/<uidb64>/<token>/",
+        auth_views.PasswordResetConfirmView.as_view(),
+        name="password_reset_confirm",
+    ),
+    path("reset/done/", PasswordResetDone.as_view(), name="password_reset_complete"),
     # Account management
-    path('accounts/', include('account.urls')),
-
+    path("accounts/", include("account.urls")),
     # Account activation
-    path('accounts/activate/complete/', views.AccountActivationSuccess.as_view(),
-         name='django_registration_activation_complete'),
-
+    path(
+        "accounts/activate/complete/",
+        views.AccountActivationSuccess.as_view(),
+        name="django_registration_activation_complete",
+    ),
     # The activation key can make use of any character from the URL-safe base64 alphabet, plus the colon as a separator.
-    url(r'^accounts/activate/(?P<activation_key>[-:\w]+)/$', ActivationView.as_view(),
-        name='django_registration_activate'),
-
+    url(
+        r"^accounts/activate/(?P<activation_key>[-:\w]+)/$",
+        ActivationView.as_view(),
+        name="django_registration_activate",
+    ),
     # OTP
-    path('accounts/2fa/', include('ftl.otp_plugins.otp_ftl.urls')),
-
+    path("accounts/2fa/", include("ftl.otp_plugins.otp_ftl.urls")),
     # OAuth2 Provider
-    path('oauth2/', include('ftl.urls_oauth2', namespace='oauth2_provider')),
+    path("oauth2/", include("ftl.urls_oauth2", namespace="oauth2_provider")),
 ]
 
 if settings.DEBUG and settings.DEV_MODE:
     import debug_toolbar
 
     urlpatterns += [
-        path('__debug__/', include(debug_toolbar.urls)),
+        path("__debug__/", include(debug_toolbar.urls)),
     ]
 
 if settings.DEV_MODE:
     from ftl import view_local_proxy
 
     urlpatterns += [
-        re_path(r'^local/(?P<url>.*)$', view_local_proxy.LocalProxy.as_view())
+        re_path(r"^local/(?P<url>.*)$", view_local_proxy.LocalProxy.as_view())
     ]

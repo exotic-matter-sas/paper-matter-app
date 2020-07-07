@@ -9,50 +9,55 @@ from ftl.settings import BASE_DIR
 
 
 class HomePage(BasePage):
-    url = '/app/'
+    url = "/app/"
 
-    home_page_link = '.navbar-nav .fa-home'
-    manage_folder_page_link = '.navbar-nav .fa-folder'
+    home_page_link = ".navbar-nav .fa-home"
+    manage_folder_page_link = ".navbar-nav .fa-folder"
 
-    search_input = '#search-input'
-    search_button = '#search-button'
-    document_list_loader = '#document-list-loader'
+    search_input = "#search-input"
+    search_button = "#search-button"
+    document_list_loader = "#document-list-loader"
 
-    profile_name = '#email'
+    profile_name = "#email"
 
     document_upload_input = 'input[type="file"]'
-    document_upload_label = '.custom-file-label'
-    submit_document_upload_button = '#upload-button'
-    document_upload_loader = '#document-upload-loader'
+    document_upload_label = ".custom-file-label"
+    submit_document_upload_button = "#upload-button"
+    document_upload_loader = "#document-upload-loader"
 
-    refresh_documents_button = '#refresh-documents'
+    breadcrumb_first_folder = ".breadcrumb-item:first-child"
+    breadcrumb_folders = ".breadcrumb-item"
+    breadcrumb_current_folder = ".breadcrumb-item.active"
 
-    create_folder_button = '#create-folder'
-    folders_list_buttons = 'button.folder > span:not(.spinner-border):not(.d-none)'
-    folders_list_loader = '#folder-list-loader'
+    refresh_documents_button = "#refresh-documents"
 
-    sort_dropdown_button = '#documents-sort'
-    az_sort_item = '#az-sort'
-    za_sort_item = '#za-sort'
-    recent_sort_item = '#recent-sort'
-    older_sort_item = '#older-sort'
-    relevance_sort_item = '#relevance-sort'
+    create_folder_button = "#create-folder"
+    folders_list_buttons = "button.folder > span:not(.spinner-border):not(.d-none)"
+    folders_list_loader = "#folder-list-loader"
 
-    batch_toolbar = '#action-selected-documents'
-    unselect_all_docs_batch_button = '#unselect-all-documents'
-    move_docs_batch_button = '#move-documents'
-    delete_docs_batch_button = '#delete-documents'
+    sort_dropdown_button = "#documents-sort"
+    az_sort_item = "#az-sort"
+    za_sort_item = "#za-sort"
+    recent_sort_item = "#recent-sort"
+    older_sort_item = "#older-sort"
+    relevance_sort_item = "#relevance-sort"
 
-    documents_list_container = '#documents-list'
-    documents_thumbnails = '.document-thumbnail'
-    documents_download_buttons = '.document-thumbnail .download-button'
-    documents_checkboxes = '.document-thumbnail .custom-checkbox'
-    documents_titles = '.document-thumbnail .card-title'
-    first_document_title = '.document-thumbnail:first-child .card-title'
-    last_document_title = '.document-thumbnail:last-child .card-title'
+    batch_toolbar = "#action-selected-documents"
+    unselect_all_docs_batch_button = "#unselect-all-documents"
+    move_docs_batch_button = "#move-documents"
+    delete_docs_batch_button = "#delete-documents"
 
-    more_documents_button = '#more-documents'
-    more_documents_loader = '#more-documents .loader'
+    documents_list_container = "#documents-list"
+    documents_thumbnails = ".document-thumbnail"
+    documents_download_buttons = ".document-thumbnail .download-button"
+    documents_checkboxes = ".document-thumbnail .custom-checkbox"
+    documents_titles = ".document-thumbnail .card-title span"
+    first_document_thumb = ".document-thumbnail:first-child"
+    first_document_title = ".document-thumbnail:first-child .card-title span"
+    last_document_title = ".document-thumbnail:last-child .card-title span"
+
+    more_documents_button = "#more-documents"
+    more_documents_loader = "#more-documents .loader"
 
     def wait_documents_list_loaded(self):
         self.wait_for_elem_to_disappear(self.document_list_loader)
@@ -71,15 +76,19 @@ class HomePage(BasePage):
 
     def upload_documents(self, absolute_paths=None):
         if not absolute_paths:
-            absolute_paths = os.path.join(BASE_DIR, 'ftests', 'tools', 'test_documents', 'test.pdf')
+            absolute_paths = os.path.join(
+                BASE_DIR, "ftests", "tools", "test_documents", "test.pdf"
+            )
         else:
             if type(absolute_paths) is not list:
                 absolute_paths = [absolute_paths]
             absolute_paths = "\n".join(absolute_paths)
 
-        self.get_elem(self.document_upload_input, is_visible=False).send_keys(absolute_paths)
+        self.get_elem(self.document_upload_input, is_visible=False).send_keys(
+            absolute_paths
+        )
         self.get_elem(self.submit_document_upload_button).click()
-        self.wait_for_elem_to_disappear(self.document_upload_loader)
+        self.wait_for_elem_to_disappear(self.document_upload_loader, timeout=10)
         # Needed in case of several upload in a row as upload success trigger a notification that hide upload button
         self.close_all_notifications()
 
@@ -96,25 +105,30 @@ class HomePage(BasePage):
         self.wait_documents_list_loaded()
 
     def open_first_document(self):
-        first_document_title = self.get_elem(self.first_document_title)
-        first_document_title.click()
+        first_document_thumb = self.get_elem(self.first_document_thumb)
+        first_document_thumb.click()
         self.wait_for_elem_to_show(self.document_viewer_panel)
 
     def select_documents(self, documents_names):
         documents_list = self.get_elems(self.documents_thumbnails)
         for document in documents_list:
-            if document.find_element_by_css_selector(self.documents_titles).text in documents_names:
+            if (
+                document.find_element_by_css_selector(self.documents_titles).text
+                in documents_names
+            ):
                 document.find_element_by_css_selector(self.documents_checkboxes).click()
         self.wait_for_elem_to_show(self.batch_toolbar)
 
     def sort_documents_list(self, sort_type):
-        allowed_sort_type = ['az', 'za', 'recent', 'older', 'relevance']
+        allowed_sort_type = ["az", "za", "recent", "older", "relevance"]
         if sort_type not in allowed_sort_type:
-            raise ValueError(f'Invalid value for sort_type, allowed values are {allowed_sort_type}')
+            raise ValueError(
+                f"Invalid value for sort_type, allowed values are {allowed_sort_type}"
+            )
 
         self.get_elem(self.sort_dropdown_button).click()
 
-        sort_item = getattr(self, f'{sort_type}_sort_item')
+        sort_item = getattr(self, f"{sort_type}_sort_item")
         self.wait_for_elem_to_show(sort_item)
         self.get_elem(sort_item).click()
 

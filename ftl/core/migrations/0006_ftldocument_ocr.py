@@ -9,13 +9,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0005_auto_20200110_1346'),
+        ("core", "0005_auto_20200110_1346"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='ftldocument',
-            name='ocrized',
+            model_name="ftldocument",
+            name="ocrized",
             field=models.BooleanField(default=False),
         ),
     ]

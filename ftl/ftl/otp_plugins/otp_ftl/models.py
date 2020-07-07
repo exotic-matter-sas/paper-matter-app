@@ -28,19 +28,17 @@ class Fido2Device(Device):
         domain = token["domain"]
 
         credentials_query = Fido2Device.objects.filter(user=self.user)
-        credentials = [AttestedCredentialData(cbor2.loads(c.authenticator_data)) for c in credentials_query]
+        credentials = [
+            AttestedCredentialData(cbor2.loads(c.authenticator_data))
+            for c in credentials_query
+        ]
 
         rp = PublicKeyCredentialRpEntity(domain, settings.FIDO2_RP_NAME)
         fido2 = Fido2Server(rp)
 
         try:
             fido2.authenticate_complete(
-                state,
-                credentials,
-                credential_id,
-                client_data,
-                auth_data,
-                signature,
+                state, credentials, credential_id, client_data, auth_data, signature,
             )
 
             return True

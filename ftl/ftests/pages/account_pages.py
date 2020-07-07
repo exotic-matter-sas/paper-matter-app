@@ -5,64 +5,69 @@ from ftests.pages.base_page import BasePage
 
 
 class AccountPages(BasePage):
-    index_url = '/accounts/'
-    update_email_url = '/accounts/email'
-    update_password_url = '/accounts/password'
-    two_factors_authentication_url = '/accounts/2fa/'
+    index_url = "/accounts/"
+    update_email_url = "/accounts/email/"
+    update_password_url = "/accounts/password/"
+    two_factors_authentication_url = "/accounts/2fa/"
+    delete_account_url = "/accounts/delete/"
 
-    success_notification = '.alert.alert-success'
-    error_notification = '.alert.alert-error'
+    success_notification = ".alert.alert-success"
+    error_notification = ".alert.alert-error"
 
-    page_title = 'h3'
+    page_title = "h3"
 
     logout_button = 'a[href="/logout/"]'
 
     # Change email page
-    new_email_input = '#email-update-form #id_email'
+    new_email_input = "#email-update-form #id_email"
     submit_new_email_input = '#email-update-form [type="submit"]'
 
     # Change password page
-    old_password_input = '#password-update-form #id_old_password'
-    new_password_input = '#password-update-form #id_new_password1'
-    new_password_confirmation_input = '#password-update-form #id_new_password2'
+    old_password_input = "#password-update-form #id_old_password"
+    new_password_input = "#password-update-form #id_new_password1"
+    new_password_confirmation_input = "#password-update-form #id_new_password2"
     submit_new_password_input = '#password-update-form [type="submit"]'
 
     # 2fa pages
     # static device
-    emergency_codes_divs = '.static-device-item'
-    add_emergency_codes_button = '#add-emergency-codes'
-    rename_emergency_codes_buttons = '.rename-emergency-codes'
-    delete_emergency_codes_buttons = '.delete-emergency-codes'
-    emergency_codes_lists = '#emergency-code-to-print li, .static-device-item code'
+    emergency_codes_divs = ".static-device-item"
+    add_emergency_codes_button = "#add-emergency-codes"
+    rename_emergency_codes_buttons = ".rename-emergency-codes"
+    delete_emergency_codes_buttons = ".delete-emergency-codes"
+    emergency_codes_lists = "#emergency-code-to-print li, .static-device-item code"
     print_button = 'a[onclick="print()"]'
-    no_code_left_badges = '.otp-warning'
+    no_code_left_badges = ".otp-warning"
     # totp device
-    auth_app_divs = '.totp-device-item'
-    add_auth_app_button = '#add-auth-app'
-    unconfirmed_badges = '.totp-device-item a.badge-danger'
-    rename_auth_app_buttons = '.rename-auth-app'
-    delete_auth_app_buttons = '.delete-auth-app'
+    auth_app_divs = ".totp-device-item"
+    add_auth_app_button = "#add-auth-app"
+    unconfirmed_badges = ".totp-device-item a.badge-danger"
+    rename_auth_app_buttons = ".rename-auth-app"
+    delete_auth_app_buttons = ".delete-auth-app"
     qr_code_image = 'img[src*="qrcode"]'
     # fido2 device
-    security_key_divs = '.fido2-device-item'
-    add_security_key_button = '#add-security-key'
-    rename_security_key_buttons = '.rename-security-key'
-    delete_security_key_buttons = '.delete-security-key'
+    security_key_divs = ".fido2-device-item"
+    add_security_key_button = "#add-security-key"
+    rename_security_key_buttons = ".rename-security-key"
+    delete_security_key_buttons = ".delete-security-key"
     # 2fa forms
     device_name_label = 'label[for="id_name"]'
-    device_name_input = '#id_name'
-    error_message = '.alert-danger'
-    cancel_button = '.btn-secondary, .btn-link'
-    confirm_button = '.btn-primary, .btn-danger'
-    delete_warning = '.text-danger'
+    device_name_input = "#id_name"
+    error_message = ".alert-danger"
+    cancel_button = ".btn-secondary, .btn-link"
+    confirm_button = ".btn-primary, .btn-danger"
+    delete_warning = ".text-danger"
     # 2fa check pages
-    check_pages_title = 'h1'
-    check_pages_device_label = 'form#user-form label'
-    check_pages_device_input = '#id_otp_device'
-    check_pages_device_select_options = '#id_otp_device option'
-    check_pages_code_input = '#id_otp_token'
+    check_pages_title = "h1"
+    check_pages_device_label = "form#user-form label"
+    check_pages_device_input = "#id_otp_device"
+    check_pages_device_select_options = "#id_otp_device option"
+    check_pages_code_input = "#id_otp_token"
     # id_otp_device option
-    check_pages_alternatives_list = '#alternatives-list li a'
+    check_pages_alternatives_list = "#alternatives-list li a"
+
+    # Delete account page
+    confirm_password_input = "#account-delete-form #password"
+    submit_account_deletion = '#account-delete-form [type="submit"]'
 
     def update_email(self, new_email):
         self.get_elem(self.new_email_input).send_keys(new_email)
@@ -125,3 +130,7 @@ class AccountPages(BasePage):
     def enter_2fa_code(self, code):
         self.get_elem(self.check_pages_code_input).send_keys(code)
         self.get_elem(self.confirm_button).click()
+
+    def delete_account(self, confirmation_password):
+        self.get_elem(self.confirm_password_input).send_keys(confirmation_password)
+        self.get_elem(self.submit_account_deletion).click()

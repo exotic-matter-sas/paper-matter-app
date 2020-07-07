@@ -3,3 +3,4 @@ coverage
 selenium
 djproxy
 django-sslserver
+black==19.10b0

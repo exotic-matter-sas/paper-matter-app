@@ -7,19 +7,22 @@ from django.utils.translation import gettext as _
 
 
 def show_message(request, **kwargs):
-    if 'auto' in request.GET:
-        messages.warning(request, _('Your session has expired or have been invalidated. Please log back in.'))
+    if "auto" in request.GET:
+        messages.warning(
+            request,
+            _("Your session has expired or have been invalidated. Please log back in."),
+        )
     else:
-        messages.success(request, _('You have been logged out. See you!'))
+        messages.success(request, _("You have been logged out. See you!"))
 
 
-user_logged_out.connect(show_message, dispatch_uid='login_page')
+user_logged_out.connect(show_message, dispatch_uid="login_page")
 
 
 def set_ftl_session(request, **kwargs):
-    org = kwargs['user'].org
-    request.session['org_id'] = org.id
-    request.session['org_name'] = org.name
+    org = kwargs["user"].org
+    request.session["org_id"] = org.id
+    request.session["org_name"] = org.name
 
 
-user_logged_in.connect(set_ftl_session, dispatch_uid='set_ftl_session')
+user_logged_in.connect(set_ftl_session, dispatch_uid="set_ftl_session")

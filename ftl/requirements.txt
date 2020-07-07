@@ -1,22 +1,27 @@
-django==2.2.11
+django==2.2.14
 django-mptt==0.9.1
 django-webpack-loader==0.6.0
 psycopg2==2.8.3
-djangorestframework==3.10.3
+djangorestframework==3.11.0
 tika==1.19
 langid==1.1.6
-whitenoise==4.1.3
+whitenoise==5.0.1
 djangorestframework_simplejwt==4.3.0
 filetype==1.0.5
-django-registration==3.0.1
-django-otp==0.7.5
+django-registration==3.1
+django-otp==0.8.1
 fido2==0.8.1
 cbor2==4.1.2
 qrcode[pil]==6.1
 # latest master ref used as there is no recent tag available at the time (latest released done on Feb 15, 2018)
-git+https://github.com/jazzband/django-oauth-toolkit.git@6c7d2221e5cc3afc9ff2252c6fe68d887ea067ba
+git+https://github.com/jazzband/django-oauth-toolkit.git@38ac5179c4eb309bb0db99f6d87bbd76c2de1681
+puremagic==1.8
+celery[redis]==4.4.2
+django-ipware==2.1.0
+django-axes==5.3.4
+ua-parser==0.10.0
 
-# django-storages==1.7.1
+# django-storages==1.9.1
 # boto3==1.9.183
-# google-cloud-storage==1.18.0
-# google-cloud-vision==0.38.1
+# google-cloud-storage==1.26.0
+# google-cloud-vision==1.0.0

@@ -18,7 +18,8 @@
             <form id="email-update-form" action="" method="post">
                 {% csrf_token %}
 
-                <input id="id_email" name="email" type="text" class="form-control" placeholder="{% trans 'New email' %}">
+                <input id="id_email" name="email" type="text" class="form-control" placeholder="{% trans 'New email' %}"
+                       required>
 
                 {% if form.email.errors %}
                     <div class="my-4 alert alert-danger">

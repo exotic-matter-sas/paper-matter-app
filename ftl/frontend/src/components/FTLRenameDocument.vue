@@ -4,20 +4,39 @@
   -->
 
 <template>
-  <b-modal id="modal-rename-document"
-           :ok-disabled="!newDocumentName || newDocumentName === doc.title"
-           @ok="renameDocument">
+  <b-modal
+    :id="id"
+    :ok-disabled="!newDocumentName || newDocumentName === doc.title"
+    @ok="renameDocument"
+  >
     <template slot="modal-title">
-      <span>{{ $t('Rename document') }}</span>
+      <span>{{ $t("Rename document") }}</span>
     </template>
-    <b-container fluid>
+    <b-container>
       <b-form-group
         id="fieldset-rename-document"
         :description="$t('The new name of the document')"
-        :label='$t("The document will be renamed to \"{0}\".", [newDocumentName])'
-        label-for="rename-document-text" class="text-truncate">
-        <b-form-input id="rename-document-text" autofocus onfocus="this.select()" v-model="newDocumentName"
-                      trim></b-form-input>
+        :label="
+          $t('The document will be renamed to \'{0}{1}\'.', [
+            newDocumentName,
+            doc.ext,
+          ])
+        "
+        label-for="rename-document-text"
+        label-class="text-truncate"
+      >
+        <b-form-input
+          id="rename-document-text"
+          autofocus
+          onfocus="this.select()"
+          v-model="newDocumentName"
+          trim
+          @keyup.enter="
+            newDocumentName &&
+              newDocumentName !== doc.title &&
+              renameDocument($event)
+          "
+        ></b-form-input>
       </b-form-group>
     </b-container>
   </b-modal>
@@ -27,49 +46,63 @@
   fr:
     Rename document: Renommer le document
     The new name of the document: Le nouveau nom du document
-    The document will be renamed to "{0}".: Le document sera renommé « {0} ».
+    The document will be renamed to '{0}{1}'.: Le document sera renommé « {0}{1} ».
     Document successfully renamed.: Le document a été renommé avec succès.
     Could not rename document.: Le document n'a pas pu être renommé.
 </i18n>
 
 <script>
-  import axios from "axios";
-  import {axiosConfig} from "@/constants";
+import axios from "axios";
+import { axiosConfig } from "@/constants";
 
-  export default {
-    name: 'FTLRenameDocument',
+export default {
+  name: "FTLRenameDocument",
 
-    props: {
-      doc: {
-        Object,
-        required: true
+  props: {
+    // customize the id to allow multiple usage of this component at the same time
+    id: {
+      type: String,
+      default: "modal-rename-document",
+    },
+    doc: {
+      Object,
+      required: true,
+    },
+  },
+
+  data() {
+    return {
+      newDocumentName: this.doc.title,
+    };
+  },
+
+  watch: {
+    doc: function (newVal, oldVal) {
+      if (newVal.pid !== oldVal.pid) {
+        this.newDocumentName = newVal.title;
       }
     },
+  },
 
-    data() {
-      return {
-        newDocumentName: this.doc.title,
-      }
+  methods: {
+    renameDocument: function () {
+      let body = { title: this.newDocumentName };
+
+      axios
+        .patch("/app/api/v1/documents/" + this.doc.pid, body, axiosConfig)
+        .then((response) => {
+          this.$emit("event-document-renamed", {
+            doc: response.data,
+          });
+          this.$bvModal.hide(this.id);
+          this.mixinAlert(this.$t("Document successfully renamed."));
+        })
+        .catch((error) => {
+          this.mixinAlert(this.$t("Could not rename document."), true);
+        });
     },
-
-    methods: {
-      renameDocument: function () {
-        let body = {title: this.newDocumentName};
-
-        axios
-          .patch('/app/api/v1/documents/' + this.doc.pid, body, axiosConfig)
-          .then(response => {
-            this.$emit('event-document-renamed', {doc: response.data});
-            this.mixinAlert(this.$t('Document successfully renamed.'));
-          })
-          .catch(error => {
-            this.mixinAlert(this.$t('Could not rename document.'), true);
-          })
-      }
-    }
-  }
+  },
+};
 </script>
 
-<style>
-
-</style>
+<style></style>

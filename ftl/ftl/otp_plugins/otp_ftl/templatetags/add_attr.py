@@ -7,7 +7,7 @@ from django import template
 register = template.Library()
 
 
-@register.filter(name='add_attr')
+@register.filter(name="add_attr")
 def add_attr(field, key_val_json):
     attrs = json.loads(key_val_json)
 

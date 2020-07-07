@@ -23,6 +23,8 @@ class FTLOCRGoogleVisionSync(FTLOCRBase):
     Doc: https://cloud.google.com/vision/docs/reference/rest/v1/files/annotate
     """
 
+    supported_documents_types = ["application/pdf"]
+
     def __init__(self, credentials=settings.GS_CREDENTIALS):
         super().__init__()
         if DEFAULT_FILE_STORAGE == FTLStorages.GCS:
@@ -32,24 +34,26 @@ class FTLOCRGoogleVisionSync(FTLOCRBase):
 
     def _extract_text(self, ftl_doc):
         if DEFAULT_FILE_STORAGE == FTLStorages.GCS:
-            storage_uri = f'gs://{self.gcs_bucket_name}/{ftl_doc.name}'
-            gcs_source = {'uri': storage_uri}
-            input_config = {'gcs_source': gcs_source}
+            storage_uri = f"gs://{self.gcs_bucket_name}/{ftl_doc.name}"
+            gcs_source = {"uri": storage_uri}
+            input_config = {"gcs_source": gcs_source}
         else:  # Default is FILE_SYSTEM storage
-            ftl_doc.open('rb')
-            input_config = {'content': ftl_doc.read()}
+            ftl_doc.open("rb")
+            input_config = {"content": ftl_doc.read()}
             ftl_doc.close()
 
         type_ = enums.Feature.Type.DOCUMENT_TEXT_DETECTION
-        features_element = {'type': type_}
+        features_element = {"type": type_}
         features = [features_element]
 
         # The service can process up to 5 pages per document file.
         # Here we specify the first, second, and last page of the document to be
         # processed.
-        requests_element = {'input_config': input_config, 'features': features}
+        requests_element = {"input_config": input_config, "features": features}
         requests = [requests_element]
 
         response = self.client.batch_annotate_files(requests)
 
-        return "\n".join([e.full_text_annotation.text for e in response.responses[0].responses])
+        return "\n".join(
+            [e.full_text_annotation.text for e in response.responses[0].responses]
+        )

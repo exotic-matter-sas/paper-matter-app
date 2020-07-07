@@ -4,40 +4,44 @@
   -->
 
 <template>
-  <b-button class="folder" :disabled="navigating" @click="navigate">
-    <b-spinner id ="folder-list-loader" :class="{'d-none': !navigating}" small></b-spinner>
-    <span :class="{'d-none': navigating}">{{ folder.name }}</span>
+  <b-button
+    class="folder"
+    :class="{ 'border border-active': dragOver }"
+    :disabled="navigating"
+    @click="navigate"
+    v-on:drop="drop"
+    v-on:dragover="allowDrop"
+    v-on:dragleave="leaveDrop"
+  >
+    <b-spinner
+      id="folder-list-loader"
+      :class="{ 'd-none': !navigating }"
+      small
+    ></b-spinner>
+    <span :class="{ 'd-none': navigating }">{{ folder.name }}</span>
   </b-button>
 </template>
 
 <script>
-  export default {
-    name: "FTLFolder",
+import FTLDnDToFolderMixin from "@/components/FTLDnDToFolderMixin";
 
-    props: {
-      folder: {
-        type: Object,
-        required: true
-      },
+export default {
+  name: "FTLFolder",
+  mixins: [FTLDnDToFolderMixin], // Reuse methods for moving documents
 
+  data() {
+    return {
+      navigating: false,
+    };
+  },
 
+  methods: {
+    navigate: function () {
+      this.navigating = true;
+      this.$emit("event-change-folder", this.folder);
     },
-
-    data() {
-      return {
-        navigating: false
-      }
-    },
-
-    methods: {
-      navigate: function () {
-        this.navigating = true;
-        this.$emit('event-change-folder', this.folder);
-      }
-    }
-  }
+  },
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

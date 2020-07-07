@@ -9,20 +9,26 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0002_auto_20191031_2127'),
+        ("core", "0002_auto_20191031_2127"),
     ]
 
     operations = [
         migrations.RemoveConstraint(
-            model_name='ftlfolder',
-            name='folder_name_unique_for_org_level',
+            model_name="ftlfolder", name="folder_name_unique_for_org_level",
         ),
         migrations.AddConstraint(
-            model_name='ftlfolder',
-            constraint=models.UniqueConstraint(fields=('name', 'parent_id', 'org_id'), name='folder_name_unique_for_org_level'),
+            model_name="ftlfolder",
+            constraint=models.UniqueConstraint(
+                fields=("name", "parent_id", "org_id"),
+                name="folder_name_unique_for_org_level",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='ftlfolder',
-            constraint=models.UniqueConstraint(condition=models.Q(parent_id__isnull=True), fields=('name', 'org_id'), name='folder_name_unique_for_org_level_at_root'),
+            model_name="ftlfolder",
+            constraint=models.UniqueConstraint(
+                condition=models.Q(parent_id__isnull=True),
+                fields=("name", "org_id"),
+                name="folder_name_unique_for_org_level_at_root",
+            ),
         ),
     ]
