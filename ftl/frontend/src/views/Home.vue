@@ -349,88 +349,75 @@ export default {
     this.$store.commit("unselectAllDocuments");
 
     // Tour
-    this.$nextTick(function () {
-      const driver = new Driver({
-        // animate: false,
-        stageBackground: "transparent",
-        opacity: 0,
-        allowClose: false,
-        overlayClickNext: false,
-        showButtons: true,
-        doneBtnText: this.$t("Done"),
-        closeBtnText: this.$t("Close"),
-        nextBtnText: this.$t("Next"),
-        prevBtnText: this.$t("Previous"),
+    if (!localStorage.tour_done) {
+      this.$nextTick(function () {
+        const driver = new Driver({
+          // animate: false,
+          stageBackground: "transparent",
+          opacity: 0,
+          allowClose: false,
+          overlayClickNext: false,
+          showButtons: true,
+          doneBtnText: this.$t("Done"),
+          closeBtnText: this.$t("Close"),
+          nextBtnText: this.$t("Next"),
+          prevBtnText: this.$t("Previous"),
+        });
+
+        driver.defineSteps([
+          {
+            element: "#upload-section",
+            popover: {
+              title: "Envoyer vos documents",
+              description:
+                "Sélectionner vos documents à envoyer ou glisser-déposer vos documents dans la zone.",
+              position: "bottom-center",
+            },
+          },
+          {
+            element: "#search-zone",
+            popover: {
+              title: "Rechercher vos documents",
+              description:
+                "Indiquer un ou plusieurs mots clés représentatives de vos documents.",
+              position: "bottom-center",
+            },
+          },
+          {
+            element: "#breadcrumb",
+            popover: {
+              title: "Arborescence parcourue",
+              description:
+                "Votre fils d'ariane indiquant le chemin parcouru jusqu'au dossier actuel.",
+              position: "bottom",
+              offset: 20,
+            },
+          },
+          {
+            element: "#folders-list",
+            popover: {
+              title: "Dossiers",
+              description:
+                "Vos dossiers du répertoire courant. Vous pouvez aussi créer un nouveau dossier ou revenir au dossier précédent.",
+              position: "bottom",
+              offset: 20,
+            },
+          },
+          {
+            element: "#documents-list",
+            popover: {
+              title: "Documents",
+              description:
+                "Vos documents du dossier courant ou bien les résultats de votre recherche.",
+              position: "top-center",
+            },
+          },
+        ]);
+
+        driver.start();
       });
-
-      driver.defineSteps([
-        {
-          element: "#upload-section",
-          popover: {
-            title: "Envoyer vos documents",
-            description:
-              "Sélectionner vos documents à envoyer ou glisser-déposer vos documents dans la zone.",
-            position: "bottom-center",
-          },
-        },
-        {
-          element: "#search-zone",
-          popover: {
-            title: "Rechercher vos documents",
-            description:
-              "Indiquer un ou plusieurs mots clés représentatives de vos documents.",
-            position: "bottom-center",
-          },
-        },
-        {
-          element: "#breadcrumb",
-          popover: {
-            title: "Arborescence parcourue",
-            description:
-              "Votre fils d'ariane indiquant le chemin parcouru jusqu'au dossier actuel.",
-            position: "bottom",
-            offset: 20,
-          },
-        },
-        {
-          element: "#folders-list",
-          popover: {
-            title: "Dossiers",
-            description:
-              "Vos dossiers du répertoire courant. Vous pouvez aussi créer un nouveau dossier ou revenir au dossier précédent.",
-            position: "bottom",
-            offset: 20,
-          },
-        },
-        {
-          element: "#documents-list",
-          popover: {
-            title: "Documents",
-            description:
-              "Vos documents du dossier courant ou bien les résultats de votre recherche.",
-            position: "top-center",
-          },
-        },
-        // {
-        //   element: "#second-element-introduction",
-        //   popover: {
-        //     title: "Title on Popover",
-        //     description: "Body of the popover",
-        //     position: "top",
-        //   },
-        // },
-        // {
-        //   element: "#third-element-introduction",
-        //   popover: {
-        //     title: "Title on Popover",
-        //     description: "Body of the popover",
-        //     position: "right",
-        //   },
-        // },
-      ]);
-
-      driver.start();
-    });
+      localStorage.tour_done = true;
+    }
   },
 
   watch: {
