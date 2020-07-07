@@ -303,6 +303,7 @@ import FTLRenameDocument from "@/components/FTLRenameDocument";
 import FTLBreadcrumbFolder from "@/components/FTLBreadcrumbFolder";
 import axios from "axios";
 import Driver from "driver.js";
+import "driver.js/dist/driver.min.css";
 
 export default {
   name: "home",
@@ -346,17 +347,85 @@ export default {
 
     // Clear the selected documents
     this.$store.commit("unselectAllDocuments");
+
+    // Tour
     this.$nextTick(function () {
       const driver = new Driver({
         animate: false,
+        allowClose: false,
+        overlayClickNext: true,
+        showButtons: false,
+        doneBtnText: this.$t("Done"),
+        closeBtnText: this.$t("Close"),
+        nextBtnText: this.$t("Next"),
+        prevBtnText: this.$t("Previous"),
       });
-      driver.highlight({
-        element: "#upload-section",
-        popover: {
-          title: "Title for the Popover",
-          description: "Description for it",
+
+      driver.defineSteps([
+        {
+          element: "#upload-section",
+          popover: {
+            title: "Envoyer vos documents",
+            description:
+              "Sélectionner vos documents à envoyer ou glisser-déposer vos documents dans la zone.",
+            position: "bottom-center",
+          },
         },
-      });
+        {
+          element: "#search-zone",
+          popover: {
+            title: "Rechercher vos documents",
+            description:
+              "Indiquer un ou plusieurs mots clés représentatives de vos documents.",
+            position: "bottom-center",
+          },
+        },
+        {
+          element: "#breadcrumb",
+          popover: {
+            title: "Arborescence parcourue",
+            description:
+              "Votre fils d'ariane indiquant le chemin parcouru jusqu'au dossier actuel.",
+            position: "bottom-center",
+          },
+        },
+        {
+          element: "#folders-list",
+          popover: {
+            title: "Dossiers",
+            description:
+              "Vos dossiers du répertoire courant. Vous pouvez aussi créer un nouveau dossier ou revenir au dossier précédent.",
+            position: "bottom-center",
+          },
+        },
+        {
+          element: "#documents-list",
+          popover: {
+            title: "Documents",
+            description:
+              "Vos documents du dossier courant ou bien les résultats de votre recherche.",
+            position: "top-center",
+          },
+        },
+        // {
+        //   element: "#second-element-introduction",
+        //   popover: {
+        //     title: "Title on Popover",
+        //     description: "Body of the popover",
+        //     position: "top",
+        //   },
+        // },
+        // {
+        //   element: "#third-element-introduction",
+        //   popover: {
+        //     title: "Title on Popover",
+        //     description: "Body of the popover",
+        //     position: "right",
+        //   },
+        // },
+      ]);
+
+      driver.start();
     });
   },
 
