@@ -286,6 +286,10 @@
     Move to folder: Déplacer vers le dossier
     Delete documents: Supprimer les documents
     Unable to refresh folders list: Erreur lors du chargement de la liste des dossiers
+    Done: Terminer
+    Next: Suivant
+    Previous: Précédent
+    Close: Fermer
 </i18n>
 
 <script>
@@ -368,7 +372,7 @@ export default {
           {
             element: "#upload-section",
             popover: {
-              title: "Envoyer vos documents",
+              title: "Envoyer vos documents 1/5",
               description:
                 "Sélectionner vos documents à envoyer ou glisser-déposer vos documents dans la zone.",
               position: "bottom-center",
@@ -377,18 +381,18 @@ export default {
           {
             element: "#search-zone",
             popover: {
-              title: "Rechercher vos documents",
+              title: "Retrouver vos documents 2/5",
               description:
-                "Indiquer un ou plusieurs mots clés représentatives de vos documents.",
+                "Indiquer un ou plusieurs mots clés représentatifs de vos documents. ",
               position: "bottom-center",
             },
           },
           {
             element: "#breadcrumb",
             popover: {
-              title: "Arborescence parcourue",
+              title: "Chemin du dossier courant 3/5",
               description:
-                "Votre fils d'ariane indiquant le chemin parcouru jusqu'au dossier actuel.",
+                "Votre fil d'ariane indiquant le chemin parcouru jusqu'au dossier actuel.",
               position: "bottom",
               offset: 20,
             },
@@ -396,7 +400,7 @@ export default {
           {
             element: "#folders-list",
             popover: {
-              title: "Dossiers",
+              title: "Dossiers 4/5",
               description:
                 "Vos dossiers du répertoire courant. Vous pouvez aussi créer un nouveau dossier ou revenir au dossier précédent.",
               position: "bottom",
@@ -406,7 +410,7 @@ export default {
           {
             element: "#documents-list",
             popover: {
-              title: "Documents",
+              title: "Documents 5/5",
               description:
                 "Vos documents du dossier courant ou bien les résultats de votre recherche.",
               position: "top-center",
