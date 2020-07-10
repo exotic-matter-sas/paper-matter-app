@@ -204,7 +204,7 @@ Rename or move an existing folder.
     - **created**: creation date following ISO 8601 format, eg. `2019-11-18T00:42:42.242424Z` (if omitted or `null` current date will be set)
     - **ftl_folder**: parent folder id (if omitted or `null`, folder is created inside root folder)
     - **ignore_thumbnail_generation_error**: if set to `false` and sent **thumbnail** is corrupt or not properly formatted upload request will fail (if omitted or `true`, error will be ignored and document will be uploaded without thumbnail, it's the default behavior as some browsers may not support thumbnail generation using canvas)
-    - **title**: document title, string (if omitted or `null`, pdf file name will be used as document title)
+    - **title**: document title, string (if omitted or `null`, file name will be used as document title)
     - **note**: document note, string (if omitted or `null`, no note will be set)
     - **md5**: document md5, it is recommended to provide this field for server to perform an integrity check to assert no corruption occurred during the upload process, a specific error is return on integrity check fail, string (if omitted or `null`, no integrity check is made)
 - _**thumbnail** (optional): thumbnail to display in the documents list, thumbnail should be a PNG image encoded as data uri `data:image/png;base64,...` (if omitted thumbnail will be generated on next document display from web interface, recommended format is half the size of the original document)_
@@ -235,7 +235,7 @@ Content-Disposition: form-data; name="json"
 ```json
 {
   "pid":"f04be12a-b08d-4857-ade0-20c778a257b3",
-  "title":"file.pdf",
+  "title":"file",
   "note":"",
   "created":"2019-08-19T13:14:15.397396Z",
   "edited":"2019-08-19T13:14:15.408445Z",
@@ -305,12 +305,13 @@ OR
   "results":[
     {
       "pid":"4c092ae2-2c91-4759-9123-5f4af7538f85",
-      "title":"file.pdf",
+      "title":"file",
       "note":"",
       "created":"2019-08-19T15:03:03.504330Z",
       "edited":"2019-08-19T15:03:06.844287Z",
       "ftl_folder":12,
-      "thumbnail_available":false,
+      "thumbnail_available":true,
+      "thumbnail_url": "/app/api/v1/documents/4c092ae2-2c91-4759-9123-5f4af7538f85/thumbnail.png",
       "is_processed":true,
       "path":[
         {
@@ -336,6 +337,7 @@ OR
       "edited":"2019-08-19T14:24:30.431466Z",
       "ftl_folder":12,
       "thumbnail_available":false,
+      "thumbnail_url": null,
       "is_processed":true,
       "path":[
         {
@@ -356,7 +358,41 @@ OR
   ]
 }
 ```
-If there is too many results, results will be paginated. To get the next page results you have to call the url specified in `next` field (or set an additional `page` query string with desired page number).
+If there is too many results, results will be paginated. To get the next page results you have to call the url specified in `next` field (or set an additional `page` query string with desired page number, page start at `1`).
+
+### Get one document
+**GET /api/v1/documents/`document_pid`**
+
+**Response** `200`
+
+```json
+{
+  "pid":"4c092ae2-2c91-4759-9123-5f4af7538f85",
+  "title":"file",
+  "note":"",
+  "created":"2019-08-19T15:03:03.504330Z",
+  "edited":"2019-08-19T15:03:06.844287Z",
+  "ftl_folder":12,
+  "thumbnail_available":false,
+  "is_processed":true,
+  "thumbnail_url": "/app/api/v1/documents/4c092ae2-2c91-4759-9123-5f4af7538f85/thumbnail.png",
+  "path":[
+    {
+      "id":34,
+      "name":"a"
+    },
+    {
+      "id":35,
+      "name":"b"
+    }
+  ],
+  "md5":"d85fce92a5789f66f58096402da6b98f",
+  "size":123,
+  "ocrized": true,
+  "type": "application/pdf"
+}
+```
+Return the same data than **List documents** request but for a single document.
 
 ### Update a document
 **PATCH /api/v1/documents/`document_pid`**
