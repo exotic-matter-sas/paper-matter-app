@@ -204,7 +204,7 @@ Rename or move an existing folder.
     - **created**: creation date following ISO 8601 format, eg. `2019-11-18T00:42:42.242424Z` (if omitted or `null` current date will be set)
     - **ftl_folder**: parent folder id (if omitted or `null`, folder is created inside root folder)
     - **ignore_thumbnail_generation_error**: if set to `false` and sent **thumbnail** is corrupt or not properly formatted upload request will fail (if omitted or `true`, error will be ignored and document will be uploaded without thumbnail, it's the default behavior as some browsers may not support thumbnail generation using canvas)
-    - **title**: document title, string (if omitted or `null`, pdf file name will be used as document title)
+    - **title**: document title, string (if omitted or `null`, file name will be used as document title)
     - **note**: document note, string (if omitted or `null`, no note will be set)
     - **md5**: document md5, it is recommended to provide this field for server to perform an integrity check to assert no corruption occurred during the upload process, a specific error is return on integrity check fail, string (if omitted or `null`, no integrity check is made)
 - _**thumbnail** (optional): thumbnail to display in the documents list, thumbnail should be a PNG image encoded as data uri `data:image/png;base64,...` (if omitted thumbnail will be generated on next document display from web interface, recommended format is half the size of the original document)_
@@ -235,7 +235,7 @@ Content-Disposition: form-data; name="json"
 ```json
 {
   "pid":"f04be12a-b08d-4857-ade0-20c778a257b3",
-  "title":"file.pdf",
+  "title":"file",
   "note":"",
   "created":"2019-08-19T13:14:15.397396Z",
   "edited":"2019-08-19T13:14:15.408445Z",
@@ -304,7 +304,7 @@ OR
   "results":[
     {
       "pid":"4c092ae2-2c91-4759-9123-5f4af7538f85",
-      "title":"file.pdf",
+      "title":"file",
       "note":"",
       "created":"2019-08-19T15:03:03.504330Z",
       "edited":"2019-08-19T15:03:06.844287Z",
@@ -365,7 +365,7 @@ If there is too many results, results will be paginated. To get the next page re
 ```json
 {
   "pid":"4c092ae2-2c91-4759-9123-5f4af7538f85",
-  "title":"file.pdf",
+  "title":"file",
   "note":"",
   "created":"2019-08-19T15:03:03.504330Z",
   "edited":"2019-08-19T15:03:06.844287Z",
