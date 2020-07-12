@@ -376,31 +376,39 @@ export default {
           closeBtnText: this.$t("Close"),
           nextBtnText: this.$t("Next"),
           prevBtnText: this.$t("Previous"),
-          onReset: (elem) => { localStorage.tour_done = true; }
+          onReset: (elem) => {
+            localStorage.tour_done = true;
+          },
         });
 
         driver.defineSteps([
           {
             element: "#upload-section",
             popover: {
-              title: this.$t('Add documents (1/5)'),
-              description: this.$t('Select documents by clicking <b>Browse</b> or by dropping them on the white area, confirm with <b>Upload</b> button.'),
+              title: this.$t("Add documents (1/5)"),
+              description: this.$t(
+                "Select documents by clicking <b>Browse</b> or by dropping them on the white area, confirm with <b>Upload</b> button."
+              ),
               position: "bottom-center",
             },
           },
           {
             element: "#search-zone",
             popover: {
-              title: this.$t('Find documents (2/5)'),
-              description: this.$t('Type key words contains in the document title, content or note and hit <b>Search</b> button.'),
+              title: this.$t("Find documents (2/5)"),
+              description: this.$t(
+                "Type key words contains in the document title, content or note and hit <b>Search</b> button."
+              ),
               position: "bottom-center",
             },
           },
           {
             element: "#breadcrumb",
             popover: {
-              title: this.$t('Current folder path (3/5)'),
-              description: this.$t('The breadcrumb show you the path of the current folder and allow you to quickly  navigate to its parents.'),
+              title: this.$t("Current folder path (3/5)"),
+              description: this.$t(
+                "The breadcrumb show you the path of the current folder and allow you to quickly  navigate to its parents."
+              ),
               position: "bottom",
               offset: 20,
             },
@@ -408,8 +416,10 @@ export default {
           {
             element: "#folders-list",
             popover: {
-              title: this.$t('Folders (4/5)'),
-              description: this.$t('Your folders list, you can create a new folder or back to the parent folder when your are inside a sub folder.'),
+              title: this.$t("Folders (4/5)"),
+              description: this.$t(
+                "Your folders list, you can create a new folder or back to the parent folder when your are inside a sub folder."
+              ),
               position: "bottom",
               offset: 20,
             },
@@ -417,8 +427,10 @@ export default {
           {
             element: "#documents-list",
             popover: {
-              title: this.$t('Documents (5/5)'),
-              description: this.$t('Your documents list, you can select multiple documents using checkbox (or <kbd>Ctrl</kbd> + <kbd>Left click</kbd>) to apply batch actions.'),
+              title: this.$t("Documents (5/5)"),
+              description: this.$t(
+                "Your documents list, you can select multiple documents using checkbox (or <kbd>Ctrl</kbd> + <kbd>Left click</kbd>) to apply batch actions."
+              ),
               position: "top-center",
             },
           },
@@ -696,7 +708,7 @@ export default {
 }
 
 /* Hack to fix the driver.js tour highlight for search input (this is a driver,js class)*/
-.driver-fix-stacking{
-  position: relative!important;
+.driver-fix-stacking {
+  position: relative !important;
 }
 </style>
