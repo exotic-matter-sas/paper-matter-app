@@ -290,6 +290,16 @@
     Next: Suivant
     Previous: Précédent
     Close: Fermer
+    Add documents (1/5): Ajouter vos documents 1/5
+    Select documents by clicking <b>Browse</b> or by dropping them on the white area, confirm with <b>Upload</b> button.: Sélectionner vos documents en cliquant sur <b>Parcourir</b> ou en les glissant-déposant sur la zone blanche, validez avec le bouton <b>Envoyer</b>.
+    Find documents (2/5): Retrouver vos documents (2/5)
+  Type key words contained in the document title, content or note and hit <b>Search</b> button.: Saisissez des mots-clés contenus dans le titre, contenu ou note du document et cliquez sur le bouton <b>Rechercher</b>.
+  Current folder path (3/5): Chemin du dossier courant (3/5)
+  The breadcrumb show you the path of the current folder and allow you to quickly navigate to its parents.: Le fil d'ariane vous montre le chemin du dossier courant et vous permet de naviguer rapidement vers ses parents.
+  Folders (4/5): Dossier (4/5)
+  Your folders list, you can create a new folder or back to the parent folder when you are inside a sub folder.: La liste de vos dossiers, vous pouvez créer un nouveau dossier ou revenir au dossier parent lorsque vous êtes dans un sous-dossier.
+  Documents (5/5): Documents (5/5)
+  Your documents list, you can select multiple documents using checkboxes (or <kbd>Ctrl</kbd> + <kbd>Left click</kbd>) to apply batch actions.: La liste de vos documents, vous pouvez en sélectionner plusieurs avec les cases à cocher (ou <kbd>Ctrl</kbd> + <kbd>Clic gauche</kbd>) pour réaliser des actions groupées.
 </i18n>
 
 <script>
@@ -358,7 +368,7 @@ export default {
         const driver = new Driver({
           // animate: false,
           stageBackground: "transparent",
-          opacity: 0,
+          opacity: 0.7,
           allowClose: false,
           overlayClickNext: false,
           showButtons: true,
@@ -372,27 +382,24 @@ export default {
           {
             element: "#upload-section",
             popover: {
-              title: "Envoyer vos documents 1/5",
-              description:
-                "Sélectionner vos documents à envoyer ou glisser-déposer vos documents dans la zone.",
+              title: this.$t('Add documents (1/5)'),
+              description: this.$t('Select documents by clicking <b>Browse</b> or by dropping them on the white area, confirm with <b>Upload</b> button.'),
               position: "bottom-center",
             },
           },
           {
             element: "#search-zone",
             popover: {
-              title: "Retrouver vos documents 2/5",
-              description:
-                "Indiquer un ou plusieurs mots clés représentatifs de vos documents. ",
+              title: this.$t('Find documents (2/5)'),
+              description: this.$t('Type key words contains in the document title, content or note and hit <b>Search</b> button.'),
               position: "bottom-center",
             },
           },
           {
             element: "#breadcrumb",
             popover: {
-              title: "Chemin du dossier courant 3/5",
-              description:
-                "Votre fil d'ariane indiquant le chemin parcouru jusqu'au dossier actuel.",
+              title: this.$t('Current folder path (3/5)'),
+              description: this.$t('The breadcrumb show you the path of the current folder and allow you to quickly  navigate to its parents.'),
               position: "bottom",
               offset: 20,
             },
@@ -400,9 +407,8 @@ export default {
           {
             element: "#folders-list",
             popover: {
-              title: "Dossiers 4/5",
-              description:
-                "Vos dossiers du répertoire courant. Vous pouvez aussi créer un nouveau dossier ou revenir au dossier précédent.",
+              title: this.$t('Folders (4/5)'),
+              description: this.$t('Your folders list, you can create a new folder or back to the parent folder when your are inside a sub folder.'),
               position: "bottom",
               offset: 20,
             },
@@ -410,9 +416,8 @@ export default {
           {
             element: "#documents-list",
             popover: {
-              title: "Documents 5/5",
-              description:
-                "Vos documents du dossier courant ou bien les résultats de votre recherche.",
+              title: this.$t('Documents (5/5)'),
+              description: this.$t('Your documents list, you can select multiple documents using checkbox (or <kbd>Ctrl</kbd> + <kbd>Left click</kbd>) to apply batch actions.'),
               position: "top-center",
             },
           },
