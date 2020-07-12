@@ -376,6 +376,7 @@ export default {
           closeBtnText: this.$t("Close"),
           nextBtnText: this.$t("Next"),
           prevBtnText: this.$t("Previous"),
+          onReset: (elem) => { localStorage.tour_done = true; }
         });
 
         driver.defineSteps([
@@ -425,7 +426,6 @@ export default {
 
         driver.start();
       });
-      // localStorage.tour_done = true;
     }
   },
 
