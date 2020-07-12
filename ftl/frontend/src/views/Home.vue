@@ -425,7 +425,7 @@ export default {
 
         driver.start();
       });
-      localStorage.tour_done = true;
+      // localStorage.tour_done = true;
     }
   },
 
@@ -693,5 +693,10 @@ export default {
     padding-right: 0 !important;
     border-right: none !important;
   }
+}
+
+/* Hack to fix the driver.js tour highlight for search input (this is a driver,js class)*/
+.driver-fix-stacking{
+  position: relative!important;
 }
 </style>
