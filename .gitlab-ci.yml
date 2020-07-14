@@ -15,6 +15,7 @@ stages:
   - build-frontend
   - build-backend
   - test
+  - coverage-report
   - docker
 
 
@@ -82,7 +83,7 @@ test-fast-python:
   script:
     - export DJANGO_SETTINGS_MODULE=ftl.settings_tests
     - source venv/bin/activate && cd ftl
-    - python3 manage.py test -v 2 --exclude-tag=slow
+    - python3 -m coverage run --source=. manage.py test -v 2 --exclude-tag=slow
 
 test-slow-python:
   stage: test
@@ -94,12 +95,30 @@ test-slow-python:
   script:
     - export DJANGO_SETTINGS_MODULE=ftl.settings_tests
     - source venv/bin/activate && cd ftl
-    - python3 manage.py test -v 2 --tag=slow
+    - python3 -m coverage run --source=. manage.py test -v 2 --tag=slow
   artifacts:
     name: "tests_screenshots"
     paths:
       - ftl/ftests/tests_screenshots
   allow_failure: false
+  when: manual
+
+python-coverage:
+  stage: coverage-report
+  image: registry.gitlab.com/exotic-matter/ftl-base-image-ci:latest
+  services:
+    - postgres:11-alpine
+  dependencies:
+    - test-fast-python
+    - test-slow-python
+  script:
+    - python3 -m coverage combine
+    - python3 -m coverage html
+  artifacts:
+    name: "python_coverage_report"
+    paths:
+      - ftl/htmlcov
+  allow_failure: true
   when: manual
 
 build-docker-gitlab:

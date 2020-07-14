@@ -1,5 +1,0 @@
-[run]
-omit =
-    manage.py
-    settings.py
-    settings_local.py

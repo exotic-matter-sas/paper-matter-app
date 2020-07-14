@@ -1,0 +1,10 @@
+[run]
+parallel=True
+omit =
+    manage.py
+    core/migrations/*
+    ftests/*
+    ftl/wsgi.py
+    *settings.py
+    *settings_*.py
+    *test_*.py

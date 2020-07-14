@@ -1,5 +1,6 @@
 django-debug-toolbar
 coverage
+tblib
 selenium
 djproxy
 django-sslserver
