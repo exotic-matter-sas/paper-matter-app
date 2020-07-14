@@ -85,23 +85,23 @@ test-fast-python:
     - source venv/bin/activate && cd ftl
     - python3 -m coverage run --source=. manage.py test -v 2 --exclude-tag=slow
 
-test-slow-python:
-  stage: test
-  image: registry.gitlab.com/exotic-matter/ftl-base-image-ci:latest
-  services:
-    - postgres:11-alpine
-  dependencies:
-    - compile-backend
-  script:
-    - export DJANGO_SETTINGS_MODULE=ftl.settings_tests
-    - source venv/bin/activate && cd ftl
-    - python3 -m coverage run --source=. manage.py test -v 2 --tag=slow
-  artifacts:
-    name: "tests_screenshots"
-    paths:
-      - ftl/ftests/tests_screenshots
-  allow_failure: false
-  when: manual
+#test-slow-python:
+#  stage: test
+#  image: registry.gitlab.com/exotic-matter/ftl-base-image-ci:latest
+#  services:
+#    - postgres:11-alpine
+#  dependencies:
+#    - compile-backend
+#  script:
+#    - export DJANGO_SETTINGS_MODULE=ftl.settings_tests
+#    - source venv/bin/activate && cd ftl
+#    - python3 -m coverage run --source=. manage.py test -v 2 --tag=slow
+#  artifacts:
+#    name: "tests_screenshots"
+#    paths:
+#      - ftl/ftests/tests_screenshots
+#  allow_failure: false
+#  when: manual
 
 python-coverage:
   stage: coverage-report
@@ -110,16 +110,36 @@ python-coverage:
     - postgres:11-alpine
   dependencies:
     - test-fast-python
-    - test-slow-python
+#    - test-slow-python
   script:
+    - source venv/bin/activate && cd ftl
     - python3 -m coverage combine
     - python3 -m coverage html
+    - python3 -m coverage-badge -o coverage.svg
   artifacts:
     name: "python_coverage_report"
     paths:
       - ftl/htmlcov
+      - ftl/coverage.svg
   allow_failure: true
-  when: manual
+#  only:
+#   - master
+
+#pages:
+#  stage: coverage-report
+#  dependencies:
+#    - python-coverage
+#  script:
+#    - mkdir public
+#    - mv htmlcov public
+#    - mv coverage.svg public/coverage.svg
+#  artifacts:
+#    name: "python_coverage_report"
+#    paths:
+#      - public
+#  allow_failure: true
+##  only:
+##   - master
 
 build-docker-gitlab:
   stage: docker
