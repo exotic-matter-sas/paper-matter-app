@@ -4,7 +4,7 @@
   -->
 
 <template>
-  <section>
+  <section id="upload-section">
     <b-row>
       <b-col cols="12" md="8">
         <b-form-file

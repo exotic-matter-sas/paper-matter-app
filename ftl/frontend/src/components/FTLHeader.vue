@@ -103,7 +103,7 @@
 
     <b-collapse id="nav-collapse" is-nav>
       <b-nav-form class="mt-3 mt-sm-0">
-        <b-input-group>
+        <b-input-group id="search-zone">
           <b-form-input
             id="search-input"
             variant="outilne"

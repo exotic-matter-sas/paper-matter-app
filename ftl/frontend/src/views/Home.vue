@@ -286,6 +286,20 @@
     Move to folder: Déplacer vers le dossier
     Delete documents: Supprimer les documents
     Unable to refresh folders list: Erreur lors du chargement de la liste des dossiers
+    Done: Terminer
+    Next: Suivant
+    Previous: Précédent
+    Close: Fermer
+    Add documents (1/5): Ajouter vos documents 1/5
+    Select documents by clicking <b>Browse</b> or by dropping them on the white area, confirm with <b>Upload</b> button.: Sélectionnez vos documents en cliquant sur <b>Parcourir</b> ou en les glissant-déposant sur la zone blanche, validez avec le bouton <b>Envoyer</b>.
+    Find documents (2/5): Retrouver vos documents (2/5)
+    Type keywords contained in the document title, content or note and hit <b>Search</b> button.: Saisissez des mots-clés contenus dans le titre, contenu ou note du document et cliquez sur le bouton <b>Rechercher</b>.
+    Current folder path (3/5): Chemin du dossier courant (3/5)
+    The breadcrumb shows you the path of the current folder and allows you to quickly navigate to its parents.: Le fil d'ariane vous montre le chemin du dossier courant et vous permet de naviguer rapidement vers ses parents.
+    Folders (4/5): Dossier (4/5)
+    Your folders list, you can create a new folder or go back to the parent folder when you are inside a sub folder.: La liste de vos dossiers, vous pouvez créer un nouveau dossier ou revenir au dossier parent lorsque vous êtes dans un sous-dossier.
+    Documents (5/5): Documents (5/5)
+    Your documents list, you can select multiple documents using the checkboxes (or <kbd>Ctrl</kbd> + <kbd>Left click</kbd>) to apply batch actions.: La liste de vos documents, vous pouvez en sélectionner plusieurs avec les cases à cocher (ou <kbd>Ctrl</kbd> + <kbd>Clic gauche</kbd>) pour réaliser des actions groupées.
 </i18n>
 
 <script>
@@ -302,6 +316,8 @@ import FTLUpload from "@/components/FTLUpload";
 import FTLRenameDocument from "@/components/FTLRenameDocument";
 import FTLBreadcrumbFolder from "@/components/FTLBreadcrumbFolder";
 import axios from "axios";
+import Driver from "driver.js";
+import "driver.js/dist/driver.min.css";
 
 export default {
   name: "home",
@@ -345,6 +361,84 @@ export default {
 
     // Clear the selected documents
     this.$store.commit("unselectAllDocuments");
+
+    // Tour
+    if (!localStorage.tour_done) {
+      this.$nextTick(function () {
+        const driver = new Driver({
+          // animate: false,
+          stageBackground: "transparent",
+          opacity: 0.7,
+          allowClose: false,
+          overlayClickNext: false,
+          showButtons: true,
+          doneBtnText: this.$t("Done"),
+          closeBtnText: this.$t("Close"),
+          nextBtnText: this.$t("Next"),
+          prevBtnText: this.$t("Previous"),
+          onReset: (elem) => {
+            localStorage.tour_done = true;
+          },
+        });
+
+        driver.defineSteps([
+          {
+            element: "#upload-section",
+            popover: {
+              title: this.$t("Add documents (1/5)"),
+              description: this.$t(
+                "Select documents by clicking <b>Browse</b> or by dropping them on the white area, confirm with <b>Upload</b> button."
+              ),
+              position: "bottom-center",
+            },
+          },
+          {
+            element: "#search-zone",
+            popover: {
+              title: this.$t("Find documents (2/5)"),
+              description: this.$t(
+                "Type keywords contained in the document title, content or note and hit <b>Search</b> button."
+              ),
+              position: "bottom-center",
+            },
+          },
+          {
+            element: "#breadcrumb",
+            popover: {
+              title: this.$t("Current folder path (3/5)"),
+              description: this.$t(
+                "The breadcrumb shows you the path of the current folder and allows you to quickly navigate to its parents."
+              ),
+              position: "bottom",
+              offset: 20,
+            },
+          },
+          {
+            element: "#folders-list",
+            popover: {
+              title: this.$t("Folders (4/5)"),
+              description: this.$t(
+                "Your folders list, you can create a new folder or go back to the parent folder when you are inside a sub folder."
+              ),
+              position: "bottom",
+              offset: 20,
+            },
+          },
+          {
+            element: "#documents-list",
+            popover: {
+              title: this.$t("Documents (5/5)"),
+              description: this.$t(
+                "Your documents list, you can select multiple documents using the checkboxes (or <kbd>Ctrl</kbd> + <kbd>Left click</kbd>) to apply batch actions."
+              ),
+              position: "top-center",
+            },
+          },
+        ]);
+
+        driver.start();
+      });
+    }
   },
 
   watch: {
@@ -611,5 +705,10 @@ export default {
     padding-right: 0 !important;
     border-right: none !important;
   }
+}
+
+/* Hack to fix the driver.js tour highlight for search input (this is a driver,js class)*/
+.driver-fix-stacking {
+  position: relative !important;
 }
 </style>

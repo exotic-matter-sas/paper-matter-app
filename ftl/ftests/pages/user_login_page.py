@@ -20,7 +20,10 @@ class LoginPage(BasePage):
 
     password_reset_link = "#password-reset"
 
-    def log_user(self, user_num=1, email=None, password=None):
+    def log_user(self, user_num=1, email=None, password=None, skip_tour=True):
+        if skip_tour:
+            self.browser.execute_script('localStorage.setItem("tour_done", "true");')
+
         email_input = self.get_elem(self.login_email_input)
         password_input = self.get_elem(self.login_password_input)
         submit_input = self.get_elem(self.login_submit_input)
