@@ -58,7 +58,7 @@ test-frontend-js:
     expire_in: 7 days
   script:
     - cd ftl/frontend
-    - vue-cli-service test:unit --coverage
+    - npx vue-cli-service test:unit --coverage
 
 compile-backend:
   stage: build-backend
