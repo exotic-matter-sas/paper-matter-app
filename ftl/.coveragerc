@@ -1,4 +1,5 @@
 [run]
+source=.
 parallel=True
 omit =
     manage.py

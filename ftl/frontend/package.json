@@ -99,6 +99,10 @@
     "watchPlugins": [
       "jest-watch-typeahead/filename",
       "jest-watch-typeahead/testname"
+    ],
+    "coverageReporters": [
+      "json-summary",
+      "lcov"
     ]
   }
 }
