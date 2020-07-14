@@ -110,7 +110,7 @@ python-coverage:
     - postgres:11-alpine
   dependencies:
     - compile-backend
-#    - test-fast-python
+    - test-fast-python
 #   - test-slow-python
   script:
     - source venv/bin/activate && cd ftl
