@@ -80,6 +80,10 @@ test-fast-python:
     - postgres:11-alpine
   dependencies:
     - compile-backend
+  artifacts:
+    paths:
+      - ftl/.coverage.*
+    expire_in: 7 days
   script:
     - export DJANGO_SETTINGS_MODULE=ftl.settings_tests
     - source venv/bin/activate && cd ftl
@@ -97,8 +101,8 @@ test-fast-python:
 #    - source venv/bin/activate && cd ftl
 #    - python3 -m coverage run --source=. manage.py test -v 2 --tag=slow
 #  artifacts:
-#    name: "tests_screenshots"
 #    paths:
+#      - ftl/.coverage.*
 #      - ftl/ftests/tests_screenshots
 #  allow_failure: false
 #  when: manual
