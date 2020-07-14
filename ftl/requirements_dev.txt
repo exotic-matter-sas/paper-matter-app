@@ -1,8 +1,8 @@
 django-debug-toolbar
 coverage
+coverage-badge
 tblib
 selenium
 djproxy
 django-sslserver
 black==19.10b0
-coverage-badge

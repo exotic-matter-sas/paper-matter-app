@@ -120,7 +120,7 @@ python-coverage:
     - source venv/bin/activate && cd ftl
     - python3 -m coverage combine
     - python3 -m coverage html
-    - python3 -m coverage-badge -o coverage.svg
+    - python3 -m coverage_badge -o coverage.svg
   artifacts:
     name: "python_coverage_report"
     paths:
