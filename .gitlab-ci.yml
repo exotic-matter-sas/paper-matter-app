@@ -89,23 +89,23 @@ test-fast-python:
     - source venv/bin/activate && cd ftl
     - python3 -m coverage run --source=. manage.py test -v 2 --exclude-tag=slow
 
-#test-slow-python:
-#  stage: test
-#  image: registry.gitlab.com/exotic-matter/ftl-base-image-ci:latest
-#  services:
-#    - postgres:11-alpine
-#  dependencies:
-#    - compile-backend
-#  script:
-#    - export DJANGO_SETTINGS_MODULE=ftl.settings_tests
-#    - source venv/bin/activate && cd ftl
-#    - python3 -m coverage run --source=. manage.py test -v 2 --tag=slow
-#  artifacts:
-#    paths:
-#      - ftl/.coverage.*
-#      - ftl/ftests/tests_screenshots
-#  allow_failure: false
-#  when: manual
+test-slow-python:
+  stage: test
+  image: registry.gitlab.com/exotic-matter/ftl-base-image-ci:latest
+  services:
+    - postgres:11-alpine
+  dependencies:
+    - compile-backend
+  script:
+    - export DJANGO_SETTINGS_MODULE=ftl.settings_tests
+    - source venv/bin/activate && cd ftl
+    - python3 -m coverage run --source=. manage.py test -v 2 --tag=slow
+  artifacts:
+    paths:
+      - ftl/.coverage.*
+      - ftl/ftests/tests_screenshots
+  allow_failure: false
+  when: manual
 
 python-coverage:
   stage: coverage-report
@@ -115,7 +115,7 @@ python-coverage:
   dependencies:
     - compile-backend
     - test-fast-python
-#   - test-slow-python
+    - test-slow-python
   script:
     - source venv/bin/activate && cd ftl
     - python3 -m coverage combine
