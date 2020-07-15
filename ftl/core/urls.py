@@ -7,7 +7,7 @@ from . import views
 
 urlpatterns = [
     path("", views.HomeView.as_view(), name="home"),
-    path("uploads/<str:uuid>", views.DownloadView.as_view(), name="api_document_url"),
+    path("uploads/<str:uuid>", views.DownloadView.as_view(), name="api_download_url"),
     path(
         "uploads/<str:uuid>/<str:name>",
         views.ViewDocument.as_view(),

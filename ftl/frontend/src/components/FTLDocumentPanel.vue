@@ -220,7 +220,7 @@ export default {
     viewerUrl: function () {
       return (
         `/assets/pdfjs/web/viewer.html?file=` +
-        this.currentOpenDoc.document_url +
+        this.currentOpenDoc.download_url +
         `#pagemode=none&search=` +
         this.search
       );

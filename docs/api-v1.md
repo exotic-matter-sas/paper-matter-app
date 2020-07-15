@@ -257,7 +257,7 @@ Content-Disposition: form-data; name="json"
   "ocrized": true,
   "type": "application/pdf",
   "ext": ".pdf",
-  "document_url": "app/uploads/f04be12a-b08d-4857-ade0-20c778a257b3"
+  "download_url": "app/uploads/f04be12a-b08d-4857-ade0-20c778a257b3"
 }
 ```
 
@@ -329,7 +329,7 @@ OR
       "ocrized": true,
       "type": "application/pdf",
       "ext": ".pdf",
-      "document_url": "app/uploads/f04be12a-b08d-4857-ade0-20c778a257b3"
+      "download_url": "app/uploads/f04be12a-b08d-4857-ade0-20c778a257b3"
     },
     {
       "pid":"6d3a6286-7c1c-45f6-86c9-6452fa2928fa",
@@ -356,7 +356,7 @@ OR
       "ocrized": true,
       "type": "application/pdf",
       "ext": ".pdf",
-      "document_url": "app/uploads/f04be12a-b08d-4857-ade0-20c778a257b3"
+      "download_url": "app/uploads/f04be12a-b08d-4857-ade0-20c778a257b3"
     }
   ]
 }
@@ -394,7 +394,7 @@ If there is too many results, results will be paginated. To get the next page re
   "ocrized": true,
   "type": "application/pdf",
   "ext": ".pdf",
-  "document_url": "app/uploads/f04be12a-b08d-4857-ade0-20c778a257b3"
+  "download_url": "app/uploads/f04be12a-b08d-4857-ade0-20c778a257b3"
 }
 ```
 Return the same data than **List documents** request but for a single document.
@@ -438,7 +438,7 @@ Rename, annotate, move a document (or set its thumbnail).
   "ocrized": true,
   "type": "application/pdf",
   "ext": ".pdf",
-  "document_url": "app/uploads/f04be12a-b08d-4857-ade0-20c778a257b3"
+  "download_url": "app/uploads/f04be12a-b08d-4857-ade0-20c778a257b3"
 }
 ```
 
