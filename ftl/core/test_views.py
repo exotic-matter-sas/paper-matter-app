@@ -100,7 +100,7 @@ class DownloadDocumentTests(TestCase):
         setup_authenticated_session(self.client, org_2, user_2)
 
         # Trying to download the document of first org with a user of second org returns a 404
-        response = self.client.get(f"/app/uploads/{doc.pid}/")
+        response = self.client.get(f"/app/api/v1/documents/{doc.pid}/download")
         self.assertEqual(response.status_code, 404)
 
 

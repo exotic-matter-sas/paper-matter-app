@@ -1108,7 +1108,7 @@ class DocumentViewerModalTests(
         new_window = (set(current_tabs) - set(initial_tabs)).pop()
         self.browser.switch_to.window(new_window)
         time.sleep(0.5)  # wait for browser to load viewer
-        self.assertIn(f"{document.pid}/doc", self.browser.current_url)
+        self.assertIn(f"{document.pid}/download/doc", self.browser.current_url)
 
     @skipIf(
         settings.DEV_MODE and not NODE_SERVER_RUNNING,
