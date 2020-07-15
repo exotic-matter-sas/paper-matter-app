@@ -95,7 +95,7 @@
                 id="open-document"
                 class="mx-1 mb-1"
                 variant="primary"
-                :href="`/app/uploads/` + currentOpenDoc.pid + `/doc`"
+                :href="currentOpenDoc.document_url + `/doc`"
                 target="_blank"
                 :title="$t('Open document in a new tab')"
               >
@@ -219,8 +219,8 @@ export default {
     },
     viewerUrl: function () {
       return (
-        `/assets/pdfjs/web/viewer.html?file=/app/uploads/` +
-        this.currentOpenDoc.pid +
+        `/assets/pdfjs/web/viewer.html?file=` +
+        this.currentOpenDoc.document_url +
         `#pagemode=none&search=` +
         this.search
       );

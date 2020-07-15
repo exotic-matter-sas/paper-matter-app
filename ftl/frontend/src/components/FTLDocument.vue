@@ -74,7 +74,7 @@
             class="ml-auto download-button"
             variant="secondary"
             size="sm"
-            :href="`uploads/${doc.pid}/`"
+            :href="doc.document_url"
             :title="$t('Download document')"
           >
             <font-awesome-icon :icon="getIcon" :alt="$t('Download')" />

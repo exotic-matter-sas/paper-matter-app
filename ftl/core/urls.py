@@ -7,8 +7,12 @@ from . import views
 
 urlpatterns = [
     path("", views.HomeView.as_view(), name="home"),
-    path("uploads/<str:uuid>/", views.DownloadView.as_view()),
-    path("uploads/<str:uuid>/<str:name>/", views.ViewDocument.as_view()),
+    path("uploads/<str:uuid>", views.DownloadView.as_view(), name="api_document_url"),
+    path(
+        "uploads/<str:uuid>/<str:name>",
+        views.ViewDocument.as_view(),
+        name="document_view",
+    ),
     path("api/v1/folders", views.FTLFolderList.as_view()),
     path("api/v1/folders/<int:id>", views.FTLFolderDetail.as_view()),
     path("api/v1/documents", views.FTLDocumentList.as_view()),

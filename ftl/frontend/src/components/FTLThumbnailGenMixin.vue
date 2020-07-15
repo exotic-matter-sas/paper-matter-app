@@ -16,7 +16,7 @@ export default {
       let thumb64;
 
       try {
-        thumb64 = await createThumbFromUrl("/app/uploads/" + doc.pid);
+        thumb64 = await createThumbFromUrl(doc.document_url);
       } catch (e) {
         return Promise.reject("Unable to create thumbnail");
       }
