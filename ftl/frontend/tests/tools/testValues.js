@@ -50,6 +50,7 @@ export const DOCUMENT_PROPS = {
   thumbnail_available: true,
   ftl_folder: null,
   path: [],
+  download_url: "app/uploads/1000",
 };
 
 export const DOCUMENT_PROPS_VARIANT = {

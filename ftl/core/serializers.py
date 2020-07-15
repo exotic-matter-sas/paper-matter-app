@@ -32,6 +32,7 @@ class FTLDocumentSerializer(serializers.ModelSerializer):
     is_processed = serializers.SerializerMethodField()
     path = serializers.SerializerMethodField()
     ext = serializers.SerializerMethodField()
+    download_url = serializers.SerializerMethodField()
 
     def get_thumbnail_available(self, obj):
         return bool(obj.thumbnail_binary)
@@ -60,6 +61,9 @@ class FTLDocumentSerializer(serializers.ModelSerializer):
     def get_ext(self, obj):
         return mimetype_to_ext(obj.type)
 
+    def get_download_url(self, obj):
+        return reverse("api_download_url", kwargs={"uuid": obj.pid})
+
     class Meta:
         model = FTLDocument
         fields = (
@@ -79,6 +83,7 @@ class FTLDocumentSerializer(serializers.ModelSerializer):
             "ocrized",
             "type",
             "ext",
+            "download_url",
         )
         read_only_fields = (
             "pid",
@@ -92,6 +97,7 @@ class FTLDocumentSerializer(serializers.ModelSerializer):
             "ocrized",
             "type",
             "ext",
+            "download_url",
         )
 
 
