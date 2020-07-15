@@ -95,7 +95,7 @@
                 id="open-document"
                 class="mx-1 mb-1"
                 variant="primary"
-                :href="currentOpenDoc.document_url + `/doc`"
+                :href="currentOpenDoc.download_url + `/doc`"
                 target="_blank"
                 :title="$t('Open document in a new tab')"
               >
