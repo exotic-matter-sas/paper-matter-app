@@ -67,6 +67,35 @@ class DocumentsTests(APITestCase):
         self.assertEqual(client_get.data["count"], 2)
         self.assertEqual(len(client_get.data["results"]), 2)
 
+    def test_list_document_flat(self):
+        client_get = self.client.get("/app/api/v1/documents?flat=true", format="json")
+        self.assertEqual(client_get.status_code, status.HTTP_200_OK)
+        self.assertEqual(client_get["Content-Type"], "application/json")
+        self.assertEqual(client_get.data["count"], 3)
+        self.assertEqual(len(client_get.data["results"]), 3)
+
+        list_docs_pid = [doc["pid"] for doc in client_get.data["results"]]
+
+        self.assertIn(str(self.doc.pid), list_docs_pid)
+        self.assertIn(str(self.doc_bis.pid), list_docs_pid)
+        self.assertIn(str(self.doc_in_folder.pid), list_docs_pid)
+
+    def test_list_document_flat_with_folder(self):
+        client_get = self.client.get(
+            f"/app/api/v1/documents?flat=true&level={self.first_level_folder.id}",
+            format="json",
+        )
+        self.assertEqual(client_get.status_code, status.HTTP_200_OK)
+        self.assertEqual(client_get["Content-Type"], "application/json")
+        self.assertEqual(client_get.data["count"], 1)
+        self.assertEqual(len(client_get.data["results"]), 1)
+
+        list_docs_pid = [doc["pid"] for doc in client_get.data["results"]]
+
+        self.assertNotIn(str(self.doc.pid), list_docs_pid)
+        self.assertNotIn(str(self.doc_bis.pid), list_docs_pid)
+        self.assertIn(str(self.doc_in_folder.pid), list_docs_pid)
+
     def test_list_documents_order_recent(self):
         ftl_document_first = FTLDocument.objects.get(pid=self.doc.pid)
         ftl_document_second = FTLDocument.objects.get(pid=self.doc_bis.pid)

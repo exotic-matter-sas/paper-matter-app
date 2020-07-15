@@ -151,6 +151,13 @@ class FTLDocumentList(generics.ListAPIView):
                 queryset = queryset.filter(ftl_folder__id=current_folder)
             else:
                 queryset = queryset.filter(ftl_folder__isnull=True)
+        elif current_folder is not None and int(current_folder) > 0:
+            # Get list of folders descendent
+            folders_qs = FTLFolder.objects.filter(
+                org=self.request.user.org, id=current_folder
+            ).get_descendants(include_self=True)
+            folders_in = [f.id for f in folders_qs]
+            queryset = queryset.filter(ftl_folder__in=folders_in)
 
         return queryset
 
