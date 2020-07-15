@@ -280,9 +280,9 @@ OR
 
 - _**search** (optional): a search query to filter all document of the organization_
 
-OR
+OR / AND (can be combined with `flat`)
 
-- _**level** (optional): the id of the folder to list (if omitted root folder is listed)_
+- _**level** (optional): the id of the folder to list from (if omitted root folder is listed)_ 
 
 ------------------------------------------------------------------------------------------------------------
 
