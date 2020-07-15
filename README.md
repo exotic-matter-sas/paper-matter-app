@@ -96,10 +96,19 @@ Run all tests
     # Run all tests excepted slow ones (all functional tests are tagged as `slow`)
     python manage.py test --parallel --exclude-tag=slow
 
-Run test for a specific module
+Run tests for a specific module
 
     python manage.py test ftests # run only functional tests
     python manage.py test core # run unit tests of core module
+    
+Run tests with coverage report
+
+    # run tests with coverage inspection enable (i.e. replace `python` by `python -m coverage run`)
+    python -m coverage run manage.py test --parallel
+    # combine different coverage files to `.coverage`
+    python -m coverage combine
+    # generate html report at ftl/htmlcov/index.html
+    python -m coverage html
 
 #### VueJS
 
@@ -108,6 +117,11 @@ Run all tests
     vue-cli-service test:unit
 
 _Or alternatively `npx vue-cli-service test:unit`_
+
+Run tests with coverage report
+
+    vue-cli-service test:unit --coverage
+    # html report generated at ftl/frontend/coverage/lcov-report/index.html
 
 ### i18n
 

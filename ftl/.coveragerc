@@ -1,0 +1,12 @@
+[run]
+source=.
+parallel=True
+omit =
+    manage.py
+    core/migrations/*
+    ftests/*
+    ftl/wsgi.py
+    ftl/view_local_proxy.py
+    *settings.py
+    *settings_*.py
+    *test_*.py

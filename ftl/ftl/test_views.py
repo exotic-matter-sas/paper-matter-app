@@ -2,6 +2,7 @@
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
 
 import re
+from datetime import datetime
 from unittest import skip
 from unittest.mock import patch, Mock
 
@@ -118,10 +119,17 @@ class FtlPagesTests(TestCase):
 
     @patch.object(messages, "success")
     def test_logout_signal_trigger_django_messages(self, messages_mocked):
+        # Setup org, admin, user and log the user
+        org = setup_org()
+        setup_admin(org)
+        user = setup_user(org)
+        setup_authenticated_session(self.client, org, user)
+
         message_to_display_on_login_page = "bingo!"
         messages_mocked.return_value = message_to_display_on_login_page
         mocked_request = Mock()
         mocked_request.GET = {}
-        user_logged_out.send(self.__class__, request=mocked_request)
+        mocked_request.axes_attempt_time = datetime.now()
+        user_logged_out.send(self.__class__, request=mocked_request, user=user)
 
         messages_mocked.assert_called_once()
