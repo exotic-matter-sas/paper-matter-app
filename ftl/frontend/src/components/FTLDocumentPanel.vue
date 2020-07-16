@@ -225,10 +225,10 @@ export default {
     },
     viewerUrl: function () {
       return (
-        `/assets/pdfjs/web/viewer.html?file=` +
-        this.currentOpenDoc.download_url +
-        `&r=` +
+        `/assets/pdfjs/web/viewer.html?r=` +
         new Date().getTime() +
+        `&file=` +
+        this.currentOpenDoc.download_url +
         `#pagemode=none&search=` +
         this.search
       );
