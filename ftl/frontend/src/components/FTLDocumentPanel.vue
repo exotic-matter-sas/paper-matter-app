@@ -5,7 +5,13 @@
 
 <template>
   <!-- Pdf viewer popup -->
-  <b-modal id="document-viewer" hide-footer centered @hidden="closeDocument">
+  <b-modal
+    id="document-viewer"
+    hide-footer
+    centered
+    @hidden="closeDocument"
+    @hide="currentOpenDoc.pid = null"
+  >
     <template slot="modal-header">
       <b-container>
         <h5 class="modal-title">
@@ -221,6 +227,8 @@ export default {
       return (
         `/assets/pdfjs/web/viewer.html?file=` +
         this.currentOpenDoc.download_url +
+        `&r=` +
+        new Date().getTime() +
         `#pagemode=none&search=` +
         this.search
       );
@@ -301,6 +309,7 @@ export default {
   },
 };
 </script>
+
 <style lang="scss">
 // Don't use `scoped` on this style because the document viewer is styled from the main app component
 $document-viewer-padding: 2em;
