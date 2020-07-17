@@ -150,12 +150,12 @@ describe("FTLDocumentPanel computed", () => {
     wrapper.setData({ currentOpenDoc: docProps });
 
     // when (no search)
-    const testedValue = wrapper.vm.viewerUrl;
+    const testedValue = wrapper.vm.viewerUrl();
     expect(testedValue).toContain(document_pid + "#pagemode=none&search=");
 
     // when (with search)
     wrapper.setProps({ pid: document_pid, search: search_text });
-    const testedValue_2 = wrapper.vm.viewerUrl;
+    const testedValue_2 = wrapper.vm.viewerUrl();
 
     expect(testedValue_2).toContain(
       document_pid + "#pagemode=none&search=" + search_text

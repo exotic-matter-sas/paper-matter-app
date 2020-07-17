@@ -10,7 +10,7 @@
     hide-footer
     centered
     @hidden="closeDocument"
-    @hide="showViewer = false"
+    @hide="viewerPdfJsUrl = null"
   >
     <template slot="modal-header">
       <b-container>
@@ -64,9 +64,9 @@
         >
           <div class="h-100 embed-responsive doc-pdf" id="pdfviewer">
             <iframe
-              v-if="showViewer"
+              v-if="viewerPdfJsUrl"
               class="embed-responsive-item"
-              :src="viewerUrl"
+              :src="viewerPdfJsUrl"
             >
             </iframe>
           </div>
@@ -212,7 +212,7 @@ export default {
     return {
       currentOpenDoc: { path: [] },
       publicPath: process.env.BASE_URL,
-      showViewer: true,
+      viewerPdfJsUrl: "",
     };
   },
 
@@ -223,16 +223,6 @@ export default {
   computed: {
     isIOS: function () {
       return /iphone|ipad|ipod/i.test(window.navigator.userAgent.toLowerCase());
-    },
-    viewerUrl: function () {
-      return (
-        `/assets/pdfjs/web/viewer.html?r=` +
-        new Date().getTime() +
-        `&file=` +
-        this.currentOpenDoc.download_url +
-        `#pagemode=none&search=` +
-        this.search
-      );
     },
     path: function () {
       let _path = this.currentOpenDoc.path.map((v) => {
@@ -261,6 +251,7 @@ export default {
         .get("/app/api/v1/documents/" + this.pid)
         .then((response) => {
           this.currentOpenDoc = response.data;
+          this.viewerPdfJsUrl = this.viewerUrl();
 
           if (
             !response.data.thumbnail_available &&
@@ -278,6 +269,17 @@ export default {
         .catch((error) => {
           this.mixinAlert(this.$t("Unable to show document"), true);
         });
+    },
+
+    viewerUrl: function () {
+      return (
+        `/assets/pdfjs/web/viewer.html?r=` +
+        new Date().getTime() +
+        `&file=` +
+        this.currentOpenDoc.download_url +
+        `#pagemode=none&search=` +
+        this.search
+      );
     },
 
     documentRenamed: function (event) {
