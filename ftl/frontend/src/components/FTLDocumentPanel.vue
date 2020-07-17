@@ -10,7 +10,7 @@
     hide-footer
     centered
     @hidden="closeDocument"
-    @hide="currentOpenDoc.pid = null"
+    @hide="showViewer = false"
   >
     <template slot="modal-header">
       <b-container>
@@ -64,7 +64,7 @@
         >
           <div class="h-100 embed-responsive doc-pdf" id="pdfviewer">
             <iframe
-              v-if="currentOpenDoc.pid"
+              v-if="showViewer"
               class="embed-responsive-item"
               :src="viewerUrl"
             >
@@ -212,6 +212,7 @@ export default {
     return {
       currentOpenDoc: { path: [] },
       publicPath: process.env.BASE_URL,
+      showViewer: true,
     };
   },
 
