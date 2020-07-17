@@ -251,7 +251,7 @@ export default {
         .get("/app/api/v1/documents/" + this.pid)
         .then((response) => {
           this.currentOpenDoc = response.data;
-          this.viewerPdfJsUrl = this.viewerUrl();
+          this.viewerPdfJsUrl = this.getViewerUrl();
 
           if (
             !response.data.thumbnail_available &&
@@ -271,7 +271,7 @@ export default {
         });
     },
 
-    viewerUrl: function () {
+    getViewerUrl: function () {
       return (
         `/assets/pdfjs/web/viewer.html?r=` +
         new Date().getTime() +
