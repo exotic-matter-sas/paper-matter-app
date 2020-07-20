@@ -5,7 +5,13 @@
 
 <template>
   <!-- Pdf viewer popup -->
-  <b-modal id="document-viewer" hide-footer centered @hidden="closeDocument">
+  <b-modal
+    id="document-viewer"
+    hide-footer
+    centered
+    @hidden="closeDocument"
+    @hide="viewerPdfJsUrl = null"
+  >
     <template slot="modal-header">
       <b-container>
         <h5 class="modal-title">
@@ -58,9 +64,9 @@
         >
           <div class="h-100 embed-responsive doc-pdf" id="pdfviewer">
             <iframe
-              v-if="currentOpenDoc.pid"
+              v-if="viewerPdfJsUrl"
               class="embed-responsive-item"
-              :src="viewerUrl"
+              :src="viewerPdfJsUrl"
             >
             </iframe>
           </div>
@@ -206,6 +212,7 @@ export default {
     return {
       currentOpenDoc: { path: [] },
       publicPath: process.env.BASE_URL,
+      viewerPdfJsUrl: "",
     };
   },
 
@@ -216,14 +223,6 @@ export default {
   computed: {
     isIOS: function () {
       return /iphone|ipad|ipod/i.test(window.navigator.userAgent.toLowerCase());
-    },
-    viewerUrl: function () {
-      return (
-        `/assets/pdfjs/web/viewer.html?file=` +
-        this.currentOpenDoc.download_url +
-        `#pagemode=none&search=` +
-        this.search
-      );
     },
     path: function () {
       let _path = this.currentOpenDoc.path.map((v) => {
@@ -252,6 +251,7 @@ export default {
         .get("/app/api/v1/documents/" + this.pid)
         .then((response) => {
           this.currentOpenDoc = response.data;
+          this.viewerPdfJsUrl = this.getViewerUrl();
 
           if (
             !response.data.thumbnail_available &&
@@ -269,6 +269,17 @@ export default {
         .catch((error) => {
           this.mixinAlert(this.$t("Unable to show document"), true);
         });
+    },
+
+    getViewerUrl: function () {
+      return (
+        `/assets/pdfjs/web/viewer.html?r=` +
+        new Date().getTime() +
+        `&file=` +
+        this.currentOpenDoc.download_url +
+        `#pagemode=none&search=` +
+        this.search
+      );
     },
 
     documentRenamed: function (event) {
@@ -301,6 +312,7 @@ export default {
   },
 };
 </script>
+
 <style lang="scss">
 // Don't use `scoped` on this style because the document viewer is styled from the main app component
 $document-viewer-padding: 2em;
