@@ -50,6 +50,36 @@ class FTLUserModelTest(TestCase):
                 self.assertIn("org", str(e))
                 raise
 
+    @patch.object(celery.app, "send_task")
+    def test_mark_delete_document(self, mocked_send_task):
+        self.org = setup_org()
+        setup_admin(self.org)
+        self.user = setup_user(self.org)
+
+        binary_f = setup_temporary_file().name
+        thumbnail_f = setup_temporary_file().name
+
+        document_to_be_deleted = FTLDocument.objects.create(
+            org=self.org,
+            ftl_user=self.user,
+            title="Test document to be deleted",
+            binary=binary_f,
+            thumbnail_binary=thumbnail_f,
+        )
+
+        document_to_be_deleted.mark_delete()
+
+        self.assertTrue(document_to_be_deleted.deleted)
+        self.assertIsNone(document_to_be_deleted.ftl_folder)
+        mocked_send_task.assert_called_with(
+            "core.tasks.delete_document",
+            args=[
+                document_to_be_deleted.pid,
+                document_to_be_deleted.org.pk,
+                document_to_be_deleted.ftl_user.pk,
+            ],
+        )
+
     def test_delete_document(self):
         self.org = setup_org()
         setup_admin(self.org)
