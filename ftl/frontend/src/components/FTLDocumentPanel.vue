@@ -124,6 +124,17 @@
               >
                 {{ $t("Delete") }}
               </b-button>
+              <b-button
+                id="share-document"
+                class="mx-1 mb-1"
+                variant="success"
+                v-b-modal="'modal-document-sharing'"
+              >
+                <span v-if="currentOpenDoc.is_shared">{{
+                  $t("Get share link")
+                }}</span>
+                <span v-else>{{ $t("Share") }}</span>
+              </b-button>
             </b-col>
           </b-row>
           <b-row>
@@ -159,6 +170,13 @@
       :docs="[currentOpenDoc]"
       @event-document-deleted="documentDeleted"
     />
+
+    <FTLDocumentSharing
+      v-if="currentOpenDoc.pid"
+      :doc="currentOpenDoc"
+      @event-document-shared="documentShared($event, true)"
+      @event-document-unshared="documentShared($event, false)"
+    />
   </b-modal>
 </template>
 
@@ -174,6 +192,8 @@
     Thumbnail updated: Miniature mis à jour
     Unable to create thumbnail: Erreur lors de la génération de la miniature
     Unable to show document: Erreur lors de l'affichage du document
+    Get share link: Obtenir le lien de partage
+    Share: Partager
 </i18n>
 
 <script>
@@ -183,7 +203,7 @@ import FTLRenameDocument from "@/components/FTLRenameDocument";
 import FTLDeleteDocuments from "@/components/FTLDeleteDocuments";
 import FTLThumbnailGenMixin from "@/components/FTLThumbnailGenMixin";
 import FTLNote from "@/components/FTLNote";
-import { mapState } from "vuex";
+import FTLDocumentSharing from "@/components/FTLDocumentSharing";
 
 export default {
   name: "FTLDocumentPanel",
@@ -194,6 +214,7 @@ export default {
     FTLRenameDocument,
     FTLDeleteDocuments,
     FTLNote,
+    FTLDocumentSharing,
   },
 
   props: {
@@ -299,6 +320,10 @@ export default {
     documentDeleted: function (event) {
       this.closeDocument();
       this.$emit("event-document-deleted", event);
+    },
+
+    documentShared: function (event, val) {
+      this.currentOpenDoc.is_shared = val;
     },
 
     closeDocument: function () {

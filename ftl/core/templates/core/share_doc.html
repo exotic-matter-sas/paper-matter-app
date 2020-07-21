@@ -1,0 +1,57 @@
+{% extends "ftl/base.html" %}
+{% load render_bundle from webpack_loader %}
+{% load i18n %}
+
+{% block title %}{{ share_doc.ftl_doc.title }}{% endblock %}
+{% block head %}
+    <meta name="robots" content="noindex, nofollow">
+    {{ request.LANGUAGE_CODE|json_script:"locale" }}
+    {% render_bundle 'common_logged_in' 'css' %}
+    {% render_bundle 'share_doc' 'css' %}
+    <style>
+        .min-vh-100 {
+            min-height: 100vh;
+        }
+
+        iframe {
+            border: 0;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <body class="d-flex flex-column min-vh-100">
+    <header>
+        <nav class="navbar navbar-dark bg-dark navbar-expand-sm">
+            <a class="navbar-brand" href="{% url "home" %}"
+               title="{% trans "Paper Matter, document management system" %}">
+                {% include "ftl/logo.html" %}
+            </a>
+            <h3 class="text-secondary"><span id="document-share-title"
+                                             class="font-weight-bolder text-capitalize">{{ share_doc.ftl_doc.title }}</span>
+            </h3>
+        </nav>
+    </header>
+
+    {% if share_doc.ftl_doc.type == 'application/pdf' %}
+        <iframe class="flex-grow-1"
+                src="/assets/pdfjs/web/viewer.html?r={{ rr }}&file=/app/share/{{ share_doc.pid }}/download#pagemode=none">
+        </iframe>
+    {% else %}
+        <main class="flex-grow-1 border rounded bg-secondary m-2 p-2">
+            <div class="d-flex flex-column align-items-center">
+                <div class="m-4">
+                    {% blocktrans %}
+                        Viewer not available for this document type, open the document instead.
+                    {% endblocktrans %}
+                </div>
+                <div class="mt-4">
+                    <a class="btn btn-primary" href="{% url 'view_sharing_doc_download' share_doc.pid %}">
+                        {% trans 'Download' %}
+                    </a>
+                </div>
+            </div>
+        </main>
+    {% endif %}
+    </body>
+{% endblock %}

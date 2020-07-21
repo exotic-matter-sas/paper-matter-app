@@ -32,8 +32,12 @@ from rest_framework.response import Response
 
 from core.errors import get_api_error
 from core.mimes import mimetype_to_ext, guess_mimetype
-from core.models import FTLDocument, FTLFolder
-from core.serializers import FTLDocumentSerializer, FTLFolderSerializer
+from core.models import FTLDocument, FTLFolder, FTLDocumentSharing
+from core.serializers import (
+    FTLDocumentSerializer,
+    FTLFolderSerializer,
+    FTLDocumentSharingSerializer,
+)
 from core.tasks import apply_ftl_processing
 from ftl.enums import FTLStorages, FTLPlugins
 
@@ -384,3 +388,38 @@ class FTLFolderDetail(generics.RetrieveUpdateDestroyAPIView):
                 )
             else:
                 raise
+
+
+class FTLDocumentSharingList(generics.ListCreateAPIView):
+    serializer_class = FTLDocumentSharingSerializer
+    lookup_field = "pid"
+    lookup_url_kwarg = "spid"
+
+    def get_queryset(self):
+        return FTLDocumentSharing.objects.filter(
+            ftl_doc__org=self.request.user.org,
+            ftl_doc__deleted=False,
+            ftl_doc__pid=self.kwargs["pid"],
+        )
+
+    def perform_create(self, serializer):
+        ftl_doc = get_object_or_404(
+            FTLDocument,
+            org=self.request.user.org,
+            deleted=False,
+            pid=self.kwargs["pid"],
+        )
+        serializer.save(ftl_doc=ftl_doc)
+
+
+class FTLDocumentSharingDetail(generics.RetrieveDestroyAPIView):
+    serializer_class = FTLDocumentSharingSerializer
+    lookup_field = "pid"
+    lookup_url_kwarg = "spid"
+
+    def get_queryset(self):
+        return FTLDocumentSharing.objects.filter(
+            ftl_doc__org=self.request.user.org,
+            ftl_doc__deleted=False,
+            ftl_doc__pid=self.kwargs["pid"],
+        )

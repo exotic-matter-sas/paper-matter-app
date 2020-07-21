@@ -1,0 +1,137 @@
+<!--
+  - Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
+  - Licensed under the BSL License. See LICENSE in the project root for license information.
+  -->
+
+<template>
+  <b-modal
+    :id="id"
+    :title="$t('Share document')"
+    ok-variant="primary"
+    cancel-variant="danger"
+    :cancel-title="$t('Unshare')"
+    :ok-disabled="sharing"
+    :cancel-disabled="sharing || unsharing"
+    @cancel="cancelSharing"
+    @show="doSharing"
+  >
+    <b-container>
+      <b-form-group
+        id="fieldset-document-sharing"
+        :description="
+          $t('Anyone with the link will be able to see your document.')
+        "
+        :label="$t('Link to share')"
+        label-for="document-sharing-link"
+        label-class="text-truncate"
+      >
+        <b-form-input
+          id="document-sharing-link"
+          onfocus="this.select()"
+          readonly
+          :value="sharingLink"
+        ></b-form-input>
+      </b-form-group>
+    </b-container>
+
+    <template slot="modal-ok">
+      <b-spinner :class="{ 'd-none': !sharing }" small></b-spinner>
+      <span :class="{ 'd-none': sharing }">{{ $t("Close") }}</span>
+    </template>
+  </b-modal>
+</template>
+
+<i18n>
+  fr:
+    Unshare: Annuler le partage
+    Share document: Partage du document
+    Link to share: Lien à partager
+    Anyone with the link will be able to see your document.: Tout le monde pourra accéder à votre document.
+    Close: Fermer
+</i18n>
+<script>
+import axios from "axios";
+import { axiosConfig } from "@/constants";
+
+export default {
+  name: "FTLDocumentSharing",
+
+  props: {
+    // customize the id to allow multiple usage of this component at the same time
+    id: {
+      type: String,
+      default: "modal-document-sharing",
+    },
+    doc: {
+      Object,
+      required: true,
+    },
+  },
+
+  data() {
+    return { shareData: {}, sharing: false, unsharing: false };
+  },
+
+  computed: {
+    sharingLink: function () {
+      if (this.shareData && "public_url" in this.shareData) {
+        return this.shareData.public_url;
+      } else {
+        return "";
+      }
+    },
+  },
+
+  methods: {
+    doSharing: function () {
+      this.sharing = true;
+      axios
+        .get("/app/api/v1/documents/" + this.doc.pid + "/share", axiosConfig)
+        .then((response) => {
+          if (response.data.count > 0) {
+            this.shareData = response.data.results[0];
+          } else {
+            axios
+              .post(
+                "/app/api/v1/documents/" + this.doc.pid + "/share",
+                {},
+                axiosConfig
+              )
+              .then((response) => {
+                this.shareData = response.data;
+                this.$emit("event-document-shared", {
+                  doc: this.doc,
+                  share: response.data,
+                });
+              })
+              .catch((error) => {
+                this.mixinAlert(this.$t("Could not share document."), true);
+              })
+              .finally(() => (this.sharing = false));
+          }
+        })
+        .finally(() => (this.sharing = false));
+    },
+    cancelSharing: function () {
+      this.unsharing = true;
+      axios
+        .delete(
+          "/app/api/v1/documents/" +
+            this.doc.pid +
+            "/share/" +
+            this.shareData.pid,
+          axiosConfig
+        )
+        .then((response) => {
+          this.$emit("event-document-unshared", {
+            share: { pid: this.shareData.pid },
+          });
+        })
+        .catch((error) => {
+          this.mixinAlert(this.$t("Could not unshare document."), true);
+        })
+        .finally(() => (this.unsharing = false));
+    },
+  },
+};
+</script>

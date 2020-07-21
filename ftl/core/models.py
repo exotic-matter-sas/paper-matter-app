@@ -5,16 +5,16 @@ import logging
 import pathlib
 import uuid
 
-from celery import Celery
 from django.conf import settings
 from django.contrib.auth.base_user import BaseUserManager
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User, AbstractUser, Permission
 from django.contrib.postgres.fields.citext import CICharField
 from django.contrib.postgres.search import SearchVectorField
 from django.core.exceptions import ValidationError
 from django.core.validators import EmailValidator
 from django.db import models
-from django.db.models import UniqueConstraint, Q
+from django.db.models import UniqueConstraint, Q, ForeignKey
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from mptt.fields import TreeForeignKey
@@ -35,6 +35,10 @@ FTL_PERMISSIONS_USER = [
     "core.change_ftlfolder",
     "core.delete_ftlfolder",
     "core.view_ftlfolder",
+    "core.add_ftldocumentsharing",
+    "core.change_ftldocumentsharing",
+    "core.delete_ftldocumentsharing",
+    "core.view_ftldocumentsharing",
 ]
 
 
@@ -281,6 +285,31 @@ class FTLFolder(MPTTModel):
                 name="folder_name_unique_for_org_level_at_root",
             ),
         ]
+
+
+# FTL Document sharing
+class FTLDocumentSharing(models.Model):
+    pid = models.UUIDField(default=uuid.uuid4, editable=False, db_index=True)
+    ftl_doc = ForeignKey(
+        "FTLDocument",
+        on_delete=models.CASCADE,
+        db_index=True,
+        related_name="share_pids",
+    )
+    created = models.DateTimeField(default=timezone.now)
+    edited = models.DateTimeField(auto_now=True)
+    expire_at = models.DateTimeField(null=True, blank=True)
+    password = models.CharField(null=True, blank=True, max_length=128)
+    note = models.TextField(blank=True)
+
+    def set_password(self, raw_password):
+        self.password = make_password(raw_password)
+
+    def __str__(self):
+        return f"{self.pid} - {self.ftl_doc.title}"
+
+    class Meta:
+        ordering = ["-created"]
 
 
 class FTLModelPermissions(DjangoModelPermissions):
