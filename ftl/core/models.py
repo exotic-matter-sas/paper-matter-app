@@ -5,7 +5,6 @@ import logging
 import pathlib
 import uuid
 
-from celery import Celery
 from django.conf import settings
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import User, AbstractUser, Permission
@@ -193,7 +192,7 @@ class FTLDocument(models.Model):
         if async_delete:
             celery.app.send_task(
                 "core.tasks.delete_document",
-                args=[self.pk, self.org.pk, self.ftl_user.pk],
+                args=[self.pid, self.org.pk, self.ftl_user.pk],
             )
 
     def delete(self, *args, **kwargs):
