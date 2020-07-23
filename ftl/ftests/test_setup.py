@@ -42,15 +42,15 @@ class LandingPageTests(SetupPages):
         self.assertIn("login", self.head_title)
 
 
-class AdminLoginTests(AdminLoginPage):
+class AdminLoginTests(LoginPage, AdminLoginPage):
     def test_admin_user_can_login_in_django_admin(self):
         """Admin user can login in Django admin"""
         # Admin user have already setup org and admin
         setup_admin(setup_org())
-        self.visit(self.url)
+        self.visit(AdminLoginPage.url)
 
         # He log to admin portal
-        self.log_admin()
+        self.log_user(email=tv.ADMIN1_EMAIL, password=tv.ADMIN1_PASS)
 
         # Django admin display properly
         self.assertIn(
