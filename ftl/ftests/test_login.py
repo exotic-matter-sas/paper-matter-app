@@ -61,16 +61,6 @@ class LoginPageTests(LoginPage, HomePage, AdminLoginPage):
         # User is redirected to home page as he is already logged
         self.assertIn("Home", self.browser.title)
 
-    def test_admin_can_login_to_app_through_admin_form(self):
-        # Admin login through admin login page
-        self.visit(AdminLoginPage.url)
-        self.log_admin()
-
-        # He can access app and see it's email plus a little admin icon
-        self.visit(HomePage.url)
-        self.assertIn("home", self.head_title)
-        self.assertIn(self.admin.email, self.get_elem(self.profile_name).text)
-
     @override_settings(AXES_ENABLED=True)
     def test_account_locked(self):
         self.visit(LoginPage.url)
