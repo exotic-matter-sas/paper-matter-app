@@ -1,5 +1,6 @@
 #  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
+from django.contrib.auth.views import redirect_to_login
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django_otp import user_has_device
@@ -23,7 +24,6 @@ class FTLAdminSite(OTPAdminSite):
         resp = super().login(request, extra_context)
 
         if not isinstance(resp, HttpResponseRedirect):
-            url = reverse("login", current_app=self.name)
-            resp = HttpResponseRedirect(url)
+            resp = redirect_to_login(reverse("admin:index", current_app=self.name))
 
         return resp
