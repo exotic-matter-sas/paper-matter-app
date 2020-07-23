@@ -43,7 +43,18 @@ class UserAdmin(BaseUserAdmin):
     raw_id_fields = ("org",)
 
 
-admin.site.register(FTLOrg)
+@admin.register(FTLOrg)
+class FTLOrgAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "name",
+        "slug",
+    )
+    search_fields = (
+        "id",
+        "name",
+        "slug",
+    )
 
 
 @admin.register(FTLFolder)
