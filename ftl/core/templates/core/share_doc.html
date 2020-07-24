@@ -26,6 +26,9 @@
             <h3 class="text-secondary"><span id="document-share-title"
                                              class="font-weight-bolder text-capitalize">{{ share_doc.ftl_doc.title }}</span>
             </h3>
+            <a class="ml-auto btn btn-primary" href="{% url 'view_sharing_doc_download' share_doc.pid %}">
+                {% trans 'Download' %}
+            </a>
         </nav>
     </header>
 
