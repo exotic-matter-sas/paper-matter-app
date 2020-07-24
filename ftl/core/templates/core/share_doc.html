@@ -41,13 +41,8 @@
             <div class="d-flex flex-column align-items-center">
                 <div class="m-4">
                     {% blocktrans %}
-                        Viewer not available for this document type, open the document instead.
+                        Viewer not available for this document type, download the document instead.
                     {% endblocktrans %}
-                </div>
-                <div class="mt-4">
-                    <a class="btn btn-primary" href="{% url 'view_sharing_doc_download' share_doc.pid %}">
-                        {% trans 'Download' %}
-                    </a>
                 </div>
             </div>
         </main>
