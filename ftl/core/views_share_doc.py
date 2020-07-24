@@ -26,7 +26,10 @@ def get_shared_doc(pid):
 
 class ViewSharedDocument(ContextMixin, View):
     def get(self, request, *args, **kwargs):
-        ftl_document_sharing = get_shared_doc(kwargs["pid"])
+        try:
+            ftl_document_sharing = get_shared_doc(kwargs["pid"])
+        except Http404:
+            return render(request, "core/share_doc_404.html", status=404)
 
         context = self.get_context_data()
         context["rr"] = int(datetime.utcnow().timestamp())
