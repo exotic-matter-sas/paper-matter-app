@@ -1,5 +1,6 @@
 #  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
+import uuid
 
 from django.contrib.staticfiles import finders
 from django.test import TestCase, override_settings
@@ -150,3 +151,7 @@ class DocumentSharingTests(TestCase):
 
         response = self.client.get(f"/app/share/{doc_share.pid}")
         self.assertEqual(response.status_code, 404)
+
+    def test_custom_404_share_document(self):
+        response = self.client.get(f"/app/share/{uuid.uuid4()}")
+        self.assertContains(response, "document was not found", status_code=404)
