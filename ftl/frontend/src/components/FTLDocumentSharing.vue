@@ -12,6 +12,7 @@
     :cancel-title="$t('Unshare')"
     :ok-disabled="sharing"
     :cancel-disabled="sharing || unsharing"
+    @ok="copyClipboard"
     @cancel="cancelSharing"
     @show="doSharing"
   >
@@ -36,7 +37,7 @@
 
     <template slot="modal-ok">
       <b-spinner :class="{ 'd-none': !sharing }" small></b-spinner>
-      <span :class="{ 'd-none': sharing }">{{ $t("Close") }}</span>
+      <span :class="{ 'd-none': sharing }">{{ $t("Copy to clipboard") }}</span>
     </template>
   </b-modal>
 </template>
@@ -47,7 +48,7 @@
     Share document: Partage du document
     Link to share: Lien à partager
     Anyone with the link will be able to see your document.: Tout le monde pourra accéder à votre document.
-    Close: Fermer
+    Copy to clipboard: Copier dans le presse-papier
 </i18n>
 <script>
 import axios from "axios";
@@ -131,6 +132,11 @@ export default {
           this.mixinAlert(this.$t("Could not unshare document."), true);
         })
         .finally(() => (this.unsharing = false));
+    },
+    copyClipboard: function () {
+      navigator.clipboard
+        .writeText(this.sharingLink)
+        .finally(() => this.$bvModal.hide(this.id));
     },
   },
 };
