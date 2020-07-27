@@ -100,3 +100,21 @@ export const DOCUMENT_NO_THUMB_PROPS_2 = {
   path: [],
   type: "application/pdf",
 };
+
+export const DOCUMENT_SHARE_LINK = {
+  pid: "s1000",
+  created: "2020-07-27T12:40:43.000000Z",
+  edited: "2020-07-27T12:40:43.000000Z",
+  expire_at: null,
+  note: "Share link note",
+  public_url: ".../app/share/s1000"
+};
+
+export const DOCUMENT_SHARE_LINK_VARIANT = {
+  pid: "s1001",
+  created: "2020-07-27T12:40:44.000000Z",
+  edited: "2020-07-27T12:40:44.000000Z",
+  expire_at: null,
+  note: "Share link note 2",
+  public_url: ".../app/share/s1001"
+};

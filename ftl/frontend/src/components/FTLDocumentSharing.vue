@@ -49,6 +49,9 @@
     Link to share: Lien à partager
     Anyone with the link will be able to see your document.: Tout le monde pourra accéder à votre document.
     Copy to clipboard: Copier dans le presse-papier
+    Could not share document: Le document n'a pu être partagé
+    Could not get share link: Le lien de partage n'a pu être récupéré
+    Could not unshare document: Le partage du document n'a pu être interompu
 </i18n>
 <script>
 import axios from "axios";
@@ -103,10 +106,13 @@ export default {
                 this.$emit("event-document-shared");
               })
               .catch((error) => {
-                this.mixinAlert(this.$t("Could not share document."), true);
+                this.mixinAlert(this.$t("Could not share document"), true);
               })
               .finally(() => (this.sharing = false));
           }
+        })
+        .catch((error) => {
+          this.mixinAlert(this.$t("Could not get share link"), true);
         })
         .finally(() => (this.sharing = false));
     },
@@ -124,7 +130,7 @@ export default {
           this.$emit("event-document-unshared");
         })
         .catch((error) => {
-          this.mixinAlert(this.$t("Could not unshare document."), true);
+          this.mixinAlert(this.$t("Could not unshare document"), true);
         })
         .finally(() => (this.unsharing = false));
     },

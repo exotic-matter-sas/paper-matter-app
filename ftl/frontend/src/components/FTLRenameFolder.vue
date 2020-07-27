@@ -42,8 +42,8 @@
     Rename folder: Renommer le dossier
     The new name of the folder: Le nouveau nom du dossier
     The folder will be renamed.: Le dossier sera renommé.
-    Folder successfully renamed.: Le dossier a été renommé avec succès.
-    Could not rename folder.: Le dossier n'a pas pu être renommé.
+    Folder successfully renamed: Le dossier a été renommé avec succès
+    Could not rename folder: Le dossier n'a pu être renommé
 </i18n>
 
 <script>
@@ -76,10 +76,10 @@ export default {
           this.$emit("event-folder-renamed", {
             folder: response.data,
           });
-          this.mixinAlert(this.$t("Folder successfully renamed."));
+          this.mixinAlert(this.$t("Folder successfully renamed"));
         })
         .catch((error) => {
-          this.mixinAlert(this.$t("Could not rename folder."), true);
+          this.mixinAlert(this.$t("Could not rename folder"), true);
         });
     },
   },
