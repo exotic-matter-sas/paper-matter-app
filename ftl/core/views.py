@@ -412,7 +412,7 @@ class FTLDocumentSharingList(generics.ListCreateAPIView):
         serializer.save(ftl_doc=ftl_doc)
 
 
-class FTLDocumentSharingDetail(generics.RetrieveDestroyAPIView):
+class FTLDocumentSharingDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = FTLDocumentSharingSerializer
     lookup_field = "pid"
     lookup_url_kwarg = "spid"
