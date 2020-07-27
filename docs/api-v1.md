@@ -363,7 +363,7 @@ OR / AND (can be combined with `flat`)
 ```
 If there is too many results, results will be paginated. To get the next page results you have to call the url specified in `next` field (or set an additional `page` query string with desired page number, page start at `1`).
 
-### Get one document
+### Get a document
 **GET /api/v1/documents/`document_pid`**
 
 **Response** `200`
@@ -444,6 +444,106 @@ Rename, annotate, move a document (or set its thumbnail).
 
 ### Delete a document
 **DELETE /api/v1/documents/`document_pid`**
+
+**Response** `204`
+
+## Documents share links
+
+### Add a document share link
+**POST /api/v1/documents/`document_pid`/share**
+
+**Request body**
+
+- _**expire_at** (optional): an expiration date, following ISO 8601 format, eg. `2019-11-18T00:42:42.242424Z`_
+- _**note** (optional): document share link note, string_
+
+**Response** `201`
+
+```json
+{
+  "pid": "7468babe-6e5e-4e9f-809b-c20758ee47ed",
+  "created": "2020-07-24T14:38:39.535580Z",
+  "edited": "2020-07-24T14:38:39.536544Z",
+  "expire_at": null,
+  "note": "",
+  "public_url": ".../app/share/7468babe-6e5e-4e9f-809b-c20758ee47ed"
+}
+```
+
+### List documents share links
+**GET /api/v1/documents/`document_pid`/share**
+
+**Response** `200`
+
+```json
+{
+  "count": 2,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "pid": "28005874-a495-4d08-b2ae-4ebc5ec8f212",
+      "created": "2020-07-24T14:44:19.472368Z",
+      "edited": "2020-07-24T14:44:19.472560Z",
+      "expire_at": null,
+      "note": "",
+      "public_url": ".../app/share/28005874-a495-4d08-b2ae-4ebc5ec8f212"
+    },
+    {
+      "pid": "f9c61c7f-8ee7-4d4f-8fa7-5f3653853339",
+      "created": "2020-07-24T14:44:11.728826Z",
+      "edited": "2020-07-24T14:44:11.729134Z",
+      "expire_at": null,
+      "note": "",
+      "public_url": ".../app/share/f9c61c7f-8ee7-4d4f-8fa7-5f3653853339"
+    }
+  ]
+}
+```
+If there is too many results, results will be paginated. To get the next page results you have to call the url specified in `next` field (or set an additional `page` query string with desired page number, page start at `1`).
+
+### Get a document share link
+**GET /api/v1/documents/`document_pid`/share/`document_shared_link_pid`**
+
+**Response** `200`
+
+```json
+{
+  "pid": "28005874-a495-4d08-b2ae-4ebc5ec8f212",
+  "created": "2020-07-24T14:44:19.472368Z",
+  "edited": "2020-07-24T14:44:19.472560Z",
+  "expire_at": null,
+  "note": "",
+  "public_url": ".../app/share/28005874-a495-4d08-b2ae-4ebc5ec8f212"
+}
+```
+Return the same data than **List documents share links** request but for a single share link.
+
+### Update a document share link
+**PATCH /api/v1/documents/`document_pid`/share/`document_shared_link_pid`**
+
+Update a document share link note or expiration date.
+
+**Request body** _(attributes omitted stay unchanged)_
+
+- _**expire_at** (optional): an expiration date, following ISO 8601 format, eg. `2019-11-18T00:42:42.242424Z`_
+- _**note** (optional): document share link note string_
+
+**Response** `200`
+
+```json
+{
+  "pid": "28005874-a495-4d08-b2ae-4ebc5ec8f212",
+  "created": "2020-07-24T14:44:19.472368Z",
+  "edited": "2020-07-24T14:44:19.472560Z",
+  "expire_at": null,
+  "note": "",
+  "public_url": ".../app/share/28005874-a495-4d08-b2ae-4ebc5ec8f212"
+}
+```
+
+### Delete a document share link
+**DELETE /api/v1/documents/`document_pid`/share/`document_shared_link_pid`**
 
 **Response** `204`
 
