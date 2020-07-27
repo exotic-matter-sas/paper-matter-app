@@ -470,7 +470,7 @@ Rename, annotate, move a document (or set its thumbnail).
 }
 ```
 
-### List documents share links
+### List document share links
 **GET /api/v1/documents/`document_pid`/share**
 
 **Response** `200`
