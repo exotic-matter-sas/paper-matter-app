@@ -621,11 +621,8 @@ class DocumentSharingTests(APITestCase):
 
         client_patch = self.client.patch(
             f"/app/api/v1/documents/{self.doc.pid}/share/{share_doc.pid}",
-            {
-                "note": "fakeNote",
-                "expire_at": "2019-11-18T00:42:42.242424Z"
-            },
-            format="json"
+            {"note": "fakeNote", "expire_at": "2019-11-18T00:42:42.242424Z"},
+            format="json",
         )
 
         self.assertEqual(client_patch.status_code, status.HTTP_200_OK)

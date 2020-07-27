@@ -159,7 +159,9 @@ class DocumentSharingTests(TestCase):
 
     def test_cant_view_expired_shared_document(self):
         doc = setup_document(self.org, self.user)
-        doc_share = setup_document_share(doc, expire_at=datetime.datetime.now() - datetime.timedelta(hours=1))
+        doc_share = setup_document_share(
+            doc, expire_at=datetime.datetime.now() - datetime.timedelta(hours=1)
+        )
 
         response = self.client.get(f"/app/share/{doc_share.pid}")
         self.assertEqual(response.status_code, 404)

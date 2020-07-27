@@ -36,7 +36,7 @@ localVue.mixin({ methods: { mixinAlert: mockedMixinAlert } }); // mixinAlert moc
 jest.mock("axios", () => ({
   get: jest.fn(),
   post: jest.fn(),
-  delete: jest.fn()
+  delete: jest.fn(),
 }));
 
 const mockedGetDocumentShareLinksResponse = {
@@ -44,7 +44,7 @@ const mockedGetDocumentShareLinksResponse = {
     count: 2,
     next: null,
     previous: null,
-    results: [tv.DOCUMENT_SHARE_LINK, tv.DOCUMENT_SHARE_LINK_VARIANT]
+    results: [tv.DOCUMENT_SHARE_LINK, tv.DOCUMENT_SHARE_LINK_VARIANT],
   },
   status: 200,
   config: axiosConfig,
@@ -55,7 +55,7 @@ const mockedGetDocumentShareLinksEmptyResponse = {
     count: 0,
     next: null,
     previous: null,
-    results: []
+    results: [],
   },
   status: 200,
   config: axiosConfig,
@@ -81,8 +81,8 @@ describe("FTLDocumentSharing template", () => {
     wrapper = shallowMount(FTLDocumentSharing, {
       localVue,
       propsData: {
-        doc: tv.DOCUMENT_PROPS
-      }
+        doc: tv.DOCUMENT_PROPS,
+      },
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
@@ -106,7 +106,7 @@ describe("FTLDocumentSharing computed", () => {
     wrapper = shallowMount(FTLDocumentSharing, {
       localVue,
       propsData: {
-        doc: tv.DOCUMENT_PROPS
+        doc: tv.DOCUMENT_PROPS,
       },
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
@@ -119,23 +119,23 @@ describe("FTLDocumentSharing computed", () => {
     let testedResult = wrapper.vm.sharingLink;
 
     // then
-    expect(testedResult).toEqual('');
+    expect(testedResult).toEqual("");
 
     // given shareData has a public_url set
-    wrapper.setData({ shareData: { public_url: 'fakePublicUrl'}});
+    wrapper.setData({ shareData: { public_url: "fakePublicUrl" } });
 
     // when
     testedResult = wrapper.vm.sharingLink;
 
     // then
-    expect(testedResult).toEqual('fakePublicUrl');
+    expect(testedResult).toEqual("fakePublicUrl");
   });
 });
 
 // METHODS
 describe("FTLDocumentSharing methods", () => {
   let wrapper;
-  let clipboardWriteTextMock = jest.fn().mockResolvedValue('');
+  let clipboardWriteTextMock = jest.fn().mockResolvedValue("");
   // defined const specific to this describe here
   beforeEach(() => {
     axios.post.mockResolvedValue(mockedPostDocumentShareLink);
@@ -145,12 +145,12 @@ describe("FTLDocumentSharing methods", () => {
         writeText: clipboardWriteTextMock,
       },
     });
-    jest.spyOn(navigator.clipboard, "writeText");    // set mocked component methods return value before shallowMount
+    jest.spyOn(navigator.clipboard, "writeText"); // set mocked component methods return value before shallowMount
     wrapper = shallowMount(FTLDocumentSharing, {
       localVue,
       propsData: {
-        doc: tv.DOCUMENT_PROPS
-      }
+        doc: tv.DOCUMENT_PROPS,
+      },
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
@@ -171,7 +171,9 @@ describe("FTLDocumentSharing methods", () => {
     );
     expect(axios.post).toHaveBeenCalledTimes(0);
     // UI only display first share link for now
-    expect(wrapper.vm.shareData).toEqual(mockedGetDocumentShareLinksResponse.data.results[0]);
+    expect(wrapper.vm.shareData).toEqual(
+      mockedGetDocumentShareLinksResponse.data.results[0]
+    );
 
     // given no share link exist for document
     axios.get.mockResolvedValue(mockedGetDocumentShareLinksEmptyResponse);
@@ -197,7 +199,7 @@ describe("FTLDocumentSharing methods", () => {
   });
   it("doSharing handle api error", async () => {
     // given get request reject an error
-    axios.get.mockRejectedValue('Boom');
+    axios.get.mockRejectedValue("Boom");
 
     // when
     wrapper.vm.doSharing();
@@ -209,7 +211,7 @@ describe("FTLDocumentSharing methods", () => {
 
     // given post request reject an error
     axios.get.mockResolvedValue(mockedGetDocumentShareLinksEmptyResponse);
-    axios.post.mockRejectedValue('Boom');
+    axios.post.mockRejectedValue("Boom");
     jest.clearAllMocks();
 
     // when
@@ -240,7 +242,7 @@ describe("FTLDocumentSharing methods", () => {
   });
   it("cancelSharing handle api error", async () => {
     // given delete request reject an error
-    axios.delete.mockRejectedValue('Boom');
+    axios.delete.mockRejectedValue("Boom");
 
     // when
     wrapper.vm.cancelSharing();

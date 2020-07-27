@@ -131,8 +131,12 @@ describe("FTLDocumentPanel computed", () => {
   let wrapper;
   let storeConfigCopy = cloneDeep(storeConfig);
   let store = new Vuex.Store(storeConfigCopy);
-  let userAgentMock = jest.fn().mockReturnValue('Mozilla/5.0 (iPhone; CPU iPhone OS 12_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/12.0 Mobile/15A372 Safari/604.1');
-  Object.defineProperty(window.navigator, 'userAgent', {get: userAgentMock});
+  let userAgentMock = jest
+    .fn()
+    .mockReturnValue(
+      "Mozilla/5.0 (iPhone; CPU iPhone OS 12_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/12.0 Mobile/15A372 Safari/604.1"
+    );
+  Object.defineProperty(window.navigator, "userAgent", { get: userAgentMock });
   // defined const specific to this describe here
   beforeEach(() => {
     wrapper = shallowMount(FTLDocumentPanel, {
@@ -362,7 +366,7 @@ describe("Event received and handled by component", () => {
         {
           documentNoteUpdated: mockedDocumentNoteUpdated,
           documentRenamed: mockedDocumentRenamed,
-          documentShared: mockedDocumentShared
+          documentShared: mockedDocumentShared,
         },
         mountedMocks
       ),
@@ -410,9 +414,7 @@ describe("Event received and handled by component", () => {
     // currentOpenDoc need to be set for FTLRenameDocument to be instantiated
     wrapper.setData({ currentOpenDoc: tv.DOCUMENT_PROPS });
     // when (called by event)
-    wrapper
-      .find(FTLDocumentSharing)
-      .vm.$emit("event-document-shared");
+    wrapper.find(FTLDocumentSharing).vm.$emit("event-document-shared");
 
     // then method called
     expect(mockedDocumentShared).toHaveBeenCalledWith(true);
@@ -421,9 +423,7 @@ describe("Event received and handled by component", () => {
     // currentOpenDoc need to be set for FTLRenameDocument to be instantiated
     wrapper.setData({ currentOpenDoc: tv.DOCUMENT_PROPS });
     // when (called by event)
-    wrapper
-      .find(FTLDocumentSharing)
-      .vm.$emit("event-document-unshared");
+    wrapper.find(FTLDocumentSharing).vm.$emit("event-document-unshared");
 
     // then method called
     expect(mockedDocumentShared).toHaveBeenCalledWith(false);

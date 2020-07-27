@@ -51,7 +51,7 @@ export const DOCUMENT_PROPS = {
   ftl_folder: null,
   path: [],
   download_url: "app/uploads/1000",
-  is_shared: false
+  is_shared: false,
 };
 
 export const DOCUMENT_PROPS_VARIANT = {
@@ -62,7 +62,7 @@ export const DOCUMENT_PROPS_VARIANT = {
   thumbnail_available: true,
   ftl_folder: null,
   path: [],
-  is_shared: false
+  is_shared: false,
 };
 
 export const DOCUMENT_PROPS_WITH_FOLDER = {
@@ -73,7 +73,7 @@ export const DOCUMENT_PROPS_WITH_FOLDER = {
   thumbnail_available: true,
   ftl_folder: 123,
   path: [],
-  is_shared: false
+  is_shared: false,
 };
 
 export const DOCUMENT_PROPS_WITH_FOLDER_MOVED = {
@@ -107,7 +107,7 @@ export const DOCUMENT_SHARE_LINK = {
   edited: "2020-07-27T12:40:43.000000Z",
   expire_at: null,
   note: "Share link note",
-  public_url: ".../app/share/s1000"
+  public_url: ".../app/share/s1000",
 };
 
 export const DOCUMENT_SHARE_LINK_VARIANT = {
@@ -116,5 +116,5 @@ export const DOCUMENT_SHARE_LINK_VARIANT = {
   edited: "2020-07-27T12:40:44.000000Z",
   expire_at: null,
   note: "Share link note 2",
-  public_url: ".../app/share/s1001"
+  public_url: ".../app/share/s1001",
 };
