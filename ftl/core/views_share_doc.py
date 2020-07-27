@@ -32,7 +32,7 @@ class ViewSharedDocument(ContextMixin, View):
             return render(request, "core/share_doc_404.html", status=404)
 
         context = self.get_context_data()
-        context["rr"] = int(datetime.utcnow().timestamp())
+        context["force_refresh_id"] = int(datetime.utcnow().timestamp())
         context["share_doc"] = ftl_document_sharing
         return render(request, "core/share_doc.html", context)
 

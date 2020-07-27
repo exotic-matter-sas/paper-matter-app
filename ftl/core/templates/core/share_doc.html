@@ -34,7 +34,7 @@
 
     {% if share_doc.ftl_doc.type == 'application/pdf' %}
         <iframe class="flex-grow-1"
-                src="/assets/pdfjs/web/viewer.html?r={{ rr }}&file=/app/share/{{ share_doc.pid }}/download#pagemode=none">
+                src="/assets/pdfjs/web/viewer.html?r={{ force_refresh_id }}&file=/app/share/{{ share_doc.pid }}/download#pagemode=none">
         </iframe>
     {% else %}
         <main class="flex-grow-1 border rounded bg-secondary m-2 p-2">
