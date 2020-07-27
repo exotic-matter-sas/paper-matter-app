@@ -174,8 +174,8 @@
     <FTLDocumentSharing
       v-if="currentOpenDoc.pid"
       :doc="currentOpenDoc"
-      @event-document-shared="documentShared($event, true)"
-      @event-document-unshared="documentShared($event, false)"
+      @event-document-shared="documentShared(true)"
+      @event-document-unshared="documentShared(false)"
     />
   </b-modal>
 </template>
@@ -322,7 +322,7 @@ export default {
       this.$emit("event-document-deleted", event);
     },
 
-    documentShared: function (event, val) {
+    documentShared: function (val) {
       this.currentOpenDoc.is_shared = val;
     },
 

@@ -129,6 +129,8 @@ describe("FTLDocumentPanel computed", () => {
   let wrapper;
   let storeConfigCopy = cloneDeep(storeConfig);
   let store = new Vuex.Store(storeConfigCopy);
+  let userAgentMock = jest.fn().mockReturnValue('Mozilla/5.0 (iPhone; CPU iPhone OS 12_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/12.0 Mobile/15A372 Safari/604.1');
+  Object.defineProperty(window.navigator, 'userAgent', {get: userAgentMock});
   // defined const specific to this describe here
   beforeEach(() => {
     wrapper = shallowMount(FTLDocumentPanel, {
@@ -141,7 +143,10 @@ describe("FTLDocumentPanel computed", () => {
   });
 
   it("isIOS return proper value", async () => {
-    // TODO test main iOS user agent device here when we will be able to force recompute of computed
+    let testedResult = wrapper.vm.isIOS;
+
+    expect(testedResult).toBe(true);
+    // FIXME cant test more than one user agent, test not working if userAgent value is set after beforeEach (even with computed cache to false)
   });
 
   it("getViewerUrl returns proper value", () => {
@@ -283,6 +288,20 @@ describe("FTLDocumentPanel methods", () => {
 
     // then
     expect(wrapper.vm.currentOpenDoc).toEqual(docProps);
+  });
+
+  it("documentShared set currentOpenDoc.is_shared", async () => {
+    // when
+    wrapper.vm.documentShared(true);
+
+    // then
+    expect(wrapper.vm.currentOpenDoc.is_shared).toEqual(true);
+
+    // when
+    wrapper.vm.documentShared(false);
+
+    // then
+    expect(wrapper.vm.currentOpenDoc.is_shared).toEqual(false);
   });
 
   it("closeDocument reset currentOpenDoc and hide document-viewer modal", async () => {
