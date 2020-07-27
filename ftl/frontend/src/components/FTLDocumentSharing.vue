@@ -100,10 +100,7 @@ export default {
               )
               .then((response) => {
                 this.shareData = response.data;
-                this.$emit("event-document-shared", {
-                  doc: this.doc,
-                  share: response.data,
-                });
+                this.$emit("event-document-shared");
               })
               .catch((error) => {
                 this.mixinAlert(this.$t("Could not share document."), true);
@@ -124,9 +121,7 @@ export default {
           axiosConfig
         )
         .then((response) => {
-          this.$emit("event-document-unshared", {
-            share: { pid: this.shareData.pid },
-          });
+          this.$emit("event-document-unshared");
         })
         .catch((error) => {
           this.mixinAlert(this.$t("Could not unshare document."), true);

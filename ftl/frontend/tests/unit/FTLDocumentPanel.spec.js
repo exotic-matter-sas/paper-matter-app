@@ -18,6 +18,7 @@ import FTLMoveDocuments from "@/components/FTLMoveDocuments";
 import cloneDeep from "lodash.clonedeep";
 import storeConfig from "@/store/storeConfig";
 import Vuex from "vuex";
+import FTLDocumentSharing from "@/components/FTLDocumentSharing";
 
 // Create clean Vue instance and set installed package to avoid warning
 const localVue = createLocalVue();
@@ -70,6 +71,7 @@ const mockedOpenDocument = jest.fn();
 const mockedCreateThumbnailForDocument = jest.fn();
 const mockedDocumentNoteUpdated = jest.fn();
 const mockedDocumentRenamed = jest.fn();
+const mockedDocumentShared = jest.fn();
 
 const mountedMocks = {
   openDocument: mockedOpenDocument,
@@ -360,6 +362,7 @@ describe("Event received and handled by component", () => {
         {
           documentNoteUpdated: mockedDocumentNoteUpdated,
           documentRenamed: mockedDocumentRenamed,
+          documentShared: mockedDocumentShared
         },
         mountedMocks
       ),
@@ -402,5 +405,27 @@ describe("Event received and handled by component", () => {
 
     // then method called
     expect(mockedDocumentRenamed).toHaveBeenCalledWith(eventArg);
+  });
+  it("event-document-shared call documentShared", async () => {
+    // currentOpenDoc need to be set for FTLRenameDocument to be instantiated
+    wrapper.setData({ currentOpenDoc: tv.DOCUMENT_PROPS });
+    // when (called by event)
+    wrapper
+      .find(FTLDocumentSharing)
+      .vm.$emit("event-document-shared");
+
+    // then method called
+    expect(mockedDocumentShared).toHaveBeenCalledWith(true);
+  });
+  it("event-document-unshared call documentShared", async () => {
+    // currentOpenDoc need to be set for FTLRenameDocument to be instantiated
+    wrapper.setData({ currentOpenDoc: tv.DOCUMENT_PROPS });
+    // when (called by event)
+    wrapper
+      .find(FTLDocumentSharing)
+      .vm.$emit("event-document-unshared");
+
+    // then method called
+    expect(mockedDocumentShared).toHaveBeenCalledWith(false);
   });
 });
