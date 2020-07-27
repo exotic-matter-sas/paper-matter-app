@@ -396,6 +396,13 @@ class FTLDocumentSharingList(generics.ListCreateAPIView):
     lookup_url_kwarg = "spid"
 
     def get_queryset(self):
+        get_object_or_404(
+            FTLDocument,
+            org=self.request.user.org,
+            deleted=False,
+            pid=self.kwargs["pid"],
+        )
+
         return FTLDocumentSharing.objects.filter(
             ftl_doc__org=self.request.user.org,
             ftl_doc__deleted=False,
@@ -418,6 +425,13 @@ class FTLDocumentSharingDetail(generics.RetrieveUpdateDestroyAPIView):
     lookup_url_kwarg = "spid"
 
     def get_queryset(self):
+        get_object_or_404(
+            FTLDocument,
+            org=self.request.user.org,
+            deleted=False,
+            pid=self.kwargs["pid"],
+        )
+
         return FTLDocumentSharing.objects.filter(
             ftl_doc__org=self.request.user.org,
             ftl_doc__deleted=False,
