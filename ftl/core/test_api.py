@@ -589,7 +589,7 @@ class DocumentSharingTests(APITestCase):
 
     def test_share_document(self):
         client_post = self.client.post(
-            f"/app/api/v1/documents/{str(self.doc.pid)}/share", format="json"
+            f"/app/api/v1/documents/{self.doc.pid}/share", format="json"
         )
 
         self.assertEqual(client_post.status_code, status.HTTP_201_CREATED)
@@ -604,11 +604,11 @@ class DocumentSharingTests(APITestCase):
         )
         self.assertEqual(ftl_document_sharing.ftl_doc, self.doc)
 
-    def test_get_shares_document(self):
+    def test_get_document_share_links(self):
         share_doc = setup_document_share(self.doc)
 
         client_get = self.client.get(
-            f"/app/api/v1/documents/{str(self.doc.pid)}/share", format="json"
+            f"/app/api/v1/documents/{self.doc.pid}/share", format="json"
         )
 
         self.assertEqual(client_get.status_code, status.HTTP_200_OK)
@@ -616,11 +616,29 @@ class DocumentSharingTests(APITestCase):
         self.assertEqual(client_doc_shares["count"], 1)
         self.assertEqual(client_doc_shares["results"][0]["pid"], str(share_doc.pid))
 
+    def test_update_document_share_link(self):
+        share_doc = setup_document_share(self.doc)
+
+        client_patch = self.client.patch(
+            f"/app/api/v1/documents/{self.doc.pid}/share/{share_doc.pid}",
+            {
+                "note": "fakeNote",
+                "expire_at": "2019-11-18T00:42:42.242424Z"
+            },
+            format="json"
+        )
+
+        self.assertEqual(client_patch.status_code, status.HTTP_200_OK)
+        client_doc_shares = client_patch.data
+        self.assertEqual(client_doc_shares["pid"], str(share_doc.pid))
+        self.assertEqual(client_doc_shares["note"], "fakeNote")
+        self.assertEqual(client_doc_shares["expire_at"], "2019-11-18T00:42:42.242424Z")
+
     def test_unshare_document(self):
         share_doc = setup_document_share(self.doc)
 
         client_delete = self.client.delete(
-            f"/app/api/v1/documents/{str(self.doc.pid)}/share/{str(share_doc.pid)}",
+            f"/app/api/v1/documents/{self.doc.pid}/share/{share_doc.pid}",
             format="json",
         )
 
@@ -635,10 +653,22 @@ class DocumentSharingTests(APITestCase):
         doc_bis = setup_document(org_bis, admin_bis)
 
         client_post = self.client.post(
-            f"/app/api/v1/documents/{str(doc_bis.pid)}/share", format="json"
+            f"/app/api/v1/documents/{doc_bis.pid}/share", format="json"
         )
 
         self.assertEqual(client_post.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_cant_get_shares_for_not_owned_doc(self):
+        org_bis = setup_org(name=tv.ORG_NAME_2, slug=tv.ORG_SLUG_2)
+        admin_bis = setup_admin(org_bis, tv.ADMIN2_EMAIL)
+        doc_bis = setup_document(org_bis, admin_bis)
+        share_doc_bis = setup_document_share(doc_bis)
+
+        client_get = self.client.get(
+            f"/app/api/v1/documents/{share_doc_bis.pid}/share", format="json"
+        )
+
+        self.assertEqual(client_get.status_code, status.HTTP_404_NOT_FOUND)
 
 
 class FoldersTests(APITestCase):
