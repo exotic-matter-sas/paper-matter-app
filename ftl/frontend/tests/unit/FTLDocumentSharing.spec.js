@@ -269,5 +269,7 @@ describe("FTLDocumentSharing methods", () => {
       1,
       "modal-document-sharing"
     );
+    expect(mockedMixinAlert).toBeCalledTimes(1);
+    expect(mockedMixinAlert.mock.calls[0][0]).toContain("copied");
   });
 });

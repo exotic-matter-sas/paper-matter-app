@@ -52,6 +52,7 @@
     Could not share document: Le document n'a pu être partagé
     Could not get share link: Le lien de partage n'a pu être récupéré
     Could not unshare document: Le partage du document n'a pu être interompu
+    Link copied: Lien copié
 </i18n>
 <script>
 import axios from "axios";
@@ -137,6 +138,7 @@ export default {
     copyClipboard: function () {
       navigator.clipboard
         .writeText(this.sharingLink)
+        .then(() => this.mixinAlert(this.$t("Link copied")))
         .finally(() => this.$bvModal.hide(this.id));
     },
   },
