@@ -1,41 +1,56 @@
 {% extends "ftl/main_with_aside.html" %}
-
 {% load i18n %}
+{% load static %}
+{% load webpack_loader %}
+
+{% block title %}{% trans "Two-step Verification" %}{% endblock %}
+
+{% block head %}{% render_bundle 'common_logged_out' 'css' %}{% endblock %}
 
 {% block main_content %}
-    <div class="block-center">
-        {% if not error %}
-            <form id="authorizationForm" method="post">
-                <h3 class="block-center-heading">{% trans "Authorize" %} {{ application.name }}?</h3>
-                {% csrf_token %}
+    <h1 class="text-primary">
+        {% blocktrans with application.name as name %}
+            Authorize "{{ name }}"?
+        {% endblocktrans %}
+    </h1>
 
-                {% for field in form %}
-                    {% if field.is_hidden %}
-                        {{ field }}
-                    {% endif %}
+    {% if not error %}
+        <form id="authorizationForm" method="post">
+            <h3 class="block-center-heading"></h3>
+            {% csrf_token %}
+
+            {% for field in form %}
+                {% if field.is_hidden %}
+                    {{ field }}
+                {% endif %}
+            {% endfor %}
+
+            <p>
+                {% blocktrans with application.name as name %}
+                    "{{ name }}" requires access to your Paper Matter account and the following permissions
+                {% endblocktrans %}
+            </p>
+            <ul>
+                {% for scope in scopes_descriptions %}
+                    <li>{{ scope }}</li>
                 {% endfor %}
+            </ul>
 
-                <p>{% trans "Application requires following permissions" %}</p>
-                <ul>
-                    {% for scope in scopes_descriptions %}
-                        <li>{{ scope }}</li>
-                    {% endfor %}
-                </ul>
+            {{ form.errors }}
+            {{ form.non_field_errors }}
 
-                {{ form.errors }}
-                {{ form.non_field_errors }}
+            <div class="d-flex justify-content-end">
+                <input type="submit" class="mx-1 btn btn-secondary" value="Cancel"/>
+                <input type="submit" class="mx-1 btn btn-large btn-primary" name="allow" value="Authorize"/>
+            </div>
+        </form>
 
-                <div class="control-group">
-                    <div class="controls">
-                        <input type="submit" class="btn btn-large" value="Cancel"/>
-                        <input type="submit" class="btn btn-large btn-primary" name="allow" value="Authorize"/>
-                    </div>
-                </div>
-            </form>
+    {% else %}
+        <h2>Error: {{ error.error }}</h2>
+        <p>{{ error.description }}</p>
+    {% endif %}
+{% endblock %}
 
-        {% else %}
-            <h2>Error: {{ error.error }}</h2>
-            <p>{{ error.description }}</p>
-        {% endif %}
-    </div>
+{% block aside_illustration %}
+    <img src="{% static "oauth2.svg" %}" alt="Signup steps illustration">
 {% endblock %}
