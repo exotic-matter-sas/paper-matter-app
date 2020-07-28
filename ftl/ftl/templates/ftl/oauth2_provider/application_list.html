@@ -1,0 +1,35 @@
+{% extends "oauth2_provider/base.html" %}
+
+{% load i18n %}
+{% block content %}
+    <div class="row no-gutters">
+        <div class="col text-justify">
+            <h3 class="text-primary">{% trans "Your applications" %}</h3>
+            <p class="font-italic">
+                {% trans "Manage your applications linked your account and API access (advanced usage)" %}
+            </p>
+
+            <p class="highlight">
+                {% blocktrans %}
+                    Please exercise caution when granting access or giving API key to third-party apps.
+                    Apps will be able to access all documents in your account.
+                {% endblocktrans %}
+            </p>
+
+            <div>
+                {% if applications %}
+                    <ul>
+                        {% for application in applications %}
+                            <li><a href="{{ application.get_absolute_url }}">{{ application.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                    <a class="btn btn-primary" href="{% url "oauth2_provider:register" %}">New Application</a>
+                {% else %}
+                    <p>{% trans "No applications defined" %}. <a
+                            href="{% url 'oauth2_provider:register' %}">{% trans "Click here" %}</a> {% trans "if you want to register a new one" %}
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock content %}

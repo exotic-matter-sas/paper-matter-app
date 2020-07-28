@@ -1,0 +1,21 @@
+{% extends "oauth2_provider/base.html" %}
+{% load add_attr %}
+{% load i18n %}
+
+{% block content %}
+    <div class="m-4">
+        <h4 class="text-primary text-center">
+            {% blocktrans with object.name as name %}
+                Are you sure you want to delete<br/> "{{ name }}"?
+            {% endblocktrans %}
+        </h4>
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="mt-4 d-flex justify-content-around">
+                <a class="btn btn-secondary" href="{% url "oauth2_provider:list" %}">{% trans "Cancel" %}</a>
+                <input type="submit" class="btn btn-large btn-danger" value="{% trans "Delete" %}"/>
+            </div>
+        </form>
+    </div>
+{% endblock %}
