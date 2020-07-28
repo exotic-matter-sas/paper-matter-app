@@ -35,9 +35,8 @@ class ViewSharedDocument(ContextMixin, View):
         context = self.get_context_data()
         context["force_refresh_id"] = int(datetime.utcnow().timestamp())
         context["share_doc"] = ftl_document_sharing
-        context["doc_ext"] = mimetype_to_ext(ftl_document_sharing.ftl_doc.type)[
-            1:
-        ]  # remove the dot from extension
+        # remove the dot from extension
+        context["doc_ext"] = mimetype_to_ext(ftl_document_sharing.ftl_doc.type)[1:]
         return render(request, "core/share_doc.html", context)
 
 

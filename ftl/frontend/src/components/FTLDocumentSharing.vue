@@ -51,7 +51,7 @@
     Copy to clipboard: Copier dans le presse-papier
     Could not share document: Le document n'a pu être partagé
     Could not get share link: Le lien de partage n'a pu être récupéré
-    Could not unshare document: Le partage du document n'a pu être interompu
+    Could not unshare document: Le partage du document n'a pu être interrompu
     Link copied: Lien copié
 </i18n>
 <script>
