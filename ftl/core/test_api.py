@@ -9,14 +9,14 @@ from unittest.mock import patch
 from uuid import UUID
 
 from django.contrib import messages
-from django.db import transaction, DEFAULT_DB_ALIAS
+from django.db import DEFAULT_DB_ALIAS
 from django.http import HttpRequest
 from django.test import override_settings
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 import core
-from core.models import FTLDocument, FTLFolder
+from core.models import FTLDocument, FTLFolder, FTLDocumentSharing
 from core.tasks import apply_ftl_processing
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import (
@@ -26,6 +26,7 @@ from ftests.tools.setup_helpers import (
     setup_document,
     setup_folder,
     setup_temporary_file,
+    setup_document_share,
 )
 from ftl import celery
 from ftl.enums import FTLStorages, FTLPlugins
@@ -571,6 +572,100 @@ class DocumentsSearchTests(APITestCase):
         self.assertEqual(search_result.data["count"], 1)
         self.assertEqual(len(search_result.data["results"]), 1)
         self.assertEqual(search_result.data["results"][0]["title"], "bingo!")
+
+
+class DocumentSharingTests(APITestCase):
+    def setUp(self):
+        self.org = setup_org()
+        setup_admin(self.org)
+        self.user = setup_user(self.org)
+
+        self.doc = setup_document(self.org, self.user)
+        self.doc_bis = setup_document(self.org, self.user, title=tv.DOCUMENT2_TITLE)
+
+        self.client.login(
+            request=HttpRequest(), email=tv.USER1_EMAIL, password=tv.USER1_PASS
+        )
+
+    def test_share_document(self):
+        client_post = self.client.post(
+            f"/app/api/v1/documents/{self.doc.pid}/share", format="json"
+        )
+
+        self.assertEqual(client_post.status_code, status.HTTP_201_CREATED)
+        client_doc_share = client_post.data
+        self.assertIsNotNone(client_doc_share["pid"])
+        self.assertIsNotNone(client_doc_share["public_url"])
+        self.assertIn(
+            f"/app/share/{client_doc_share['pid']}", client_doc_share["public_url"]
+        )
+        ftl_document_sharing = FTLDocumentSharing.objects.get(
+            pid=client_doc_share["pid"]
+        )
+        self.assertEqual(ftl_document_sharing.ftl_doc, self.doc)
+
+    def test_get_document_share_links(self):
+        share_doc = setup_document_share(self.doc)
+
+        client_get = self.client.get(
+            f"/app/api/v1/documents/{self.doc.pid}/share", format="json"
+        )
+
+        self.assertEqual(client_get.status_code, status.HTTP_200_OK)
+        client_doc_shares = client_get.data
+        self.assertEqual(client_doc_shares["count"], 1)
+        self.assertEqual(client_doc_shares["results"][0]["pid"], str(share_doc.pid))
+
+    def test_update_document_share_link(self):
+        share_doc = setup_document_share(self.doc)
+
+        client_patch = self.client.patch(
+            f"/app/api/v1/documents/{self.doc.pid}/share/{share_doc.pid}",
+            {"note": "fakeNote", "expire_at": "2019-11-18T00:42:42.242424Z"},
+            format="json",
+        )
+
+        self.assertEqual(client_patch.status_code, status.HTTP_200_OK)
+        client_doc_shares = client_patch.data
+        self.assertEqual(client_doc_shares["pid"], str(share_doc.pid))
+        self.assertEqual(client_doc_shares["note"], "fakeNote")
+        self.assertEqual(client_doc_shares["expire_at"], "2019-11-18T00:42:42.242424Z")
+
+    def test_unshare_document(self):
+        share_doc = setup_document_share(self.doc)
+
+        client_delete = self.client.delete(
+            f"/app/api/v1/documents/{self.doc.pid}/share/{share_doc.pid}",
+            format="json",
+        )
+
+        self.assertEqual(client_delete.status_code, status.HTTP_204_NO_CONTENT)
+
+        with self.assertRaises(core.models.FTLDocumentSharing.DoesNotExist):
+            FTLDocumentSharing.objects.get(pid=share_doc.pid)
+
+    def test_cant_share_not_owned_doc(self):
+        org_bis = setup_org(name=tv.ORG_NAME_2, slug=tv.ORG_SLUG_2)
+        admin_bis = setup_admin(org_bis, tv.ADMIN2_EMAIL)
+        doc_bis = setup_document(org_bis, admin_bis)
+
+        client_post = self.client.post(
+            f"/app/api/v1/documents/{doc_bis.pid}/share", format="json"
+        )
+
+        self.assertEqual(client_post.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_cant_get_shares_for_not_owned_doc(self):
+        org_bis = setup_org(name=tv.ORG_NAME_2, slug=tv.ORG_SLUG_2)
+        admin_bis = setup_admin(org_bis, tv.ADMIN2_EMAIL)
+        doc_bis = setup_document(org_bis, admin_bis)
+        share_doc_bis = setup_document_share(doc_bis)
+
+        client_get = self.client.get(
+            f"/app/api/v1/documents/{share_doc_bis.pid}/share", format="json"
+        )
+
+        self.assertEqual(client_get.status_code, status.HTTP_404_NOT_FOUND)
 
 
 class FoldersTests(APITestCase):

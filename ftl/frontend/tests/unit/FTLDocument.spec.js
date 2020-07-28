@@ -64,6 +64,7 @@ describe("FTLDocument template", () => {
     delete document_props_to_test.note;
     delete document_props_to_test.created;
     delete document_props_to_test.ftl_folder;
+    delete document_props_to_test.is_shared;
     Object.values(document_props_to_test).forEach(function (documentData) {
       expect(wrapper.html()).toContain(documentData);
     });

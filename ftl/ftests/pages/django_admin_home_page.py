@@ -2,6 +2,7 @@
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
 from selenium.webdriver.support.select import Select
 
+from core.models import FTLOrg
 from ftests.pages.base_page import BasePage
 from ftests.tools import test_values as tv
 
@@ -18,7 +19,7 @@ class AdminHomePage(BasePage):
     org_slug_input = "#id_slug"
 
     create_user_link = ".model-ftluser a.addlink"
-    org_name_select = "#id_org"
+    org_id_input = "#id_org"
     user_email_input = "#id_email"
     user_password_input = "#id_password1"
     user_password_confirmation_input = "#id_password2"
@@ -43,7 +44,7 @@ class AdminHomePage(BasePage):
         password=tv.USER1_PASS,
         is_admin=False,
     ):
-        org_name_select = self.get_elem(self.org_name_select)
+        org_name_input = self.get_elem(self.org_id_input)
         user_email_input = self.get_elem(self.user_email_input)
         user_password_input = self.get_elem(self.user_password_input)
         user_password_confirmation_input = self.get_elem(
@@ -51,7 +52,8 @@ class AdminHomePage(BasePage):
         )
         submit_input = self.get_elem(self.submit_input)
 
-        Select(org_name_select).select_by_visible_text(org_slug)
+        org_id = FTLOrg.objects.get(slug=org_slug).id
+        org_name_input.send_keys(org_id)
         user_email_input.send_keys(email)
         user_password_input.send_keys(password)
         user_password_confirmation_input.send_keys(password)

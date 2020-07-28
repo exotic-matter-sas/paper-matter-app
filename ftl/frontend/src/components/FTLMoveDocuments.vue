@@ -60,7 +60,7 @@
     current location: emplacement actuel
     No folder selected: Aucun dossier sélectionné
     Document moved successfully.: Le document a été déplacé avec succès.
-    "No move needed. | One document moved successfully. | {n} documents moved successfully.": "Aucun déplacement nécessaire. | Un document déplacé. | {n} documents déplacés."
+    "No move needed | One document moved successfully | {n} documents moved successfully": "Aucun déplacement nécessaire | Un document déplacé | {n} documents déplacés"
     "No document could be moved. | One document moved successfully ({remain} couldn't). | {n} documents moved successfully ({remain} couldn't).": "Aucun document n'a pu être déplacé. | Un document déplacé ({remain} en erreur). | {n} documents déplacés ({remain} en erreur)."
     Could not move document.: Le document n'a pu être déplacé.
 </i18n>
@@ -147,7 +147,7 @@ export default {
             // nb could be equal to 0 due decrement which happen when folder is moved to its current location
             this.mixinAlert(
               this.$tc(
-                "No move needed. | One document moved successfully. | {n} documents moved successfully.",
+                "No move needed | One document moved successfully | {n} documents moved successfully",
                 responses.length
               )
             );

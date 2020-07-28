@@ -34,6 +34,7 @@ module.exports = {
     config.entry("common_logged_in").add("@/styles/common_logged_in.scss");
     config.entry("common_logged_out").add("@/styles/common_logged_out.scss");
     config.entry("account").add("@/styles/account.scss");
+    config.entry("share_doc").add("@/styles/share_doc.scss");
 
     // Built app broken if omitted
     config.optimization.splitChunks(false);
