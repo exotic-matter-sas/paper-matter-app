@@ -166,7 +166,7 @@ msgstr "Document introuvable"
 
 #: core/templates/core/share_doc_404.html:24
 msgid "Nothing there..."
-msgstr "Il n'y a rien ici..."
+msgstr "Il n'y a rien par ici..."
 
 #: core/templates/core/share_doc_404.html:33
 msgid ""
