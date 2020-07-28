@@ -7,3 +7,13 @@
 @import "~bootstrap/scss/functions";
 @import "~bootstrap/scss/variables";
 @import "~bootstrap/scss/mixins";
+
+main {
+    width: 100%;
+}
+
+@include media-breakpoint-up(sm) {
+    main {
+        width: 75% !important;
+    }
+}

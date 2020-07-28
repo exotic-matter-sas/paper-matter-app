@@ -154,29 +154,26 @@ msgstr "Télécharger"
 #: .\core\templates\core\share_doc.html:43
 msgid ""
 "\n"
-"                        Viewer not available for this document type, "
-"download the document instead.\n"
-"                    "
+"Preview unavailable for this document."
 msgstr ""
 "\n"
-"Visionneuse non disponible pour ce type de document, téléchargez plutôt le "
-"document."
+"Prévisualisation indisponible pour ce document."
 
 #: .\core\templates\core\share_doc_404.html:6
 msgid "Document Not found"
 msgstr "Document introuvable"
 
 #: .\core\templates\core\share_doc_404.html:24
-msgid "404 Not Found"
-msgstr "Erreur 404 - Page non trouvée"
+msgid "Nothing there..."
+msgstr "Il n'y a rien ici..."
 
 #: .\core\templates\core\share_doc_404.html:34
 msgid ""
 "\n"
-"                    The document was not found, or the sharing might have "
-"been revoked. Please contact the owner.\n"
+"                    The document was not found, the sharing might have "
+"been revoked.<br/> Please contact the sharer.\n"
 "                "
 msgstr ""
 "\n"
-"Le document n’a pas été trouvé, ou le partage pourrait avoir été révoqué. "
-"Veuillez contacter le propriétaire."
+"Le document n’a pas été trouvé, le partage pourrait avoir été révoqué.<br/> "
+"Veuillez contacter la personne à l'origine du partage."
