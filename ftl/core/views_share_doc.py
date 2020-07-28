@@ -10,6 +10,7 @@ from django.utils.text import slugify
 from django.views import View
 from django.views.generic.base import ContextMixin
 
+from core.mimes import mimetype_to_ext
 from core.models import FTLDocumentSharing
 from core.views import DownloadView
 
@@ -34,6 +35,7 @@ class ViewSharedDocument(ContextMixin, View):
         context = self.get_context_data()
         context["force_refresh_id"] = int(datetime.utcnow().timestamp())
         context["share_doc"] = ftl_document_sharing
+        context["doc_ext"] = mimetype_to_ext(ftl_document_sharing.ftl_doc.type)[1:]  # remove the dot from extension
         return render(request, "core/share_doc.html", context)
 
 
