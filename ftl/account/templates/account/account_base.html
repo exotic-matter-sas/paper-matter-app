@@ -99,7 +99,7 @@
                                 {% if ftl_account.otp_warning %}
                                     <span class="badge badge-danger badge-pill otp-warning">!</span>{% endif %}
                             </a>
-                            <a href="{% url 'oauth2_provider:list' %}"
+                            <a href="{% url 'oauth2_provider:authorized-token-list' %}"
                                class="{% if 'oauth2_provider' in view_name %}active {% endif %}list-group-item list-group-item-action">
                                 {% trans 'Applications and API' %}</a>
                             <a href="{% url 'account_import_export' %}"

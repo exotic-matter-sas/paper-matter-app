@@ -1,0 +1,57 @@
+{% extends "oauth2_provider/base.html" %}
+
+{% load i18n %}
+{% block content %}
+    <div class="row no-gutters">
+        <div class="col text-justify">
+            <h3 class="text-primary">{% trans "Your applications" %}</h3>
+            <p class="font-italic">
+                {% trans "Manage applications accessing your account." %}
+            </p>
+
+            <p class="highlight">
+                {% blocktrans %}
+                    Please exercise caution when granting access to third-party apps.
+                    Apps will be able to access all documents in your account.
+                {% endblocktrans %}
+            </p>
+
+            <div>
+                {% for authorized_token in authorized_tokens %}
+                    <div class="my-2 p-2 border rounded d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-center ">
+                            <div>
+                                <strong>{{ authorized_token.application }}</strong>
+                            </div>
+                            <div>
+                                <span class="badge badge-success">Enabled</span>
+                            </div>
+                        </div>
+                        <div class="my-2">
+                            <ul class="list-group list-group-horizontal-sm">
+                                {% for scope_name, scope_description in authorized_token.scopes.items %}
+                                    <li class="list-group-item">{{ scope_description }}</li>
+                                {% endfor %}
+                            </ul>
+
+
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                                                        <span class="text-muted font-italic"
+                                                              title="{% trans 'Added on' %}">{{ authorized_token.created }}</span>
+                            <a class="btn btn-sm btn-danger"
+                               href="{% url 'oauth2_provider:authorized-token-delete' authorized_token.pk %}">{% trans 'Revoke' %}</a>
+                        </div>
+                    </div>
+                {% empty %}
+                    {% trans "There are no authorized app yet." %}
+                {% endfor %}
+            </div>
+
+            {#            <div>#}
+            {#                <p><a href="{% url "oauth2_provider:list" %}">For developers, you can create your own API key.</a></p>#}
+            {#            </div>#}
+        </div>
+    </div>
+{% endblock %}

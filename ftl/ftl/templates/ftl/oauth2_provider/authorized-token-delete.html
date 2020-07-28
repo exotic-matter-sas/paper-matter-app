@@ -1,0 +1,30 @@
+{% extends "oauth2_provider/base.html" %}
+{% load add_attr %}
+{% load i18n %}
+
+{% block content %}
+    <div class="m-4">
+        <h4 class="text-primary text-center">
+            {% blocktrans with object.application as name %}
+                Are you sure you want to revoke <br/> "{{ name }}"?
+            {% endblocktrans %}
+        </h4>
+
+        <p class="text-center">
+            <strong>
+                {% blocktrans with object.application as name %}
+                    The app "{{ name }}" will not be able to access your account anymore.
+                {% endblocktrans %}
+            </strong>
+        </p>
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="mt-4 d-flex justify-content-around">
+                <a class="btn btn-secondary"
+                   href="{% url "oauth2_provider:authorized-token-list" %}">{% trans "Cancel" %}</a>
+                <input type="submit" class="btn btn-large btn-danger" value="{% trans "Revoke" %}"/>
+            </div>
+        </form>
+    </div>
+{% endblock %}

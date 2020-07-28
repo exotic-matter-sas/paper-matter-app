@@ -229,7 +229,10 @@ SIMPLE_JWT = {
 # OAuth2 Provider
 OAUTH2_PROVIDER = {
     # TODO to be completed with more
-    "SCOPES": {"read": "Read scope", "write": "Write scope"}
+    "SCOPES": {
+        "read": "Read access to your account",
+        "write": "Write access to your account",
+    }
 }
 
 WEBPACK_LOADER = {
