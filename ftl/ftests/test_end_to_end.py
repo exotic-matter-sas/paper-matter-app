@@ -13,6 +13,7 @@ from django_otp.middleware import OTPMiddleware
 from django_otp.oath import TOTP
 from selenium.common.exceptions import NoSuchElementException
 
+from core.processing.ftl_processing import FTLDocumentProcessing
 from core.tasks import apply_ftl_processing
 from ftests.pages.account_pages import AccountPages
 from ftests.pages.base_page import NODE_SERVER_RUNNING
@@ -32,6 +33,7 @@ from ftests.test_account import (
     TotpDevice2FATests,
 )
 from ftests.tools import test_values as tv
+from ftests.tools.decorators import delay_method_decorator
 from ftests.tools.setup_helpers import (
     setup_org,
     setup_admin,
@@ -252,6 +254,13 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage, DocumentViewerModal):
         self.assertEqual(new_title, self.get_elem_text(self.first_document_title))
 
 
+# Fake a slow processing for TikaDocumentIndexationEdgeCases
+delayed_apply_processing = delay_method_decorator(
+    FTLDocumentProcessing.apply_processing
+)
+
+
+@patch.object(FTLDocumentProcessing, "apply_processing", delayed_apply_processing)
 @override_settings(CELERY_BROKER_URL="memory://localhost")
 class TikaDocumentIndexationEdgeCases(
     LoginPage, HomePage, DocumentViewerModal, MoveDocumentsModal
@@ -300,16 +309,6 @@ class TikaDocumentIndexationEdgeCases(
 
         # User wait for document to be indexed
         self.wait_celery_queue_to_be_empty(self._worker)
-
-        # User search for document using its old title
-        self.search_documents(old_title)
-
-        # No document appears
-        self.assertEqual(
-            len(self.get_elems(self.documents_thumbnails)),
-            0,
-            "Document should have been renamed and not appears in the list",
-        )
 
         # User search for document using its new title
         self.search_documents(new_title)

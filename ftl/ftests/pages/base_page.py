@@ -199,14 +199,14 @@ class BasePage(LIVE_SERVER):
         if elem.is_displayed() == is_visible:
             return elem
         else:
-            raise NoSuchElementException()
+            raise NoSuchElementException(msg=f"{css_selector} not found")
 
     def get_elems(self, css_selector, is_visible=True):
         elems = self.browser.find_elements_by_css_selector(css_selector)
         if elems and elems[0].is_displayed() == is_visible:
             return elems
         else:
-            raise NoSuchElementException()
+            raise NoSuchElementException(msg=f"{css_selector} not found")
 
     def get_elem_text(
         self, css_selector, is_visible=True, web_element_instead_of_css_selector=False
@@ -237,7 +237,7 @@ class BasePage(LIVE_SERVER):
                 )
             return elems_text
         else:
-            raise NoSuchElementException()
+            raise NoSuchElementException(msg=f"{css_selector} not found")
 
     @staticmethod
     def _wait_for_method_to_return(
