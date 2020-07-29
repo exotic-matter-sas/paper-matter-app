@@ -253,7 +253,9 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage, DocumentViewerModal):
 
 
 @override_settings(CELERY_BROKER_URL="memory://localhost")
-class TikaDocumentIndexationEdgeCases(LoginPage, HomePage, DocumentViewerModal, MoveDocumentsModal):
+class TikaDocumentIndexationEdgeCases(
+    LoginPage, HomePage, DocumentViewerModal, MoveDocumentsModal
+):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -288,7 +290,7 @@ class TikaDocumentIndexationEdgeCases(LoginPage, HomePage, DocumentViewerModal, 
                 "tools",
                 "test_documents",
                 old_title + ".pdf",
-                )
+            )
         )
 
         # User rename document from list
@@ -303,15 +305,21 @@ class TikaDocumentIndexationEdgeCases(LoginPage, HomePage, DocumentViewerModal, 
         self.search_documents(old_title)
 
         # No document appears
-        self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 0,
-                         "Document should have been renamed and not appears in the list")
+        self.assertEqual(
+            len(self.get_elems(self.documents_thumbnails)),
+            0,
+            "Document should have been renamed and not appears in the list",
+        )
 
         # User search for document using its new title
         self.search_documents(new_title)
 
         # The document has been properly renamed
-        self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1,
-                         "Document should have been renamed and appears in the list")
+        self.assertEqual(
+            len(self.get_elems(self.documents_thumbnails)),
+            1,
+            "Document should have been renamed and appears in the list",
+        )
 
     def test_search_a_doc_annotated_during_its_processing(self):
         # User upload a document
@@ -331,8 +339,11 @@ class TikaDocumentIndexationEdgeCases(LoginPage, HomePage, DocumentViewerModal, 
         self.search_documents(new_doc_note)
 
         # The document has been properly renamed
-        self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1,
-                         "Document should have been renamed and appears in the list")
+        self.assertEqual(
+            len(self.get_elems(self.documents_thumbnails)),
+            1,
+            "Document should have been renamed and appears in the list",
+        )
 
     def test_move_a_doc_during_its_processing(self):
         # User upload a document
@@ -344,7 +355,7 @@ class TikaDocumentIndexationEdgeCases(LoginPage, HomePage, DocumentViewerModal, 
                 "tools",
                 "test_documents",
                 doc_title + ".pdf",
-                )
+            )
         )
 
         # User move document during its processing
@@ -359,8 +370,11 @@ class TikaDocumentIndexationEdgeCases(LoginPage, HomePage, DocumentViewerModal, 
         # User see the documents in the proper folder
         self.get_elem(self.folders_list_buttons).click()
         self.wait_documents_list_loaded()
-        self.assertCountEqual([doc_title], self.get_elems_text(self.documents_titles),
-                              "Document should have been moved to proper folder")
+        self.assertCountEqual(
+            [doc_title],
+            self.get_elems_text(self.documents_titles),
+            "Document should have been moved to proper folder",
+        )
 
 
 class UserSetupAll2FA(LoginPage, AccountPages):
