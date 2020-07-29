@@ -20,6 +20,7 @@ from ftests.pages.django_admin_home_page import AdminHomePage
 from ftests.pages.django_admin_login_page import AdminLoginPage
 from ftests.pages.document_viewer_modal import DocumentViewerModal
 from ftests.pages.home_page import HomePage
+from ftests.pages.move_documents_modal import MoveDocumentsModal
 from ftests.pages.setup_pages import SetupPages
 from ftests.pages.signup_pages import SignupPages
 from ftests.pages.user_login_page import LoginPage
@@ -249,6 +250,117 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage, DocumentViewerModal):
         # the second uploaded document appears in search results
         self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
         self.assertEqual(new_title, self.get_elem_text(self.first_document_title))
+
+
+@override_settings(CELERY_BROKER_URL="memory://localhost")
+class TikaDocumentIndexationEdgeCases(LoginPage, HomePage, DocumentViewerModal, MoveDocumentsModal):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        app.control.purge()
+        cls._worker = app.Worker(app=app, pool="solo", concurrency=1)
+        cls._thread = threading.Thread(target=cls._worker.start)
+        cls._thread.daemon = True
+        cls._thread.start()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls._worker.stop()
+        super().tearDownClass()
+
+    def setUp(self, **kwargs):
+        # first org, admin, user are already created, user is already logged on home page
+        super().setUp()
+        self.org = setup_org()
+        setup_admin(self.org)
+        self.user = setup_user(self.org)
+        self.folder = setup_folder(self.org)
+        self.visit(LoginPage.url)
+        self.log_user()
+
+    def test_search_a_doc_renamed_during_its_processing(self):
+        # User upload a document
+        old_title = "green"
+        self.upload_documents(
+            os.path.join(
+                settings.BASE_DIR,
+                "ftests",
+                "tools",
+                "test_documents",
+                old_title + ".pdf",
+                )
+        )
+
+        # User rename document from list
+        doc_to_rename = self.get_elem(self.first_document_title)
+        new_title = "bingo!"
+        self.rename_document_from_list(doc_to_rename, new_title)
+
+        # User wait for document to be indexed
+        self.wait_celery_queue_to_be_empty(self._worker)
+
+        # User search for document using its old title
+        self.search_documents(old_title)
+
+        # No document appears
+        self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 0,
+                         "Document should have been renamed and not appears in the list")
+
+        # User search for document using its new title
+        self.search_documents(new_title)
+
+        # The document has been properly renamed
+        self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1,
+                         "Document should have been renamed and appears in the list")
+
+    def test_search_a_doc_annotated_during_its_processing(self):
+        # User upload a document
+        self.upload_documents()
+
+        # User annotate doc just after upload
+        self.open_first_document()
+
+        new_doc_note = "bingo!"
+        self.annotate_document(new_doc_note)
+        self.close_document()
+
+        # User wait for document to be indexed
+        self.wait_celery_queue_to_be_empty(self._worker)
+
+        # User search for document using its note
+        self.search_documents(new_doc_note)
+
+        # The document has been properly renamed
+        self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1,
+                         "Document should have been renamed and appears in the list")
+
+    def test_move_a_doc_during_its_processing(self):
+        # User upload a document
+        doc_title = "green"
+        self.upload_documents(
+            os.path.join(
+                settings.BASE_DIR,
+                "ftests",
+                "tools",
+                "test_documents",
+                doc_title + ".pdf",
+                )
+        )
+
+        # User move document during its processing
+        self.open_first_document()
+        self.get_elem(self.move_document_button).click()
+        self.move_document(self.folder.name)
+        self.close_document()
+
+        # User wait for document to be indexed
+        self.wait_celery_queue_to_be_empty(self._worker)
+
+        # User see the documents in the proper folder
+        self.get_elem(self.folders_list_buttons).click()
+        self.wait_documents_list_loaded()
+        self.assertCountEqual([doc_title], self.get_elems_text(self.documents_titles),
+                              "Document should have been moved to proper folder")
 
 
 class UserSetupAll2FA(LoginPage, AccountPages):
