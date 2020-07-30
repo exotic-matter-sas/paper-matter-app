@@ -1,7 +1,6 @@
 #  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
-
-from concurrent.futures import wait as wait_futures
+import uuid
 from unittest.mock import Mock, patch, call
 
 from django.test import TestCase
@@ -9,11 +8,13 @@ from langid.langid import LanguageIdentifier
 from tika import parser
 
 from core.errors import PluginUnsupportedStorage
+from core.models import FTLDocument
 from core.processing import ftl_processing
 from core.processing.ftl_processing import (
     FTLDocumentProcessing,
     FTLDocProcessingBase,
     FTLOCRBase,
+    atomic_ftl_doc_update,
 )
 from core.processing.proc_lang import FTLLangDetectorLangId
 from core.processing.proc_pgsql_tsvector import (
@@ -185,38 +186,49 @@ class DocumentProcessingTests(TestCase):
 
 
 class ProcLangTests(TestCase):
+    @patch.object(FTLDocument, "objects")
     @patch.object(LanguageIdentifier, "from_modelstring")
-    def test_process(self, mocked_from_modelstring):
+    def test_process(self, mocked_from_modelstring, mocked_select_ftl_doc):
         lang = FTLLangDetectorLangId()
         mocked_classify = lang.identifier.classify
         mocked_classify.return_value = ("fr", 1.0)
 
         doc = Mock()
+        mocked_select_ftl_doc.select_for_update().get.return_value = doc
+
         lang.process(doc, True)
 
         mocked_classify.assert_called_once_with(doc.content_text)
         self.assertEqual("french", doc.language)
         doc.save.assert_called_once()
 
+    @patch.object(FTLDocument, "objects")
     @patch.object(LanguageIdentifier, "from_modelstring")
-    def test_process_unsupported_lang(self, mocked_from_modelstring):
+    def test_process_unsupported_lang(
+        self, mocked_from_modelstring, mocked_select_ftl_doc
+    ):
         lang = FTLLangDetectorLangId()
         mocked_classify = lang.identifier.classify
         mocked_classify.return_value = ("zz", 1.0)
 
         doc = Mock()
+        mocked_select_ftl_doc.select_for_update().get.return_value = doc
         lang.process(doc, True)
 
         mocked_classify.assert_called_once_with(doc.content_text)
         doc.save.assert_called_once()
 
+    @patch.object(FTLDocument, "objects")
     @patch.object(LanguageIdentifier, "from_modelstring")
-    def test_process_langid_confidence_too_low(self, mocked_from_modelstring):
+    def test_process_langid_confidence_too_low(
+        self, mocked_from_modelstring, mocked_select_ftl_doc
+    ):
         lang = FTLLangDetectorLangId()
         mocked_classify = lang.identifier.classify
         mocked_classify.return_value = ("en", 0.1)
 
         doc = Mock()
+        mocked_select_ftl_doc.select_for_update().get.return_value = doc
         lang.process(doc, True)
 
         mocked_classify.assert_called_once_with(doc.content_text)
@@ -236,12 +248,14 @@ class ProcLangTests(TestCase):
 
 
 class ProcTikaTests(TestCase):
+    @patch.object(FTLDocument, "objects")
     @patch.object(parser, "from_buffer")
-    def test_process(self, mocked_from_buffer):
+    def test_process(self, mocked_from_buffer, mocked_select_ftl_doc):
         doc = Mock()
         doc.binary = Mock()
         doc.binary.open.return_value.__enter__ = Mock()
         doc.binary.open.return_value.__exit__ = Mock()
+        mocked_select_ftl_doc.select_for_update().get.return_value = doc
 
         indexed_text = {"content": "indexed text", "metadata": {"xmpTPg:NPages": 42}}
         mocked_from_buffer.return_value = indexed_text
@@ -268,20 +282,24 @@ class ProcTikaTests(TestCase):
 
 
 class ProcPGsqlTests(TestCase):
-    def test_process(self):
+    @patch.object(FTLDocument, "objects")
+    def test_process(self, mocked_select_ftl_doc):
         pgsql = FTLSearchEnginePgSQLTSVector()
         doc = Mock()
         doc.tsvector = None
+        mocked_select_ftl_doc.select_for_update().get.return_value = doc
         pgsql.process(doc, False)
 
         self.assertEqual(doc.tsvector, SEARCH_VECTOR)
         doc.save.assert_called_once()
 
-    def test_process_without_lang(self):
+    @patch.object(FTLDocument, "objects")
+    def test_process_without_lang(self, mocked_select_ftl_doc):
         pgsql = FTLSearchEnginePgSQLTSVector()
         doc = Mock()
         doc.tsvector = None
         doc.language = None
+        mocked_select_ftl_doc.select_for_update().get.return_value = doc
         pgsql.process(doc, False)
 
         self.assertEqual(doc.tsvector, SEARCH_VECTOR)
@@ -289,8 +307,9 @@ class ProcPGsqlTests(TestCase):
 
 
 class FTLOCRBaseTests(TestCase):
+    @patch.object(FTLDocument, "objects")
     @patch.object(FTLOCRBase, "_extract_text")
-    def test_process(self, mocked_extract_text):
+    def test_process(self, mocked_extract_text, mocked_select_ftl_doc):
         expected_extracted_text = "bingo!"
         mocked_extract_text.return_value = expected_extracted_text
         base_ocr = FTLOCRBase()
@@ -299,6 +318,9 @@ class FTLOCRBaseTests(TestCase):
         # When doc do not have a content text
         mocked_doc = Mock()
         mocked_doc.content_text = ""
+        mocked_doc.ocrized = False
+
+        mocked_select_ftl_doc.select_for_update().get.return_value = mocked_doc
 
         base_ocr.process(mocked_doc, False)
 
@@ -332,3 +354,27 @@ class FTLOCRBaseTests(TestCase):
         # Then PluginUnsupportedStorage is raised
         with self.assertRaises(PluginUnsupportedStorage):
             base_ocr.process(mocked_doc, False)
+
+    @patch.object(FTLDocument, "objects")
+    def test_atomic_ftl_doc_update(self, mocked_select_ftl_doc):
+        uuid_ = uuid.uuid4()
+        doc = Mock()
+        doc.pid = uuid_
+        doc.field_1 = 123
+        doc.field_2 = "Test"
+        doc.field_3 = False
+        mocked_select_ftl_doc.select_for_update().get.return_value = doc
+
+        atomic_ftl_doc_update(
+            uuid_,
+            {"field_1": 456, "field_2": "NoTest", "field_3": True, "field_4": 12.4},
+        )
+
+        self.assertEqual(doc.field_1, 456)
+        self.assertEqual(doc.field_2, "NoTest")
+        self.assertEqual(doc.field_3, True)
+        self.assertEqual(doc.field_4, 12.4)
+        mocked_select_ftl_doc.select_for_update().get.assert_called_once_with(pid=uuid_)
+        doc.save.assert_called_once_with(
+            update_fields=["field_1", "field_2", "field_3", "field_4"]
+        )

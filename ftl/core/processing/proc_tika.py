@@ -5,7 +5,7 @@ import logging
 
 from tika import parser
 
-from core.processing.ftl_processing import FTLDocProcessingBase
+from core.processing.ftl_processing import FTLDocProcessingBase, atomic_ftl_doc_update
 
 logger = logging.getLogger(__name__)
 
@@ -37,12 +37,15 @@ class FTLTextExtractionTika(FTLDocProcessingBase):
                 parsed_txt = parser.from_buffer(ff.read())
 
             if "metadata" in parsed_txt and "xmpTPg:NPages" in parsed_txt["metadata"]:
-                ftl_doc.count_pages = int(parsed_txt["metadata"]["xmpTPg:NPages"])
-                ftl_doc.save()
+                atomic_ftl_doc_update(
+                    ftl_doc.pid,
+                    {"count_pages": int(parsed_txt["metadata"]["xmpTPg:NPages"])},
+                )
             else:
                 logger.warning(
                     f"{self.log_prefix} Pages number can't be retrieved for document {ftl_doc.pid}"
                 )
+
         else:
             logger.debug(
                 f"{self.log_prefix} Skipping Tika extract (page count) for document {ftl_doc.pid}"
@@ -54,8 +57,9 @@ class FTLTextExtractionTika(FTLDocProcessingBase):
                     parsed_txt = parser.from_buffer(ff.read())
 
             if "content" in parsed_txt and parsed_txt["content"]:
-                ftl_doc.content_text = parsed_txt["content"].strip()
-                ftl_doc.save()
+                atomic_ftl_doc_update(
+                    ftl_doc.pid, {"content_text": parsed_txt["content"].strip()}
+                )
         else:
             logger.debug(
                 f"{self.log_prefix} Skipping Tika extract (text) for document {ftl_doc.pid}"

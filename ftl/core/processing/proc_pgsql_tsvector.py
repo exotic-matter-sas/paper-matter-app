@@ -6,7 +6,7 @@ import logging
 from django.contrib.postgres.search import SearchVector
 from django.db.models import F
 
-from core.processing.ftl_processing import FTLDocProcessingBase
+from core.processing.ftl_processing import FTLDocProcessingBase, atomic_ftl_doc_update
 
 logger = logging.getLogger(__name__)
 
@@ -25,8 +25,7 @@ class FTLSearchEnginePgSQLTSVector(FTLDocProcessingBase):
 
     def process(self, ftl_doc, force):
         if force or not ftl_doc.tsvector:
-            ftl_doc.tsvector = SEARCH_VECTOR
-            ftl_doc.save()
+            atomic_ftl_doc_update(ftl_doc.pid, {"tsvector": SEARCH_VECTOR})
         else:
             logger.debug(
                 f"{self.log_prefix} Skipping tsvector compute for document {ftl_doc.pid}"
