@@ -40,6 +40,9 @@ class FTLAdminIPFilter:
             request, proxy_count=self.proxy_count, proxy_order=self.metas
         )
 
+        if not client_ip:
+            return True
+
         for ip_range in self.ips:
             if ipaddress.ip_address(client_ip) in ipaddress.ip_network(ip_range):
                 return False
