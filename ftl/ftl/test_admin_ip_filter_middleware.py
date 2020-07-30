@@ -29,12 +29,17 @@ class TestFTLAdminIPFilter(TestCase):
         )
         self.assertEqual(response.status_code, 200)
 
+    @override_settings(FTL_ADMIN_ENABLE_IP_PROTECTION=False)
+    def test_not_blocking_when_disabled(self):
+        response = self.client.get(reverse_lazy("admin:login"), REMOTE_ADDR="128.0.0.1")
+        self.assertEqual(response.status_code, 200)
+
 
 @override_settings(FTL_ADMIN_ENABLE_IP_PROTECTION=True)
 @override_settings(FTL_ADMIN_IP_RANGE_ALLOWED=["127.0.0.1/32", "10.0.0.0/8"])
 @override_settings(FTL_ADMIN_IP_PROXY_COUNT=1)
 @override_settings(
-    FTL_ADMIN_IP_META_PRECEDENCE_ORDER=["HTTP_X_FORWARDED_FOR", "X_FORWARDED_FOR",]
+    FTL_ADMIN_IP_META_PRECEDENCE_ORDER=["HTTP_X_FORWARDED_FOR", "X_FORWARDED_FOR"]
 )
 class TestFTLAdminIPFilterForwardHeader(TestCase):
     def test_ip_header_forwarding_with_lb_not_blocked(self):
