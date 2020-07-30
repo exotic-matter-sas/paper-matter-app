@@ -24,6 +24,10 @@ class DocumentViewerModal(BasePage):
     pdf_viewer_iframe = "#document-viewer iframe"
     document_viewer_panel = "#document-viewer"
 
+    share_document_button = "#share-document"
+    validate_modal_button = "#"
+    unshare_modal_button = "#modal-document-sharing .modal-footer .btn-danger"
+
     def rename_document(self, document_name):
         self.wait_for_elem_to_show(self.rename_document_button)
         self.get_elem(self.rename_document_button).click()
@@ -46,3 +50,18 @@ class DocumentViewerModal(BasePage):
         self.get_elem(self.delete_document_button).click()
         self.accept_modal()
         self.wait_for_elem_to_disappear(self.page_body)
+
+    def share_document(self):
+        self.wait_for_elem_to_show(self.share_document_button)
+        self.get_elem(self.share_document_button).click()
+        self.wait_for_elem_to_show(self.modal_input)
+        self.wait_for_elem_text_not_to_be(self.modal_input, "")
+        link = self.get_elem_text(self.modal_input)
+        return link
+
+    def unshare_document(self):
+        self.wait_for_elem_to_show(self.share_document_button)
+        self.get_elem(self.share_document_button).click()
+        self.wait_for_elem_to_show(self.modal_input)
+        self.wait_for_elem_text_not_to_be(self.modal_input, "")
+        self.get_elem(self.unshare_modal_button).click()

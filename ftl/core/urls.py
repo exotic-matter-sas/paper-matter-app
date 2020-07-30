@@ -1,16 +1,37 @@
-#  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
+#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
 from django.urls import path
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-from . import views
+from . import views, views_share_doc
 
 urlpatterns = [
     path("", views.HomeView.as_view(), name="home"),
+    path(
+        "share/<uuid:pid>",
+        views_share_doc.ViewSharedDocument.as_view(),
+        name="view_sharing_doc",
+    ),
+    path(
+        "share/<uuid:pid>/download",
+        views_share_doc.DownloadSharedDocument.as_view(),
+        name="view_sharing_doc_download",
+    ),
+    path("uploads/<str:uuid>", views.DownloadView.as_view(), name="api_download_url"),
+    path(
+        "uploads/<str:uuid>/<str:name>",
+        views.ViewDocument.as_view(),
+        name="document_view",
+    ),
     path("api/v1/folders", views.FTLFolderList.as_view()),
     path("api/v1/folders/<int:id>", views.FTLFolderDetail.as_view()),
     path("api/v1/documents", views.FTLDocumentList.as_view()),
     path("api/v1/documents/<uuid:pid>", views.FTLDocumentDetail.as_view()),
+    path("api/v1/documents/<uuid:pid>/share", views.FTLDocumentSharingList.as_view()),
+    path(
+        "api/v1/documents/<uuid:pid>/share/<uuid:spid>",
+        views.FTLDocumentSharingDetail.as_view(),
+    ),
     path(
         "api/v1/documents/<uuid:pid>/thumbnail.png",
         views.FTLDocumentThumbnail.as_view(),

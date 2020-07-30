@@ -25,6 +25,7 @@ from ftests.tools.setup_helpers import (
     setup_document,
     setup_folder,
     setup_temporary_file,
+    setup_document_share,
 )
 from ftl import celery
 from ftl.settings import BASE_DIR
@@ -1142,6 +1143,41 @@ class DocumentViewerModalTests(
         self.assertCountEqual(
             [document.title], self.get_elems_text(self.documents_titles)
         )
+
+    @skipIf(
+        settings.DEV_MODE and not NODE_SERVER_RUNNING,
+        "Node not running, this test can't be run",
+    )
+    def test_share_document(self):
+        setup_document(self.org, self.user, binary=setup_temporary_file().name)
+        self.refresh_documents_list()
+        self.open_first_document()
+
+        share_doc_link = self.share_document()
+        self.assertIsNotNone(share_doc_link)
+
+        self.visit(share_doc_link, absolute_url=True)
+        self.wait_for_elem_to_show("#document-share-title")
+
+    @skipIf(
+        settings.DEV_MODE and not NODE_SERVER_RUNNING,
+        "Node not running, this test can't be run",
+    )
+    def test_unshare_document(self):
+        doc = setup_document(self.org, self.user, binary=setup_temporary_file().name)
+        doc_share = setup_document_share(doc)
+
+        self.visit(f"/app/share/{doc_share.pid}")
+        self.wait_for_elem_to_show("#document-share-title")
+
+        self.visit(HomePage.url)
+        self.refresh_documents_list()
+        self.open_first_document()
+
+        self.unshare_document()
+
+        self.visit(f"/app/share/{doc_share.pid}")
+        self.assertIn("not found", self.get_elem_text("body"))
 
 
 class ManageFoldersPageTests(LoginPage, ManageFolderPage):

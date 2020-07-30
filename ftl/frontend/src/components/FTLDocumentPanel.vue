@@ -5,7 +5,13 @@
 
 <template>
   <!-- Pdf viewer popup -->
-  <b-modal id="document-viewer" hide-footer centered @hidden="closeDocument">
+  <b-modal
+    id="document-viewer"
+    hide-footer
+    centered
+    @hidden="closeDocument"
+    @hide="viewerPdfJsUrl = null"
+  >
     <template slot="modal-header">
       <b-container>
         <h5 class="modal-title">
@@ -58,9 +64,9 @@
         >
           <div class="h-100 embed-responsive doc-pdf" id="pdfviewer">
             <iframe
-              v-if="currentOpenDoc.pid"
+              v-if="viewerPdfJsUrl"
               class="embed-responsive-item"
-              :src="viewerUrl"
+              :src="viewerPdfJsUrl"
             >
             </iframe>
           </div>
@@ -118,6 +124,17 @@
               >
                 {{ $t("Delete") }}
               </b-button>
+              <b-button
+                id="share-document"
+                class="mx-1 mb-1"
+                variant="success"
+                v-b-modal="'modal-document-sharing'"
+              >
+                <span v-if="currentOpenDoc.is_shared">{{
+                  $t("Get share link")
+                }}</span>
+                <span v-else>{{ $t("Share") }}</span>
+              </b-button>
             </b-col>
           </b-row>
           <b-row>
@@ -153,6 +170,13 @@
       :docs="[currentOpenDoc]"
       @event-document-deleted="documentDeleted"
     />
+
+    <FTLDocumentSharing
+      v-if="currentOpenDoc.pid"
+      :doc="currentOpenDoc"
+      @event-document-shared="documentShared(true)"
+      @event-document-unshared="documentShared(false)"
+    />
   </b-modal>
 </template>
 
@@ -168,6 +192,8 @@
     Thumbnail updated: Miniature mis à jour
     Unable to create thumbnail: Erreur lors de la génération de la miniature
     Unable to show document: Erreur lors de l'affichage du document
+    Get share link: Obtenir le lien de partage
+    Share: Partager
 </i18n>
 
 <script>
@@ -177,7 +203,7 @@ import FTLRenameDocument from "@/components/FTLRenameDocument";
 import FTLDeleteDocuments from "@/components/FTLDeleteDocuments";
 import FTLThumbnailGenMixin from "@/components/FTLThumbnailGenMixin";
 import FTLNote from "@/components/FTLNote";
-import { mapState } from "vuex";
+import FTLDocumentSharing from "@/components/FTLDocumentSharing";
 
 export default {
   name: "FTLDocumentPanel",
@@ -188,6 +214,7 @@ export default {
     FTLRenameDocument,
     FTLDeleteDocuments,
     FTLNote,
+    FTLDocumentSharing,
   },
 
   props: {
@@ -206,6 +233,7 @@ export default {
     return {
       currentOpenDoc: { path: [] },
       publicPath: process.env.BASE_URL,
+      viewerPdfJsUrl: "",
     };
   },
 
@@ -216,14 +244,6 @@ export default {
   computed: {
     isIOS: function () {
       return /iphone|ipad|ipod/i.test(window.navigator.userAgent.toLowerCase());
-    },
-    viewerUrl: function () {
-      return (
-        `/assets/pdfjs/web/viewer.html?file=` +
-        this.currentOpenDoc.download_url +
-        `#pagemode=none&search=` +
-        this.search
-      );
     },
     path: function () {
       let _path = this.currentOpenDoc.path.map((v) => {
@@ -252,6 +272,7 @@ export default {
         .get("/app/api/v1/documents/" + this.pid)
         .then((response) => {
           this.currentOpenDoc = response.data;
+          this.viewerPdfJsUrl = this.getViewerUrl();
 
           if (
             !response.data.thumbnail_available &&
@@ -269,6 +290,17 @@ export default {
         .catch((error) => {
           this.mixinAlert(this.$t("Unable to show document"), true);
         });
+    },
+
+    getViewerUrl: function () {
+      return (
+        `/assets/pdfjs/web/viewer.html?r=` +
+        new Date().getTime() +
+        `&file=` +
+        this.currentOpenDoc.download_url +
+        `#pagemode=none&search=` +
+        this.search
+      );
     },
 
     documentRenamed: function (event) {
@@ -290,6 +322,10 @@ export default {
       this.$emit("event-document-deleted", event);
     },
 
+    documentShared: function (val) {
+      this.currentOpenDoc.is_shared = val;
+    },
+
     closeDocument: function () {
       this.$bvModal.hide("document-viewer");
       this.$emit("event-document-panel-closed", {
@@ -301,6 +337,7 @@ export default {
   },
 };
 </script>
+
 <style lang="scss">
 // Don't use `scoped` on this style because the document viewer is styled from the main app component
 $document-viewer-padding: 2em;

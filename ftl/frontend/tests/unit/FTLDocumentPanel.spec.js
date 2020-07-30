@@ -18,6 +18,7 @@ import FTLMoveDocuments from "@/components/FTLMoveDocuments";
 import cloneDeep from "lodash.clonedeep";
 import storeConfig from "@/store/storeConfig";
 import Vuex from "vuex";
+import FTLDocumentSharing from "@/components/FTLDocumentSharing";
 
 // Create clean Vue instance and set installed package to avoid warning
 const localVue = createLocalVue();
@@ -70,6 +71,7 @@ const mockedOpenDocument = jest.fn();
 const mockedCreateThumbnailForDocument = jest.fn();
 const mockedDocumentNoteUpdated = jest.fn();
 const mockedDocumentRenamed = jest.fn();
+const mockedDocumentShared = jest.fn();
 
 const mountedMocks = {
   openDocument: mockedOpenDocument,
@@ -129,6 +131,12 @@ describe("FTLDocumentPanel computed", () => {
   let wrapper;
   let storeConfigCopy = cloneDeep(storeConfig);
   let store = new Vuex.Store(storeConfigCopy);
+  let userAgentMock = jest
+    .fn()
+    .mockReturnValue(
+      "Mozilla/5.0 (iPhone; CPU iPhone OS 12_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/12.0 Mobile/15A372 Safari/604.1"
+    );
+  Object.defineProperty(window.navigator, "userAgent", { get: userAgentMock });
   // defined const specific to this describe here
   beforeEach(() => {
     wrapper = shallowMount(FTLDocumentPanel, {
@@ -141,21 +149,24 @@ describe("FTLDocumentPanel computed", () => {
   });
 
   it("isIOS return proper value", async () => {
-    // TODO test main iOS user agent device here when we will be able to force recompute of computed
+    let testedResult = wrapper.vm.isIOS;
+
+    expect(testedResult).toBe(true);
+    // FIXME cant test more than one user agent, test not working if userAgent value is set after beforeEach (even with computed cache to false)
   });
 
-  it("viewer url returns proper value", () => {
+  it("getViewerUrl returns proper value", () => {
     const search_text = "my search";
     const document_pid = docProps.pid;
     wrapper.setData({ currentOpenDoc: docProps });
 
     // when (no search)
-    const testedValue = wrapper.vm.viewerUrl;
+    const testedValue = wrapper.vm.getViewerUrl();
     expect(testedValue).toContain(document_pid + "#pagemode=none&search=");
 
     // when (with search)
     wrapper.setProps({ pid: document_pid, search: search_text });
-    const testedValue_2 = wrapper.vm.viewerUrl;
+    const testedValue_2 = wrapper.vm.getViewerUrl();
 
     expect(testedValue_2).toContain(
       document_pid + "#pagemode=none&search=" + search_text
@@ -285,6 +296,20 @@ describe("FTLDocumentPanel methods", () => {
     expect(wrapper.vm.currentOpenDoc).toEqual(docProps);
   });
 
+  it("documentShared set currentOpenDoc.is_shared", async () => {
+    // when
+    wrapper.vm.documentShared(true);
+
+    // then
+    expect(wrapper.vm.currentOpenDoc.is_shared).toEqual(true);
+
+    // when
+    wrapper.vm.documentShared(false);
+
+    // then
+    expect(wrapper.vm.currentOpenDoc.is_shared).toEqual(false);
+  });
+
   it("closeDocument reset currentOpenDoc and hide document-viewer modal", async () => {
     // given
     wrapper.setData({ currentOpenDoc: tv.DOCUMENT_PROPS });
@@ -341,6 +366,7 @@ describe("Event received and handled by component", () => {
         {
           documentNoteUpdated: mockedDocumentNoteUpdated,
           documentRenamed: mockedDocumentRenamed,
+          documentShared: mockedDocumentShared,
         },
         mountedMocks
       ),
@@ -383,5 +409,23 @@ describe("Event received and handled by component", () => {
 
     // then method called
     expect(mockedDocumentRenamed).toHaveBeenCalledWith(eventArg);
+  });
+  it("event-document-shared call documentShared", async () => {
+    // currentOpenDoc need to be set for FTLRenameDocument to be instantiated
+    wrapper.setData({ currentOpenDoc: tv.DOCUMENT_PROPS });
+    // when (called by event)
+    wrapper.find(FTLDocumentSharing).vm.$emit("event-document-shared");
+
+    // then method called
+    expect(mockedDocumentShared).toHaveBeenCalledWith(true);
+  });
+  it("event-document-unshared call documentShared", async () => {
+    // currentOpenDoc need to be set for FTLRenameDocument to be instantiated
+    wrapper.setData({ currentOpenDoc: tv.DOCUMENT_PROPS });
+    // when (called by event)
+    wrapper.find(FTLDocumentSharing).vm.$emit("event-document-unshared");
+
+    // then method called
+    expect(mockedDocumentShared).toHaveBeenCalledWith(false);
   });
 });

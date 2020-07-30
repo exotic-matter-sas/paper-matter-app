@@ -47,8 +47,8 @@
     Rename document: Renommer le document
     The new name of the document: Le nouveau nom du document
     The document will be renamed to '{0}{1}'.: Le document sera renommé « {0}{1} ».
-    Document successfully renamed.: Le document a été renommé avec succès.
-    Could not rename document.: Le document n'a pas pu être renommé.
+    Document successfully renamed: Le document a été renommé avec succès
+    Could not rename document: Le document n'a pu être renommé
 </i18n>
 
 <script>
@@ -95,10 +95,10 @@ export default {
             doc: response.data,
           });
           this.$bvModal.hide(this.id);
-          this.mixinAlert(this.$t("Document successfully renamed."));
+          this.mixinAlert(this.$t("Document successfully renamed"));
         })
         .catch((error) => {
-          this.mixinAlert(this.$t("Could not rename document."), true);
+          this.mixinAlert(this.$t("Could not rename document"), true);
         });
     },
   },

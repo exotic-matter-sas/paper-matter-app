@@ -173,6 +173,7 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "frontend", "src", "assets"),
     os.path.join(BASE_DIR, "account", "static"),
     os.path.join(BASE_DIR, "ftl", "static"),
+    os.path.join(BASE_DIR, "core", "static"),
 )
 
 # IPs allowed to see the debug toolbar app

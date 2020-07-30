@@ -14,6 +14,7 @@ from core.models import (
     FTLFolder,
     permissions_names_to_objects,
     FTL_PERMISSIONS_USER,
+    FTLDocumentSharing,
 )
 from core.processing.proc_pgsql_tsvector import FTLSearchEnginePgSQLTSVector
 from ftests.tools import test_values as tv
@@ -112,3 +113,7 @@ def setup_2fa_totp_device(
 
 def setup_2fa_fido2_device(ftl_user, name="My security key", confirmed=True):
     return Fido2Device.objects.create(user=ftl_user, name=name, confirmed=confirmed)
+
+
+def setup_document_share(ftl_doc, expire_at=None):
+    return FTLDocumentSharing.objects.create(ftl_doc=ftl_doc, expire_at=expire_at)

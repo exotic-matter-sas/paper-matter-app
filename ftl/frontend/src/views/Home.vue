@@ -280,7 +280,7 @@
     "| 1 document: | {n} documents:": "| 1 document : | {n} documents :"
     No document yet: Aucun document
     "| Show more documents (1 remaining) | Show more documents ({n} remaining)": "| Afficher plus de documents (1 restant) | Afficher plus de documents ({n} restants)"
-    Could not open this folder.: Impossible d'ouvrir ce dossier.
+    Could not open this folder: Impossible d'ouvrir ce dossier
     Select all documents displayed: Sélectionner tous les documents affichés
     Deselect all documents: Désélectionner tous les documents
     Move to folder: Déplacer vers le dossier
@@ -587,7 +587,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.mixinAlert(this.$t("Could not open this folder."), true);
+          this.mixinAlert(this.$t("Could not open this folder"), true);
         });
     },
 
