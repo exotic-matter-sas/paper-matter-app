@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-22 12:00+0200\n"
-"PO-Revision-Date: 2020-06-22 12:02+0200\n"
+"POT-Creation-Date: 2020-07-30 14:42+0200\n"
+"PO-Revision-Date: 2020-07-30 14:22+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 2.3.1\n"
+"X-Generator: Poedit 2.4\n"
 
 #: .\account\forms.py:17
 msgid "Email is already used by someone else."
@@ -37,10 +37,8 @@ msgid "Account activity"
 msgstr "Activité du compte"
 
 #: .\account\templates\account\account_activity.html:10
-msgid ""
-"See the last ten successful connections to your account."
-msgstr ""
-"Consultez les dix dernières connexions réussies à votre compte."
+msgid "See the last ten successful connections to your account."
+msgstr "Consultez les dix dernières connexions réussies à votre compte."
 
 #: .\account\templates\account\account_activity.html:14
 #, python-format
@@ -56,10 +54,6 @@ msgstr ""
 "Si vous ne reconnaissez pas un appareil, quelqu’un d’autre a pu avoir accès "
 "à votre mot de passe. <a href=\"%(the_url)s\">Modifiez-le</a> pour protéger "
 "votre compte."
-
-#: .\account\templates\account\account_activity.html:23
-msgid "current device"
-msgstr "appareil actuel"
 
 #: .\account\templates\account\account_base.html:5
 msgid "Account management"
@@ -78,18 +72,18 @@ msgid "Two factor authentication"
 msgstr "Authentification à deux facteurs"
 
 #: .\account\templates\account\account_base.html:104
+msgid "Applications and API"
+msgstr "Applications et API"
+
+#: .\account\templates\account\account_base.html:107
 msgid "Data import / export"
 msgstr "Import / export des données"
 
-#: .\account\templates\account\account_base.html:107
+#: .\account\templates\account\account_base.html:110
 msgid "Delete account"
 msgstr "Supprimer mon compte"
 
-#: .\account\templates\account\account_base.html:111
-msgid "Paper Matter settings"
-msgstr "Paramètres de Paper Matter"
-
-#: .\account\templates\account\account_base.html:123
+#: .\account\templates\account\account_base.html:126
 msgid ""
 "\n"
 "            Paper Matter, carefully crafted by\n"
@@ -399,3 +393,9 @@ msgstr "Mot de passe mis à jour !"
 #: .\account\views.py:201
 msgid "Your account was deleted."
 msgstr "Votre compte a été supprimé."
+
+#~ msgid "current device"
+#~ msgstr "appareil actuel"
+
+#~ msgid "Paper Matter settings"
+#~ msgstr "Paramètres de Paper Matter"

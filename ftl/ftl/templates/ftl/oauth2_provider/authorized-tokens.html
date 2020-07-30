@@ -24,7 +24,7 @@
                                 <strong>{{ authorized_token.application }}</strong>
                             </div>
                             <div>
-                                <span class="badge badge-success">Enabled</span>
+                                <span class="badge badge-success">{% trans "Enabled" %}</span>
                             </div>
                         </div>
                         <div class="my-2">
@@ -33,13 +33,13 @@
                                     <li class="list-group-item">{{ scope_description }}</li>
                                 {% endfor %}
                             </ul>
-
-
                         </div>
 
                         <div class="d-flex justify-content-between align-items-center">
-                                                        <span class="text-muted font-italic"
-                                                              title="{% trans 'Added on' %}">{{ authorized_token.created }}</span>
+                            <span class="text-muted font-italic"
+                                  title="{% blocktrans with authorized_token.created as date %}Added on {{ date }}{% endblocktrans %}">
+                                {{ authorized_token.created }}
+                            </span>
                             <a class="btn btn-sm btn-danger"
                                href="{% url 'oauth2_provider:authorized-token-delete' authorized_token.pk %}">{% trans 'Revoke' %}</a>
                         </div>
