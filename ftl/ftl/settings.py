@@ -84,6 +84,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 MIDDLEWARE = [
+    "ftl.ftl_admin_ip_filter_middleware.FTLAdminIPFilter",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
@@ -360,6 +361,16 @@ AXES_FAILURE_LIMIT = 5
 AXES_COOLOFF_TIME = timedelta(minutes=10)
 AXES_LOCKOUT_TEMPLATE = "ftl/axes/locked.html"
 
+"""
+Enable IP allowlist for Django Admin access
+"""
+# FTL_ADMIN_ENABLE_IP_PROTECTION = True
+# FTL_ADMIN_IP_RANGE_ALLOWED = ["127.0.0.1/32", "10.0.0.0/8"]
+# FTL_ADMIN_IP_PROXY_COUNT = 1
+# FTL_ADMIN_IP_META_PRECEDENCE_ORDER = [
+#     "HTTP_X_FORWARDED_FOR",
+#     "X_FORWARDED_FOR",
+# ]
 
 # ==================================================
 # No settings under this line
