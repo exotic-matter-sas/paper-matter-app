@@ -9,14 +9,13 @@ from django.core import mail
 from django.test import override_settings
 
 from ftests.pages.base_page import NODE_SERVER_RUNNING
-from ftests.pages.django_admin_login_page import AdminLoginPage
 from ftests.pages.home_page import HomePage
 from ftests.pages.user_login_page import LoginPage
 from ftests.pages.user_reset_password_pages import ResetPasswordPages
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user
 
 
-class LoginPageTests(LoginPage, HomePage, AdminLoginPage):
+class LoginPageTests(LoginPage, HomePage):
     def setUp(self, **kwargs):
         # first org, admin, user are already created
         super().setUp()

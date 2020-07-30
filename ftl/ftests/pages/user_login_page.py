@@ -7,6 +7,7 @@ from ftests.tools import test_values as tv
 
 class LoginPage(BasePage):
     url = "/login/"
+    admin_url = "/admin/"
     logout_url = "/logout/"
 
     page_title = "h1"
