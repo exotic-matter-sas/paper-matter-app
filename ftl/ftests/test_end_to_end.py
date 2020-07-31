@@ -21,7 +21,7 @@ from ftests.pages.document_viewer_modal import DocumentViewerModal
 from ftests.pages.home_page import HomePage
 from ftests.pages.setup_pages import SetupPages
 from ftests.pages.signup_pages import SignupPages
-from ftests.pages.user_login_page import LoginPage
+from ftests.pages.login_page import LoginPage
 from ftests.test_account import (
     mocked_verify_user,
     totp_time_setter,

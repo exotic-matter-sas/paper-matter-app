@@ -17,7 +17,7 @@ from ftests.pages.account_pages import AccountPages
 from ftests.pages.base_page import NODE_SERVER_RUNNING
 from ftests.pages.home_page import HomePage
 from ftests.pages.signup_pages import SignupPages
-from ftests.pages.user_login_page import LoginPage
+from ftests.pages.login_page import LoginPage
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import (
     setup_org,

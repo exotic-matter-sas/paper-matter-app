@@ -21,6 +21,8 @@ class LoginPage(BasePage):
 
     password_reset_link = "#password-reset"
 
+    django_admin_success_message = "#user-tools"
+
     def log_user(self, user_num=1, email=None, password=None, skip_tour=True):
         if skip_tour:
             self.browser.execute_script('localStorage.setItem("tour_done", "true");')

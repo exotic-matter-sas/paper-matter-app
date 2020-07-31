@@ -2,7 +2,7 @@
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
 
 from ftests.pages.setup_pages import SetupPages
-from ftests.pages.user_login_page import LoginPage
+from ftests.pages.login_page import LoginPage
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import setup_admin, setup_org
 
@@ -17,7 +17,7 @@ class LandingPageTests(SetupPages):
         self.assertIn(tv.APP_NAME.lower(), self.head_title)
         self.assertIn("create first organization and administrator", self.head_title)
 
-    def test_landing_page_redirect_to_user_login_when_setup_complete(self):
+    def test_landing_page_redirect_to_login_when_setup_complete(self):
         """Landing page redirect to user login page when setup complete"""
         self.visit(self.root_url)
 
