@@ -49,7 +49,7 @@ AUTH_USER_MODEL = "core.FTLUser"
 # Application definition
 
 INSTALLED_APPS = [
-    "django.contrib.admin",
+    "ftl.apps.MyAdminConfig",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",

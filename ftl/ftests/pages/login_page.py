@@ -7,6 +7,7 @@ from ftests.tools import test_values as tv
 
 class LoginPage(BasePage):
     url = "/login/"
+    admin_url = "/admin/"
     logout_url = "/logout/"
 
     page_title = "h1"
@@ -19,6 +20,8 @@ class LoginPage(BasePage):
     login_messages = "#messages"
 
     password_reset_link = "#password-reset"
+
+    django_admin_success_message = "#user-tools"
 
     def log_user(self, user_num=1, email=None, password=None, skip_tour=True):
         if skip_tour:

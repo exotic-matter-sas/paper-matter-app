@@ -16,7 +16,7 @@ from ftests.pages.document_viewer_modal import DocumentViewerModal
 from ftests.pages.home_page import HomePage
 from ftests.pages.manage_folder_page import ManageFolderPage
 from ftests.pages.move_documents_modal import MoveDocumentsModal
-from ftests.pages.user_login_page import LoginPage
+from ftests.pages.login_page import LoginPage
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import (
     setup_org,

@@ -17,12 +17,11 @@ from core.tasks import apply_ftl_processing
 from ftests.pages.account_pages import AccountPages
 from ftests.pages.base_page import NODE_SERVER_RUNNING
 from ftests.pages.django_admin_home_page import AdminHomePage
-from ftests.pages.django_admin_login_page import AdminLoginPage
 from ftests.pages.document_viewer_modal import DocumentViewerModal
 from ftests.pages.home_page import HomePage
 from ftests.pages.setup_pages import SetupPages
 from ftests.pages.signup_pages import SignupPages
-from ftests.pages.user_login_page import LoginPage
+from ftests.pages.login_page import LoginPage
 from ftests.test_account import (
     mocked_verify_user,
     totp_time_setter,
@@ -82,7 +81,7 @@ class InitialSetupTest(SetupPages, SignupPages, LoginPage, HomePage):
         self.assertIn(email, self.get_elem(self.profile_name).text)
 
 
-class SecondOrgSetup(AdminLoginPage, AdminHomePage, SignupPages, LoginPage, HomePage):
+class SecondOrgSetup(AdminHomePage, SignupPages, LoginPage, HomePage):
     @skipIf(
         settings.DEV_MODE and not NODE_SERVER_RUNNING,
         "Node not running, this test can't be run",
@@ -95,7 +94,7 @@ class SecondOrgSetup(AdminLoginPage, AdminHomePage, SignupPages, LoginPage, Home
         setup_user(org=org1)
 
         # Admin user login to admin portal and create a new org
-        self.visit(AdminLoginPage.url)
+        self.visit(LoginPage.admin_url)
         self.log_admin()
         self.get_elem(self.create_org_link).click()
         org2_slug = self.create_org(tv.ORG_NAME_2, tv.ORG_SLUG_2)
@@ -324,7 +323,7 @@ class UserSetupAll2FA(LoginPage, AccountPages):
             self.get_elem(self.delete_warning)
 
 
-class AccountDeletion(LoginPage, AccountPages, AdminLoginPage, AdminHomePage):
+class AccountDeletion(LoginPage, AccountPages, AdminHomePage):
     def setUp(self, **kwargs):
         # orgs, admin, users are already created
         super().setUp()
@@ -492,10 +491,10 @@ class AccountDeletion(LoginPage, AccountPages, AdminLoginPage, AdminHomePage):
             self.get_elem(self.submit_account_deletion)
 
         # Admin go to admin panel and create a new org and admin user in this org
-        self.visit(AdminLoginPage.url)
+        self.visit(LoginPage.admin_url)
         self.get_elem(self.create_org_link).click()
         admin_org2_slug = self.create_org("admin-org2", "admin-org2")
-        self.visit(AdminLoginPage.url)
+        self.visit(LoginPage.admin_url)
         self.get_elem(self.create_user_link).click()
         self.create_user(
             admin_org2_slug, tv.ADMIN2_EMAIL, tv.ADMIN2_PASS, is_admin=True
