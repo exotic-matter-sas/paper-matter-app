@@ -120,11 +120,12 @@ class FTLOCRBase(FTLDocProcessingBase):
 
 def atomic_ftl_doc_update(pid: UUID, values: dict):
     """
-        Atomically update FTLDocument with the specified fields `values`
-        Example usage:  atomic_ftl_doc_update(pid, {"content": "my value"})
+    Atomically update FTLDocument with the specified fields `values`
+    Example usage:  atomic_ftl_doc_update(pid, {"content": "my value"})
     """
     # Issue #161
     with transaction.atomic():
+        # select objects with a FOR UPDATE lock
         ftl_doc_update = FTLDocument.objects.select_for_update().get(pid=pid)
         keys = list()
         for key, value in values.items():
