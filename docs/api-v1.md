@@ -399,6 +399,18 @@ If there is too many results, results will be paginated. To get the next page re
 ```
 Return the same data than **List documents** request but for a single document.
 
+### Download a document
+**GET /api/v1/documents/`document_pid`/download**
+
+**Response** `200`
+
+```
+%PDF-1.4
+3 0 obj <<
+...
+%%EOF
+```
+
 ### Update a document
 **PATCH /api/v1/documents/`document_pid`**
 
