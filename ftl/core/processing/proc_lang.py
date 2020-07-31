@@ -5,7 +5,7 @@ import logging
 
 from langid.langid import LanguageIdentifier, model
 
-from core.processing.ftl_processing import FTLDocProcessingBase
+from core.processing.ftl_processing import FTLDocProcessingBase, atomic_ftl_doc_update
 
 logger = logging.getLogger(__name__)
 
@@ -45,21 +45,22 @@ class FTLLangDetectorLangId(FTLDocProcessingBase):
             detected_lang, confidence = self.identifier.classify(ftl_doc.content_text)
             if confidence > 0.5:
                 try:
-                    ftl_doc.language = COUNTRY_CODE_INDEX[detected_lang]
+                    ftl_doc_language_to_set = COUNTRY_CODE_INDEX[detected_lang]
                 # Lang not supported by PgSQL (see COUNTRY_CODE_INDEX)
                 except KeyError:
                     logger.warning(
                         f"{self.log_prefix} {ftl_doc.pid} Lang {detected_lang} not registered as "
                         f'supported PgSQL lang, search will fallback to "simple" lang for this document'
                     )
-                    ftl_doc.language = self.default_language
+                    ftl_doc_language_to_set = self.default_language
             else:
                 logger.warning(
                     f"{self.log_prefix} {ftl_doc.pid} Lang detection confidence too low, search will"
                     f' fallback to "simple" lang for this document'
                 )
-                ftl_doc.language = self.default_language
-            ftl_doc.save()
+                ftl_doc_language_to_set = self.default_language
+
+            atomic_ftl_doc_update(ftl_doc.pid, {"language": ftl_doc_language_to_set})
         else:
             logger.debug(
                 f"{self.log_prefix} Skipping lang detection for document {ftl_doc.pid}"

@@ -2,11 +2,14 @@
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
 
 import logging
+from uuid import UUID
 
 from django.conf import settings
+from django.db import transaction
 from django.utils.module_loading import import_string
 
 from core.errors import PluginUnsupportedStorage
+from core.models import FTLDocument
 from core.signals import pre_ftl_processing
 from ftl.settings import DEFAULT_FILE_STORAGE
 
@@ -57,6 +60,9 @@ class FTLDocumentProcessing:
                         f"Executing plugin {plugin.__class__.__name__} on {ftl_doc.pid}"
                     )
                     pre_ftl_processing.send(sender=plugin.__class__, document=ftl_doc)
+
+                    # Refresh model to have latest update if any
+                    ftl_doc.refresh_from_db()
                     plugin.process(
                         ftl_doc,
                         plugins_all
@@ -93,9 +99,11 @@ class FTLOCRBase(FTLDocProcessingBase):
         if DEFAULT_FILE_STORAGE in self.supported_storages:
             # If full text not already extracted
             if force or not ftl_doc.content_text.strip():
-                ftl_doc.content_text = self._extract_text(ftl_doc.binary)
-                ftl_doc.ocrized = True
-                ftl_doc.save()
+                extracted_text = self._extract_text(ftl_doc.binary)
+
+                atomic_ftl_doc_update(
+                    ftl_doc.pid, {"content_text": extracted_text, "ocrized": True}
+                )
             else:
                 logger.info(
                     f"{self.log_prefix} Processing skipped, document {ftl_doc.id} already got a text_content"
@@ -108,3 +116,20 @@ class FTLOCRBase(FTLDocProcessingBase):
 
     def _extract_text(self, ftl_doc_binary):
         raise NotImplementedError
+
+
+def atomic_ftl_doc_update(pid: UUID, values: dict):
+    """
+    Atomically update FTLDocument with the specified fields `values`
+    Example usage:  atomic_ftl_doc_update(pid, {"content": "my value"})
+    """
+    # issue #161
+    with transaction.atomic():
+        # select objects with a FOR UPDATE lock
+        ftl_doc_update = FTLDocument.objects.select_for_update().get(pid=pid)
+        keys = list()
+        for key, value in values.items():
+            keys.append(key)
+            setattr(ftl_doc_update, key, value)
+
+        ftl_doc_update.save(update_fields=keys)
