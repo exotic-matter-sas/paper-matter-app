@@ -1,5 +1,7 @@
 #  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
+import datetime
+import uuid
 
 from django.contrib.staticfiles import finders
 from django.test import TestCase, override_settings
@@ -11,6 +13,7 @@ from ftests.tools.setup_helpers import (
     setup_user,
     setup_authenticated_session,
     setup_document,
+    setup_document_share,
 )
 from ftl.enums import FTLStorages
 
@@ -76,7 +79,7 @@ class DownloadDocumentTests(TestCase):
         doc = setup_document(self.org, self.user)
         setup_authenticated_session(self.client, self.org, self.user)
 
-        response = self.client.get(f"/app/uploads/{doc.pid}")
+        response = self.client.get(f"/app/api/v1/documents/{doc.pid}/download")
 
         with open(doc.binary.path, "rb") as uploaded_doc:
             self.assertEqual(uploaded_doc.read(), response.content)
@@ -86,7 +89,7 @@ class DownloadDocumentTests(TestCase):
         doc = setup_document(self.org, self.user)
 
         # Trying to download the document when not logged returns an error
-        download_url = f"/app/uploads/{doc.pid}"
+        download_url = f"/app/api/v1/documents/{doc.pid}/download"
         response = self.client.get(download_url)
         self.assertEqual(response.status_code, 403)
 
@@ -100,7 +103,7 @@ class DownloadDocumentTests(TestCase):
         setup_authenticated_session(self.client, org_2, user_2)
 
         # Trying to download the document of first org with a user of second org returns a 404
-        response = self.client.get(f"/app/uploads/{doc.pid}/")
+        response = self.client.get(f"/app/api/v1/documents/{doc.pid}/download")
         self.assertEqual(response.status_code, 404)
 
 
@@ -108,3 +111,57 @@ class PDFViewerTests(TestCase):
     def test_pdf_viewer_accessible(self):
         result = finders.find("pdfjs/web/viewer.html")
         self.assertIsNotNone(result, "Pdfjs resources not found")
+
+
+class DocumentSharingTests(TestCase):
+    def setUp(self):
+        # Setup org, admin, user and log the user
+        self.org = setup_org()
+        setup_admin(self.org)
+        self.user = setup_user(self.org)
+
+    def test_view_shared_document(self):
+        doc = setup_document(self.org, self.user)
+        doc_share = setup_document_share(doc)
+
+        response = self.client.get(f"/app/share/{doc_share.pid}")
+        self.assertEqual(response.status_code, 200)
+
+    def test_cant_use_doc_pid_for_sharing(self):
+        doc = setup_document(self.org, self.user)
+
+        response = self.client.get(f"/app/share/{doc.pid}")
+        self.assertEqual(response.status_code, 404)
+
+    def test_download_shared_document(self):
+        doc = setup_document(self.org, self.user)
+        doc_share = setup_document_share(doc)
+
+        response = self.client.get(f"/app/share/{doc_share.pid}/download")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["content-type"], "application/octet-stream")
+
+    def test_cant_view_unshared_document(self):
+        doc = setup_document(self.org, self.user)
+        doc_share = setup_document_share(doc)
+
+        response = self.client.get(f"/app/share/{doc_share.pid}")
+        self.assertEqual(response.status_code, 200)
+
+        doc_share.delete()
+
+        response = self.client.get(f"/app/share/{doc_share.pid}")
+        self.assertEqual(response.status_code, 404)
+
+    def test_custom_404_share_document(self):
+        response = self.client.get(f"/app/share/{uuid.uuid4()}")
+        self.assertContains(response, "document was not found", status_code=404)
+
+    def test_cant_view_expired_shared_document(self):
+        doc = setup_document(self.org, self.user)
+        doc_share = setup_document_share(
+            doc, expire_at=datetime.datetime.now() - datetime.timedelta(hours=1)
+        )
+
+        response = self.client.get(f"/app/share/{doc_share.pid}")
+        self.assertEqual(response.status_code, 404)

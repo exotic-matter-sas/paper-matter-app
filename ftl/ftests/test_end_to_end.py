@@ -13,16 +13,17 @@ from django_otp.middleware import OTPMiddleware
 from django_otp.oath import TOTP
 from selenium.common.exceptions import NoSuchElementException
 
+from core.processing.ftl_processing import FTLDocumentProcessing
 from core.tasks import apply_ftl_processing
 from ftests.pages.account_pages import AccountPages
 from ftests.pages.base_page import NODE_SERVER_RUNNING
 from ftests.pages.django_admin_home_page import AdminHomePage
-from ftests.pages.django_admin_login_page import AdminLoginPage
 from ftests.pages.document_viewer_modal import DocumentViewerModal
 from ftests.pages.home_page import HomePage
+from ftests.pages.move_documents_modal import MoveDocumentsModal
 from ftests.pages.setup_pages import SetupPages
 from ftests.pages.signup_pages import SignupPages
-from ftests.pages.user_login_page import LoginPage
+from ftests.pages.login_page import LoginPage
 from ftests.test_account import (
     mocked_verify_user,
     totp_time_setter,
@@ -31,6 +32,7 @@ from ftests.test_account import (
     TotpDevice2FATests,
 )
 from ftests.tools import test_values as tv
+from ftests.tools.decorators import delay_method_decorator
 from ftests.tools.setup_helpers import (
     setup_org,
     setup_admin,
@@ -82,7 +84,7 @@ class InitialSetupTest(SetupPages, SignupPages, LoginPage, HomePage):
         self.assertIn(email, self.get_elem(self.profile_name).text)
 
 
-class SecondOrgSetup(AdminLoginPage, AdminHomePage, SignupPages, LoginPage, HomePage):
+class SecondOrgSetup(AdminHomePage, SignupPages, LoginPage, HomePage):
     @skipIf(
         settings.DEV_MODE and not NODE_SERVER_RUNNING,
         "Node not running, this test can't be run",
@@ -95,7 +97,7 @@ class SecondOrgSetup(AdminLoginPage, AdminHomePage, SignupPages, LoginPage, Home
         setup_user(org=org1)
 
         # Admin user login to admin portal and create a new org
-        self.visit(AdminLoginPage.url)
+        self.visit(LoginPage.admin_url)
         self.log_admin()
         self.get_elem(self.create_org_link).click()
         org2_slug = self.create_org(tv.ORG_NAME_2, tv.ORG_SLUG_2)
@@ -251,6 +253,128 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage, DocumentViewerModal):
         self.assertEqual(new_title, self.get_elem_text(self.first_document_title))
 
 
+# Fake a slow processing for TikaDocumentIndexationEdgeCases
+delayed_apply_processing = delay_method_decorator(
+    FTLDocumentProcessing.apply_processing
+)
+
+
+@patch.object(FTLDocumentProcessing, "apply_processing", delayed_apply_processing)
+@override_settings(CELERY_BROKER_URL="memory://localhost")
+class TikaDocumentIndexationEdgeCases(
+    LoginPage, HomePage, DocumentViewerModal, MoveDocumentsModal
+):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        app.control.purge()
+        cls._worker = app.Worker(app=app, pool="solo", concurrency=1)
+        cls._thread = threading.Thread(target=cls._worker.start)
+        cls._thread.daemon = True
+        cls._thread.start()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls._worker.stop()
+        super().tearDownClass()
+
+    def setUp(self, **kwargs):
+        # first org, admin, user are already created, user is already logged on home page
+        super().setUp()
+        self.org = setup_org()
+        setup_admin(self.org)
+        self.user = setup_user(self.org)
+        self.folder = setup_folder(self.org)
+        self.visit(LoginPage.url)
+        self.log_user()
+
+    def test_search_a_doc_renamed_during_its_processing(self):
+        # User upload a document
+        old_title = "green"
+        self.upload_documents(
+            os.path.join(
+                settings.BASE_DIR,
+                "ftests",
+                "tools",
+                "test_documents",
+                old_title + ".pdf",
+            )
+        )
+
+        # User rename document from list
+        doc_to_rename = self.get_elem(self.first_document_title)
+        new_title = "bingo!"
+        self.rename_document_from_list(doc_to_rename, new_title)
+
+        # User wait for document to be indexed
+        self.wait_celery_queue_to_be_empty(self._worker)
+
+        # User search for document using its new title
+        self.search_documents(new_title)
+
+        # The document has been properly renamed
+        self.assertEqual(
+            len(self.get_elems(self.documents_thumbnails)),
+            1,
+            "Document should have been renamed and appears in the list",
+        )
+
+    def test_search_a_doc_annotated_during_its_processing(self):
+        # User upload a document
+        self.upload_documents()
+
+        # User annotate doc just after upload
+        self.open_first_document()
+
+        new_doc_note = "bingo!"
+        self.annotate_document(new_doc_note)
+        self.close_document()
+
+        # User wait for document to be indexed
+        self.wait_celery_queue_to_be_empty(self._worker)
+
+        # User search for document using its note
+        self.search_documents(new_doc_note)
+
+        # The document has been properly renamed
+        self.assertEqual(
+            len(self.get_elems(self.documents_thumbnails)),
+            1,
+            "Document should have been renamed and appears in the list",
+        )
+
+    def test_move_a_doc_during_its_processing(self):
+        # User upload a document
+        doc_title = "green"
+        self.upload_documents(
+            os.path.join(
+                settings.BASE_DIR,
+                "ftests",
+                "tools",
+                "test_documents",
+                doc_title + ".pdf",
+            )
+        )
+
+        # User move document during its processing
+        self.open_first_document()
+        self.get_elem(self.move_document_button).click()
+        self.move_document(self.folder.name)
+        self.close_document()
+
+        # User wait for document to be indexed
+        self.wait_celery_queue_to_be_empty(self._worker)
+
+        # User see the documents in the proper folder
+        self.get_elem(self.folders_list_buttons).click()
+        self.wait_documents_list_loaded()
+        self.assertCountEqual(
+            [doc_title],
+            self.get_elems_text(self.documents_titles),
+            "Document should have been moved to proper folder",
+        )
+
+
 class UserSetupAll2FA(LoginPage, AccountPages):
     def setUp(self, **kwargs):
         # first org, admin, user are already created, user is already logged to 2FA account page
@@ -324,7 +448,7 @@ class UserSetupAll2FA(LoginPage, AccountPages):
             self.get_elem(self.delete_warning)
 
 
-class AccountDeletion(LoginPage, AccountPages, AdminLoginPage, AdminHomePage):
+class AccountDeletion(LoginPage, AccountPages, AdminHomePage):
     def setUp(self, **kwargs):
         # orgs, admin, users are already created
         super().setUp()
@@ -492,10 +616,10 @@ class AccountDeletion(LoginPage, AccountPages, AdminLoginPage, AdminHomePage):
             self.get_elem(self.submit_account_deletion)
 
         # Admin go to admin panel and create a new org and admin user in this org
-        self.visit(AdminLoginPage.url)
+        self.visit(LoginPage.admin_url)
         self.get_elem(self.create_org_link).click()
         admin_org2_slug = self.create_org("admin-org2", "admin-org2")
-        self.visit(AdminLoginPage.url)
+        self.visit(LoginPage.admin_url)
         self.get_elem(self.create_user_link).click()
         self.create_user(
             admin_org2_slug, tv.ADMIN2_EMAIL, tv.ADMIN2_PASS, is_admin=True

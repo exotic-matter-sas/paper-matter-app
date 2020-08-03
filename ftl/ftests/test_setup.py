@@ -1,14 +1,10 @@
 #  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
 
-from unittest import skip
-
-from ftests.pages.django_admin_login_page import AdminLoginPage
 from ftests.pages.setup_pages import SetupPages
-from ftests.pages.signup_pages import SignupPages
-from ftests.pages.user_login_page import LoginPage
+from ftests.pages.login_page import LoginPage
 from ftests.tools import test_values as tv
-from ftests.tools.setup_helpers import setup_admin, setup_org, setup_user
+from ftests.tools.setup_helpers import setup_admin, setup_org
 
 
 class LandingPageTests(SetupPages):
@@ -21,7 +17,7 @@ class LandingPageTests(SetupPages):
         self.assertIn(tv.APP_NAME.lower(), self.head_title)
         self.assertIn("create first organization and administrator", self.head_title)
 
-    def test_landing_page_redirect_to_user_login_when_setup_complete(self):
+    def test_landing_page_redirect_to_login_when_setup_complete(self):
         """Landing page redirect to user login page when setup complete"""
         self.visit(self.root_url)
 
@@ -42,15 +38,15 @@ class LandingPageTests(SetupPages):
         self.assertIn("login", self.head_title)
 
 
-class AdminLoginTests(AdminLoginPage):
+class AdminLoginTests(LoginPage):
     def test_admin_user_can_login_in_django_admin(self):
         """Admin user can login in Django admin"""
         # Admin user have already setup org and admin
         setup_admin(setup_org())
-        self.visit(self.url)
+        self.visit(LoginPage.admin_url)
 
         # He log to admin portal
-        self.log_admin()
+        self.log_user(email=tv.ADMIN1_EMAIL, password=tv.ADMIN1_PASS)
 
         # Django admin display properly
         self.assertIn(
