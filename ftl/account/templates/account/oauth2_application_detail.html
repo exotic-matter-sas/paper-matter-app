@@ -1,7 +1,7 @@
-{% extends "oauth2_provider/base.html" %}
-
+{% extends "account/account_base.html" %}
 {% load i18n %}
-{% block content %}
+
+{% block account %}
     <div class="row no-gutters">
         <div class="col text-justify">
             <div class="">
@@ -34,7 +34,7 @@
             </div>
 
             <div class="d-flex justify-content-end">
-                <a class="mx-1 btn btn-secondary" href="{% url "oauth2_provider:list" %}">{% trans "Go Back" %}</a>
+                <a class="mx-1 btn btn-secondary" href="{% url "oauth2_provider:list" %}">{% trans "Back" %}</a>
                 <a class="mx-1 btn btn-primary"
                    href="{% url "oauth2_provider:update" application.id %}">{% trans "Edit" %}</a>
                 <a class="mx-1 btn btn-danger"
@@ -42,4 +42,4 @@
             </div>
         </div>
     </div>
-{% endblock content %}
+{% endblock account %}

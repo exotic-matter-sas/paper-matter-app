@@ -1,7 +1,7 @@
-{% extends "oauth2_provider/base.html" %}
-
+{% extends "account/account_base.html" %}
 {% load i18n %}
-{% block content %}
+
+{% block account %}
     <div class="row no-gutters">
         <div class="col text-justify">
             <h3 class="text-primary">{% trans "Developer API keys" %}</h3>
@@ -25,11 +25,15 @@
                     </ul>
                     <a class="btn btn-primary" href="{% url "oauth2_provider:register" %}">New Application</a>
                 {% else %}
-                    <p>{% trans "No applications defined" %}. <a
-                            href="{% url 'oauth2_provider:register' %}">{% trans "Click here" %}</a> {% trans "if you want to register a new one" %}
+                    <p>
+                        {% url 'oauth2_provider:register' as register %}
+                        {% blocktrans %}
+                            No applications defined. <a href="{{ register }}">Click here</a> if you want to register a
+                            new one.
+                        {% endblocktrans %}
                     </p>
                 {% endif %}
             </div>
         </div>
     </div>
-{% endblock content %}
+{% endblock account %}

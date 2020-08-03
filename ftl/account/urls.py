@@ -3,7 +3,7 @@
 
 from django.urls import path, include
 
-from . import views, views_oauth2_mgnt
+from . import views
 
 urlpatterns = [
     path("", views.AccountView.as_view(), name="account_index"),
@@ -21,5 +21,5 @@ urlpatterns = [
         name="account_import_export",
     ),
     path("delete/", views.AccountDeleteView.as_view(), name="account_delete"),
-    path("oauth2/", include("account.urls_oauth2_mgnt", namespace="oauth2_provider")),
+    path("oauth2/", include("account.urls_oauth2_mgnt")),
 ]

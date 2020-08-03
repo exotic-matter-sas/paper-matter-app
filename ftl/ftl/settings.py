@@ -362,6 +362,11 @@ AXES_FAILURE_LIMIT = 5
 AXES_COOLOFF_TIME = timedelta(minutes=10)
 AXES_LOCKOUT_TEMPLATE = "ftl/axes/locked.html"
 
+"""
+Enable Developer API
+"""
+FTL_ENABLE_DEV_API = False
+
 
 # ==================================================
 # No settings under this line

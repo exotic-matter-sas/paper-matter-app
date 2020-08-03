@@ -1,8 +1,8 @@
-{% extends "oauth2_provider/base.html" %}
+{% extends "account/account_base.html" %}
 {% load add_attr %}
 {% load i18n %}
 
-{% block content %}
+{% block account %}
     <div class="m-4">
         <h4 class="text-primary text-center">
             {% blocktrans with object.application as name %}

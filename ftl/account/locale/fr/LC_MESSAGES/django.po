@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-30 14:42+0200\n"
-"PO-Revision-Date: 2020-07-30 14:22+0200\n"
+"POT-Creation-Date: 2020-08-03 13:42+0200\n"
+"PO-Revision-Date: 2020-08-03 13:44+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -370,6 +370,162 @@ msgstr ""
 msgid "Account security: notice of password change"
 msgstr "Sécurité du compte : avis de changement de mot de passe"
 
+#: .\account\templates\account\oauth2_application_confirm_delete.html:8
+#, python-format
+msgid ""
+"\n"
+"                Are you sure you want to delete<br/> \"%(name)s\"?\n"
+"            "
+msgstr ""
+"\n"
+"Êtes-vous sûr de vouloir supprimer<br/> « %(name)s » ?"
+
+#: .\account\templates\account\oauth2_application_confirm_delete.html:16
+#: .\account\templates\account\oauth2_authorized-token-delete.html:25
+msgid "Cancel"
+msgstr "Annuler"
+
+#: .\account\templates\account\oauth2_application_confirm_delete.html:17
+#: .\account\templates\account\oauth2_application_detail.html:41
+msgid "Delete"
+msgstr "Supprimer"
+
+#: .\account\templates\account\oauth2_application_detail.html:12
+msgid "Client Type"
+msgstr "Client Type"
+
+#: .\account\templates\account\oauth2_application_detail.html:18
+msgid "Authorization Grant Type"
+msgstr "Authorization Grant Type"
+
+#: .\account\templates\account\oauth2_application_detail.html:25
+msgid "Client id"
+msgstr "Client id"
+
+#: .\account\templates\account\oauth2_application_detail.html:28
+msgid "Client secret"
+msgstr "Client secret"
+
+#: .\account\templates\account\oauth2_application_detail.html:31
+msgid "Redirect Uris"
+msgstr "Redirect URIs"
+
+#: .\account\templates\account\oauth2_application_detail.html:37
+#: .\account\templates\account\oauth2_application_form.html:33
+#: .\account\templates\account\oauth2_application_registration_form.html:33
+msgid "Back"
+msgstr "Retour"
+
+#: .\account\templates\account\oauth2_application_detail.html:39
+msgid "Edit"
+msgstr "Éditer"
+
+#: .\account\templates\account\oauth2_application_form.html:8
+msgid "Edit application"
+msgstr "Éditer l'application"
+
+#: .\account\templates\account\oauth2_application_list.html:7
+msgid "Developer API keys"
+msgstr "Clé d'API développeur"
+
+#: .\account\templates\account\oauth2_application_list.html:9
+msgid "Use the Paper Matter API to create your application."
+msgstr "Utiliser l'API Paper Matter dans vos applications."
+
+#: .\account\templates\account\oauth2_application_list.html:13
+msgid ""
+"\n"
+"                    Please exercise caution when giving API key to third-"
+"party apps. Apps will be able to access all\n"
+"                    documents in your account.\n"
+"                "
+msgstr ""
+"\n"
+"Soyez prudent lorsque vous attribuez une clé API à des applications tierces. "
+"Les applications pourront accéder à tous les documents de votre compte."
+
+#: .\account\templates\account\oauth2_application_list.html:30
+#, python-format
+msgid ""
+"\n"
+"                            No applications defined. <a href=\"%(register)s"
+"\">Click here</a> if you want to register a\n"
+"                            new one.\n"
+"                        "
+msgstr ""
+"\n"
+"Aucune application définie. <a href=\"%(register)s\">Cliquez ici</a> si vous "
+"souhaitez enregistrer une nouvelle application."
+
+#: .\account\templates\account\oauth2_application_registration_form.html:8
+msgid "Register a new application"
+msgstr "Ajouter une nouvelle application"
+
+#: .\account\templates\account\oauth2_application_registration_form.html:35
+msgid "Add"
+msgstr "Ajouter"
+
+#: .\account\templates\account\oauth2_authorized-token-delete.html:8
+#, python-format
+msgid ""
+"\n"
+"                Are you sure you want to revoke <br/> \"%(name)s\"?\n"
+"            "
+msgstr ""
+"\n"
+"Êtes vous sûr de vouloir révoquer <br /> « %(name)s » ?"
+
+#: .\account\templates\account\oauth2_authorized-token-delete.html:15
+#, python-format
+msgid ""
+"\n"
+"                    The app \"%(name)s\" will not be able to access your "
+"account anymore.\n"
+"                "
+msgstr ""
+"\n"
+"L'application « %(name)s » ne pourra plus accéder à votre compte."
+
+#: .\account\templates\account\oauth2_authorized-token-delete.html:26
+#: .\account\templates\account\oauth2_authorized-tokens.html:44
+msgid "Revoke"
+msgstr "Révoquer"
+
+#: .\account\templates\account\oauth2_authorized-tokens.html:7
+msgid "Your applications"
+msgstr "Vos applications"
+
+#: .\account\templates\account\oauth2_authorized-tokens.html:9
+msgid "Manage applications accessing your account."
+msgstr "Gérez les applications accédant à votre compte."
+
+#: .\account\templates\account\oauth2_authorized-tokens.html:13
+msgid ""
+"\n"
+"                    Please exercise caution when granting access to third-"
+"party apps.\n"
+"                    Apps will be able to access all documents in your "
+"account.\n"
+"                "
+msgstr ""
+"\n"
+"Veuillez faire preuve de prudence lorsque vous accordez un accès à des "
+"applications tierces. Les applications pourront accéder à tous les documents "
+"de votre compte."
+
+#: .\account\templates\account\oauth2_authorized-tokens.html:27
+msgid "Enabled"
+msgstr "Activée"
+
+#: .\account\templates\account\oauth2_authorized-tokens.html:40
+#, python-format
+msgid "Added on %(date)s"
+msgstr "Ajouté le %(date)s"
+
+#: .\account\templates\account\oauth2_authorized-tokens.html:48
+msgid "There are no authorized app yet."
+msgstr "Il n'y a pas encore d'application autorisée."
+
 #: .\account\views.py:73
 msgid "A confirmation email has been sent."
 msgstr "Un email de confirmation a été envoyé."
@@ -393,6 +549,12 @@ msgstr "Mot de passe mis à jour !"
 #: .\account\views.py:201
 msgid "Your account was deleted."
 msgstr "Votre compte a été supprimé."
+
+#~ msgid "No applications defined"
+#~ msgstr "Aucune application définie"
+
+#~ msgid "Go Back"
+#~ msgstr "Retour"
 
 #~ msgid "current device"
 #~ msgstr "appareil actuel"
