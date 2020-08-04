@@ -33,7 +33,7 @@ urlpatterns = [
 
 # API Application management views
 if getattr(settings, "FTL_ENABLE_DEV_API", False):
-    urlpatterns = urlpatterns + [
+    urlpatterns += [
         url(
             r"^applications/$",
             views.ApplicationList.as_view(
