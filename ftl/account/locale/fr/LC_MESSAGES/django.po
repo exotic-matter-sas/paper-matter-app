@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-04 11:48+0200\n"
+"POT-Creation-Date: 2020-08-04 12:33+0000\n"
 "PO-Revision-Date: 2020-08-04 11:51+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -407,7 +407,7 @@ msgid "Client secret"
 msgstr "Client secret"
 
 #: account/templates/account/oauth2_application_detail.html:31
-msgid "Redirect Uris"
+msgid "Redirect URIs"
 msgstr "Redirect URIs"
 
 #: account/templates/account/oauth2_application_detail.html:37
@@ -428,7 +428,7 @@ msgstr "Éditer l'application"
 msgid "Developer API keys"
 msgstr "Clé d'API développeur"
 
-#: .\account\templates\account\oauth2_application_list.html:9
+#: account/templates/account/oauth2_application_list.html:9
 msgid "Use the Paper Matter API in your application."
 msgstr "Utiliser l'API Paper Matter dans vos applications."
 
@@ -486,19 +486,19 @@ msgstr ""
 "L'application « %(name)s » ne pourra plus accéder à votre compte."
 
 #: account/templates/account/oauth2_authorized-token-delete.html:26
-#: account/templates/account/oauth2_authorized-tokens.html:44
+#: account/templates/account/oauth2_authorized-tokens.html:45
 msgid "Revoke"
 msgstr "Révoquer"
 
-#: account/templates/account/oauth2_authorized-tokens.html:7
+#: account/templates/account/oauth2_authorized-tokens.html:8
 msgid "Your applications"
 msgstr "Vos applications"
 
-#: account/templates/account/oauth2_authorized-tokens.html:9
+#: account/templates/account/oauth2_authorized-tokens.html:10
 msgid "Manage applications accessing your account."
 msgstr "Gérez les applications accédant à votre compte."
 
-#: .\account\templates\account\oauth2_authorized-tokens.html:14
+#: account/templates/account/oauth2_authorized-tokens.html:14
 msgid ""
 "\n"
 "                    Please exercise caution when granting access to third-"
@@ -511,18 +511,22 @@ msgstr ""
 "Soyez prudent lorsque vous accordez un accès à des applications tierces. Les "
 "applications pourront accéder à tous les documents de votre compte."
 
-#: account/templates/account/oauth2_authorized-tokens.html:27
+#: account/templates/account/oauth2_authorized-tokens.html:28
 msgid "Enabled"
 msgstr "Activée"
 
-#: account/templates/account/oauth2_authorized-tokens.html:40
+#: account/templates/account/oauth2_authorized-tokens.html:41
 #, python-format
 msgid "Added on %(date)s"
 msgstr "Ajouté le %(date)s"
 
-#: account/templates/account/oauth2_authorized-tokens.html:48
+#: account/templates/account/oauth2_authorized-tokens.html:49
 msgid "There are no authorized app yet."
 msgstr "Il n'y a pas encore d'application autorisée."
+
+#: account/templates/account/oauth2_authorized-tokens.html:58
+msgid "For developers, you can create your own API key."
+msgstr ""
 
 #: account/views.py:73
 msgid "A confirmation email has been sent."
