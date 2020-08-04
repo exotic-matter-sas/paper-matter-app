@@ -76,6 +76,8 @@ class OAuth2FTLTests(TestCase):
         self.assertEqual(response_token.status_code, 200)
 
         # Use token with API
+        self.client.get(reverse("logout"))
+
         content = json.loads(response_token.content.decode("utf-8"))
         response_documents = self.client.get(
             "/app/api/v1/documents",
