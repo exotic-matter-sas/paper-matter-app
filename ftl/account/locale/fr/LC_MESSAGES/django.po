@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-03 13:42+0200\n"
-"PO-Revision-Date: 2020-08-03 13:44+0200\n"
+"POT-Creation-Date: 2020-08-04 11:48+0200\n"
+"PO-Revision-Date: 2020-08-04 11:51+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -22,7 +22,7 @@ msgstr ""
 msgid "Email is already used by someone else."
 msgstr "Cette adresse est déjà utilisée."
 
-#: .\account\forms.py:26 .\account\templates\account\account_base.html:88
+#: .\account\forms.py:26 .\account\templates\account\account_base.html:49
 #: .\account\templates\account\account_delete.html:44
 msgid "Password"
 msgstr "Mot de passe"
@@ -32,7 +32,7 @@ msgid "Incorrect password"
 msgstr "Mot de passe incorrect"
 
 #: .\account\templates\account\account_activity.html:8
-#: .\account\templates\account\account_base.html:93
+#: .\account\templates\account\account_base.html:54
 msgid "Account activity"
 msgstr "Activité du compte"
 
@@ -59,31 +59,31 @@ msgstr ""
 msgid "Account management"
 msgstr "Mon compte"
 
-#: .\account\templates\account\account_base.html:58
+#: .\account\templates\account\account_base.html:19
 msgid "Return to app"
 msgstr "Revenir à l'application"
 
-#: .\account\templates\account\account_base.html:63
+#: .\account\templates\account\account_base.html:24
 msgid "Settings"
 msgstr "Paramètres"
 
-#: .\account\templates\account\account_base.html:98
+#: .\account\templates\account\account_base.html:59
 msgid "Two factor authentication"
 msgstr "Authentification à deux facteurs"
 
-#: .\account\templates\account\account_base.html:104
+#: .\account\templates\account\account_base.html:65
 msgid "Applications and API"
 msgstr "Applications et API"
 
-#: .\account\templates\account\account_base.html:107
+#: .\account\templates\account\account_base.html:68
 msgid "Data import / export"
 msgstr "Import / export des données"
 
-#: .\account\templates\account\account_base.html:110
+#: .\account\templates\account\account_base.html:71
 msgid "Delete account"
 msgstr "Supprimer mon compte"
 
-#: .\account\templates\account\account_base.html:126
+#: .\account\templates\account\account_base.html:87
 msgid ""
 "\n"
 "            Paper Matter, carefully crafted by\n"
@@ -429,7 +429,7 @@ msgid "Developer API keys"
 msgstr "Clé d'API développeur"
 
 #: .\account\templates\account\oauth2_application_list.html:9
-msgid "Use the Paper Matter API to create your application."
+msgid "Use the Paper Matter API in your application."
 msgstr "Utiliser l'API Paper Matter dans vos applications."
 
 #: .\account\templates\account\oauth2_application_list.html:13
@@ -487,19 +487,19 @@ msgstr ""
 "L'application « %(name)s » ne pourra plus accéder à votre compte."
 
 #: .\account\templates\account\oauth2_authorized-token-delete.html:26
-#: .\account\templates\account\oauth2_authorized-tokens.html:44
+#: .\account\templates\account\oauth2_authorized-tokens.html:45
 msgid "Revoke"
 msgstr "Révoquer"
 
-#: .\account\templates\account\oauth2_authorized-tokens.html:7
+#: .\account\templates\account\oauth2_authorized-tokens.html:8
 msgid "Your applications"
 msgstr "Vos applications"
 
-#: .\account\templates\account\oauth2_authorized-tokens.html:9
+#: .\account\templates\account\oauth2_authorized-tokens.html:10
 msgid "Manage applications accessing your account."
 msgstr "Gérez les applications accédant à votre compte."
 
-#: .\account\templates\account\oauth2_authorized-tokens.html:13
+#: .\account\templates\account\oauth2_authorized-tokens.html:14
 msgid ""
 "\n"
 "                    Please exercise caution when granting access to third-"
@@ -513,18 +513,22 @@ msgstr ""
 "applications tierces. Les applications pourront accéder à tous les documents "
 "de votre compte."
 
-#: .\account\templates\account\oauth2_authorized-tokens.html:27
+#: .\account\templates\account\oauth2_authorized-tokens.html:28
 msgid "Enabled"
 msgstr "Activée"
 
-#: .\account\templates\account\oauth2_authorized-tokens.html:40
+#: .\account\templates\account\oauth2_authorized-tokens.html:41
 #, python-format
 msgid "Added on %(date)s"
 msgstr "Ajouté le %(date)s"
 
-#: .\account\templates\account\oauth2_authorized-tokens.html:48
+#: .\account\templates\account\oauth2_authorized-tokens.html:49
 msgid "There are no authorized app yet."
 msgstr "Il n'y a pas encore d'application autorisée."
+
+#: .\account\templates\account\oauth2_authorized-tokens.html:58
+msgid "For developers, you can create your own API key."
+msgstr "Pour les développeurs, vous pouvez créer votre propre clé API."
 
 #: .\account\views.py:73
 msgid "A confirmation email has been sent."

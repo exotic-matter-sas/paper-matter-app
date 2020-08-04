@@ -1,5 +1,6 @@
 {% extends "account/account_base.html" %}
 {% load i18n %}
+{% load get_setting %}
 
 {% block account %}
     <div class="row no-gutters">
@@ -49,9 +50,16 @@
                 {% endfor %}
             </div>
 
-            {#            <div>#}
-            {#                <p><a href="{% url "oauth2_provider:list" %}">For developers, you can create your own API key.</a></p>#}
-            {#            </div>#}
+            {% get_setting "FTL_ENABLE_DEV_API" as dev_api_enabled %}
+            {% if dev_api_enabled %}
+                <div class="mt-4">
+                    <p>
+                        <a href="{% url "oauth2_provider:list" %}">
+                            {% trans "For developers, you can create your own API key." %}
+                        </a>
+                    </p>
+                </div>
+            {% endif %}
         </div>
     </div>
 {% endblock %}
