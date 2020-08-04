@@ -18,29 +18,29 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.4\n"
 
-#: .\account\forms.py:17
+#: account/forms.py:17
 msgid "Email is already used by someone else."
 msgstr "Cette adresse est déjà utilisée."
 
-#: .\account\forms.py:26 .\account\templates\account\account_base.html:49
-#: .\account\templates\account\account_delete.html:44
+#: account/forms.py:26 account/templates/account/account_base.html:49
+#: account/templates/account/account_delete.html:44
 msgid "Password"
 msgstr "Mot de passe"
 
-#: .\account\forms.py:38
+#: account/forms.py:38
 msgid "Incorrect password"
 msgstr "Mot de passe incorrect"
 
-#: .\account\templates\account\account_activity.html:8
-#: .\account\templates\account\account_base.html:54
+#: account/templates/account/account_activity.html:8
+#: account/templates/account/account_base.html:54
 msgid "Account activity"
 msgstr "Activité du compte"
 
-#: .\account\templates\account\account_activity.html:10
+#: account/templates/account/account_activity.html:10
 msgid "See the last ten successful connections to your account."
 msgstr "Consultez les dix dernières connexions réussies à votre compte."
 
-#: .\account\templates\account\account_activity.html:14
+#: account/templates/account/account_activity.html:14
 #, python-format
 msgid ""
 "\n"
@@ -55,35 +55,35 @@ msgstr ""
 "à votre mot de passe. <a href=\"%(the_url)s\">Modifiez-le</a> pour protéger "
 "votre compte."
 
-#: .\account\templates\account\account_base.html:5
+#: account/templates/account/account_base.html:5
 msgid "Account management"
 msgstr "Mon compte"
 
-#: .\account\templates\account\account_base.html:19
+#: account/templates/account/account_base.html:19
 msgid "Return to app"
 msgstr "Revenir à l'application"
 
-#: .\account\templates\account\account_base.html:24
+#: account/templates/account/account_base.html:24
 msgid "Settings"
 msgstr "Paramètres"
 
-#: .\account\templates\account\account_base.html:59
+#: account/templates/account/account_base.html:59
 msgid "Two factor authentication"
 msgstr "Authentification à deux facteurs"
 
-#: .\account\templates\account\account_base.html:65
+#: account/templates/account/account_base.html:65
 msgid "Applications and API"
 msgstr "Applications et API"
 
-#: .\account\templates\account\account_base.html:68
+#: account/templates/account/account_base.html:68
 msgid "Data import / export"
 msgstr "Import / export des données"
 
-#: .\account\templates\account\account_base.html:71
+#: account/templates/account/account_base.html:71
 msgid "Delete account"
 msgstr "Supprimer mon compte"
 
-#: .\account\templates\account\account_base.html:87
+#: account/templates/account/account_base.html:87
 msgid ""
 "\n"
 "            Paper Matter, carefully crafted by\n"
@@ -97,11 +97,11 @@ msgstr ""
 "href=\"https://www.exotic-matter.fr\">Exotic <span class=\"highlight"
 "\">Matter</span></a>  en France."
 
-#: .\account\templates\account\account_delete.html:9
+#: account/templates/account/account_delete.html:9
 msgid "Your are about to delete your Paper Matter account"
 msgstr "Vous êtes sur le point de supprimer votre compte Paper Matter"
 
-#: .\account\templates\account\account_delete.html:16
+#: account/templates/account/account_delete.html:16
 #, python-format
 msgid ""
 "\n"
@@ -124,7 +124,7 @@ msgstr ""
 "ajoutez lui les permissions \"Statut équipe\" et \"Statut super-utilisateur"
 "\". Rafraichissez ensuite cette page pour supprimer ce compte."
 
-#: .\account\templates\account\account_delete.html:26
+#: account/templates/account/account_delete.html:26
 msgid ""
 "Every document and folders will be immediately marked for deletion and the "
 "account\n"
@@ -138,7 +138,7 @@ msgstr ""
 "pour vous inscrire ne sera pas réutilisable pour la création  d'un nouveau "
 "compte.</b>"
 
-#: .\account\templates\account\account_delete.html:34
+#: account/templates/account/account_delete.html:34
 #, python-format
 msgid ""
 "Please <a href=\"%(export_url)s\">export your documents</a> before "
@@ -149,15 +149,15 @@ msgstr ""
 "Pensez à <a href=\"%(export_url)s\">exporter vos documents</a> avant de "
 "continuer car cette action est irréversible."
 
-#: .\account\templates\account\account_delete.html:46
+#: account/templates/account/account_delete.html:46
 msgid "Please provide your account password to continue"
 msgstr "Veuillez indiquer votre mot de passe pour continuer"
 
-#: .\account\templates\account\account_delete.html:61
+#: account/templates/account/account_delete.html:61
 msgid "Delete my account immediately"
 msgstr "Supprimer mon compte immédiatement"
 
-#: .\account\templates\account\account_delete_warn_body.txt:5
+#: account/templates/account/account_delete_warn_body.txt:5
 msgid ""
 "As requested, your Paper Matter account has been purged and deleted.\n"
 "We are sorry that the service didn't meet your expectations :(.\n"
@@ -165,15 +165,15 @@ msgstr ""
 "Suite à votre demande, votre compte Paper Matter a été vidé et supprimé.\n"
 " Nous sommes désolés que le service n'ait pas été à la hauteur :(.\n"
 
-#: .\account\templates\account\account_delete_warn_subject.txt:5
+#: account/templates/account/account_delete_warn_subject.txt:5
 msgid "Your Paper Matter account has been deleted"
 msgstr "Votre compte Paper Matter a été supprimé"
 
-#: .\account\templates\account\account_email.html:8
+#: account/templates/account/account_email.html:8
 msgid "Change your email"
 msgstr "Modifier votre email"
 
-#: .\account\templates\account\account_email.html:10
+#: account/templates/account/account_email.html:10
 msgid ""
 "Keep your email updated. You might receive important notice about your "
 "account."
@@ -181,7 +181,7 @@ msgstr ""
 "Garder votre adresse email à jour. Vous pouvez recevoir des informations "
 "importantes à propos de votre compte."
 
-#: .\account\templates\account\account_email.html:13
+#: account/templates/account/account_email.html:13
 msgid ""
 "\n"
 "                    An confirmation email will be sent to your new address. "
@@ -195,15 +195,15 @@ msgstr ""
 "cliquer sur le lien contenu dans l'email pour valider votre nouvelle "
 "adresse. Attention, ce lien expirera dans 10 minutes."
 
-#: .\account\templates\account\account_email.html:21
+#: account/templates/account/account_email.html:21
 msgid "New email"
 msgstr "Nouvelle adresse email"
 
-#: .\account\templates\account\account_email.html:34
+#: account/templates/account/account_email.html:34
 msgid "Next"
 msgstr "Suivant"
 
-#: .\account\templates\account\account_email_change_body.txt:5
+#: account/templates/account/account_email_change_body.txt:5
 msgid ""
 "\n"
 "An request has been made to change your email linked to your Paper Matter "
@@ -214,7 +214,7 @@ msgstr ""
 "Vous avez demandé à modifier votre adresse email relié à votre compte Paper "
 "Matter. Merci de cliquer sur le lien suivant pour valider.\n"
 
-#: .\account\templates\account\account_email_change_body.txt:12
+#: account/templates/account/account_email_change_body.txt:12
 #, python-format
 msgid ""
 "\n"
@@ -223,11 +223,11 @@ msgstr ""
 "\n"
 "Ce lien expirera dans %(expiration_minutes)s minutes.\n"
 
-#: .\account\templates\account\account_email_change_subject.txt:5
+#: account/templates/account/account_email_change_subject.txt:5
 msgid "Validate your new email!"
 msgstr "Valider votre nouvelle adresse email !"
 
-#: .\account\templates\account\account_email_warn_body.txt:5
+#: account/templates/account/account_email_warn_body.txt:5
 msgid ""
 "\n"
 "Someone requested to change the email address linked to your Paper Matter "
@@ -239,15 +239,15 @@ msgstr ""
 "compte Paper Matter. Si vous n'en êtes pas l'origine, changer IMMÉDIATEMENT "
 "votre mot de passe.\n"
 
-#: .\account\templates\account\account_email_warn_subject.txt:5
+#: account/templates/account/account_email_warn_subject.txt:5
 msgid "Account security: notice of email change"
 msgstr "Sécurité: notification de changement de l'adresse email"
 
-#: .\account\templates\account\account_import_export.html:8
+#: account/templates/account/account_import_export.html:8
 msgid "Import or export your documents"
 msgstr "Importez ou exportez vos documents"
 
-#: .\account\templates\account\account_import_export.html:10
+#: account/templates/account/account_import_export.html:10
 msgid ""
 "You can download the Import - Export software to easily import or export all "
 "your documents and their related metadata (title, note, date...)."
@@ -256,11 +256,11 @@ msgstr ""
 "exporter facilement tous vos documents et leurs métadonnées associées "
 "(titre, note, date...)."
 
-#: .\account\templates\account\account_import_export.html:17
+#: account/templates/account/account_import_export.html:17
 msgid "Download import - export software"
 msgstr "Télécharger le logiciel d'import / export"
 
-#: .\account\templates\account\account_index.html:24
+#: account/templates/account/account_index.html:24
 msgid ""
 "\n"
 "                            Keep your contact email up-to-date\n"
@@ -269,7 +269,7 @@ msgstr ""
 "\n"
 "Gardez votre email de contact à jour"
 
-#: .\account\templates\account\account_index.html:37
+#: account/templates/account/account_index.html:37
 msgid ""
 "\n"
 "                                For more security: update your password "
@@ -279,7 +279,7 @@ msgstr ""
 "\n"
 "Pour plus de sécurité : changez régulièrement de mot de passe"
 
-#: .\account\templates\account\account_index.html:41
+#: account/templates/account/account_index.html:41
 msgid ""
 "\n"
 "                                For more security: update your password "
@@ -290,11 +290,11 @@ msgstr ""
 "Pour plus de sécurité : changez régulièrement de mot de passe et activez le "
 "2FA"
 
-#: .\account\templates\account\account_password.html:8
+#: account/templates/account/account_password.html:8
 msgid "Change your password"
 msgstr "Modifier votre mot de passe"
 
-#: .\account\templates\account\account_password.html:12
+#: account/templates/account/account_password.html:12
 msgid ""
 "\n"
 "                        Your account is protected with your password and Two "
@@ -306,7 +306,7 @@ msgstr ""
 "Votre compte est protégé par votre mot de passe et l'authentification à deux "
 "facteurs. La sécurité de votre compte est optimale."
 
-#: .\account\templates\account\account_password.html:17
+#: account/templates/account/account_password.html:17
 #, python-format
 msgid ""
 "\n"
@@ -323,7 +323,7 @@ msgstr ""
 "l'authentification à deux facteurs pour augmenter la sécurité de votre "
 "compte.</a>"
 
-#: .\account\templates\account\account_password.html:25
+#: account/templates/account/account_password.html:25
 #, python-format
 msgid ""
 "\n"
@@ -338,23 +338,23 @@ msgstr ""
 "aléatoires en incluant des caractères spéciaux (!#%%?) ou une phrase "
 "comprenant 5 ou 6 mots séparés par un espace est suffisant."
 
-#: .\account\templates\account\account_password.html:34
+#: account/templates/account/account_password.html:34
 msgid "Old password"
 msgstr "Ancien mot de passe"
 
-#: .\account\templates\account\account_password.html:46
+#: account/templates/account/account_password.html:46
 msgid "New password"
 msgstr "Nouveau mot de passe"
 
-#: .\account\templates\account\account_password.html:58
+#: account/templates/account/account_password.html:58
 msgid "Confirm new password"
 msgstr "Confirmer nouveau mot de passe"
 
-#: .\account\templates\account\account_password.html:68
+#: account/templates/account/account_password.html:68
 msgid "Update my password"
 msgstr "Modifier votre mot de passe"
 
-#: .\account\templates\account\account_password_warn_body.txt:4
+#: account/templates/account/account_password_warn_body.txt:4
 msgid ""
 "\n"
 "The password of your Paper Matter account has been updated. If you did not "
@@ -366,11 +366,11 @@ msgstr ""
 "n’avez pas demandé ce changement, veuillez IMMÉDIATEMENT réinitialisez votre "
 "mot de passe en utilisant la page \"Mot de passe oublié\".\n"
 
-#: .\account\templates\account\account_password_warn_subject.txt:5
+#: account/templates/account/account_password_warn_subject.txt:5
 msgid "Account security: notice of password change"
 msgstr "Sécurité du compte : avis de changement de mot de passe"
 
-#: .\account\templates\account\oauth2_application_confirm_delete.html:8
+#: account/templates/account/oauth2_application_confirm_delete.html:8
 #, python-format
 msgid ""
 "\n"
@@ -380,51 +380,51 @@ msgstr ""
 "\n"
 "Êtes-vous sûr de vouloir supprimer<br/> « %(name)s » ?"
 
-#: .\account\templates\account\oauth2_application_confirm_delete.html:16
-#: .\account\templates\account\oauth2_authorized-token-delete.html:25
+#: account/templates/account/oauth2_application_confirm_delete.html:16
+#: account/templates/account/oauth2_authorized-token-delete.html:25
 msgid "Cancel"
 msgstr "Annuler"
 
-#: .\account\templates\account\oauth2_application_confirm_delete.html:17
-#: .\account\templates\account\oauth2_application_detail.html:41
+#: account/templates/account/oauth2_application_confirm_delete.html:17
+#: account/templates/account/oauth2_application_detail.html:41
 msgid "Delete"
 msgstr "Supprimer"
 
-#: .\account\templates\account\oauth2_application_detail.html:12
+#: account/templates/account/oauth2_application_detail.html:12
 msgid "Client Type"
 msgstr "Client Type"
 
-#: .\account\templates\account\oauth2_application_detail.html:18
+#: account/templates/account/oauth2_application_detail.html:18
 msgid "Authorization Grant Type"
 msgstr "Authorization Grant Type"
 
-#: .\account\templates\account\oauth2_application_detail.html:25
+#: account/templates/account/oauth2_application_detail.html:25
 msgid "Client id"
 msgstr "Client id"
 
-#: .\account\templates\account\oauth2_application_detail.html:28
+#: account/templates/account/oauth2_application_detail.html:28
 msgid "Client secret"
 msgstr "Client secret"
 
-#: .\account\templates\account\oauth2_application_detail.html:31
+#: account/templates/account/oauth2_application_detail.html:31
 msgid "Redirect Uris"
 msgstr "Redirect URIs"
 
-#: .\account\templates\account\oauth2_application_detail.html:37
-#: .\account\templates\account\oauth2_application_form.html:33
-#: .\account\templates\account\oauth2_application_registration_form.html:33
+#: account/templates/account/oauth2_application_detail.html:37
+#: account/templates/account/oauth2_application_form.html:33
+#: account/templates/account/oauth2_application_registration_form.html:33
 msgid "Back"
 msgstr "Retour"
 
-#: .\account\templates\account\oauth2_application_detail.html:39
+#: account/templates/account/oauth2_application_detail.html:39
 msgid "Edit"
 msgstr "Éditer"
 
-#: .\account\templates\account\oauth2_application_form.html:8
+#: account/templates/account/oauth2_application_form.html:8
 msgid "Edit application"
 msgstr "Éditer l'application"
 
-#: .\account\templates\account\oauth2_application_list.html:7
+#: account/templates/account/oauth2_application_list.html:7
 msgid "Developer API keys"
 msgstr "Clé d'API développeur"
 
@@ -432,7 +432,7 @@ msgstr "Clé d'API développeur"
 msgid "Use the Paper Matter API in your application."
 msgstr "Utiliser l'API Paper Matter dans vos applications."
 
-#: .\account\templates\account\oauth2_application_list.html:13
+#: account/templates/account/oauth2_application_list.html:13
 msgid ""
 "\n"
 "                    Please exercise caution when giving API key to third-"
@@ -444,28 +444,27 @@ msgstr ""
 "Soyez prudent lorsque vous attribuez une clé API à des applications tierces. "
 "Les applications pourront accéder à tous les documents de votre compte."
 
-#: .\account\templates\account\oauth2_application_list.html:30
+#: account/templates/account/oauth2_application_list.html:30
 #, python-format
 msgid ""
 "\n"
 "                            No applications defined. <a href=\"%(register)s"
-"\">Click here</a> if you want to register a\n"
-"                            new one.\n"
+"\">Click here</a> to register one.\n"
 "                        "
 msgstr ""
 "\n"
-"Aucune application définie. <a href=\"%(register)s\">Cliquez ici</a> si vous "
-"souhaitez enregistrer une nouvelle application."
+"Aucune application définie. <a href=\"%(register)s\">Cliquez ici</a> pour en "
+"enregistrer une nouvelle."
 
-#: .\account\templates\account\oauth2_application_registration_form.html:8
+#: account/templates/account/oauth2_application_registration_form.html:8
 msgid "Register a new application"
-msgstr "Ajouter une nouvelle application"
+msgstr "Ajouter une application"
 
-#: .\account\templates\account\oauth2_application_registration_form.html:35
+#: account/templates/account/oauth2_application_registration_form.html:35
 msgid "Add"
 msgstr "Ajouter"
 
-#: .\account\templates\account\oauth2_authorized-token-delete.html:8
+#: account/templates/account/oauth2_authorized-token-delete.html:8
 #, python-format
 msgid ""
 "\n"
@@ -475,7 +474,7 @@ msgstr ""
 "\n"
 "Êtes vous sûr de vouloir révoquer <br /> « %(name)s » ?"
 
-#: .\account\templates\account\oauth2_authorized-token-delete.html:15
+#: account/templates/account/oauth2_authorized-token-delete.html:15
 #, python-format
 msgid ""
 "\n"
@@ -486,16 +485,16 @@ msgstr ""
 "\n"
 "L'application « %(name)s » ne pourra plus accéder à votre compte."
 
-#: .\account\templates\account\oauth2_authorized-token-delete.html:26
-#: .\account\templates\account\oauth2_authorized-tokens.html:45
+#: account/templates/account/oauth2_authorized-token-delete.html:26
+#: account/templates/account/oauth2_authorized-tokens.html:44
 msgid "Revoke"
 msgstr "Révoquer"
 
-#: .\account\templates\account\oauth2_authorized-tokens.html:8
+#: account/templates/account/oauth2_authorized-tokens.html:7
 msgid "Your applications"
 msgstr "Vos applications"
 
-#: .\account\templates\account\oauth2_authorized-tokens.html:10
+#: account/templates/account/oauth2_authorized-tokens.html:9
 msgid "Manage applications accessing your account."
 msgstr "Gérez les applications accédant à votre compte."
 
@@ -509,59 +508,42 @@ msgid ""
 "                "
 msgstr ""
 "\n"
-"Veuillez faire preuve de prudence lorsque vous accordez un accès à des "
-"applications tierces. Les applications pourront accéder à tous les documents "
-"de votre compte."
+"Soyez prudent lorsque vous accordez un accès à des applications tierces. Les "
+"applications pourront accéder à tous les documents de votre compte."
 
-#: .\account\templates\account\oauth2_authorized-tokens.html:28
+#: account/templates/account/oauth2_authorized-tokens.html:27
 msgid "Enabled"
 msgstr "Activée"
 
-#: .\account\templates\account\oauth2_authorized-tokens.html:41
+#: account/templates/account/oauth2_authorized-tokens.html:40
 #, python-format
 msgid "Added on %(date)s"
 msgstr "Ajouté le %(date)s"
 
-#: .\account\templates\account\oauth2_authorized-tokens.html:49
+#: account/templates/account/oauth2_authorized-tokens.html:48
 msgid "There are no authorized app yet."
 msgstr "Il n'y a pas encore d'application autorisée."
 
-#: .\account\templates\account\oauth2_authorized-tokens.html:58
-msgid "For developers, you can create your own API key."
-msgstr "Pour les développeurs, vous pouvez créer votre propre clé API."
-
-#: .\account\views.py:73
+#: account/views.py:73
 msgid "A confirmation email has been sent."
 msgstr "Un email de confirmation a été envoyé."
 
-#: .\account\views.py:130
+#: account/views.py:130
 msgid "Email successfully updated."
 msgstr "L'adresse a été mise à jour."
 
-#: .\account\views.py:131
+#: account/views.py:131
 msgid "The link expired. Please try again."
 msgstr "Le lien de validation a expiré. Merci de réessayer."
 
-#: .\account\views.py:132
+#: account/views.py:132
 msgid "Could not validate your email. Please try again."
 msgstr "Impossible de valider votre adresse. Veuillez réessayer."
 
-#: .\account\views.py:167
+#: account/views.py:167
 msgid "Password updated!"
 msgstr "Mot de passe mis à jour !"
 
-#: .\account\views.py:201
+#: account/views.py:201
 msgid "Your account was deleted."
 msgstr "Votre compte a été supprimé."
-
-#~ msgid "No applications defined"
-#~ msgstr "Aucune application définie"
-
-#~ msgid "Go Back"
-#~ msgstr "Retour"
-
-#~ msgid "current device"
-#~ msgstr "appareil actuel"
-
-#~ msgid "Paper Matter settings"
-#~ msgstr "Paramètres de Paper Matter"

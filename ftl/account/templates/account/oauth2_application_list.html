@@ -28,8 +28,7 @@
                     <p>
                         {% url 'oauth2_provider:register' as register %}
                         {% blocktrans %}
-                            No applications defined. <a href="{{ register }}">Click here</a> if you want to register a
-                            new one.
+                            No applications defined. <a href="{{ register }}">Click here</a> to register one.
                         {% endblocktrans %}
                     </p>
                 {% endif %}
