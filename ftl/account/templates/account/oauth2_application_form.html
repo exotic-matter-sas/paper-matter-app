@@ -1,0 +1,40 @@
+{% extends "account/account_base.html" %}
+{% load add_attr %}
+{% load i18n %}
+
+{% block account %}
+    <div class="row no-gutters">
+        <div class="col text-justify">
+            <h3 class="text-primary">{% trans "Edit application" %} {{ application.name }}</h3>
+
+            <form method="post" action="{% url 'oauth2_provider:update' application.id %}">
+                {% csrf_token %}
+
+                {% for field in form %}
+                    <div class="form-group {% if field.errors %}invalid{% endif %}">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field|add_attr:'{"class":"form-control"}' }}
+                        {% for error in field.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {% for error in form.non_field_errors %}
+                            <span class="help-inline">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="d-flex justify-content-around">
+                    <a class="btn btn-secondary" href="{% url "oauth2_provider:detail" application.id %}">
+                        {% trans "Back" %}
+                    </a>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -231,7 +231,10 @@ SIMPLE_JWT = {
 # OAuth2 Provider
 OAUTH2_PROVIDER = {
     # TODO to be completed with more
-    "SCOPES": {"read": "Read scope", "write": "Write scope"}
+    "SCOPES": {
+        "read": "Read access to your account",
+        "write": "Write access to your account",
+    }
 }
 
 WEBPACK_LOADER = {
@@ -371,6 +374,12 @@ Enable IP allowlist for Django Admin access
 #     "HTTP_X_FORWARDED_FOR",
 #     "X_FORWARDED_FOR",
 # ]
+
+"""
+Enable Developer API
+"""
+FTL_ENABLE_DEV_API = False
+
 
 # ==================================================
 # No settings under this line

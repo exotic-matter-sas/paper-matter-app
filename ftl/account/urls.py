@@ -1,7 +1,7 @@
 #  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
 
-from django.urls import path
+from django.urls import path, include
 
 from . import views
 
@@ -21,4 +21,5 @@ urlpatterns = [
         name="account_import_export",
     ),
     path("delete/", views.AccountDeleteView.as_view(), name="account_delete"),
+    path("oauth2/", include("account.urls_oauth2_mgnt")),
 ]
