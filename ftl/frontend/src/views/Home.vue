@@ -59,7 +59,19 @@
             <font-awesome-icon
               icon="folder-plus"
               :title="$t('Create new folder')"
+              size="lg"
             />
+          </b-button>
+          <b-button
+            id="manage-folder"
+            variant="primary"
+            :title="$t('Rename or move folder')"
+          >
+            <svg class="svg-inline--fa fa-folder fa-w-16 fa-lg" width="512" height="512" aria-hidden="true" data-icon="folder" data-prefix="fas" focusable="false" role="img" version="1.1" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+              <g transform="translate(0 -.012176)">
+                <path transform="translate(0 .012176)" d="m48 64c-26.51 0-48 21.49-48 48v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48v-224c0-26.51-21.49-48-48-48h-192l-64-64h-160zm299.01 100.57c5.3568 0 10.712 2.0347 14.779 6.1016l33.146 33.146c8.1336 8.2211 8.1336 21.427 0 29.648l-36.557 36.557-62.795-62.707 36.645-36.645c4.0668-4.0668 9.4244-6.1016 14.781-6.1016zm-71.191 62.512 62.707 62.707-120.61 120.61-53.262 5.9473c-8.8333 1.0495-16.355-6.4718-15.393-15.393l5.9473-53.35 120.61-120.52z" fill="currentColor"/>
+              </g>
+            </svg>
           </b-button>
           <b-button
             variant="primary"
@@ -300,11 +312,12 @@
     Your folders list, you can create a new folder or go back to the parent folder when you are inside a sub folder.: La liste de vos dossiers, vous pouvez créer un nouveau dossier ou revenir au dossier parent lorsque vous êtes dans un sous-dossier.
     Documents (5/5): Documents (5/5)
     Your documents list, you can select multiple documents using the checkboxes (or <kbd>Ctrl</kbd> + <kbd>Left click</kbd>) to apply batch actions.: La liste de vos documents, vous pouvez en sélectionner plusieurs avec les cases à cocher (ou <kbd>Ctrl</kbd> + <kbd>Clic gauche</kbd>) pour réaliser des actions groupées.
+    Rename or move folder: Renommer ou déplacer un dossier
 </i18n>
 
 <script>
 // @ is an alias to /src
-import { mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import HomeBase from "@/views/HomeBase";
 import FTLFolder from "@/components/FTLFolder.vue";
 import FTLNewFolder from "@/components/FTLNewFolder";
@@ -343,7 +356,6 @@ export default {
 
       // Folders list and breadcrumb
       folders: [],
-      previousLevels: [],
     };
   },
 
@@ -465,14 +477,6 @@ export default {
   },
 
   computed: {
-    getCurrentFolder: function () {
-      if (this.previousLevels.length) {
-        return this.previousLevels[this.previousLevels.length - 1];
-      } else {
-        return null;
-      }
-    },
-
     breadcrumb: function () {
       const vi = this;
       let paths = [];
@@ -503,7 +507,8 @@ export default {
 
       return paths;
     },
-    ...mapState(["selectedDocumentsHome", "sortHome"]), // generate vuex computed getter
+    ...mapState(["selectedDocumentsHome", "sortHome", "previousLevels"]), // generate vuex computed getter
+    ...mapGetters(["getCurrentFolder"])
   },
 
   methods: {
@@ -534,21 +539,21 @@ export default {
 
     changeFolder: function (folder = null) {
       if (folder === null) {
-        this.previousLevels = [];
+        this.$store.commit("resetPreviousLevels");
       }
       this.updateFolders(folder);
       this.updateDocuments();
     },
 
     navigateToFolder: function (folder) {
-      if (folder) this.previousLevels.push(folder);
+      if (folder) this.$store.commit("appendNewLevel", folder);
       this.$router.push({
         path: "/home/" + this.computeFolderUrlPath(folder.id),
       });
     },
 
     changeToPreviousFolder: function () {
-      this.previousLevels.pop(); // Remove current level
+      this.$store.commit("removeCurrentLevel");
       let level = this.getCurrentFolder;
 
       if (level === null) {
@@ -564,7 +569,7 @@ export default {
       axios
         .get("/app/api/v1/folders/" + folderId)
         .then((response) => {
-          this.previousLevels = response.data.paths;
+          this.$store.commit("setPreviousLevels", response.data.paths);
           this.changeFolder(response.data);
           // Allow refresh of the current URL in address bar to take into account folders paths changes
           if (this.docPid) {

@@ -91,9 +91,9 @@
     </b-navbar-brand>
 
     <b-navbar-nav>
-      <router-link :to="{ name: 'home' }" tag="b-nav-item">
-        <font-awesome-icon icon="home" :title="$t('Home')" />
-      </router-link>
+      <!--<router-link :to="{ name: 'home' }" tag="b-nav-item">-->
+      <!--<font-awesome-icon icon="home" :title="$t('Home')" />-->
+      <!--</router-link>-->
       <router-link :to="{ name: 'folders' }" tag="b-nav-item">
         <font-awesome-icon icon="folder" :title="$t('Folders management')" />
       </router-link>
@@ -126,6 +126,22 @@
             </b-button>
           </b-input-group-append>
         </b-input-group>
+      </b-nav-form>
+
+      <b-nav-form class="mt-3 ml-0 mt-sm-0 ml-sm-3">
+        <b-dropdown id="add-documents" right split variant="outline-secondary"
+        :html="`<label for='upload-doc-input'>${$t('Add documents')}</label>`">
+          <b-dropdown-item variant="primary">
+          </b-dropdown-item>
+          <b-dropdown-item variant="primary">
+            {{ $t("Import a folder") }}
+            <font-awesome-icon icon="external-link-alt" size="sm" />
+          </b-dropdown-item>
+          <b-dropdown-divider></b-dropdown-divider>
+          <b-dropdown-item variant="primary" disabled>
+            {{ $t("Adding 4 documents...") }}
+          </b-dropdown-item>
+        </b-dropdown>
       </b-nav-form>
 
       <b-navbar-nav class="ml-auto">
@@ -170,6 +186,8 @@
     Folders management: Gestion des dossiers
     Keywords...: Mots clés...
     Search: Rechercher
+    Add documents: Ajouter des documents
+    Import a folder: Importer un dossier
     Settings: Paramètres
     Sign Out: Se déconnecter
 </i18n>
@@ -257,4 +275,15 @@ export default {
   margin-right: 0.5em;
   font-size: 0.7em;
 }
+</style>
+
+<style lang="scss">
+  #add-documents > button:first-child {
+    padding: 0;
+
+    label {
+      padding: 0.375rem 0.75rem;
+      cursor: pointer;
+    }
+  }
 </style>

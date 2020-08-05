@@ -7,6 +7,7 @@ import mutations from "@/store/mutations";
 import getters from "@/store/getters";
 
 const state = {
+  previousLevels: [], // breadcrumb
   selectedMoveTargetFolder: null,
   panelSelectedFolder: null,
   selectedDocumentsHome: [],

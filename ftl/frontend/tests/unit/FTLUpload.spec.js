@@ -55,7 +55,7 @@ describe("FTLUpload template", () => {
   });
 });
 
-describe("FTLUpload script", () => {
+describe("FTLUpload methods", () => {
   let axios_upload_conf;
   const mockedPostResponse = {
     data: {},
@@ -69,10 +69,12 @@ describe("FTLUpload script", () => {
   let wrapper;
   let storeConfigCopy;
   let store;
+  let currentFolderMock = jest.fn();
 
   beforeEach(() => {
     axios.post.mockResolvedValue(mockedPostResponse);
     createThumbFromFile.mockResolvedValue("base64str");
+    currentFolderMock.mockReturnValue(tv.FOLDER_PROPS);
 
     storeConfigCopy = cloneDeep(storeConfig);
     store = new Vuex.Store(storeConfigCopy);
@@ -80,13 +82,65 @@ describe("FTLUpload script", () => {
     wrapper = shallowMount(FTLUpload, {
       localVue,
       store,
-      propsData: { currentFolder: tv.FOLDER_PROPS },
+      computed: {
+        currentFolder: {
+          get: currentFolderMock,
+          cache: false
+        }
+      }
     });
     axios_upload_conf = {
       onUploadProgress: wrapper.vm.refreshUploadProgression,
     };
     Object.assign(axios_upload_conf, axiosConfig); // merge upload specific conf with generic crsf conf
-    wrapper.setData({ files: [{ type: "application/pdf" }] });
+    wrapper.setData({ selectedFiles: [{ type: "application/pdf" }] });
+  });
+
+  it("addUploadTask set uploadTasks properly", async () => {
+    // given user begin by selecting 1 file
+    currentFolderMock.mockReturnValue(tv.FOLDER_PROPS);
+    wrapper.setData({
+      selectedFiles: [tv.FILES_PROPS]
+    });
+
+    // when
+    wrapper.vm.addUploadTask();
+
+    // then
+    expect(wrapper.vm.uploadTasks).toEqual(new Map([
+      [tv.FOLDER_PROPS.id, [tv.FILES_PROPS]],
+    ]));
+    expect(wrapper.vm.selectedFiles).toEqual([]);
+
+    // given user add 2 more docs to the same folder
+    wrapper.setData({
+      selectedFiles: [tv.FILES_PROPS_2, tv.FILES_PROPS_3]
+    });
+
+    // when
+    wrapper.vm.addUploadTask();
+
+    // then
+    expect(wrapper.vm.uploadTasks).toEqual(new Map([
+      [tv.FOLDER_PROPS.id, [tv.FILES_PROPS, tv.FILES_PROPS_2, tv.FILES_PROPS_3]],
+    ]));
+    expect(wrapper.vm.selectedFiles).toEqual([]);
+
+    // given user add 3 more docs to another folder
+    currentFolderMock.mockReturnValue(tv.FOLDER_PROPS_VARIANT);
+    wrapper.setData({
+      selectedFiles: [tv.FILES_PROPS, tv.FILES_PROPS_2, tv.FILES_PROPS_3]
+    });
+
+    // when
+    wrapper.vm.addUploadTask();
+
+    // then
+    expect(wrapper.vm.uploadTasks).toEqual(new Map([
+      [tv.FOLDER_PROPS.id, [tv.FILES_PROPS, tv.FILES_PROPS_2, tv.FILES_PROPS_3]],
+      [tv.FOLDER_PROPS_VARIANT.id, [tv.FILES_PROPS, tv.FILES_PROPS_2, tv.FILES_PROPS_3]],
+    ]));
+    expect(wrapper.vm.selectedFiles).toEqual([]);
   });
 
   it("uploadDocument call api", async () => {

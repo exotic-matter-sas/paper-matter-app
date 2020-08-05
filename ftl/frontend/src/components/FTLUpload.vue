@@ -6,48 +6,50 @@
 <template>
   <section id="upload-section">
     <b-row>
-      <b-col cols="12" md="8">
+      <b-col cols="12">
         <b-form-file
+          id="upload-doc-input"
           multiple
           ref="fileUploadField"
-          v-model="files"
-          :state="files.length > 0 || null"
+          v-model="selectedFiles"
+          :state="selectedFiles.length > 0 || null"
           :placeholder="$t('Upload document')"
           :drop-placeholder="$t('Drop file here...')"
           :browse-text="$t('Browse')"
           :accept="exts.join(',')"
+          @input="uploadDocument"
         ></b-form-file>
       </b-col>
-      <b-col cols="12" md="2">
-        <b-button
-          class="w-100 mt-2 mt-md-0"
-          id="upload-button"
-          variant="primary"
-          :disabled="uploading || !files.length > 0"
-          @click="uploadDocument"
-        >
-          {{ $t("Upload") }}
-        </b-button>
-      </b-col>
-      <b-col
-        class="d-none d-md-flex align-items-center justify-content-center"
-        md="2"
-      >
-        <a
-          id="import-folder-link"
-          class="text-center"
-          href="https://welcome.papermatter.app/downloads"
-          target="_blank"
-          :title="
-            $t(
-              'Import a folder or a large amount of documents using the local import client'
-            )
-          "
-        >
-          {{ $t("Import a folder") }}
-          <font-awesome-icon icon="external-link-alt" size="sm" />
-        </a>
-      </b-col>
+      <!--<b-col cols="12" md="2">-->
+        <!--<b-button-->
+          <!--class="w-100 mt-2 mt-md-0"-->
+          <!--id="upload-button"-->
+          <!--variant="primary"-->
+          <!--:disabled="uploading || !selectedFiles.length > 0"-->
+          <!--@click="uploadDocument"-->
+        <!--&gt;-->
+          <!--{{ $t("Upload") }}-->
+        <!--</b-button>-->
+      <!--</b-col>-->
+      <!--<b-col-->
+        <!--class="d-none d-md-flex align-items-center justify-content-center"-->
+        <!--md="2"-->
+      <!--&gt;-->
+        <!--<a-->
+          <!--id="import-folder-link"-->
+          <!--class="text-center"-->
+          <!--href="https://welcome.papermatter.app/downloads"-->
+          <!--target="_blank"-->
+          <!--:title="-->
+            <!--$t(-->
+              <!--'Import a folder or a large amount of documents using the local import client'-->
+            <!--)-->
+          <!--"-->
+        <!--&gt;-->
+          <!--{{ $t("Import a folder") }}-->
+          <!--<font-awesome-icon icon="external-link-alt" size="sm" />-->
+        <!--</a>-->
+      <!--</b-col>-->
     </b-row>
     <b-row class="mt-1">
       <b-col>
@@ -83,20 +85,15 @@
 import axios from "axios";
 import { createThumbFromFile } from "@/thumbnailGenerator";
 import { axiosConfig } from "@/constants";
-import { mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 
 export default {
   name: "FTLUpload",
-  props: {
-    currentFolder: {
-      type: Object,
-      required: false,
-    },
-  },
 
   data() {
     return {
-      files: [],
+      selectedFiles: [],
+      uploadTasks: new Map(),
       uploading: false,
       uploadedFilesCount: 0,
       currentUploadProgress: 0,
@@ -115,9 +112,24 @@ export default {
       return list_exts;
     },
     ...mapState(["ftlAccount"]), // generate vuex computed getter
+    ...mapGetters(["getCurrentFolder"]), // generate vuex computed getter
   },
 
   methods: {
+    addUploadTask: function () {
+      const uploadFolderId = this.getCurrentFolder.id;
+
+      // if there is already an upload task for this folder add selectedFiles to the file to upload
+      if (this.uploadTasks.has(uploadFolderId)) {
+        this.uploadTasks.get(uploadFolderId).push(...this.selectedFiles);
+      }
+      else {
+        this.uploadTasks.set(uploadFolderId, this.selectedFiles);
+      }
+
+      this.selectedFiles = [];
+    },
+
     refreshUploadProgression: function (progressEvent) {
       let vi = this;
       if (progressEvent.lengthComputable) {
@@ -129,16 +141,16 @@ export default {
 
       vi.globalUploadProgress =
         (vi.currentUploadProgress + vi.uploadedFilesCount * 100) /
-        vi.files.length;
+        vi.selectedFiles.length;
     },
 
     uploadDocument: async function () {
       let vi = this;
       vi.uploading = true;
       // Non reactive copy, avoid uploading in wrong folder while the user is navigating.
-      const folderForUpload = Object.assign({}, vi.currentFolder);
+      const folderForUpload = Object.assign({}, vi.getCurrentFolder);
 
-      for (const file of vi.files) {
+      for (const file of vi.selectedFiles) {
         let formData = new FormData();
         // file binary
         formData.append("file", file);
@@ -175,7 +187,7 @@ export default {
         vi.uploadedFilesCount++;
       }
 
-      vi.files = [];
+      vi.selectedFiles = [];
       vi.uploadedFilesCount = vi.currentUploadProgress = vi.globalUploadProgress = 0;
       vi.uploading = false;
     },

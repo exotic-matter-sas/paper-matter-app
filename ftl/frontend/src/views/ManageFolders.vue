@@ -174,6 +174,7 @@ import FTLRenameFolder from "@/components/FTLRenameFolder";
 import FTLDeleteFolder from "@/components/FTLDeleteFolder";
 import axios from "axios";
 import FTLMoveFolder from "@/components/FTLMoveFolder";
+import { mapGetters, mapState } from "vuex";
 
 export default {
   name: "Folders",
@@ -192,9 +193,6 @@ export default {
       foldersLoading: false,
       folders: [],
 
-      // breadcrumb
-      previousLevels: [],
-
       // Folder panel
       folderDetail: null,
       folderDetailLoading: false,
@@ -204,7 +202,7 @@ export default {
   watch: {
     folder: function (newVal, oldVal) {
       if (newVal === undefined) {
-        this.previousLevels = [];
+        this.$store.commit('resetPreviousLevels');
         this.updateFolders();
       } else {
         if (newVal !== oldVal) {
@@ -224,13 +222,6 @@ export default {
   },
 
   computed: {
-    getCurrentFolder: function () {
-      if (this.previousLevels.length) {
-        return this.previousLevels[this.previousLevels.length - 1];
-      } else {
-        return null;
-      }
-    },
     breadcrumb: function () {
       let paths = [];
 
@@ -251,6 +242,8 @@ export default {
         })
       );
     },
+    ...mapState(["previousLevels"]),
+    ...mapGetters(["getCurrentFolder"])
   },
 
   methods: {
@@ -258,7 +251,7 @@ export default {
       if (this.folder) {
         this.updateFoldersFromUrl(this.folder);
       } else {
-        this.previousLevels = [];
+        this.$store.commit('resetPreviousLevels');
         this.updateFolders();
       }
     },
@@ -286,7 +279,7 @@ export default {
 
     navigateToFolder: function (folder) {
       this.unselectFolder();
-      if (folder) this.previousLevels.push(folder);
+      if (folder) this.$store.commit('appendNewLevel', folder);
       this.$router.push({
         name: "folders",
         params: { folder: folder.id },
@@ -326,13 +319,13 @@ export default {
 
       if (this.folderDetail && this.folderDetail.id === folderId) {
         // Avoid duplicate request to folder detail api if we have already the detail because we clicked on the folder
-        this.previousLevels = this.folderDetail.paths;
+        this.$store.commit('setPreviousLevels', this.folderDetail.paths);
         this.updateFolders(this.folderDetail);
       } else {
         axios
           .get("/app/api/v1/folders/" + folderId)
           .then((response) => {
-            this.previousLevels = response.data.paths;
+            this.$store.commit('setPreviousLevels', response.data.paths);
             this.updateFolders(response.data);
           })
           .catch(() => {
