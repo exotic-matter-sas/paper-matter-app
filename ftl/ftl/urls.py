@@ -21,7 +21,7 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path, include, re_path, reverse_lazy
-from django.views.generic import RedirectView
+from django.views.generic import RedirectView, TemplateView
 from django_registration.backends.activation.views import ActivationView
 
 from ftl import views
@@ -82,6 +82,10 @@ urlpatterns = [
     path("accounts/2fa/", include("ftl.otp_plugins.otp_ftl.urls")),
     # OAuth2 Provider
     path("oauth2/", include("ftl.urls_oauth2")),
+    # TEST TO BE REMOVED FIXME
+    path("404.html", TemplateView.as_view(template_name="404.html")),
+    path("403.html", TemplateView.as_view(template_name="403.html")),
+    path("500.html", TemplateView.as_view(template_name="500.html")),
 ]
 
 if settings.DEBUG and settings.DEV_MODE:
