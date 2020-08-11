@@ -6,7 +6,7 @@
 <template>
   <b-button
     class="folder"
-    :class="{ 'border border-active': dragOver, 'background-highlight': folder.highlightAnimation}"
+    :class="{ 'border border-active': dragOver, 'highlight-animation': folder.highlightAnimation}"
     :disabled="navigating"
     @click="navigate"
     v-on:drop="drop"
@@ -49,7 +49,7 @@ export default {
 @import "~bootstrap/scss/_variables.scss";
 @import "~bootstrap/scss/_mixins.scss";
 
-.background-highlight {
+.highlight-animation {
   animation: highlight 2s ease-in;
 }
 </style>

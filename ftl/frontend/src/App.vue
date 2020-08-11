@@ -79,6 +79,7 @@ export default {
   from {
     background-color: $em-orange;
     border-color: $em-orange;
+    fill: $em-orange;
   }
 }
 </style>
