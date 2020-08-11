@@ -6,7 +6,10 @@
 <template>
   <b-button
     class="folder"
-    :class="{ 'border border-active': dragOver, 'highlight-animation': folder.highlightAnimation}"
+    :class="{
+      'border border-active': dragOver,
+      'highlight-animation': folder.highlightAnimation,
+    }"
     :disabled="navigating"
     @click="navigate"
     v-on:drop="drop"
