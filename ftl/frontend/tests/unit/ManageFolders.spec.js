@@ -299,13 +299,16 @@ describe("ManageFolders methods", () => {
   });
   it("folderCreated push folder to the list and set folder.highlightAnimation", () => {
     // given
-    wrapper.setData({folders: [tv.FOLDER_PROPS]});
+    wrapper.setData({ folders: [tv.FOLDER_PROPS] });
 
     // when
     wrapper.vm.folderCreated(tv.FOLDER_PROPS_VARIANT);
 
     // then
-    expect(wrapper.vm.folders).toEqual([tv.FOLDER_PROPS, tv.FOLDER_PROPS_VARIANT]);
+    expect(wrapper.vm.folders).toEqual([
+      tv.FOLDER_PROPS,
+      tv.FOLDER_PROPS_VARIANT,
+    ]);
     expect(wrapper.vm.folders[1]).toHaveProperty("highlightAnimation");
     expect(wrapper.vm.folders[1].highlightAnimation).toEqual(true);
   });

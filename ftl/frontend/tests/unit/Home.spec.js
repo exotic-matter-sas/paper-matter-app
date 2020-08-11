@@ -67,7 +67,7 @@ jest.mock("axios", () => ({
   post: jest.fn(),
   patch: jest.fn(),
 }));
-jest.mock('driver.js');
+jest.mock("driver.js");
 const mockedGetFoldersResponse = {
   data: [],
   status: 200,
@@ -623,13 +623,16 @@ describe("Home methods update proper data", () => {
 
   it("folderCreated unshift folder to the list and set folder.highlightAnimation", () => {
     // given
-    wrapper.setData({folders: [tv.FOLDER_PROPS]});
+    wrapper.setData({ folders: [tv.FOLDER_PROPS] });
 
     // when
     wrapper.vm.folderCreated(tv.FOLDER_PROPS_VARIANT);
 
     // then
-    expect(wrapper.vm.folders).toEqual([tv.FOLDER_PROPS_VARIANT, tv.FOLDER_PROPS]);
+    expect(wrapper.vm.folders).toEqual([
+      tv.FOLDER_PROPS_VARIANT,
+      tv.FOLDER_PROPS,
+    ]);
     expect(wrapper.vm.folders[0]).toHaveProperty("highlightAnimation");
     expect(wrapper.vm.folders[0].highlightAnimation).toEqual(true);
   });

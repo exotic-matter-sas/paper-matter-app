@@ -50,7 +50,7 @@ describe("FTLFolder methods", () => {
 
   it("navigate set navigating true", () => {
     // given
-    wrapper.setData({navigating: false});
+    wrapper.setData({ navigating: false });
 
     // when
     wrapper.vm.navigate();
