@@ -11,7 +11,6 @@
           icon="folder"
           size="5x"
           class="text-secondary w-100"
-          :class="{ 'highlight-animation': folder.highlightAnimation }"
         />
       </b-col>
     </b-row>
@@ -127,9 +126,5 @@ export default {
       overflow: hidden;
     }
   }
-}
-
-.highlight-animation path {
-  animation: highlight 2s ease-in;
 }
 </style>
