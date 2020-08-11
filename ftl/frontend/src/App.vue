@@ -74,4 +74,11 @@ export default {
     opacity: 1;
   }
 }
+
+@keyframes highlight {
+  from {
+    background-color: $em-orange;
+    border-color: $em-orange;
+  }
+}
 </style>
