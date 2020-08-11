@@ -68,6 +68,7 @@ const mockedGetCurrentFolder = jest.fn();
 const mockedFolderMoved = jest.fn();
 const mockedFolderDeleted = jest.fn();
 const mockedFolderUpdated = jest.fn();
+const mockedFolderCreated = jest.fn();
 const mockedFTLTreeItemSelected = jest.fn();
 const mockedSelectMoveTargetFolder = jest.fn();
 
@@ -295,6 +296,18 @@ describe("ManageFolders methods", () => {
     expect(mockedUpdateFolders).toHaveBeenCalledWith(
       mockedGetFolderDetailsResponse.data
     );
+  });
+  it("folderCreated push folder to the list and set folder.highlightAnimation", () => {
+    // given
+    wrapper.setData({folders: [tv.FOLDER_PROPS]});
+
+    // when
+    wrapper.vm.folderCreated(tv.FOLDER_PROPS_VARIANT);
+
+    // then
+    expect(wrapper.vm.folders).toEqual([tv.FOLDER_PROPS, tv.FOLDER_PROPS_VARIANT]);
+    expect(wrapper.vm.folders[1]).toHaveProperty("highlightAnimation");
+    expect(wrapper.vm.folders[1].highlightAnimation).toEqual(true);
   });
   it("folderMoved remove folder from list and deselect folder", () => {
     // given
@@ -566,6 +579,7 @@ describe("Event received and handled by component", () => {
           folderMoved: mockedFolderMoved,
           folderDeleted: mockedFolderDeleted,
           folderUpdated: mockedFolderUpdated,
+          folderCreated: mockedFolderCreated,
         },
         mountedMocks
       ),
@@ -625,14 +639,14 @@ describe("Event received and handled by component", () => {
     expect(mockedFolderUpdated).toHaveBeenCalledTimes(1);
     expect(mockedFolderUpdated).toHaveBeenCalledWith(folder);
   });
-  it("event-folder-created call refreshFolder", async () => {
+  it("event-folder-created call folderCreated", async () => {
     // when
     wrapper.find(FTLNewFolder).vm.$emit("event-folder-created", folder);
     await flushPromises();
 
     // then
-    expect(mockedRefreshFolder).toHaveBeenCalledTimes(1);
-    expect(mockedRefreshFolder).toHaveBeenCalledWith(folder);
+    expect(mockedFolderCreated).toHaveBeenCalledTimes(1);
+    expect(mockedFolderCreated).toHaveBeenCalledWith(folder);
   });
   it("event-folder-deleted call folderDeleted", async () => {
     // Need to defined folderDetail for FTLRenameFolder to appears

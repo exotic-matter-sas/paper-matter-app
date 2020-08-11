@@ -67,6 +67,7 @@ jest.mock("axios", () => ({
   post: jest.fn(),
   patch: jest.fn(),
 }));
+jest.mock('driver.js');
 const mockedGetFoldersResponse = {
   data: [],
   status: 200,
@@ -449,14 +450,6 @@ describe("Home methods call proper methods", () => {
       path: "/home/" + fakePath,
     });
   });
-
-  it("folderCreated call refreshFolders", () => {
-    // when
-    wrapper.vm.folderCreated("");
-
-    // then
-    expect(mockedRefreshFolders).toHaveBeenCalledTimes(1);
-  });
 });
 
 describe("Home methods return proper value", () => {
@@ -618,18 +611,27 @@ describe("Home methods update proper data", () => {
   let store;
 
   beforeEach(() => {
-    mockedDocumentsSelected.mockReturnValue([]);
     storeConfigCopy = cloneDeep(storeConfig);
     store = new Vuex.Store(storeConfigCopy);
     wrapper = shallowMount(Home, {
       localVue,
       store,
       methods: mountedMocks,
-      computed: {
-        documentsSelected: mockedDocumentsSelected,
-      },
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
+  });
+
+  it("folderCreated unshift folder to the list and set folder.highlightAnimation", () => {
+    // given
+    wrapper.setData({folders: [tv.FOLDER_PROPS]});
+
+    // when
+    wrapper.vm.folderCreated(tv.FOLDER_PROPS_VARIANT);
+
+    // then
+    expect(wrapper.vm.folders).toEqual([tv.FOLDER_PROPS_VARIANT, tv.FOLDER_PROPS]);
+    expect(wrapper.vm.folders[0]).toHaveProperty("highlightAnimation");
+    expect(wrapper.vm.folders[0].highlightAnimation).toEqual(true);
   });
 });
 
