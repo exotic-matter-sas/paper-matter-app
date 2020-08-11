@@ -641,8 +641,7 @@ export default {
     },
 
     folderCreated: function (folder) {
-      folder.highlightAnimation = true;
-      this.folders.unshift(folder);
+      this.refreshFolders();
     },
   },
 };

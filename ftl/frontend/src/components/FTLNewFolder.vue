@@ -86,6 +86,7 @@ export default {
       axios
         .post("/app/api/v1/folders", postBody, axiosConfig)
         .then((response) => {
+          // TODO flash the new folder when just created
           this.mixinAlert(
             this.$t('Folder "{0}" created', [this.newFolderName])
           );
