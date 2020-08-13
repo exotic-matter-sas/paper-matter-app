@@ -47,10 +47,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
-@import "~bootstrap/scss/_functions.scss";
-@import "~bootstrap/scss/_variables.scss";
-@import "~bootstrap/scss/_mixins.scss";
+<style scoped>
 
 .highlight-animation {
   animation: highlight 2s ease-in;
