@@ -4,9 +4,10 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.translation import gettext_lazy as _
-from mptt.admin import MPTTModelAdmin
+from django_otp.plugins.otp_static.models import StaticDevice
+from django_otp.plugins.otp_totp.models import TOTPDevice
 
-from core.models import FTLOrg, FTLUser, FTLDocument, FTLFolder, FTLDocumentSharing
+from core.models import FTLOrg, FTLUser, FTLDocument, FTLDocumentSharing
 
 
 @admin.register(FTLUser)
@@ -37,8 +38,8 @@ class UserAdmin(BaseUserAdmin):
             },
         ),
     )
-    list_display = ("org", "email", "first_name", "last_name", "is_staff")
-    search_fields = ("org__name", "email", "first_name", "last_name")
+    list_display = ("org", "email", "is_staff")
+    search_fields = ("email",)
     ordering = ("email",)
     raw_id_fields = ("org",)
 
@@ -54,14 +55,6 @@ class FTLOrgAdmin(admin.ModelAdmin):
         "id",
         "name",
         "slug",
-    )
-
-
-@admin.register(FTLFolder)
-class FTLFolderAdmin(MPTTModelAdmin):
-    raw_id_fields = (
-        "org",
-        "parent",
     )
 
 
@@ -86,12 +79,7 @@ class FTLDocumentAdmin(admin.ModelAdmin):
     inlines = [
         FTLDocumentSharingInline,
     ]
-    search_fields = (
-        "pid",
-        "title",
-        "note",
-        "content",
-    )
+    search_fields = ("pid",)
     raw_id_fields = (
         "org",
         "ftl_user",
@@ -103,3 +91,7 @@ class FTLDocumentAdmin(admin.ModelAdmin):
 class FTLDocumentSharingAdmin(admin.ModelAdmin):
     search_fields = ("pid",)
     raw_id_fields = ("ftl_doc",)
+
+
+admin.site.unregister(TOTPDevice)
+admin.site.unregister(StaticDevice)
