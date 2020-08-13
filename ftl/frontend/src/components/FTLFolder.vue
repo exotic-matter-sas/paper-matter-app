@@ -48,7 +48,6 @@ export default {
 </script>
 
 <style scoped>
-
 .highlight-animation {
   animation: highlight 2s ease-in;
 }
