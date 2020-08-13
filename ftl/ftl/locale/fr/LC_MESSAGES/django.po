@@ -91,7 +91,7 @@ msgid ""
 "                "
 msgstr ""
 "\n"
-"Désolé, quelque chose s’est mal passé. C’est de notre faute, pas la vôtre. "
+"Désolé, une erreur s'est produite. C’est de notre faute, pas la vôtre. "
 "Veuillez essayer à nouveau plus tard."
 
 #: .\ftl\templates\ftl\axes\locked.html:6
