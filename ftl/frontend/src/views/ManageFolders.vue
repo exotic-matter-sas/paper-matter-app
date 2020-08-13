@@ -138,7 +138,7 @@
 
       <FTLNewFolder
         :parent="getCurrentFolder"
-        @event-folder-created="refreshFolder"
+        @event-folder-created="folderCreated"
       />
 
       <FTLDeleteFolder
@@ -340,6 +340,11 @@ export default {
             this.foldersLoading = false;
           });
       }
+    },
+
+    folderCreated: function (folder) {
+      folder.highlightAnimation = true;
+      this.folders.push(folder);
     },
 
     folderMoved: function (event) {
