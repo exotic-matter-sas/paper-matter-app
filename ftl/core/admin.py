@@ -76,6 +76,7 @@ class FTLDocumentSharingInline(admin.TabularInline):
 
 @admin.register(FTLDocument)
 class FTLDocumentAdmin(admin.ModelAdmin):
+    list_display = ("pid",)
     inlines = [
         FTLDocumentSharingInline,
     ]
@@ -86,8 +87,6 @@ class FTLDocumentAdmin(admin.ModelAdmin):
         "ftl_folder",
     )
     fields = (
-        "org",
-        "ftl_user",
         "created",
         "size",
         "md5",
