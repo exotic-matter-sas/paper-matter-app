@@ -85,6 +85,17 @@ class FTLDocumentAdmin(admin.ModelAdmin):
         "ftl_user",
         "ftl_folder",
     )
+    fields = (
+        "org",
+        "ftl_user",
+        "created",
+        "size",
+        "md5",
+        "deleted",
+        "ocrized",
+        "ocr_retry",
+        "type",
+    )
 
 
 @admin.register(FTLDocumentSharing)
