@@ -1,0 +1,19 @@
+/*!
+ * Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
+ * Licensed under the BSL License. See LICENSE in the project root for license information.
+ */
+
+@import "variables";
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
+
+main {
+  width: 100%;
+}
+
+@include media-breakpoint-up(sm) {
+  main {
+    width: 75% !important;
+  }
+}

@@ -23,7 +23,7 @@ export const FOLDER_PROPS_VARIANT = {
 };
 
 export const FOLDER_PROPS_WITH_PARENT = {
-  id: 1234,
+  id: 4321,
   name: "Folder title",
   parent: "4321",
 };
@@ -51,6 +51,7 @@ export const DOCUMENT_PROPS = {
   ftl_folder: null,
   path: [],
   download_url: "app/uploads/1000",
+  is_shared: false,
 };
 
 export const DOCUMENT_PROPS_VARIANT = {
@@ -61,6 +62,7 @@ export const DOCUMENT_PROPS_VARIANT = {
   thumbnail_available: true,
   ftl_folder: null,
   path: [],
+  is_shared: false,
 };
 
 export const DOCUMENT_PROPS_WITH_FOLDER = {
@@ -71,6 +73,7 @@ export const DOCUMENT_PROPS_WITH_FOLDER = {
   thumbnail_available: true,
   ftl_folder: 123,
   path: [],
+  is_shared: false,
 };
 
 export const DOCUMENT_PROPS_WITH_FOLDER_MOVED = {

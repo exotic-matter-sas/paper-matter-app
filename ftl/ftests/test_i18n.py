@@ -8,7 +8,7 @@ from django.conf import settings
 from ftests.pages.base_page import NODE_SERVER_RUNNING
 from ftests.pages.home_page import HomePage
 from ftests.pages.setup_pages import SetupPages
-from ftests.pages.user_login_page import LoginPage
+from ftests.pages.login_page import LoginPage
 from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user
 
 

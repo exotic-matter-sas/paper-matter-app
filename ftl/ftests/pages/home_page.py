@@ -92,6 +92,12 @@ class HomePage(BasePage):
         # Needed in case of several upload in a row as upload success trigger a notification that hide upload button
         self.close_all_notifications()
 
+    def rename_document_from_list(self, doc_elem, doc_name):
+        doc_elem.click()
+        self.wait_for_elem_to_show(self.modal_input)
+        self.get_elem(self.modal_input).send_keys(doc_name)
+        self.accept_modal()
+
     def create_folder(self, folder_name=tv.FOLDER1_NAME, close_notification=True):
         self.get_elem(self.create_folder_button).click()
         self.wait_for_elem_to_show(self.modal_input)

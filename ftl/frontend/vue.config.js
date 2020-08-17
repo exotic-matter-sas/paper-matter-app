@@ -34,6 +34,7 @@ module.exports = {
     config.entry("common_logged_in").add("@/styles/common_logged_in.scss");
     config.entry("common_logged_out").add("@/styles/common_logged_out.scss");
     config.entry("account").add("@/styles/account.scss");
+    config.entry("share_doc").add("@/styles/share_doc.scss");
 
     // Built app broken if omitted
     config.optimization.splitChunks(false);
@@ -69,7 +70,7 @@ module.exports = {
       .resourceQuery(/blockType=i18n/)
       .type("javascript/auto")
       .use("i18n")
-      .loader("@kazupon/vue-i18n-loader")
+      .loader("@intlify/vue-i18n-loader")
       .end()
       .use("yaml")
       .loader("yaml-loader")

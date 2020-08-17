@@ -70,6 +70,7 @@ describe("FTLUpload methods", () => {
   let storeConfigCopy;
   let store;
   let currentFolderMock = jest.fn();
+  let uploadDocumentMock = jest.fn().mockResolvedValue("");
 
   beforeEach(() => {
     axios.post.mockResolvedValue(mockedPostResponse);
@@ -87,6 +88,9 @@ describe("FTLUpload methods", () => {
           get: currentFolderMock,
           cache: false
         }
+      },
+      methods: {
+        uploadDocument: uploadDocumentMock
       }
     });
     axios_upload_conf = {
@@ -143,7 +147,74 @@ describe("FTLUpload methods", () => {
     expect(wrapper.vm.selectedFiles).toEqual([]);
   });
 
+  it("consumeUploadTasks call api and set uploadTasksCompleted properly", async () => {
+    // given there is 3 uploadTasks waiting
+    wrapper.setData({
+      uploadTasks: new Map([
+        [tv.FOLDER_PROPS.id, [tv.FILES_PROPS]],
+        [tv.FOLDER_PROPS_VARIANT.id, [tv.FILES_PROPS, tv.FILES_PROPS_2]],
+        [tv.FOLDER_PROPS_WITH_PARENT.id, [tv.FILES_PROPS, tv.FILES_PROPS_2, tv.FILES_PROPS_3]],
+      ])
+    });
+
+    // when
+    await wrapper.vm.consumeUploadTasks();
+
+    // then
+    expect(uploadDocumentMock).toHaveBeenNthCalledWith(1, tv.FOLDER_PROPS.id, tv.FILES_PROPS);
+    expect(uploadDocumentMock).toHaveBeenNthCalledWith(2, tv.FOLDER_PROPS_VARIANT.id, tv.FILES_PROPS);
+    expect(uploadDocumentMock).toHaveBeenNthCalledWith(3, tv.FOLDER_PROPS_VARIANT.id, tv.FILES_PROPS_2);
+    expect(uploadDocumentMock).toHaveBeenNthCalledWith(4, tv.FOLDER_PROPS_WITH_PARENT.id, tv.FILES_PROPS);
+    expect(uploadDocumentMock).toHaveBeenNthCalledWith(5, tv.FOLDER_PROPS_WITH_PARENT.id, tv.FILES_PROPS_2);
+    expect(uploadDocumentMock).toHaveBeenNthCalledWith(6, tv.FOLDER_PROPS_WITH_PARENT.id, tv.FILES_PROPS_3);
+    expect(wrapper.vm.uploadTasksCompleted).toEqual(new Map([
+      [tv.FOLDER_PROPS.id, {successes: [tv.FILES_PROPS.path], errors: []}],
+      [tv.FOLDER_PROPS_VARIANT.id, {successes: [tv.FILES_PROPS.path, tv.FILES_PROPS_2.path], errors: []}],
+      [tv.FOLDER_PROPS_WITH_PARENT.id, {successes: [tv.FILES_PROPS.path, tv.FILES_PROPS_2.path, tv.FILES_PROPS_3.path], errors: []}],
+    ]));
+
+    // given user add additional upload tasks for 2 folders where task is already completed
+    wrapper.setData({
+      uploadTasks: new Map([
+        [tv.FOLDER_PROPS.id, [tv.FILES_PROPS_2, tv.FILES_PROPS_3]],
+        [tv.FOLDER_PROPS_VARIANT.id, [tv.FILES_PROPS_3]],
+      ])
+    });
+
+    // when
+    await wrapper.vm.consumeUploadTasks();
+
+    // then
+    expect(uploadDocumentMock).toHaveBeenNthCalledWith(7, tv.FOLDER_PROPS.id, tv.FILES_PROPS_2);
+    expect(uploadDocumentMock).toHaveBeenNthCalledWith(8, tv.FOLDER_PROPS.id, tv.FILES_PROPS_3);
+    expect(uploadDocumentMock).toHaveBeenNthCalledWith(9, tv.FOLDER_PROPS_VARIANT.id, tv.FILES_PROPS_3);
+    expect(wrapper.vm.uploadTasksCompleted).toEqual(new Map([
+      [tv.FOLDER_PROPS.id, {successes: [tv.FILES_PROPS.path, tv.FILES_PROPS_2.path, tv.FILES_PROPS_3.path], errors: []}],
+      [tv.FOLDER_PROPS_VARIANT.id, {successes: [tv.FILES_PROPS.path, tv.FILES_PROPS_2.path, tv.FILES_PROPS_3.path], errors: []}],
+      [tv.FOLDER_PROPS_WITH_PARENT.id, {successes: [tv.FILES_PROPS.path, tv.FILES_PROPS_2.path, tv.FILES_PROPS_3.path], errors: []}],
+    ]));
+  });
+
+  it("consumeUploadTasks handle api error", async () => {
+    // given user begin by selecting 1 file
+    currentFolderMock.mockReturnValue(tv.FOLDER_PROPS);
+    wrapper.setData({
+      selectedFiles: [tv.FILES_PROPS]
+    });
+
+    // when
+    wrapper.vm.addUploadTask();
+
+    // then
+    expect(wrapper.vm.uploadTasks).toEqual(new Map([
+      [tv.FOLDER_PROPS.id, [tv.FILES_PROPS]],
+    ]));
+    expect(wrapper.vm.selectedFiles).toEqual([]);
+  });
+
   it("uploadDocument call api", async () => {
+    // restore original method to test it
+    wrapper.setMethods({ uploadDocument: FTLUpload.methods.uploadDocument });
     // when
     wrapper.vm.uploadDocument();
 
@@ -156,6 +227,7 @@ describe("FTLUpload methods", () => {
     );
   });
   it("uploadDocument call createThumbFromFile", async () => {
+    wrapper.setMethods({ uploadDocument: FTLUpload.methods.uploadDocument });
     // when
     wrapper.vm.uploadDocument();
 
@@ -164,6 +236,7 @@ describe("FTLUpload methods", () => {
     expect(createThumbFromFile).toHaveBeenCalled();
   });
   it("uploadDocument emit event-new-upload", async () => {
+    wrapper.setMethods({ uploadDocument: FTLUpload.methods.uploadDocument });
     // when
     wrapper.vm.uploadDocument();
 

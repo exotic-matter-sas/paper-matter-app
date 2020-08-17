@@ -1,0 +1,38 @@
+{% extends "account/account_base.html" %}
+{% load i18n %}
+
+{% block account %}
+    <div class="row no-gutters">
+        <div class="col text-justify">
+            <h3 class="text-primary">{% trans "Developer API keys" %}</h3>
+            <p class="font-italic">
+                {% trans "Use the Paper Matter API in your application." %}
+            </p>
+
+            <p class="highlight">
+                {% blocktrans %}
+                    Please exercise caution when giving API key to third-party apps. Apps will be able to access all
+                    documents in your account.
+                {% endblocktrans %}
+            </p>
+
+            <div>
+                {% if applications %}
+                    <ul>
+                        {% for application in applications %}
+                            <li><a href="{{ application.get_absolute_url }}">{{ application.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                    <a class="btn btn-primary" href="{% url "oauth2_provider:register" %}">New Application</a>
+                {% else %}
+                    <p>
+                        {% url 'oauth2_provider:register' as register %}
+                        {% blocktrans %}
+                            No applications defined. <a href="{{ register }}">Click here</a> to register one.
+                        {% endblocktrans %}
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock account %}

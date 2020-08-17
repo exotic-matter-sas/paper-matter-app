@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-22 12:00+0200\n"
-"PO-Revision-Date: 2020-06-22 12:02+0200\n"
+"POT-Creation-Date: 2020-08-04 16:19+0200\n"
+"PO-Revision-Date: 2020-08-04 16:19+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -16,13 +16,13 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 2.3.1\n"
+"X-Generator: Poedit 2.4\n"
 
 #: .\account\forms.py:17
 msgid "Email is already used by someone else."
 msgstr "Cette adresse est déjà utilisée."
 
-#: .\account\forms.py:26 .\account\templates\account\account_base.html:88
+#: .\account\forms.py:26 .\account\templates\account\account_base.html:49
 #: .\account\templates\account\account_delete.html:44
 msgid "Password"
 msgstr "Mot de passe"
@@ -32,15 +32,13 @@ msgid "Incorrect password"
 msgstr "Mot de passe incorrect"
 
 #: .\account\templates\account\account_activity.html:8
-#: .\account\templates\account\account_base.html:93
+#: .\account\templates\account\account_base.html:54
 msgid "Account activity"
 msgstr "Activité du compte"
 
 #: .\account\templates\account\account_activity.html:10
-msgid ""
-"See the last ten successful connections to your account."
-msgstr ""
-"Consultez les dix dernières connexions réussies à votre compte."
+msgid "See the last ten successful connections to your account."
+msgstr "Consultez les dix dernières connexions réussies à votre compte."
 
 #: .\account\templates\account\account_activity.html:14
 #, python-format
@@ -57,39 +55,35 @@ msgstr ""
 "à votre mot de passe. <a href=\"%(the_url)s\">Modifiez-le</a> pour protéger "
 "votre compte."
 
-#: .\account\templates\account\account_activity.html:23
-msgid "current device"
-msgstr "appareil actuel"
-
 #: .\account\templates\account\account_base.html:5
 msgid "Account management"
 msgstr "Mon compte"
 
-#: .\account\templates\account\account_base.html:58
+#: .\account\templates\account\account_base.html:19
 msgid "Return to app"
 msgstr "Revenir à l'application"
 
-#: .\account\templates\account\account_base.html:63
+#: .\account\templates\account\account_base.html:24
 msgid "Settings"
 msgstr "Paramètres"
 
-#: .\account\templates\account\account_base.html:98
+#: .\account\templates\account\account_base.html:59
 msgid "Two factor authentication"
 msgstr "Authentification à deux facteurs"
 
-#: .\account\templates\account\account_base.html:104
+#: .\account\templates\account\account_base.html:65
+msgid "Third party applications"
+msgstr "Applications tierces"
+
+#: .\account\templates\account\account_base.html:68
 msgid "Data import / export"
 msgstr "Import / export des données"
 
-#: .\account\templates\account\account_base.html:107
+#: .\account\templates\account\account_base.html:71
 msgid "Delete account"
 msgstr "Supprimer mon compte"
 
-#: .\account\templates\account\account_base.html:111
-msgid "Paper Matter settings"
-msgstr "Paramètres de Paper Matter"
-
-#: .\account\templates\account\account_base.html:123
+#: .\account\templates\account\account_base.html:87
 msgid ""
 "\n"
 "            Paper Matter, carefully crafted by\n"
@@ -376,6 +370,164 @@ msgstr ""
 msgid "Account security: notice of password change"
 msgstr "Sécurité du compte : avis de changement de mot de passe"
 
+#: .\account\templates\account\oauth2_application_confirm_delete.html:8
+#, python-format
+msgid ""
+"\n"
+"                Are you sure you want to delete<br/> \"%(name)s\"?\n"
+"            "
+msgstr ""
+"\n"
+"Êtes-vous sûr de vouloir supprimer<br/> « %(name)s » ?"
+
+#: .\account\templates\account\oauth2_application_confirm_delete.html:16
+#: .\account\templates\account\oauth2_authorized-token-delete.html:25
+msgid "Cancel"
+msgstr "Annuler"
+
+#: .\account\templates\account\oauth2_application_confirm_delete.html:17
+#: .\account\templates\account\oauth2_application_detail.html:41
+msgid "Delete"
+msgstr "Supprimer"
+
+#: .\account\templates\account\oauth2_application_detail.html:12
+msgid "Client Type"
+msgstr "Client Type"
+
+#: .\account\templates\account\oauth2_application_detail.html:18
+msgid "Authorization Grant Type"
+msgstr "Authorization Grant Type"
+
+#: .\account\templates\account\oauth2_application_detail.html:25
+msgid "Client id"
+msgstr "Client id"
+
+#: .\account\templates\account\oauth2_application_detail.html:28
+msgid "Client secret"
+msgstr "Client secret"
+
+#: .\account\templates\account\oauth2_application_detail.html:31
+msgid "Redirect URIs"
+msgstr "Redirect URIs"
+
+#: .\account\templates\account\oauth2_application_detail.html:37
+#: .\account\templates\account\oauth2_application_form.html:33
+#: .\account\templates\account\oauth2_application_registration_form.html:33
+msgid "Back"
+msgstr "Retour"
+
+#: .\account\templates\account\oauth2_application_detail.html:39
+msgid "Edit"
+msgstr "Éditer"
+
+#: .\account\templates\account\oauth2_application_form.html:8
+msgid "Edit application"
+msgstr "Éditer l'application"
+
+#: .\account\templates\account\oauth2_application_list.html:7
+msgid "Developer API keys"
+msgstr "Clé d'API développeur"
+
+#: .\account\templates\account\oauth2_application_list.html:9
+msgid "Use the Paper Matter API in your application."
+msgstr "Utiliser l'API Paper Matter dans vos applications."
+
+#: .\account\templates\account\oauth2_application_list.html:13
+msgid ""
+"\n"
+"                    Please exercise caution when giving API key to third-"
+"party apps. Apps will be able to access all\n"
+"                    documents in your account.\n"
+"                "
+msgstr ""
+"\n"
+"Soyez prudent lorsque vous attribuez une clé API à des applications tierces. "
+"Les applications pourront accéder à tous les documents de votre compte."
+
+#: .\account\templates\account\oauth2_application_list.html:30
+#, python-format
+msgid ""
+"\n"
+"                            No applications defined. <a href=\"%(register)s"
+"\">Click here</a> to register one.\n"
+"                        "
+msgstr ""
+"\n"
+"Aucune application définie. <a href=\"%(register)s\">Cliquez ici</a> pour en "
+"enregistrer une nouvelle."
+
+#: .\account\templates\account\oauth2_application_registration_form.html:8
+msgid "Register a new application"
+msgstr "Ajouter une application"
+
+#: .\account\templates\account\oauth2_application_registration_form.html:35
+msgid "Add"
+msgstr "Ajouter"
+
+#: .\account\templates\account\oauth2_authorized-token-delete.html:8
+#, python-format
+msgid ""
+"\n"
+"                Are you sure you want to revoke <br/> \"%(name)s\"?\n"
+"            "
+msgstr ""
+"\n"
+"Êtes vous sûr de vouloir révoquer <br /> « %(name)s » ?"
+
+#: .\account\templates\account\oauth2_authorized-token-delete.html:15
+#, python-format
+msgid ""
+"\n"
+"                    The app \"%(name)s\" will not be able to access your "
+"account anymore.\n"
+"                "
+msgstr ""
+"\n"
+"L'application « %(name)s » ne pourra plus accéder à votre compte."
+
+#: .\account\templates\account\oauth2_authorized-token-delete.html:26
+#: .\account\templates\account\oauth2_authorized-tokens.html:45
+msgid "Revoke"
+msgstr "Révoquer"
+
+#: .\account\templates\account\oauth2_authorized-tokens.html:8
+msgid "Your applications"
+msgstr "Vos applications"
+
+#: .\account\templates\account\oauth2_authorized-tokens.html:10
+msgid "Manage applications accessing your account."
+msgstr "Gérez les applications accédant à votre compte."
+
+#: .\account\templates\account\oauth2_authorized-tokens.html:14
+msgid ""
+"\n"
+"                    Please exercise caution when granting access to third-"
+"party apps.\n"
+"                    Apps will be able to access all documents in your "
+"account.\n"
+"                "
+msgstr ""
+"\n"
+"Soyez prudent lorsque vous accordez un accès à des applications tierces. Les "
+"applications pourront accéder à tous les documents de votre compte."
+
+#: .\account\templates\account\oauth2_authorized-tokens.html:28
+msgid "Enabled"
+msgstr "Activée"
+
+#: .\account\templates\account\oauth2_authorized-tokens.html:41
+#, python-format
+msgid "Added on %(date)s"
+msgstr "Ajouté le %(date)s"
+
+#: .\account\templates\account\oauth2_authorized-tokens.html:49
+msgid "There are no authorized app yet."
+msgstr "Il n'y a pas encore d'application autorisée."
+
+#: .\account\templates\account\oauth2_authorized-tokens.html:58
+msgid "For developers, you can create your own API key."
+msgstr "Pour les développeurs, vous pouvez créer votre propre clé API."
+
 #: .\account\views.py:73
 msgid "A confirmation email has been sent."
 msgstr "Un email de confirmation a été envoyé."
@@ -399,3 +551,6 @@ msgstr "Mot de passe mis à jour !"
 #: .\account\views.py:201
 msgid "Your account was deleted."
 msgstr "Votre compte a été supprimé."
+
+#~ msgid "Applications and API"
+#~ msgstr "Applications et API"

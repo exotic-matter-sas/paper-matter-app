@@ -1,0 +1,43 @@
+{% extends "ftl/base.html" %}
+{% load static %}
+{% load render_bundle from webpack_loader %}
+{% load i18n %}
+
+{% block title %}{% trans 'Document Not found' %}{% endblock %}
+{% block head %}
+    <meta name="robots" content="noindex, nofollow">
+    {{ request.LANGUAGE_CODE|json_script:"locale" }}
+    {% render_bundle 'common_logged_in' 'css' %}
+    {% render_bundle 'share_doc' 'css' %}
+{% endblock %}
+
+{% block body %}
+    <body class="d-flex flex-column min-vh-100">
+    <header>
+        <nav class="navbar navbar-dark bg-dark navbar-expand-sm">
+            <a class="navbar-brand" href="{% url "home" %}"
+               title="{% trans "Paper Matter, document management system" %}">
+                {% include "ftl/logo.html" %}
+            </a>
+            <h3 class="text-secondary m-0">
+                <span id="document-share-title"
+                      class="">{% trans "Nothing there..." %}
+                </span>
+            </h3>
+        </nav>
+    </header>
+
+    <main class="flex-grow-1 border rounded bg-secondary mt-2 mb-2 mr-auto ml-auto px-3">
+        <div>
+            <p class="font-weight-bold text-center mt-5">
+                {% blocktrans %}
+                    The document was not found, the sharing might have been revoked.<br/> Please contact the person who
+                    initiated the sharing.
+                {% endblocktrans %}
+            </p>
+            <img class="d-block w-75 mt-5 mx-auto" src="{% static "page_not_found.svg" %}" alt="Error 404">
+        </div>
+    </main>
+
+    </body>
+{% endblock %}
