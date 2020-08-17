@@ -413,7 +413,6 @@ $manage-folders-padding: 2em;
 
   .modal-dialog {
     width: 100vw;
-    height: 100vh;
     max-width: none;
     margin: 0;
   }
