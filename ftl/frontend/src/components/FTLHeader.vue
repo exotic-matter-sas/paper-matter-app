@@ -90,15 +90,6 @@
       </svg>
     </b-navbar-brand>
 
-    <b-navbar-nav>
-      <!--<router-link :to="{ name: 'home' }" tag="b-nav-item">-->
-      <!--<font-awesome-icon icon="home" :title="$t('Home')" />-->
-      <!--</router-link>-->
-      <router-link :to="{ name: 'folders' }" tag="b-nav-item">
-        <font-awesome-icon icon="folder" :title="$t('Folders management')" />
-      </router-link>
-    </b-navbar-nav>
-
     <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
     <b-collapse id="nav-collapse" is-nav>
@@ -130,23 +121,19 @@
 
       <b-nav-form class="mt-3 ml-0 mt-sm-0 ml-sm-3">
         <b-dropdown id="add-documents" right split variant="outline-secondary"
-        :html="`<label for='upload-doc-input'>${$t('Add documents')}</label>`">
-          <b-dropdown-item variant="primary">
-          </b-dropdown-item>
-          <b-dropdown-item variant="primary">
+                    :html="$route.name === 'home-search' ?
+                      `<label for='upload-doc-input' class='m-0'>${$t('Add documents to root')}</label>`:
+                      `<label for='upload-doc-input' class='m-0'>${$t('Add documents')}</label>`">
+          <b-dropdown-item :href="$t('https://welcome.papermatter.app/downloads')" target="_blank"
+          :title="$t('Import a folder or a large amount of documents using the local import client')">
             {{ $t("Import a folder") }}
             <font-awesome-icon icon="external-link-alt" size="sm" />
-          </b-dropdown-item>
-          <b-dropdown-divider></b-dropdown-divider>
-          <b-dropdown-item variant="primary" disabled>
-            {{ $t("Adding 4 documents...") }}
           </b-dropdown-item>
         </b-dropdown>
       </b-nav-form>
 
       <b-navbar-nav class="ml-auto">
         <b-nav-item-dropdown right>
-          <!-- Using 'button-content' slot -->
           <template slot="button-content">
             <font-awesome-icon
               v-if="account.isSuperUser"
@@ -187,7 +174,10 @@
     Keywords...: Mots clés...
     Search: Rechercher
     Add documents: Ajouter des documents
+    Add documents to root: Ajouter des documents à la racine
     Import a folder: Importer un dossier
+    Import a folder or a large amount of documents using the local import client: Importer un dossier ou un grand nombre de documents en utilisant le client d'import local
+    "https://welcome.papermatter.app/downloads": "https://welcome.papermatter.app/fr/downloads"
     Settings: Paramètres
     Sign Out: Se déconnecter
 </i18n>
@@ -251,13 +241,8 @@ export default {
 @import "~bootstrap/scss/_mixins.scss";
 
 #search-input {
-  width: 150px;
   transition: width 0.5s cubic-bezier(0.77, 0, 0.18, 1);
   margin: 0;
-
-  &:not(:placeholder-shown) {
-    width: 33vw;
-  }
 
   &:invalid {
     box-shadow: none;

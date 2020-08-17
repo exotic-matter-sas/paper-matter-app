@@ -5,95 +5,62 @@
 
 <template>
   <section id="upload-section">
+    <b-form-file
+      id="upload-doc-input"
+      class="d-none"
+      multiple
+      v-model="selectedFiles"
+      :accept="exts.join(',')"
+      @input="addUploadTask"
+    ></b-form-file>
     <b-row>
-      <b-col cols="12">
-        <b-form-file
-          id="upload-doc-input"
-          multiple
-          ref="fileUploadField"
-          v-model="selectedFiles"
-          :state="selectedFiles.length > 0 || null"
-          :placeholder="$t('Upload document')"
-          :drop-placeholder="$t('Drop file here...')"
-          :browse-text="$t('Browse')"
-          :accept="exts.join(',')"
-          @input="uploadDocument"
-        ></b-form-file>
-      </b-col>
-      <!--<b-col cols="12" md="2">-->
-        <!--<b-button-->
-          <!--class="w-100 mt-2 mt-md-0"-->
-          <!--id="upload-button"-->
-          <!--variant="primary"-->
-          <!--:disabled="uploading || !selectedFiles.length > 0"-->
-          <!--@click="uploadDocument"-->
-        <!--&gt;-->
-          <!--{{ $t("Upload") }}-->
-        <!--</b-button>-->
-      <!--</b-col>-->
-      <!--<b-col-->
-        <!--class="d-none d-md-flex align-items-center justify-content-center"-->
-        <!--md="2"-->
-      <!--&gt;-->
-        <!--<a-->
-          <!--id="import-folder-link"-->
-          <!--class="text-center"-->
-          <!--href="https://welcome.papermatter.app/downloads"-->
-          <!--target="_blank"-->
-          <!--:title="-->
-            <!--$t(-->
-              <!--'Import a folder or a large amount of documents using the local import client'-->
-            <!--)-->
-          <!--"-->
-        <!--&gt;-->
-          <!--{{ $t("Import a folder") }}-->
-          <!--<font-awesome-icon icon="external-link-alt" size="sm" />-->
-        <!--</a>-->
-      <!--</b-col>-->
-    </b-row>
-    <b-row class="mt-1">
-      <b-col>
-        <b-progress
-          id="document-upload-loader"
-          :class="{ 'd-none': !uploading }"
-          :max="100"
-          variant="success"
-        >
-          <b-progress-bar :value="globalUploadProgress">
-            <strong>{{ globalUploadProgress.toFixed(0) }} %</strong>
-          </b-progress-bar>
-        </b-progress>
-      </b-col>
+      <FTLUploadTask
+        class="mt-3"
+        v-for="(task, folderId) in uploadTasks"
+        :key="folderId"
+        :folder-name="task.folderName"
+        :left-to-upload="task.files.length"
+        :successes-count="uploadTasksCompleted[folderId].successes.length"
+        :errors-count="uploadTasksCompleted[folderId].errors.length"
+        @event-interrupt-task="$set(uploadTasksInterrupted, folderId, true)"
+      />
     </b-row>
   </section>
 </template>
 
 <i18n>
   fr:
+    Root: Racine
     Upload document: Ajouter un document
     Drop file here...: Déposer un fichier ici ...
     Browse: Parcourir
     Upload: Envoyer
-    Import a folder: Importer un dossier
-    Import a folder or a large amount of documents using the local import client: Importer un dossier ou un grand
-      nombre de documents en utilisant le client d'import local
     Unable to create thumbnail: Erreur lors de la génération de la miniature
     Document uploaded: Document ajouté
-    Could not upload document: Erreur lors de l'ajout du document
+    "| (and 1 skipped) | (and {n} skipped)": "| (et 1 ignoré) | (et {n} ignorés)"
+    "| 1 document added into {folderName} | {n} documents added into {folderName}": "| 1 document ajouté dans {folderName} | {n} documents ajoutés dans {folderName}"
+    "| 1 document couldn't be added into {folderName} | {n} documents couldn't be added into {folderName}": "| 1 document n'a pu être ajouté dans {folderName} | {n} documents n'ont pu être ajoutés dans {folderName}"
+    "| 1 document added | {n} documents added": "| 1 document ajouté | {n} documents ajoutés"
+    "| another couldn't be added | {n} others couldn't be added": "| 1 autre n'a pu être ajouté | {n} autres n'ont pu être ajoutés"
+    "{successesMention} into {folderName}, {errorsMention}.": "{successesMention} dans {folderName}, {errorsMention}."
 </i18n>
+
 <script>
 import axios from "axios";
 import { createThumbFromFile } from "@/thumbnailGenerator";
 import { axiosConfig } from "@/constants";
 import { mapGetters, mapState } from "vuex";
+import FTLUploadTask from "@/components/FTLUploadTask";
 
 export default {
   name: "FTLUpload",
-
+  components: { FTLUploadTask },
   data() {
     return {
       selectedFiles: [],
-      uploadTasks: new Map(),
+      uploadTasks: {},
+      uploadTasksCompleted: {},
+      uploadTasksInterrupted: {},
       uploading: false,
       uploadedFilesCount: 0,
       currentUploadProgress: 0,
@@ -117,80 +84,127 @@ export default {
 
   methods: {
     addUploadTask: function () {
-      const uploadFolderId = this.getCurrentFolder.id;
+      const uploadFolderId = this.getCurrentFolder === null ? null : this.getCurrentFolder.id;
+      const folderName = this.getCurrentFolder === null ? this.$t('Root') : this.getCurrentFolder.name;
 
       // if there is already an upload task for this folder add selectedFiles to the file to upload
-      if (this.uploadTasks.has(uploadFolderId)) {
-        this.uploadTasks.get(uploadFolderId).push(...this.selectedFiles);
+      if (uploadFolderId in this.uploadTasks) {
+        this.uploadTasks[uploadFolderId].files.push(...this.selectedFiles);
       }
       else {
-        this.uploadTasks.set(uploadFolderId, this.selectedFiles);
-      }
-
-      this.selectedFiles = [];
-    },
-
-    refreshUploadProgression: function (progressEvent) {
-      let vi = this;
-      if (progressEvent.lengthComputable) {
-        vi.currentUploadProgress =
-          (progressEvent.loaded * 100) / progressEvent.total;
-      } else {
-        vi.currentUploadProgress = 100;
-      }
-
-      vi.globalUploadProgress =
-        (vi.currentUploadProgress + vi.uploadedFilesCount * 100) /
-        vi.selectedFiles.length;
-    },
-
-    uploadDocument: async function () {
-      let vi = this;
-      vi.uploading = true;
-      // Non reactive copy, avoid uploading in wrong folder while the user is navigating.
-      const folderForUpload = Object.assign({}, vi.getCurrentFolder);
-
-      for (const file of vi.selectedFiles) {
-        let formData = new FormData();
-        // file binary
-        formData.append("file", file);
-
-        // parent folder
-        let jsonData = {};
-        if (folderForUpload != null) {
-          jsonData = { ftl_folder: folderForUpload.id };
-        }
-        formData.append("json", JSON.stringify(jsonData));
-
-        if (file.type === "application/pdf") {
-          // thumbnail generation
-          try {
-            let thumb = await createThumbFromFile(file);
-            formData.append("thumbnail", thumb);
-          } catch (e) {
-            vi.mixinAlert(this.$t("Unable to create thumbnail"), true);
-          }
-        }
-
-        const updatedAxiosConfig = Object.assign({}, axiosConfig, {
-          onUploadProgress: this.refreshUploadProgression,
+        this.$set(this.uploadTasksCompleted, uploadFolderId, {
+          folderName: folderName,
+          successes: [],
+          errors: []
         });
-        await axios
-          .post("/app/api/v1/documents/upload", formData, updatedAxiosConfig)
-          .then((response) => {
-            vi.$emit("event-new-upload", { doc: response.data }); // Event for refresh documents list
-            vi.mixinAlert(this.$t("Document uploaded"));
-          })
-          .catch((error) =>
-            vi.mixinAlert(this.$t("Could not upload document"), true)
-          );
-        vi.uploadedFilesCount++;
+        this.$set(this.uploadTasks, uploadFolderId, {
+          folderName: folderName,
+          files: this.selectedFiles
+        });
+      }
+      this.selectedFiles = [];
+
+      if (!this.uploading) {
+        this.consumeUploadTasks();
+      }
+    },
+
+    consumeUploadTasks: async function () {
+      this.uploading = true;
+      let folderId;
+      let files;
+      let fileToUpload;
+      let folderName;
+      let entries = Object.entries(this.uploadTasks);
+      let uploadTaskSuccesses;
+      let uploadTaskErrors;
+
+      while (entries.length > 0) {
+        // get first upload task
+        [folderId, {folderName, files}] = entries[0];
+        uploadTaskSuccesses = this.uploadTasksCompleted[folderId].successes;
+        uploadTaskErrors = this.uploadTasksCompleted[folderId].errors;
+
+        while (files.length > 0 && !(folderId in this.uploadTasksInterrupted)) {
+          fileToUpload = files[0];
+          await this.uploadDocument(folderId, fileToUpload)
+            // push file path to successes or full file object to errors (to allow later retry)
+            .then(() => uploadTaskSuccesses.push(fileToUpload.path))
+            .catch(() => uploadTaskErrors.push(fileToUpload))
+            // consume file
+            .finally(() => files.shift());
+        }
+
+        // notify user
+        this.notifyUploadTaskCompleted(folderName, uploadTaskSuccesses.length, uploadTaskErrors.length, files.length);
+        // consume uploadTask
+        this.$delete(this.uploadTasks, folderId);
+        // consume interrupted flag
+        folderId in this.uploadTasksInterrupted ? this.$delete(this.uploadTasksInterrupted, folderId) : undefined;
+
+        // refresh entries
+        entries = Object.entries(this.uploadTasks);
+      }
+      this.uploading = false;
+    },
+
+    uploadDocument: async function (folderId, file) {
+      let vi = this;
+
+      let formData = new FormData();
+      // file binary
+      formData.append("file", file);
+
+      // parent folder
+      let jsonData = {};
+      if (folderId !== "null") {
+        jsonData = { ftl_folder: folderId };
+      }
+      formData.append("json", JSON.stringify(jsonData));
+
+      if (file.type === "application/pdf") {
+        // thumbnail generation
+        try {
+          let thumb = await createThumbFromFile(file);
+          formData.append("thumbnail", thumb);
+        } catch (e) {
+          vi.mixinAlert(this.$t("Unable to create thumbnail"), true);
+        }
       }
 
-      vi.selectedFiles = [];
-      vi.uploadedFilesCount = vi.currentUploadProgress = vi.globalUploadProgress = 0;
-      vi.uploading = false;
+      return await axios
+        .post("/app/api/v1/documents/upload", formData, axiosConfig)
+        .then((response) => {
+          vi.$emit("event-new-upload", { doc: response.data }); // Event for refresh documents list
+        })
     },
+
+    notifyUploadTaskCompleted: function(folderName, successesCount, errorsCount, skippedCount) {
+      folderName = folderName === null ? this.$('Root') : folderName;
+      console.log("skippedCount", skippedCount);
+      const skippedMention = skippedCount > 0 ?
+        this.$tc("| (and 1 skipped) | (and {n} skipped)", skippedCount) : "";
+
+      // Only successes
+      if (successesCount > 0 && errorsCount === 0) {
+        this.mixinAlert(this.$tc("| 1 document added into {folderName} | {n} documents added into {folderName}",
+          successesCount, {folderName}) + ` ${skippedMention}`);
+      }
+      // Only errors
+      else if (errorsCount > 0 && successesCount === 0) {
+        this.mixinAlert(this.$tc("| 1 document couldn't be added into {folderName} | {n} documents couldn't be added into {folderName}",
+          errorsCount, {folderName}) + ` ${skippedMention}`,
+          true);
+      }
+      // Mixed successes and errors
+      else if (successesCount > 0 && errorsCount > 0) {
+        const successesMention = this.$tc("| 1 document added | {n} documents added", successesCount);
+        const errorsMention = this.$tc("| another couldn't be added | {n} others couldn't be added", errorsCount);
+        this.mixinAlertWarning(this.$t("{successesMention} into {folderName}, {errorsMention}.",
+          {successesMention, folderName, errorsMention}) + ` ${skippedMention}`);
+      }
+
+    }
   },
 };
 </script>

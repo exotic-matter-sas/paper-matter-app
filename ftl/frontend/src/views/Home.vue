@@ -6,7 +6,7 @@
 <template>
   <main class="flex-grow">
     <b-col>
-      <b-row class="my-3">
+      <b-row>
         <b-col>
           <FTLUpload
             :currentFolder="getCurrentFolder"
@@ -66,6 +66,7 @@
             id="manage-folder"
             variant="primary"
             :title="$t('Rename or move folder')"
+            @click.prevent="$bvModal.show('folders-mngt')"
           >
             <svg class="svg-inline--fa fa-folder fa-w-16 fa-lg" width="512" height="512" aria-hidden="true" data-icon="folder" data-prefix="fas" focusable="false" role="img" version="1.1" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
               <g transform="translate(0 -.012176)">
@@ -256,6 +257,10 @@
         @event-folder-created="folderCreated"
       />
 
+      <FTLManageFoldersPanel
+        :folder="getCurrentFolder"
+      />
+
       <!-- For batch action move document -->
       <FTLMoveDocuments
         v-if="selectedDocumentsHome.length > 0"
@@ -321,6 +326,7 @@ import { mapGetters, mapState } from "vuex";
 import HomeBase from "@/views/HomeBase";
 import FTLFolder from "@/components/FTLFolder.vue";
 import FTLNewFolder from "@/components/FTLNewFolder";
+import FTLManageFoldersPanel from "@/components/FTLManageFoldersPanel";
 import FTLDocumentPanel from "@/components/FTLDocumentPanel";
 import FTLDeleteDocuments from "@/components/FTLDeleteDocuments";
 import FTLMoveDocuments from "@/components/FTLMoveDocuments";
@@ -339,6 +345,7 @@ export default {
   components: {
     FTLNewFolder,
     FTLFolder,
+    FTLManageFoldersPanel,
     FTLDocumentPanel,
     FTLDeleteDocuments,
     FTLMoveDocuments,
@@ -643,6 +650,12 @@ export default {
         .catch((error) =>
           vi.mixinAlert(this.$t("Unable to refresh folders list"), true)
         );
+    },
+
+    documentsCreated: function (event) {
+      const doc = event.doc;
+      this.docs.unshift(doc);
+      this.count++;
     },
 
     folderCreated: function (folder) {

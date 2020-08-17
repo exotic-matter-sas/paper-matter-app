@@ -314,7 +314,10 @@ export default {
 </script>
 
 <style lang="scss">
-// Don't use `scoped` on this style because the document viewer is styled from the main app component
+@import "~bootstrap/scss/_functions.scss";
+@import "~bootstrap/scss/_variables.scss";
+@import "~bootstrap/scss/_mixins.scss";
+// Don't use `scoped` because scoped doesn't apply to bootstrap-vue sub-components
 $document-viewer-padding: 2em;
 
 #document-viewer {
@@ -326,7 +329,6 @@ $document-viewer-padding: 2em;
     width: 100vw;
     height: 100vh;
     max-width: none;
-    padding: $document-viewer-padding;
     margin: 0;
   }
 
@@ -391,6 +393,14 @@ $document-viewer-padding: 2em;
     background-color: rgba(0, 0, 0, 0.06);
     text-align: center;
     user-select: none;
+  }
+}
+
+@include media-breakpoint-up(md) {
+  #document-viewer {
+    .modal-dialog {
+      padding: $document-viewer-padding;
+    }
   }
 }
 </style>

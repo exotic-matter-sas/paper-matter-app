@@ -62,7 +62,7 @@ export default {
     state: function (newVal, oldVal) {
       if (newVal === true) {
         this.$emit("event-select-folder", this.folder);
-        // Store the selected panel folder for usage by ManageFolders.vue for displaying the folder detail panel
+        // Store the selected panel folder for usage by FTLManageFoldersPanel.vue for displaying the folder detail panel
         this.$store.commit("selectPanelFolder", this.folder);
       } else {
         this.$emit("event-unselect-folder", this.folder);

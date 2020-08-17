@@ -131,12 +131,6 @@ export default {
         });
     },
 
-    documentsCreated: function (event) {
-      const doc = event.doc;
-      this.docs.unshift(doc);
-      this.count++;
-    },
-
     documentDeleted: function (event) {
       const doc = event.doc;
       const foundIndex = this.docs.findIndex((x) => x.pid === doc.pid);

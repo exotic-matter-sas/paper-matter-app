@@ -6,9 +6,25 @@
 <template>
   <main class="flex-grow">
     <b-col>
-      <b-row class="my-3">
+      <b-row>
         <b-col>
-          <FTLUpload @event-new-upload="documentsCreated" />
+          <FTLUpload />
+        </b-col>
+      </b-row>
+
+      <b-row class="my-3" id="breadcrumb" no-gutter>
+        <b-col>
+          <b-breadcrumb class="breadcrumb-ftl m-0">
+            <FTLBreadcrumbFolder
+              v-for="(item, index) in breadcrumbPlaceholder"
+              :key="item.id"
+              :id="item.id"
+              :text="item.text"
+              :to="item.to"
+              :active="index === breadcrumbPlaceholder.length - 1"
+              :folder="{ id: item.id, name: item.text }"
+            />
+          </b-breadcrumb>
         </b-col>
       </b-row>
 
@@ -274,6 +290,7 @@ import FTLMoveDocuments from "@/components/FTLMoveDocuments";
 import FTLDocument from "@/components/FTLDocument";
 import FTLUpload from "@/components/FTLUpload";
 import FTLRenameDocument from "@/components/FTLRenameDocument";
+import FTLBreadcrumbFolder from "@/components/FTLBreadcrumbFolder";
 
 export default {
   name: "home-search",
@@ -286,6 +303,7 @@ export default {
     FTLDocument,
     FTLUpload,
     FTLRenameDocument,
+    FTLBreadcrumbFolder,
   },
 
   props: ["searchQuery"],
@@ -296,6 +314,18 @@ export default {
 
       // Documents list
       currentSearch: "",
+      breadcrumbPlaceholder: [
+        {
+          id: null,
+          text: this.$t("Root"),
+          to: { name: "home" },
+        },
+        {
+          id: null,
+          text: this.$t("Search results"),
+          to: { name: "home" },
+        }
+      ]
     };
   },
 
