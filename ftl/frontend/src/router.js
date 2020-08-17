@@ -22,17 +22,17 @@ export default new Router({
       component: Home,
       props: (route) => ({
         doc: route.query.doc,
-        folder: null, // Needed to trigger watched value `folder`
+        folderId: null, // Needed to trigger watched value `folderId`
       }),
     },
-    // Two entries for Home component because /home/:path*/:folder* entry doesn't work for both cases FIXME
+    // Two entries for Home component because /home/:path*/:folderId* entry doesn't work for both cases FIXME
     {
-      path: "/home/*/:folder(\\d+)",
+      path: "/home/*/:folderId(\\d+)",
       name: "home-folder",
       component: Home,
       props: (route) => ({
         doc: route.query.doc,
-        folder: route.params.folder,
+        folderId: route.params.folderId,
       }),
     },
     // Search page

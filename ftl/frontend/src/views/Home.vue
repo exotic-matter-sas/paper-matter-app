@@ -355,7 +355,7 @@ export default {
     FTLBreadcrumbFolder,
   },
 
-  props: ["folder"],
+  props: ["folderId"],
 
   data() {
     return {
@@ -369,9 +369,9 @@ export default {
   mounted() {
     this.sort = String(this.sortHome); // copy value for sortHome mutations not to call sort watcher
 
-    if (this.folder) {
+    if (this.folderId) {
       // Open folder directly from loading an URL with folder (don't reset URL if opening a document)
-      this.updateFoldersPath(this.folder);
+      this.updateFoldersPath(this.folderId);
     } else {
       // Or just show the current folders
       this.refreshFolders();
@@ -461,7 +461,7 @@ export default {
   },
 
   watch: {
-    folder: function (newVal, oldVal) {
+    folderId: function (newVal, oldVal) {
       if (this.$route.name === "home") {
         // Coming back to home so clear everything and reload from root folder
         this.changeFolder();
@@ -519,12 +519,12 @@ export default {
   },
 
   methods: {
-    computeFolderUrlPath: function (id = null) {
+    computeFolderUrlPath: function (folderId = null) {
       if (this.previousLevels.length > 0) {
         let s = this.previousLevels.map((e) => e.name);
 
-        if (id) {
-          s.push(id);
+        if (folderId) {
+          s.push(folderId);
         } else {
           s.push(this.previousLevels[this.previousLevels.length - 1].id);
         }
@@ -606,8 +606,8 @@ export default {
     documentsCreatedExtended: function (event) {
       const doc = event.doc;
       // Only add document to interface if we are in the same folder, this should allow the user to navigate while uploading
-      if (this.folder) {
-        if (parseInt(this.folder, 10) === doc.ftl_folder) {
+      if (this.folderId) {
+        if (parseInt(this.folderId, 10) === doc.ftl_folder) {
           this.documentsCreated(event);
         }
       } else {
@@ -628,18 +628,18 @@ export default {
       return this._updateDocuments(queryString);
     },
 
-    updateFolders: function (level = null) {
+    updateFolders: function (folder = null) {
       const vi = this;
       let qs = "";
 
-      if (level) {
-        if ("has_descendant" in level && level.has_descendant === false) {
+      if (folder) {
+        if ("has_descendant" in folder && folder.has_descendant === false) {
           // Avoid doing an API request when we know there are no descendant
           vi.folders = [];
           return;
         }
 
-        qs = "?level=" + level.id;
+        qs = "?level=" + folder.id;
       }
 
       axios
