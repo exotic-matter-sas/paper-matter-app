@@ -6,7 +6,7 @@
 <template>
   <b-col sm="2" class="m-1 folder" :class="{ selected: state }">
     <b-row class="icon" align-h="center">
-      <b-col @click="navigateToFolder">
+      <b-col @click="state = !state">
         <font-awesome-icon
           icon="folder"
           size="5x"
@@ -71,22 +71,12 @@ export default {
       }
     },
   },
-
-  methods: {
-    navigateToFolder: function () {
-      this.$emit("event-navigate-folder", this.folder);
-    },
-  },
 };
 </script>
 
 <style scoped lang="scss">
 .folder {
   border: 3px solid transparent;
-
-  .icon {
-    cursor: pointer;
-  }
 }
 
 .folder.selected .icon svg {
@@ -104,8 +94,6 @@ export default {
   margin-left: -1.5rem;
 
   label {
-    cursor: pointer;
-
     span {
       white-space: nowrap;
       text-overflow: ellipsis;

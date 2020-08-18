@@ -39,7 +39,7 @@
           <b-button
             id="rename-document"
             class="float-left"
-            v-b-modal="'modal-rename-document'"
+            v-b-modal="'modal-rename-document-dp'"
             variant="link"
           >
             <font-awesome-icon icon="edit" :title="$t('Rename document')" />
@@ -112,7 +112,7 @@
                 id="move-document"
                 class="mx-1 mb-1"
                 variant="secondary"
-                v-b-modal="'modal-move-document'"
+                v-b-modal="'modal-move-document-dp'"
               >
                 {{ $t("Move") }}
               </b-button>
@@ -120,7 +120,7 @@
                 id="delete-document"
                 class="mx-1 mb-1"
                 variant="danger"
-                v-b-modal="'modal-delete-document'"
+                v-b-modal="'modal-delete-document-dp'"
               >
                 {{ $t("Delete") }}
               </b-button>
@@ -128,7 +128,7 @@
                 id="share-document"
                 class="mx-1 mb-1"
                 variant="success"
-                v-b-modal="'modal-document-sharing'"
+                v-b-modal="'modal-document-sharing-dp'"
               >
                 <span v-if="currentOpenDoc.is_shared">{{
                   $t("Get share link")
@@ -152,27 +152,27 @@
     </b-container>
 
     <FTLMoveDocuments
-      v-if="currentOpenDoc.pid"
+      modal-id="modal-move-document-dp"
       id="modal-move-document"
       :docs="[currentOpenDoc]"
       @event-document-moved="documentMoved"
     />
 
     <FTLRenameDocument
-      v-if="currentOpenDoc.pid"
+      modal-id="modal-rename-document-dp"
       :doc="currentOpenDoc"
       @event-document-renamed="documentRenamed"
     />
 
     <FTLDeleteDocuments
-      v-if="currentOpenDoc.pid"
+      modal-id="modal-delete-document-dp"
       id="modal-delete-document"
       :docs="[currentOpenDoc]"
       @event-document-deleted="documentDeleted"
     />
 
     <FTLDocumentSharing
-      v-if="currentOpenDoc.pid"
+      modal-id="modal-document-sharing-dp"
       :doc="currentOpenDoc"
       @event-document-shared="documentShared(true)"
       @event-document-unshared="documentShared(false)"

@@ -4,7 +4,10 @@
   -->
 
 <template>
-  <b-modal :id="id">
+  <b-modal
+    :id="modalId"
+    scrollable
+  >
     <template slot="modal-title">
       <span>
         {{
@@ -80,7 +83,7 @@ export default {
     // customize the id to allow multiple time this component in Home
     // Used one time for document panel move button
     // Used one time for batch move document
-    id: {
+    modalId: {
       type: String,
       default: "modal-move-documents",
     },
@@ -151,7 +154,7 @@ export default {
                 responses.length
               )
             );
-            this.$bvModal.hide(this.id);
+            this.$bvModal.hide(this.modalId);
           } else {
             this.mixinAlertWarning(
               this.$tc(

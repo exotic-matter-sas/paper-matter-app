@@ -5,170 +5,184 @@
 
 <template>
   <b-modal
-    id="folders-mngt"
+    id="modal-manage-folders"
     hide-footer
     centered
     scrollable
-    :title="$t('Folders management')"
     body-class="px-0"
-    @hidden="$bvModal.hide('folders-mngt')"
   >
-    <main class="flex-grow">
-      <b-container fluid class="text-center">
-        <b-row>
-          <!-- Left panel -->
-          <b-col id="left-panel" md="8">
-            <b-row>
-              <b-col>
-                <b-breadcrumb
-                  class="breadcrumb-ftl"
-                  :items="breadcrumb"
-                  @click="unselectFolder"
-                />
-              </b-col>
-            </b-row>
-            <b-row v-if="foldersLoading">
-              <b-col>
-                <b-spinner
-                  style="width: 3rem; height: 3rem;"
-                  class="m-5 loader"
-                  label="Loading..."
-                ></b-spinner>
-              </b-col>
-            </b-row>
-            <b-row align-h="center" v-else>
-              <FTLSelectableFolder
-                v-for="_folder in folders"
-                :key="_folder.id"
-                :folder="_folder"
-                @event-navigate-folder="navigateToFolder"
-                @event-select-folder="getFolderDetail"
-                @event-unselect-folder="unselectFolder"
-              />
-              <b-col
-                id="create-folder"
-                sm="2"
-                class="m-1"
-                v-b-modal="'modal-new-folder'"
-              >
-                <b-row>
-                  <b-col>
-                    <font-awesome-icon
-                      icon="folder-plus"
-                      size="5x"
-                      class="text-primary w-100"
-                    />
-                  </b-col>
-                </b-row>
-                <b-row>
-                  <b-col
-                  ><b>{{ $t("Create new folder") }}</b></b-col
-                  >
-                </b-row>
-              </b-col>
-            </b-row>
-          </b-col>
-          <!-- Right panel -->
-          <b-col id="right-panel">
-            <b-row v-if="folderDetailLoading" class="sticky-top">
-              <b-col>
-                <b-spinner :label="$t('Loading')"></b-spinner>
-              </b-col>
-            </b-row>
-            <b-row v-else-if="folderDetail" class="sticky-top">
-              <b-col>
-                <b-row>
-                  <b-col>
-                    <font-awesome-icon icon="folder" size="6x" />
-                  </b-col>
-                </b-row>
-                <b-row>
-                  <b-col id="selected-folder-name"
-                  ><h1>{{ folderDetail.name }}</h1></b-col
-                  >
-                </b-row>
-                <b-row>
-                  <b-col>
-                    {{ $t("Creation date") }}
-                  </b-col>
-                  <b-col>
-                  <span
-                    id="selected-folder-date"
-                    :title="folderDetail.created"
-                  >{{ $moment(folderDetail.created).fromNow() }}</span
-                  >
-                  </b-col>
-                </b-row>
-                <b-row>
-                  <b-col>
-                    <b-button
-                      id="rename-selected-folder"
-                      class="m-1"
-                      variant="secondary"
-                      v-b-modal="'modal-rename-folder'"
-                    >
-                      {{ $t("Rename") }}
-                    </b-button>
-                    <b-button
-                      id="move-selected-folder"
-                      class="m-1"
-                      variant="secondary"
-                      v-b-modal="'modal-move-folder'"
-                    >
-                      {{ $t("Move") }}
-                    </b-button>
-                    <b-button
-                      id="delete-selected-folder"
-                      class="m-1"
-                      variant="danger"
-                      v-b-modal="'modal-delete-folder'"
-                    >
-                      {{ $t("Delete") }}
-                    </b-button>
-                  </b-col>
-                </b-row>
-              </b-col>
-            </b-row>
-            <b-row v-else class="sticky-top">
-              <b-col
-              ><h1 class="text-muted">
-                {{ $t("No folder selected") }}
-              </h1></b-col
-              >
-            </b-row>
-          </b-col>
-        </b-row>
+    <!-- Header -->
+    <template slot="modal-header">
+      <b-container>
+        <h5 class="modal-title">
+          <span
+            id="folder-parent"
+            class="float-left text-primary"
+          >
+            <font-awesome-icon icon="folder" />
+            <font-awesome-icon icon="folder-open" class="d-none" />
+            {{ parentFolder === null ? $t('Root') : parentFolder.name }}
+          </span>
+          <div id="title-separator" class="float-left">
+            >
+          </div>
+          <div
+            id="title"
+            class="float-left"
+          >
+            <span>{{ $t('Folders management') }}</span>
+          </div>
+        </h5>
 
-        <FTLRenameFolder
-          v-if="folderDetail"
-          :folder="folderDetail"
-          @event-folder-renamed="folderUpdated"
-        />
-
-        <FTLNewFolder
-          :parent="getCurrentFolder"
-          @event-folder-created="folderCreated"
-        />
-
-        <FTLDeleteFolder
-          v-if="folderDetail"
-          :folder="folderDetail"
-          @event-folder-deleted="folderDeleted"
-        />
-
-        <FTLMoveFolder
-          v-if="folderDetail"
-          :folder="folderDetail"
-          @event-folder-moved="folderMoved"
-        />
+        <button
+          @click.prevent="$bvModal.hide('modal-manage-folders')"
+          type="button"
+          aria-label="Close"
+          class="close"
+        >
+          ×
+        </button>
       </b-container>
-    </main>
+    </template>
+    <b-container fluid class="text-center">
+      <b-row>
+        <!-- Left panel -->
+        <b-col id="left-panel" md="8">
+          <b-row align-h="center">
+            <b-col
+              id="create-folder"
+              sm="2"
+              class="m-1"
+              v-b-modal="'modal-new-folder-mfp'"
+            >
+              <b-row>
+                <b-col>
+                  <font-awesome-icon
+                    icon="folder-plus"
+                    size="5x"
+                    class="text-primary w-100"
+                  />
+                </b-col>
+              </b-row>
+              <b-row>
+                <b-col
+                ><b>{{ $t("Add") }}</b></b-col
+                >
+              </b-row>
+            </b-col>
+            <FTLSelectableFolder
+              v-for="_folder in childrenFolders"
+              :key="_folder.id"
+              :folder="_folder"
+              @event-select-folder="getFolderDetails"
+              @event-unselect-folder="unselectFolder"
+            />
+          </b-row>
+        </b-col>
+        <!-- Right panel -->
+        <b-col id="right-panel">
+          <b-row v-if="folderDetailLoading" class="sticky-top">
+            <b-col>
+              <b-spinner :label="$t('Loading')"></b-spinner>
+            </b-col>
+          </b-row>
+          <b-row v-else-if="folderDetail" class="sticky-top">
+            <b-col>
+              <b-row>
+                <b-col>
+                  <font-awesome-icon icon="folder" size="6x" />
+                </b-col>
+              </b-row>
+              <b-row>
+                <b-col id="selected-folder-name"
+                ><h1>{{ folderDetail.name }}</h1></b-col
+                >
+              </b-row>
+              <b-row>
+                <b-col>
+                  {{ $t("Creation date") }}
+                </b-col>
+                <b-col>
+                <span
+                  id="selected-folder-date"
+                  :title="folderDetail.created"
+                >{{ $moment(folderDetail.created).fromNow() }}</span
+                >
+                </b-col>
+              </b-row>
+              <b-row>
+                <b-col>
+                  <b-button
+                    id="rename-selected-folder"
+                    class="m-1"
+                    variant="secondary"
+                    v-b-modal="'modal-rename-folder-mfp'"
+                  >
+                    {{ $t("Rename") }}
+                  </b-button>
+                  <b-button
+                    id="move-selected-folder"
+                    class="m-1"
+                    variant="secondary"
+                    v-b-modal="'modal-move-folder-mfp'"
+                  >
+                    {{ $t("Move") }}
+                  </b-button>
+                  <b-button
+                    id="delete-selected-folder"
+                    class="m-1"
+                    variant="danger"
+                    v-b-modal="'modal-delete-folder-mfp'"
+                  >
+                    {{ $t("Delete") }}
+                  </b-button>
+                </b-col>
+              </b-row>
+            </b-col>
+          </b-row>
+          <b-row v-else class="sticky-top">
+            <b-col
+            ><h1 class="text-muted">
+              {{ $t("No folder selected") }}
+            </h1></b-col
+            >
+          </b-row>
+        </b-col>
+      </b-row>
+
+      <FTLRenameFolder
+        v-if="folderDetail"
+        modal-id="modal-rename-folder-mfp"
+        :folder="folderDetail"
+        @event-folder-renamed="folderUpdated"
+      />
+
+      <FTLNewFolder
+        modal-id="modal-new-folder-mfp"
+        :parent="getCurrentFolder"
+        @event-folder-created="folderCreated"
+      />
+
+      <FTLDeleteFolder
+        v-if="folderDetail"
+        modal-id="modal-delete-folder-mfp"
+        :folder="folderDetail"
+        @event-folder-deleted="folderDeleted"
+      />
+
+      <FTLMoveFolder
+        v-if="folderDetail"
+        modal-id="modal-move-folder-mfp"
+        :folder="folderDetail"
+        @event-folder-moved="folderMoved"
+      />
+    </b-container>
   </b-modal>
 </template>
 
 <i18n>
   fr:
-    Create new folder: Créer un nouveau dossier
+    Add: Ajouter
     Loading: Chargement
     No folder selected: Aucun dossier sélectionné
     Unable to get folder details: Les détails du dossier n'ont pu être récupérés
@@ -196,78 +210,30 @@ export default {
     FTLSelectableFolder,
     FTLNewFolder,
   },
-  props: ["folder"],
+  props: {
+    parentFolder: {
+      default: null,
+    },
+    childrenFolders: {
+      default: [],
+    }
+  },
 
   data() {
     return {
-      // Folders list
-      foldersLoading: false,
-      folders: [],
-
       // Folder panel
       folderDetail: null,
       folderDetailLoading: false,
     };
   },
 
-  watch: {
-    folder: function (newVal, oldVal) {
-      if (newVal === undefined) {
-        this.$store.commit('resetPreviousLevels');
-        this.updateFolders();
-      } else {
-        if (newVal !== oldVal) {
-          // Restore breadcrumb
-          this.updateFoldersFromUrl(newVal);
-        }
-      }
-    },
-  },
-
-    mounted() {
-      if (this.folder) {
-        this.updateFoldersFromUrl(this.folder);
-      } else {
-        this.updateFolders();
-      }
-    },
-
   computed: {
-    breadcrumb: function () {
-      let paths = [];
-
-      paths.push({
-        text: this.$t("Root"),
-        to: { name: "folders" },
-      });
-
-      return paths.concat(
-        this.previousLevels.map((e) => {
-          return {
-            text: e.name,
-            to: {
-              name: "folders",
-              params: { folder: e.id },
-            },
-          };
-        })
-      );
-    },
     ...mapState(["previousLevels"]),
     ...mapGetters(["getCurrentFolder"])
   },
 
   methods: {
-    refreshFolder: function () {
-      if (this.folder) {
-        this.updateFoldersFromUrl(this.folder);
-      } else {
-        this.$store.commit('resetPreviousLevels');
-        this.updateFolders();
-      }
-    },
-
-    getFolderDetail: function (folder) {
+    getFolderDetails: function (folder) {
       if (!this.folderDetail || this.folderDetail.id !== folder.id) {
         this.folderDetailLoading = true;
         // Avoid duplicate request to folder detail api because when doubleclicking, it also triggers single click event
@@ -301,80 +267,28 @@ export default {
       this.folderDetail = null;
     },
 
-    navigateToFolder: function (folder) {
-      this.unselectFolder();
-      if (folder) this.$store.commit('appendNewLevel', folder);
-      this.$router.push({
-        name: "folders",
-        params: { folder: folder.id },
-      });
-    },
-
-    updateFolders: function (folder = null) {
-      const vi = this;
-      let qs = "";
-
-      vi.foldersLoading = true;
-
-      if (folder) {
-        if ("has_descendant" in folder && folder.has_descendant === false) {
-          // Avoid doing an API request when we know there are no descendant
-          vi.folders = [];
-          vi.foldersLoading = false;
-          return;
-        }
-
-        qs = "?level=" + folder.id;
-      }
-
-      axios
-        .get("/app/api/v1/folders" + qs)
-        .then((response) => {
-          vi.folders = response.data;
-        })
-        .catch((error) =>
-          vi.mixinAlert(vi.$t("Unable to refresh folders list"), true)
-        )
-        .finally(() => (vi.foldersLoading = false));
-    },
-
-    updateFoldersFromUrl: function (folderId) {
-      this.foldersLoading = true;
-
-      if (this.folderDetail && this.folderDetail.id === folderId) {
-        // Avoid duplicate request to folder detail api if we have already the detail because we clicked on the folder
-        this.$store.commit('setPreviousLevels', this.folderDetail.paths);
-        this.updateFolders(this.folderDetail);
-      } else {
-        axios
-          .get("/app/api/v1/folders/" + folderId)
-          .then((response) => {
-            this.$store.commit('setPreviousLevels', response.data.paths);
-            this.updateFolders(response.data);
-          })
-          .catch(() => {
-            this.mixinAlert(this.$t("Could not open folder"), true);
-            this.foldersLoading = false;
-          });
-      }
-    },
-
     folderCreated: function (folder) {
       folder.highlightAnimation = true;
-      this.folders.push(folder);
+      this.childrenFolders.unshift(folder);
+
+      // update folders in Home
+      this.$emit('update:childrenFolders', this.childrenFolders);
     },
 
     folderMoved: function (event) {
       const folderIndex = this._getFolderIndexFromId(event.folder.id);
-      this.folders.splice(folderIndex, 1);
+      this.childrenFolders.splice(folderIndex, 1);
 
       this.unselectFolder();
+
+      // update folders in Home
+      this.$emit('update:childrenFolders', this.childrenFolders);
     },
 
     folderDeleted: function (event) {
       const folderId = event.folder.id;
       const folderIndex = this._getFolderIndexFromId(folderId);
-      this.folders.splice(folderIndex, 1);
+      this.childrenFolders.splice(folderIndex, 1);
 
       this.unselectFolder();
 
@@ -382,19 +296,25 @@ export default {
       if (this.$store.getters.FTLTreeItemSelected(folderId)) {
         this.$store.commit("selectMoveTargetFolder", null);
       }
+
+      // update folders in Home
+      this.$emit('update:childrenFolders', this.childrenFolders);
     },
 
     folderUpdated: function (event) {
       const folder = event.folder;
       const folderIndex = this._getFolderIndexFromId(folder.id);
-      this.$set(this.folders, folderIndex, folder); // to be reactive, see https://vuejs.org/v2/guide/list.html#Caveats
+      this.$set(this.childrenFolders, folderIndex, folder); // to be reactive, see https://vuejs.org/v2/guide/list.html#Caveats
       if (this.folderDetail && this.folderDetail.id === folder.id) {
         this.folderDetail = folder;
       }
+
+      // update folders in Home
+      this.$emit('update:childrenFolders', this.childrenFolders);
     },
 
     _getFolderIndexFromId(folderId) {
-      return this.folders.findIndex((x) => x.id === folderId);
+      return this.childrenFolders.findIndex((x) => x.id === folderId);
     },
   },
 };
@@ -406,7 +326,7 @@ export default {
 @import "~bootstrap/scss/_mixins.scss";
 $manage-folders-padding: 2em;
 
-#folders-mngt {
+#modal-manage-folders {
   .container {
     max-width: none;
   }
@@ -415,6 +335,47 @@ $manage-folders-padding: 2em;
     width: 100vw;
     max-width: none;
     margin: 0;
+  }
+
+  .fa-folder {
+    width: 1.125em;
+  }
+
+  #parent-folder,
+  #title-separator,
+  #title {
+    display: block;
+    padding: 1rem;
+    margin: -1rem -1rem -1rem auto;
+  }
+
+  #parent-folder {
+    max-width: 25%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-left: 0;
+
+    &:hover {
+      .fa-folder {
+        display: none !important;
+      }
+
+      .fa-folder-open {
+        display: inline-block !important;
+      }
+    }
+  }
+
+  #title-separator {
+    padding: 1rem 0.5rem;
+  }
+
+  #title {
+    max-width: 65%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .close {
@@ -438,7 +399,7 @@ $manage-folders-padding: 2em;
 }
 
 @include media-breakpoint-up(md) {
-  #folders-mngt {
+  #modal-manage-folders {
     .modal-dialog {
       padding: $manage-folders-padding;
     }

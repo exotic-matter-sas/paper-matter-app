@@ -5,7 +5,7 @@
 
 <template>
   <b-modal
-    :id="id"
+    :id="modalId"
     :title="$t('Delete documents')"
     ok-variant="danger"
     :ok-title="$t('Delete')"
@@ -41,8 +41,7 @@ export default {
   props: {
     // customize the id to allow multiple time this component in Home
     // Used one time for batch delete document
-    // TODO next, in doc panel?
-    id: {
+    modalId: {
       type: String,
       default: "modal-delete-documents",
     },

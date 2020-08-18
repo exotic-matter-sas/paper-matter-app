@@ -54,7 +54,7 @@
           <b-button
             id="create-folder"
             variant="primary"
-            v-b-modal="'modal-new-folder'"
+            v-b-modal="'modal-new-folder-h'"
           >
             <font-awesome-icon
               icon="folder-plus"
@@ -66,7 +66,7 @@
             id="manage-folder"
             variant="primary"
             :title="$t('Rename or move folder')"
-            @click.prevent="$bvModal.show('folders-mngt')"
+            v-b-modal="'modal-manage-folders'"
           >
             <svg class="svg-inline--fa fa-folder fa-w-16 fa-lg" width="512" height="512" aria-hidden="true" data-icon="folder" data-prefix="fas" focusable="false" role="img" version="1.1" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
               <g transform="translate(0 -.012176)">
@@ -77,6 +77,7 @@
           <b-button
             variant="primary"
             :disabled="!previousLevels.length"
+            :title="$t('Back to parent folder')"
             @click="changeToPreviousFolder"
           >
             <font-awesome-icon icon="level-up-alt" />
@@ -178,7 +179,7 @@
           <b-button
             id="move-documents"
             variant="primary"
-            v-b-modal="'modal-move-documents'"
+            v-b-modal="'modal-move-documents-h'"
             :title="$t('Move to folder')"
           >
             <font-awesome-icon icon="folder-open" class="d-sm-none" />
@@ -187,7 +188,7 @@
           <b-button
             id="delete-documents"
             variant="danger"
-            v-b-modal="'modal-delete-documents'"
+            v-b-modal="'modal-delete-documents-h'"
             :title="$t('Delete documents')"
           >
             <font-awesome-icon icon="trash" class="d-sm-none" />
@@ -253,31 +254,39 @@
       />
 
       <FTLNewFolder
+        modal-id="modal-new-folder-h"
         :parent="getCurrentFolder"
         @event-folder-created="folderCreated"
       />
 
       <FTLManageFoldersPanel
-        :folder="getCurrentFolder"
+        :parent-folder="getCurrentFolder"
+        :children-folders.sync="folders"
+        @event-folder-created="folderCreated"
+        @event-folder-renamed="folderUpdated"
+        @event-folder-moved="folderDeleted"
+        @event-folder-deleted="folderDeleted"
       />
 
-      <!-- For batch action move document -->
+      <!-- For batch action -->
       <FTLMoveDocuments
         v-if="selectedDocumentsHome.length > 0"
-        id="modal-move-documents"
+        modal-id="modal-move-documents-h"
         :docs="selectedDocumentsHome"
         @event-document-moved="documentDeleted"
       />
 
+      <!-- For batch action -->
       <FTLDeleteDocuments
         v-if="selectedDocumentsHome.length > 0"
+        modal-id="modal-delete-documents-h"
         :docs="selectedDocumentsHome"
         @event-document-deleted="documentDeleted"
       />
 
       <FTLRenameDocument
+        modal-id="modal-rename-document-h"
         :doc="currentRenameDoc"
-        id="modal-rename-document-home"
         @event-document-renamed="documentUpdated"
       />
     </b-col>
@@ -318,6 +327,7 @@
     Documents (5/5): Documents (5/5)
     Your documents list, you can select multiple documents using the checkboxes (or <kbd>Ctrl</kbd> + <kbd>Left click</kbd>) to apply batch actions.: La liste de vos documents, vous pouvez en sélectionner plusieurs avec les cases à cocher (ou <kbd>Ctrl</kbd> + <kbd>Clic gauche</kbd>) pour réaliser des actions groupées.
     Rename or move folder: Renommer ou déplacer un dossier
+    Back to parent folder: Revenir au dossier parent
 </i18n>
 
 <script>
@@ -652,6 +662,11 @@ export default {
         );
     },
 
+    renameDoc: function (doc) {
+      this.currentRenameDoc = doc;
+      this.$bvModal.show("modal-rename-document-h");
+    },
+
     documentsCreated: function (event) {
       const doc = event.doc;
       this.docs.unshift(doc);
@@ -661,6 +676,21 @@ export default {
     folderCreated: function (folder) {
       folder.highlightAnimation = true;
       this.folders.unshift(folder);
+    },
+
+    folderDeleted: function (event) {
+      const folderIndex = this._getFolderIndexFromId(event.folder.id);
+      this.folders.splice(folderIndex, 1);
+    },
+
+    folderUpdated: function (event) {
+      const folder = event.folder;
+      const folderIndex = this._getFolderIndexFromId(folder.id);
+      this.$set(this.folders, folderIndex, folder); // to be reactive, see https://vuejs.org/v2/guide/list.html#Caveats
+    },
+
+    _getFolderIndexFromId(folderId) {
+      return this.folders.findIndex((x) => x.id === folderId);
     },
   },
 };

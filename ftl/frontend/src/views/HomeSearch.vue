@@ -153,7 +153,7 @@
           <b-button
             id="move-documents"
             variant="primary"
-            v-b-modal="'modal-move-documents'"
+            v-b-modal="'modal-move-documents-hs'"
             :title="$t('Move to folder')"
           >
             <font-awesome-icon icon="folder-open" class="d-sm-none" />
@@ -162,7 +162,7 @@
           <b-button
             id="delete-documents"
             variant="danger"
-            v-b-modal="'modal-delete-documents'"
+            v-b-modal="'modal-delete-documents-hs'"
             :title="$t('Delete documents')"
           >
             <font-awesome-icon icon="trash" class="d-sm-none" />
@@ -236,21 +236,22 @@
 
       <!-- For batch action move document -->
       <FTLMoveDocuments
-        v-if="selectedDocumentsHome.length > 0"
+        modal-id="modal-move-folder-hs"
         id="modal-move-documents"
         :docs="selectedDocumentsHome"
         @event-document-moved="documentDeleted"
       />
 
       <FTLDeleteDocuments
+        modal-id="modal-delete-documents-hs"
         v-if="selectedDocumentsHome.length > 0"
         :docs="selectedDocumentsHome"
         @event-document-deleted="documentDeleted"
       />
 
       <FTLRenameDocument
+        modal-id="modal-rename-document-hs"
         :doc="currentRenameDoc"
-        id="modal-rename-document-home"
         @event-document-renamed="documentUpdated"
       />
     </b-col>
@@ -377,6 +378,11 @@ export default {
       }
 
       return this._updateDocuments(queryString);
+    },
+
+    renameDoc: function (doc) {
+      this.currentRenameDoc = doc;
+      this.$bvModal.show("modal-rename-document-hs");
     },
   },
 };

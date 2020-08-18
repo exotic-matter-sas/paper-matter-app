@@ -5,7 +5,7 @@
 
 <template>
   <b-modal
-    id="modal-new-folder"
+    :id="modalId"
     @ok="createNewFolder"
     :ok-disabled="newFolderName === ''"
     :cancel-title="$t('Cancel')"
@@ -52,6 +52,10 @@ export default {
   name: "FTLNewFolder",
 
   props: {
+    modalId: {
+      type: String,
+      default: "modal-new-folder"
+    },
     parent: {
       type: Object,
       default: null,
@@ -90,7 +94,7 @@ export default {
             this.$t('Folder "{0}" created', [this.newFolderName])
           );
           this.newFolderName = "";
-          this.$bvModal.hide("modal-new-folder");
+          this.$bvModal.hide(this.modalId);
           this.$emit("event-folder-created", response.data);
         })
         .catch((error) => {

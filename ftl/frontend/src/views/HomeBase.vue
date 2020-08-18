@@ -93,11 +93,6 @@ export default {
         });
     },
 
-    renameDoc: function (doc) {
-      this.currentRenameDoc = doc;
-      this.$bvModal.show("modal-rename-document-home");
-    },
-
     _updateDocuments: function (query) {
       let queryString = {};
 
