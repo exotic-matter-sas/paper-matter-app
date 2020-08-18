@@ -69,7 +69,6 @@ class FTLDocumentSharingInline(admin.TabularInline):
         "created",
         "expire_at",
         "password",
-        "note",
     )
     extra = 0
 
@@ -86,8 +85,15 @@ class FTLDocumentAdmin(admin.ModelAdmin):
         "ftl_user",
         "ftl_folder",
     )
-    fields = (
+    readonly_fields = (
+        "pid",
         "created",
+        "edited",
+    )
+    fields = (
+        "pid",
+        "created",
+        "edited",
         "size",
         "md5",
         "deleted",
@@ -101,6 +107,17 @@ class FTLDocumentAdmin(admin.ModelAdmin):
 class FTLDocumentSharingAdmin(admin.ModelAdmin):
     search_fields = ("pid",)
     raw_id_fields = ("ftl_doc",)
+    readonly_fields = (
+        "pid",
+        "created",
+        "edited",
+    )
+    fields = (
+        "pid",
+        "created",
+        "edited",
+        "password",
+    )
 
 
 admin.site.unregister(TOTPDevice)
