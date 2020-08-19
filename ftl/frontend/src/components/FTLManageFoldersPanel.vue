@@ -15,22 +15,16 @@
     <template slot="modal-header">
       <b-container>
         <h5 class="modal-title">
-          <span
-            id="folder-parent"
-            class="float-left text-primary"
-          >
+          <span id="folder-parent" class="float-left text-primary">
             <font-awesome-icon icon="folder" />
             <font-awesome-icon icon="folder-open" class="d-none" />
-            {{ parentFolder === null ? $t('Root') : parentFolder.name }}
+            {{ parentFolder === null ? $t("Root") : parentFolder.name }}
           </span>
           <div id="title-separator" class="float-left">
             >
           </div>
-          <div
-            id="title"
-            class="float-left"
-          >
-            <span>{{ $t('Folders management') }}</span>
+          <div id="title" class="float-left">
+            <span>{{ $t("Folders management") }}</span>
           </div>
         </h5>
 
@@ -66,7 +60,7 @@
               </b-row>
               <b-row>
                 <b-col
-                ><b>{{ $t("Add") }}</b></b-col
+                  ><b>{{ $t("Add") }}</b></b-col
                 >
               </b-row>
             </b-col>
@@ -95,7 +89,7 @@
               </b-row>
               <b-row>
                 <b-col id="selected-folder-name"
-                ><h1>{{ folderDetail.name }}</h1></b-col
+                  ><h1>{{ folderDetail.name }}</h1></b-col
                 >
               </b-row>
               <b-row>
@@ -103,11 +97,11 @@
                   {{ $t("Creation date") }}
                 </b-col>
                 <b-col>
-                <span
-                  id="selected-folder-date"
-                  :title="folderDetail.created"
-                >{{ $moment(folderDetail.created).fromNow() }}</span
-                >
+                  <span
+                    id="selected-folder-date"
+                    :title="folderDetail.created"
+                    >{{ $moment(folderDetail.created).fromNow() }}</span
+                  >
                 </b-col>
               </b-row>
               <b-row>
@@ -142,9 +136,9 @@
           </b-row>
           <b-row v-else class="sticky-top">
             <b-col
-            ><h1 class="text-muted">
-              {{ $t("No folder selected") }}
-            </h1></b-col
+              ><h1 class="text-muted">
+                {{ $t("No folder selected") }}
+              </h1></b-col
             >
           </b-row>
         </b-col>
@@ -215,8 +209,8 @@ export default {
       default: null,
     },
     childrenFolders: {
-      default: [],
-    }
+      default: () => [],
+    },
   },
 
   data() {
@@ -229,7 +223,7 @@ export default {
 
   computed: {
     ...mapState(["previousLevels"]),
-    ...mapGetters(["getCurrentFolder"])
+    ...mapGetters(["getCurrentFolder"]),
   },
 
   methods: {
@@ -252,14 +246,13 @@ export default {
               this.$nextTick(() => {
                 const elem = document.querySelector("#right-panel");
                 elem.scrollIntoView({
-                  behavior: 'smooth',
+                  behavior: "smooth",
                   block: "end",
-                  inline: "nearest"
-                })
-              }
-              );
+                  inline: "nearest",
+                });
+              });
             }
-          })
+          });
       }
     },
 
@@ -272,7 +265,7 @@ export default {
       this.childrenFolders.unshift(folder);
 
       // update folders in Home
-      this.$emit('update:childrenFolders', this.childrenFolders);
+      this.$emit("update:childrenFolders", this.childrenFolders);
     },
 
     folderMoved: function (event) {
@@ -282,7 +275,7 @@ export default {
       this.unselectFolder();
 
       // update folders in Home
-      this.$emit('update:childrenFolders', this.childrenFolders);
+      this.$emit("update:childrenFolders", this.childrenFolders);
     },
 
     folderDeleted: function (event) {
@@ -298,7 +291,7 @@ export default {
       }
 
       // update folders in Home
-      this.$emit('update:childrenFolders', this.childrenFolders);
+      this.$emit("update:childrenFolders", this.childrenFolders);
     },
 
     folderUpdated: function (event) {
@@ -310,7 +303,7 @@ export default {
       }
 
       // update folders in Home
-      this.$emit('update:childrenFolders', this.childrenFolders);
+      this.$emit("update:childrenFolders", this.childrenFolders);
     },
 
     _getFolderIndexFromId(folderId) {

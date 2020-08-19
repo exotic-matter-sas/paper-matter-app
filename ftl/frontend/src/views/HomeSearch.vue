@@ -325,8 +325,8 @@ export default {
           id: null,
           text: this.$t("Search results"),
           to: { name: "home" },
-        }
-      ]
+        },
+      ],
     };
   },
 

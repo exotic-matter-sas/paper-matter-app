@@ -54,7 +54,7 @@ export default {
   props: {
     modalId: {
       type: String,
-      default: "modal-new-folder"
+      default: "modal-new-folder",
     },
     parent: {
       type: Object,

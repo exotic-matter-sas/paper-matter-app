@@ -84,22 +84,31 @@ export default {
 
   methods: {
     addUploadTask: function () {
-      const uploadFolderId = this.getCurrentFolder === null ? null : this.getCurrentFolder.id;
-      const folderName = this.getCurrentFolder === null ? this.$t('Root') : this.getCurrentFolder.name;
+      // Convert the id as a string to use it as an object key and make recent browsers preserve object insertion order
+      const uploadFolderIdKey =
+        this.getCurrentFolder === null
+          ? "id-null"
+          : `id-${this.getCurrentFolder.id}`;
+      const folderName =
+        this.getCurrentFolder === null
+          ? this.$t("Root")
+          : this.getCurrentFolder.name;
 
       // if there is already an upload task for this folder add selectedFiles to the file to upload
-      if (uploadFolderId in this.uploadTasks) {
-        this.uploadTasks[uploadFolderId].files.push(...this.selectedFiles);
-      }
-      else {
-        this.$set(this.uploadTasksCompleted, uploadFolderId, {
-          folderName: folderName,
-          successes: [],
-          errors: []
-        });
-        this.$set(this.uploadTasks, uploadFolderId, {
-          folderName: folderName,
-          files: this.selectedFiles
+      if (uploadFolderIdKey in this.uploadTasks) {
+        this.uploadTasks[uploadFolderIdKey].files.push(...this.selectedFiles);
+      } else {
+        if (!(uploadFolderIdKey in this.uploadTasksCompleted)) {
+          this.$set(this.uploadTasksCompleted, uploadFolderIdKey, {
+            folderName,
+            successes: [],
+            errors: [],
+          });
+        }
+
+        this.$set(this.uploadTasks, uploadFolderIdKey, {
+          folderName,
+          files: this.selectedFiles,
         });
       }
       this.selectedFiles = [];
@@ -111,6 +120,7 @@ export default {
 
     consumeUploadTasks: async function () {
       this.uploading = true;
+      let folderIdKey;
       let folderId;
       let files;
       let fileToUpload;
@@ -121,11 +131,18 @@ export default {
 
       while (entries.length > 0) {
         // get first upload task
-        [folderId, {folderName, files}] = entries[0];
-        uploadTaskSuccesses = this.uploadTasksCompleted[folderId].successes;
-        uploadTaskErrors = this.uploadTasksCompleted[folderId].errors;
+        [folderIdKey, { folderName, files }] = entries[0];
+        folderId =
+          folderIdKey.slice(3) === "null"
+            ? null
+            : parseInt(folderIdKey.slice(3)); // remove "id-" prefix and convert to null or int
+        uploadTaskSuccesses = this.uploadTasksCompleted[folderIdKey].successes;
+        uploadTaskErrors = this.uploadTasksCompleted[folderIdKey].errors;
 
-        while (files.length > 0 && !(folderId in this.uploadTasksInterrupted)) {
+        while (
+          files.length > 0 &&
+          !(folderIdKey in this.uploadTasksInterrupted)
+        ) {
           fileToUpload = files[0];
           await this.uploadDocument(folderId, fileToUpload)
             // push file path to successes or full file object to errors (to allow later retry)
@@ -136,11 +153,18 @@ export default {
         }
 
         // notify user
-        this.notifyUploadTaskCompleted(folderName, uploadTaskSuccesses.length, uploadTaskErrors.length, files.length);
+        this.notifyUploadTaskCompleted(
+          folderName,
+          uploadTaskSuccesses.length,
+          uploadTaskErrors.length,
+          files.length
+        );
         // consume uploadTask
-        this.$delete(this.uploadTasks, folderId);
+        this.$delete(this.uploadTasks, folderIdKey);
         // consume interrupted flag
-        folderId in this.uploadTasksInterrupted ? this.$delete(this.uploadTasksInterrupted, folderId) : undefined;
+        folderIdKey in this.uploadTasksInterrupted
+          ? this.$delete(this.uploadTasksInterrupted, folderIdKey)
+          : undefined;
 
         // refresh entries
         entries = Object.entries(this.uploadTasks);
@@ -176,35 +200,61 @@ export default {
         .post("/app/api/v1/documents/upload", formData, axiosConfig)
         .then((response) => {
           vi.$emit("event-new-upload", { doc: response.data }); // Event for refresh documents list
-        })
+        });
     },
 
-    notifyUploadTaskCompleted: function(folderName, successesCount, errorsCount, skippedCount) {
-      folderName = folderName === null ? this.$('Root') : folderName;
-      console.log("skippedCount", skippedCount);
-      const skippedMention = skippedCount > 0 ?
-        this.$tc("| (and 1 skipped) | (and {n} skipped)", skippedCount) : "";
+    notifyUploadTaskCompleted: function (
+      folderName,
+      successesCount,
+      errorsCount,
+      skippedCount
+    ) {
+      folderName = folderName === null ? this.$("Root") : folderName;
+      const skippedMention =
+        skippedCount > 0
+          ? this.$tc("| (and 1 skipped) | (and {n} skipped)", skippedCount)
+          : "";
 
       // Only successes
       if (successesCount > 0 && errorsCount === 0) {
-        this.mixinAlert(this.$tc("| 1 document added into {folderName} | {n} documents added into {folderName}",
-          successesCount, {folderName}) + ` ${skippedMention}`);
+        this.mixinAlert(
+          this.$tc(
+            "| 1 document added into {folderName} | {n} documents added into {folderName}",
+            successesCount,
+            { folderName }
+          ) + ` ${skippedMention}`
+        );
       }
       // Only errors
       else if (errorsCount > 0 && successesCount === 0) {
-        this.mixinAlert(this.$tc("| 1 document couldn't be added into {folderName} | {n} documents couldn't be added into {folderName}",
-          errorsCount, {folderName}) + ` ${skippedMention}`,
-          true);
+        this.mixinAlert(
+          this.$tc(
+            "| 1 document couldn't be added into {folderName} | {n} documents couldn't be added into {folderName}",
+            errorsCount,
+            { folderName }
+          ) + ` ${skippedMention}`,
+          true
+        );
       }
       // Mixed successes and errors
       else if (successesCount > 0 && errorsCount > 0) {
-        const successesMention = this.$tc("| 1 document added | {n} documents added", successesCount);
-        const errorsMention = this.$tc("| another couldn't be added | {n} others couldn't be added", errorsCount);
-        this.mixinAlertWarning(this.$t("{successesMention} into {folderName}, {errorsMention}.",
-          {successesMention, folderName, errorsMention}) + ` ${skippedMention}`);
+        const successesMention = this.$tc(
+          "| 1 document added | {n} documents added",
+          successesCount
+        );
+        const errorsMention = this.$tc(
+          "| another couldn't be added | {n} others couldn't be added",
+          errorsCount
+        );
+        this.mixinAlertWarning(
+          this.$t("{successesMention} into {folderName}, {errorsMention}.", {
+            successesMention,
+            folderName,
+            errorsMention,
+          }) + ` ${skippedMention}`
+        );
       }
-
-    }
+    },
   },
 };
 </script>

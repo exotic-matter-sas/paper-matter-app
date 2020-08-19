@@ -64,7 +64,7 @@ export default {
   props: {
     modalId: {
       type: String,
-      default: "modal-delete-folder"
+      default: "modal-delete-folder",
     },
     folder: {
       type: Object,

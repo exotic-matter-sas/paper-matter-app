@@ -55,7 +55,7 @@ export default {
   props: {
     modalId: {
       type: String,
-      default: "modal-rename-folder"
+      default: "modal-rename-folder",
     },
     folder: {
       type: Object,

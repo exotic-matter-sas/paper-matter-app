@@ -120,12 +120,30 @@
       </b-nav-form>
 
       <b-nav-form class="mt-3 ml-0 mt-sm-0 ml-sm-3">
-        <b-dropdown id="add-documents" right split variant="outline-secondary"
-                    :html="$route.name === 'home-search' ?
-                      `<label for='upload-doc-input' class='m-0'>${$t('Add documents to root')}</label>`:
-                      `<label for='upload-doc-input' class='m-0'>${$t('Add documents')}</label>`">
-          <b-dropdown-item :href="$t('https://welcome.papermatter.app/downloads')" target="_blank"
-          :title="$t('Import a folder or a large amount of documents using the local import client')">
+        <b-dropdown
+          id="add-documents"
+          right
+          split
+          variant="outline-secondary"
+          :html="
+            $route.name === 'home-search'
+              ? `<label for='upload-doc-input' class='m-0'>${$t(
+                  'Add documents to root'
+                )}</label>`
+              : `<label for='upload-doc-input' class='m-0'>${$t(
+                  'Add documents'
+                )}</label>`
+          "
+        >
+          <b-dropdown-item
+            :href="$t('https://welcome.papermatter.app/downloads')"
+            target="_blank"
+            :title="
+              $t(
+                'Import a folder or a large amount of documents using the local import client'
+              )
+            "
+          >
             {{ $t("Import a folder") }}
             <font-awesome-icon icon="external-link-alt" size="sm" />
           </b-dropdown-item>
@@ -263,12 +281,12 @@ export default {
 </style>
 
 <style lang="scss">
-  #add-documents > button:first-child {
-    padding: 0;
+#add-documents > button:first-child {
+  padding: 0;
 
-    label {
-      padding: 0.375rem 0.75rem;
-      cursor: pointer;
-    }
+  label {
+    padding: 0.375rem 0.75rem;
+    cursor: pointer;
   }
+}
 </style>

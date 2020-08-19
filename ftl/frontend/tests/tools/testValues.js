@@ -120,25 +120,25 @@ export const DOCUMENT_SHARE_LINK_VARIANT = {
 };
 
 export const FILES_PROPS = {
-  name: 'test.pdf',
-  path: 'absolute/path/test.pdf',
-  webkitRelativePath: 'relative/path/test.pdf',
-  type: 'application/pdf',
+  name: "test.pdf",
+  path: "absolute/path/test.pdf",
+  webkitRelativePath: "relative/path/test.pdf",
+  type: "application/pdf",
   lastModified: 1567521895187,
 };
 
 export const FILES_PROPS_2 = {
-  name: 'test.txt',
-  path: 'absolute/path/test.txt',
-  webkitRelativePath: 'relative/path/test.txt',
-  type: 'text/plain',
+  name: "test.txt",
+  path: "absolute/path/test.txt",
+  webkitRelativePath: "relative/path/test.txt",
+  type: "text/plain",
   lastModified: 1567521895188,
 };
 
 export const FILES_PROPS_3 = {
-  name: 'test.DOC',
-  path: 'absolute/path/test.DOC',
-  webkitRelativePath: 'relative/path/test.DOC',
-  type: 'application/msword',
+  name: "test.DOC",
+  path: "absolute/path/test.DOC",
+  webkitRelativePath: "relative/path/test.DOC",
+  type: "application/msword",
   lastModified: 1567521895189,
 };

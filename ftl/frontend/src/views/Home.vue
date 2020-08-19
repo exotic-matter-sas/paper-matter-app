@@ -68,9 +68,25 @@
             :title="$t('Rename or move folder')"
             v-b-modal="'modal-manage-folders'"
           >
-            <svg class="svg-inline--fa fa-folder fa-w-16 fa-lg" width="512" height="512" aria-hidden="true" data-icon="folder" data-prefix="fas" focusable="false" role="img" version="1.1" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+            <svg
+              class="svg-inline--fa fa-folder fa-w-16 fa-lg"
+              width="512"
+              height="512"
+              aria-hidden="true"
+              data-icon="folder"
+              data-prefix="fas"
+              focusable="false"
+              role="img"
+              version="1.1"
+              viewBox="0 0 512 512"
+              xmlns="http://www.w3.org/2000/svg"
+            >
               <g transform="translate(0 -.012176)">
-                <path transform="translate(0 .012176)" d="m48 64c-26.51 0-48 21.49-48 48v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48v-224c0-26.51-21.49-48-48-48h-192l-64-64h-160zm299.01 100.57c5.3568 0 10.712 2.0347 14.779 6.1016l33.146 33.146c8.1336 8.2211 8.1336 21.427 0 29.648l-36.557 36.557-62.795-62.707 36.645-36.645c4.0668-4.0668 9.4244-6.1016 14.781-6.1016zm-71.191 62.512 62.707 62.707-120.61 120.61-53.262 5.9473c-8.8333 1.0495-16.355-6.4718-15.393-15.393l5.9473-53.35 120.61-120.52z" fill="currentColor"/>
+                <path
+                  transform="translate(0 .012176)"
+                  d="m48 64c-26.51 0-48 21.49-48 48v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48v-224c0-26.51-21.49-48-48-48h-192l-64-64h-160zm299.01 100.57c5.3568 0 10.712 2.0347 14.779 6.1016l33.146 33.146c8.1336 8.2211 8.1336 21.427 0 29.648l-36.557 36.557-62.795-62.707 36.645-36.645c4.0668-4.0668 9.4244-6.1016 14.781-6.1016zm-71.191 62.512 62.707 62.707-120.61 120.61-53.262 5.9473c-8.8333 1.0495-16.355-6.4718-15.393-15.393l5.9473-53.35 120.61-120.52z"
+                  fill="currentColor"
+                />
               </g>
             </svg>
           </b-button>
@@ -525,7 +541,7 @@ export default {
       return paths;
     },
     ...mapState(["selectedDocumentsHome", "sortHome", "previousLevels"]), // generate vuex computed getter
-    ...mapGetters(["getCurrentFolder"])
+    ...mapGetters(["getCurrentFolder"]),
   },
 
   methods: {

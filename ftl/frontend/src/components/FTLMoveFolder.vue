@@ -4,10 +4,7 @@
   -->
 
 <template>
-  <b-modal
-    :id="modalId"
-    scrollable
-  >
+  <b-modal :id="modalId" scrollable>
     <template slot="modal-title">
       <span v-if="selectedMoveTargetFolder">
         {{
@@ -80,7 +77,7 @@ export default {
   props: {
     modalId: {
       type: String,
-      default: "modal-move-folder"
+      default: "modal-move-folder",
     },
     folder: {
       type: Object,

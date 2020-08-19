@@ -4,10 +4,7 @@
   -->
 
 <template>
-  <b-modal
-    :id="modalId"
-    scrollable
-  >
+  <b-modal :id="modalId" scrollable>
     <template slot="modal-title">
       <span>
         {{
