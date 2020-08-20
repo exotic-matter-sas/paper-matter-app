@@ -428,11 +428,11 @@ export default {
 
         driver.defineSteps([
           {
-            element: "#upload-section",
+            element: "#add-documents",
             popover: {
               title: this.$t("Add documents (1/5)"),
               description: this.$t(
-                "Select documents by clicking <b>Browse</b> or by dropping them on the white area, confirm with <b>Upload</b> button."
+                "Select documents by clicking <b>Add documents</b>."
               ),
               position: "bottom-center",
             },
