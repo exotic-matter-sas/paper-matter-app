@@ -39,7 +39,7 @@
           </small>
         </b-col>
       </b-row>
-      <b-card-footer footer-tag="footer" footer-class="p-0">
+      <b-card-footer footer-tag="footer" footer-class="p-0 upload-tasks-loader">
         <b-progress
           v-show="currentUploadProgress === 0"
           value="100"

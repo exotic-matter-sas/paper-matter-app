@@ -44,7 +44,7 @@
         <b-col id="left-panel" md="8">
           <b-row align-h="center">
             <b-col
-              id="create-folder"
+              id="create-folder-mfp"
               sm="2"
               class="m-1"
               v-b-modal="'modal-new-folder-mfp'"

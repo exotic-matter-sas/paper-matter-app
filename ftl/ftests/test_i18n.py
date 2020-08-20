@@ -38,7 +38,7 @@ class I18nTests(SetupPages, LoginPage, HomePage):
 
         self.visit(self.root_url)
         self.assertIn(
-            "Ajouter un document",
-            self.get_elem(self.document_upload_label).text,
+            "Ajouter des documents",
+            self.get_elem(self.add_documents_button).text,
             '"Upload document" should be translated as "Ajouter un document"',
         )

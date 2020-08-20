@@ -63,7 +63,7 @@
             />
           </b-button>
           <b-button
-            id="manage-folder"
+            id="manage-folders"
             variant="primary"
             :title="$t('Rename or move folder')"
             v-b-modal="'modal-manage-folders'"
