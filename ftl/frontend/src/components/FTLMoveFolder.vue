@@ -40,7 +40,7 @@
         </span>
         <span v-else>{{ $t("No folder selected") }}</span>
       </div>
-      <b-button variant="secondary" @click.prevent="$bvModal.hide(id)">
+      <b-button variant="secondary" @click.prevent="$bvModal.hide(modalId)">
         {{ $t("Cancel") }}
       </b-button>
       <b-button
