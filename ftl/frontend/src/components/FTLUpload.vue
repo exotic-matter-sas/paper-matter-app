@@ -84,7 +84,7 @@ export default {
       if (newVal.length > 0) {
         this.addUploadTask(newVal);
         // reset filesToUpload
-        this.$emit("update:filesToUpload", [])
+        this.$emit("update:filesToUpload", []);
       }
     },
   },
@@ -104,12 +104,15 @@ export default {
   },
 
   methods: {
-    addUploadTask: function (filesToUpload=null) {
+    addUploadTask: function (filesToUpload = null) {
       // if no filesToUpload is passed, use input selectedFiles as source
-      let files = filesToUpload === null ?
-        this.selectedFiles :
-        // filesToUpload need to be filtered (eg. when it comes for drag n dropped files)
-        filesToUpload.filter((file) => file.type in this.ftlAccount["supported_exts"]);
+      let files =
+        filesToUpload === null
+          ? this.selectedFiles
+          : // filesToUpload need to be filtered (eg. when it comes for drag n dropped files)
+            filesToUpload.filter(
+              (file) => file.type in this.ftlAccount["supported_exts"]
+            );
 
       if (files.length > 0) {
         // Convert the id to string to use it as an object key
@@ -144,7 +147,7 @@ export default {
         }
 
         // reset selectedFiles if files where added from it
-        if (filesToUpload === null){
+        if (filesToUpload === null) {
           this.selectedFiles = [];
         }
         // warn user if some files have been ignored due to their types
@@ -152,7 +155,10 @@ export default {
           const ignoredFilesCount = filesToUpload.length - files.length;
           if (ignoredFilesCount > 0) {
             this.mixinAlertWarning(
-              this.$tc("| One file has been ignored due to its unsupported type | {n} files have been ignored due to their unsupported types", ignoredFilesCount)
+              this.$tc(
+                "| One file has been ignored due to its unsupported type | {n} files have been ignored due to their unsupported types",
+                ignoredFilesCount
+              )
             );
           }
         }
@@ -160,11 +166,12 @@ export default {
         if (!this.uploading) {
           this.consumeUploadTasks();
         }
-      }
-      else if (filesToUpload.length > 0) {
+      } else if (filesToUpload.length > 0) {
         this.mixinAlert(
-          this.$tc("| Sorry, this file can't be added due to its unsupported type. | Sorry, these files can't be added due to their unsupported types.",
-            filesToUpload.length),
+          this.$tc(
+            "| Sorry, this file can't be added due to its unsupported type. | Sorry, these files can't be added due to their unsupported types.",
+            filesToUpload.length
+          ),
           true
         );
       }

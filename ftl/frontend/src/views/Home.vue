@@ -213,11 +213,14 @@
         </b-col>
       </b-row>
 
-      <b-row class="mt-2 mb-3" id="documents-list"
-             :class="{'documents-list-dragged-over': draggingFilesToDocsList}"
-             @dragover="allowDrop"
-             @drop="drop"
-             @dragleave="leaveDrop">
+      <b-row
+        class="mt-2 mb-3"
+        id="documents-list"
+        :class="{ 'documents-list-dragged-over': draggingFilesToDocsList }"
+        @dragover="allowDrop"
+        @drop="drop"
+        @dragleave="leaveDrop"
+      >
         <b-col v-if="docsLoading">
           <b-spinner
             class="mx-auto loader"
@@ -237,16 +240,27 @@
           </b-row>
         </b-col>
         <b-col v-else class="text-center">{{ $t("No document yet") }}</b-col>
-        <div v-show="draggingFilesToDocsList" id="document-drop-overlay"
-             class="position-fixed w-100 text-center text-dark font-weight-bold">
+        <div
+          v-show="draggingFilesToDocsList"
+          id="document-drop-overlay"
+          class="position-fixed w-100 text-center text-dark font-weight-bold"
+        >
           <div id="document-drop-label" class="w-100 my-5 text-primary">
-            <img src="@/assets/add_files.svg" alt="Add files illustration">
-            <br/>
-            {{ $t("Drop documents to begin upload.")}}
-            <br/>
-            <b-button id="cancel-drop" variant="outline-danger" class="m-5" size="lg" ref="cancel-drop-button"
-                      @click.prevent="cancelDrop" @dragover="activateCancelButton"
-                      @dragleave="deactivateCancelButton" @drop="cancelDrop">
+            <img src="@/assets/add_files.svg" alt="Add files illustration" />
+            <br />
+            {{ $t("Drop documents to begin upload.") }}
+            <br />
+            <b-button
+              id="cancel-drop"
+              variant="outline-danger"
+              class="m-5"
+              size="lg"
+              ref="cancel-drop-button"
+              @click.prevent="cancelDrop"
+              @dragover="activateCancelButton"
+              @dragleave="deactivateCancelButton"
+              @drop="cancelDrop"
+            >
               {{ $t("Cancel") }}
             </b-button>
           </div>
@@ -748,18 +762,18 @@ export default {
     },
 
     activateCancelButton: function (event) {
-      this.$refs["cancel-drop-button"].classList.add('active');
+      this.$refs["cancel-drop-button"].classList.add("active");
     },
 
     deactivateCancelButton: function (event) {
-      this.$refs["cancel-drop-button"].classList.remove('active');
+      this.$refs["cancel-drop-button"].classList.remove("active");
     },
 
     cancelDrop: function (event) {
       event.preventDefault();
       event.stopPropagation();
       this.draggingFilesToDocsList = false;
-      this.$refs["cancel-drop-button"].classList.remove('active');
+      this.$refs["cancel-drop-button"].classList.remove("active");
     },
   },
 };
@@ -817,7 +831,7 @@ export default {
   font-size: 1.2em;
   img {
     width: 200px;
-    filter: drop-shadow(0 0 1px rgba(0, 0, 0, .2));
+    filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.2));
   }
 }
 </style>
