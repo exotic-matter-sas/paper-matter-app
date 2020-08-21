@@ -4,12 +4,7 @@
   -->
 
 <template>
-  <b-modal
-    id="modal-manage-folders"
-    hide-footer
-    scrollable
-    body-class="px-0"
-  >
+  <b-modal id="modal-manage-folders" hide-footer scrollable body-class="px-0">
     <!-- Header -->
     <template slot="modal-header">
       <b-container>

@@ -80,8 +80,8 @@ export default {
     };
   },
 
-  created () {
-    window.addEventListener('beforeunload', this.notifyUserUploadUncompleted)
+  created() {
+    window.addEventListener("beforeunload", this.notifyUserUploadUncompleted);
   },
 
   watch: {
@@ -326,9 +326,11 @@ export default {
 
         // Message not shown by recent browsers, but attribute need to be set for Chrome anyway
         // https://developer.mozilla.org/en-US/docs/Web/API/WindowEventHandlers/onbeforeunload#Browser_compatibility
-        event.returnValue = this.$t("Documents are still being uploaded, are you sure you want to stop this upload?");
+        event.returnValue = this.$t(
+          "Documents are still being uploaded, are you sure you want to stop this upload?"
+        );
       }
-    }
+    },
   },
 };
 </script>
