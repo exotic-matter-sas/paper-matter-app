@@ -734,7 +734,6 @@ export default {
       // prevent browser from opening file
       event.preventDefault();
       this.droppedFiles = Array.from(event.dataTransfer.files);
-      console.log("droppedFiles", this.droppedFiles);
       this.draggingFilesToDocsList = false;
     },
 

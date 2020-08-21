@@ -455,7 +455,6 @@ describe("FTLUpload methods", () => {
     wrapper.vm.uploadDocument(tv.FOLDER_PROPS.id, tv.FILES_PROPS);
 
     await flushPromises();
-    console.log("expectedFormData", formData);
     // then
     expect(axios.post).toHaveBeenCalledTimes(1);
     expect(axios.post.mock.calls[0][0]).toEqual("/app/api/v1/documents/upload");
