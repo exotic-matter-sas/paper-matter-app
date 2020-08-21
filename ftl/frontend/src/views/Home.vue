@@ -244,9 +244,9 @@
             <br/>
             {{ $t("Drop documents to begin upload.")}}
             <br/>
-            <b-button id="cancel-drop" variant="outline-danger" class="mt-2" size="lg"
-                      @click.prevent="cancelDrop" @dragover="$event.target.classList.add('active')"
-                      @dragleave="$event.target.classList.remove('active')" @drop="cancelDrop">
+            <b-button id="cancel-drop" variant="outline-danger" class="m-5" size="lg" ref="cancel-drop-button"
+                      @click.prevent="cancelDrop" @dragover="activateCancelButton"
+                      @dragleave="deactivateCancelButton" @drop="cancelDrop">
               {{ $t("Cancel") }}
             </b-button>
           </div>
@@ -747,11 +747,19 @@ export default {
       this.draggingFilesToDocsList = false;
     },
 
+    activateCancelButton: function (event) {
+      this.$refs["cancel-drop-button"].classList.add('active');
+    },
+
+    deactivateCancelButton: function (event) {
+      this.$refs["cancel-drop-button"].classList.remove('active');
+    },
+
     cancelDrop: function (event) {
       event.preventDefault();
       event.stopPropagation();
       this.draggingFilesToDocsList = false;
-      event.target.classList.remove('active')
+      this.$refs["cancel-drop-button"].classList.remove('active');
     },
   },
 };
