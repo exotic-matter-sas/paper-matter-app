@@ -9,7 +9,7 @@
       <b-row>
         <b-col>
           <FTLUpload
-            :currentFolder="getCurrentFolder"
+            :files-to-upload.sync="droppedFiles"
             @event-new-upload="documentsCreatedExtended"
           />
         </b-col>
@@ -213,7 +213,11 @@
         </b-col>
       </b-row>
 
-      <b-row class="mt-2 mb-3" id="documents-list">
+      <b-row class="mt-2 mb-3" id="documents-list"
+             :class="{'documents-list-dragged-over': draggingFilesToDocsList}"
+             @dragover="allowDrop"
+             @drop="drop"
+             @dragleave="leaveDrop">
         <b-col v-if="docsLoading">
           <b-spinner
             class="mx-auto loader"
@@ -233,6 +237,20 @@
           </b-row>
         </b-col>
         <b-col v-else class="text-center">{{ $t("No document yet") }}</b-col>
+        <div v-show="draggingFilesToDocsList" id="document-drop-overlay"
+             class="position-fixed w-100 text-center text-dark font-weight-bold">
+          <div id="document-drop-label" class="w-100 my-5 text-primary">
+            <img src="@/assets/add_files.svg" alt="Add files illustration">
+            <br/>
+            {{ $t("Drop documents to begin upload.")}}
+            <br/>
+            <b-button id="cancel-drop" variant="outline-danger" class="mt-2" size="lg"
+                      @click.prevent="cancelDrop" @dragover="$event.target.classList.add('active')"
+                      @dragleave="$event.target.classList.remove('active')" @drop="cancelDrop">
+              {{ $t("Cancel") }}
+            </b-button>
+          </div>
+        </div>
       </b-row>
 
       <b-row v-if="moreDocs" align-h="center" class="my-3">
@@ -344,6 +362,7 @@
     Your documents list, you can select multiple documents using the checkboxes (or <kbd>Ctrl</kbd> + <kbd>Left click</kbd>) to apply batch actions.: La liste de vos documents, vous pouvez en sélectionner plusieurs avec les cases à cocher (ou <kbd>Ctrl</kbd> + <kbd>Clic gauche</kbd>) pour réaliser des actions groupées.
     Rename or move folder: Renommer ou déplacer un dossier
     Back to parent folder: Revenir au dossier parent
+    Drop documents to begin upload.: Déposez les documents pour débuter l'envoi.
 </i18n>
 
 <script>
@@ -386,6 +405,8 @@ export default {
   data() {
     return {
       sort: "recent",
+      draggingFilesToDocsList: false,
+      droppedFiles: [],
 
       // Folders list and breadcrumb
       folders: [],
@@ -708,6 +729,31 @@ export default {
     _getFolderIndexFromId(folderId) {
       return this.folders.findIndex((x) => x.id === folderId);
     },
+
+    drop: function (event) {
+      // prevent browser from opening file
+      event.preventDefault();
+      this.droppedFiles = Array.from(event.dataTransfer.files);
+      console.log("droppedFiles", this.droppedFiles);
+      this.draggingFilesToDocsList = false;
+    },
+
+    allowDrop: function (event) {
+      // element doesn't allow dropping by default, we need to prevent default to allow dropping.
+      event.preventDefault();
+      this.draggingFilesToDocsList = true;
+    },
+
+    leaveDrop: function (event) {
+      this.draggingFilesToDocsList = false;
+    },
+
+    cancelDrop: function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      this.draggingFilesToDocsList = false;
+      event.target.classList.remove('active')
+    },
   },
 };
 </script>
@@ -758,6 +804,15 @@ export default {
 .stop-spin {
   animation: unspin 0.5s 1 ease-out;
 }
+
+#document-drop-label {
+  text-shadow: 0 0 3px white;
+  font-size: 1.2em;
+  img {
+    width: 200px;
+    filter: drop-shadow(0 0 1px rgba(0, 0, 0, .2));
+  }
+}
 </style>
 
 <style lang="scss">
@@ -775,5 +830,12 @@ export default {
 /* Hack to fix the driver.js tour highlight for search input (this is a driver,js class)*/
 .driver-fix-stacking {
   position: relative !important;
+}
+
+.documents-list-dragged-over {
+  .card {
+    opacity: 0.3;
+    pointer-events: none;
+  }
 }
 </style>

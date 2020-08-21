@@ -43,6 +43,8 @@
     "| 1 document added | {n} documents added": "| 1 document ajouté | {n} documents ajoutés"
     "| another couldn't be added | {n} others couldn't be added": "| 1 autre n'a pu être ajouté | {n} autres n'ont pu être ajoutés"
     "{successesMention} into {folderName}, {errorsMention}.": "{successesMention} dans {folderName}, {errorsMention}."
+    "| Sorry, this file can't be added due to its unsupported type. | Sorry, these files can't be added due to their unsupported types.": "| Désolé, ce fichier ne peut être ajouté car son type n'est pas supporté. | Désolé, ces fichiers ne peuvent être ajoutés car leurs types ne sont pas supportés."
+    "| One file has been ignored due to its unsupported type | {n} files have been ignored due to their unsupported types": "| Un fichier a été ignoré car son type n'est pas supporté | {n} fichiers ont été ignorés car leurs types n'est pas supporté"
 </i18n>
 
 <script>
@@ -54,7 +56,16 @@ import FTLUploadTask from "@/components/FTLUploadTask";
 
 export default {
   name: "FTLUpload",
+
   components: { FTLUploadTask },
+
+  props: {
+    filesToUpload: {
+      type: Array,
+      default: () => [],
+    },
+  },
+
   data() {
     return {
       selectedFiles: [],
@@ -66,6 +77,16 @@ export default {
       currentUploadProgress: 0,
       globalUploadProgress: 0,
     };
+  },
+
+  watch: {
+    filesToUpload: function (newVal, oldVal) {
+      if (newVal.length > 0) {
+        this.addUploadTask(newVal);
+        // reset filesToUpload
+        this.$emit("update:filesToUpload", [])
+      }
+    },
   },
 
   computed: {
@@ -83,38 +104,69 @@ export default {
   },
 
   methods: {
-    addUploadTask: function () {
-      // Convert the id as a string to use it as an object key and make recent browsers preserve object insertion order
-      const uploadFolderIdKey =
-        this.getCurrentFolder === null
-          ? "id-null"
-          : `id-${this.getCurrentFolder.id}`;
-      const folderName =
-        this.getCurrentFolder === null
-          ? this.$t("Root")
-          : this.getCurrentFolder.name;
+    addUploadTask: function (filesToUpload=null) {
+      // if no filesToUpload is passed, use input selectedFiles as source
+      let files = filesToUpload === null ?
+        this.selectedFiles :
+        // filesToUpload need to be filtered (eg. when it comes for drag n dropped files)
+        filesToUpload.filter((file) => file.type in this.ftlAccount["supported_exts"]);
 
-      // if there is already an upload task for this folder add selectedFiles to the file to upload
-      if (uploadFolderIdKey in this.uploadTasks) {
-        this.uploadTasks[uploadFolderIdKey].files.push(...this.selectedFiles);
-      } else {
-        if (!(uploadFolderIdKey in this.uploadTasksCompleted)) {
-          this.$set(this.uploadTasksCompleted, uploadFolderIdKey, {
+      if (files.length > 0) {
+        // Convert the id to string to use it as an object key
+        // (recent browsers preserve attribute insertion order in object when the specified key is a string)
+        const uploadFolderIdKey =
+          this.getCurrentFolder === null
+            ? "id-null"
+            : `id-${this.getCurrentFolder.id}`;
+        const folderName =
+          this.getCurrentFolder === null
+            ? this.$t("Root")
+            : this.getCurrentFolder.name;
+
+        // If there is already an existing upload task for this folder append files to it
+        if (uploadFolderIdKey in this.uploadTasks) {
+          this.uploadTasks[uploadFolderIdKey].files.push(...files);
+        }
+        // Create new entry in uploadTasks and uploadTasksCompleted
+        else {
+          if (!(uploadFolderIdKey in this.uploadTasksCompleted)) {
+            this.$set(this.uploadTasksCompleted, uploadFolderIdKey, {
+              folderName,
+              successes: [],
+              errors: [],
+            });
+          }
+
+          this.$set(this.uploadTasks, uploadFolderIdKey, {
             folderName,
-            successes: [],
-            errors: [],
+            files: files,
           });
         }
 
-        this.$set(this.uploadTasks, uploadFolderIdKey, {
-          folderName,
-          files: this.selectedFiles,
-        });
-      }
-      this.selectedFiles = [];
+        // reset selectedFiles if files where added from it
+        if (filesToUpload === null){
+          this.selectedFiles = [];
+        }
+        // warn user if some files have been ignored due to their types
+        else {
+          const ignoredFilesCount = filesToUpload.length - files.length;
+          if (ignoredFilesCount > 0) {
+            this.mixinAlertWarning(
+              this.$tc("| One file has been ignored due to its unsupported type | {n} files have been ignored due to their unsupported types", ignoredFilesCount)
+            );
+          }
+        }
 
-      if (!this.uploading) {
-        this.consumeUploadTasks();
+        if (!this.uploading) {
+          this.consumeUploadTasks();
+        }
+      }
+      else if (filesToUpload.length > 0) {
+        this.mixinAlert(
+          this.$tc("| Sorry, this file can't be added due to its unsupported type. | Sorry, these files can't be added due to their unsupported types.",
+            filesToUpload.length),
+          true
+        );
       }
     },
 
