@@ -45,6 +45,7 @@
     "{successesMention} into {folderName}, {errorsMention}.": "{successesMention} dans {folderName}, {errorsMention}."
     "| Sorry, this file can't be added due to its unsupported type. | Sorry, these files can't be added due to their unsupported types.": "| Désolé, ce fichier ne peut être ajouté car son type n'est pas supporté. | Désolé, ces fichiers ne peuvent être ajoutés car leurs types ne sont pas supportés."
     "| One file has been ignored due to its unsupported type | {n} files have been ignored due to their unsupported types": "| Un fichier a été ignoré car son type n'est pas supporté | {n} fichiers ont été ignorés car leurs types n'est pas supporté"
+    Documents are still being uploaded, are you sure you want to stop this upload?: Des documents sont encore en cours d'ajout, êtes-vous sûr de vouloir interrompre cet ajout ?
 </i18n>
 
 <script>
@@ -77,6 +78,10 @@ export default {
       currentUploadProgress: 0,
       globalUploadProgress: 0,
     };
+  },
+
+  created () {
+    window.addEventListener('beforeunload', this.notifyUserUploadUncompleted)
   },
 
   watch: {
@@ -314,6 +319,16 @@ export default {
         );
       }
     },
+
+    notifyUserUploadUncompleted: function (event) {
+      if (this.uploading) {
+        event.preventDefault();
+
+        // Message not shown by recent browsers, but attribute need to be set for Chrome anyway
+        // https://developer.mozilla.org/en-US/docs/Web/API/WindowEventHandlers/onbeforeunload#Browser_compatibility
+        event.returnValue = this.$t("Documents are still being uploaded, are you sure you want to stop this upload?");
+      }
+    }
   },
 };
 </script>
