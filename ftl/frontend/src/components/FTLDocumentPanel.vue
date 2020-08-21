@@ -411,7 +411,7 @@ $document-viewer-padding: 2em;
   }
 
   .modal-content {
-    height: calc(100vh - (#{$document-viewer-padding} * 2));
+    height: 100vh;
   }
 
   #viewer-disabled {
@@ -425,6 +425,10 @@ $document-viewer-padding: 2em;
   #document-viewer {
     .modal-dialog {
       padding: $document-viewer-padding;
+    }
+
+    .modal-content {
+      height: calc(100vh - (#{$document-viewer-padding} * 2));
     }
   }
 }

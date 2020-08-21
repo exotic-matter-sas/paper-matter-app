@@ -7,7 +7,6 @@
   <b-modal
     id="modal-manage-folders"
     hide-footer
-    centered
     scrollable
     body-class="px-0"
   >
@@ -376,7 +375,8 @@ $manage-folders-padding: 2em;
   }
 
   .modal-content {
-    height: calc(100vh - (#{$manage-folders-padding} * 2));
+    height: 100vh;
+    max-height: 100vh;
   }
 
   #create-folder {
@@ -402,6 +402,10 @@ $manage-folders-padding: 2em;
       border-left: 2px solid map_get($theme-colors, "light-gray");
       margin-top: 0;
       padding-top: 0;
+    }
+
+    .modal-content {
+      height: calc(100vh - (#{$manage-folders-padding} * 2));
     }
   }
 }
