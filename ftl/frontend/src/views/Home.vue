@@ -247,8 +247,12 @@
           class="position-fixed w-100 text-center text-dark font-weight-bold"
         >
           <div id="document-drop-label" class="w-100 my-5 text-primary">
-            <img class="mb-3" src="@/assets/add_files.svg" alt="Add files illustration" />
-            <br/>
+            <img
+              class="mb-3"
+              src="@/assets/add_files.svg"
+              alt="Add files illustration"
+            />
+            <br />
             <p class="mb-3">{{ $t("Drop documents to upload.") }}</p>
           </div>
         </div>
@@ -455,9 +459,7 @@ export default {
             element: "#add-documents",
             popover: {
               title: this.$t("Add documents (1/5)"),
-              description: this.$t(
-                "Click on <b>Add documents</b>."
-              ),
+              description: this.$t("Click on <b>Add documents</b>."),
               position: "bottom-center",
             },
           },

@@ -230,8 +230,6 @@ export default {
 
   &:hover {
     border-color: map_get($theme-colors, "primary");
-
-
   }
 }
 
@@ -305,11 +303,11 @@ export default {
 </style>
 
 <style lang="scss">
-  .card {
-    &:hover {
-      .custom-checkbox.b-custom-control-lg .custom-control-label::before {
-        border-color: map_get($theme-colors, "primary");
-      }
+.card {
+  &:hover {
+    .custom-checkbox.b-custom-control-lg .custom-control-label::before {
+      border-color: map_get($theme-colors, "primary");
     }
   }
+}
 </style>
