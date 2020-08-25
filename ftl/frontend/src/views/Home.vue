@@ -352,7 +352,9 @@
     Previous: Précédent
     Close: Fermer
     Add documents (1/5): Ajouter vos documents 1/5
-    Select documents by clicking <b>Browse</b> or by dropping them on the white area, confirm with <b>Upload</b> button.: Sélectionnez vos documents en cliquant sur <b>Parcourir</b> ou en les glissant-déposant sur la zone blanche, validez avec le bouton <b>Envoyer</b>.
+    Click on <b>Add documents</b>.: Cliquez sur <b>Ajouter des documents</b>.
+    Add documents (2/5): Ajouter vos documents 2/5
+    You can also drag n drop files straight into the documents list.: Vous pouvez aussi glisser-déposer vos fichers directement dans la liste des documents.
     Find documents (2/5): Retrouver vos documents (2/5)
     Type keywords contained in the document title, content or note and hit <b>Search</b> button.: Saisissez des mots-clés contenus dans le titre, contenu ou note du document et cliquez sur le bouton <b>Rechercher</b>.
     Current folder path (3/5): Chemin du dossier courant (3/5)
@@ -360,7 +362,7 @@
     Folders (4/5): Dossier (4/5)
     Your folders list, you can create a new folder or go back to the parent folder when you are inside a sub folder.: La liste de vos dossiers, vous pouvez créer un nouveau dossier ou revenir au dossier parent lorsque vous êtes dans un sous-dossier.
     Documents (5/5): Documents (5/5)
-    Your documents list, you can select multiple documents using the checkboxes (or <kbd>Ctrl</kbd> + <kbd>Left click</kbd>) to apply batch actions.: La liste de vos documents, vous pouvez en sélectionner plusieurs avec les cases à cocher (ou <kbd>Ctrl</kbd> + <kbd>Clic gauche</kbd>) pour réaliser des actions groupées.
+    "Your documents list, you can select multiple documents using the checkboxes (or <kbd>Ctrl</kbd> + <kbd>Left click</kbd>) to apply batch actions.<br/>To quickly add new documents drag n drop them straight into the list.": "La liste de vos documents, vous pouvez en sélectionner plusieurs avec les cases à cocher (ou <kbd>Ctrl</kbd> + <kbd>Clic gauche</kbd>) pour réaliser des actions groupées.<br/>Pour ajouter rapidement des fichiers, glissez-déposez les directement dans la liste."
     Rename or move folder: Renommer ou déplacer un dossier
     Back to parent folder: Revenir au dossier parent
     Drop documents to upload.: Déposez les documents pour les ajouter.
@@ -454,7 +456,7 @@ export default {
             popover: {
               title: this.$t("Add documents (1/5)"),
               description: this.$t(
-                "Select documents by clicking <b>Add documents</b>."
+                "Click on <b>Add documents</b>."
               ),
               position: "bottom-center",
             },
@@ -496,7 +498,7 @@ export default {
             popover: {
               title: this.$t("Documents (5/5)"),
               description: this.$t(
-                "Your documents list, you can select multiple documents using the checkboxes (or <kbd>Ctrl</kbd> + <kbd>Left click</kbd>) to apply batch actions."
+                "Your documents list, you can select multiple documents using the checkboxes (or <kbd>Ctrl</kbd> + <kbd>Left click</kbd>) to apply batch actions.<br/>To quickly add new documents drag n drop them straight into the list."
               ),
               position: "top-center",
             },
@@ -838,5 +840,9 @@ export default {
   .card {
     opacity: 0.3;
   }
+}
+
+.driver-popover-title {
+  color: map_get($theme-colors, "primary");
 }
 </style>
