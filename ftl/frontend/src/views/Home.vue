@@ -216,10 +216,11 @@
       <b-row
         class="mt-2 mb-3"
         id="documents-list"
-        :class="{ 'documents-list-dragged-over': draggingFilesToDocsList }"
+        :class="{ 'documents-list-dragged-hover': draggingFilesToDocsList }"
+        @dragenter="showDropZone"
         @dragover="allowDrop"
-        @drop="drop"
-        @dragleave="leaveDrop"
+        @drop="getDroppedFiles"
+        @dragleave.self="hideDropZone"
       >
         <b-col v-if="docsLoading">
           <b-spinner
@@ -246,23 +247,9 @@
           class="position-fixed w-100 text-center text-dark font-weight-bold"
         >
           <div id="document-drop-label" class="w-100 my-5 text-primary">
-            <img src="@/assets/add_files.svg" alt="Add files illustration" />
-            <br />
-            {{ $t("Drop documents to begin upload.") }}
-            <br />
-            <b-button
-              id="cancel-drop"
-              variant="outline-danger"
-              class="m-5"
-              size="lg"
-              ref="cancel-drop-button"
-              @click.prevent="cancelDrop"
-              @dragover="activateCancelButton"
-              @dragleave="deactivateCancelButton"
-              @drop="cancelDrop"
-            >
-              {{ $t("Cancel") }}
-            </b-button>
+            <img class="mb-3" src="@/assets/add_files.svg" alt="Add files illustration" />
+            <br/>
+            <p class="mb-3">{{ $t("Drop documents to upload.") }}</p>
           </div>
         </div>
       </b-row>
@@ -376,7 +363,7 @@
     Your documents list, you can select multiple documents using the checkboxes (or <kbd>Ctrl</kbd> + <kbd>Left click</kbd>) to apply batch actions.: La liste de vos documents, vous pouvez en sélectionner plusieurs avec les cases à cocher (ou <kbd>Ctrl</kbd> + <kbd>Clic gauche</kbd>) pour réaliser des actions groupées.
     Rename or move folder: Renommer ou déplacer un dossier
     Back to parent folder: Revenir au dossier parent
-    Drop documents to begin upload.: Déposez les documents pour débuter l'envoi.
+    Drop documents to upload.: Déposez les documents pour les ajouter.
 </i18n>
 
 <script>
@@ -744,36 +731,27 @@ export default {
       return this.folders.findIndex((x) => x.id === folderId);
     },
 
-    drop: function (event) {
-      // prevent browser from opening file
+    showDropZone: function (event) {
+      // only show drop zone when dragging a file
+      if (event.dataTransfer.types.includes("Files")) {
+        event.preventDefault();
+        this.draggingFilesToDocsList = true;
+      }
+    },
+
+    allowDrop: function (event) {
+      // element doesn't allow dropping by default, we need to prevent default to allow dropping
+      event.preventDefault();
+    },
+
+    getDroppedFiles: function (event) {
       event.preventDefault();
       this.droppedFiles = Array.from(event.dataTransfer.files);
       this.draggingFilesToDocsList = false;
     },
 
-    allowDrop: function (event) {
-      // element doesn't allow dropping by default, we need to prevent default to allow dropping.
-      event.preventDefault();
-      this.draggingFilesToDocsList = true;
-    },
-
-    leaveDrop: function (event) {
+    hideDropZone: function (event) {
       this.draggingFilesToDocsList = false;
-    },
-
-    activateCancelButton: function (event) {
-      this.$refs["cancel-drop-button"].classList.add("active");
-    },
-
-    deactivateCancelButton: function (event) {
-      this.$refs["cancel-drop-button"].classList.remove("active");
-    },
-
-    cancelDrop: function (event) {
-      event.preventDefault();
-      event.stopPropagation();
-      this.draggingFilesToDocsList = false;
-      this.$refs["cancel-drop-button"].classList.remove("active");
     },
   },
 };
@@ -853,10 +831,12 @@ export default {
   position: relative !important;
 }
 
-.documents-list-dragged-over {
+.documents-list-dragged-hover {
+  * {
+    pointer-events: none;
+  }
   .card {
     opacity: 0.3;
-    pointer-events: none;
   }
 }
 </style>
