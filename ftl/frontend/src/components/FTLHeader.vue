@@ -113,7 +113,8 @@
               @click.prevent="doSearch"
               :disabled="search === ''"
             >
-              {{ $t("Search") }}
+              <span class="d-none d-lg-inline">{{ $t("Search") }}</span>
+              <font-awesome-icon class="d-lg-none" icon="search" size="sm" />
             </b-button>
           </b-input-group-append>
         </b-input-group>
@@ -259,7 +260,7 @@ export default {
 @import "~bootstrap/scss/_mixins.scss";
 
 #search-input {
-  transition: width 0.5s cubic-bezier(0.77, 0, 0.18, 1);
+  width: 1%; // default value set by bootstrap
   margin: 0;
 
   &:invalid {
@@ -267,9 +268,10 @@ export default {
   }
 }
 
-@include media-breakpoint-up(sm) {
+@include media-breakpoint-up(lg) {
   #search-input {
     margin-left: 0.5rem;
+    width: 25vw;
   }
 }
 
