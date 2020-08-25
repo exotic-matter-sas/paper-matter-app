@@ -191,7 +191,9 @@ export default {
       let folderName;
       let entries = Object.entries(this.uploadTasks);
       let uploadTaskSuccesses;
+      let initialSuccessesLength;
       let uploadTaskErrors;
+      let initialErrosLength;
 
       while (entries.length > 0) {
         // get first upload task
@@ -201,7 +203,9 @@ export default {
             ? null
             : parseInt(folderIdKey.slice(3)); // remove "id-" prefix and convert to null or int
         uploadTaskSuccesses = this.uploadTasksCompleted[folderIdKey].successes;
+        initialSuccessesLength = uploadTaskSuccesses.length;
         uploadTaskErrors = this.uploadTasksCompleted[folderIdKey].errors;
+        initialErrosLength = uploadTaskErrors.length;
 
         while (
           files.length > 0 &&
@@ -219,8 +223,8 @@ export default {
         // notify user
         this.notifyUploadTaskCompleted(
           folderName,
-          uploadTaskSuccesses.length,
-          uploadTaskErrors.length,
+          uploadTaskSuccesses.length - initialSuccessesLength,
+          uploadTaskErrors.length - initialErrosLength,
           files.length
         );
         // consume uploadTask
