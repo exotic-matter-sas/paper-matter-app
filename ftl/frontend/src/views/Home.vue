@@ -141,7 +141,8 @@
         id="action-selected-documents"
       >
         <b-col>
-          <b-button v-if="docs.length === selectedDocumentsHome.length"
+          <b-button
+            v-if="docs.length === selectedDocumentsHome.length"
             id="unselect-all-documents"
             variant="outline-primary"
             @click="$store.commit('unselectAllDocuments')"
@@ -149,11 +150,12 @@
           >
             {{ $t("Deselect all") }}
           </b-button>
-          <b-button v-else
-                    id="select-all-documents"
-                    variant="outline-primary"
-                    :title="$t('Select all documents displayed')"
-                    @click="$store.commit('selectDocuments', docs)"
+          <b-button
+            v-else
+            id="select-all-documents"
+            variant="outline-primary"
+            :title="$t('Select all documents displayed')"
+            @click="$store.commit('selectDocuments', docs)"
           >
             {{ $t("Select all") }}
           </b-button>
