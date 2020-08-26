@@ -113,26 +113,34 @@
         id="action-selected-documents"
       >
         <b-col>
-          <b-button
-            id="select-all-documents"
-            variant="outline-primary"
-            :title="$t('Select all documents displayed')"
-            @click="$store.commit('selectDocuments', docs)"
+          <b-button v-if="docs.length === selectedDocumentsHome.length"
+                    id="unselect-all-documents"
+                    variant="outline-primary"
+                    @click="$store.commit('unselectAllDocuments')"
+                    :title="$t('Deselect all documents')"
+          >
+            {{ $t("Deselect all") }}
+          </b-button>
+          <b-button v-else
+                    id="select-all-documents"
+                    variant="outline-primary"
+                    :title="$t('Select all documents displayed')"
+                    @click="$store.commit('selectDocuments', docs)"
           >
             {{ $t("Select all") }}
           </b-button>
         </b-col>
-        <b-col cols="8" class="text-right">
+        <b-col cols="7" class="text-right">
           <span class="text-muted d-none d-sm-inline">{{
             $tc("| 1 document: | {n} documents:", selectedDocumentsHome.length)
           }}</span>
           <b-button
-            id="unselect-all-documents"
+            id="cancel-selection"
+            class="d-none d-md-inline-block"
             @click="$store.commit('unselectAllDocuments')"
             :title="$t('Deselect all documents')"
           >
-            <font-awesome-icon icon="window-close" class="d-sm-none" />
-            <span class="d-none d-sm-inline">{{ $t("Cancel") }}</span>
+            {{ $t("Cancel") }}
           </b-button>
           <b-button
             id="move-documents"
@@ -252,6 +260,7 @@
     A-Z: A-Z
     Z-A: Z-A
     Select all: Tout sélectionner
+    Deselect all: Tout désélectionner
     "| 1 document: | {n} documents:": "| 1 document : | {n} documents :"
     "| 1 result found | {n} results found": "| 1 résultat | {n} résultats"
     No result found: Aucun résultat
