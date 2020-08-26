@@ -131,7 +131,10 @@
           </b-button>
         </b-col>
         <b-col cols="7" class="text-right">
-          <span class="text-muted d-none d-sm-inline">{{
+          <span class="text-muted d-none d-sm-inline d-md-none">{{
+            $tc("| 1 doc: | {n} docs:", selectedDocumentsHome.length)
+          }}</span>
+          <span class="text-muted d-none d-md-inline">{{
             $tc("| 1 document: | {n} documents:", selectedDocumentsHome.length)
           }}</span>
           <b-button
@@ -261,6 +264,7 @@
     Z-A: Z-A
     Select all: Tout sélectionner
     Deselect all: Tout désélectionner
+    "| 1 doc: | {n} docs:": "| 1 doc : | {n} docs :"
     "| 1 document: | {n} documents:": "| 1 document : | {n} documents :"
     "| 1 result found | {n} results found": "| 1 résultat | {n} résultats"
     No result found: Aucun résultat
