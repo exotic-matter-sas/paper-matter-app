@@ -322,7 +322,7 @@ export default {
           to: { name: "home" },
         },
         {
-          id: null,
+          id: -1,
           text: this.$t("Search results"),
           to: { name: "home" },
         },
