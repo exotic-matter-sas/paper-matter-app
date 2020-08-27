@@ -12,7 +12,7 @@
     v-on:dragover="customAllowDrop"
     v-on:dragleave="leaveDrop"
   >
-    <font-awesome-icon v-if="id === null" icon="home"/>
+    <font-awesome-icon v-if="id === null" icon="home" />
     {{ text }}
   </b-breadcrumb-item>
 </template>

@@ -218,10 +218,10 @@ export default {
 
   computed: {
     addDocumentsButtonText: function () {
-      return this.$route.name === 'home-search' ?
-        this.$t('Add documents to root'):
-        this.$t('Add documents')
-    }
+      return this.$route.name === "home-search"
+        ? this.$t("Add documents to root")
+        : this.$t("Add documents");
+    },
   },
 
   mounted() {

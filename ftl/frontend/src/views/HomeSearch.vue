@@ -260,6 +260,7 @@
 
 <i18n>
   fr:
+    Search results: Résultats de la recherche
     Refresh documents list: Rafraichir la liste des documents
     Create new folder: Créer un nouveau dossier
     Sort: Trier
