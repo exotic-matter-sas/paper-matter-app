@@ -153,7 +153,6 @@
 
     <FTLMoveDocuments
       modal-id="modal-move-document-dp"
-      id="modal-move-document"
       :docs="[currentOpenDoc]"
       @event-document-moved="documentMoved"
     />
@@ -166,7 +165,6 @@
 
     <FTLDeleteDocuments
       modal-id="modal-delete-document-dp"
-      id="modal-delete-document"
       :docs="[currentOpenDoc]"
       @event-document-deleted="documentDeleted"
     />

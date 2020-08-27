@@ -236,8 +236,7 @@
 
       <!-- For batch action move document -->
       <FTLMoveDocuments
-        modal-id="modal-move-folder-hs"
-        id="modal-move-documents"
+        modal-id="modal-move-document-hs"
         :docs="selectedDocumentsHome"
         @event-document-moved="documentDeleted"
       />
