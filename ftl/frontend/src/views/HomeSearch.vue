@@ -236,14 +236,15 @@
 
       <!-- For batch action move document -->
       <FTLMoveDocuments
+        v-if="selectedDocumentsHome.length > 0"
         modal-id="modal-move-document-hs"
         :docs="selectedDocumentsHome"
         @event-document-moved="documentDeleted"
       />
 
       <FTLDeleteDocuments
-        modal-id="modal-delete-documents-hs"
         v-if="selectedDocumentsHome.length > 0"
+        modal-id="modal-delete-documents-hs"
         :docs="selectedDocumentsHome"
         @event-document-deleted="documentDeleted"
       />
