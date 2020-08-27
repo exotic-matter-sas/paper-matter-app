@@ -126,15 +126,7 @@
           right
           split
           variant="outline-secondary"
-          :html="
-            $route.name === 'home-search'
-              ? `<label for='upload-doc-input' class='m-0'>${$t(
-                  'Add documents to root'
-                )}</label>`
-              : `<label for='upload-doc-input' class='m-0'>${$t(
-                  'Add documents'
-                )}</label>`
-          "
+          :html="`<label for='upload-doc-input' class='m-0'>${addDocumentsButtonText}</label>`"
         >
           <b-dropdown-item
             :href="$t('https://welcome.papermatter.app/downloads')"
@@ -222,6 +214,14 @@ export default {
     $route(to, from) {
       this.update();
     },
+  },
+
+  computed: {
+    addDocumentsButtonText: function () {
+      return this.$route.name === 'home-search' ?
+        this.$t('Add documents to root'):
+        this.$t('Add documents')
+    }
   },
 
   mounted() {
