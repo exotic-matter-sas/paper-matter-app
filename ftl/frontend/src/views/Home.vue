@@ -244,9 +244,9 @@
         <div
           v-show="draggingFilesToDocsList"
           id="document-drop-overlay"
-          class="position-fixed w-100 text-center text-dark font-weight-bold"
+          class="position-fixed w-100 text-center font-weight-bold"
         >
-          <div id="document-drop-label" class="w-100 my-5 text-primary">
+          <div id="document-drop-label" class="w-100 my-5">
             <img
               class="mb-3"
               src="@/assets/add_files.svg"
@@ -809,8 +809,8 @@ export default {
 }
 
 #document-drop-label {
-  text-shadow: 0 0 3px white;
   font-size: 1.2em;
+  color: map_get($theme-colors, "light-gray");
   img {
     width: 200px;
     filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.2));
@@ -836,6 +836,7 @@ export default {
 }
 
 .documents-list-dragged-hover {
+  background: adjust_color(map_get($theme-colors, "active"), $alpha: -0.7);
   * {
     pointer-events: none;
   }
