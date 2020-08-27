@@ -502,7 +502,7 @@ export default {
               description: this.$t(
                 "Your documents list, you can select multiple documents using the checkboxes (or <kbd>Ctrl</kbd> + <kbd>Left click</kbd>) to apply batch actions.<br/>To quickly add new documents drag n drop them straight into the list."
               ),
-              position: "top-center",
+              position: "mid-center",
             },
           },
         ]);
