@@ -25,7 +25,6 @@ export default {
 
   data() {
     return {
-      // Documents list
       docs: [],
       docPid: null,
       docsLoading: false,
@@ -34,6 +33,8 @@ export default {
       sort: null,
       count: 0,
       currentRenameDoc: {},
+      droppedFiles: [],
+      draggingFilesToDocsList: false,
     };
   },
 
@@ -144,6 +145,29 @@ export default {
 
       const foundIndex = this.docs.findIndex((x) => x.pid === doc.pid);
       this.$set(this.docs, foundIndex, doc); // update doc in the list (force reactivity)
+    },
+
+    showDropZone: function (event) {
+      // only show drop zone when dragging a file
+      if (event.dataTransfer.types.includes("Files")) {
+        event.preventDefault();
+        this.draggingFilesToDocsList = true;
+      }
+    },
+
+    allowDrop: function (event) {
+      // element doesn't allow dropping by default, we need to prevent default to allow dropping
+      event.preventDefault();
+    },
+
+    getDroppedFiles: function (event) {
+      event.preventDefault();
+      this.droppedFiles = Array.from(event.dataTransfer.files);
+      this.draggingFilesToDocsList = false;
+    },
+
+    hideDropZone: function (event) {
+      this.draggingFilesToDocsList = false;
     },
   },
 };

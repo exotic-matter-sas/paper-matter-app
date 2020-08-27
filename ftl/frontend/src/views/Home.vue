@@ -334,6 +334,7 @@
 
 <i18n>
   fr:
+    Root: Racine
     Refresh documents list: Rafraichir la liste des documents
     Create new folder: Créer un nouveau dossier
     Sort: Trier
@@ -412,10 +413,6 @@ export default {
   data() {
     return {
       sort: "recent",
-      draggingFilesToDocsList: false,
-      droppedFiles: [],
-
-      // Folders list and breadcrumb
       folders: [],
     };
   },
@@ -733,29 +730,6 @@ export default {
 
     _getFolderIndexFromId(folderId) {
       return this.folders.findIndex((x) => x.id === folderId);
-    },
-
-    showDropZone: function (event) {
-      // only show drop zone when dragging a file
-      if (event.dataTransfer.types.includes("Files")) {
-        event.preventDefault();
-        this.draggingFilesToDocsList = true;
-      }
-    },
-
-    allowDrop: function (event) {
-      // element doesn't allow dropping by default, we need to prevent default to allow dropping
-      event.preventDefault();
-    },
-
-    getDroppedFiles: function (event) {
-      event.preventDefault();
-      this.droppedFiles = Array.from(event.dataTransfer.files);
-      this.draggingFilesToDocsList = false;
-    },
-
-    hideDropZone: function (event) {
-      this.draggingFilesToDocsList = false;
     },
   },
 };

@@ -8,7 +8,7 @@
     <b-col>
       <b-row>
         <b-col>
-          <FTLUpload />
+          <FTLUpload :files-to-upload.sync="droppedFiles" />
         </b-col>
       </b-row>
 
@@ -171,7 +171,15 @@
         </b-col>
       </b-row>
 
-      <b-row class="my-3" id="documents-list">
+      <b-row
+        class="mt-2 mb-3"
+        id="documents-list"
+        :class="{ 'documents-list-dragged-hover': draggingFilesToDocsList }"
+        @dragenter="showDropZone"
+        @dragover="allowDrop"
+        @drop="getDroppedFiles"
+        @dragleave.self="hideDropZone"
+      >
         <b-col v-if="docsLoading">
           <b-spinner
             class="mx-auto loader"
@@ -191,6 +199,21 @@
           </b-row>
         </b-col>
         <b-col v-else class="text-center">{{ $t("No result found") }}</b-col>
+        <div
+          v-show="draggingFilesToDocsList"
+          id="document-drop-overlay"
+          class="position-fixed w-100 text-center font-weight-bold"
+        >
+          <div id="document-drop-label" class="w-100 my-5">
+            <img
+              class="mb-3"
+              src="@/assets/add_files.svg"
+              alt="Add files illustration"
+            />
+            <br />
+            <p class="mb-3">{{ $t("Drop documents to upload to root.") }}</p>
+          </div>
+        </div>
       </b-row>
 
       <b-row v-if="moreDocs" align-h="center" class="my-3">
@@ -260,9 +283,9 @@
 
 <i18n>
   fr:
+    Root: Racine
     Search results: Résultats de la recherche
     Refresh documents list: Rafraichir la liste des documents
-    Create new folder: Créer un nouveau dossier
     Sort: Trier
     Recent first: Récents en premier
     Older first: Anciens en premier
@@ -280,6 +303,7 @@
     Deselect all documents: Désélectionner tous les documents
     Move to folder: Déplacer vers le dossier
     Delete documents: Supprimer les documents
+    Drop documents to upload to root.: Déposez les documents pour les ajouter à la racine.
 </i18n>
 
 <script>
@@ -313,21 +337,7 @@ export default {
   data() {
     return {
       sort: "relevance",
-
-      // Documents list
       currentSearch: "",
-      breadcrumbPlaceholder: [
-        {
-          id: null,
-          text: this.$t("Root"),
-          to: { name: "home" },
-        },
-        {
-          id: -1,
-          text: this.$t("Search results"),
-          to: { name: "home" },
-        },
-      ],
     };
   },
 
@@ -361,6 +371,21 @@ export default {
   },
 
   computed: {
+    breadcrumbPlaceholder: function () {
+      return [
+        {
+          id: null,
+          text: this.$t("Root"),
+          to: { name: "home" },
+        },
+        {
+          id: -1,
+          text: this.$t("Search results"),
+          to: { name: "home" },
+        },
+      ];
+    },
+
     ...mapState(["selectedDocumentsHome"]), // generate computed for vuex getters
   },
 
@@ -443,6 +468,15 @@ export default {
 .stop-spin {
   animation: unspin 0.5s 1 ease-out;
 }
+
+#document-drop-label {
+  font-size: 1.2em;
+  color: map_get($theme-colors, "light-gray");
+  img {
+    width: 200px;
+    filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.2));
+  }
+}
 </style>
 
 <style lang="scss">
@@ -453,6 +487,16 @@ export default {
   .btn {
     padding-right: 0 !important;
     border-right: none !important;
+  }
+}
+
+.documents-list-dragged-hover {
+  background: adjust_color(map_get($theme-colors, "active"), $alpha: -0.7);
+  * {
+    pointer-events: none;
+  }
+  .card {
+    opacity: 0.3;
   }
 }
 </style>
