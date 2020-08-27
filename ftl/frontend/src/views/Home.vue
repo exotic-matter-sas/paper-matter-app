@@ -766,6 +766,10 @@ export default {
 @import "~bootstrap/scss/_variables.scss";
 @import "~bootstrap/scss/_mixins.scss";
 
+#documents-list {
+  min-height: 400px;
+}
+
 #documents-list-loader {
   width: 3em;
   height: 3em;
