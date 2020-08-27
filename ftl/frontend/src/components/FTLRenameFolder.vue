@@ -5,7 +5,7 @@
 
 <template>
   <b-modal
-    id="modal-rename-folder"
+    :id="modalId"
     :ok-disabled="!newFolderName"
     :cancel-title="$t('Cancel')"
     @ok="renameFolder"
@@ -53,6 +53,10 @@ import { axiosConfig } from "@/constants";
 export default {
   name: "FTLRenameFolder",
   props: {
+    modalId: {
+      type: String,
+      default: "modal-rename-folder",
+    },
     folder: {
       type: Object,
       required: true,
@@ -72,7 +76,7 @@ export default {
       axios
         .patch("/app/api/v1/folders/" + this.folder.id, body, axiosConfig)
         .then((response) => {
-          this.$bvModal.hide("modal-rename-folder");
+          this.$bvModal.hide(this.modalId);
           this.$emit("event-folder-renamed", {
             folder: response.data,
           });

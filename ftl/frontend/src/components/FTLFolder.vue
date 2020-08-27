@@ -12,9 +12,9 @@
     }"
     :disabled="navigating"
     @click="navigate"
-    v-on:drop="drop"
-    v-on:dragover="allowDrop"
-    v-on:dragleave="leaveDrop"
+    @drop="drop"
+    @dragover="allowDrop"
+    @dragleave="leaveDrop"
   >
     <b-spinner
       id="folder-list-loader"

@@ -6,10 +6,10 @@
 <template>
   <main class="flex-grow">
     <b-col>
-      <b-row class="my-3">
+      <b-row>
         <b-col>
           <FTLUpload
-            :currentFolder="getCurrentFolder"
+            :files-to-upload.sync="droppedFiles"
             @event-new-upload="documentsCreatedExtended"
           />
         </b-col>
@@ -54,16 +54,46 @@
           <b-button
             id="create-folder"
             variant="primary"
-            v-b-modal="'modal-new-folder'"
+            v-b-modal="'modal-new-folder-h'"
           >
             <font-awesome-icon
               icon="folder-plus"
               :title="$t('Create new folder')"
+              size="lg"
             />
+          </b-button>
+          <b-button
+            id="manage-folders"
+            variant="primary"
+            :title="$t('Rename or move folder')"
+            v-b-modal="'modal-manage-folders'"
+          >
+            <svg
+              class="svg-inline--fa fa-folder fa-w-16 fa-lg"
+              width="512"
+              height="512"
+              aria-hidden="true"
+              data-icon="folder"
+              data-prefix="fas"
+              focusable="false"
+              role="img"
+              version="1.1"
+              viewBox="0 0 512 512"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <g transform="translate(0 -.012176)">
+                <path
+                  transform="translate(0 .012176)"
+                  d="m48 64c-26.51 0-48 21.49-48 48v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48v-224c0-26.51-21.49-48-48-48h-192l-64-64h-160zm299.01 100.57c5.3568 0 10.712 2.0347 14.779 6.1016l33.146 33.146c8.1336 8.2211 8.1336 21.427 0 29.648l-36.557 36.557-62.795-62.707 36.645-36.645c4.0668-4.0668 9.4244-6.1016 14.781-6.1016zm-71.191 62.512 62.707 62.707-120.61 120.61-53.262 5.9473c-8.8333 1.0495-16.355-6.4718-15.393-15.393l5.9473-53.35 120.61-120.52z"
+                  fill="currentColor"
+                />
+              </g>
+            </svg>
           </b-button>
           <b-button
             variant="primary"
             :disabled="!previousLevels.length"
+            :title="$t('Back to parent folder')"
             @click="changeToPreviousFolder"
           >
             <font-awesome-icon icon="level-up-alt" />
@@ -165,7 +195,7 @@
           <b-button
             id="move-documents"
             variant="primary"
-            v-b-modal="'modal-move-documents'"
+            v-b-modal="'modal-move-documents-h'"
             :title="$t('Move to folder')"
           >
             <font-awesome-icon icon="folder-open" class="d-sm-none" />
@@ -174,7 +204,7 @@
           <b-button
             id="delete-documents"
             variant="danger"
-            v-b-modal="'modal-delete-documents'"
+            v-b-modal="'modal-delete-documents-h'"
             :title="$t('Delete documents')"
           >
             <font-awesome-icon icon="trash" class="d-sm-none" />
@@ -183,7 +213,15 @@
         </b-col>
       </b-row>
 
-      <b-row class="mt-2 mb-3" id="documents-list">
+      <b-row
+        class="mt-2 mb-3"
+        id="documents-list"
+        :class="{ 'documents-list-dragged-hover': draggingFilesToDocsList }"
+        @dragenter="showDropZone"
+        @dragover="allowDrop"
+        @drop="getDroppedFiles"
+        @dragleave.self="hideDropZone"
+      >
         <b-col v-if="docsLoading">
           <b-spinner
             class="mx-auto loader"
@@ -203,6 +241,21 @@
           </b-row>
         </b-col>
         <b-col v-else class="text-center">{{ $t("No document yet") }}</b-col>
+        <div
+          v-show="draggingFilesToDocsList"
+          id="document-drop-overlay"
+          class="position-fixed w-100 text-center font-weight-bold"
+        >
+          <div id="document-drop-label" class="w-100 my-5">
+            <img
+              class="mb-3"
+              src="@/assets/add_files.svg"
+              alt="Add files illustration"
+            />
+            <br />
+            <p class="mb-3">{{ $t("Drop documents to upload.") }}</p>
+          </div>
+        </div>
       </b-row>
 
       <b-row v-if="moreDocs" align-h="center" class="my-3">
@@ -240,27 +293,39 @@
       />
 
       <FTLNewFolder
+        modal-id="modal-new-folder-h"
         :parent="getCurrentFolder"
         @event-folder-created="folderCreated"
       />
 
-      <!-- For batch action move document -->
+      <FTLManageFoldersPanel
+        :parent-folder="getCurrentFolder"
+        :children-folders.sync="folders"
+        @event-folder-created="folderCreated"
+        @event-folder-renamed="folderUpdated"
+        @event-folder-moved="folderDeleted"
+        @event-folder-deleted="folderDeleted"
+      />
+
+      <!-- For batch action -->
       <FTLMoveDocuments
         v-if="selectedDocumentsHome.length > 0"
-        id="modal-move-documents"
+        modal-id="modal-move-documents-h"
         :docs="selectedDocumentsHome"
         @event-document-moved="documentDeleted"
       />
 
+      <!-- For batch action -->
       <FTLDeleteDocuments
         v-if="selectedDocumentsHome.length > 0"
+        modal-id="modal-delete-documents-h"
         :docs="selectedDocumentsHome"
         @event-document-deleted="documentDeleted"
       />
 
       <FTLRenameDocument
+        modal-id="modal-rename-document-h"
         :doc="currentRenameDoc"
-        id="modal-rename-document-home"
         @event-document-renamed="documentUpdated"
       />
     </b-col>
@@ -269,6 +334,7 @@
 
 <i18n>
   fr:
+    Root: Racine
     Refresh documents list: Rafraichir la liste des documents
     Create new folder: Créer un nouveau dossier
     Sort: Trier
@@ -291,7 +357,9 @@
     Previous: Précédent
     Close: Fermer
     Add documents (1/5): Ajouter vos documents 1/5
-    Select documents by clicking <b>Browse</b> or by dropping them on the white area, confirm with <b>Upload</b> button.: Sélectionnez vos documents en cliquant sur <b>Parcourir</b> ou en les glissant-déposant sur la zone blanche, validez avec le bouton <b>Envoyer</b>.
+    Click on <b>Add documents</b>.: Cliquez sur <b>Ajouter des documents</b>.
+    Add documents (2/5): Ajouter vos documents 2/5
+    You can also drag n drop files straight into the documents list.: Vous pouvez aussi glisser-déposer vos fichers directement dans la liste des documents.
     Find documents (2/5): Retrouver vos documents (2/5)
     Type keywords contained in the document title, content or note and hit <b>Search</b> button.: Saisissez des mots-clés contenus dans le titre, contenu ou note du document et cliquez sur le bouton <b>Rechercher</b>.
     Current folder path (3/5): Chemin du dossier courant (3/5)
@@ -299,15 +367,19 @@
     Folders (4/5): Dossier (4/5)
     Your folders list, you can create a new folder or go back to the parent folder when you are inside a sub folder.: La liste de vos dossiers, vous pouvez créer un nouveau dossier ou revenir au dossier parent lorsque vous êtes dans un sous-dossier.
     Documents (5/5): Documents (5/5)
-    Your documents list, you can select multiple documents using the checkboxes (or <kbd>Ctrl</kbd> + <kbd>Left click</kbd>) to apply batch actions.: La liste de vos documents, vous pouvez en sélectionner plusieurs avec les cases à cocher (ou <kbd>Ctrl</kbd> + <kbd>Clic gauche</kbd>) pour réaliser des actions groupées.
+    "Your documents list, you can select multiple documents using the checkboxes (or <kbd>Ctrl</kbd> + <kbd>Left click</kbd>) to apply batch actions.<br/>To quickly add new documents drag n drop them straight into the list.": "La liste de vos documents, vous pouvez en sélectionner plusieurs avec les cases à cocher (ou <kbd>Ctrl</kbd> + <kbd>Clic gauche</kbd>) pour réaliser des actions groupées.<br/>Pour ajouter rapidement des fichiers, glissez-déposez les directement dans la liste."
+    Rename or move folder: Renommer ou déplacer un dossier
+    Back to parent folder: Revenir au dossier parent
+    Drop documents to upload.: Déposez les documents pour les ajouter.
 </i18n>
 
 <script>
 // @ is an alias to /src
-import { mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import HomeBase from "@/views/HomeBase";
 import FTLFolder from "@/components/FTLFolder.vue";
 import FTLNewFolder from "@/components/FTLNewFolder";
+import FTLManageFoldersPanel from "@/components/FTLManageFoldersPanel";
 import FTLDocumentPanel from "@/components/FTLDocumentPanel";
 import FTLDeleteDocuments from "@/components/FTLDeleteDocuments";
 import FTLMoveDocuments from "@/components/FTLMoveDocuments";
@@ -326,6 +398,7 @@ export default {
   components: {
     FTLNewFolder,
     FTLFolder,
+    FTLManageFoldersPanel,
     FTLDocumentPanel,
     FTLDeleteDocuments,
     FTLMoveDocuments,
@@ -335,24 +408,21 @@ export default {
     FTLBreadcrumbFolder,
   },
 
-  props: ["folder"],
+  props: ["folderId"],
 
   data() {
     return {
       sort: "recent",
-
-      // Folders list and breadcrumb
       folders: [],
-      previousLevels: [],
     };
   },
 
   mounted() {
     this.sort = String(this.sortHome); // copy value for sortHome mutations not to call sort watcher
 
-    if (this.folder) {
+    if (this.folderId) {
       // Open folder directly from loading an URL with folder (don't reset URL if opening a document)
-      this.updateFoldersPath(this.folder);
+      this.updateFoldersPath(this.folderId);
     } else {
       // Or just show the current folders
       this.refreshFolders();
@@ -383,12 +453,10 @@ export default {
 
         driver.defineSteps([
           {
-            element: "#upload-section",
+            element: "#add-documents",
             popover: {
               title: this.$t("Add documents (1/5)"),
-              description: this.$t(
-                "Select documents by clicking <b>Browse</b> or by dropping them on the white area, confirm with <b>Upload</b> button."
-              ),
+              description: this.$t("Click on <b>Add documents</b>."),
               position: "bottom-center",
             },
           },
@@ -429,9 +497,9 @@ export default {
             popover: {
               title: this.$t("Documents (5/5)"),
               description: this.$t(
-                "Your documents list, you can select multiple documents using the checkboxes (or <kbd>Ctrl</kbd> + <kbd>Left click</kbd>) to apply batch actions."
+                "Your documents list, you can select multiple documents using the checkboxes (or <kbd>Ctrl</kbd> + <kbd>Left click</kbd>) to apply batch actions.<br/>To quickly add new documents drag n drop them straight into the list."
               ),
-              position: "top-center",
+              position: "mid-center",
             },
           },
         ]);
@@ -442,7 +510,7 @@ export default {
   },
 
   watch: {
-    folder: function (newVal, oldVal) {
+    folderId: function (newVal, oldVal) {
       if (this.$route.name === "home") {
         // Coming back to home so clear everything and reload from root folder
         this.changeFolder();
@@ -465,14 +533,6 @@ export default {
   },
 
   computed: {
-    getCurrentFolder: function () {
-      if (this.previousLevels.length) {
-        return this.previousLevels[this.previousLevels.length - 1];
-      } else {
-        return null;
-      }
-    },
-
     breadcrumb: function () {
       const vi = this;
       let paths = [];
@@ -503,16 +563,17 @@ export default {
 
       return paths;
     },
-    ...mapState(["selectedDocumentsHome", "sortHome"]), // generate vuex computed getter
+    ...mapState(["selectedDocumentsHome", "sortHome", "previousLevels"]), // generate vuex computed getter
+    ...mapGetters(["getCurrentFolder"]),
   },
 
   methods: {
-    computeFolderUrlPath: function (id = null) {
+    computeFolderUrlPath: function (folderId = null) {
       if (this.previousLevels.length > 0) {
         let s = this.previousLevels.map((e) => e.name);
 
-        if (id) {
-          s.push(id);
+        if (folderId) {
+          s.push(folderId);
         } else {
           s.push(this.previousLevels[this.previousLevels.length - 1].id);
         }
@@ -534,21 +595,21 @@ export default {
 
     changeFolder: function (folder = null) {
       if (folder === null) {
-        this.previousLevels = [];
+        this.$store.commit("resetPreviousLevels");
       }
       this.updateFolders(folder);
       this.updateDocuments();
     },
 
     navigateToFolder: function (folder) {
-      if (folder) this.previousLevels.push(folder);
+      if (folder) this.$store.commit("appendNewLevel", folder);
       this.$router.push({
         path: "/home/" + this.computeFolderUrlPath(folder.id),
       });
     },
 
     changeToPreviousFolder: function () {
-      this.previousLevels.pop(); // Remove current level
+      this.$store.commit("removeCurrentLevel");
       let level = this.getCurrentFolder;
 
       if (level === null) {
@@ -564,7 +625,7 @@ export default {
       axios
         .get("/app/api/v1/folders/" + folderId)
         .then((response) => {
-          this.previousLevels = response.data.paths;
+          this.$store.commit("setPreviousLevels", response.data.paths);
           this.changeFolder(response.data);
           // Allow refresh of the current URL in address bar to take into account folders paths changes
           if (this.docPid) {
@@ -594,8 +655,8 @@ export default {
     documentsCreatedExtended: function (event) {
       const doc = event.doc;
       // Only add document to interface if we are in the same folder, this should allow the user to navigate while uploading
-      if (this.folder) {
-        if (parseInt(this.folder, 10) === doc.ftl_folder) {
+      if (this.folderId) {
+        if (parseInt(this.folderId, 10) === doc.ftl_folder) {
           this.documentsCreated(event);
         }
       } else {
@@ -616,18 +677,18 @@ export default {
       return this._updateDocuments(queryString);
     },
 
-    updateFolders: function (level = null) {
+    updateFolders: function (folder = null) {
       const vi = this;
       let qs = "";
 
-      if (level) {
-        if ("has_descendant" in level && level.has_descendant === false) {
+      if (folder) {
+        if ("has_descendant" in folder && folder.has_descendant === false) {
           // Avoid doing an API request when we know there are no descendant
           vi.folders = [];
           return;
         }
 
-        qs = "?level=" + level.id;
+        qs = "?level=" + folder.id;
       }
 
       axios
@@ -640,9 +701,35 @@ export default {
         );
     },
 
+    renameDoc: function (doc) {
+      this.currentRenameDoc = doc;
+      this.$bvModal.show("modal-rename-document-h");
+    },
+
+    documentsCreated: function (event) {
+      const doc = event.doc;
+      this.docs.unshift(doc);
+      this.count++;
+    },
+
     folderCreated: function (folder) {
       folder.highlightAnimation = true;
       this.folders.unshift(folder);
+    },
+
+    folderDeleted: function (event) {
+      const folderIndex = this._getFolderIndexFromId(event.folder.id);
+      this.folders.splice(folderIndex, 1);
+    },
+
+    folderUpdated: function (event) {
+      const folder = event.folder;
+      const folderIndex = this._getFolderIndexFromId(folder.id);
+      this.$set(this.folders, folderIndex, folder); // to be reactive, see https://vuejs.org/v2/guide/list.html#Caveats
+    },
+
+    _getFolderIndexFromId(folderId) {
+      return this.folders.findIndex((x) => x.id === folderId);
     },
   },
 };
@@ -652,6 +739,10 @@ export default {
 @import "~bootstrap/scss/_functions.scss";
 @import "~bootstrap/scss/_variables.scss";
 @import "~bootstrap/scss/_mixins.scss";
+
+#documents-list {
+  min-height: 400px;
+}
 
 #documents-list-loader {
   width: 3em;
@@ -694,6 +785,15 @@ export default {
 .stop-spin {
   animation: unspin 0.5s 1 ease-out;
 }
+
+#document-drop-label {
+  font-size: 1.2em;
+  color: map_get($theme-colors, "light-gray");
+  img {
+    width: 200px;
+    filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.2));
+  }
+}
 </style>
 
 <style lang="scss">
@@ -711,5 +811,19 @@ export default {
 /* Hack to fix the driver.js tour highlight for search input (this is a driver,js class)*/
 .driver-fix-stacking {
   position: relative !important;
+}
+
+.documents-list-dragged-hover {
+  background: adjust_color(map_get($theme-colors, "active"), $alpha: -0.7);
+  * {
+    pointer-events: none;
+  }
+  .card {
+    opacity: 0.3;
+  }
+}
+
+.driver-popover-title {
+  color: map_get($theme-colors, "primary");
 }
 </style>

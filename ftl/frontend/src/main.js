@@ -30,6 +30,7 @@ import App from "./App.vue";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import {
+  faArrowRight,
   faCrown,
   faEdit,
   faExclamationCircle,
@@ -51,6 +52,7 @@ import {
   faSync,
   faTrash,
   faWindowClose,
+  faTimesCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   faMinusSquare,
@@ -94,7 +96,9 @@ library.add(
   faFileExcel,
   faFile,
   faFilePowerpoint,
-  faFileAlt
+  faFileAlt,
+  faArrowRight,
+  faTimesCircle
 );
 Vue.component("font-awesome-icon", FontAwesomeIcon);
 
