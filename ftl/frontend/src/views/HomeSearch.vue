@@ -30,7 +30,7 @@
 
       <b-row
         v-show="!selectedDocumentsHome.length"
-        class="my-3"
+        class="mt-3"
         id="folders-list"
       >
         <b-col class="text-center">
@@ -126,6 +126,7 @@
 
       <b-row
         v-show="selectedDocumentsHome.length"
+        class="mb-3"
         id="action-selected-documents"
       >
         <b-col>
@@ -429,7 +430,12 @@ export default {
   display: block;
 }
 
-#folders-list button,
+#folders-list button {
+  margin-left: 0 !important;
+  margin-right: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
 #action-selected-documents button,
 #action-selected-documents span {
   margin-left: 0 !important;
@@ -448,10 +454,6 @@ export default {
     #{$zindex-sticky} - 1
   ); // to be under header dropdown menu (mobile)
   background: $light;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  margin-top: -0.5rem;
-  margin-bottom: -0.5rem;
 }
 
 @include media-breakpoint-up(sm) {
