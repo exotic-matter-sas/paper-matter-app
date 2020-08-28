@@ -891,7 +891,7 @@ class DocumentsBatchActionsTests(LoginPage, HomePage, MoveDocumentsModal):
         self.assertIn("2 documents", self.get_elem_text(self.batch_toolbar))
 
         # User unselect documents and the toolbar disappear
-        self.get_elem(self.unselect_all_docs_batch_button).click()
+        self.get_elem(self.cancel_selection_button).click()
         with self.assertRaises(NoSuchElementException):
             self.get_elem(self.batch_toolbar)
 

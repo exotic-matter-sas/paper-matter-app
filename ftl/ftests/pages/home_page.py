@@ -43,6 +43,7 @@ class HomePage(BasePage):
 
     batch_toolbar = "#action-selected-documents"
     unselect_all_docs_batch_button = "#unselect-all-documents"
+    cancel_selection_button = "#cancel-selection"
     move_docs_batch_button = "#move-documents"
     delete_docs_batch_button = "#delete-documents"
 
