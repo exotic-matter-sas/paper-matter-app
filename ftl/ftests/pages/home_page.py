@@ -11,11 +11,9 @@ from ftl.settings import BASE_DIR
 class HomePage(BasePage):
     url = "/app/"
 
-    home_page_link = ".navbar-nav .fa-home"
-    manage_folder_page_link = ".navbar-nav .fa-folder"
-
     search_input = "#search-input"
     search_button = "#search-button"
+    add_documents_button = "#add-documents"
     document_list_loader = "#document-list-loader"
 
     profile_name = "#email"
@@ -23,7 +21,7 @@ class HomePage(BasePage):
     document_upload_input = 'input[type="file"]'
     document_upload_label = ".custom-file-label"
     submit_document_upload_button = "#upload-button"
-    document_upload_loader = "#document-upload-loader"
+    document_upload_loader = ".upload-tasks-loader"
 
     breadcrumb_first_folder = ".breadcrumb-item:first-child"
     breadcrumb_folders = ".breadcrumb-item"
@@ -32,6 +30,7 @@ class HomePage(BasePage):
     refresh_documents_button = "#refresh-documents"
 
     create_folder_button = "#create-folder"
+    manage_folders_button = "#manage-folders"
     folders_list_buttons = "button.folder > span:not(.spinner-border):not(.d-none)"
     folders_list_loader = "#folder-list-loader"
 
@@ -88,7 +87,6 @@ class HomePage(BasePage):
         self.get_elem(self.document_upload_input, is_visible=False).send_keys(
             absolute_paths
         )
-        self.get_elem(self.submit_document_upload_button).click()
         self.wait_for_elem_to_disappear(self.document_upload_loader, timeout=10)
         # Needed in case of several upload in a row as upload success trigger a notification that hide upload button
         self.close_all_notifications()

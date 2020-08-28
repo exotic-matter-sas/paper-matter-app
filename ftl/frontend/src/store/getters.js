@@ -20,4 +20,12 @@ export default {
       );
     };
   },
+
+  getCurrentFolder(state) {
+    if (state.previousLevels.length) {
+      return state.previousLevels[state.previousLevels.length - 1];
+    } else {
+      return null;
+    }
+  },
 };

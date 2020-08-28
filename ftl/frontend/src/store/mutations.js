@@ -4,6 +4,22 @@
  */
 
 export default {
+  appendNewLevel: function (state, folder) {
+    state.previousLevels.push(folder);
+  },
+
+  removeCurrentLevel: function (state) {
+    state.previousLevels.pop();
+  },
+
+  setPreviousLevels: function (state, folders) {
+    state.previousLevels = folders;
+  },
+
+  resetPreviousLevels: function (state) {
+    state.previousLevels = [];
+  },
+
   selectMoveTargetFolder: function (state, folder) {
     state.selectedMoveTargetFolder = folder;
   },

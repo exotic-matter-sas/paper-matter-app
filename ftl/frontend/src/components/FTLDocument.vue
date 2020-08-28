@@ -230,6 +230,12 @@ export default {
 
   &:hover {
     border-color: map_get($theme-colors, "primary");
+
+    ::v-deep
+      .custom-checkbox.b-custom-control-lg
+      .custom-control-label::before {
+      border-color: map_get($theme-colors, "primary");
+    }
   }
 }
 

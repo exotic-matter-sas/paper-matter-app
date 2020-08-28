@@ -5,7 +5,7 @@
 
 <template>
   <b-modal
-    :id="id"
+    :id="modalId"
     :title="$t('Share document')"
     ok-variant="primary"
     cancel-variant="danger"
@@ -63,7 +63,7 @@ export default {
 
   props: {
     // customize the id to allow multiple usage of this component at the same time
-    id: {
+    modalId: {
       type: String,
       default: "modal-document-sharing",
     },
@@ -139,7 +139,7 @@ export default {
       navigator.clipboard
         .writeText(this.sharingLink)
         .then(() => this.mixinAlert(this.$t("Link copied")))
-        .finally(() => this.$bvModal.hide(this.id));
+        .finally(() => this.$bvModal.hide(this.modalId));
     },
   },
 };

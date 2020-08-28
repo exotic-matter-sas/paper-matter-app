@@ -127,19 +127,6 @@ describe("method or watcher emit event", () => {
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
 
-  it("event-navigate-folder emitted when calling navigateToFolder", async () => {
-    const testedEvent = "event-navigate-folder";
-
-    // when
-    wrapper.vm.navigateToFolder();
-    await flushPromises();
-
-    // then
-    expect(wrapper.emitted(testedEvent)).toBeTruthy();
-    expect(wrapper.emitted(testedEvent).length).toBe(1);
-    expect(wrapper.emitted(testedEvent)[0]).toEqual([folder]);
-  });
-
   it("event-select-folder emitted when setting state", async () => {
     const testedEvent = "event-select-folder";
 

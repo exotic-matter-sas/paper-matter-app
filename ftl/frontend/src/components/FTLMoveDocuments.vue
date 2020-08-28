@@ -4,7 +4,7 @@
   -->
 
 <template>
-  <b-modal :id="id">
+  <b-modal :id="modalId" scrollable>
     <template slot="modal-title">
       <span>
         {{
@@ -39,7 +39,7 @@
         </span>
         <span v-else>{{ $t("No folder selected") }}</span>
       </div>
-      <b-button variant="secondary" @click.prevent="$bvModal.hide(id)">
+      <b-button variant="secondary" @click.prevent="$bvModal.hide(modalId)">
         {{ $t("Cancel") }}
       </b-button>
       <b-button
@@ -80,7 +80,7 @@ export default {
     // customize the id to allow multiple time this component in Home
     // Used one time for document panel move button
     // Used one time for batch move document
-    id: {
+    modalId: {
       type: String,
       default: "modal-move-documents",
     },
@@ -151,7 +151,7 @@ export default {
                 responses.length
               )
             );
-            this.$bvModal.hide(this.id);
+            this.$bvModal.hide(this.modalId);
           } else {
             this.mixinAlertWarning(
               this.$tc(

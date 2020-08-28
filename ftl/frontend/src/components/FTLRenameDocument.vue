@@ -5,7 +5,7 @@
 
 <template>
   <b-modal
-    :id="id"
+    :id="modalId"
     :ok-disabled="!newDocumentName || newDocumentName === doc.title"
     @ok="renameDocument"
   >
@@ -60,7 +60,7 @@ export default {
 
   props: {
     // customize the id to allow multiple usage of this component at the same time
-    id: {
+    modalId: {
       type: String,
       default: "modal-rename-document",
     },
@@ -94,7 +94,7 @@ export default {
           this.$emit("event-document-renamed", {
             doc: response.data,
           });
-          this.$bvModal.hide(this.id);
+          this.$bvModal.hide(this.modalId);
           this.mixinAlert(this.$t("Document successfully renamed"));
         })
         .catch((error) => {

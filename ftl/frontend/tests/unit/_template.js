@@ -96,6 +96,12 @@ describe("Component first type of test", () => {
         },
         mountedMocks
       ),
+      computed: {
+        computedA: {
+          get: mockedComputedA,
+          cache: false,
+        },
+      },
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
