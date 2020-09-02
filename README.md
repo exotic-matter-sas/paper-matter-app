@@ -78,8 +78,7 @@ for this. Please refer to the official site for setup.
 
     # reformat all js files
     cd ftl/frontend
-    npx prettier --write src
-    npx prettier --write tests
+    npx prettier@2.0.5 . --check --ignore-path=../../.prettierignore
 
 #### Django Template HTML
 
