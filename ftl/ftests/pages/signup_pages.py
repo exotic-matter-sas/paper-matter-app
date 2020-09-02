@@ -37,6 +37,9 @@ class SignupPages(BasePage):
         submit_input.click()
 
         if activate_user:
+            if getattr(self, "_worker", None):
+                self.wait_celery_queue_to_be_empty(self._worker)
+
             activation_email = self.get_last_email()
             activation_url = re.search(
                 r"(https?://.+/accounts/activate/.+/)", activation_email.body
