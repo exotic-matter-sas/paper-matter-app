@@ -69,9 +69,10 @@ if settings.DEV_MODE and not is_node_server_running() and "CI" not in os.environ
 
 @tag("slow")
 class BasePage(LIVE_SERVER):
-    modal_input = ".modal-dialog input"
+    modal_input = ".modal-dialog input[type='text']"
     modal_accept_button = ".modal-dialog .modal-footer .btn-primary, .modal-dialog .modal-footer .btn-danger"
     modal_reject_button = ".modal-dialog .modal-footer .btn-secondary"
+    modal_close_button = ".modal-dialog .close"
 
     notification = ".b-toaster-slot .b-toast"
     success_notification = ".b-toaster-slot .b-toast-success"

@@ -6,15 +6,31 @@
 <template>
   <main class="flex-grow">
     <b-col>
-      <b-row class="my-3">
+      <b-row>
         <b-col>
-          <FTLUpload @event-new-upload="documentsCreated" />
+          <FTLUpload :files-to-upload.sync="droppedFiles" />
+        </b-col>
+      </b-row>
+
+      <b-row class="my-3" id="breadcrumb" no-gutter>
+        <b-col>
+          <b-breadcrumb class="breadcrumb-ftl m-0">
+            <FTLBreadcrumbFolder
+              v-for="(item, index) in breadcrumbPlaceholder"
+              :key="item.id"
+              :id="item.id"
+              :text="item.text"
+              :to="item.to"
+              :active="index === breadcrumbPlaceholder.length - 1"
+              :folder="{ id: item.id, name: item.text }"
+            />
+          </b-breadcrumb>
         </b-col>
       </b-row>
 
       <b-row
         v-show="!selectedDocumentsHome.length"
-        class="my-3"
+        class="mt-3"
         id="folders-list"
       >
         <b-col class="text-center">
@@ -110,10 +126,21 @@
 
       <b-row
         v-show="selectedDocumentsHome.length"
+        class="mb-3"
         id="action-selected-documents"
       >
         <b-col>
           <b-button
+            v-if="docs.length === selectedDocumentsHome.length"
+            id="unselect-all-documents"
+            variant="outline-primary"
+            @click="$store.commit('unselectAllDocuments')"
+            :title="$t('Deselect all documents')"
+          >
+            {{ $t("Deselect all") }}
+          </b-button>
+          <b-button
+            v-else
             id="select-all-documents"
             variant="outline-primary"
             :title="$t('Select all documents displayed')"
@@ -122,22 +149,25 @@
             {{ $t("Select all") }}
           </b-button>
         </b-col>
-        <b-col cols="8" class="text-right">
-          <span class="text-muted d-none d-sm-inline">{{
+        <b-col cols="7" class="text-right">
+          <span class="text-muted d-none d-sm-inline d-md-none">{{
+            $tc("| 1 doc: | {n} docs:", selectedDocumentsHome.length)
+          }}</span>
+          <span class="text-muted d-none d-md-inline">{{
             $tc("| 1 document: | {n} documents:", selectedDocumentsHome.length)
           }}</span>
           <b-button
-            id="unselect-all-documents"
+            id="cancel-selection"
+            class="d-none d-md-inline-block"
             @click="$store.commit('unselectAllDocuments')"
             :title="$t('Deselect all documents')"
           >
-            <font-awesome-icon icon="window-close" class="d-sm-none" />
-            <span class="d-none d-sm-inline">{{ $t("Cancel") }}</span>
+            {{ $t("Cancel") }}
           </b-button>
           <b-button
             id="move-documents"
             variant="primary"
-            v-b-modal="'modal-move-documents'"
+            v-b-modal="'modal-move-documents-hs'"
             :title="$t('Move to folder')"
           >
             <font-awesome-icon icon="folder-open" class="d-sm-none" />
@@ -146,7 +176,7 @@
           <b-button
             id="delete-documents"
             variant="danger"
-            v-b-modal="'modal-delete-documents'"
+            v-b-modal="'modal-delete-documents-hs'"
             :title="$t('Delete documents')"
           >
             <font-awesome-icon icon="trash" class="d-sm-none" />
@@ -155,7 +185,15 @@
         </b-col>
       </b-row>
 
-      <b-row class="my-3" id="documents-list">
+      <b-row
+        class="mt-2 mb-3"
+        id="documents-list"
+        :class="{ 'documents-list-dragged-hover': draggingFilesToDocsList }"
+        @dragenter="showDropZone"
+        @dragover="allowDrop"
+        @drop="getDroppedFiles"
+        @dragleave.self="hideDropZone"
+      >
         <b-col v-if="docsLoading">
           <b-spinner
             class="mx-auto loader"
@@ -175,6 +213,21 @@
           </b-row>
         </b-col>
         <b-col v-else class="text-center">{{ $t("No result found") }}</b-col>
+        <div
+          v-show="draggingFilesToDocsList"
+          id="document-drop-overlay"
+          class="position-fixed w-100 text-center font-weight-bold"
+        >
+          <div id="document-drop-label" class="w-100 my-5">
+            <img
+              class="mb-3"
+              src="@/assets/add_files.svg"
+              alt="Add files illustration"
+            />
+            <br />
+            <p class="mb-3">{{ $t("Drop documents to upload to root.") }}</p>
+          </div>
+        </div>
       </b-row>
 
       <b-row v-if="moreDocs" align-h="center" class="my-3">
@@ -221,20 +274,21 @@
       <!-- For batch action move document -->
       <FTLMoveDocuments
         v-if="selectedDocumentsHome.length > 0"
-        id="modal-move-documents"
+        modal-id="modal-move-documents-hs"
         :docs="selectedDocumentsHome"
         @event-document-moved="documentDeleted"
       />
 
       <FTLDeleteDocuments
         v-if="selectedDocumentsHome.length > 0"
+        modal-id="modal-delete-documents-hs"
         :docs="selectedDocumentsHome"
         @event-document-deleted="documentDeleted"
       />
 
       <FTLRenameDocument
+        modal-id="modal-rename-document-hs"
         :doc="currentRenameDoc"
-        id="modal-rename-document-home"
         @event-document-renamed="documentUpdated"
       />
     </b-col>
@@ -243,8 +297,9 @@
 
 <i18n>
   fr:
+    Root: Racine
+    Search results: Résultats de la recherche
     Refresh documents list: Rafraichir la liste des documents
-    Create new folder: Créer un nouveau dossier
     Sort: Trier
     Recent first: Récents en premier
     Older first: Anciens en premier
@@ -252,6 +307,8 @@
     A-Z: A-Z
     Z-A: Z-A
     Select all: Tout sélectionner
+    Deselect all: Tout désélectionner
+    "| 1 doc: | {n} docs:": "| 1 doc : | {n} docs :"
     "| 1 document: | {n} documents:": "| 1 document : | {n} documents :"
     "| 1 result found | {n} results found": "| 1 résultat | {n} résultats"
     No result found: Aucun résultat
@@ -262,6 +319,7 @@
     Deselect all documents: Désélectionner tous les documents
     Move to folder: Déplacer vers le dossier
     Delete documents: Supprimer les documents
+    Drop documents to upload to root.: Déposez les documents pour les ajouter à la racine.
 </i18n>
 
 <script>
@@ -274,6 +332,7 @@ import FTLMoveDocuments from "@/components/FTLMoveDocuments";
 import FTLDocument from "@/components/FTLDocument";
 import FTLUpload from "@/components/FTLUpload";
 import FTLRenameDocument from "@/components/FTLRenameDocument";
+import FTLBreadcrumbFolder from "@/components/FTLBreadcrumbFolder";
 
 export default {
   name: "home-search",
@@ -286,6 +345,7 @@ export default {
     FTLDocument,
     FTLUpload,
     FTLRenameDocument,
+    FTLBreadcrumbFolder,
   },
 
   props: ["searchQuery"],
@@ -293,8 +353,6 @@ export default {
   data() {
     return {
       sort: "relevance",
-
-      // Documents list
       currentSearch: "",
     };
   },
@@ -329,6 +387,21 @@ export default {
   },
 
   computed: {
+    breadcrumbPlaceholder: function () {
+      return [
+        {
+          id: null,
+          text: this.$t("Root"),
+          to: { name: "home" },
+        },
+        {
+          id: -1,
+          text: this.$t("Search results"),
+          to: { name: "home" },
+        },
+      ];
+    },
+
     ...mapState(["selectedDocumentsHome"]), // generate computed for vuex getters
   },
 
@@ -348,6 +421,11 @@ export default {
 
       return this._updateDocuments(queryString);
     },
+
+    renameDoc: function (doc) {
+      this.currentRenameDoc = doc;
+      this.$bvModal.show("modal-rename-document-hs");
+    },
   },
 };
 </script>
@@ -357,13 +435,22 @@ export default {
 @import "~bootstrap/scss/_variables.scss";
 @import "~bootstrap/scss/_mixins.scss";
 
+#documents-list {
+  min-height: 400px;
+}
+
 #documents-list-loader {
   width: 3em;
   height: 3em;
   display: block;
 }
 
-#folders-list button,
+#folders-list button {
+  margin-left: 0 !important;
+  margin-right: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
 #action-selected-documents button,
 #action-selected-documents span {
   margin-left: 0 !important;
@@ -382,10 +469,6 @@ export default {
     #{$zindex-sticky} - 1
   ); // to be under header dropdown menu (mobile)
   background: $light;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  margin-top: -0.5rem;
-  margin-bottom: -0.5rem;
 }
 
 @include media-breakpoint-up(sm) {
@@ -402,6 +485,15 @@ export default {
 .stop-spin {
   animation: unspin 0.5s 1 ease-out;
 }
+
+#document-drop-label {
+  font-size: 1.2em;
+  color: map_get($theme-colors, "light-gray");
+  img {
+    width: 200px;
+    filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.2));
+  }
+}
 </style>
 
 <style lang="scss">
@@ -412,6 +504,16 @@ export default {
   .btn {
     padding-right: 0 !important;
     border-right: none !important;
+  }
+}
+
+.documents-list-dragged-hover {
+  background: adjust_color(map_get($theme-colors, "active"), $alpha: -0.7);
+  * {
+    pointer-events: none;
+  }
+  .card {
+    opacity: 0.3;
   }
 }
 </style>

@@ -5,8 +5,8 @@ from ftests.pages.base_page import BasePage
 
 
 class MoveDocumentsModal(BasePage):
-    move_document_modal = "#modal-move-document"
-    move_documents_modal = "#modal-move-documents"
+    move_document_modal = "[id^='modal-move-document']"
+    move_documents_modal = "[id^='modal-move-document']"
     move_document_target_list = ".target-folder-name"
 
     def move_document(self, target_folder_name):

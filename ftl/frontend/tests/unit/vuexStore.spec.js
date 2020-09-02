@@ -92,4 +92,24 @@ describe("getters.js", () => {
 
     expect(testedValue).toBe(true);
   });
+
+  it("getCurrentFolder returns proper value", () => {
+    // given previousLevels is empty
+    let state = { previousLevels: [] };
+
+    // when
+    let testedValue = getters.getCurrentFolder(state);
+
+    // then
+    expect(testedValue).toBe(null);
+
+    // given previousLevels is NOT empty
+    state = { previousLevels: [tv.FOLDER_PROPS, tv.FOLDER_PROPS_VARIANT] };
+
+    // when
+    testedValue = getters.getCurrentFolder(state);
+
+    // then
+    expect(testedValue).toBe(tv.FOLDER_PROPS_VARIANT);
+  });
 });
