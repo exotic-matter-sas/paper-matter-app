@@ -147,6 +147,17 @@ class FTLUser(AbstractUser):
     def __str__(self):
         return self.email
 
+    def email_user(self, subject, message, from_email=None, **kwargs):
+        """
+        Email the user asynchronously
+        """
+        # Manual call because of mutual import of FTLDocument
+        celery.app.send_task(
+            "core.tasks.send_email_async",
+            args=[subject, message, from_email, [self.email]],
+            kwargs=kwargs,
+        )
+
 
 # FTL Documents
 class FTLDocument(models.Model):
