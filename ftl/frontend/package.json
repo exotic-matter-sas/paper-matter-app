@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "preinstall": "npx npm-force-resolutions",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
@@ -20,7 +21,7 @@
     "bootstrap": "^4.5.2",
     "bootstrap-vue": "^2.16.0",
     "core-js": "^3.6.5",
-    "dompurify": "^2.0.12",
+    "dompurify": "^2.0.14",
     "driver.js": "^0.9.8",
     "marked": "^0.7.0",
     "moment": "^2.27.0",
@@ -104,5 +105,8 @@
       "json-summary",
       "lcov"
     ]
+  },
+  "resolutions": {
+    "yargs-parser": "^19.0.4"
   }
 }
