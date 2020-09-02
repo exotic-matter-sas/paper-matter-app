@@ -8,3 +8,4 @@ ftl/frontend/node_modules
 ftl/frontend/pdfjs
 ftl/frontend/webpack-stats.json
 ftl/frontend/**/*.md
+ftl/frontend/package-lock.json
