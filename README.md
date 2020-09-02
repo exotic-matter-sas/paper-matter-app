@@ -78,7 +78,8 @@ for this. Please refer to the official site for setup.
 
     # reformat all js files
     cd ftl/frontend
-    npx prettier --write .
+    npx prettier --write src
+    npx prettier --write tests
 
 #### Django Template HTML
 
