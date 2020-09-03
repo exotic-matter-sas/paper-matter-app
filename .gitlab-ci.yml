@@ -24,7 +24,7 @@ check-frontend:
   stage: code-analysis
   image: node:lts-alpine
   script:
-    - npx prettier@2.0.5 . --check --ignore-path=../../.prettierignore
+    - npx prettier@2.0.5 . --check
 
 check-backend:
   stage: code-analysis
