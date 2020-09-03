@@ -12,7 +12,6 @@ from django.contrib.auth.views import PasswordChangeView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.sites.shortcuts import get_current_site
 from django.core import signing, management
-from django.core.mail import send_mail
 from django.core.signing import SignatureExpired, BadSignature
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -28,6 +27,7 @@ from ua_parser import user_agent_parser
 
 from account.forms import EmailSendForm, DeleteAccountForm
 from core.models import FTLUser
+from core.tasks import send_email_async
 
 
 @method_decorator(login_required, name="dispatch")
@@ -119,7 +119,11 @@ class AccountEmailChangeView(SuccessMessageMixin, FormView):
         self.request.user.email_user(
             subject_warn, message_warn, settings.DEFAULT_FROM_EMAIL
         )
-        send_mail(subject_change, message_change, settings.DEFAULT_FROM_EMAIL, [email_])
+
+        # Send to new user email
+        send_email_async.delay(
+            subject_change, message_change, settings.DEFAULT_FROM_EMAIL, [email_]
+        )
 
         return super().form_valid(form)
 

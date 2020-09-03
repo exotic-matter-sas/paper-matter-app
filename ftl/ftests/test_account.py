@@ -2,6 +2,7 @@
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
 
 import re
+import threading
 from unittest import skipIf
 from unittest.mock import patch, Mock
 
@@ -16,8 +17,8 @@ from selenium.common.exceptions import NoSuchElementException
 from ftests.pages.account_pages import AccountPages
 from ftests.pages.base_page import NODE_SERVER_RUNNING
 from ftests.pages.home_page import HomePage
-from ftests.pages.signup_pages import SignupPages
 from ftests.pages.login_page import LoginPage
+from ftests.pages.signup_pages import SignupPages
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import (
     setup_org,
@@ -27,6 +28,7 @@ from ftests.tools.setup_helpers import (
     setup_2fa_static_device,
     setup_2fa_fido2_device,
 )
+from ftl.celery import app
 from ftl.otp_plugins.otp_ftl import views_fido2
 from ftl.settings import CRON_SECRET_KEY
 
@@ -48,7 +50,22 @@ mocked_fido2_api_register_begin = Mock(wraps=views_fido2.fido2_api_register_begi
 views_fido2.fido2_api_register_begin = mocked_fido2_api_register_begin
 
 
+@override_settings(CELERY_BROKER_URL="memory://localhost")
 class BasicAccountPagesTests(LoginPage, AccountPages):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        app.control.purge()
+        cls._worker = app.Worker(app=app, pool="solo", concurrency=1)
+        cls._thread = threading.Thread(target=cls._worker.start)
+        cls._thread.daemon = True
+        cls._thread.start()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls._worker.stop()
+        super().tearDownClass()
+
     def setUp(self, **kwargs):
         # first org, admin, user are already created, user is already logged on home page
         super().setUp()
@@ -61,6 +78,7 @@ class BasicAccountPagesTests(LoginPage, AccountPages):
         settings.DEV_MODE and not NODE_SERVER_RUNNING,
         "Node not running, this test can't be run",
     )
+    @override_settings(CELERY_BROKER_URL="memory://localhost")
     def test_change_email(self):
         # Go to account management / email change
         self.visit(AccountPages.update_email_url)
@@ -72,6 +90,9 @@ class BasicAccountPagesTests(LoginPage, AccountPages):
             "A confirmation email has been sent",
             self.get_elem_text(self.success_notification),
         )
+
+        # Wait for async sending of emails
+        self.wait_celery_queue_to_be_empty(self._worker)
 
         # Two emails should have been sent
         self.assertEqual(len(mail.outbox), 2)
@@ -129,6 +150,9 @@ class BasicAccountPagesTests(LoginPage, AccountPages):
         self.update_password(tv.ADMIN1_PASS, new_password)
 
         self.assertIn("Password updated!", self.get_elem_text("div.text-center"))
+
+        # Wait for async sending of emails
+        self.wait_celery_queue_to_be_empty(self._worker)
 
         # Check notice email
         self.assertIn(tv.ADMIN1_EMAIL, mail.outbox[0].to)
