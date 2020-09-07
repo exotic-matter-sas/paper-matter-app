@@ -46,9 +46,9 @@ class FTLCreateOrgAndFTLUser(RegistrationForm):
         # remove default autofocus on email field
         del self.fields["email"].widget.attrs["autofocus"]
         # add the mandatory asterisk to existing label
-        self.fields["email"].label = f"{self.fields['email'].label}*"
-        self.fields["password1"].label = f"{self.fields['password1'].label}*"
-        self.fields["password2"].label = f"{self.fields['password2'].label}*"
+        self.fields["email"].label += "*"
+        self.fields["password1"].label += "*"
+        self.fields["password2"].label += "*"
 
     class Meta(RegistrationForm.Meta):
         model = FTLUser
