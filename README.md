@@ -76,9 +76,8 @@ for this and it will fail if the Python code is not properly formatted. Please r
 [Prettier](https://prettier.io/) is required for all files in the `frontend` app. There is also a hard check on the CI
 for this. Please refer to the official site for setup.
 
-    # reformat all js files
-    cd ftl/frontend
-    npx prettier@2.0.5 . --check --ignore-path=../../.prettierignore
+    # reformat all js files (run at project root)
+    npx prettier@2.0.5 --write .
 
 #### Django Template HTML
 
