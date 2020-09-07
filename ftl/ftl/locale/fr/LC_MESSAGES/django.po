@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-10 12:07+0200\n"
-"PO-Revision-Date: 2020-08-10 12:13+0200\n"
+"POT-Creation-Date: 2020-09-04 17:29+0200\n"
+"PO-Revision-Date: 2020-09-04 17:30+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -16,11 +16,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 2.4\n"
+"X-Generator: Poedit 2.4.1\n"
 
 #: .\ftl\forms.py:35
-msgid "Organization name"
-msgstr "Nom de l'organisation"
+msgid "Organization name*"
+msgstr "Nom de l'organisation*"
 
 #: .\ftl\forms.py:39
 msgid ""
@@ -31,7 +31,7 @@ msgstr ""
 "choisir quelque chose d'unique (ex : basé sur votre nom et prénom ou nom "
 "d'entreprise)."
 
-#: .\ftl\forms.py:61
+#: .\ftl\forms.py:65
 msgid "Organization already exists"
 msgstr "L'organisation existe déjà"
 
@@ -367,7 +367,7 @@ msgstr "Une fois votre compte activé, vous pourrez vous rendre sur :"
 msgid "Login page"
 msgstr "Page de connexion"
 
-#: .\ftl\views.py:61
+#: .\ftl\views.py:60
 msgid ""
 "We’ve emailed you instructions for setting your password, if an account "
 "exists with the email you entered. You should receive them shortly (check "
@@ -377,13 +377,13 @@ msgstr ""
 "réinitialiser votre mot de passe vous ont été envoyées. Vous devriez les "
 "recevoir rapidement (vérifiez votre dossier spam si ce n'est pas le cas)."
 
-#: .\ftl\views.py:68
+#: .\ftl\views.py:67
 msgid "Your password has been set. You may go ahead and log in now."
 msgstr ""
 "Votre mot de passe a bien été enregistré, vous pouvez vous connecter avec "
 "celui-ci."
 
-#: .\ftl\views.py:80
+#: .\ftl\views.py:79
 msgid ""
 "Your email has been verified, thank you! You may go ahead and log in now."
 msgstr ""
