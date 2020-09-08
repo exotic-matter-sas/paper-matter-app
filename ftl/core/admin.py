@@ -43,6 +43,14 @@ class UserAdmin(BaseUserAdmin):
     ordering = ("email",)
     raw_id_fields = ("org",)
 
+    def get_search_results(self, request, queryset, search_term):
+        # Return empty search result when search is empty instead of returning all objects
+        if "q" in request.GET and request.GET["q"].strip():
+            queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+            return queryset, use_distinct
+        else:
+            return queryset.none(), False
+
 
 @admin.register(FTLOrg)
 class FTLOrgAdmin(admin.ModelAdmin):
@@ -102,6 +110,14 @@ class FTLDocumentAdmin(admin.ModelAdmin):
         "type",
     )
 
+    def get_search_results(self, request, queryset, search_term):
+        # Return empty search result when search is empty instead of returning all objects
+        if "q" in request.GET and request.GET["q"].strip():
+            queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+            return queryset, use_distinct
+        else:
+            return queryset.none(), False
+
 
 @admin.register(FTLDocumentSharing)
 class FTLDocumentSharingAdmin(admin.ModelAdmin):
@@ -118,6 +134,14 @@ class FTLDocumentSharingAdmin(admin.ModelAdmin):
         "edited",
         "password",
     )
+
+    def get_search_results(self, request, queryset, search_term):
+        # Return empty search result when search is empty instead of returning all objects
+        if "q" in request.GET and request.GET["q"].strip():
+            queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+            return queryset, use_distinct
+        else:
+            return queryset.none(), False
 
 
 admin.site.unregister(TOTPDevice)
