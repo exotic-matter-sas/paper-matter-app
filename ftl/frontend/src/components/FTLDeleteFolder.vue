@@ -5,7 +5,7 @@
 
 <template>
   <b-modal
-    id="modal-delete-folder"
+    :id="modalId"
     @ok="deleteFolder"
     :ok-disabled="deleting || name !== folder.name"
     :cancel-title="$t('Cancel')"
@@ -62,6 +62,10 @@ import { axiosConfig } from "@/constants";
 export default {
   name: "FTLDeleteFolder",
   props: {
+    modalId: {
+      type: String,
+      default: "modal-delete-folder",
+    },
     folder: {
       type: Object,
       required: true,
@@ -87,7 +91,7 @@ export default {
         .then((response) => {
           this.$emit("event-folder-deleted", { folder: this.folder });
           this.$nextTick(() => {
-            vi.$bvModal.hide("modal-delete-folder");
+            vi.$bvModal.hide(this.modalId);
           });
         })
         .catch((error) =>

@@ -4,7 +4,7 @@
   -->
 
 <template>
-  <b-modal :id="id">
+  <b-modal :id="modalId" scrollable>
     <template slot="modal-title">
       <span v-if="selectedMoveTargetFolder">
         {{
@@ -40,7 +40,7 @@
         </span>
         <span v-else>{{ $t("No folder selected") }}</span>
       </div>
-      <b-button variant="secondary" @click.prevent="$bvModal.hide(id)">
+      <b-button variant="secondary" @click.prevent="$bvModal.hide(modalId)">
         {{ $t("Cancel") }}
       </b-button>
       <b-button
@@ -75,16 +75,14 @@ export default {
   name: "FTLMoveFolder",
   components: { FTLTreeFolders },
   props: {
+    modalId: {
+      type: String,
+      default: "modal-move-folder",
+    },
     folder: {
       type: Object,
       required: true,
     },
-  },
-
-  data() {
-    return {
-      id: "modal-move-folder",
-    };
   },
 
   computed: {
@@ -110,7 +108,7 @@ export default {
               target_folder: this.selectedMoveTargetFolder,
             });
             this.$store.commit("selectMoveTargetFolder", null);
-            this.$bvModal.hide(this.id);
+            this.$bvModal.hide(this.modalId);
           })
           .catch((error) => {
             this.mixinAlert(this.$t("Could not move folder"), true);

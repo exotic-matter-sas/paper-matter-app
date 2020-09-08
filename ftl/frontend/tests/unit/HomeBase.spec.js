@@ -345,20 +345,6 @@ describe("HomeBase methods update proper data", () => {
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
 
-  it("documentsCreated update docs data", () => {
-    let docsList = [tv.DOCUMENT_PROPS];
-    //given
-    wrapper.setData({ docs: docsList });
-
-    // when
-    wrapper.vm.documentsCreated({ doc: tv.DOCUMENT_PROPS_VARIANT });
-
-    expect(wrapper.vm.docs).toEqual([
-      tv.DOCUMENT_PROPS_VARIANT,
-      tv.DOCUMENT_PROPS,
-    ]);
-  });
-
   it("documentDeleted update docs data", () => {
     // given
     const documentToDelete = tv.DOCUMENT_NO_THUMB_PROPS_2;

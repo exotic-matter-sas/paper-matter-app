@@ -30,7 +30,7 @@ check-backend:
   stage: code-analysis
   image: python:3.7-slim
   script:
-    - pip3 install black
+    - pip3 install black==19.10b0
     - black --check .
 
 compile-frontend:

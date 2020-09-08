@@ -101,6 +101,9 @@ const mockedNavigateToDocument = jest.fn();
 const mockedDocumentClosed = jest.fn();
 const mockedDocumentUpdated = jest.fn();
 const mockedDocumentDeleted = jest.fn();
+const mockedPreviousLevels = jest.fn();
+const mockedRemoveCurrentLevelCommit = jest.fn();
+const mockedAppendNewLevelCommit = jest.fn();
 
 const mountedMocks = {
   updateDocuments: mockedUpdateDocuments,
@@ -133,9 +136,12 @@ describe("Home computed", () => {
   let storeConfigCopy; // deep copy storeConfig for tests not to pollute it
   let store;
   const fakePath = "fakeComputeFolderPath";
+  const fakeLevels = [tv.FOLDER_PROPS, tv.FOLDER_PROPS_VARIANT];
 
   beforeEach(() => {
     mockedComputeFolderUrlPath.mockReturnValue(fakePath);
+    mockedGetCurrentFolder.mockReturnValue(tv.FOLDER_PROPS_VARIANT);
+    mockedPreviousLevels.mockReturnValue(fakeLevels);
     storeConfigCopy = cloneDeep(storeConfig);
     store = new Vuex.Store(storeConfigCopy);
     wrapper = shallowMount(Home, {
@@ -148,31 +154,18 @@ describe("Home computed", () => {
         },
         mountedMocks
       ),
+      computed: {
+        getCurrentFolder: mockedGetCurrentFolder,
+        previousLevels: mockedPreviousLevels,
+      },
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
 
-  it("getCurrentFolder return proper format", () => {
-    // when
-    let getCurrentFolderValue = wrapper.vm.getCurrentFolder;
-
-    // then
-    expect(getCurrentFolderValue).toBe(null);
-
-    // when
-    wrapper.setData({
-      previousLevels: [tv.FOLDER_PROPS, tv.FOLDER_PROPS_VARIANT],
-    });
-    getCurrentFolderValue = wrapper.vm.getCurrentFolder;
-
-    // then
-    expect(getCurrentFolderValue).toBe(tv.FOLDER_PROPS_VARIANT);
-  });
-
   it("breadcrumb return proper format", () => {
     const fakeCount = 42;
-    const fakeLevels = [tv.FOLDER_PROPS, tv.FOLDER_PROPS_VARIANT];
-    wrapper.setData({ count: fakeCount, previousLevels: fakeLevels });
+    mockedPreviousLevels.mockReturnValue(fakeLevels);
+    wrapper.setData({ count: fakeCount });
 
     // when
     const breadcrumbData = wrapper.vm.breadcrumb;
@@ -230,26 +223,26 @@ describe("Home mounted call proper methods with given props and get sort from st
     await flushPromises(); // to wait for watchers trigger
 
     // then
-    expect(wrapper.vm.sortHome).toEqual(mockedSortValue);
+    expect(wrapper.vm.sort).toEqual(mockedSortValue);
     expect(mockedRefreshFolders).toHaveBeenCalledTimes(1);
     expect(mockedUpdateDocuments).toHaveBeenCalledTimes(1 + 1); // + 1 for sort watcher
     expect(mockedUpdateFoldersPath).not.toHaveBeenCalled();
   });
 
   it("mounted call proper methods with folder props", async () => {
-    const current_folder = tv.FOLDER_PROPS;
+    const current_folder = tv.FOLDER_PROPS.id;
 
     const wrapper = shallowMount(Home, {
       localVue,
       store,
       methods: mountedMocks,
-      propsData: { folder: current_folder },
+      propsData: { folderId: current_folder },
     });
 
     await flushPromises(); // to wait for watchers trigger
 
     // then
-    expect(wrapper.vm.sortHome).toEqual(mockedSortValue);
+    expect(wrapper.vm.sort).toEqual(mockedSortValue);
     expect(mockedRefreshFolders).not.toHaveBeenCalled();
     expect(mockedUpdateDocuments).toHaveBeenCalledTimes(1); // + 1 for sort watcher
     expect(mockedUpdateFoldersPath).toHaveBeenCalledTimes(1);
@@ -289,12 +282,12 @@ describe("Home watchers call proper methods", () => {
     jest.clearAllMocks();
   });
 
-  it("folder watcher call proper methods based on route name", async () => {
-    const folder = tv.FOLDER_PROPS.id;
-    const folderVariant = tv.FOLDER_PROPS_VARIANT.id;
+  it("folderId watcher call proper methods based on route name", async () => {
+    const folderId = tv.FOLDER_PROPS.id;
+    const folderIdVariant = tv.FOLDER_PROPS_VARIANT.id;
     //when route is home
     mockedRouteName.mockReturnValue("home");
-    wrapper.setData({ folder });
+    wrapper.setData({ folderId });
     await flushPromises();
 
     // then
@@ -305,17 +298,17 @@ describe("Home watchers call proper methods", () => {
     //when route is home-folder and folder change
     jest.clearAllMocks();
     mockedRouteName.mockReturnValue("home-folder");
-    wrapper.setData({ folder: folderVariant });
+    wrapper.setData({ folderId: folderIdVariant });
 
     // then
     expect(mockedChangeFolder).not.toHaveBeenCalled();
     expect(mockedUpdateFoldersPath).toHaveBeenCalledTimes(1);
-    expect(mockedUpdateFoldersPath).toHaveBeenCalledWith(folderVariant);
+    expect(mockedUpdateFoldersPath).toHaveBeenCalledWith(folderIdVariant);
   });
 
   it("folder watcher commit change to store", async () => {
-    const folder = tv.FOLDER_PROPS.id;
-    wrapper.setData({ folder });
+    const folderId = tv.FOLDER_PROPS.id;
+    wrapper.setData({ folderId });
     await flushPromises();
 
     // then
@@ -366,7 +359,19 @@ describe("Home methods call proper methods", () => {
     mockedGetCurrentFolder.mockReturnValue(fakeCurrentFolder);
     mockedComputeFolderUrlPath.mockReturnValue(fakePath);
     storeConfigCopy = cloneDeep(storeConfig);
-    store = new Vuex.Store(storeConfigCopy);
+    store = new Vuex.Store(
+      Object.assign(
+        // overwrite some mutations and getter to replace them with mocks
+        storeConfigCopy,
+        {
+          mutations: {
+            removeCurrentLevel: mockedRemoveCurrentLevelCommit,
+            unselectAllDocuments: mockedUnselectAllDocumentsCommit,
+            appendNewLevel: mockedAppendNewLevelCommit,
+          },
+        }
+      )
+    );
     wrapper = shallowMount(Home, {
       localVue,
       store,
@@ -399,16 +404,13 @@ describe("Home methods call proper methods", () => {
   });
 
   it("changeToPreviousFolder call proper methods", async () => {
-    const fakePreviousLevels = [tv.FOLDER_PROPS, tv.FOLDER_PROPS_VARIANT];
-    wrapper.setData({ previousLevels: Array.from(fakePreviousLevels) });
+    // given level not null
 
-    // when level not null
+    // when
     wrapper.vm.changeToPreviousFolder();
 
     // then
-    expect(wrapper.vm.previousLevels.length).toBe(
-      fakePreviousLevels.length - 1
-    );
+    expect(mockedRemoveCurrentLevelCommit).toHaveBeenCalledTimes(1);
     expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
       path: "/home/" + fakePath,
     });
@@ -443,9 +445,11 @@ describe("Home methods call proper methods", () => {
     wrapper.vm.navigateToFolder(folderToNavigate);
 
     // then
-    expect(
-      wrapper.vm.previousLevels[wrapper.vm.previousLevels.length - 1]
-    ).toEqual(folderToNavigate);
+    expect(mockedAppendNewLevelCommit).toHaveBeenNthCalledWith(
+      1,
+      storeConfigCopy.state,
+      folderToNavigate
+    );
     expect(wrapper.vm.$router.push).toHaveBeenNthCalledWith(1, {
       path: "/home/" + fakePath,
     });
@@ -458,6 +462,7 @@ describe("Home methods return proper value", () => {
   let store;
 
   beforeEach(() => {
+    mockedPreviousLevels.mockReturnValue([]);
     storeConfigCopy = cloneDeep(storeConfig);
     store = new Vuex.Store(storeConfigCopy);
     wrapper = shallowMount(Home, {
@@ -470,15 +475,24 @@ describe("Home methods return proper value", () => {
         },
         mountedMocks
       ),
+      computed: {
+        previousLevels: {
+          get: mockedPreviousLevels,
+          cache: false,
+        },
+      },
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
 
   it("computeFolderUrlPath return proper value", () => {
-    // when previousLevels and param id are set
-    wrapper.setData({
-      previousLevels: [tv.FOLDER_PROPS, tv.FOLDER_PROPS_VARIANT],
-    });
+    // given previousLevels and param id are set
+    mockedPreviousLevels.mockReturnValue([
+      tv.FOLDER_PROPS,
+      tv.FOLDER_PROPS_VARIANT,
+    ]);
+
+    // when
     let computeFolderUrlPathReturn = wrapper.vm.computeFolderUrlPath(
       tv.FOLDER_PROPS_VARIANT.id
     );
@@ -492,8 +506,10 @@ describe("Home methods return proper value", () => {
         tv.FOLDER_PROPS_VARIANT.id
     );
 
-    // when previousLevels and param id not set
-    wrapper.setData({ previousLevels: [tv.FOLDER_PROPS] });
+    // given previousLevels and param id not set
+    mockedPreviousLevels.mockReturnValue([tv.FOLDER_PROPS]);
+
+    // when
     computeFolderUrlPathReturn = wrapper.vm.computeFolderUrlPath();
 
     // then
@@ -501,8 +517,10 @@ describe("Home methods return proper value", () => {
       tv.FOLDER_PROPS.name + "/" + tv.FOLDER_PROPS.id
     );
 
-    // when previousLevels empty
-    wrapper.setData({ previousLevels: [] });
+    // given previousLevels empty
+    mockedPreviousLevels.mockReturnValue([]);
+
+    // when
     computeFolderUrlPathReturn = wrapper.vm.computeFolderUrlPath();
 
     // then
@@ -644,11 +662,13 @@ describe("Home event handling", () => {
   let store;
 
   beforeEach(() => {
+    mockedPreviousLevels.mockReturnValue([]);
     storeConfigCopy = cloneDeep(storeConfig);
     store = new Vuex.Store(
       Object.assign(storeConfigCopy, {
         mutations: {
           unselectAllDocuments: mockedUnselectAllDocumentsCommit,
+          changeSortHome: mockedChangeSortHomeCommit,
         },
         state: {
           selectedDocumentsHome: ["fakeDocument"],
@@ -673,6 +693,10 @@ describe("Home event handling", () => {
         },
         mountedMocks
       ),
+      computed: {
+        previousLevels: mockedPreviousLevels,
+        getCurrentFolder: mockedGetCurrentFolder,
+      },
     });
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });

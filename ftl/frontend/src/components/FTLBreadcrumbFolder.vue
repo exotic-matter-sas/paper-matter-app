@@ -5,14 +5,16 @@
 
 <template>
   <b-breadcrumb-item
-    :text="text"
     :to="to"
     :active="active"
     :class="{ 'drag-over': dragOver }"
     v-on:drop="drop"
     v-on:dragover="customAllowDrop"
     v-on:dragleave="leaveDrop"
-  />
+  >
+    <font-awesome-icon v-if="id === null" icon="home" />
+    {{ text }}
+  </b-breadcrumb-item>
 </template>
 
 <script>

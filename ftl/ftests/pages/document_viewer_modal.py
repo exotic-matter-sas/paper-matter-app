@@ -26,7 +26,7 @@ class DocumentViewerModal(BasePage):
 
     share_document_button = "#share-document"
     validate_modal_button = "#"
-    unshare_modal_button = "#modal-document-sharing .modal-footer .btn-danger"
+    unshare_modal_button = "[id^='modal-document-sharing'] .modal-footer .btn-danger"
 
     def rename_document(self, document_name):
         self.wait_for_elem_to_show(self.rename_document_button)

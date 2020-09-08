@@ -39,7 +39,7 @@
           <b-button
             id="rename-document"
             class="float-left"
-            v-b-modal="'modal-rename-document'"
+            v-b-modal="'modal-rename-document-dp'"
             variant="link"
           >
             <font-awesome-icon icon="edit" :title="$t('Rename document')" />
@@ -112,7 +112,7 @@
                 id="move-document"
                 class="mx-1 mb-1"
                 variant="secondary"
-                v-b-modal="'modal-move-document'"
+                v-b-modal="'modal-move-document-dp'"
               >
                 {{ $t("Move") }}
               </b-button>
@@ -120,7 +120,7 @@
                 id="delete-document"
                 class="mx-1 mb-1"
                 variant="danger"
-                v-b-modal="'modal-delete-document'"
+                v-b-modal="'modal-delete-document-dp'"
               >
                 {{ $t("Delete") }}
               </b-button>
@@ -128,7 +128,7 @@
                 id="share-document"
                 class="mx-1 mb-1"
                 variant="success"
-                v-b-modal="'modal-document-sharing'"
+                v-b-modal="'modal-document-sharing-dp'"
               >
                 <span v-if="currentOpenDoc.is_shared">{{
                   $t("Get share link")
@@ -152,27 +152,25 @@
     </b-container>
 
     <FTLMoveDocuments
-      v-if="currentOpenDoc.pid"
-      id="modal-move-document"
+      modal-id="modal-move-document-dp"
       :docs="[currentOpenDoc]"
       @event-document-moved="documentMoved"
     />
 
     <FTLRenameDocument
-      v-if="currentOpenDoc.pid"
+      modal-id="modal-rename-document-dp"
       :doc="currentOpenDoc"
       @event-document-renamed="documentRenamed"
     />
 
     <FTLDeleteDocuments
-      v-if="currentOpenDoc.pid"
-      id="modal-delete-document"
+      modal-id="modal-delete-document-dp"
       :docs="[currentOpenDoc]"
       @event-document-deleted="documentDeleted"
     />
 
     <FTLDocumentSharing
-      v-if="currentOpenDoc.pid"
+      modal-id="modal-document-sharing-dp"
       :doc="currentOpenDoc"
       @event-document-shared="documentShared(true)"
       @event-document-unshared="documentShared(false)"
@@ -339,7 +337,10 @@ export default {
 </script>
 
 <style lang="scss">
-// Don't use `scoped` on this style because the document viewer is styled from the main app component
+@import "~bootstrap/scss/_functions.scss";
+@import "~bootstrap/scss/_variables.scss";
+@import "~bootstrap/scss/_mixins.scss";
+// Don't use `scoped` because scoped doesn't apply to bootstrap-vue sub-components
 $document-viewer-padding: 2em;
 
 #document-viewer {
@@ -351,7 +352,6 @@ $document-viewer-padding: 2em;
     width: 100vw;
     height: 100vh;
     max-width: none;
-    padding: $document-viewer-padding;
     margin: 0;
   }
 
@@ -409,13 +409,25 @@ $document-viewer-padding: 2em;
   }
 
   .modal-content {
-    height: calc(100vh - (#{$document-viewer-padding} * 2));
+    height: 100vh;
   }
 
   #viewer-disabled {
     background-color: rgba(0, 0, 0, 0.06);
     text-align: center;
     user-select: none;
+  }
+}
+
+@include media-breakpoint-up(md) {
+  #document-viewer {
+    .modal-dialog {
+      padding: $document-viewer-padding;
+    }
+
+    .modal-content {
+      height: calc(100vh - (#{$document-viewer-padding} * 2));
+    }
   }
 }
 </style>

@@ -6,7 +6,7 @@
 <template>
   <b-col sm="2" class="m-1 folder" :class="{ selected: state }">
     <b-row class="icon" align-h="center">
-      <b-col @click="navigateToFolder">
+      <b-col @click="state = !state">
         <font-awesome-icon
           icon="folder"
           size="5x"
@@ -63,18 +63,12 @@ export default {
     state: function (newVal, oldVal) {
       if (newVal === true) {
         this.$emit("event-select-folder", this.folder);
-        // Store the selected panel folder for usage by ManageFolders.vue for displaying the folder detail panel
+        // Store the selected panel folder for usage by FTLManageFoldersPanel.vue for displaying the folder detail panel
         this.$store.commit("selectPanelFolder", this.folder);
       } else {
         this.$emit("event-unselect-folder", this.folder);
         this.$store.commit("selectPanelFolder", null);
       }
-    },
-  },
-
-  methods: {
-    navigateToFolder: function () {
-      this.$emit("event-navigate-folder", this.folder);
     },
   },
 };
@@ -83,10 +77,6 @@ export default {
 <style scoped lang="scss">
 .folder {
   border: 3px solid transparent;
-
-  .icon {
-    cursor: pointer;
-  }
 }
 
 .folder.selected .icon svg {
@@ -104,8 +94,6 @@ export default {
   margin-left: -1.5rem;
 
   label {
-    cursor: pointer;
-
     span {
       white-space: nowrap;
       text-overflow: ellipsis;

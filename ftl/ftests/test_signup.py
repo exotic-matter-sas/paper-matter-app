@@ -1,17 +1,33 @@
 #  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
 
-import re
-from unittest import skip
+import threading
 
 from django.core import mail
+from django.test import override_settings
 
 from ftests.pages.signup_pages import SignupPages
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import setup_org, setup_admin
+from ftl.celery import app
 
 
+@override_settings(CELERY_BROKER_URL="memory://localhost")
 class SignupPageTests(SignupPages):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        app.control.purge()
+        cls._worker = app.Worker(app=app, pool="solo", concurrency=1)
+        cls._thread = threading.Thread(target=cls._worker.start)
+        cls._thread.daemon = True
+        cls._thread.start()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls._worker.stop()
+        super().tearDownClass()
+
     def setUp(self, **kwargs):
         # first org and admin already created
         super().setUp()
@@ -41,6 +57,9 @@ class SignupPageTests(SignupPages):
     def test_signup_receive_activation_email(self):
         self.visit(self.url)
         self.create_user()
+
+        # Wait for async sending of emails
+        self.wait_celery_queue_to_be_empty(self._worker)
 
         self.assertEqual(len(mail.outbox), 1)
         self.assertIn(tv.USER1_EMAIL, mail.outbox[0].to)

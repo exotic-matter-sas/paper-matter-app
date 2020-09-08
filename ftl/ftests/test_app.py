@@ -14,7 +14,7 @@ from core.tasks import apply_ftl_processing
 from ftests.pages.base_page import NODE_SERVER_RUNNING
 from ftests.pages.document_viewer_modal import DocumentViewerModal
 from ftests.pages.home_page import HomePage
-from ftests.pages.manage_folder_page import ManageFolderPage
+from ftests.pages.manage_folders_modal import ManageFoldersModal
 from ftests.pages.move_documents_modal import MoveDocumentsModal
 from ftests.pages.login_page import LoginPage
 from ftests.tools import test_values as tv
@@ -419,7 +419,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         self.assertIn("A-Z", self.get_elem_text(self.sort_dropdown_button))
 
         # User come back to root
-        self.get_elem(self.home_page_link).click()
+        self.get_elem(self.breadcrumb_first_folder).click()
 
         # Default sort is now a-z
         self.assertIn("A-Z", self.get_elem_text(self.sort_dropdown_button))
@@ -437,10 +437,9 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         self.assertIn("Z-A", self.get_elem_text(self.sort_dropdown_button))
 
         # User display the page to manage folder
-        self.get_elem(self.manage_folder_page_link).click()
-
-        # User come back to home
-        self.get_elem(self.home_page_link).click()
+        self.get_elem(self.breadcrumb_first_folder).click()
+        self.wait_folder_list_loaded()
+        self.get_elem(self.manage_folders_button).click()
 
         # Default sort is still a-z
         self.assertIn(
@@ -525,7 +524,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
 
         self.search_documents("ABXXAB")
         self.get_elem(self.documents_checkboxes).click()
-        self.get_elem(self.home_page_link).click()
+        self.get_elem(self.breadcrumb_first_folder).click()
 
         with self.assertRaises(
             NoSuchElementException, msg="No batch toolbar should be shown"
@@ -892,7 +891,7 @@ class DocumentsBatchActionsTests(LoginPage, HomePage, MoveDocumentsModal):
         self.assertIn("2 documents", self.get_elem_text(self.batch_toolbar))
 
         # User unselect documents and the toolbar disappear
-        self.get_elem(self.unselect_all_docs_batch_button).click()
+        self.get_elem(self.cancel_selection_button).click()
         with self.assertRaises(NoSuchElementException):
             self.get_elem(self.batch_toolbar)
 
@@ -1180,15 +1179,18 @@ class DocumentViewerModalTests(
         self.assertIn("not found", self.get_elem_text("body"))
 
 
-class ManageFoldersPageTests(LoginPage, ManageFolderPage):
+class ManageFoldersModalTests(LoginPage, HomePage, ManageFoldersModal):
     def setUp(self, **kwargs):
-        # first org, admin, user are already created, user is already logged on manage folder page
+        # first org, admin, user are already created, user is already logged and display manage folder page
         super().setUp()
         self.org = setup_org()
         setup_admin(self.org)
         self.user = setup_user(self.org)
-        self.visit(ManageFolderPage.url)
+        self.visit(HomePage.url)
         self.log_user()
+        self.get_elem(self.manage_folders_button).click()
+        self.wait_for_elem_to_show(self.manage_folder_modal)
+        self.wait_folder_list_loaded_mfp()
 
     @skipIf(
         settings.DEV_MODE and not NODE_SERVER_RUNNING,
@@ -1198,53 +1200,11 @@ class ManageFoldersPageTests(LoginPage, ManageFolderPage):
         # User create 3 folders at root
         folders_to_create = ["folder 1", "folder 2", "folder 3"]
         for folder in folders_to_create:
-            self.create_folder(folder)
+            self.create_folder_mfp(folder)
 
-        # Folder appears in the list with the proper order
+        # Folder appears in the list with the reversed order
+        folders_to_create.reverse()
         self.assertEqual(folders_to_create, self.get_elems_text(self.folders_title))
-
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
-    def test_create_folder_tree(self):
-        # User create a folder tree of 3 levels :
-        # folder 1
-        #   folder 2
-        #       folder 3
-        folders_to_create = ["folder 1", "folder 2", "folder 3"]
-        for folder in folders_to_create:
-            self.create_folder(folder)
-            self.navigate_to_folder(folder)
-
-        # Folders appears as a tree
-        self.visit(ManageFolderPage.url)
-        self.assertEqual(
-            [folders_to_create[0]],
-            self.get_elems_text(self.folders_title),
-            "First level should only show first folder",
-        )
-
-        self.navigate_to_folder(folders_to_create[0])
-        self.assertEqual(
-            [folders_to_create[1]],
-            self.get_elems_text(self.folders_title),
-            "Second level should only show second folder",
-        )
-
-        self.navigate_to_folder(folders_to_create[1])
-        self.assertEqual(
-            [folders_to_create[2]],
-            self.get_elems_text(self.folders_title),
-            "Third level should only show third folder",
-        )
-
-        self.navigate_to_folder(folders_to_create[2])
-        self.assertEqual(
-            "Root\n" + "\n".join(folders_to_create),
-            self.get_elem_text(self.breadcrumb),
-            "Breadcrumb should show all folders created on the deepest level",
-        )
 
     @skipIf(
         settings.DEV_MODE and not NODE_SERVER_RUNNING,
@@ -1253,8 +1213,8 @@ class ManageFoldersPageTests(LoginPage, ManageFolderPage):
     def test_select_folder(self):
         # User have already created 2 folders
         folder_to_select_name = "folder 1"
-        self.create_folder(folder_to_select_name)
-        self.create_folder("folder 2")
+        self.create_folder_mfp(folder_to_select_name)
+        self.create_folder_mfp("folder 2")
 
         # No folder select message appears in the right panel
         self.assertEqual("No folder selected", self.get_elem_text(self.right_panel))
@@ -1274,9 +1234,9 @@ class ManageFoldersPageTests(LoginPage, ManageFolderPage):
     def test_rename_selected_folder(self):
         # User have already created 2 folders
         folder_to_rename_name = "rename me plz"
-        self.create_folder(folder_to_rename_name)
+        self.create_folder_mfp(folder_to_rename_name)
         folder_not_to_rename_name = "do not rename me :C!"
-        self.create_folder(folder_not_to_rename_name)
+        self.create_folder_mfp(folder_not_to_rename_name)
 
         # User select the folder to rename and rename it
         self.select_folder(folder_to_rename_name)
@@ -1312,9 +1272,9 @@ class ManageFoldersPageTests(LoginPage, ManageFolderPage):
     def test_move_selected_folder(self):
         # User have already created 2 folders
         folder_to_move_name = "move me plz"
-        self.create_folder(folder_to_move_name)
+        self.create_folder_mfp(folder_to_move_name)
         folder_not_to_move_name = "do not move me :C!"
-        self.create_folder(folder_not_to_move_name)
+        self.create_folder_mfp(folder_not_to_move_name)
 
         # User select the folder to move and move it
         self.select_folder(folder_to_move_name)
@@ -1334,7 +1294,12 @@ class ManageFoldersPageTests(LoginPage, ManageFolderPage):
         with self.assertRaises(NoSuchElementException):
             self.get_elem(self.selected_folder_name)
 
-        self.navigate_to_folder(folder_not_to_move_name)
+        self.get_elem(self.modal_close_button).click()
+        self.get_elem(self.folders_list_buttons).click()
+        self.wait_folder_list_loaded()
+        self.get_elem(self.manage_folders_button).click()
+        self.wait_folder_list_loaded_mfp()
+
         folder_title_list = self.get_elems_text(self.folders_title)
         self.assertIn(
             folder_to_move_name,
@@ -1349,9 +1314,9 @@ class ManageFoldersPageTests(LoginPage, ManageFolderPage):
     def test_delete_selected_folder(self):
         # User have already created 2 folders
         folder_to_delete_name = "delete me plz"
-        self.create_folder(folder_to_delete_name)
+        self.create_folder_mfp(folder_to_delete_name)
         folder_not_to_delete_name = "do not delete me :C!"
-        self.create_folder(folder_not_to_delete_name)
+        self.create_folder_mfp(folder_not_to_delete_name)
 
         # User select the folder to move and move it
         self.select_folder(folder_to_delete_name)

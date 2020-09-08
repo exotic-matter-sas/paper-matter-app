@@ -284,15 +284,6 @@ describe("HomeSearch event handling", () => {
     jest.clearAllMocks(); // Reset mock call count done by mounted
   });
 
-  it("event-new-upload call documentsCreated", async () => {
-    // when
-    wrapper.find(FTLUpload).vm.$emit("event-new-upload");
-    await flushPromises(); // wait all pending promises are resolved/rejected
-
-    // then
-    expect(mockedDocumentsCreated).toHaveBeenCalledTimes(1);
-  });
-
   it("event-open-doc call navigateToDocument", async () => {
     // Need to define at least one document in order FTLDocument component is instantiated
     wrapper.setData({ docs: [tv.DOCUMENT_PROPS] });

@@ -2,6 +2,7 @@
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
 
 from celery import shared_task
+from django.core.mail import send_mail
 
 from core.models import FTLDocument
 from core.processing.ftl_processing import FTLDocumentProcessing
@@ -23,3 +24,8 @@ def delete_document(ftl_doc_pid, org_id, user_id):
         doc.delete()
     except FTLDocument.DoesNotExist:
         pass
+
+
+@shared_task
+def send_email_async(*args, **kwargs):
+    send_mail(*args, **kwargs)
