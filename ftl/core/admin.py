@@ -39,7 +39,7 @@ class UserAdmin(BaseUserAdmin):
         ),
     )
     list_display = ("org", "email", "is_staff")
-    search_fields = ("email",)
+    search_fields = ("email__exact",)
     ordering = ("email",)
     raw_id_fields = ("org",)
 
@@ -79,7 +79,7 @@ class FTLDocumentAdmin(admin.ModelAdmin):
     inlines = [
         FTLDocumentSharingInline,
     ]
-    search_fields = ("pid",)
+    search_fields = ("pid__exact",)
     raw_id_fields = (
         "org",
         "ftl_user",
@@ -105,7 +105,7 @@ class FTLDocumentAdmin(admin.ModelAdmin):
 
 @admin.register(FTLDocumentSharing)
 class FTLDocumentSharingAdmin(admin.ModelAdmin):
-    search_fields = ("pid",)
+    search_fields = ("pid__exact",)
     raw_id_fields = ("ftl_doc",)
     readonly_fields = (
         "pid",
