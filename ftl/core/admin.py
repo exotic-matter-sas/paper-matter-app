@@ -6,6 +6,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.translation import gettext_lazy as _
 from django_otp.plugins.otp_static.models import StaticDevice
 from django_otp.plugins.otp_totp.models import TOTPDevice
+from oauth2_provider.models import AccessToken, RefreshToken, Grant
 
 from core.models import FTLOrg, FTLUser, FTLDocument, FTLDocumentSharing
 
@@ -14,7 +15,6 @@ from core.models import FTLOrg, FTLUser, FTLDocument, FTLDocumentSharing
 class UserAdmin(BaseUserAdmin):
     fieldsets = (
         (None, {"fields": ("org", "email", "password")}),
-        (_("Personal info"), {"fields": ("first_name", "last_name")}),
         (
             _("Permissions"),
             {
@@ -144,5 +144,9 @@ class FTLDocumentSharingAdmin(admin.ModelAdmin):
             return queryset.none(), False
 
 
+# Models below were removed because they weren't considered as useful or for privacy concern
 admin.site.unregister(TOTPDevice)
 admin.site.unregister(StaticDevice)
+admin.site.unregister(AccessToken)
+admin.site.unregister(Grant)
+admin.site.unregister(RefreshToken)
