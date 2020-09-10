@@ -7,17 +7,32 @@ from ftests.pages.base_page import BasePage
 from ftests.tools import test_values as tv
 
 
-class AdminHomePage(BasePage):
+class AdminPages(BasePage):
     url = "/admin/"
+    ftl_documents_url = "/admin/core/ftldocument/"
+    ftl_document_sharings_url = "/admin/core/ftldocumentsharing/"
+    ftl_users_url = "/admin/core/ftluser/"
 
     page_title = "h1"
+    model_list = 'tr[class^="model-"] th'
 
     submit_input = 'input[type="submit"].default'
 
+    # Generic list
+    admin_search_list_input = "#searchbar"
+    admin_search_list_submit = '#changelist-search [type="submit"]'
+    admin_results_list = "#result_list tbody tr"
+    admin_first_row_details_link = "#result_list tbody tr:first-child a"
+
+    # Generic details form
+    admin_details_from = 'form[action*="changelist"]'
+
+    # Create org
     create_org_link = ".model-ftlorg a.addlink"
     org_name_input = "#id_name"
     org_slug_input = "#id_slug"
 
+    # Create user
     create_user_link = ".model-ftluser a.addlink"
     org_id_input = "#id_org"
     user_email_input = "#id_email"
@@ -69,3 +84,7 @@ class AdminHomePage(BasePage):
             submit_input.click()
 
         return email
+
+    def search_admin_list(self, search_value):
+        self.get_elem(self.admin_search_list_input).send_keys(search_value)
+        self.get_elem(self.admin_search_list_submit).click()

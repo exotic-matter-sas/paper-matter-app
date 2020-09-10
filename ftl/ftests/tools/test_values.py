@@ -33,3 +33,7 @@ DOCUMENT2_CONTENT = "Document 2 content"
 FOLDER1_NAME = "Folder 1"
 FOLDER2_NAME = "Folder 2"
 FOLDER3_NAME = "Folder 3"
+
+
+DOCUMENT_SHARING_LINK_1_NOTE = "Document sharing link 1 note"
+DOCUMENT_SHARING_LINK_1_PASS = "dsl123"
