@@ -115,5 +115,9 @@ def setup_2fa_fido2_device(ftl_user, name="My security key", confirmed=True):
     return Fido2Device.objects.create(user=ftl_user, name=name, confirmed=confirmed)
 
 
-def setup_document_share(ftl_doc, expire_at=None):
-    return FTLDocumentSharing.objects.create(ftl_doc=ftl_doc, expire_at=expire_at)
+def setup_document_share(
+    ftl_doc, expire_at=None, password=None, note=tv.DOCUMENT_SHARING_LINK_1_NOTE
+):
+    return FTLDocumentSharing.objects.create(
+        ftl_doc=ftl_doc, expire_at=expire_at, password=password, note=note
+    )

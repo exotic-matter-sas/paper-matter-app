@@ -17,7 +17,7 @@ from core.processing.ftl_processing import FTLDocumentProcessing
 from core.tasks import apply_ftl_processing
 from ftests.pages.account_pages import AccountPages
 from ftests.pages.base_page import NODE_SERVER_RUNNING
-from ftests.pages.django_admin_home_page import AdminHomePage
+from ftests.pages.django_admin_pages import AdminPages
 from ftests.pages.document_viewer_modal import DocumentViewerModal
 from ftests.pages.home_page import HomePage
 from ftests.pages.move_documents_modal import MoveDocumentsModal
@@ -84,7 +84,7 @@ class InitialSetupTest(SetupPages, SignupPages, LoginPage, HomePage):
         self.assertIn(email, self.get_elem(self.profile_name).text)
 
 
-class SecondOrgSetup(AdminHomePage, SignupPages, LoginPage, HomePage):
+class SecondOrgSetup(AdminPages, SignupPages, LoginPage, HomePage):
     @skipIf(
         settings.DEV_MODE and not NODE_SERVER_RUNNING,
         "Node not running, this test can't be run",
@@ -448,7 +448,7 @@ class UserSetupAll2FA(LoginPage, AccountPages):
             self.get_elem(self.delete_warning)
 
 
-class AccountDeletion(LoginPage, AccountPages, AdminHomePage):
+class AccountDeletion(LoginPage, AccountPages, AdminPages):
     def setUp(self, **kwargs):
         # orgs, admin, users are already created
         super().setUp()

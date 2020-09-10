@@ -196,7 +196,7 @@ class FTLDocument(models.Model):
         ]
 
     def __str__(self):
-        return self.title
+        return str(self.pid)
 
     def mark_delete(self, async_delete=True, *args, **kwargs):
         self.deleted = True
@@ -317,7 +317,7 @@ class FTLDocumentSharing(models.Model):
         self.password = make_password(raw_password)
 
     def __str__(self):
-        return f"{self.pid} - {self.ftl_doc.title}"
+        return str(self.pid)
 
     class Meta:
         ordering = ["-created"]
