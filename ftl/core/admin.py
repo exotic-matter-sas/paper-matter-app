@@ -46,7 +46,9 @@ class UserAdmin(BaseUserAdmin):
     def get_search_results(self, request, queryset, search_term):
         # Return empty search result when search is empty instead of returning all objects
         if "q" in request.GET and request.GET["q"].strip():
-            queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+            queryset, use_distinct = super().get_search_results(
+                request, queryset, search_term
+            )
             return queryset, use_distinct
         else:
             return queryset.none(), False
@@ -113,7 +115,9 @@ class FTLDocumentAdmin(admin.ModelAdmin):
     def get_search_results(self, request, queryset, search_term):
         # Return empty search result when search is empty instead of returning all objects
         if "q" in request.GET and request.GET["q"].strip():
-            queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+            queryset, use_distinct = super().get_search_results(
+                request, queryset, search_term
+            )
             return queryset, use_distinct
         else:
             return queryset.none(), False
@@ -138,7 +142,9 @@ class FTLDocumentSharingAdmin(admin.ModelAdmin):
     def get_search_results(self, request, queryset, search_term):
         # Return empty search result when search is empty instead of returning all objects
         if "q" in request.GET and request.GET["q"].strip():
-            queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+            queryset, use_distinct = super().get_search_results(
+                request, queryset, search_term
+            )
             return queryset, use_distinct
         else:
             return queryset.none(), False

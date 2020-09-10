@@ -16,7 +16,8 @@ from ftests.tools.setup_helpers import (
     setup_user,
     setup_document,
     setup_temporary_file,
-    setup_document_share)
+    setup_document_share,
+)
 
 
 class AdminPreserveUserPrivacy(LoginPage, AdminPages):
@@ -40,47 +41,42 @@ class AdminPreserveUserPrivacy(LoginPage, AdminPages):
             self.admin_org, ftl_user=self.admin, binary=setup_temporary_file().name
         )
         self.admin_resources["doc2"] = setup_document(
-            self.admin_org,
-            ftl_user=self.admin,
-            binary=setup_temporary_file().name,
+            self.admin_org, ftl_user=self.admin, binary=setup_temporary_file().name,
         )
         self.admin_resources["doc3"] = setup_document(
-            self.admin_org,
-            ftl_user=self.admin,
-            binary=setup_temporary_file().name,
+            self.admin_org, ftl_user=self.admin, binary=setup_temporary_file().name,
         )
-        self.admin_resources["share_links"] = [setup_document_share(self.admin_resources["doc3"])]
+        self.admin_resources["share_links"] = [
+            setup_document_share(self.admin_resources["doc3"])
+        ]
 
         self.user1_resources = {}
         self.user1_resources["doc1"] = setup_document(
             self.user1_org, ftl_user=self.user1, binary=setup_temporary_file().name
         )
         self.user1_resources["doc2"] = setup_document(
-            self.user1_org,
-            ftl_user=self.user1,
-            binary=setup_temporary_file().name,
+            self.user1_org, ftl_user=self.user1, binary=setup_temporary_file().name,
         )
         self.user1_resources["doc3"] = setup_document(
-            self.user1_org,
-            ftl_user=self.user1,
-            binary=setup_temporary_file().name,
+            self.user1_org, ftl_user=self.user1, binary=setup_temporary_file().name,
         )
-        self.user1_resources["share_links"] = [setup_document_share(self.user1_resources["doc2"])]
+        self.user1_resources["share_links"] = [
+            setup_document_share(self.user1_resources["doc2"])
+        ]
 
         self.user2_resources = {}
         self.user2_resources["doc1"] = setup_document(
             self.user2_org, ftl_user=self.user2
         )
         self.user2_resources["doc2"] = setup_document(
-            self.user2_org,
-            ftl_user=self.user2,
+            self.user2_org, ftl_user=self.user2,
         )
         self.user2_resources["doc3"] = setup_document(
-            self.user2_org,
-            ftl_user=self.user2,
+            self.user2_org, ftl_user=self.user2,
         )
-        self.user2_resources["share_links"] = [setup_document_share(self.user2_resources["doc1"])]
-
+        self.user2_resources["share_links"] = [
+            setup_document_share(self.user2_resources["doc1"])
+        ]
 
     @skipIf(
         settings.DEV_MODE and not NODE_SERVER_RUNNING,
@@ -106,7 +102,7 @@ class AdminPreserveUserPrivacy(LoginPage, AdminPages):
             "deleted",
             "ocrized",
             "ocr_retry",
-            "type"
+            "type",
         ]
         user_non_personal_data = [
             "org",
@@ -116,14 +112,14 @@ class AdminPreserveUserPrivacy(LoginPage, AdminPages):
             "is_superuser",
             "is_staff",
             "is_active",
-            "date_joined"
+            "date_joined",
         ]
         document_sharing_non_personal_data = [
             "pid",
             "created",
             "edited",
             "expire_at",
-            "password"  # not yet implemented, but may be required in case of abuse report to check legality of document
+            "password",  # not yet implemented, but may be required in case of abuse report to check legality of document
         ]
 
         # Admin user log into admin portal
