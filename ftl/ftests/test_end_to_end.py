@@ -573,12 +573,12 @@ class AccountDeletion(LoginPage, AccountPages, AdminPages):
 
         # Faking the hourly /etc/cron.hourly/batch-delete-documents CRON call
         self.client.get(
-            f"/crons/{settings.CRON_SECRET_KEY}/batch-delete-documents",
+            f"/crons_core/{settings.CRON_SECRET_KEY}/batch_delete_documents",
             HTTP_X_APPENGINE_CRON="true",
         )
         # Faking the daily CRON /etc/cron.daily/batch-delete-orgs
         self.client.get(
-            f"/crons-account/{settings.CRON_SECRET_KEY}/batch-delete-orgs",
+            f"/crons_account/{settings.CRON_SECRET_KEY}/batch_delete_orgs",
             HTTP_X_APPENGINE_CRON="true",
         )
 
@@ -631,12 +631,12 @@ class AccountDeletion(LoginPage, AccountPages, AdminPages):
 
         # Faking the hourly /etc/cron.hourly/batch-delete-documents CRON call
         self.client.get(
-            f"/crons/{settings.CRON_SECRET_KEY}/batch-delete-documents",
+            f"/crons_core/{settings.CRON_SECRET_KEY}/batch_delete_documents",
             HTTP_X_APPENGINE_CRON="true",
         )
         # Faking the daily CRON /etc/cron.daily/batch-delete-orgs
         self.client.get(
-            f"/crons-account/{settings.CRON_SECRET_KEY}/batch-delete-orgs",
+            f"/crons_account/{settings.CRON_SECRET_KEY}/batch_delete_orgs",
             HTTP_X_APPENGINE_CRON="true",
         )
 

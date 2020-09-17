@@ -51,7 +51,7 @@ class CronTests(APITestCase):
         ftl_document.save()
 
         client_get = self.client.get(
-            f"/crons/{CRON_SECRET_KEY}/batch-delete-documents",
+            f"/crons_core/{CRON_SECRET_KEY}/batch_delete_documents",
             HTTP_X_APPENGINE_CRON="true",
         )
         self.assertEqual(client_get.status_code, status.HTTP_204_NO_CONTENT)

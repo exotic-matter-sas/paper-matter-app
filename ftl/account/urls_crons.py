@@ -6,7 +6,7 @@ from account import views_crons
 
 urlpatterns = [
     path(
-        "batch-delete-orgs",
+        "batch_delete_orgs",
         views_crons.BatchDeleteOrg.as_view(),
         name="cron-batch-delete-org",
     ),

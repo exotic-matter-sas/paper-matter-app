@@ -6,12 +6,12 @@ from core import views_crons
 
 urlpatterns = [
     path(
-        "batch-delete-documents",
+        "batch_delete_documents",
         views_crons.BatchDeleteDocument.as_view(),
         name="cron-batch-delete-documents",
     ),
     path(
-        "batch-clean-oauth-tokens",
+        "batch_clean_oauth_tokens",
         views_crons.BatchCleanOauthTokens.as_view(),
         name="cron-batch-clean-oauth-tokens",
     ),
