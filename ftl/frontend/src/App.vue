@@ -11,6 +11,8 @@
   </div>
 </template>
 
+<!--i18n can't be defined here (it will break i18n defined in other components)-->
+
 <script>
 import FTLHeader from "@/components/FTLHeader";
 import FTLFooter from "@/components/FTLFooter";
