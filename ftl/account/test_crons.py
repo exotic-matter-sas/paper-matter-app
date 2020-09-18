@@ -25,7 +25,7 @@ class CronAccountTests(APITestCase):
         self.org.save()
 
         client_get = self.client.get(
-            f"/crons-account/{CRON_SECRET_KEY}/batch-delete-orgs",
+            f"/crons_account/{CRON_SECRET_KEY}/batch_delete_orgs",
             HTTP_X_APPENGINE_CRON="true",
         )
         self.assertEqual(client_get.status_code, status.HTTP_204_NO_CONTENT)
@@ -44,7 +44,7 @@ class CronAccountTests(APITestCase):
         self.org.save()
 
         client_get = self.client.get(
-            f"/crons-account/{CRON_SECRET_KEY}/batch-delete-orgs",
+            f"/crons_account/{CRON_SECRET_KEY}/batch_delete_orgs",
             HTTP_X_APPENGINE_CRON="true",
         )
         self.assertEqual(client_get.status_code, status.HTTP_204_NO_CONTENT)
