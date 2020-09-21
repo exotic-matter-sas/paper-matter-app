@@ -126,11 +126,11 @@ Run tests with coverage report
 
 1 - Add missing keys to translate into .po files (or add a new language):
 
-     python manage.py makemessages -l fr --ignore=requirements*.txt,__init__.py,ftest/*
+     python manage.py makemessages --no-location -l fr --ignore=requirements*.txt,__init__.py,ftest/*
 
 2 - Update existing translations in .po files:
 
-     python manage.py makemessages --all
+     python manage.py makemessages --no-location --all
 
 3 - Update/complete translations in .po files
   

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-27 11:35+0000\n"
+"POT-Creation-Date: 2020-09-18 14:38+0200\n"
 "PO-Revision-Date: 2019-03-05 17:05+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,31 +18,24 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.0.6\n"
 
-#: setup/forms.py:13
 msgid "Organization name"
 msgstr "Nom de l'organisation"
 
-#: setup/forms.py:34
 msgid "Organization already exists"
 msgstr "L'organisation existe déjà"
 
-#: setup/templates/setup/first_org_and_admin_creation_form.html:5
 msgid "Create first organization and administrator"
 msgstr "Créez la première organisation et l'administrateur"
 
-#: setup/templates/setup/first_org_and_admin_creation_form.html:9
 msgid "Welcome to your Paper Matter instance!"
 msgstr "Bienvenue sur votre instance Paper Matter !"
 
-#: setup/templates/setup/first_org_and_admin_creation_form.html:11
 msgid "Some concepts to get started:"
 msgstr "Quelques notions pour bien débuter :"
 
-#: setup/templates/setup/first_org_and_admin_creation_form.html:12
 msgid "Administrator > Instance > Organization > User"
 msgstr "Administrateur > Instance > Organisation > Utilisateur"
 
-#: setup/templates/setup/first_org_and_admin_creation_form.html:14
 msgid ""
 "The <b>administrator</b> can administrate the whole instance via the Admin "
 "portal"
@@ -50,7 +43,6 @@ msgstr ""
 "L'<b>administrateur</b> peut administrer l'instance entière à partir du "
 "portail admin"
 
-#: setup/templates/setup/first_org_and_admin_creation_form.html:15
 msgid ""
 "This <b>instance</b> can host multiple <b>organizations</b>, each "
 "<b>organization</b> can have multiple <b>users</b>."
@@ -58,14 +50,12 @@ msgstr ""
 "Cette <b>instance</b> peut héberger plusieures <b>organisations</b>, chaque "
 "<b>organisation</b> peut avoir plusieurs <b>utilisateurs</b>."
 
-#: setup/templates/setup/first_org_and_admin_creation_form.html:16
 msgid ""
 "A <b>user</b> can only access data and documents of its <b>organization</b>."
 msgstr ""
 "Un <b>utilisateur</b> peut seulement accéder aux données et documents de son "
 "<b>organisation</b>."
 
-#: setup/templates/setup/first_org_and_admin_creation_form.html:17
 msgid ""
 "Finally, the <b>administrator</b> is an <b>user</b> of the first "
 "<b>organization</b>."
@@ -73,24 +63,19 @@ msgstr ""
 "Enfin, l'<b>administrateur</b> est un <b>utilisateur</b> de la première "
 "<b>organisation</b>."
 
-#: setup/templates/setup/first_org_and_admin_creation_form.html:21
 msgid "Create the first organization of your instance and its administrator:"
 msgstr ""
 "Créez la première organisation de votre instance et son administrateur :"
 
-#: setup/templates/setup/first_org_and_admin_creation_form.html:24
 msgid "Finish"
 msgstr "Terminer"
 
-#: setup/templates/setup/success.html:5
 msgid "Setup completed"
 msgstr "Configuration terminée"
 
-#: setup/templates/setup/success.html:8
 msgid "Congratulations!"
 msgstr "Félicitations !"
 
-#: setup/templates/setup/success.html:9
 #, python-format
 msgid ""
 "<span class=\"highlight\">%(org_name)s</span> organization was created along "
@@ -99,22 +84,17 @@ msgstr ""
 "L'organisation <span class=\"highlight\">%(org_name)s</span> ainsi que "
 "l'administrateur ont été créé."
 
-#: setup/templates/setup/success.html:10
 msgid "You can now:"
 msgstr "Vous pouvez maintenant :"
 
-#: setup/templates/setup/success.html:17
 msgid "Connect to admin pannel here:"
 msgstr "Vous connecter à l'interface d'administration ici :"
 
-#: setup/templates/setup/success.html:19
 msgid "admin login page"
 msgstr "page de connexion pour les administrateurs"
 
-#: setup/templates/setup/success.html:22
 msgid "Connect as a user to first organization here:"
 msgstr "Connectez-vous à la première organisation en tant qu'utilisateur :"
 
-#: setup/templates/setup/success.html:24
 msgid "user login page"
 msgstr "page de connexion"
