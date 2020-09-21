@@ -1,4 +1,4 @@
-FROM node:10.15.3-alpine AS frontdependencies
+FROM node:lts-alpine AS frontdependencies
 ADD /ftl/frontend/package*.json /app/
 WORKDIR /app
 RUN npm ci
@@ -12,7 +12,7 @@ RUN npm run build
 
 
 
-FROM python:3.7.4-slim
+FROM python:3.7-slim
 
 # Configure the listening PORT for the web frontend server (used by uwsgi)
 ENV PORT 8000
