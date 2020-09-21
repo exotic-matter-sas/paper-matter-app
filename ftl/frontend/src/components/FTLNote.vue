@@ -16,6 +16,38 @@
       >
         <font-awesome-icon icon="edit" :title="$t('Edit note')" />
       </b-button>
+
+      <span v-if="editing" class="d-inline d-xl-none">
+        <b-button
+          class="float-right"
+          id="save-note"
+          variant="primary"
+          size="sm"
+          :disabled="doc.note === text"
+          @click.prevent="updateNote"
+        >
+          {{ $t("Save") }}
+        </b-button>
+        <b-button
+          class="float-right"
+          variant="link"
+          size="sm"
+          :disabled="editing === false"
+          @click.prevent="cancelUpdate"
+        >
+          {{ $t("Cancel") }}
+        </b-button>
+      </span>
+      <span v-else>
+        <b-button
+          class="float-right d-inline d-xl-none"
+          variant="secondary"
+          size="sm"
+          @click.prevent="$emit('event-close-note')"
+        >
+          {{ $t("Close note") }}
+        </b-button>
+      </span>
     </b-col>
 
     <b-col v-if="editing" id="note-form">
@@ -41,7 +73,7 @@
       </b-row>
       <b-row id="note-toolbar" class="mt-2" align-v="center">
         <b-col>
-          <div id="note-tip">
+          <div id="note-tip" class="d-none d-xl-block">
             <a
               v-if="doc.note === text"
               class="text-muted"
@@ -61,7 +93,7 @@
             </span>
           </div>
         </b-col>
-        <b-col class="text-right">
+        <b-col class="text-right d-none d-xl-block">
           <b-button
             variant="link"
             size="sm"
@@ -184,7 +216,7 @@ export default {
 
 #note {
   overflow: auto;
-  max-height: 50vh;
+  max-height: 200px;
 }
 
 #note-tip {
@@ -193,5 +225,10 @@ export default {
 
 #note-form {
   animation: slide-down 0.2s linear;
+
+  textarea, #note-preview {
+    max-height: 200px;
+    overflow-y: scroll;
+  }
 }
 </style>

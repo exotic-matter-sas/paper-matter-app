@@ -68,7 +68,7 @@
               <small>{{ doc.ext }}</small>
             </h4>
           </div>
-          <font-awesome-icon v-show="rename" class="ml-auto" icon="edit" />
+          <font-awesome-icon v-show="rename" class="ml-auto" icon="pen" />
           <b-button
             v-show="!rename"
             class="ml-auto download-button"

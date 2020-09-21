@@ -7,6 +7,7 @@
   <!-- Pdf viewer popup -->
   <b-modal
     id="document-viewer"
+    class="px-0"
     hide-footer
     centered
     @hidden="closeDocument"
@@ -17,7 +18,7 @@
         <h5 class="modal-title">
           <b-link
             id="document-parent-folder"
-            class="float-left"
+            class="float-left d-none d-md-block"
             :to="parent_folder.to"
             :title="path.map((v) => v.text).join('/')"
           >
@@ -25,7 +26,7 @@
             <font-awesome-icon icon="folder-open" class="d-none" />
             {{ parent_folder.text }}
           </b-link>
-          <div id="document-title-separator" class="float-left">
+          <div id="document-title-separator" class="float-left  d-none d-md-block">
             /
           </div>
           <div
@@ -42,7 +43,7 @@
             v-b-modal="'modal-rename-document-dp'"
             variant="link"
           >
-            <font-awesome-icon icon="edit" :title="$t('Rename document')" />
+            <font-awesome-icon size="sm" icon="pen" :title="$t('Rename document')" />
           </b-button>
         </h5>
 
@@ -54,25 +55,82 @@
         >
           ×
         </button>
+
+        <b-dropdown id="documents-actions-small"
+                    class="float-right d-xl-none"
+                    variant="primary"
+                    :text="$t('Actions')"
+                    right>
+          <b-dropdown-item :href="currentOpenDoc.download_url" target="_blank">
+            <font-awesome-icon
+              :icon="getDownloadIcon"
+            />
+            <span>{{ $t("Download") }}</span>
+          </b-dropdown-item>
+          <b-dropdown-item :href="currentOpenDoc.download_url + `/doc`" target="_blank">
+            <font-awesome-icon
+              icon="external-link-alt"
+            />
+            <span>{{ $t("Open") }}</span>
+          </b-dropdown-item>
+          <b-dropdown-item>
+            <font-awesome-icon
+              icon="print"
+            />
+            <span>{{ $t("Print") }}</span>
+          </b-dropdown-item>
+          <b-dropdown-divider></b-dropdown-divider>
+          <b-dropdown-item link-class="text-primary" v-b-modal="'modal-document-sharing-dp'">
+            <font-awesome-icon
+              icon="share"
+            />
+            <span v-if="currentOpenDoc.is_shared">{{ $t("Get share link") }}</span>
+            <span v-else>{{ $t("Share") }}</span>
+          </b-dropdown-item>
+          <b-dropdown-item link-class="text-primary" @click.prevent="noteToggled = true">
+            <font-awesome-icon
+              icon="edit"
+            />
+            <span v-if="currentOpenDoc.note === ''">{{ $t("Add note") }}</span>
+            <span v-else>{{ $t("Show note") }}</span>
+          </b-dropdown-item>
+          <b-dropdown-item link-class="text-primary" v-b-modal="'modal-move-document-dp'">
+            <font-awesome-icon
+              icon="arrow-right"
+            />
+            <span>{{ $t("Move") }}</span>
+          </b-dropdown-item>
+          <b-dropdown-item class="d-block d-md-none" link-class="text-primary" :to="parent_folder.to">
+            <font-awesome-icon
+              icon="folder-open"
+            />
+            <span>{{ $t("Open location") }}</span>
+          </b-dropdown-item>
+          <b-dropdown-divider></b-dropdown-divider>
+          <b-dropdown-item link-class="text-danger" v-b-modal="'modal-delete-document-dp'">
+            <font-awesome-icon
+              icon="trash"
+            />
+            <span>{{ $t("Delete") }}</span>
+          </b-dropdown-item>
+        </b-dropdown>
       </b-container>
     </template>
-    <b-container class="h-100" fluid>
-      <b-row class="h-100">
+    <b-container id="document-viewer-body" class="h-100 px-0" fluid>
+      <b-row class="h-100" no-gutters>
         <b-col
-          md="8"
           v-if="currentOpenDoc.type === 'application/pdf' && !isIOS"
         >
-          <div class="h-100 embed-responsive doc-pdf" id="pdfviewer">
+          <b-row class="h-100" no-gutters id="pdfviewer">
             <iframe
+              class="col border-0"
               v-if="viewerPdfJsUrl"
-              class="embed-responsive-item"
               :src="viewerPdfJsUrl"
             >
             </iframe>
-          </div>
+          </b-row>
         </b-col>
         <b-col
-          md="6"
           v-else
           id="viewer-disabled"
           class="d-flex align-items-center"
@@ -94,56 +152,86 @@
             </b-col>
           </b-row>
         </b-col>
-        <b-col>
-          <b-row>
-            <b-col class="mb-1">
-              <b-button
-                id="open-document"
-                class="mx-1 mb-1"
-                variant="primary"
-                :href="currentOpenDoc.download_url + `/doc`"
-                target="_blank"
-                :title="$t('Open document in a new tab')"
+        <b-col xl="3" class="d-none d-xl-block" :class="{'mobile-note-toggled': noteToggled}">
+          <b-row id="documents-actions-big" class="px-3 d-none d-xl-block">
+            <b-col class="pt-3 px-3">
+              <b-dropdown
+                id="download-document"
+                class="mr-1 mb-1"
+                right
+                split
+                :split-href="currentOpenDoc.download_url"
               >
-                {{ $t("Open document") }}
-                <font-awesome-icon icon="external-link-alt" size="sm" />
-              </b-button>
-              <b-button
-                id="move-document"
-                class="mx-1 mb-1"
-                variant="secondary"
-                v-b-modal="'modal-move-document-dp'"
-              >
-                {{ $t("Move") }}
-              </b-button>
-              <b-button
-                id="delete-document"
-                class="mx-1 mb-1"
-                variant="danger"
-                v-b-modal="'modal-delete-document-dp'"
-              >
-                {{ $t("Delete") }}
-              </b-button>
+                <template v-slot:button-content>
+                  <font-awesome-icon
+                    :icon="getDownloadIcon"
+                  />
+                  {{ $t('Download document') }}
+                </template>
+                <b-dropdown-item :href="currentOpenDoc.download_url + `/doc`" target="_blank">
+                  <font-awesome-icon
+                    icon="external-link-alt"
+                  />
+                  <span>{{ $t("Open") }}</span>
+                </b-dropdown-item>
+                <b-dropdown-item>
+                  <font-awesome-icon
+                    icon="print"
+                  />
+                  <span>{{ $t("Print") }}</span>
+                </b-dropdown-item>
+              </b-dropdown>
+
+              <hr class="border-0 mt-0 mb-1">
+
               <b-button
                 id="share-document"
-                class="mx-1 mb-1"
-                variant="success"
+                class="mr-1 mb-1"
+                variant="primary"
                 v-b-modal="'modal-document-sharing-dp'"
               >
-                <span v-if="currentOpenDoc.is_shared">{{
-                  $t("Get share link")
-                }}</span>
-                <span v-else>{{ $t("Share") }}</span>
+                <font-awesome-icon
+                  icon="share"
+                />
+                {{ currentOpenDoc.is_shared ? $t("Get share link") : $t("Share") }}
               </b-button>
+
+              <b-button
+                id="move-document"
+                class="mr-1 mb-1"
+                variant="primary"
+                v-b-modal="'modal-move-document-dp'"
+              >
+                <font-awesome-icon
+                  icon="arrow-right"
+                />
+                {{ $t("Move") }}
+              </b-button>
+
+              <hr class="border-0 mt-0 mb-1">
+
+              <b-button
+                id="delete-document"
+                class="mr-1 mb-1"
+                variant="outline-danger"
+                v-b-modal="'modal-delete-document-dp'"
+              >
+                <font-awesome-icon
+                  icon="trash"
+                />
+                {{ $t("Delete") }}
+              </b-button>
+
+              <hr/>
             </b-col>
           </b-row>
-          <b-row>
-            <b-col>
-              <hr />
+          <b-row class="px-3">
+            <b-col class="px-3 py-2 py-xl-0">
               <FTLNote
                 v-if="currentOpenDoc.pid"
                 :doc="currentOpenDoc"
                 @event-document-note-edited="documentNoteUpdated"
+                @event-close-note="noteToggled = false"
               />
             </b-col>
           </b-row>
@@ -232,6 +320,21 @@ export default {
       currentOpenDoc: { path: [] },
       publicPath: process.env.BASE_URL,
       viewerPdfJsUrl: "",
+      icons: {
+        "application/pdf": "file-pdf",
+        "text/plain": "file-alt",
+        "application/rtf": "file-alt",
+        "application/msword": "file-word",
+        "application/vnd.ms-excel": "file-excel",
+        "application/vnd.ms-powerpoint": "file-powerpoint",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+          "file-word",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+          "file-excel",
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+          "file-powerpoint",
+      },
+      noteToggled: false
     };
   },
 
@@ -240,6 +343,13 @@ export default {
   },
 
   computed: {
+    getDownloadIcon: function () {
+      if (this.currentOpenDoc.type in this.icons) {
+        return this.icons[this.currentOpenDoc.type];
+      } else {
+        return "file";
+      }
+    },
     isIOS: function () {
       return /iphone|ipad|ipod/i.test(window.navigator.userAgent.toLowerCase());
     },
@@ -343,79 +453,129 @@ export default {
 // Don't use `scoped` because scoped doesn't apply to bootstrap-vue sub-components
 $document-viewer-padding: 2em;
 
-#document-viewer {
-  .container {
-    max-width: none;
-  }
-
-  .modal-dialog {
-    width: 100vw;
-    height: 100vh;
-    max-width: none;
-    margin: 0;
-  }
-
-  .fa-folder {
-    width: 1.125em;
-  }
-
-  #document-parent-folder,
-  #document-title-separator,
-  #document-title,
-  #rename-document {
-    display: block;
-    padding: 1rem;
-    margin: -1rem -1rem -1rem auto;
-  }
-
-  #document-parent-folder {
-    max-width: 25%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    padding-left: 0;
-
-    &:hover {
-      .fa-folder {
-        display: none !important;
-      }
-
-      .fa-folder-open {
-        display: inline-block !important;
-      }
-    }
-  }
-
-  #document-title-separator {
-    padding: 1rem 0.5rem;
-  }
-
-  #document-title {
-    max-width: 65%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  #rename-document {
-    font-size: 1.25rem;
-    line-height: 1.5;
-    border: 0;
-    padding-left: 0.5rem;
-  }
-
-  .close {
-    line-height: 1.25;
-  }
+#document-viewer .modal-dialog {
+  width: 100vw;
+  height: 100vh;
+  max-width: none;
+  margin: 0;
 
   .modal-content {
     height: 100vh;
+
+    .container {
+      max-width: none;
+    }
+
+    .modal-header {
+      padding-left: 0;
+      padding-right: 0;
+
+      .fa-folder {
+        width: 1.125em;
+      }
+
+      #document-parent-folder,
+      #document-title-separator,
+      #document-title,
+      #rename-document,
+      .close {
+        display: block;
+        padding: 1.25rem;
+        margin: -1rem -1rem -1rem auto;
+      }
+
+      #document-parent-folder {
+        max-width: 25%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding-left: 0;
+
+        &:hover {
+          .fa-folder {
+            display: none !important;
+          }
+
+          .fa-folder-open {
+            display: inline-block !important;
+          }
+        }
+      }
+
+      #document-title-separator {
+        padding: 1.25rem 0.5rem;
+      }
+
+      #document-title {
+        max-width: 65%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      #rename-document {
+        font-size: 1.25rem;
+        line-height: 1.5;
+        border: 0;
+        padding-left: 0.5rem;
+      }
+
+      .close {
+        line-height: 1.25;
+      }
+    }
+
+    .modal-body {
+      padding: 0;
+
+      #viewer-disabled {
+        background-color: rgba(0, 0, 0, 0.06);
+        text-align: center;
+        user-select: none;
+      }
+
+      #documents-actions-big hr:last-child {
+        margin: 0.75rem 0 0.75rem 0;
+      }
+
+      .mobile-note-toggled {
+        border-top: 1px solid #dee2e6;
+        display: block !important;
+        overflow-y: auto;
+        overflow-x: hidden;
+        animation: slide-up 0.1s linear;
+      }
+    }
+
+    #document-viewer-body .row{
+      flex-direction: column;
+    }
+
+    #documents-actions-small a, #documents-actions-big a {
+      padding-left:1rem;
+
+      &:active {
+        color: white !important;
+
+        &.text-primary{
+          background: map_get($theme-colors, "primary");
+        }
+        &.text-danger{
+          background: map_get($theme-colors, "danger");
+        }
+      }
+
+      span {
+        position:absolute;
+        left: 0;
+        margin-left:3rem;
+      }
+
+    }
   }
 
-  #viewer-disabled {
-    background-color: rgba(0, 0, 0, 0.06);
-    text-align: center;
-    user-select: none;
+  #document-viewer #document-viewer-body .row{
+    flex-direction: row;
   }
 }
 
@@ -426,8 +586,14 @@ $document-viewer-padding: 2em;
     }
 
     .modal-content {
-      height: calc(100vh - (#{$document-viewer-padding} * 2));
+      height: calc(100vh - (#{$document-viewer-padding} * 2)) !important;
     }
+  }
+}
+
+@include media-breakpoint-up(xl) {
+  #document-viewer #document-viewer-body .row{
+    flex-direction: row !important;
   }
 }
 </style>
