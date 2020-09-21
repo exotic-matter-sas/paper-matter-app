@@ -6,7 +6,7 @@
 <template>
   <b-modal
     :id="modalId"
-    :title="$t('Delete documents')"
+    :title="$tc('|Delete document|Delete documents', docs.length)"
     ok-variant="danger"
     :ok-title="$t('Delete')"
     :cancel-title="$t('Cancel')"
@@ -24,7 +24,7 @@
 
 <i18n>
   fr:
-    Delete documents: Supprimer les documents
+    "|Delete document|Delete documents": "|Supprimer le document|Supprimer les documents"
     Please confirm that you want to delete {0} documents?: Êtes-vous sûr de vouloir supprimer {0} documents ?
     Please confirm that you want to delete "{0}".: Veuillez confirmer la suppression de « {0} ».
     "| One document deleted successfully | {n} documents deleted successfully": "| Un document supprimé | {n} documents supprimés"
