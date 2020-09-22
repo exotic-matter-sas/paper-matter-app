@@ -58,7 +58,7 @@
               <b-form-textarea
                 id="note-textarea"
                 v-model="text"
-                :placeholder="$t('Example note')"
+                :placeholder="$t('Enter your note')"
                 max-rows="10"
               >
               </b-form-textarea>
@@ -130,13 +130,14 @@
     Note: Note
     Edit note: Éditer note
     Edition: Édition
-    Example note: Note d'exemple
+    Enter your note: Saisissez votre note
     Preview: Prévisualisation
     Markdown syntax supported: Syntaxe Markdown supportée
     supported: supportée
     unsaved note: note non sauvegardée
     No note set: Aucune note définie
     Could not save note: La note n'a pu être sauvegardée
+    Close note: Fermer la note
 </i18n>
 
 <script>
@@ -160,6 +161,13 @@ export default {
       editing: false,
       text: this.doc.note,
     };
+  },
+
+  mounted() {
+    // Auto switch to edit mode if no note is define
+    if (this.doc.note === "") {
+      this.editing = true
+    }
   },
 
   computed: {
