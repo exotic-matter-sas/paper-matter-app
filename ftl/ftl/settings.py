@@ -354,6 +354,11 @@ FTL_SUFFIX_DELETED_ORG = "-disabled"  # No need to change this
 Redis URL for Celery broker
 """
 CELERY_BROKER_URL = "redis://localhost:6379"
+CELERY_TASK_ROUTES = {
+    "core.tasks.apply_ftl_processing": {"queue": "ftl_processing"},
+    "core.tasks.delete_document": {"queue": "med"},
+    "core.tasks.send_email_async": {"queue": "med"},
+}
 
 
 """
