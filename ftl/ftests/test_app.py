@@ -1082,11 +1082,11 @@ class DocumentViewerModalTests(
         "attachment."
         "\nRef: https://bugzilla.mozilla.org/show_bug.cgi?id=453455"
         "\nPossible workaround: https://bugzilla.mozilla.org/show_bug.cgi?id=453455#c150",
-        )
+    )
     @skipIf(
         settings.DEV_MODE and not NODE_SERVER_RUNNING,
         "Node not running, this test can't be run",
-        )
+    )
     def test_download_document(self):
         # User has already added a document
         document_name = "doc_name1"
