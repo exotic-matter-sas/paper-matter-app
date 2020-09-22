@@ -26,12 +26,12 @@
             <font-awesome-icon icon="folder-open" class="d-none" />
             {{ parent_folder.text }}
           </b-link>
-          <div id="document-title-separator" class="float-left  d-none d-md-block">
+          <div id="document-title-separator" class="float-left d-none d-md-block">
             /
           </div>
           <div
             id="document-title"
-            class="float-left"
+            class="float-left pl-0"
             :title="currentOpenDoc.title + currentOpenDoc.ext"
           >
             <span>{{ currentOpenDoc.title }}</span>
@@ -72,12 +72,6 @@
               icon="external-link-alt"
             />
             <span>{{ $t("Open") }}</span>
-          </b-dropdown-item>
-          <b-dropdown-item>
-            <font-awesome-icon
-              icon="print"
-            />
-            <span>{{ $t("Print") }}</span>
           </b-dropdown-item>
           <b-dropdown-divider></b-dropdown-divider>
           <b-dropdown-item link-class="text-primary" v-b-modal="'modal-document-sharing-dp'">
@@ -166,19 +160,13 @@
                   <font-awesome-icon
                     :icon="getDownloadIcon"
                   />
-                  {{ $t('Download document') }}
+                  {{ $t('Download') }}
                 </template>
                 <b-dropdown-item :href="currentOpenDoc.download_url + `/doc`" target="_blank">
                   <font-awesome-icon
                     icon="external-link-alt"
                   />
                   <span>{{ $t("Open") }}</span>
-                </b-dropdown-item>
-                <b-dropdown-item>
-                  <font-awesome-icon
-                    icon="print"
-                  />
-                  <span>{{ $t("Print") }}</span>
                 </b-dropdown-item>
               </b-dropdown>
 
@@ -268,18 +256,25 @@
 
 <i18n>
   fr:
-    Click to rename document: Cliquez pour renommer
+    Rename document: Renommer le document
     Viewer not available on this device, open the document instead.: Visualisateur indisponible pour cet appareil,
       ouvrez le document à la place.
     Viewer not available for this document type, open the document instead.: Visualisateur indisponible pour ce type de
       document, ouvrez le document à la place.
-    Open document: Ouvrir le document
+    Open: Ouvrir
+    Print: Imprimer
     Open document in a new tab: Ouvrir le document dans un nouvel onglet
     Thumbnail updated: Miniature mis à jour
     Unable to create thumbnail: Erreur lors de la génération de la miniature
     Unable to show document: Erreur lors de l'affichage du document
     Get share link: Obtenir le lien de partage
+    Download: Télécharger
     Share: Partager
+    Move: Déplacer
+    Delete: Supprimer
+    Show note: Voir la note
+    Add note: Annoter
+    Open location: Dossier parent
 </i18n>
 
 <script>
@@ -503,7 +498,7 @@ $document-viewer-padding: 2em;
       }
 
       #document-title-separator {
-        padding: 1.25rem 0.5rem;
+        padding: 1.25rem 1.75rem 1.25rem 0.5rem;
       }
 
       #document-title {
@@ -568,7 +563,7 @@ $document-viewer-padding: 2em;
       span {
         position:absolute;
         left: 0;
-        margin-left:3rem;
+        margin-left:2.75rem;
       }
 
     }
