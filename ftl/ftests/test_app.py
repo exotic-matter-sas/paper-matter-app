@@ -1077,6 +1077,30 @@ class DocumentViewerModalTests(
             self.get_elem(self.first_document_title)
 
     @skipIf(
+        settings.DEFAULT_TEST_BROWSER == "firefox",
+        "Due to a Firefox bug, download can't be automated for file with Content-Disposition header set to "
+        "attachment."
+        "\nRef: https://bugzilla.mozilla.org/show_bug.cgi?id=453455"
+        "\nPossible workaround: https://bugzilla.mozilla.org/show_bug.cgi?id=453455#c150",
+        )
+    @skipIf(
+        settings.DEV_MODE and not NODE_SERVER_RUNNING,
+        "Node not running, this test can't be run",
+        )
+    def test_download_document(self):
+        # User has already added a document
+        document_name = "doc_name1"
+        setup_document(self.org, self.user, title=document_name)
+        self.refresh_documents_list()
+        self.open_first_document()
+
+        # User click on the download button
+        file_name = self.download_file(self.download_button)
+
+        # Downloaded file name match document name
+        self.assertEqual(file_name, document_name + ".pdf")
+
+    @skipIf(
         settings.DEFAULT_TEST_BROWSER == "chrome" and settings.TEST_BROWSER_HEADLESS,
         "Headless chrome doesn't support extensions and it seem it doesn't support PDF preview too (browser freeze"
         " after switching to tab with PDF preview).\n"
@@ -1097,6 +1121,7 @@ class DocumentViewerModalTests(
 
         # User click on open pdf button
         initial_tabs = self.browser.window_handles
+        self.get_elem(self.download_button_dropdown).click()
         self.get_elem(self.open_pdf_button).click()
         time.sleep(0.5)  # wait for browser to open new tab
         current_tabs = self.browser.window_handles

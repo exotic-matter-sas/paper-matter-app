@@ -20,7 +20,6 @@
       <span v-if="editing" class="d-inline d-xl-none">
         <b-button
           class="float-right"
-          id="save-note"
           variant="primary"
           size="sm"
           :disabled="doc.note === text"
@@ -108,8 +107,9 @@
             size="sm"
             :disabled="doc.note === text"
             @click.prevent="updateNote"
+            :title="$t('Save')"
           >
-            {{ $t("Save") }}
+            {{ $t("OK") }}
           </b-button>
         </b-col>
       </b-row>

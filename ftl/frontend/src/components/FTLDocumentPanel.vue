@@ -177,6 +177,7 @@
                 <b-dropdown-item
                   :href="currentOpenDoc.download_url + `/doc`"
                   target="_blank"
+                  id="open-document"
                 >
                   <font-awesome-icon icon="external-link-alt" />
                   <span>{{ $t("Open") }}</span>

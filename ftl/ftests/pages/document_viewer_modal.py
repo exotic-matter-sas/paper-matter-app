@@ -1,5 +1,6 @@
 #  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
+from selenium.common.exceptions import NoSuchElementException
 
 from ftests.pages.base_page import BasePage
 
@@ -12,6 +13,8 @@ class DocumentViewerModal(BasePage):
 
     rename_document_button = "#rename-document"
     close_document_button = "#document-viewer .close"
+    download_button = "#download-document"
+    download_button_dropdown = "#download-document .dropdown-toggle"
     open_pdf_button = "#open-document"
     move_document_button = "#move-document"
     delete_document_button = "#delete-document"
@@ -40,7 +43,10 @@ class DocumentViewerModal(BasePage):
         self.wait_for_elem_to_disappear(self.page_body)
 
     def annotate_document(self, note):
-        self.get_elem(self.edit_note_button).click()
+        try:
+            self.get_elem(self.edit_note_button).click()
+        except NoSuchElementException:
+            pass
         self.wait_for_elem_to_show(self.note_textarea)
         self.get_elem(self.note_textarea).clear()
         self.get_elem(self.note_textarea).send_keys(note)
