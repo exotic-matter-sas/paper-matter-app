@@ -166,7 +166,7 @@ export default {
   mounted() {
     // Auto switch to edit mode if no note is define
     if (this.doc.note === "") {
-      this.editing = true
+      this.editing = true;
     }
   },
 
@@ -234,7 +234,8 @@ export default {
 #note-form {
   animation: slide-down 0.2s linear;
 
-  textarea, #note-preview {
+  textarea,
+  #note-preview {
     max-height: 200px;
     overflow-y: scroll;
   }

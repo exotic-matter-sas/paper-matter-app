@@ -52,7 +52,9 @@ import {
   faSync,
   faTrash,
   faWindowClose,
-  faTimesCircle, faPrint, faShare, faPen
+  faTimesCircle,
+  faShare,
+  faPen,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   faMinusSquare,
@@ -99,9 +101,8 @@ library.add(
   faFileAlt,
   faArrowRight,
   faTimesCircle,
-  faPrint,
   faShare,
-  faPen,
+  faPen
 );
 Vue.component("font-awesome-icon", FontAwesomeIcon);
 

@@ -26,7 +26,10 @@
             <font-awesome-icon icon="folder-open" class="d-none" />
             {{ parent_folder.text }}
           </b-link>
-          <div id="document-title-separator" class="float-left d-none d-md-block">
+          <div
+            id="document-title-separator"
+            class="float-left d-none d-md-block"
+          >
             /
           </div>
           <div
@@ -43,7 +46,11 @@
             v-b-modal="'modal-rename-document-dp'"
             variant="link"
           >
-            <font-awesome-icon size="sm" icon="pen" :title="$t('Rename document')" />
+            <font-awesome-icon
+              size="sm"
+              icon="pen"
+              :title="$t('Rename document')"
+            />
           </b-button>
         </h5>
 
@@ -56,55 +63,64 @@
           ×
         </button>
 
-        <b-dropdown id="documents-actions-small"
-                    class="float-right d-xl-none"
-                    variant="primary"
-                    :text="$t('Actions')"
-                    right>
+        <b-dropdown
+          id="documents-actions-small"
+          class="float-right d-xl-none"
+          variant="primary"
+          :text="$t('Actions')"
+          right
+        >
           <b-dropdown-item :href="currentOpenDoc.download_url" target="_blank">
-            <font-awesome-icon
-              :icon="getDownloadIcon"
-            />
+            <font-awesome-icon :icon="getDownloadIcon" />
             <span>{{ $t("Download") }}</span>
           </b-dropdown-item>
-          <b-dropdown-item :href="currentOpenDoc.download_url + `/doc`" target="_blank">
-            <font-awesome-icon
-              icon="external-link-alt"
-            />
+          <b-dropdown-item
+            :href="currentOpenDoc.download_url + `/doc`"
+            target="_blank"
+          >
+            <font-awesome-icon icon="external-link-alt" />
             <span>{{ $t("Open") }}</span>
           </b-dropdown-item>
           <b-dropdown-divider></b-dropdown-divider>
-          <b-dropdown-item link-class="text-primary" v-b-modal="'modal-document-sharing-dp'">
-            <font-awesome-icon
-              icon="share"
-            />
-            <span v-if="currentOpenDoc.is_shared">{{ $t("Get share link") }}</span>
+          <b-dropdown-item
+            link-class="text-primary"
+            v-b-modal="'modal-document-sharing-dp'"
+          >
+            <font-awesome-icon icon="share" />
+            <span v-if="currentOpenDoc.is_shared">{{
+              $t("Get share link")
+            }}</span>
             <span v-else>{{ $t("Share") }}</span>
           </b-dropdown-item>
-          <b-dropdown-item link-class="text-primary" @click.prevent="noteToggled = true">
-            <font-awesome-icon
-              icon="edit"
-            />
+          <b-dropdown-item
+            link-class="text-primary"
+            @click.prevent="noteToggled = true"
+          >
+            <font-awesome-icon icon="edit" />
             <span v-if="currentOpenDoc.note === ''">{{ $t("Add note") }}</span>
             <span v-else>{{ $t("Show note") }}</span>
           </b-dropdown-item>
-          <b-dropdown-item link-class="text-primary" v-b-modal="'modal-move-document-dp'">
-            <font-awesome-icon
-              icon="arrow-right"
-            />
+          <b-dropdown-item
+            link-class="text-primary"
+            v-b-modal="'modal-move-document-dp'"
+          >
+            <font-awesome-icon icon="arrow-right" />
             <span>{{ $t("Move") }}</span>
           </b-dropdown-item>
-          <b-dropdown-item class="d-block d-md-none" link-class="text-primary" :to="parent_folder.to">
-            <font-awesome-icon
-              icon="folder-open"
-            />
+          <b-dropdown-item
+            class="d-block d-md-none"
+            link-class="text-primary"
+            :to="parent_folder.to"
+          >
+            <font-awesome-icon icon="folder-open" />
             <span>{{ $t("Open location") }}</span>
           </b-dropdown-item>
           <b-dropdown-divider></b-dropdown-divider>
-          <b-dropdown-item link-class="text-danger" v-b-modal="'modal-delete-document-dp'">
-            <font-awesome-icon
-              icon="trash"
-            />
+          <b-dropdown-item
+            link-class="text-danger"
+            v-b-modal="'modal-delete-document-dp'"
+          >
+            <font-awesome-icon icon="trash" />
             <span>{{ $t("Delete") }}</span>
           </b-dropdown-item>
         </b-dropdown>
@@ -112,9 +128,7 @@
     </template>
     <b-container id="document-viewer-body" class="h-100 px-0" fluid>
       <b-row class="h-100" no-gutters>
-        <b-col
-          v-if="currentOpenDoc.type === 'application/pdf' && !isIOS"
-        >
+        <b-col v-if="currentOpenDoc.type === 'application/pdf' && !isIOS">
           <b-row class="h-100" no-gutters id="pdfviewer">
             <iframe
               class="col border-0"
@@ -124,11 +138,7 @@
             </iframe>
           </b-row>
         </b-col>
-        <b-col
-          v-else
-          id="viewer-disabled"
-          class="d-flex align-items-center"
-        >
+        <b-col v-else id="viewer-disabled" class="d-flex align-items-center">
           <b-row class="m-2 w-100 text-muted font-italic">
             <b-col v-if="isIOS">
               {{
@@ -146,7 +156,11 @@
             </b-col>
           </b-row>
         </b-col>
-        <b-col xl="3" class="d-none d-xl-block" :class="{'mobile-note-toggled': noteToggled}">
+        <b-col
+          xl="3"
+          class="d-none d-xl-block"
+          :class="{ 'mobile-note-toggled': noteToggled }"
+        >
           <b-row id="documents-actions-big" class="px-3 d-none d-xl-block">
             <b-col class="pt-3 px-3">
               <b-dropdown
@@ -157,20 +171,19 @@
                 :split-href="currentOpenDoc.download_url"
               >
                 <template v-slot:button-content>
-                  <font-awesome-icon
-                    :icon="getDownloadIcon"
-                  />
-                  {{ $t('Download') }}
+                  <font-awesome-icon :icon="getDownloadIcon" />
+                  {{ $t("Download") }}
                 </template>
-                <b-dropdown-item :href="currentOpenDoc.download_url + `/doc`" target="_blank">
-                  <font-awesome-icon
-                    icon="external-link-alt"
-                  />
+                <b-dropdown-item
+                  :href="currentOpenDoc.download_url + `/doc`"
+                  target="_blank"
+                >
+                  <font-awesome-icon icon="external-link-alt" />
                   <span>{{ $t("Open") }}</span>
                 </b-dropdown-item>
               </b-dropdown>
 
-              <hr class="border-0 mt-0 mb-1">
+              <hr class="border-0 mt-0 mb-1" />
 
               <b-button
                 id="share-document"
@@ -178,10 +191,10 @@
                 variant="primary"
                 v-b-modal="'modal-document-sharing-dp'"
               >
-                <font-awesome-icon
-                  icon="share"
-                />
-                {{ currentOpenDoc.is_shared ? $t("Get share link") : $t("Share") }}
+                <font-awesome-icon icon="share" />
+                {{
+                  currentOpenDoc.is_shared ? $t("Get share link") : $t("Share")
+                }}
               </b-button>
 
               <b-button
@@ -190,13 +203,11 @@
                 variant="primary"
                 v-b-modal="'modal-move-document-dp'"
               >
-                <font-awesome-icon
-                  icon="arrow-right"
-                />
+                <font-awesome-icon icon="arrow-right" />
                 {{ $t("Move") }}
               </b-button>
 
-              <hr class="border-0 mt-0 mb-1">
+              <hr class="border-0 mt-0 mb-1" />
 
               <b-button
                 id="delete-document"
@@ -204,13 +215,11 @@
                 variant="outline-danger"
                 v-b-modal="'modal-delete-document-dp'"
               >
-                <font-awesome-icon
-                  icon="trash"
-                />
+                <font-awesome-icon icon="trash" />
                 {{ $t("Delete") }}
               </b-button>
 
-              <hr/>
+              <hr />
             </b-col>
           </b-row>
           <b-row class="px-3">
@@ -329,7 +338,7 @@ export default {
         "application/vnd.openxmlformats-officedocument.presentationml.presentation":
           "file-powerpoint",
       },
-      noteToggled: false
+      noteToggled: false,
     };
   },
 
@@ -542,34 +551,34 @@ $document-viewer-padding: 2em;
       }
     }
 
-    #document-viewer-body .row{
+    #document-viewer-body .row {
       flex-direction: column;
     }
 
-    #documents-actions-small a, #documents-actions-big a {
-      padding-left:1rem;
+    #documents-actions-small a,
+    #documents-actions-big a {
+      padding-left: 1rem;
 
       &:active {
         color: white !important;
 
-        &.text-primary{
+        &.text-primary {
           background: map_get($theme-colors, "primary");
         }
-        &.text-danger{
+        &.text-danger {
           background: map_get($theme-colors, "danger");
         }
       }
 
       span {
-        position:absolute;
+        position: absolute;
         left: 0;
-        margin-left:2.75rem;
+        margin-left: 2.75rem;
       }
-
     }
   }
 
-  #document-viewer #document-viewer-body .row{
+  #document-viewer #document-viewer-body .row {
     flex-direction: row;
   }
 }
@@ -587,7 +596,7 @@ $document-viewer-padding: 2em;
 }
 
 @include media-breakpoint-up(xl) {
-  #document-viewer #document-viewer-body .row{
+  #document-viewer #document-viewer-body .row {
     flex-direction: row !important;
   }
 }
