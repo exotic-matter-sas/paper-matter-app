@@ -2453,3 +2453,6 @@ html[dir='rtl'] #documentPropertiesOverlay .row > * {
     display: none;
   }
 }
+
+/* Changes for FTL */
+#download, #secondaryDownload {display:none!important}

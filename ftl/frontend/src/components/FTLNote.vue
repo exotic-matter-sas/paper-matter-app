@@ -16,6 +16,37 @@
       >
         <font-awesome-icon icon="edit" :title="$t('Edit note')" />
       </b-button>
+
+      <span v-if="editing" class="d-inline d-xl-none">
+        <b-button
+          class="float-right"
+          variant="primary"
+          size="sm"
+          :disabled="doc.note === text"
+          @click.prevent="updateNote"
+        >
+          {{ $t("Save") }}
+        </b-button>
+        <b-button
+          class="float-right"
+          variant="link"
+          size="sm"
+          :disabled="editing === false"
+          @click.prevent="cancelUpdate"
+        >
+          {{ $t("Cancel") }}
+        </b-button>
+      </span>
+      <span v-else>
+        <b-button
+          class="float-right d-inline d-xl-none"
+          variant="secondary"
+          size="sm"
+          @click.prevent="$emit('event-close-note')"
+        >
+          {{ $t("Close note") }}
+        </b-button>
+      </span>
     </b-col>
 
     <b-col v-if="editing" id="note-form">
@@ -26,7 +57,7 @@
               <b-form-textarea
                 id="note-textarea"
                 v-model="text"
-                :placeholder="$t('Example note')"
+                :placeholder="$t('Enter your note')"
                 max-rows="10"
               >
               </b-form-textarea>
@@ -41,7 +72,7 @@
       </b-row>
       <b-row id="note-toolbar" class="mt-2" align-v="center">
         <b-col>
-          <div id="note-tip">
+          <div id="note-tip" class="d-none d-xl-block">
             <a
               v-if="doc.note === text"
               class="text-muted"
@@ -61,7 +92,7 @@
             </span>
           </div>
         </b-col>
-        <b-col class="text-right">
+        <b-col class="text-right d-none d-xl-block">
           <b-button
             variant="link"
             size="sm"
@@ -76,8 +107,9 @@
             size="sm"
             :disabled="doc.note === text"
             @click.prevent="updateNote"
+            :title="$t('Save')"
           >
-            {{ $t("Save") }}
+            {{ $t("OK") }}
           </b-button>
         </b-col>
       </b-row>
@@ -98,13 +130,14 @@
     Note: Note
     Edit note: Éditer note
     Edition: Édition
-    Example note: Note d'exemple
+    Enter your note: Saisissez votre note
     Preview: Prévisualisation
     Markdown syntax supported: Syntaxe Markdown supportée
     supported: supportée
     unsaved note: note non sauvegardée
     No note set: Aucune note définie
     Could not save note: La note n'a pu être sauvegardée
+    Close note: Fermer la note
 </i18n>
 
 <script>
@@ -128,6 +161,13 @@ export default {
       editing: false,
       text: this.doc.note,
     };
+  },
+
+  mounted() {
+    // Auto switch to edit mode if no note is define
+    if (this.doc.note === "") {
+      this.editing = true;
+    }
   },
 
   computed: {
@@ -184,7 +224,7 @@ export default {
 
 #note {
   overflow: auto;
-  max-height: 50vh;
+  max-height: 200px;
 }
 
 #note-tip {
@@ -193,5 +233,24 @@ export default {
 
 #note-form {
   animation: slide-down 0.2s linear;
+
+  textarea,
+  #note-preview {
+    max-height: 200px;
+    overflow-y: scroll;
+  }
+}
+
+@include media-breakpoint-up(xl) {
+  #note {
+    overflow: auto;
+    max-height: 60vh;
+  }
+
+  #note-form textarea,
+  #note-form #note-preview {
+    max-height: 60vh;
+    overflow-y: scroll;
+  }
 }
 </style>
