@@ -184,29 +184,29 @@
                 </b-dropdown-item>
               </b-dropdown>
 
-              <hr class="border-0 mt-0 mb-1" />
+              <span class="text-nowrap">
+                <b-button
+                  id="share-document"
+                  class="mr-1 mb-1"
+                  variant="primary"
+                  v-b-modal="'modal-document-sharing-dp'"
+                >
+                  <font-awesome-icon icon="share" />
+                  {{
+                    currentOpenDoc.is_shared ? $t("Get share link") : $t("Share")
+                  }}
+                </b-button>
 
-              <b-button
-                id="share-document"
-                class="mr-1 mb-1"
-                variant="primary"
-                v-b-modal="'modal-document-sharing-dp'"
-              >
-                <font-awesome-icon icon="share" />
-                {{
-                  currentOpenDoc.is_shared ? $t("Get share link") : $t("Share")
-                }}
-              </b-button>
-
-              <b-button
-                id="move-document"
-                class="mr-1 mb-1"
-                variant="primary"
-                v-b-modal="'modal-move-document-dp'"
-              >
-                <font-awesome-icon icon="arrow-right" />
-                {{ $t("Move") }}
-              </b-button>
+                <b-button
+                  id="move-document"
+                  class="mr-1 mb-1"
+                  variant="primary"
+                  v-b-modal="'modal-move-document-dp'"
+                >
+                  <font-awesome-icon icon="arrow-right" />
+                  {{ $t("Move") }}
+                </b-button>
+              </span>
 
               <hr class="border-0 mt-0 mb-1" />
 
