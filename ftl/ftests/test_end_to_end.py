@@ -20,10 +20,10 @@ from ftests.pages.base_page import NODE_SERVER_RUNNING
 from ftests.pages.django_admin_pages import AdminPages
 from ftests.pages.document_viewer_modal import DocumentViewerModal
 from ftests.pages.home_page import HomePage
+from ftests.pages.login_page import LoginPage
 from ftests.pages.move_documents_modal import MoveDocumentsModal
 from ftests.pages.setup_pages import SetupPages
 from ftests.pages.signup_pages import SignupPages
-from ftests.pages.login_page import LoginPage
 from ftests.test_account import (
     mocked_verify_user,
     totp_time_setter,
@@ -158,6 +158,7 @@ class NewUserAddDocumentInsideFolder(
 
 
 @override_settings(CELERY_BROKER_URL="memory://localhost")
+@override_settings(CELERY_TASK_ROUTES={})
 class TikaDocumentIndexationAndSearch(LoginPage, HomePage, DocumentViewerModal):
     @classmethod
     def setUpClass(cls):
@@ -261,6 +262,7 @@ delayed_apply_processing = delay_method_decorator(
 
 @patch.object(FTLDocumentProcessing, "apply_processing", delayed_apply_processing)
 @override_settings(CELERY_BROKER_URL="memory://localhost")
+@override_settings(CELERY_TASK_ROUTES={})
 class TikaDocumentIndexationEdgeCases(
     LoginPage, HomePage, DocumentViewerModal, MoveDocumentsModal
 ):

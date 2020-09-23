@@ -51,6 +51,7 @@ views_fido2.fido2_api_register_begin = mocked_fido2_api_register_begin
 
 
 @override_settings(CELERY_BROKER_URL="memory://localhost")
+@override_settings(CELERY_TASK_ROUTES={})
 class BasicAccountPagesTests(LoginPage, AccountPages):
     @classmethod
     def setUpClass(cls):
@@ -78,7 +79,6 @@ class BasicAccountPagesTests(LoginPage, AccountPages):
         settings.DEV_MODE and not NODE_SERVER_RUNNING,
         "Node not running, this test can't be run",
     )
-    @override_settings(CELERY_BROKER_URL="memory://localhost")
     def test_change_email(self):
         # Go to account management / email change
         self.visit(AccountPages.update_email_url)
