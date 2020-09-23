@@ -86,7 +86,9 @@
             link-class="text-primary"
             v-b-modal="'modal-document-sharing-dp'"
           >
-            <font-awesome-icon :icon="currentOpenDoc.is_shared ? 'link' : 'share'" />
+            <font-awesome-icon
+              :icon="currentOpenDoc.is_shared ? 'link' : 'share'"
+            />
             <span>
               {{ shareButtonText }}
             </span>
@@ -190,7 +192,9 @@
                   variant="primary"
                   v-b-modal="'modal-document-sharing-dp'"
                 >
-                  <font-awesome-icon :icon="currentOpenDoc.is_shared ? 'link' : 'share'" />
+                  <font-awesome-icon
+                    :icon="currentOpenDoc.is_shared ? 'link' : 'share'"
+                  />
                   {{ shareButtonText }}
                 </b-button>
 
@@ -373,8 +377,10 @@ export default {
       }
     },
     shareButtonText: function () {
-      return this.currentOpenDoc.is_shared ? this.$t("Sharing") : this.$t("Share")
-    }
+      return this.currentOpenDoc.is_shared
+        ? this.$t("Sharing")
+        : this.$t("Share");
+    },
   },
 
   methods: {

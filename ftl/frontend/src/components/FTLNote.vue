@@ -247,9 +247,10 @@ export default {
     max-height: 60vh;
   }
 
-  #note-form textarea, #note-form #note-preview {
-      max-height: 60vh;
-      overflow-y: scroll;
+  #note-form textarea,
+  #note-form #note-preview {
+    max-height: 60vh;
+    overflow-y: scroll;
   }
 }
 </style>

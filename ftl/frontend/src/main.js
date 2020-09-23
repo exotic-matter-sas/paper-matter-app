@@ -55,7 +55,7 @@ import {
   faTimesCircle,
   faShare,
   faPen,
-  faLink
+  faLink,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   faMinusSquare,
