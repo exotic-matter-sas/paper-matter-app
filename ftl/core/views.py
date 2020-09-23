@@ -26,11 +26,11 @@ from django.views import View
 from django_otp.decorators import otp_required
 from mptt.exceptions import InvalidMove
 from rest_framework import generics, views, filters
-from rest_framework.exceptions import ParseError
+from rest_framework.exceptions import UnsupportedMediaType
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 
-from core.errors import ERROR_CODES_DETAILS
+from core.errors import ERROR_CODES_DETAILS, BadRequestError
 from core.mimes import mimetype_to_ext, guess_mimetype
 from core.models import FTLDocument, FTLFolder, FTLDocumentSharing
 from core.serializers import (
@@ -233,17 +233,22 @@ class FileUploadView(views.APIView):
 
     def post(self, request, *args, **kwargs):
         if "file" not in request.FILES or "json" not in request.POST:
-            raise ParseError()
+            raise BadRequestError(
+                ERROR_CODES_DETAILS["ftl_missing_file_or_json_in_body"],
+                "ftl_missing_file_or_json_in_body",
+            )
 
         file_obj = request.FILES["file"]
 
         if file_obj.size == 0:
-            raise ParseError()
+            raise BadRequestError(
+                ERROR_CODES_DETAILS["ftl_file_empty"], "ftl_file_empty",
+            )
 
         mime = guess_mimetype(file_obj, filename=file_obj.name)
         extension = mimetype_to_ext(mime)
         if not extension:
-            raise ParseError(
+            raise UnsupportedMediaType(
                 ERROR_CODES_DETAILS["ftl_document_type_unsupported"],
                 "ftl_document_type_unsupported",
             )
@@ -257,7 +262,7 @@ class FileUploadView(views.APIView):
                     id=payload["ftl_folder"],
                 )
             except Http404:
-                raise ParseError(
+                raise BadRequestError(
                     ERROR_CODES_DETAILS["ftl_folder_not_found"], "ftl_folder_not_found",
                 )
         else:
@@ -277,7 +282,7 @@ class FileUploadView(views.APIView):
 
         if "md5" in payload and payload["md5"]:
             if payload["md5"] != ftl_doc.md5:
-                raise ParseError(
+                raise BadRequestError(
                     ERROR_CODES_DETAILS["ftl_document_md5_mismatch"],
                     "ftl_document_md5_mismatch",
                 )
@@ -313,7 +318,10 @@ class FileUploadView(views.APIView):
                     "ignore_thumbnail_generation_error" in payload
                     and not payload["ignore_thumbnail_generation_error"]
                 ):
-                    raise ParseError()
+                    raise BadRequestError(
+                        ERROR_CODES_DETAILS["ftl_thumbnail_generation_error"],
+                        "The thumbnail could not be decoded",
+                    )
                 else:
                     pass
 
@@ -351,7 +359,7 @@ class FTLFolderList(generics.ListCreateAPIView):
             serializer.save(org=self.request.user.org)
         except IntegrityError as e:
             if "folder_name_unique_for_org_level" in str(e):
-                raise ParseError(
+                raise BadRequestError(
                     ERROR_CODES_DETAILS["folder_name_unique_for_org_level"],
                     "folder_name_unique_for_org_level",
                 )
@@ -381,7 +389,7 @@ class FTLFolderDetail(generics.RetrieveUpdateDestroyAPIView):
                     try:
                         serializer.instance.move_to(target_folder)
                     except InvalidMove:
-                        raise ParseError(
+                        raise BadRequestError(
                             ERROR_CODES_DETAILS["folder_parent_invalid"],
                             "folder_parent_invalid",
                         )
@@ -389,7 +397,7 @@ class FTLFolderDetail(generics.RetrieveUpdateDestroyAPIView):
             serializer.save(org=self.request.user.org)
         except IntegrityError as e:
             if "folder_name_unique_for_org_level" in str(e):
-                raise ParseError(
+                raise BadRequestError(
                     ERROR_CODES_DETAILS["folder_name_unique_for_org_level"],
                     "folder_name_unique_for_org_level",
                 )
