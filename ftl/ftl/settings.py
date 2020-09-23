@@ -219,6 +219,7 @@ REST_FRAMEWORK = {
         "rest_framework.throttling.UserRateThrottle",
     ],
     "DEFAULT_THROTTLE_RATES": {"anon": "1/second", "user": "15/second"},
+    "EXCEPTION_HANDLER": "core.rest_exc_handler.custom_exception_handler",
 }
 
 # JWT API Token

@@ -14,7 +14,6 @@ from django.db import IntegrityError, transaction
 from django.db.models import F
 from django.http import (
     HttpResponse,
-    HttpResponseBadRequest,
     HttpResponseNotFound,
     HttpResponseRedirect,
     Http404,
@@ -26,11 +25,12 @@ from django.utils.text import slugify
 from django.views import View
 from django_otp.decorators import otp_required
 from mptt.exceptions import InvalidMove
-from rest_framework import generics, views, serializers, filters
+from rest_framework import generics, views, filters
+from rest_framework.exceptions import UnsupportedMediaType
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 
-from core.errors import get_api_error
+from core.errors import ERROR_CODES_DETAILS, BadRequestError
 from core.mimes import mimetype_to_ext, guess_mimetype
 from core.models import FTLDocument, FTLFolder, FTLDocumentSharing
 from core.serializers import (
@@ -233,18 +233,24 @@ class FileUploadView(views.APIView):
 
     def post(self, request, *args, **kwargs):
         if "file" not in request.FILES or "json" not in request.POST:
-            return HttpResponseBadRequest()
+            raise BadRequestError(
+                ERROR_CODES_DETAILS["ftl_missing_file_or_json_in_body"],
+                "ftl_missing_file_or_json_in_body",
+            )
 
         file_obj = request.FILES["file"]
 
         if file_obj.size == 0:
-            return HttpResponseBadRequest()
+            raise BadRequestError(
+                ERROR_CODES_DETAILS["ftl_file_empty"], "ftl_file_empty",
+            )
 
         mime = guess_mimetype(file_obj, filename=file_obj.name)
         extension = mimetype_to_ext(mime)
         if not extension:
-            raise serializers.ValidationError(
-                get_api_error("ftl_document_type_unsupported")
+            raise UnsupportedMediaType(
+                ERROR_CODES_DETAILS["ftl_document_type_unsupported"],
+                "ftl_document_type_unsupported",
             )
 
         payload = json.loads(request.POST["json"])
@@ -256,7 +262,9 @@ class FileUploadView(views.APIView):
                     id=payload["ftl_folder"],
                 )
             except Http404:
-                raise serializers.ValidationError(get_api_error("ftl_folder_not_found"))
+                raise BadRequestError(
+                    ERROR_CODES_DETAILS["ftl_folder_not_found"], "ftl_folder_not_found",
+                )
         else:
             ftl_folder = None
 
@@ -274,8 +282,9 @@ class FileUploadView(views.APIView):
 
         if "md5" in payload and payload["md5"]:
             if payload["md5"] != ftl_doc.md5:
-                raise serializers.ValidationError(
-                    get_api_error("ftl_document_md5_mismatch")
+                raise BadRequestError(
+                    ERROR_CODES_DETAILS["ftl_document_md5_mismatch"],
+                    "ftl_document_md5_mismatch",
                 )
 
         ftl_doc.org = self.request.user.org
@@ -309,7 +318,10 @@ class FileUploadView(views.APIView):
                     "ignore_thumbnail_generation_error" in payload
                     and not payload["ignore_thumbnail_generation_error"]
                 ):
-                    raise e
+                    raise BadRequestError(
+                        ERROR_CODES_DETAILS["ftl_thumbnail_generation_error"],
+                        "ftl_thumbnail_generation_error",
+                    )
                 else:
                     pass
 
@@ -347,8 +359,9 @@ class FTLFolderList(generics.ListCreateAPIView):
             serializer.save(org=self.request.user.org)
         except IntegrityError as e:
             if "folder_name_unique_for_org_level" in str(e):
-                raise serializers.ValidationError(
-                    get_api_error("folder_name_unique_for_org_level")
+                raise BadRequestError(
+                    ERROR_CODES_DETAILS["folder_name_unique_for_org_level"],
+                    "folder_name_unique_for_org_level",
                 )
             else:
                 raise
@@ -376,15 +389,17 @@ class FTLFolderDetail(generics.RetrieveUpdateDestroyAPIView):
                     try:
                         serializer.instance.move_to(target_folder)
                     except InvalidMove:
-                        raise serializers.ValidationError(
-                            get_api_error("folder_parent_invalid")
+                        raise BadRequestError(
+                            ERROR_CODES_DETAILS["folder_parent_invalid"],
+                            "folder_parent_invalid",
                         )
         try:
             serializer.save(org=self.request.user.org)
         except IntegrityError as e:
             if "folder_name_unique_for_org_level" in str(e):
-                raise serializers.ValidationError(
-                    get_api_error("folder_name_unique_for_org_level")
+                raise BadRequestError(
+                    ERROR_CODES_DETAILS["folder_name_unique_for_org_level"],
+                    "folder_name_unique_for_org_level",
                 )
             else:
                 raise

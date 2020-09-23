@@ -100,7 +100,7 @@ export default {
         .catch((error) => {
           let error_details = null;
           try {
-            error_details = error.response.data.details;
+            error_details = error.response.data.detail;
           } finally {
             this.mixinAlert(
               this.$t("Unable to create new folder"),

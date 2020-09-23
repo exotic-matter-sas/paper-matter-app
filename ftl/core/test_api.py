@@ -390,7 +390,9 @@ class DocumentsTests(APITestCase):
             client_post = self.client.post(
                 "/app/api/v1/documents/upload", {"json": "{}", "file": fp}
             )
-        self.assertEqual(client_post.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            client_post.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE
+        )
 
     @patch.object(apply_ftl_processing, "delay")
     def test_upload_document_docx(self, mock_apply_processing):
