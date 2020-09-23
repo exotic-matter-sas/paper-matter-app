@@ -240,4 +240,16 @@ export default {
     overflow-y: scroll;
   }
 }
+
+@include media-breakpoint-up(xl) {
+  #note {
+    overflow: auto;
+    max-height: 60vh;
+  }
+
+  #note-form textarea, #note-form #note-preview {
+      max-height: 60vh;
+      overflow-y: scroll;
+  }
+}
 </style>
