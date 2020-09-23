@@ -267,6 +267,7 @@ Content-Disposition: form-data; name="json"
 | ----- | ----- | ----- |
 | 400 | Specified ftl_folder doesn't exist | ftl_folder_not_found |
 | 400 | Document has been corrupted during upload, please retry | ftl_document_md5_mismatch |
+| 400 | Unsupported document format | ftl_document_type_unsupported | 
 
 ### List documents
 **GET /api/v1/documents**
