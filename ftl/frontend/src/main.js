@@ -55,6 +55,7 @@ import {
   faTimesCircle,
   faShare,
   faPen,
+  faLink
 } from "@fortawesome/free-solid-svg-icons";
 import {
   faMinusSquare,
@@ -102,7 +103,8 @@ library.add(
   faArrowRight,
   faTimesCircle,
   faShare,
-  faPen
+  faPen,
+  faLink
 );
 Vue.component("font-awesome-icon", FontAwesomeIcon);
 

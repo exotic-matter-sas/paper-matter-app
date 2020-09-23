@@ -86,9 +86,9 @@
             link-class="text-primary"
             v-b-modal="'modal-document-sharing-dp'"
           >
-            <font-awesome-icon icon="share" />
+            <font-awesome-icon :icon="currentOpenDoc.is_shared ? 'link' : 'share'" />
             <span v-if="currentOpenDoc.is_shared">{{
-              $t("Get share link")
+              $t("Sharing")
             }}</span>
             <span v-else>{{ $t("Share") }}</span>
           </b-dropdown-item>
@@ -191,9 +191,9 @@
                   variant="primary"
                   v-b-modal="'modal-document-sharing-dp'"
                 >
-                  <font-awesome-icon icon="share" />
+                  <font-awesome-icon :icon="currentOpenDoc.is_shared ? 'link' : 'share'" />
                   {{
-                    currentOpenDoc.is_shared ? $t("Get share link") : $t("Share")
+                    currentOpenDoc.is_shared ? $t("Sharing") : $t("Share")
                   }}
                 </b-button>
 
@@ -277,7 +277,7 @@
     Thumbnail updated: Miniature mis à jour
     Unable to create thumbnail: Erreur lors de la génération de la miniature
     Unable to show document: Erreur lors de l'affichage du document
-    Get share link: Obtenir le lien de partage
+    Sharing: Partage
     Download: Télécharger
     Share: Partager
     Move: Déplacer
