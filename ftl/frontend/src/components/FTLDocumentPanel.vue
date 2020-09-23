@@ -166,7 +166,7 @@
             <b-col class="pt-3 px-3">
               <b-dropdown
                 id="download-document"
-                class="mr-1 mb-1"
+                class="mr-1 mb-2"
                 right
                 split
                 :split-href="currentOpenDoc.download_url"
@@ -188,7 +188,7 @@
               <span class="text-nowrap">
                 <b-button
                   id="share-document"
-                  class="mr-1 mb-1"
+                  class="mr-1 mb-2"
                   variant="primary"
                   v-b-modal="'modal-document-sharing-dp'"
                 >
@@ -200,7 +200,7 @@
 
                 <b-button
                   id="move-document"
-                  class="mr-1 mb-1"
+                  class="mr-1 mb-2"
                   variant="primary"
                   v-b-modal="'modal-move-document-dp'"
                 >
@@ -209,7 +209,7 @@
                 </b-button>
               </span>
 
-              <hr class="border-0 mt-0 mb-1" />
+              <hr class="border-0 m-0" />
 
               <b-button
                 id="delete-document"
