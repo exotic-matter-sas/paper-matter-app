@@ -320,7 +320,7 @@ class FileUploadView(views.APIView):
                 ):
                     raise BadRequestError(
                         ERROR_CODES_DETAILS["ftl_thumbnail_generation_error"],
-                        "The thumbnail could not be decoded",
+                        "ftl_thumbnail_generation_error",
                     )
                 else:
                     pass
