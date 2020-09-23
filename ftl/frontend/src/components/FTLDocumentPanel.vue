@@ -87,7 +87,7 @@
             v-b-modal="'modal-document-sharing-dp'"
           >
             <font-awesome-icon :icon="currentOpenDoc.is_shared ? 'link' : 'share'" />
-            <span v-if="currentOpenDoc.is_shared">
+            <span>
               {{ shareButtonText }}
             </span>
           </b-dropdown-item>
@@ -373,7 +373,7 @@ export default {
       }
     },
     shareButtonText: function () {
-      return this.currentOpenDoc.is_shared ? $t("Sharing") : $t("Share")
+      return this.currentOpenDoc.is_shared ? this.$t("Sharing") : this.$t("Share")
     }
   },
 
