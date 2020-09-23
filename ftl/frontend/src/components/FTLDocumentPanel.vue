@@ -19,12 +19,12 @@
           <b-link
             id="document-parent-folder"
             class="float-left d-none d-md-block"
-            :to="parent_folder.to"
+            :to="parentFolder.to"
             :title="path.map((v) => v.text).join('/')"
           >
             <font-awesome-icon icon="folder" />
             <font-awesome-icon icon="folder-open" class="d-none" />
-            {{ parent_folder.text }}
+            {{ parentFolder.text }}
           </b-link>
           <div
             id="document-title-separator"
@@ -109,7 +109,7 @@
           <b-dropdown-item
             class="d-block d-md-none"
             link-class="text-primary"
-            :to="parent_folder.to"
+            :to="parentFolder.to"
           >
             <font-awesome-icon icon="folder-open" />
             <span>{{ $t("Open location") }}</span>
@@ -365,7 +365,7 @@ export default {
 
       return [{ text: this.$t("Root"), to: { name: "home" } }, ..._path];
     },
-    parent_folder: function () {
+    parentFolder: function () {
       if (this.path.length > 0) {
         return this.path.slice(-1)[0];
       } else {
