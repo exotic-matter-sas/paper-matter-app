@@ -93,7 +93,7 @@
             class="mr-1 spinner-border spinner-border-sm text-primary"
             role="status"
             aria-hidden="true"
-            :title="$t('Processing document, it cannot be searched yet.')"
+            :title="$t('Processing document, it will be searchable soon.')"
           ></div>
         </div>
       </b-card-footer>
@@ -104,7 +104,7 @@
 <i18n>
   fr:
     You can also use CTRL + left click to select document: Vous pouvez aussi utiliser CTRL + clic gauche pour sélectionner le document
-    Processing document, it cannot be searched yet.: Document en cours d'indexation, il ne peut pas être recherché.
+    Processing document, it will be searchable soon.: Document en cours d'indexation, il pourra bientôt être recherché.
     Click to rename: Cliquer pour renommer
     Drag to folder to move document: Saisir pour déplacer le document
     Download document: Télécharger le document

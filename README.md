@@ -2,6 +2,9 @@
 
 Archiving documents solution
 
+- Python [![Python coverage ratio](https://exotic-matter.gitlab.io/ftl-app/python-coverage.svg)](https://exotic-matter.gitlab.io/ftl-app/python-coverage/)
+- Javascript [![Javascript coverage ratio](https://exotic-matter.gitlab.io/ftl-app/javascript-coverage.svg)](https://exotic-matter.gitlab.io/ftl-app/javascript-coverage/)
+
 ## For users
 
 Please see `SELFHOSTING.md`.
