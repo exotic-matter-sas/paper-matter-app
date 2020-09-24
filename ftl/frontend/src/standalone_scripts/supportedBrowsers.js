@@ -8,16 +8,24 @@ const isValidBrowser = browser.satisfies({
   firefox: ">=78",
   safari: ">=12",
   opera: ">=70",
-  edge: ">=80"
+  edge: ">=80",
 });
 
-window.addEventListener('DOMContentLoaded', (event) => {
+window.addEventListener("DOMContentLoaded", (event) => {
   // If user doesn't already set the cookie to ignore the warning
-  if (!document.cookie.split(';').some((item) => item.trim().startsWith('ignore_browser_warning='))) {
-    if (isValidBrowser === false){
-      document.querySelector("#unsupported-browser-version-warning").classList.remove("d-none");
+  if (
+    !document.cookie
+      .split(";")
+      .some((item) => item.trim().startsWith("ignore_browser_warning="))
+  ) {
+    if (isValidBrowser === false) {
+      document
+        .querySelector("#unsupported-browser-version-warning")
+        .classList.remove("d-none");
     } else if (isValidBrowser === undefined) {
-      document.querySelector("#unsupported-browser-warning").classList.remove("d-none");
+      document
+        .querySelector("#unsupported-browser-warning")
+        .classList.remove("d-none");
     }
   }
 });
