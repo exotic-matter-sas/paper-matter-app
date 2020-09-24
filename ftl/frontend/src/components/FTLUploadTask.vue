@@ -52,7 +52,7 @@
         <b-progress
           v-show="currentUploadProgress > 0"
           :value="currentUploadProgress"
-          :max="maxUploadProgress"
+          :max="totalUploadCount"
           class="upload-task-progress"
           animated
         >
@@ -73,28 +73,32 @@ export default {
       type: Number,
       required: true,
     },
-    successesCount: {
-      type: Number,
-      required: true,
-    },
-    errorsCount: {
-      type: Number,
-      required: true,
-    },
   },
 
   data() {
     return {
       interrupted: false,
+      totalUploadCount: 0,
     };
   },
 
-  computed: {
-    maxUploadProgress: function () {
-      return this.leftToUpload + this.successesCount + this.errorsCount;
+  mounted: function () {
+    // At component creation, we store the number of documents to upload, to display progressbar
+    this.totalUploadCount = this.leftToUpload;
+  },
+
+  watch: {
+    leftToUpload: function (newVal, oldVal) {
+      // if leftToUpload is increased after component creation, we need to update to totalUploadCount accordingly
+      if (newVal > oldVal) {
+        this.totalUploadCount += newVal - oldVal;
+      }
     },
+  },
+
+  computed: {
     currentUploadProgress: function () {
-      return this.maxUploadProgress - this.leftToUpload;
+      return this.totalUploadCount - this.leftToUpload;
     },
   },
 

@@ -20,8 +20,6 @@
         :key="folderId"
         :folder-name="task.folderName"
         :left-to-upload="task.files.length"
-        :successes-count="uploadTasksCompleted[folderId].successes.length"
-        :errors-count="uploadTasksCompleted[folderId].errors.length"
         @event-interrupt-task="$set(uploadTasksInterrupted, folderId, true)"
       />
     </b-row>
