@@ -22,6 +22,8 @@ ENV ENABLE_WEB false
 ENV ENABLE_WORKER false
 # Set number of workers for async processing such as OCR
 ENV NB_WORKERS 1
+# Celery queue configuration (indicate which queue should the worker(s) work(s) on
+ENV WORKER_QUEUES ftl_processing,med,celery
 # Set time limit in seconds for each job in async processing (child process will be force restart)
 ENV JOB_TIMELIMIT 900
 

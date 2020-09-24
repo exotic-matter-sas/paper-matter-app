@@ -2,5 +2,5 @@
 
 if [ $WORKER_MODE = 'true' ]; then
   cd /app || exit
-  celery -A ftl worker -l info -O fair --concurrency=$NB_WORKERS --time-limit=$JOB_TIMELIMIT
+  celery -A ftl worker -l info -O fair --concurrency=$NB_WORKERS --time-limit=$JOB_TIMELIMIT -Q $WORKER_QUEUES
 fi

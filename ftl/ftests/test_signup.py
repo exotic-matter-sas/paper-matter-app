@@ -13,6 +13,7 @@ from ftl.celery import app
 
 
 @override_settings(CELERY_BROKER_URL="memory://localhost")
+@override_settings(CELERY_TASK_ROUTES={})
 class SignupPageTests(SignupPages):
     @classmethod
     def setUpClass(cls):
