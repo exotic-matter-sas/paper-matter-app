@@ -4,9 +4,42 @@
 {% load webpack_loader %}
 
 {% block title %}{% trans 'Login' %}{% endblock %}
-{% block head %}{% render_bundle 'common_logged_out' 'css' %}{% endblock %}
+{% block head %}
+    {% render_bundle 'common_logged_out' 'css' %}
+    {% render_bundle 'supported_browsers' 'js' %}
+    <script type="text/javascript">
+        function setIgnoreBrowserWarningCookie () {
+            // ignore cookie is set for 1 year
+            document.cookie='ignore_browser_warning=true;;max-age=31536000;samesite=strict';
+            this.document.querySelector("#unsupported-browser-version-warning").classList.add("d-none");
+            this.document.querySelector("#unsupported-browser-warning").classList.add("d-none");
+        }
+    </script>
+{% endblock %}
 
 {% block main_content_vcenter %}
+    <div id="unsupported-browser-version-warning" class="alert alert-warning text-justify d-none">
+        {% blocktrans %}
+            Your browser version is not supported, some functionalities may not work properly.<br>
+            You should update your browser or use a another one.
+        {% endblocktrans  %}
+        <a class="float-right text-warning"
+           href="#"
+           onclick="setIgnoreBrowserWarningCookie()">
+            {% trans 'ignore' %}
+        </a>
+    </div>
+    <div id="unsupported-browser-warning" class="alert alert-warning text-justify d-none">
+        {% blocktrans %}
+            Your browser is not supported, some functionalities may not work properly.<br>
+            You should use a another browser.
+        {% endblocktrans %}
+        <a class="float-right text-warning"
+           href="#"
+           onclick="setIgnoreBrowserWarningCookie()">
+            {% trans 'ignore' %}
+        </a>
+    </div>
     <form id="login-form" action="{{ app_path }}" method="post">
         {% if messages %}
             <ul id="messages">
