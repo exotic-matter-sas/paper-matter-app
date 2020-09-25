@@ -20,7 +20,7 @@
 {% endblock %}
 
 {% block main_content_vcenter %}
-    <div id="unsupported-browser-version-warning" class="alert alert-warning text-justify p-0">
+    <div id="unsupported-browser-version-warning" class="alert alert-warning text-justify p-0 d-none">
         <button type="button" class="close mx-2 my-1" aria-label="Close" onclick="setIgnoreBrowserWarningCookie()">
             <span aria-hidden="true">&times;</span>
         </button>
@@ -31,7 +31,7 @@
             {% endblocktrans  %}
         </p>
     </div>
-    <div id="unsupported-browser-warning" class="alert alert-warning text-justify p-0">
+    <div id="unsupported-browser-warning" class="alert alert-warning text-justify p-0 d-none">
         <button type="button" class="close mx-2 my-1" aria-label="Close" onclick="setIgnoreBrowserWarningCookie()">
             <span aria-hidden="true">&times;</span>
         </button>
