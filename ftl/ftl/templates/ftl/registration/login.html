@@ -4,9 +4,44 @@
 {% load webpack_loader %}
 
 {% block title %}{% trans 'Login' %}{% endblock %}
-{% block head %}{% render_bundle 'common_logged_out' 'css' %}{% endblock %}
+{% block head %}
+    {% render_bundle 'common_logged_out' 'css' %}
+{% endblock %}
+{% block footer %}
+    {% render_bundle 'supported_browsers' 'js' %}
+    <script type="text/javascript">
+        function setIgnoreBrowserWarningCookie () {
+            // ignore cookie is set for 1 year
+            document.cookie='ignore_browser_warning=true;;max-age=31536000;samesite=strict';
+            this.document.querySelector("#unsupported-browser-version-warning").classList.add("d-none");
+            this.document.querySelector("#unsupported-browser-warning").classList.add("d-none");
+        }
+    </script>
+{% endblock %}
 
 {% block main_content_vcenter %}
+    <div id="unsupported-browser-version-warning" class="alert alert-warning text-justify p-0 d-none">
+        <button type="button" class="close mx-2 my-1" aria-label="Close" onclick="setIgnoreBrowserWarningCookie()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <p class="mx-4 my-3">
+            {% blocktrans %}
+                Your browser version is not supported, some functionalities may not work properly.<br>
+                You should update your browser or use a another one.
+            {% endblocktrans  %}
+        </p>
+    </div>
+    <div id="unsupported-browser-warning" class="alert alert-warning text-justify p-0 d-none">
+        <button type="button" class="close mx-2 my-1" aria-label="Close" onclick="setIgnoreBrowserWarningCookie()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <p class="mx-4 my-3">
+            {% blocktrans %}
+                Your browser is not supported, some functionalities may not work properly.<br>
+                You should use a another browser.
+            {% endblocktrans %}
+        </p>
+    </div>
     <form id="login-form" action="{{ app_path }}" method="post">
         {% if messages %}
             <ul id="messages">
