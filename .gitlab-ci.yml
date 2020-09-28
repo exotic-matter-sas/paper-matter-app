@@ -15,9 +15,9 @@ stages:
   - build-backend
   - test
   - coverage-reports
-  - publish-reports
+  - build-doc
+  - publish-reports-and-doc
   - docker
-
 
 check-frontend:
   stage: .pre
@@ -31,22 +31,6 @@ check-backend:
   script:
     - pip3 install black==19.10b0
     - black --check .
-
-
-build-and-publish-doc:
-  stage: .pre
-  image: python:3.7-slim
-  artifacts:
-    paths:
-      - public
-  script:
-    - pip3 install mkdocs
-    - python3 -m mkdocs build
-    - mkdir public
-    - mv site public/doc
-  when: manual
-#  only:
-#    - master
 
 compile-frontend:
   stage: build-frontend
@@ -169,11 +153,25 @@ javascript-coverage:
   only:
    - master
 
-publish-reports:
-  stage: publish-reports
+build-doc:
+  stage: build-doc
+  image: python:3.7-slim
+  artifacts:
+    paths:
+      - site
+  script:
+    - pip3 install mkdocs
+    - python3 -m mkdocs build
+  allow_failure: true
+#  only:
+#    - master
+
+pages:
+  stage: publish-reports-and-doc
   dependencies:
     - python-coverage
     - javascript-coverage
+    - build-doc
   artifacts:
     paths:
       - public
@@ -183,6 +181,7 @@ publish-reports:
       - mv ftl/coverage.svg public/python-coverage.svg
       - mv ftl/frontend/coverage/lcov-report public/javascript-coverage
       - mv ftl/frontend/coverage/badge.svg public/javascript-coverage.svg
+      - mv site public/doc
   allow_failure: true
   only:
    - master
