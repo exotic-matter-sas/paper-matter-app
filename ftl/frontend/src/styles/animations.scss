@@ -1,35 +1,35 @@
 @keyframes unspin {
-    to {
-        transform: rotate(-0.5turn);
-    }
+  to {
+    transform: rotate(-0.5turn);
+  }
 }
 
 @keyframes slide-down {
-    from {
-        transform: translateY(-30px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0px);
-        opacity: 1;
-    }
+  from {
+    transform: translateY(-30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0px);
+    opacity: 1;
+  }
 }
 
 @keyframes slide-up {
-    from {
-        transform: translateY(30px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0px);
-        opacity: 1;
-    }
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0px);
+    opacity: 1;
+  }
 }
 
 @keyframes highlight {
-    from {
-        background-color: $em-orange;
-        border-color: $em-orange;
-        fill: $em-orange;
-    }
+  from {
+    background-color: $em-orange;
+    border-color: $em-orange;
+    fill: $em-orange;
+  }
 }
