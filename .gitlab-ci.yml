@@ -17,6 +17,7 @@ stages:
   - test
   - coverage-reports
   - publish-reports
+  - build-and-publish-doc
   - docker
 
 
@@ -154,7 +155,7 @@ javascript-coverage:
   only:
    - master
 
-pages:
+publish-reports:
   stage: publish-reports
   dependencies:
     - python-coverage
@@ -171,6 +172,17 @@ pages:
   allow_failure: true
   only:
    - master
+
+build-and-publish-doc:
+  stage: build-and-publish-doc
+  image: python:3.7-slim
+  script:
+    - pip3 install mkdocs
+    - python3 -m mkdocs build
+    - mv site public/doc
+  when: manual
+#  only:
+#    - master
 
 build-docker-gitlab:
   stage: docker

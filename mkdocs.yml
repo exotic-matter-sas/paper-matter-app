@@ -1,6 +1,7 @@
 site_name: Paper Matter Doc
 nav:
     - Home: index.md
+    - Self hosting: self-hosting.md
     - API v1 reference: api-v1.md
     - About: about.md
 theme: readthedocs
