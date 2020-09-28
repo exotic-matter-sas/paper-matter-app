@@ -280,10 +280,8 @@ export default {
   margin-right: 0.5em;
   font-size: 0.7em;
 }
-</style>
 
-<style lang="scss">
-#add-documents > button:first-child {
+::v-deep #add-documents > button:first-child {
   padding: 0;
 
   label {

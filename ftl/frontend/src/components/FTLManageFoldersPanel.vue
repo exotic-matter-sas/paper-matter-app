@@ -307,13 +307,13 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 @import "~bootstrap/scss/_functions.scss";
 @import "~bootstrap/scss/_variables.scss";
 @import "~bootstrap/scss/_mixins.scss";
 $manage-folders-padding: 2em;
 
-#modal-manage-folders {
+::v-deep #modal-manage-folders {
   .container {
     max-width: none;
   }
@@ -387,7 +387,7 @@ $manage-folders-padding: 2em;
 }
 
 @include media-breakpoint-up(md) {
-  #modal-manage-folders {
+  ::v-deep #modal-manage-folders {
     .modal-dialog {
       padding: $manage-folders-padding;
     }

@@ -457,14 +457,14 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 @import "~bootstrap/scss/_functions.scss";
 @import "~bootstrap/scss/_variables.scss";
 @import "~bootstrap/scss/_mixins.scss";
-// Don't use `scoped` because scoped doesn't apply to bootstrap-vue sub-components
+
 $document-viewer-padding: 2em;
 
-#document-viewer .modal-dialog {
+::v-deep #document-viewer .modal-dialog {
   width: 100vw;
   height: 100vh;
   max-width: none;
@@ -591,7 +591,7 @@ $document-viewer-padding: 2em;
 }
 
 @include media-breakpoint-up(md) {
-  #document-viewer {
+  ::v-deep #document-viewer {
     .modal-dialog {
       padding: $document-viewer-padding;
     }
@@ -603,7 +603,7 @@ $document-viewer-padding: 2em;
 }
 
 @include media-breakpoint-up(xl) {
-  #document-viewer #document-viewer-body .row {
+  ::v-deep #document-viewer #document-viewer-body .row {
     flex-direction: row !important;
   }
 }

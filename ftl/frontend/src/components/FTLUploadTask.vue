@@ -111,7 +111,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 .interrupt-upload-task-button {
   font-size: 1.5em;
   padding: 0;
