@@ -36,6 +36,9 @@ check-backend:
 build-and-publish-doc:
   stage: .pre
   image: python:3.7-slim
+  artifacts:
+    paths:
+      - public
   script:
     - pip3 install mkdocs
     - python3 -m mkdocs build
