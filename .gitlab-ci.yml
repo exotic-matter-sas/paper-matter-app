@@ -11,28 +11,38 @@ services:
   - docker:dind
 
 stages:
-  - code-analysis
   - build-frontend
   - build-backend
   - test
   - coverage-reports
   - publish-reports
-  - build-and-publish-doc
   - docker
 
 
 check-frontend:
-  stage: code-analysis
+  stage: .pre
   image: node:lts-alpine
   script:
     - npx prettier@2.0.5 . --check
 
 check-backend:
-  stage: code-analysis
+  stage: .pre
   image: python:3.7-slim
   script:
     - pip3 install black==19.10b0
     - black --check .
+
+
+build-and-publish-doc:
+  stage: .pre
+  image: python:3.7-slim
+  script:
+    - pip3 install mkdocs
+    - python3 -m mkdocs build
+    - mv site public/doc
+  when: manual
+#  only:
+#    - master
 
 compile-frontend:
   stage: build-frontend
@@ -172,17 +182,6 @@ publish-reports:
   allow_failure: true
   only:
    - master
-
-build-and-publish-doc:
-  stage: build-and-publish-doc
-  image: python:3.7-slim
-  script:
-    - pip3 install mkdocs
-    - python3 -m mkdocs build
-    - mv site public/doc
-  when: manual
-#  only:
-#    - master
 
 build-docker-gitlab:
   stage: docker
