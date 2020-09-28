@@ -6,7 +6,7 @@
 - Docker-Compose (Compose file version 2)
 - 1 vCPU, 1 GB RAM, 10 GB disk space (2 vCPU, 2 GB RAM recommended)
 
-### Basic deployment (for test purpose)
+## Basic deployment (for test purpose)
 
 __This deployment should be only considered as a first step, it will use default settings and is **NOT SECURE** for production use.__
 
@@ -23,7 +23,7 @@ code. Execute the following command to migrate database:
 
 4. Open your browser to http://localhost:8000 and follow instruction to create the super admin account.
 
-### Secured deployment (for production use)
+## Secured deployment (for production use)
 
 __Complete the steps described in **Basic deployment** section first.__
 
@@ -80,16 +80,16 @@ __Email server is not included in the Docker but it is required to send activati
 
     `docker-compose up -d`
 
-### Backup
+## Backup
 
 You should use the recommended Docker methods to backup the two volumes `dbdata` and `docs`.
 https://docs.docker.com/storage/volumes/#backup-restore-or-migrate-data-volumes
 
-### Customize the file storage
+## Customize the file storage
 
 __By default the documents binaries are stored using the file system into the `uploads` folder, if you want you can set the ENV `DEFAULT_FILE_STORAGE` to use [Amazon S3](https://aws.amazon.com/s3/) or [Google cloud Storage](https://cloud.google.com/storage).__
 
-#### Amazon S3 settings
+### Amazon S3 settings
 
 Set `DEFAULT_FILE_STORAGE` to `storages.backends.s3boto3.S3Boto3Storage` and set the additional settings bellow:
 
@@ -101,7 +101,7 @@ Set `DEFAULT_FILE_STORAGE` to `storages.backends.s3boto3.S3Boto3Storage` and set
 | AWS_S3_ENDPOINT_URL | - |
 | AWS_S3_REGION_NAME | - |
 
-#### Google Cloud Storage settings
+### Google Cloud Storage settings
 
 Set `DEFAULT_FILE_STORAGE` to `storages.backends.gcloud.GoogleCloudStorage` and set the additional settings bellow:
 
@@ -127,13 +127,13 @@ Set `DEFAULT_FILE_STORAGE` to `storages.backends.gcloud.GoogleCloudStorage` and 
 }
 ```
 
-### Enable the OCR feature
+## Enable the OCR feature
 
 __By default the OCR feature is disabled, it allows searching for keywords inside scanned documents.__
 
 You can't enable OCR feature using ENV variables for now, but you can do it as described in `Customize Paper Matter other settings` bellow.
 
-### Various other settings that you can update with ENV
+## Various other settings that you can update with ENV
 
 | Name | Default value | Format | Description |
 | --- | --- | --- | --- |
@@ -142,11 +142,11 @@ You can't enable OCR feature using ENV variables for now, but you can do it as d
 | NB_WORKERS | `1`  | A number >= 1 | Number of workers which will run documents processing in parallel, increasing this number can impact significantly server load (to use on an image with `ENABLE_WORKER` set to `true`) |
 | WORKER_QUEUES | `ftl_processing,med,celery` | Value separated by comma | Queues name to be processed by the worker |
 
-### Customize Paper Matter other settings
+## Customize Paper Matter other settings
 
 You need to [bind mount](https://docs.docker.com/storage/bind-mounts/) the local path `/app/ftl/settings_local.py` and customize you own copy of the file `docker/settings_local.py`.
 
-### Logs
+## Logs
 
 Execute `docker-compose logs -f` for all logs.
 Execute `docker-compose logs -f [web|worker|redis|postgres]` for specific container logs.

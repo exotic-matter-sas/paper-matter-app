@@ -14,10 +14,7 @@ stages:
   - build-frontend
   - build-backend
   - test
-  - coverage-reports
-  - build-doc
-  - publish-reports-and-doc
-  - docker
+  - generate-reports-and-doc
 
 check-frontend:
   stage: .pre
@@ -113,7 +110,7 @@ test-slow-python:
   when: manual
 
 python-coverage:
-  stage: coverage-reports
+  stage: generate-reports-and-doc
   image: registry.gitlab.com/exotic-matter/ftl-base-image-ci:latest
   services:
     - postgres:11-alpine
@@ -132,11 +129,11 @@ python-coverage:
       - python3 -m coverage html
       - python3 -m coverage_badge -o coverage.svg
   allow_failure: true
-  only:
-   - master
+#  only:
+#   - master
 
 javascript-coverage:
-  stage: coverage-reports
+  stage: generate-reports-and-doc
   image: node:lts-alpine
   dependencies:
     - compile-frontend
@@ -150,11 +147,11 @@ javascript-coverage:
     - cd ftl/frontend
     - npx make-coverage-badge
   allow_failure: true
-  only:
-   - master
+#  only:
+#   - master
 
 build-doc:
-  stage: build-doc
+  stage: generate-reports-and-doc
   image: python:3.7-slim
   artifacts:
     paths:
@@ -166,28 +163,28 @@ build-doc:
 #  only:
 #    - master
 
-pages:
-  stage: publish-reports-and-doc
+pages: # Magic job name that publish public folder to Gitlab Pages
+  stage: .post
   dependencies:
     - python-coverage
     - javascript-coverage
     - build-doc
   artifacts:
     paths:
-      - public
+      - public # Required to trigger Gitlab Pages publish
   script:
-      - mkdir public
-      - mv ftl/htmlcov public/python-coverage
-      - mv ftl/coverage.svg public/python-coverage.svg
-      - mv ftl/frontend/coverage/lcov-report public/javascript-coverage
-      - mv ftl/frontend/coverage/badge.svg public/javascript-coverage.svg
-      - mv site public/doc
+    - mkdir public
+    - mv ftl/htmlcov public/python-coverage
+    - mv ftl/coverage.svg public/python-coverage.svg
+    - mv ftl/frontend/coverage/lcov-report public/javascript-coverage
+    - mv ftl/frontend/coverage/badge.svg public/javascript-coverage.svg
+    - mv site public/doc
   allow_failure: true
-  only:
-   - master
+#  only:
+#   - master
 
 build-docker-gitlab:
-  stage: docker
+  stage: .post
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME .
@@ -195,7 +192,7 @@ build-docker-gitlab:
   when: manual
 
 build-docker-hub:
-  stage: docker
+  stage: .post
   script:
     - docker login -u $DOCKER_REGISTRY_LOGIN -p $DOCKER_REGISTRY_PASSWORD
     - docker build -t $DOCKER_REGISTRY_IMAGE:$CI_COMMIT_TAG .
