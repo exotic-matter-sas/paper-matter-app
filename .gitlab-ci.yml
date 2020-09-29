@@ -130,8 +130,8 @@ python-coverage:
       - python3 -m coverage html
       - python3 -m coverage_badge -o coverage.svg
   allow_failure: true
-#  only:
-#   - master
+  only:
+   - master
 
 javascript-coverage:
   stage: generate-reports-and-doc
@@ -148,8 +148,8 @@ javascript-coverage:
     - cd ftl/frontend
     - npx make-coverage-badge
   allow_failure: true
-#  only:
-#   - master
+  only:
+   - master
 
 build-doc:
   stage: generate-reports-and-doc
@@ -162,8 +162,8 @@ build-doc:
     - pip3 install mkdocs
     - python3 -m mkdocs build
   allow_failure: true
-#  only:
-#    - master
+  only:
+    - master
 
 pages: # Magic job name that publish public folder to Gitlab Pages
   stage: .post
@@ -182,8 +182,8 @@ pages: # Magic job name that publish public folder to Gitlab Pages
     - mv ftl/frontend/coverage/badge.svg public/javascript-coverage.svg
     - mv site public/doc
   allow_failure: true
-#  only:
-#   - master
+  only:
+   - master
 
 build-docker-gitlab:
   stage: .post
