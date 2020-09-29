@@ -13,8 +13,8 @@ services:
 stages:
   - build-frontend
   - build-backend
-  - test
-  - generate-reports
+  - run-tests
+  - generate-reports-and-doc
 
 check-frontend:
   stage: .pre
@@ -28,20 +28,6 @@ check-backend:
   script:
     - pip3 install black==19.10b0
     - black --check .
-
-build-doc:
-  stage: .pre
-  image: python:3.7-slim
-  artifacts:
-    paths:
-      - site
-  script:
-    - pip3 install mkdocs
-    - python3 -m mkdocs build
-  allow_failure: true
-  when: manual
-#  only:
-#    - master
 
 compile-frontend:
   stage: build-frontend
@@ -124,7 +110,7 @@ test-slow-python:
   when: manual
 
 python-coverage:
-  stage: generate-reports
+  stage: generate-reports-and-doc
   image: registry.gitlab.com/exotic-matter/ftl-base-image-ci:latest
   services:
     - postgres:11-alpine
@@ -137,6 +123,7 @@ python-coverage:
     paths:
       - ftl/htmlcov
       - ftl/coverage.svg
+    expire_in: 7 days
   script:
       - source venv/bin/activate && cd ftl
       - python3 -m coverage combine
@@ -147,7 +134,7 @@ python-coverage:
 #   - master
 
 javascript-coverage:
-  stage: generate-reports
+  stage: generate-reports-and-doc
   image: node:lts-alpine
   dependencies:
     - compile-frontend
@@ -164,7 +151,21 @@ javascript-coverage:
 #  only:
 #   - master
 
-pages: # Magic job name that publish public folder to Gitlab Pages, must be unique
+build-doc:
+  stage: generate-reports-and-doc
+  image: python:3.7-slim
+  artifacts:
+    paths:
+      - site
+    expire_in: 7 days
+  script:
+    - pip3 install mkdocs
+    - python3 -m mkdocs build
+  allow_failure: true
+#  only:
+#    - master
+
+pages: # Magic job name that publish public folder to Gitlab Pages
   stage: .post
   dependencies:
     - python-coverage
