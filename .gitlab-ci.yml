@@ -58,7 +58,7 @@ compile-frontend:
     - npm run build
 
 test-frontend-js:
-  stage: test
+  stage: run-tests
   image: node:lts-alpine
   dependencies:
     - compile-frontend
@@ -89,7 +89,7 @@ compile-backend:
     - python3 manage.py collectstatic
 
 test-fast-python:
-  stage: test
+  stage: run-tests
   image: registry.gitlab.com/exotic-matter/ftl-base-image-ci:latest
   services:
     - postgres:11-alpine
@@ -172,7 +172,7 @@ pages: # Magic job name that publish public folder to Gitlab Pages, must be uniq
     - build-doc
   artifacts:
     paths:
-      - public # Required to trigger Gitlab Pages publish
+      - public # Required to trigger Gitlab pages:deploy job
   script:
     - mkdir public
     - mv ftl/htmlcov public/python-coverage
