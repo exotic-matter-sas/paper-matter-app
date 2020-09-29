@@ -7,7 +7,7 @@ Archiving documents solution
 
 ## For users
 
-Please see `SELFHOSTING.md`.
+Please see our [Documentation](https://exotic-matter.gitlab.io/ftl-app/doc/).
 
 ## For developers
 
