@@ -8,15 +8,16 @@ from rest_framework.views import exception_handler
 def custom_exception_handler(exc, context):
     response = exception_handler(exc, context)
 
-    # Handle a rare case where response.data will be a list object
-    # instead of a dict because a ValidationError was raised
-    if isinstance(exc, rest_framework.exceptions.ValidationError):
-        details = {"detail": exc.get_full_details()}
-        response.data = details
+    if response:
+        # Handle a rare case where response.data will be a list object
+        # instead of a dict because a ValidationError was raised
+        if isinstance(exc, rest_framework.exceptions.ValidationError):
+            details = {"detail": exc.get_full_details()}
+            response.data = details
 
-    response.data["status_code"] = getattr(response, "status_code", 500)
+        response.data["status_code"] = getattr(response, "status_code", 500)
 
-    if isinstance(exc, APIException):
-        response.data["code"] = exc.get_codes()
+        if isinstance(exc, APIException):
+            response.data["code"] = exc.get_codes()
 
     return response
