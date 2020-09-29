@@ -75,6 +75,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "~bootstrap/scss/_functions.scss";
+@import "~bootstrap/scss/_variables.scss";
+@import "~bootstrap/scss/_mixins.scss";
+
 .folder {
   border: 3px solid transparent;
 }
@@ -83,12 +87,6 @@ export default {
   stroke: $em-orange;
   stroke-width: 0.25em;
 }
-</style>
-
-<style scoped lang="scss">
-@import "~bootstrap/scss/_functions.scss";
-@import "~bootstrap/scss/_variables.scss";
-@import "~bootstrap/scss/_mixins.scss";
 
 .folder .custom-control {
   margin-left: -1.5rem;

@@ -809,15 +809,13 @@ export default {
     filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.2));
   }
 }
-</style>
 
-<style lang="scss">
 #documents-sort {
   float: right;
   margin-top: 0 !important;
   margin-right: 0 !important;
 
-  .btn {
+  ::v-deep .btn {
     padding-right: 0 !important;
     border-right: none !important;
   }
@@ -830,7 +828,7 @@ export default {
 
 .documents-list-dragged-hover {
   background: adjust_color(map_get($theme-colors, "active"), $alpha: -0.7);
-  * {
+  :v-deep * {
     pointer-events: none;
   }
   .card {

@@ -47,7 +47,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 @import "~bootstrap/scss/_functions.scss";
 @import "~bootstrap/scss/_variables.scss";
 @import "~bootstrap/scss/_mixins.scss";
@@ -57,42 +57,5 @@ export default {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-// ANIMATIONS
-@keyframes unspin {
-  to {
-    transform: rotate(-0.5turn);
-  }
-}
-
-@keyframes slide-down {
-  from {
-    transform: translateY(-30px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0px);
-    opacity: 1;
-  }
-}
-
-@keyframes slide-up {
-  from {
-    transform: translateY(30px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0px);
-    opacity: 1;
-  }
-}
-
-@keyframes highlight {
-  from {
-    background-color: $em-orange;
-    border-color: $em-orange;
-    fill: $em-orange;
-  }
 }
 </style>
