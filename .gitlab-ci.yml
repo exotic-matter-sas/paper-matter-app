@@ -91,7 +91,7 @@ test-fast-python:
     - python3 -m coverage run manage.py test -v 2 --exclude-tag=slow
 
 test-slow-python:
-  stage: test
+  stage: run-tests
   image: registry.gitlab.com/exotic-matter/ftl-base-image-ci:latest
   services:
     - postgres:11-alpine
