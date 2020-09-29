@@ -21,8 +21,10 @@ from django.http import (
 from django.shortcuts import render, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.utils.http import http_date
+from django.utils.module_loading import import_string
 from django.utils.text import slugify
 from django.views import View
+from django.views.generic.base import ContextMixin
 from django_otp.decorators import otp_required
 from mptt.exceptions import InvalidMove
 from rest_framework import generics, views, filters
@@ -53,9 +55,26 @@ class WebSearchQuery(SearchQuery):
 
 @method_decorator(login_required, name="dispatch")
 @method_decorator(otp_required(if_configured=True), name="dispatch")
-class HomeView(View):
+class HomeView(ContextMixin, View):
+    plugins = list()
+
+    # This is a custom processor for ftl apps, allow injecting account data in the frontend Vue app
+    # Also allow injecting data from others apps
+    # See FTL_ACCOUNT_PROCESSORS in settings.py
+    for configured_plugin in settings.FTL_ACCOUNT_PROCESSORS:
+        my_class = import_string(configured_plugin)
+        plugins.append(my_class)
+
     def get(self, request, *args, **kwargs):
-        return render(request, "core/home.html")
+        ftl_context = {}
+
+        for plugin in self.__class__.plugins:
+            ftl_context = {**ftl_context, **plugin(request)}
+
+        context_data = self.get_context_data()
+        context_data["ftl_account"] = ftl_context
+
+        return render(request, "core/home.html", context_data)
 
 
 # API

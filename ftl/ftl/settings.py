@@ -222,6 +222,11 @@ REST_FRAMEWORK = {
     "EXCEPTION_HANDLER": "core.rest_exc_handler.custom_exception_handler",
 }
 
+# FTL Account Processors
+FTL_ACCOUNT_PROCESSORS = [
+    "core.ftl_account_processor.ftl_account_data",
+]
+
 # JWT API Token
 # Docs: https://github.com/davesque/django-rest-framework-simplejwt#settings
 SIMPLE_JWT = {
