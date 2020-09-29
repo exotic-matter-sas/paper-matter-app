@@ -1,8 +1,10 @@
+# API V1 reference
+
 _Before you can query [Folders](#folders) and [Documents](#documents) resources, you have to obtain, store and manage an `access` and `refresh` token through [Authentication requests](#authentication)._
 
-# Authentication
+## Authentication
 
-## Get access and refresh tokens
+### Get access and refresh tokens
 **POST /api/token**
 
 Generate an access and refresh token that follow the [JSON Web Token standard](https://en.wikipedia.org/wiki/JSON_Web_Token). You should store them for later use.
@@ -29,7 +31,7 @@ Generate an access and refresh token that follow the [JSON Web Token standard](h
 ```
 
  - `access` token should be passed inside the `Authorization` header for each authenticated request (eg. `Authorization: Bearer eyJ0eX...`)
- - `refresh` token should be used to get a fresh new access token after it expired after a short period (see [Refresh access token request](http://localhost:8001/api-v1/#refresh-access-token)).
+ - `refresh` token should be used to get a fresh new access token after it expired after a short period (see [Refresh access token request](#refresh-access-token)).
 
 **HTTP error status**
 
@@ -37,7 +39,7 @@ Generate an access and refresh token that follow the [JSON Web Token standard](h
 | ----- | ----- |
 | 401 | No active account found with the given credentials |
 
-## Refresh access token
+### Refresh access token
 **POST /api/token**
 
 To use when the `access` token is expired or going to (eg. <1min), it return a fresh new access token to store in place of the previous one.
@@ -72,9 +74,9 @@ Eventually the refresh token will also expire (after a longer period), if you're
 | ----- | ----- | ----- |
 | 401 | Token is invalid or expired | token_not_valid |
 
-# Folders
+## Folders
 
-## Create a folder
+### Create a folder
 **POST /api/v1/folders**
 
 **Request body**
@@ -113,7 +115,7 @@ Eventually the refresh token will also expire (after a longer period), if you're
 | ----- | ----- | ----- |
 | 400 | A folder with this name already exist | folder_name_unique_for_org_level |
 
-## List folders
+### List folders
 **GET /api/v1/folders**
 
 **Query strings params**
@@ -153,7 +155,7 @@ Eventually the refresh token will also expire (after a longer period), if you're
 ]
 ```
 
-## Update a folders
+### Update a folders
 **PATCH /api/v1/folders/`folder_id`**
 
 Rename or move an existing folder.
@@ -187,14 +189,14 @@ Rename or move an existing folder.
 | ----- | ----- | ----- |
 | 400 | A folder can't be move inside one of its children | folder_parent_invalid |
 
-## Delete a folder
+### Delete a folder
 **DELETE /api/v1/folders/`folder_id`**
 
 **Response** `204`
 
-# Documents
+## Documents
 
-## Upload a document
+### Upload a document
 **POST /api/v1/documents/upload**
 
 **Request body** (`multipart/form-data`)
@@ -272,7 +274,7 @@ Content-Disposition: form-data; name="json"
 | 400 | The file is empty | ftl_file_empty | 
 | 400 | The thumbnail could not be decoded | ftl_thumbnail_generation_error | 
 
-## List documents
+### List documents
 **GET /api/v1/documents**
 
 **Query strings params**
@@ -367,7 +369,7 @@ OR / AND (can be combined with `flat`)
 ```
 If there is too many results, results will be paginated. To get the next page results you have to call the url specified in `next` field (or set an additional `page` query string with desired page number, page start at `1`).
 
-## Get a document
+### Get a document
 **GET /api/v1/documents/`document_pid`**
 
 **Response** `200`
@@ -403,7 +405,7 @@ If there is too many results, results will be paginated. To get the next page re
 ```
 Return the same data than **List documents** request but for a single document.
 
-## Download a document
+### Download a document
 **GET /api/v1/documents/`document_pid`/download**
 
 **Response** `200`
@@ -415,7 +417,7 @@ Return the same data than **List documents** request but for a single document.
 %%EOF
 ```
 
-## Update a document
+### Update a document
 **PATCH /api/v1/documents/`document_pid`**
 
 Rename, annotate, move a document (or set its thumbnail).
@@ -458,14 +460,14 @@ Rename, annotate, move a document (or set its thumbnail).
 }
 ```
 
-## Delete a document
+### Delete a document
 **DELETE /api/v1/documents/`document_pid`**
 
 **Response** `204`
 
-# Documents share links
+## Documents share links
 
-## Add a document share link
+### Add a document share link
 **POST /api/v1/documents/`document_pid`/share**
 
 **Request body**
@@ -486,7 +488,7 @@ Rename, annotate, move a document (or set its thumbnail).
 }
 ```
 
-## List document share links
+### List document share links
 **GET /api/v1/documents/`document_pid`/share**
 
 **Response** `200`
@@ -518,7 +520,7 @@ Rename, annotate, move a document (or set its thumbnail).
 ```
 If there is too many results, results will be paginated. To get the next page results you have to call the url specified in `next` field (or set an additional `page` query string with desired page number, page start at `1`).
 
-## Get a document share link
+### Get a document share link
 **GET /api/v1/documents/`document_pid`/share/`document_shared_link_pid`**
 
 **Response** `200`
@@ -535,7 +537,7 @@ If there is too many results, results will be paginated. To get the next page re
 ```
 Return the same data than **List documents share links** request but for a single share link.
 
-## Update a document share link
+### Update a document share link
 **PATCH /api/v1/documents/`document_pid`/share/`document_shared_link_pid`**
 
 Update a document share link note or expiration date.
@@ -558,12 +560,12 @@ Update a document share link note or expiration date.
 }
 ```
 
-## Delete a document share link
+### Delete a document share link
 **DELETE /api/v1/documents/`document_pid`/share/`document_shared_link_pid`**
 
 **Response** `204`
 
-# Tool to easily test API
+## Tool to easily test API
 
 1. Download and install [Insomnia](https://insomnia.rest/)
 
