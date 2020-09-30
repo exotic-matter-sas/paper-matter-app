@@ -3,7 +3,7 @@
 
 import os
 import threading
-from unittest import skipIf, skip
+from unittest import skip
 from unittest.mock import patch
 
 from django.conf import settings
@@ -16,7 +16,6 @@ from selenium.common.exceptions import NoSuchElementException
 from core.processing.ftl_processing import FTLDocumentProcessing
 from core.tasks import apply_ftl_processing
 from ftests.pages.account_pages import AccountPages
-from ftests.pages.base_page import NODE_SERVER_RUNNING
 from ftests.pages.django_admin_pages import AdminPages
 from ftests.pages.document_viewer_modal import DocumentViewerModal
 from ftests.pages.home_page import HomePage
@@ -49,10 +48,6 @@ from ftl.celery import app
 
 
 class InitialSetupTest(SetupPages, SignupPages, LoginPage, HomePage):
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     @skip("Multi users feature disabled")
     def test_end_to_end_setup(self):
         # Admin have just install Paper Matter and display it for the first time
@@ -85,10 +80,6 @@ class InitialSetupTest(SetupPages, SignupPages, LoginPage, HomePage):
 
 
 class SecondOrgSetup(AdminPages, SignupPages, LoginPage, HomePage):
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     @skip("Multi users feature disabled")
     def test_second_org_setup(self):
         # first org, admin, first user are already created
@@ -124,10 +115,6 @@ class NewUserAddDocumentInsideFolder(
     SignupPages, LoginPage, HomePage, DocumentViewerModal
 ):
     @patch.object(apply_ftl_processing, "delay")
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     @skip("Multi users feature disabled")
     def test_new_user_add_document_inside_folder(self, mock_apply_processing):
         # first org, admin, are already created
@@ -183,10 +170,6 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage, DocumentViewerModal):
         self.visit(LoginPage.url)
         self.log_user()
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     def test_upload_doc_wait_tika_indexation_and_search_for_doc(self):
         # User upload 2 documents
         self.upload_documents()
@@ -213,10 +196,6 @@ class TikaDocumentIndexationAndSearch(LoginPage, HomePage, DocumentViewerModal):
             second_document_title, self.get_elem(self.first_document_title).text
         )
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     def test_search_renamed_doc(self):
         # User upload 2 documents
         self.upload_documents()
@@ -399,10 +378,6 @@ class UserSetupAll2FA(LoginPage, AccountPages):
         self.visit(AccountPages.two_factors_authentication_url)
 
     @patch.object(TOTP, "time", totp_time_property)
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     def test_user_setup_all_2fa(self):
         # Make TOTP.time setter set a hard coded secret_time to always be able to confirm app with the same valid_token
         totp_time_setter.side_effect = mocked_totp_time_setter
@@ -559,10 +534,6 @@ class AccountDeletion(LoginPage, AccountPages, AdminPages):
         )
 
     @patch.object(TOTP, "time", totp_time_property)
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     @patch.object(celery.app, "send_task")
     def test_all_user_resources_are_deleted(self, mocked_send_task_delete_document):
         # user is already logged to account deletion page
@@ -597,10 +568,6 @@ class AccountDeletion(LoginPage, AccountPages, AdminPages):
             resource.refresh_from_db()
 
     @patch.object(TOTP, "time", totp_time_property)
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     @patch.object(celery.app, "send_task")
     def test_unique_admin_can_create_a_second_admin_and_delete_its_account(
         self, mocked_send_task_delete_document

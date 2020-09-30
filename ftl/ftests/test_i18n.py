@@ -1,11 +1,6 @@
 #  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
 
-from unittest import skipIf, skip
-
-from django.conf import settings
-
-from ftests.pages.base_page import NODE_SERVER_RUNNING
 from ftests.pages.home_page import HomePage
 from ftests.pages.setup_pages import SetupPages
 from ftests.pages.login_page import LoginPage
@@ -24,10 +19,6 @@ class I18nTests(SetupPages, LoginPage, HomePage):
             '"administrator" should be translated as "administrateur"',
         )
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     def test_js_i18n_are_working(self):
         # first org, admin, user are already created, user is already logged on home page
         self.org = setup_org()

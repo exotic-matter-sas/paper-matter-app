@@ -11,7 +11,6 @@ from django.conf import settings
 from selenium.common.exceptions import NoSuchElementException
 
 from core.tasks import apply_ftl_processing
-from ftests.pages.base_page import NODE_SERVER_RUNNING
 from ftests.pages.document_viewer_modal import DocumentViewerModal
 from ftests.pages.home_page import HomePage
 from ftests.pages.manage_folders_modal import ManageFoldersModal
@@ -41,10 +40,6 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         self.visit(LoginPage.url)
         self.log_user()
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     @patch.object(apply_ftl_processing, "delay")
     def test_upload_document_to_root(self, mock_apply_processing):
         # User upload a document
@@ -55,10 +50,6 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
             tv.DOCUMENT1_TITLE, self.get_elem_text(self.first_document_title)
         )
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     @patch.object(apply_ftl_processing, "delay")
     def test_upload_document_to_subfolder(self, mock_apply_processing):
         # User has already created a folder
@@ -78,10 +69,6 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         with self.assertRaises(NoSuchElementException):
             self.get_elem(self.first_document_title)
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     @patch.object(apply_ftl_processing, "delay")
     def test_upload_documents_to_root(self, mock_apply_processing):
         # User upload several documents
@@ -95,10 +82,6 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         # Document appears as the first document of the list
         self.assertEqual(3, len(self.get_elems(self.documents_thumbnails)))
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     def test_display_document(self):
         # User has already added a document
         setup_document(self.org, self.user)
@@ -115,10 +98,6 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
 
         self.assertEqual(pdf_viewer_iframe_title, "PDF.js viewer")
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     def test_create_folder(self):
         # User create a folder
         self.create_folder()
@@ -126,10 +105,6 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         # The folder properly appears in the folder list
         self.assertEqual(tv.FOLDER1_NAME, self.get_elem_text(self.folders_list_buttons))
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     def test_create_folder_with_name_already_used(self):
         # A folder already exist
         existing_folder = setup_folder(self.org)
@@ -153,10 +128,6 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
             " of duplicate name",
         )
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     def test_create_folder_tree(self):
         # User create a folder at root level
         self.create_folder(tv.FOLDER1_NAME)
@@ -179,10 +150,6 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         self.assertEqual(tv.FOLDER3_NAME, self.get_elem_text(self.folders_list_buttons))
         self.get_elem(self.folders_list_buttons).click()
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     def test_visit_url_with_search_query(self):
         # User have already added 2 documents
         setup_document(self.org, self.user)
@@ -210,10 +177,6 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
             "Search input should be prefilled with search query",
         )
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     def test_visit_url_with_folder_id(self):
         # User already created a 3 levels folder three (a > b > c) and have added a document inside c folder
         folder_a = setup_folder(self.org)
@@ -231,10 +194,6 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
             "Setup document title should appears in folder C",
         )
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     def test_folder_navigation_using_browser_previous_and_next(self):
         # User already created a 3 levels folder three (a > b > c) and have added a document inside each of them
         # plus one at root level
@@ -290,10 +249,6 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
             "Setup document title should appears in folder c",
         )
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     def test_documents_list_pagination(self):
         # User has already added 21 documents
         for i in range(21):
@@ -327,10 +282,6 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         with self.assertRaises(NoSuchElementException):
             self.get_elem(self.more_documents_button)
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     def test_sort_documents_list(self):
         # append 1 at the end to not have the same order for date and alphabetical
         document_title_to_create = list(ascii_lowercase) + ["1"]
@@ -384,10 +335,6 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         self.assertIn("Relevance", self.get_elem_text(self.sort_dropdown_button))
         self.assertEqual(self.get_elems_text(self.documents_titles), relevance_order)
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     def test_sort_doc_cache_policy(self):
         # User has already added 21 docs to root and 21 docs to a sub_folder
         document_title_to_create = list(ascii_lowercase) + [
@@ -461,10 +408,6 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         "\nRef: https://bugzilla.mozilla.org/show_bug.cgi?id=453455"
         "\nPossible workaround: https://bugzilla.mozilla.org/show_bug.cgi?id=453455#c150",
     )
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     def test_download_document_from_list(self):
         # User has already added a document
         document_name = "doc_name1"
@@ -477,10 +420,6 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         # Downloaded file name match document name
         self.assertEqual(file_name, document_name + ".pdf")
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     @patch.object(apply_ftl_processing, "delay")
     def test_rename_document_from_list(self, mock_processing_delay):
         # User has already added a document
@@ -505,10 +444,6 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
             self.get_elem_text(self.first_document_title), new_document_name
         )
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     def test_unselect_documents(self):
         # Ensure that documents selected are unselected when switching pages
         folder_a = setup_folder(self.org, "Folder A")
@@ -543,10 +478,6 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         ):
             self.get_elem(self.batch_toolbar)
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     def test_drag_document_to_folder(self):
         # User already created a folder and have added a document inside root
         document_to_move = setup_document(self.org, self.user, title="document_to_move")
@@ -624,10 +555,6 @@ class SearchTests(LoginPage, HomePage, DocumentViewerModal):
         self.visit(LoginPage.url)
         self.log_user()
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     def test_search_document_by_its_title(self):
         # User have already added 2 documents
         setup_document(self.org, self.user)
@@ -643,10 +570,6 @@ class SearchTests(LoginPage, HomePage, DocumentViewerModal):
             second_document_title, self.get_elem_text(self.first_document_title)
         )
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     def test_search_document_by_its_note(self):
         # User have already added 2 documents
         setup_document(self.org, self.user)
@@ -665,10 +588,6 @@ class SearchTests(LoginPage, HomePage, DocumentViewerModal):
             second_document_title, self.get_elem_text(self.first_document_title)
         )
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     def test_search_apply_to_all_folders(self):
         # User have added 3 documents in 3 different folders
         folder_a = setup_folder(self.org)
@@ -698,10 +617,6 @@ class SearchTests(LoginPage, HomePage, DocumentViewerModal):
             "Search should apply to all folders",
         )
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     def test_search_document_by_its_content(self):
         # User have already added 2 documents
         setup_document(self.org, self.user)
@@ -723,10 +638,6 @@ class SearchTests(LoginPage, HomePage, DocumentViewerModal):
             second_document_title, self.get_elem_text(self.first_document_title)
         )
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     def test_search_not_found(self):
         # User have already added 1 document
         setup_document(self.org, self.user)
@@ -747,10 +658,6 @@ class SearchTests(LoginPage, HomePage, DocumentViewerModal):
             "A message should indicate no documents were found",
         )
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     def test_search_not_found_from_a_folder(self):
         # User have already added 1 document and 1 folder
         setup_document(self.org, self.user)
@@ -777,10 +684,6 @@ class SearchTests(LoginPage, HomePage, DocumentViewerModal):
             "A message should indicate no documents were found",
         )
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     def test_search_open_close_document(self):
         # User have already added 2 documents inside sub folder
         sub_folder = setup_folder(self.org)
@@ -805,10 +708,6 @@ class SearchTests(LoginPage, HomePage, DocumentViewerModal):
             [doc_first_result.title, doc_second_result.title],
         )
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     def test_search_advanced_syntax(self):
         # See https://www.postgresql.org/docs/11/textsearch-controls.html#id-1.5.11.6.4.11 for advanced search syntax
         # User have already added 2 documents inside sub folder
@@ -878,10 +777,6 @@ class DocumentsBatchActionsTests(LoginPage, HomePage, MoveDocumentsModal):
         # refresh page to see documents
         self.visit(HomePage.url)
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     def test_select_documents(self):
         # User select doc1 and doc2
         docs_to_select = ["doc1", "doc2"]
@@ -895,10 +790,6 @@ class DocumentsBatchActionsTests(LoginPage, HomePage, MoveDocumentsModal):
         with self.assertRaises(NoSuchElementException):
             self.get_elem(self.batch_toolbar)
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     def test_move_documents(self):
         # Document counter is 3
         self.wait_documents_list_loaded()
@@ -923,10 +814,6 @@ class DocumentsBatchActionsTests(LoginPage, HomePage, MoveDocumentsModal):
         self.wait_documents_list_loaded()
         self.assertCountEqual(docs_to_move, self.get_elems_text(self.documents_titles))
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     @patch.object(celery.app, "send_task")
     def test_delete_documents(self, mock_send_task_delete_document):
         # User select doc1 and doc2
@@ -961,10 +848,6 @@ class DocumentViewerModalTests(
         self.visit(LoginPage.url)
         self.log_user()
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     def test_visit_url_with_document_pid(self):
         # User have already added 2 documents
         setup_document(self.org, self.user)
@@ -983,10 +866,6 @@ class DocumentViewerModalTests(
             "Setup document title should match opened document",
         )
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     def test_visit_url_with_folder_id_and_document_pid(self):
         # User already created a 3 levels folder three (a > b > c) and have added a document inside c folder
         folder_a = setup_folder(self.org)
@@ -1015,10 +894,6 @@ class DocumentViewerModalTests(
             "Setup document title should appears in folder C",
         )
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     @patch.object(apply_ftl_processing, "delay")
     def test_rename_document(self, mock_apply_processing):
         # User has already added and opened a document
@@ -1035,10 +910,6 @@ class DocumentViewerModalTests(
         self.close_document()
         self.assertEqual(self.get_elem_text(self.first_document_title), new_doc_title)
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     @patch.object(apply_ftl_processing, "delay")
     def test_annotate_document(self, mock_apply_processing):
         # User has already added and opened a document
@@ -1053,10 +924,6 @@ class DocumentViewerModalTests(
         # Document note is properly updated in pdf viewer
         self.assertEqual(self.get_elem_text(self.note_text), new_doc_note)
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     @patch.object(celery.app, "send_task")
     def test_delete_document(self, mock_send_task_delete_document):
         # User has already added and opened a document
@@ -1083,10 +950,6 @@ class DocumentViewerModalTests(
         "\nRef: https://bugzilla.mozilla.org/show_bug.cgi?id=453455"
         "\nPossible workaround: https://bugzilla.mozilla.org/show_bug.cgi?id=453455#c150",
     )
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     def test_download_document(self):
         # User has already added a document
         document_name = "doc_name1"
@@ -1107,10 +970,6 @@ class DocumentViewerModalTests(
         "Refs:\n"
         " - https://bugs.chromium.org/p/chromedriver/issues/detail?id=1961\n"
         " - https://bugs.chromium.org/p/chromium/issues/detail?id=706008",
-    )
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
     )
     def test_open_document(self):
         # User has already added and opened a document
@@ -1135,10 +994,6 @@ class DocumentViewerModalTests(
         time.sleep(0.5)  # wait for browser to load viewer
         self.assertIn(f"{document.pid}/download/doc", self.browser.current_url)
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     @patch.object(apply_ftl_processing, "delay")
     def test_move_document(self, mock_apply_processing):
         # User has already created a folder and added and opened a document
@@ -1168,10 +1023,6 @@ class DocumentViewerModalTests(
             [document.title], self.get_elems_text(self.documents_titles)
         )
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     def test_share_document(self):
         setup_document(self.org, self.user, binary=setup_temporary_file().name)
         self.refresh_documents_list()
@@ -1183,10 +1034,6 @@ class DocumentViewerModalTests(
         self.visit(share_doc_link, absolute_url=True)
         self.wait_for_elem_to_show("#document-share-title")
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     def test_unshare_document(self):
         doc = setup_document(self.org, self.user, binary=setup_temporary_file().name)
         doc_share = setup_document_share(doc)
@@ -1217,10 +1064,6 @@ class ManageFoldersModalTests(LoginPage, HomePage, ManageFoldersModal):
         self.wait_for_elem_to_show(self.manage_folder_modal)
         self.wait_folder_list_loaded_mfp()
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     def test_create_folder(self):
         # User create 3 folders at root
         folders_to_create = ["folder 1", "folder 2", "folder 3"]
@@ -1231,10 +1074,6 @@ class ManageFoldersModalTests(LoginPage, HomePage, ManageFoldersModal):
         folders_to_create.reverse()
         self.assertEqual(folders_to_create, self.get_elems_text(self.folders_title))
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     def test_select_folder(self):
         # User have already created 2 folders
         folder_to_select_name = "folder 1"
@@ -1252,10 +1091,6 @@ class ManageFoldersModalTests(LoginPage, HomePage, ManageFoldersModal):
             folder_to_select_name, self.get_elem_text(self.selected_folder_name)
         )
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     def test_rename_selected_folder(self):
         # User have already created 2 folders
         folder_to_rename_name = "rename me plz"
@@ -1290,10 +1125,6 @@ class ManageFoldersModalTests(LoginPage, HomePage, ManageFoldersModal):
             "The selected folder name should be still visible and updated",
         )
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     def test_move_selected_folder(self):
         # User have already created 2 folders
         folder_to_move_name = "move me plz"
@@ -1332,10 +1163,6 @@ class ManageFoldersModalTests(LoginPage, HomePage, ManageFoldersModal):
             "Moved folder should appears in target folder",
         )
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     def test_delete_selected_folder(self):
         # User have already created 2 folders
         folder_to_delete_name = "delete me plz"
