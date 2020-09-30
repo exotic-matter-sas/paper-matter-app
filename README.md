@@ -94,9 +94,9 @@ _To run functional tests: make sure your `settings.DEFAULT_TEST_BROWSER` is prop
 
 Run all tests
 
-    python manage.py test --parallel
+    python manage.py test
     # Run all tests excepted slow ones (all functional tests are tagged as `slow`)
-    python manage.py test --parallel --exclude-tag=slow
+    python manage.py test --exclude-tag=slow
 
 Run tests for a specific module
 
@@ -106,7 +106,7 @@ Run tests for a specific module
 Run tests with coverage report
 
     # run tests with coverage inspection enable (i.e. replace `python` by `python -m coverage run`)
-    python -m coverage run manage.py test --parallel
+    python -m coverage run manage.py test
     # combine different coverage files to `.coverage`
     python -m coverage combine
     # generate html report at ftl/htmlcov/index.html
