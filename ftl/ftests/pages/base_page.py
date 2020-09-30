@@ -60,7 +60,11 @@ class BasePage(LIVE_SERVER):
 
     @classmethod
     def setUpClass(cls):
-        if settings.DEV_MODE and "CI" not in os.environ and not server.Node.is_running():
+        if (
+            settings.DEV_MODE
+            and "CI" not in os.environ
+            and not server.Node.is_running()
+        ):
             raise SkipTest("Node server not running, skipping Ftest")
         super().setUpClass()
 

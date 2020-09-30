@@ -39,5 +39,9 @@ class Node:
         cls.running = None
         cls.is_running()
 
-        running_status = green_message.format(cls.running) if cls.running else red_message.format(cls.running)
+        running_status = (
+            green_message.format(cls.running)
+            if cls.running
+            else red_message.format(cls.running)
+        )
         print(f"\nContinue with Node.running: {running_status}")
