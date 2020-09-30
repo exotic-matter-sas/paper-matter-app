@@ -37,10 +37,6 @@ class CorePagesTests(TestCase):
         self.assertContains(response, '<div id="app">')
         self.assertTemplateUsed(response, "core/home.html")
 
-    def test_home_ftl_account_processors_injector(self):
-        home_view = HomeView()
-        home_view.g
-
     def test_home_get_proper_context(self):
         response = self.client.get("/app/")
         # self.assertEqual(response.context['org_name'], self.org.name)
