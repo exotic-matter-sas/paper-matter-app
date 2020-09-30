@@ -5,9 +5,8 @@ import os
 import platform
 import secrets
 import time
-import urllib.error
-import urllib.request
 from tempfile import TemporaryDirectory
+from unittest import SkipTest
 
 from celery import shared_task
 from django.conf import settings
@@ -26,6 +25,7 @@ from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.support import expected_conditions as Ec
 from selenium.webdriver.support.wait import WebDriverWait
 
+import ftests.tools.detect_server as server
 from ftl.settings import BASE_DIR
 
 if "CI" in os.environ:
@@ -33,38 +33,6 @@ if "CI" in os.environ:
 else:
     # Use StaticLiveServerTestCase when test running locally to not depend on collectstatic run
     LIVE_SERVER = StaticLiveServerTestCase
-
-
-def is_node_server_running():
-    """
-    Check if Node server is running
-    """
-    if settings.DEV_MODE and "CI" not in os.environ:
-        try:
-            urllib.request.urlopen("http://localhost:8080/")
-            return True
-        except urllib.error.URLError:
-            return False
-    else:
-        return False
-
-
-# Display a warning if Node server not running during test execution
-NODE_SERVER_RUNNING = is_node_server_running()
-red_message = "\x1b[1;31m{}\033[0m"
-if settings.DEV_MODE and not is_node_server_running() and "CI" not in os.environ:
-    print(
-        red_message.format(
-            "WARNING: Node server NOT running: all tests related to JS frontend will be skipped."
-        )
-    )
-    input(
-        "Run Node server now if you want to run all tests, press Enter to continue..."
-    )
-    NODE_SERVER_RUNNING = (
-        is_node_server_running()
-    )  # refresh value in case user hae just run Node
-    print(f"Continue with NODE_SERVER_RUNNING: {NODE_SERVER_RUNNING}")
 
 
 @tag("slow")
@@ -89,6 +57,12 @@ class BasePage(LIVE_SERVER):
         self._tests_screenshots_path = os.path.join(
             settings.BASE_DIR, "ftests", "tests_screenshots"
         )
+
+    @classmethod
+    def setUpClass(cls):
+        if settings.DEV_MODE and "CI" not in os.environ and not server.Node.is_running():
+            raise SkipTest("Node server not running, skipping Ftest")
+        super().setUpClass()
 
     def setUp(self, browser=settings.DEFAULT_TEST_BROWSER, browser_locale="en"):
         self._download_dir = TemporaryDirectory()
@@ -358,6 +332,7 @@ class BasePage(LIVE_SERVER):
         self.wait_for_elem_to_disappear(self.notification)
 
     def _finish_test_reminder(self, message="Finish test!", pause_test=False):
+        red_message = "\x1b[1;31m{}\033[0m"
         print(red_message.format(message))
 
         if pause_test:

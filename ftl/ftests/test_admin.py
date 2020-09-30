@@ -1,12 +1,8 @@
 #  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
 
-from unittest import skipIf
-
-from django.conf import settings
 from selenium.common.exceptions import NoSuchElementException
 
-from ftests.pages.base_page import NODE_SERVER_RUNNING
 from ftests.pages.django_admin_pages import AdminPages
 from ftests.pages.login_page import LoginPage
 from ftests.tools import test_values as tv
@@ -78,10 +74,6 @@ class AdminPreserveUserPrivacy(LoginPage, AdminPages):
             setup_document_share(self.user2_resources["doc1"])
         ]
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     def test_admin_portal_show_limited_data(self):
         allowed_models = [
             "Groups",

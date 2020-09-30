@@ -2,13 +2,10 @@
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
 
 import re
-from unittest import skipIf
 
-from django.conf import settings
 from django.core import mail
 from django.test import override_settings
 
-from ftests.pages.base_page import NODE_SERVER_RUNNING
 from ftests.pages.home_page import HomePage
 from ftests.pages.login_page import LoginPage
 from ftests.pages.reset_password_pages import ResetPasswordPages
@@ -24,10 +21,6 @@ class LoginPageTests(LoginPage, HomePage):
         # User have already created its account
         self.user = setup_user(org=org)
 
-    @skipIf(
-        settings.DEV_MODE and not NODE_SERVER_RUNNING,
-        "Node not running, this test can't be run",
-    )
     def test_first_user_can_login(self):
         # User login and is redirected to the home page
         self.visit(LoginPage.url)
