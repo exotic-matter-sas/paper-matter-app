@@ -1,4 +1,6 @@
-Before you can query [Folders](#folders) and [Documents](#documents) resources, you have to obtain, store and manage an `access` and `refresh` token through [Authentication requests](#authentication).
+# API V1 reference
+
+_Before you can query [Folders](#folders) and [Documents](#documents) resources, you have to obtain, store and manage an `access` and `refresh` token through [Authentication requests](#authentication)._
 
 ## Authentication
 
@@ -29,7 +31,7 @@ Generate an access and refresh token that follow the [JSON Web Token standard](h
 ```
 
  - `access` token should be passed inside the `Authorization` header for each authenticated request (eg. `Authorization: Bearer eyJ0eX...`)
- - `refresh` token should be used to get a fresh new access token after it expired after a short period (see [Refresh access token request](http://localhost:8001/api-v1/#refresh-access-token)).
+ - `refresh` token should be used to get a fresh new access token after it expired after a short period (see [Refresh access token request](#refresh-access-token)).
 
 **HTTP error status**
 
@@ -563,7 +565,7 @@ Update a document share link note or expiration date.
 
 **Response** `204`
 
-## Tool to test API easily
+## Tool to easily test API
 
 1. Download and install [Insomnia](https://insomnia.rest/)
 
