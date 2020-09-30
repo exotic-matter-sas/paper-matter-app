@@ -26,20 +26,25 @@ from django_otp.decorators import otp_required
 from ua_parser import user_agent_parser
 
 from account.forms import EmailSendForm, DeleteAccountForm
+from core.ftl_account_processors_mixin import FTLAccountProcessorMixin
 from core.models import FTLUser
 from core.tasks import send_email_async
 
 
 @method_decorator(login_required, name="dispatch")
 @method_decorator(otp_required(if_configured=True), name="dispatch")
-class AccountView(View):
+class AccountView(FTLAccountProcessorMixin, View):
     def get(self, request, *args, **kwargs):
-        return render(request, "account/account_index.html")
+        return render(
+            request,
+            "account/account_index.html",
+            self.get_context_data_with_request(request),
+        )
 
 
 @method_decorator(login_required, name="dispatch")
 @method_decorator(otp_required(if_configured=True), name="dispatch")
-class AccountActivityView(ContextMixin, View):
+class AccountActivityView(FTLAccountProcessorMixin, View):
     def get(self, request, *args, **kwargs):
         # When using 2FA, we have a duplicate access log. For now, exclude those from listing.
         access_logs = (
@@ -54,7 +59,7 @@ class AccountActivityView(ContextMixin, View):
             access_log.parsed = user_agent_parser.Parse(access_log.user_agent)
             access_logs_parsed.append(access_log)
 
-        context = self.get_context_data()
+        context = self.get_context_data_with_request(request)
         context["access_log"] = access_logs_parsed
 
         return render(request, "account/account_activity.html", context)

@@ -6,6 +6,7 @@ import uuid
 from django.contrib.staticfiles import finders
 from django.test import TestCase, override_settings
 
+from core.views import HomeView
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import (
     setup_org,
@@ -35,6 +36,10 @@ class CorePagesTests(TestCase):
         self.assertContains(response, f'"isSuperUser": false')
         self.assertContains(response, '<div id="app">')
         self.assertTemplateUsed(response, "core/home.html")
+
+    def test_home_ftl_account_processors_injector(self):
+        home_view = HomeView()
+        home_view.g
 
     def test_home_get_proper_context(self):
         response = self.client.get("/app/")
