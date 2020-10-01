@@ -50,7 +50,7 @@ from ftl.celery import app
 class InitialSetupTest(SetupPages, SignupPages, LoginPage, HomePage):
     @skip("Multi users feature disabled")
     def test_end_to_end_setup(self):
-        # Admin have just install Paper Matter and display it for the first time
+        # Admin have just installed Paper Matter and display it for the first time
         self.visit(self.root_url)
 
         # Admin fulfill the admin creation form
