@@ -26,14 +26,14 @@ from django_otp.decorators import otp_required
 from ua_parser import user_agent_parser
 
 from account.forms import EmailSendForm, DeleteAccountForm
-from core.ftl_account_processors_mixin import FTLAccountProcessorMixin
+from core.ftl_account_processors_mixin import FTLAccountProcessorContextMixin
 from core.models import FTLUser
 from core.tasks import send_email_async
 
 
 @method_decorator(login_required, name="dispatch")
 @method_decorator(otp_required(if_configured=True), name="dispatch")
-class AccountView(FTLAccountProcessorMixin, View):
+class AccountView(FTLAccountProcessorContextMixin, View):
     def get(self, request, *args, **kwargs):
         return render(
             request,
@@ -44,7 +44,7 @@ class AccountView(FTLAccountProcessorMixin, View):
 
 @method_decorator(login_required, name="dispatch")
 @method_decorator(otp_required(if_configured=True), name="dispatch")
-class AccountActivityView(FTLAccountProcessorMixin, View):
+class AccountActivityView(FTLAccountProcessorContextMixin, View):
     def get(self, request, *args, **kwargs):
         # When using 2FA, we have a duplicate access log. For now, exclude those from listing.
         access_logs = (

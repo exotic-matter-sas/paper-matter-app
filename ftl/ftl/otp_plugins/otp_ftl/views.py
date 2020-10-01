@@ -13,14 +13,14 @@ from django_otp.decorators import otp_required
 from django_otp.plugins.otp_static.models import StaticDevice, StaticToken
 from django_otp.plugins.otp_totp.models import TOTPDevice
 
-from core.ftl_account_processors_mixin import FTLAccountProcessorMixin
+from core.ftl_account_processors_mixin import FTLAccountProcessorContextMixin
 from ftl.otp_plugins.otp_ftl.models import Fido2Device
 from ftl.views_auth import LoginViewFTL
 
 
 @method_decorator(login_required, name="dispatch")
 @method_decorator(otp_required(if_configured=True), name="dispatch")
-class ListOTPDevices(FTLAccountProcessorMixin, View):
+class ListOTPDevices(FTLAccountProcessorContextMixin, View):
     def get(self, request, *args, **kwargs):
         user = request.user
         # Static token
