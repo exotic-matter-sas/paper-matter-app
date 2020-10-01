@@ -18,6 +18,6 @@ def custom_exception_handler(exc, context):
         response.data["status_code"] = getattr(response, "status_code", 500)
 
         if isinstance(exc, APIException):
-            response.data["code"] = exc.get_codes()
+            response.data["code"] = getattr(exc, "default_code", "none")
 
     return response
