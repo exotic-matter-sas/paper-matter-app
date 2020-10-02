@@ -246,14 +246,13 @@ class FileUploadView(views.APIView):
             )
 
         mime = guess_mimetype(file_obj, filename=file_obj.name)
-        if not mime:
+        extension = mimetype_to_ext(mime)
+        if not extension:
             raise UnsupportedMediaType(
                 mime,
                 ERROR_CODES_DETAILS["ftl_document_type_unsupported"],
                 "ftl_document_type_unsupported",
             )
-
-        extension = mimetype_to_ext(mime)
 
         payload = json.loads(request.POST["json"])
 
