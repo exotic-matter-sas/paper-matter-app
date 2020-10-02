@@ -86,7 +86,7 @@ def setup_temporary_file():
 
 
 def setup_2fa_static_device(
-    ftl_user, name="My emergency codes", codes_list=None, confirmed=True
+    ftl_user, name=tv.STATIC_DEVICE_NAME, codes_list=None, confirmed=True
 ):
     static_device = StaticDevice.objects.create(
         user=ftl_user, name=name, confirmed=confirmed
@@ -100,7 +100,7 @@ def setup_2fa_static_device(
 
 
 def setup_2fa_totp_device(
-    ftl_user, name="My smartphone", secret_key=None, confirmed=True
+    ftl_user, name=tv.TOTP_DEVICE_NAME, secret_key=None, confirmed=True
 ):
 
     kwargs = {"user": ftl_user, "name": name, "confirmed": confirmed}

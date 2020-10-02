@@ -20,6 +20,9 @@ USER1_PASS = "a123456!1"
 USER2_EMAIL = "user2@localhost.com"
 USER2_PASS = "a123456!2"
 
+USER3_EMAIL = "user3@localhost.com"
+USER3_PASS = "a123456!3"
+
 DOCUMENT1_TITLE = "test"
 DOCUMENT1_NOTE = "Document 1 note"
 DOCUMENT1_BINARY_PATH = "ftests/tools/test_documents/test.pdf"
@@ -37,3 +40,9 @@ FOLDER3_NAME = "Folder 3"
 
 DOCUMENT_SHARING_LINK_1_NOTE = "Document sharing link 1 note"
 DOCUMENT_SHARING_LINK_1_PASS = "dsl123"
+
+STATIC_DEVICE_NAME = "My emergency codes"
+STATIC_DEVICE_CODES_LIST = ["SD1", "SD2", "SD3", "SD4", "SD5", "SD6", "SD7", "SD8", "SD9", "SD10"]
+
+TOTP_DEVICE_NAME = "My smartphone"
+TOTP_DEVICE_SECRET_KEY = "TDSC1"

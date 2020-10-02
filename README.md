@@ -52,7 +52,7 @@ Second terminal
     cd ftl
     python manage.py runserver
 
-_To run local as https (required to test 2fa fido2 devices) use `python manage.py runsslserver` instead. You **must have** `DEBUG` and `DEV_MODE` set to `True` in `settings.py` (set them in your `settings_local.py` wont work, unfortunately) and you may have to use `localhost` domain (in place of the usual ip) in order your browser accept to load the app._
+_To run local as https (required to test 2fa fido2 devices) use `python manage.py runsslserver` instead. You **must have** `DEBUG` and `DEV_MODE` set to `True` in `settings.py` (set them in your `settings_local.py` wont work unfortunately) and you may have to use `localhost` domain (in place of the usual ip) in order your browser accept to load the app._
 
 Third terminal
   
