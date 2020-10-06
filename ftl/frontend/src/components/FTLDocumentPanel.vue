@@ -11,7 +11,6 @@
     hide-footer
     centered
     @hidden="closeDocument"
-    @hide="viewerPdfJsUrl = null"
   >
     <template slot="modal-header">
       <b-container>
@@ -124,19 +123,23 @@
             <font-awesome-icon icon="trash" />
             <span>{{ $t("Delete") }}</span>
           </b-dropdown-item>
+          <b-dropdown-form form-class="px-3">
+            <b-form-checkbox
+              v-model="forcePDFJS"
+              name="check-forcePDFJS"
+              switch
+            >
+              {{ $t("Alt. viewer") }}
+            </b-form-checkbox>
+          </b-dropdown-form>
         </b-dropdown>
       </b-container>
     </template>
     <b-container id="document-viewer-body" class="h-100 px-0" fluid>
       <b-row class="h-100" no-gutters>
         <b-col v-if="currentOpenDoc.type === 'application/pdf' && !isIOS">
-          <b-row class="h-100" no-gutters id="pdfviewer">
-            <iframe
-              class="col border-0"
-              v-if="viewerPdfJsUrl"
-              :src="viewerPdfJsUrl"
-            >
-            </iframe>
+          <b-row class="h-100" no-gutters id="viewer-pdf">
+            <div id="pdfjs-embed-container" class="col border-0"></div>
           </b-row>
         </b-col>
         <b-col v-else id="viewer-disabled" class="d-flex align-items-center">
@@ -224,6 +227,7 @@
               <hr />
             </b-col>
           </b-row>
+
           <b-row class="px-3">
             <b-col class="px-3 py-2 py-xl-0">
               <FTLNote
@@ -232,6 +236,19 @@
                 @event-document-note-edited="documentNoteUpdated"
                 @event-close-note="noteToggled = false"
               />
+              <hr />
+            </b-col>
+          </b-row>
+
+          <b-row class="px-3 d-d">
+            <b-col class="px-3">
+              <b-form-checkbox
+                v-model="forcePDFJS"
+                name="check-forcePDFJS"
+                switch
+              >
+                {{ $t("Use alternative PDF viewer") }}
+              </b-form-checkbox>
             </b-col>
           </b-row>
         </b-col>
@@ -286,10 +303,13 @@
     Show note: Voir la note
     Add note: Annoter
     Open location: Dossier parent
+    Alt. viewer: Visionneuse alternative
+    Use alternative PDF viewer: Utiliser une visionneuse PDF alternative
 </i18n>
 
 <script>
 import axios from "axios";
+import PDFObject from "pdfobject";
 import FTLMoveDocuments from "@/components/FTLMoveDocuments";
 import FTLRenameDocument from "@/components/FTLRenameDocument";
 import FTLDeleteDocuments from "@/components/FTLDeleteDocuments";
@@ -325,7 +345,6 @@ export default {
     return {
       currentOpenDoc: { path: [] },
       publicPath: process.env.BASE_URL,
-      viewerPdfJsUrl: "",
       icons: {
         "application/pdf": "file-pdf",
         "text/plain": "file-alt",
@@ -341,10 +360,15 @@ export default {
           "file-powerpoint",
       },
       noteToggled: false,
+      forcePDFJS: false,
     };
   },
 
   mounted() {
+    if (localStorage.forcepdfjs) {
+      // Convert string "true" as stored in localstorage to boolean
+      this.forcePDFJS = JSON.parse(localStorage.forcepdfjs);
+    }
     this.openDocument();
   },
 
@@ -383,6 +407,15 @@ export default {
     },
   },
 
+  watch: {
+    forcePDFJS: function (newVal, oldVal) {
+      localStorage.forcepdfjs = newVal;
+      if (this.currentOpenDoc.pid) {
+        this.embedPDF();
+      }
+    },
+  },
+
   methods: {
     openDocument: function () {
       this.$bvModal.show("document-viewer");
@@ -391,7 +424,7 @@ export default {
         .get("/app/api/v1/documents/" + this.pid)
         .then((response) => {
           this.currentOpenDoc = response.data;
-          this.viewerPdfJsUrl = this.getViewerUrl();
+          this.$nextTick().then(() => this.embedPDF());
 
           if (
             !response.data.thumbnail_available &&
@@ -411,15 +444,23 @@ export default {
         });
     },
 
-    getViewerUrl: function () {
-      return (
-        `/assets/pdfjs/web/viewer.html?r=` +
-        new Date().getTime() +
-        `&file=` +
-        this.currentOpenDoc.download_url +
-        `#pagemode=none&search=` +
-        this.search
-      );
+    embedPDF: function () {
+      if (this.currentOpenDoc.download_url) {
+        let options = {
+          PDFJS_URL: "/assets/pdfjs/web/viewer.html",
+          supportRedirect: true,
+          forcePDFJS: this.forcePDFJS,
+          pdfOpenParams: {
+            pagemode: "none",
+            search: this.search,
+          },
+        };
+        PDFObject.embed(
+          this.currentOpenDoc.download_url + "/open",
+          "#pdfjs-embed-container",
+          options
+        );
+      }
     },
 
     documentRenamed: function (event) {
