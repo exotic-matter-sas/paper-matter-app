@@ -106,10 +106,9 @@ class Fido2DeviceCheckForm(OTPTokenForm):
             for d in self.device_choices(self.user)
             if Fido2Device.model_label() in d[0]
         ]
-        # The fido2_device store in the form may not match the one used by the user
-        # (e.g. if he use its second registered fido2_device)
-        # It doesn't matter as this field is ignored by views_fido2.fido2_api_login_begin,
-        # it get all user fido2_devices
+        # We choose a default Fido 2 device to satisfy the requirement of the form but the field itself is not used
+        # by the final submit request as the check uses its own API views_fido2.fido2_api_login_begin (which return
+        # all the user keys).
         self.cleaned_data["otp_device"] = fido2_devices[0][0]
         return super().clean()
 
