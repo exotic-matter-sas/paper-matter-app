@@ -193,6 +193,7 @@
         @dragover="allowDrop"
         @drop="getDroppedFiles"
         @dragleave.self="hideDropZone"
+        @mouseover="hideDropZone"
       >
         <b-col v-if="docsLoading">
           <b-spinner
