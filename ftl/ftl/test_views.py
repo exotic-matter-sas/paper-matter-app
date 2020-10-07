@@ -1,9 +1,6 @@
 #  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
-
-import re
 from datetime import datetime, timezone, timedelta
-from unittest import skip
 from unittest.mock import patch, Mock
 
 import qrcode.image.svg
@@ -11,15 +8,16 @@ from django.conf.global_settings import SESSION_COOKIE_AGE
 from django.contrib import messages
 from django.contrib.auth.signals import user_logged_out
 from django.contrib.sessions.backends.base import SessionBase
-from django.core import mail
-from django.test import TestCase, RequestFactory
+from django.test import RequestFactory
 from django.utils import timezone as django_timezone
+from django.test import TestCase
 from django.urls import reverse_lazy
 from django_otp.middleware import OTPMiddleware
 from django_otp.oath import TOTP
 from django_otp.plugins.otp_static.models import StaticDevice
 from django_otp.plugins.otp_totp.models import TOTPDevice
 from rest_framework import status
+from django_registration.backends.activation.views import RegistrationView
 
 from core.models import FTLUser, FTL_PERMISSIONS_USER
 from ftests.test_account import (
@@ -49,7 +47,7 @@ from ftl.otp_plugins.otp_ftl.views_totp import (
     TOTPDeviceConfirm,
 )
 from ftl.settings import FIDO2_RP_NAME
-from .forms import FTLUserCreationForm
+from ftl import celery
 
 
 class FtlPagesTests(TestCase):
@@ -65,38 +63,25 @@ class FtlPagesTests(TestCase):
             response, f"{reverse_lazy('login')}?next={reverse_lazy('home')}"
         )
 
-    @skip("Multi users feature disabled")
     def test_signup_returns_correct_html(self):
         """Signup page returns correct html"""
-        org = setup_org()
-
-        response = self.client.get(f"/signup/{org.slug}/")
+        response = self.client.get("/signup/")
         self.assertContains(response, "Create your account")
-        self.assertTemplateUsed(response, "ftl/registration/signup.html")
+        self.assertTemplateUsed(
+            response, "ftl/registration/create_org_and_ftluser.html"
+        )
 
-    @skip("Multi users feature disabled")
-    def test_signup_context(self):
-        """Signup page get proper context"""
-        org = setup_org()
-
-        response = self.client.get(f"/signup/{org.slug}/")
-        self.assertEqual(response.context["org_name"], org.name)
-        self.assertIsInstance(response.context["form"], FTLUserCreationForm)
-
-    @skip("Multi users feature disabled")
-    def test_signup_get_success_url(self):
-        """Signup get_success_url working properly"""
-        org = setup_org()
-
+    @patch.object(celery.app, "send_task")
+    def test_signup_get_success_url(self, mocked_send_email_async):
         response = self.client.post(
-            f"/signup/{org.slug}/",
+            "/signup/",
             {
+                "org_name": tv.ORG_NAME_1,
                 "email": tv.USER1_EMAIL,
                 "password1": tv.USER1_PASS,
                 "password2": tv.USER1_PASS,
             },
         )
-
         self.assertRedirects(
             response, reverse_lazy("signup_success"), fetch_redirect_response=False
         )
@@ -108,13 +93,12 @@ class FtlPagesTests(TestCase):
         self.assertContains(response, "verify your email")
         self.assertTemplateUsed(response, "ftl/registration/signup_success.html")
 
-    @skip("Multi users feature disabled")
-    def test_user_permissions_signup(self):
-        org = setup_org()
-
+    @patch.object(celery.app, "send_task")
+    def test_user_permissions_signup(self, mocked_send_email_async):
         self.client.post(
-            f"/signup/{org.slug}/",
+            "/signup/",
             {
+                "org_name": tv.ORG_NAME_1,
                 "email": tv.USER1_EMAIL,
                 "password1": tv.USER1_PASS,
                 "password2": tv.USER1_PASS,
@@ -125,11 +109,10 @@ class FtlPagesTests(TestCase):
         self.assertIsNotNone(user)
 
         # To test permission, we need an account activated otherwise the permissions are not set
-        self.assertEqual(len(mail.outbox), 1)
-        activate_link = re.search(
-            r"(https?://.+/accounts/activate/.+/)", mail.outbox[0].body
-        )
-        response = self.client.get(activate_link.group(1), follow=True)
+        registration_view = RegistrationView()
+        activation_key = registration_view.get_activation_key(user)
+
+        response = self.client.get(f"/accounts/activate/{activation_key}/", follow=True)
         self.assertEqual(response.status_code, 200)
         user = FTLUser.objects.get(email=tv.USER1_EMAIL)
         self.assertTrue(user.has_perms(FTL_PERMISSIONS_USER))
