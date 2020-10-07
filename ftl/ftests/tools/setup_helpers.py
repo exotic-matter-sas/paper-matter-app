@@ -111,7 +111,7 @@ def setup_2fa_totp_device(
     return TOTPDevice.objects.create(**kwargs)
 
 
-def setup_2fa_fido2_device(ftl_user, name="My security key", confirmed=True):
+def setup_2fa_fido2_device(ftl_user, name=tv.FIDO2_DEVICE_NAME, confirmed=True):
     return Fido2Device.objects.create(user=ftl_user, name=name, confirmed=confirmed)
 
 

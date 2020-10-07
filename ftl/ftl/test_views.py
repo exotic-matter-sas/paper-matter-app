@@ -19,6 +19,7 @@ from django_otp.middleware import OTPMiddleware
 from django_otp.oath import TOTP
 from django_otp.plugins.otp_static.models import StaticDevice
 from django_otp.plugins.otp_totp.models import TOTPDevice
+from rest_framework import status
 
 from core.models import FTLUser, FTL_PERMISSIONS_USER
 from ftests.test_account import TotpDevice2FATests, totp_time_setter, totp_time_property, mocked_totp_time_setter, \
@@ -34,9 +35,11 @@ from ftests.tools.setup_helpers import (
     setup_2fa_fido2_device
 )
 from ftl.otp_plugins.otp_ftl.forms import TOTPDeviceConfirmForm
+from ftl.otp_plugins.otp_ftl.models import Fido2Device
+from ftl.otp_plugins.otp_ftl.views_fido2 import Fido2Check
 from ftl.otp_plugins.otp_ftl.views_static import StaticDeviceCheck, StaticDeviceAdd
-from ftl.otp_plugins.otp_ftl.views_totp import TOTPDeviceCheck, TOTPDeviceAdd, TOTPDeviceDetail, TOTPDeviceDisplay, \
-    TOTPDeviceConfirm
+from ftl.otp_plugins.otp_ftl.views_totp import TOTPDeviceCheck, TOTPDeviceAdd, TOTPDeviceConfirm
+from ftl.settings import FIDO2_RP_NAME
 from .forms import FTLUserCreationForm
 
 
@@ -668,3 +671,237 @@ class OTPFtlViewsTOTPTests(TestCase):
         self.client.get(f"/accounts/2fa/totp/{self.totp_device.id}/qrcode/")
 
         mocked_make.assert_called_once_with(self.totp_device.config_url, image_factory=qrcode.image.svg.SvgImage)
+
+
+class OTPFtlViewsFido2Tests(TestCase):
+    def setUp(self):
+        # Setup org, user, a static device and the user is logged
+        self.org = setup_org()
+        self.user = setup_user(self.org)
+        self.fido2_device = setup_2fa_fido2_device(self.user)
+        setup_authenticated_session(self.client, self.org, self.user)
+        # mock OTPMiddleware._verify_user() to skip check page
+        self.middleware_patcher = patch.object(
+            OTPMiddleware, "_verify_user", mocked_verify_user
+        )
+        self.middleware_patcher.start()
+        self.addCleanup(
+            patch.stopall
+        )  # ensure mock is remove after each test, even if the test crash
+        self.addCleanup(totp_time_setter.reset_mock, side_effect=True)
+
+    def test_otp_fido2_check_returns_correct_html(self):
+        response = self.client.get("/accounts/2fa/fido2/check/")
+
+        self.assertTemplateUsed(response, "otp_ftl/fido2device_check.html")
+
+    def test_otp_fido2_check_context(self):
+        response = self.client.get("/accounts/2fa/fido2/check/")
+
+        self.assertEqual(response.context["have_fido2"], True)
+        self.assertEqual(response.context["have_totp"], False)
+        self.assertEqual(response.context["have_static"], False)
+
+        # given user setup static + fido2 devices
+        setup_2fa_totp_device(self.user)
+
+        response = self.client.get("/accounts/2fa/fido2/check/")
+
+        self.assertEqual(response.context["have_fido2"], True)
+        self.assertEqual(response.context["have_totp"], True)
+        self.assertEqual(response.context["have_static"], False)
+        # given user setup static + fido2 + totp devices
+        setup_2fa_static_device(self.user, codes_list=tv.STATIC_DEVICE_CODES_LIST)
+
+        response = self.client.get("/accounts/2fa/fido2/check/")
+
+        self.assertEqual(response.context["have_fido2"], True)
+        self.assertEqual(response.context["have_totp"], True)
+        self.assertEqual(response.context["have_static"], True)
+
+    def test_otp_fido2_check_success_url(self):
+        # Given there is no next querystring set
+        request_factory = RequestFactory()
+        request = request_factory.get("/accounts/2fa/fido2/check/")
+        request.user = self.user
+        request.session = SessionBase()
+
+        otp_fido2_check_view = Fido2Check()
+        otp_fido2_check_view.request = request
+
+        # Success url is set to Home
+        self.assertEqual(otp_fido2_check_view.get_success_url(), reverse_lazy("home"))
+
+        # Given there is a safe url in next querystring
+        request = request_factory.get("/accounts/2fa/fido2/check/")
+        request.user = self.user
+        request.session = SessionBase()
+        request.session["next"] = reverse_lazy("account_index")
+
+        otp_fido2_check_view = Fido2Check()
+        otp_fido2_check_view.request = request
+
+        # Success url is set to next url
+        self.assertEqual(otp_fido2_check_view.get_success_url(), reverse_lazy("account_index"))
+
+        # Given there is a unsafe url in next querystring
+        request = request_factory.get("/accounts/2fa/fido2/check/")
+        request.user = self.user
+        request.session = SessionBase()
+        request.session["next"] = "https://buymybitcoins.plz"
+
+        otp_fido2_check_view = Fido2Check()
+        otp_fido2_check_view.request = request
+
+        # Success url is set NOT set to next url, it default to Home
+        self.assertEqual(otp_fido2_check_view.get_success_url(), reverse_lazy("home"))
+
+    def test_otp_fido2_update_returns_correct_html(self):
+        response = self.client.get(f"/accounts/2fa/fido2/{self.fido2_device.id}/update/")
+
+        self.assertTemplateUsed(response, "otp_ftl/device_update.html")
+
+    def test_otp_fido2_add_returns_correct_html(self):
+        response = self.client.get(f"/accounts/2fa/fido2/")
+
+        self.assertTemplateUsed(response, "otp_ftl/fido2device_form.html")
+
+    def test_otp_fido2_delete_returns_correct_html(self):
+        response = self.client.get(f"/accounts/2fa/fido2/{self.fido2_device.id}/delete/")
+
+        self.assertTemplateUsed(response, "otp_ftl/device_confirm_delete.html")
+
+    def test_otp_fido2_success_returns_correct_html(self):
+        response = self.client.get("/accounts/2fa/fido2/success/")
+
+        self.assertTemplateUsed(response, "otp_ftl/fido2device_detail.html")
+
+    @patch("ftl.otp_plugins.otp_ftl.views_fido2.AttestedCredentialData")
+    @patch("ftl.otp_plugins.otp_ftl.views_fido2.cbor2")
+    @patch("ftl.otp_plugins.otp_ftl.views_fido2.PublicKeyCredentialRpEntity")
+    @patch("ftl.otp_plugins.otp_ftl.views_fido2.Fido2Server")
+    def test_otp_fido2_api_register_begin(self, fido2_server_mock, pkcre_mock, cbor2_mock, acd_mock):
+        # given user setup another fido2_device
+        fido2_device_2 = setup_2fa_fido2_device(self.user, name="second fido device")
+
+        register_begin_return_value = ["fake_registration_data", "fake_state"]
+        fido2_server_mock().register_begin.return_value = register_begin_return_value
+        fido2_server_mock.reset_mock()  # previous assignment count as a call so we need to reset mock counter
+        fake_credentials_list = ["fake_credential_1", "fake_credential_2"]
+        acd_mock.side_effect = fake_credentials_list
+        fake_cbor2_loaded_list = ["fake_cbor2_loaded_1", "fake_cbor2_loaded_2"]
+        cbor2_mock.loads.side_effect = fake_cbor2_loaded_list
+        cbor2_mock.dumps.return_value = b"fake_registration_data"
+
+        response = self.client.get("/accounts/2fa/fido2/api/register_begin")
+
+        pkcre_mock.assert_called_once_with("testserver", FIDO2_RP_NAME)
+        fido2_server_mock.assert_called_once_with(pkcre_mock())
+
+        self.assertEqual(cbor2_mock.loads.call_count, 2)
+        cbor2_mock.loads.assert_any_call(self.fido2_device.authenticator_data)
+        cbor2_mock.loads.assert_any_call(fido2_device_2.authenticator_data)
+        self.assertEqual(acd_mock.call_count, 2)
+        acd_mock.assert_any_call(fake_cbor2_loaded_list[0])
+        acd_mock.assert_any_call(fake_cbor2_loaded_list[1])
+
+        fido2_server_mock().register_begin.assert_called_once_with(
+            {
+                "id": self.user.email.encode(),
+                "name": self.user.email,
+                "displayName": self.user.email,
+                "icon": ""
+            },
+            credentials=fake_credentials_list,
+            user_verification="discouraged",
+            authenticator_attachment="cross-platform",
+        )
+
+        cbor2_mock.dumps.assert_called_once_with(register_begin_return_value[0])
+
+        self.assertEqual(response.wsgi_request.session.get("fido2_register_state"), register_begin_return_value[1])
+
+        self.assertEqual(response.content, cbor2_mock.dumps.return_value)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response["Content-Type"], "application/octet-stream")
+
+    @patch("ftl.otp_plugins.otp_ftl.views_fido2.Fido2Server")
+    @patch("ftl.otp_plugins.otp_ftl.views_fido2.PublicKeyCredentialRpEntity")
+    @patch("ftl.otp_plugins.otp_ftl.views_fido2.AttestationObject")
+    @patch("ftl.otp_plugins.otp_ftl.views_fido2.ClientData")
+    @patch("ftl.otp_plugins.otp_ftl.views_fido2.cbor2")
+    def test_otp_fido2_api_register_finish(self, cbor2_mock, client_data_mock, attestation_object_mock, pkcre_mock,
+                                           fido2_server_mock):
+        device_name = "Fido2 device just added"
+        fake_cbor2_loads_value = {
+            "name": device_name,
+            "clientDataJSON": "fakeClientDataJSON",
+            "attestationObject": "fakeattestationObject"
+        }
+        cbor2_mock.loads.return_value = fake_cbor2_loads_value
+        cbor2_mock.dumps.return_value = b"fake_authenticator_data"
+        session = self.client.session
+        session["fido2_register_state"] = "fake_registration_data"
+        session.save()
+        client_data_mock.return_value = "fake_client_data"
+        attestation_object_mock.return_value = "fake_attestation_object"
+
+        response = self.client.get("/accounts/2fa/fido2/api/register_finish")
+
+        cbor2_mock.loads.assert_called_once_with(response.wsgi_request.body)
+        client_data_mock.assert_called_once_with(fake_cbor2_loads_value["clientDataJSON"])
+        attestation_object_mock.assert_called_once_with(fake_cbor2_loads_value["attestationObject"])
+
+        pkcre_mock.assert_called_once_with("testserver", FIDO2_RP_NAME)
+        fido2_server_mock().register_complete.assert_called_once_with(
+            "fake_registration_data",
+            client_data_mock.return_value,
+            attestation_object_mock.return_value
+        )
+
+        self.assertEqual(2, Fido2Device.objects.count())
+        self.assertEqual(1, len(Fido2Device.objects.filter(name=device_name)))
+
+        self.assertEqual(response.content, cbor2_mock.dumps.return_value)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response["Content-Type"], "application/cbor")
+
+    @patch("ftl.otp_plugins.otp_ftl.views_fido2.Fido2Server")
+    @patch("ftl.otp_plugins.otp_ftl.views_fido2.PublicKeyCredentialRpEntity")
+    @patch("ftl.otp_plugins.otp_ftl.views_fido2.cbor2")
+    @patch("ftl.otp_plugins.otp_ftl.views_fido2.AttestedCredentialData")
+    def test_otp_fido2_api_login_begin(self, acd_mock, cbor2_mock, pkcre_mock, fido2_server_mock):
+        # given user setup another fido2_device
+        setup_2fa_fido2_device(self.user, name="second fido device")
+
+        authenticate_begin_return_value = ["fake_auth_data", "fake_state"]
+        fido2_server_mock().authenticate_begin.return_value = authenticate_begin_return_value
+        fido2_server_mock.reset_mock()  # previous assignment count as a call so we need to reset mock counter
+        fake_credentials_list = ["fake_credential_1", "fake_credential_2"]
+        acd_mock.side_effect = fake_credentials_list
+        fake_cbor2_loaded_list = ["fake_cbor2_loaded_1", "fake_cbor2_loaded_2"]
+        cbor2_mock.loads.side_effect = fake_cbor2_loaded_list
+        cbor2_mock.dumps.return_value = b"fakeAuthData"
+
+        response = self.client.get("/accounts/2fa/fido2/api/login_begin")
+
+        self.assertEqual(acd_mock.call_count, 2)
+        acd_mock.assert_any_call(fake_cbor2_loaded_list[0])
+        acd_mock.assert_any_call(fake_cbor2_loaded_list[1])
+
+        pkcre_mock.assert_called_once_with("testserver", FIDO2_RP_NAME)
+        fido2_server_mock.assert_called_once_with(pkcre_mock())
+
+        fido2_server_mock().authenticate_begin.assert_called_once_with(
+            fake_credentials_list,
+            user_verification="discouraged",
+        )
+
+        self.assertEqual(response.wsgi_request.session.get("fido2_state"), authenticate_begin_return_value[1])
+        self.assertEqual(response.wsgi_request.session.get("fido2_domain"), "testserver")
+
+        cbor2_mock.dumps.assert_called_once_with(authenticate_begin_return_value[0])
+
+        self.assertEqual(response.content, cbor2_mock.dumps.return_value)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response["Content-Type"], "application/cbor")

@@ -46,3 +46,5 @@ STATIC_DEVICE_CODES_LIST = ["SD1", "SD2", "SD3", "SD4", "SD5", "SD6", "SD7", "SD
 
 TOTP_DEVICE_NAME = "My smartphone"
 TOTP_DEVICE_SECRET_KEY = "TDSC1"
+
+FIDO2_DEVICE_NAME = "My security key"
