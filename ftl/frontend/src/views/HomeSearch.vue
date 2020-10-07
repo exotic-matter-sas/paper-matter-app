@@ -510,7 +510,7 @@ export default {
   ::v-deep * {
     pointer-events: none;
   }
-  .card {
+  ::v-deep .card {
     opacity: 0.3;
   }
 }
