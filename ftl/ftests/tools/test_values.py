@@ -42,7 +42,18 @@ DOCUMENT_SHARING_LINK_1_NOTE = "Document sharing link 1 note"
 DOCUMENT_SHARING_LINK_1_PASS = "dsl123"
 
 STATIC_DEVICE_NAME = "My emergency codes"
-STATIC_DEVICE_CODES_LIST = ["SD1", "SD2", "SD3", "SD4", "SD5", "SD6", "SD7", "SD8", "SD9", "SD10"]
+STATIC_DEVICE_CODES_LIST = [
+    "SD1",
+    "SD2",
+    "SD3",
+    "SD4",
+    "SD5",
+    "SD6",
+    "SD7",
+    "SD8",
+    "SD9",
+    "SD10",
+]
 
 TOTP_DEVICE_NAME = "My smartphone"
 TOTP_DEVICE_SECRET_KEY = "TDSC1"

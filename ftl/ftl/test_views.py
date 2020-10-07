@@ -22,8 +22,13 @@ from django_otp.plugins.otp_totp.models import TOTPDevice
 from rest_framework import status
 
 from core.models import FTLUser, FTL_PERMISSIONS_USER
-from ftests.test_account import TotpDevice2FATests, totp_time_setter, totp_time_property, mocked_totp_time_setter, \
-    mocked_verify_user
+from ftests.test_account import (
+    TotpDevice2FATests,
+    totp_time_setter,
+    totp_time_property,
+    mocked_totp_time_setter,
+    mocked_verify_user,
+)
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import (
     setup_org,
@@ -32,13 +37,17 @@ from ftests.tools.setup_helpers import (
     setup_authenticated_session,
     setup_2fa_totp_device,
     setup_2fa_static_device,
-    setup_2fa_fido2_device
+    setup_2fa_fido2_device,
 )
 from ftl.otp_plugins.otp_ftl.forms import TOTPDeviceConfirmForm
 from ftl.otp_plugins.otp_ftl.models import Fido2Device
 from ftl.otp_plugins.otp_ftl.views_fido2 import Fido2Check
 from ftl.otp_plugins.otp_ftl.views_static import StaticDeviceCheck, StaticDeviceAdd
-from ftl.otp_plugins.otp_ftl.views_totp import TOTPDeviceCheck, TOTPDeviceAdd, TOTPDeviceConfirm
+from ftl.otp_plugins.otp_ftl.views_totp import (
+    TOTPDeviceCheck,
+    TOTPDeviceAdd,
+    TOTPDeviceConfirm,
+)
 from ftl.settings import FIDO2_RP_NAME
 from .forms import FTLUserCreationForm
 
@@ -154,6 +163,7 @@ class FtlPagesTests(TestCase):
 
         messages_mocked.assert_called_once()
 
+
 ########################
 # Otp_ftl plugin views #
 ########################
@@ -209,7 +219,9 @@ class OTPCheckViewTests(TestCase):
         )
         delta = cookie_expiration_time - now
 
-        self.assertAlmostEqual(round(delta.total_seconds()), SESSION_COOKIE_AGE, delta=5)
+        self.assertAlmostEqual(
+            round(delta.total_seconds()), SESSION_COOKIE_AGE, delta=5
+        )
 
     def test_otp_check_redirect_to_proper_view(self):
         # Given no 2fa devices are setup
@@ -221,25 +233,19 @@ class OTPCheckViewTests(TestCase):
         setup_2fa_static_device(self.user, codes_list=tv.STATIC_DEVICE_CODES_LIST)
         response = self.client.get("/app/", follow=True)
         # User is redirect to otp_static_check
-        self.assertRedirects(
-            response, reverse_lazy("otp_static_check")
-        )
+        self.assertRedirects(response, reverse_lazy("otp_static_check"))
 
         # Given static + totp device are setup
         setup_2fa_totp_device(self.user)
         response = self.client.get("/app/", follow=True)
         # User is redirect to otp_static_check
-        self.assertRedirects(
-            response, reverse_lazy("otp_totp_check")
-        )
+        self.assertRedirects(response, reverse_lazy("otp_totp_check"))
 
         # Given static + totp device are setup
         setup_2fa_fido2_device(self.user)
         response = self.client.get("/app/", follow=True)
         # User is redirect to otp_static_check
-        self.assertRedirects(
-            response, reverse_lazy("otp_fido2_check")
-        )
+        self.assertRedirects(response, reverse_lazy("otp_fido2_check"))
 
 
 class OTPFtlViewsTests(TestCase):
@@ -282,8 +288,12 @@ class OTPFtlViewsTests(TestCase):
         totp_time_setter.side_effect = mocked_totp_time_setter
 
         # Given 2fa devices are setup
-        static_device_1 = setup_2fa_static_device(self.user, "SD1", codes_list=tv.STATIC_DEVICE_CODES_LIST)
-        static_device_2 = setup_2fa_static_device(self.user, "SD2", codes_list=tv.STATIC_DEVICE_CODES_LIST)
+        static_device_1 = setup_2fa_static_device(
+            self.user, "SD1", codes_list=tv.STATIC_DEVICE_CODES_LIST
+        )
+        static_device_2 = setup_2fa_static_device(
+            self.user, "SD2", codes_list=tv.STATIC_DEVICE_CODES_LIST
+        )
         totp_device_1 = setup_2fa_totp_device(self.user, "TD1")
         totp_device_2 = setup_2fa_totp_device(self.user, "TD2")
         fido2_device_1 = setup_2fa_fido2_device(self.user, "FD1")
@@ -291,12 +301,15 @@ class OTPFtlViewsTests(TestCase):
 
         response = self.client.get("/accounts/2fa/")
 
-        self.assertCountEqual(response.context["static_devices"],
-                              [static_device_1, static_device_2])
-        self.assertCountEqual(response.context["totp_devices"],
-                              [totp_device_1, totp_device_2])
-        self.assertCountEqual(response.context["fido2_devices"],
-                              [fido2_device_1, fido2_device_2])
+        self.assertCountEqual(
+            response.context["static_devices"], [static_device_1, static_device_2]
+        )
+        self.assertCountEqual(
+            response.context["totp_devices"], [totp_device_1, totp_device_2]
+        )
+        self.assertCountEqual(
+            response.context["fido2_devices"], [fido2_device_1, fido2_device_2]
+        )
 
 
 class OTPFtlViewsStaticTests(TestCase):
@@ -304,7 +317,9 @@ class OTPFtlViewsStaticTests(TestCase):
         # Setup org, user, a static device and the user is logged
         self.org = setup_org()
         self.user = setup_user(self.org)
-        self.static_device = setup_2fa_static_device(self.user, codes_list=tv.STATIC_DEVICE_CODES_LIST)
+        self.static_device = setup_2fa_static_device(
+            self.user, codes_list=tv.STATIC_DEVICE_CODES_LIST
+        )
         setup_authenticated_session(self.client, self.org, self.user)
         # mock OTPMiddleware._verify_user() to skip check page
         self.middleware_patcher = patch.object(
@@ -368,7 +383,9 @@ class OTPFtlViewsStaticTests(TestCase):
         otp_static_check_view.request = request
 
         # Success url is set to next url
-        self.assertEqual(otp_static_check_view.get_success_url(), reverse_lazy("account_index"))
+        self.assertEqual(
+            otp_static_check_view.get_success_url(), reverse_lazy("account_index")
+        )
 
         # Given there is a unsafe url in next querystring
         request = request_factory.get("/accounts/2fa/static/check/")
@@ -388,7 +405,9 @@ class OTPFtlViewsStaticTests(TestCase):
         self.assertTemplateUsed(response, "otp_ftl/staticdevice_detail.html")
 
     def test_otp_static_update_returns_correct_html(self):
-        response = self.client.get(f"/accounts/2fa/static/{self.static_device.id}/update/")
+        response = self.client.get(
+            f"/accounts/2fa/static/{self.static_device.id}/update/"
+        )
 
         self.assertTemplateUsed(response, "otp_ftl/device_update.html")
 
@@ -399,21 +418,22 @@ class OTPFtlViewsStaticTests(TestCase):
 
     def test_otp_static_add_get_success_url(self):
         response = self.client.post(
-            f"/accounts/2fa/static/",
-            data={
-                "name": tv.STATIC_DEVICE_NAME
-            }
+            f"/accounts/2fa/static/", data={"name": tv.STATIC_DEVICE_NAME}
         )
 
         # get_success_url redirect to the detail of the static device just created
-        self.assertRedirects(response, reverse_lazy(
-            "otp_static_detail",
-            kwargs={"pk": StaticDevice.objects.last().id}
-        ))
+        self.assertRedirects(
+            response,
+            reverse_lazy(
+                "otp_static_detail", kwargs={"pk": StaticDevice.objects.last().id}
+            ),
+        )
 
     def test_otp_static_add_form_valid_set_data(self):
         request_factory = RequestFactory()
-        request = request_factory.post("/accounts/2fa/static/check/", {"name": tv.STATIC_DEVICE_NAME})
+        request = request_factory.post(
+            "/accounts/2fa/static/check/", {"name": tv.STATIC_DEVICE_NAME}
+        )
         request.user = self.user
 
         otp_static_add_view = StaticDeviceAdd()
@@ -426,7 +446,9 @@ class OTPFtlViewsStaticTests(TestCase):
         self.assertEqual(otp_static_add_view.instance, StaticDevice.objects.last())
 
     def test_otp_static_delete_returns_correct_html(self):
-        response = self.client.get(f"/accounts/2fa/static/{self.static_device.id}/delete/")
+        response = self.client.get(
+            f"/accounts/2fa/static/{self.static_device.id}/delete/"
+        )
 
         self.assertTemplateUsed(response, "otp_ftl/device_confirm_delete.html")
 
@@ -503,7 +525,9 @@ class OTPFtlViewsTOTPTests(TestCase):
         otp_totp_check_view.request = request
 
         # Success url is set to next url
-        self.assertEqual(otp_totp_check_view.get_success_url(), reverse_lazy("account_index"))
+        self.assertEqual(
+            otp_totp_check_view.get_success_url(), reverse_lazy("account_index")
+        )
 
         # Given there is a unsafe url in next querystring
         request = request_factory.get("/accounts/2fa/totp/check/")
@@ -529,21 +553,22 @@ class OTPFtlViewsTOTPTests(TestCase):
 
     def test_otp_totp_add_get_success_url(self):
         response = self.client.post(
-            f"/accounts/2fa/totp/",
-            data={
-                "name": tv.STATIC_DEVICE_NAME
-            }
+            f"/accounts/2fa/totp/", data={"name": tv.STATIC_DEVICE_NAME}
         )
 
         # get_success_url redirect to the detail of the static device just created
-        self.assertRedirects(response, reverse_lazy(
-            "otp_totp_detail",
-            kwargs={"pk": TOTPDevice.objects.last().id}
-        ))
+        self.assertRedirects(
+            response,
+            reverse_lazy(
+                "otp_totp_detail", kwargs={"pk": TOTPDevice.objects.last().id}
+            ),
+        )
 
     def test_otp_totp_add_form_valid_set_data(self):
         request_factory = RequestFactory()
-        request = request_factory.post("/accounts/2fa/totp/check/", {"name": tv.TOTP_DEVICE_NAME})
+        request = request_factory.post(
+            "/accounts/2fa/totp/check/", {"name": tv.TOTP_DEVICE_NAME}
+        )
         request.user = self.user
 
         otp_totp_add_view = TOTPDeviceAdd()
@@ -606,7 +631,9 @@ class OTPFtlViewsTOTPTests(TestCase):
         otp_totp_confirm_view.request = request
 
         # Success url is set to otp_static_add
-        self.assertEqual(otp_totp_confirm_view.get_success_url(), reverse_lazy("otp_static_add"))
+        self.assertEqual(
+            otp_totp_confirm_view.get_success_url(), reverse_lazy("otp_static_add")
+        )
 
         # Given user set one static device
         setup_2fa_static_device(self.user)
@@ -617,7 +644,9 @@ class OTPFtlViewsTOTPTests(TestCase):
         otp_totp_confirm_view.request = request
 
         # Success url is set to otp_static_add
-        self.assertEqual(otp_totp_confirm_view.get_success_url(), reverse_lazy("otp_list"))
+        self.assertEqual(
+            otp_totp_confirm_view.get_success_url(), reverse_lazy("otp_list")
+        )
 
         # Given user set two static devices
         setup_2fa_static_device(self.user)
@@ -628,7 +657,9 @@ class OTPFtlViewsTOTPTests(TestCase):
         otp_totp_confirm_view.request = request
 
         # Success url is set to otp_list
-        self.assertEqual(otp_totp_confirm_view.get_success_url(), reverse_lazy("otp_list"))
+        self.assertEqual(
+            otp_totp_confirm_view.get_success_url(), reverse_lazy("otp_list")
+        )
 
     def test_otp_totp_confirm_get_form_kwargs(self):
         # Given post method have been called
@@ -638,7 +669,9 @@ class OTPFtlViewsTOTPTests(TestCase):
 
         otp_totp_confirm_view = TOTPDeviceConfirm()
         otp_totp_confirm_view.request = request
-        TOTPDeviceConfirm.setup(otp_totp_confirm_view, request, pk=self.totp_device.id)  # to init self.kwargs
+        TOTPDeviceConfirm.setup(
+            otp_totp_confirm_view, request, pk=self.totp_device.id
+        )  # to init self.kwargs
         otp_totp_confirm_view.post(request)  # to set self.object
 
         # get_form_kwargs add data to form kwargs
@@ -655,7 +688,9 @@ class OTPFtlViewsTOTPTests(TestCase):
         request.session.create = lambda: True
 
         otp_totp_confirm_view = TOTPDeviceConfirm()
-        TOTPDeviceConfirm.setup(otp_totp_confirm_view, request, pk=self.totp_device.id)  # to init self.kwargs
+        TOTPDeviceConfirm.setup(
+            otp_totp_confirm_view, request, pk=self.totp_device.id
+        )  # to init self.kwargs
         otp_totp_confirm_view.post(request)  # to set self.object
         otp_totp_confirm_view.request = request
         form = otp_totp_confirm_view.get_form(otp_totp_confirm_view.form_class)
@@ -670,7 +705,9 @@ class OTPFtlViewsTOTPTests(TestCase):
     def test_otp_totp_qrcode_call_qrcode_make(self, mocked_make):
         self.client.get(f"/accounts/2fa/totp/{self.totp_device.id}/qrcode/")
 
-        mocked_make.assert_called_once_with(self.totp_device.config_url, image_factory=qrcode.image.svg.SvgImage)
+        mocked_make.assert_called_once_with(
+            self.totp_device.config_url, image_factory=qrcode.image.svg.SvgImage
+        )
 
 
 class OTPFtlViewsFido2Tests(TestCase):
@@ -742,7 +779,9 @@ class OTPFtlViewsFido2Tests(TestCase):
         otp_fido2_check_view.request = request
 
         # Success url is set to next url
-        self.assertEqual(otp_fido2_check_view.get_success_url(), reverse_lazy("account_index"))
+        self.assertEqual(
+            otp_fido2_check_view.get_success_url(), reverse_lazy("account_index")
+        )
 
         # Given there is a unsafe url in next querystring
         request = request_factory.get("/accounts/2fa/fido2/check/")
@@ -757,7 +796,9 @@ class OTPFtlViewsFido2Tests(TestCase):
         self.assertEqual(otp_fido2_check_view.get_success_url(), reverse_lazy("home"))
 
     def test_otp_fido2_update_returns_correct_html(self):
-        response = self.client.get(f"/accounts/2fa/fido2/{self.fido2_device.id}/update/")
+        response = self.client.get(
+            f"/accounts/2fa/fido2/{self.fido2_device.id}/update/"
+        )
 
         self.assertTemplateUsed(response, "otp_ftl/device_update.html")
 
@@ -767,7 +808,9 @@ class OTPFtlViewsFido2Tests(TestCase):
         self.assertTemplateUsed(response, "otp_ftl/fido2device_form.html")
 
     def test_otp_fido2_delete_returns_correct_html(self):
-        response = self.client.get(f"/accounts/2fa/fido2/{self.fido2_device.id}/delete/")
+        response = self.client.get(
+            f"/accounts/2fa/fido2/{self.fido2_device.id}/delete/"
+        )
 
         self.assertTemplateUsed(response, "otp_ftl/device_confirm_delete.html")
 
@@ -780,7 +823,9 @@ class OTPFtlViewsFido2Tests(TestCase):
     @patch("ftl.otp_plugins.otp_ftl.views_fido2.cbor2")
     @patch("ftl.otp_plugins.otp_ftl.views_fido2.PublicKeyCredentialRpEntity")
     @patch("ftl.otp_plugins.otp_ftl.views_fido2.Fido2Server")
-    def test_otp_fido2_api_register_begin(self, fido2_server_mock, pkcre_mock, cbor2_mock, acd_mock):
+    def test_otp_fido2_api_register_begin(
+        self, fido2_server_mock, pkcre_mock, cbor2_mock, acd_mock
+    ):
         # given user setup another fido2_device
         fido2_device_2 = setup_2fa_fido2_device(self.user, name="second fido device")
 
@@ -810,7 +855,7 @@ class OTPFtlViewsFido2Tests(TestCase):
                 "id": self.user.email.encode(),
                 "name": self.user.email,
                 "displayName": self.user.email,
-                "icon": ""
+                "icon": "",
             },
             credentials=fake_credentials_list,
             user_verification="discouraged",
@@ -819,7 +864,10 @@ class OTPFtlViewsFido2Tests(TestCase):
 
         cbor2_mock.dumps.assert_called_once_with(register_begin_return_value[0])
 
-        self.assertEqual(response.wsgi_request.session.get("fido2_register_state"), register_begin_return_value[1])
+        self.assertEqual(
+            response.wsgi_request.session.get("fido2_register_state"),
+            register_begin_return_value[1],
+        )
 
         self.assertEqual(response.content, cbor2_mock.dumps.return_value)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -830,13 +878,19 @@ class OTPFtlViewsFido2Tests(TestCase):
     @patch("ftl.otp_plugins.otp_ftl.views_fido2.AttestationObject")
     @patch("ftl.otp_plugins.otp_ftl.views_fido2.ClientData")
     @patch("ftl.otp_plugins.otp_ftl.views_fido2.cbor2")
-    def test_otp_fido2_api_register_finish(self, cbor2_mock, client_data_mock, attestation_object_mock, pkcre_mock,
-                                           fido2_server_mock):
+    def test_otp_fido2_api_register_finish(
+        self,
+        cbor2_mock,
+        client_data_mock,
+        attestation_object_mock,
+        pkcre_mock,
+        fido2_server_mock,
+    ):
         device_name = "Fido2 device just added"
         fake_cbor2_loads_value = {
             "name": device_name,
             "clientDataJSON": "fakeClientDataJSON",
-            "attestationObject": "fakeattestationObject"
+            "attestationObject": "fakeattestationObject",
         }
         cbor2_mock.loads.return_value = fake_cbor2_loads_value
         cbor2_mock.dumps.return_value = b"fake_authenticator_data"
@@ -849,14 +903,18 @@ class OTPFtlViewsFido2Tests(TestCase):
         response = self.client.get("/accounts/2fa/fido2/api/register_finish")
 
         cbor2_mock.loads.assert_called_once_with(response.wsgi_request.body)
-        client_data_mock.assert_called_once_with(fake_cbor2_loads_value["clientDataJSON"])
-        attestation_object_mock.assert_called_once_with(fake_cbor2_loads_value["attestationObject"])
+        client_data_mock.assert_called_once_with(
+            fake_cbor2_loads_value["clientDataJSON"]
+        )
+        attestation_object_mock.assert_called_once_with(
+            fake_cbor2_loads_value["attestationObject"]
+        )
 
         pkcre_mock.assert_called_once_with("testserver", FIDO2_RP_NAME)
         fido2_server_mock().register_complete.assert_called_once_with(
             "fake_registration_data",
             client_data_mock.return_value,
-            attestation_object_mock.return_value
+            attestation_object_mock.return_value,
         )
 
         self.assertEqual(2, Fido2Device.objects.count())
@@ -870,12 +928,16 @@ class OTPFtlViewsFido2Tests(TestCase):
     @patch("ftl.otp_plugins.otp_ftl.views_fido2.PublicKeyCredentialRpEntity")
     @patch("ftl.otp_plugins.otp_ftl.views_fido2.cbor2")
     @patch("ftl.otp_plugins.otp_ftl.views_fido2.AttestedCredentialData")
-    def test_otp_fido2_api_login_begin(self, acd_mock, cbor2_mock, pkcre_mock, fido2_server_mock):
+    def test_otp_fido2_api_login_begin(
+        self, acd_mock, cbor2_mock, pkcre_mock, fido2_server_mock
+    ):
         # given user setup another fido2_device
         setup_2fa_fido2_device(self.user, name="second fido device")
 
         authenticate_begin_return_value = ["fake_auth_data", "fake_state"]
-        fido2_server_mock().authenticate_begin.return_value = authenticate_begin_return_value
+        fido2_server_mock().authenticate_begin.return_value = (
+            authenticate_begin_return_value
+        )
         fido2_server_mock.reset_mock()  # previous assignment count as a call so we need to reset mock counter
         fake_credentials_list = ["fake_credential_1", "fake_credential_2"]
         acd_mock.side_effect = fake_credentials_list
@@ -893,12 +955,16 @@ class OTPFtlViewsFido2Tests(TestCase):
         fido2_server_mock.assert_called_once_with(pkcre_mock())
 
         fido2_server_mock().authenticate_begin.assert_called_once_with(
-            fake_credentials_list,
-            user_verification="discouraged",
+            fake_credentials_list, user_verification="discouraged",
         )
 
-        self.assertEqual(response.wsgi_request.session.get("fido2_state"), authenticate_begin_return_value[1])
-        self.assertEqual(response.wsgi_request.session.get("fido2_domain"), "testserver")
+        self.assertEqual(
+            response.wsgi_request.session.get("fido2_state"),
+            authenticate_begin_return_value[1],
+        )
+        self.assertEqual(
+            response.wsgi_request.session.get("fido2_domain"), "testserver"
+        )
 
         cbor2_mock.dumps.assert_called_once_with(authenticate_begin_return_value[0])
 
