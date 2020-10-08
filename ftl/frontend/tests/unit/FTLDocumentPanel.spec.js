@@ -10,6 +10,7 @@ import BootstrapVue from "bootstrap-vue";
 import flushPromises from "flush-promises"; // needed for async tests
 import * as tv from "./../tools/testValues.js";
 import { axiosConfig } from "../../src/constants";
+import PDFObject from "pdfobject";
 
 import FTLDocumentPanel from "../../src/components/FTLDocumentPanel";
 import FTLNote from "@/components/FTLNote";
@@ -53,6 +54,11 @@ localVue.mixin({ methods: { mixinAlert: mockedMixinAlert } }); // mixinAlert moc
 // mock calls to api requests
 jest.mock("axios", () => ({
   get: jest.fn(),
+}));
+
+// mock PDFObject
+jest.mock("pdfobject", () => ({
+  embed: jest.fn(),
 }));
 
 const mockedGetDocumentResponse = {
@@ -153,24 +159,6 @@ describe("FTLDocumentPanel computed", () => {
 
     expect(testedResult).toBe(true);
     // FIXME cant test more than one user agent, test not working if userAgent value is set after beforeEach (even with computed cache to false)
-  });
-
-  it("getViewerUrl returns proper value", () => {
-    const search_text = "my search";
-    const document_pid = docProps.pid;
-    wrapper.setData({ currentOpenDoc: docProps });
-
-    // when (no search)
-    const testedValue = wrapper.vm.getViewerUrl();
-    expect(testedValue).toContain(document_pid + "#pagemode=none&search=");
-
-    // when (with search)
-    wrapper.setProps({ pid: document_pid, search: search_text });
-    const testedValue_2 = wrapper.vm.getViewerUrl();
-
-    expect(testedValue_2).toContain(
-      document_pid + "#pagemode=none&search=" + search_text
-    );
   });
 });
 
@@ -348,6 +336,36 @@ describe("FTLDocumentPanel methods", () => {
       { path: previousPathValue },
       expect.any(Function)
     );
+  });
+
+  it("embedPDF call PDFObject embedding method", async () => {
+    // given
+    const search_text = "my search";
+    const document_pid = docProps.pid;
+    wrapper.setData({ currentOpenDoc: docProps });
+    wrapper.setProps({ pid: document_pid, search: search_text });
+    wrapper.setMethods({ embedPDF: FTLDocumentPanel.methods.embedPDF });
+    PDFObject.embed.mockReturnValue(true);
+
+    wrapper.vm.embedPDF();
+
+    const options = {
+      PDFJS_URL: "/assets/pdfjs/web/viewer.html",
+      supportRedirect: true,
+      forcePDFJS: false,
+      pdfOpenParams: {
+        pagemode: "none",
+        search: search_text,
+      },
+    };
+
+    expect(PDFObject.embed).toBeCalledWith(
+      tv.DOCUMENT_PROPS.download_url + "/open",
+      "#pdfjs-embed-container",
+      options
+    );
+
+    expect(PDFObject.embed).toBeCalledTimes(1);
   });
 });
 
