@@ -126,7 +126,7 @@ class StaticDeviceCheckFormTests(TestCase):
             },
         )
 
-        # User OK token KO set OK (valid token of an another user)
+        # User OK token KO set OK (valid token of another user)
         form = StaticDeviceCheckForm(
             self.user_1,
             data={

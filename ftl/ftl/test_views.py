@@ -9,15 +9,15 @@ from django.contrib import messages
 from django.contrib.auth.signals import user_logged_out
 from django.contrib.sessions.backends.base import SessionBase
 from django.test import RequestFactory
-from django.utils import timezone as django_timezone
 from django.test import TestCase
 from django.urls import reverse_lazy
+from django.utils import timezone as django_timezone
 from django_otp.middleware import OTPMiddleware
 from django_otp.oath import TOTP
 from django_otp.plugins.otp_static.models import StaticDevice
 from django_otp.plugins.otp_totp.models import TOTPDevice
-from rest_framework import status
 from django_registration.backends.activation.views import RegistrationView
+from rest_framework import status
 
 from core.models import FTLUser, FTL_PERMISSIONS_USER
 from ftests.test_account import (
@@ -37,6 +37,7 @@ from ftests.tools.setup_helpers import (
     setup_2fa_static_device,
     setup_2fa_fido2_device,
 )
+from ftl import celery
 from ftl.otp_plugins.otp_ftl.forms import TOTPDeviceConfirmForm
 from ftl.otp_plugins.otp_ftl.models import Fido2Device
 from ftl.otp_plugins.otp_ftl.views_fido2 import Fido2Check
@@ -47,7 +48,6 @@ from ftl.otp_plugins.otp_ftl.views_totp import (
     TOTPDeviceConfirm,
 )
 from ftl.settings import FIDO2_RP_NAME
-from ftl import celery
 
 
 class FtlPagesTests(TestCase):
@@ -154,7 +154,7 @@ class FtlPagesTests(TestCase):
 
 class OTPCheckViewTests(TestCase):
     def setUp(self):
-        # Setup org, admin, user, 2fa totp device already setup and user is logged
+        # Setup org, admin, user and user is logged
         self.org = setup_org()
         setup_admin(self.org)
         self.user = setup_user(self.org)
@@ -224,7 +224,7 @@ class OTPCheckViewTests(TestCase):
         # User is redirect to otp_static_check
         self.assertRedirects(response, reverse_lazy("otp_totp_check"))
 
-        # Given static + totp device are setup
+        # Given static + totp + 2fa device are setup
         setup_2fa_fido2_device(self.user)
         response = self.client.get("/app/", follow=True)
         # User is redirect to otp_static_check
@@ -370,7 +370,7 @@ class OTPFtlViewsStaticTests(TestCase):
             otp_static_check_view.get_success_url(), reverse_lazy("account_index")
         )
 
-        # Given there is a unsafe url in next querystring
+        # Given there is an unsafe url in next querystring
         request = request_factory.get("/accounts/2fa/static/check/")
         request.user = self.user
         request.session = SessionBase()
@@ -379,7 +379,7 @@ class OTPFtlViewsStaticTests(TestCase):
         otp_static_check_view = StaticDeviceCheck()
         otp_static_check_view.request = request
 
-        # Success url is set NOT set to next url, it default to Home
+        # Success url is set NOT set to next url, it defaults to Home
         self.assertEqual(otp_static_check_view.get_success_url(), reverse_lazy("home"))
 
     def test_otp_static_detail_returns_correct_html(self):
@@ -438,7 +438,7 @@ class OTPFtlViewsStaticTests(TestCase):
 
 class OTPFtlViewsTOTPTests(TestCase):
     def setUp(self):
-        # Setup org, user, a static device and the user is logged
+        # Setup org, user, a totp device and the user is logged
         self.org = setup_org()
         self.user = setup_user(self.org)
         self.totp_device = setup_2fa_totp_device(self.user, confirmed=False)
@@ -468,7 +468,7 @@ class OTPFtlViewsTOTPTests(TestCase):
         self.assertEqual(response.context["have_fido2"], False)
         self.assertEqual(response.context["have_static"], False)
 
-        # given user setup static + fido2 devices
+        # given user setup totp + fido2 devices
         setup_2fa_fido2_device(self.user)
 
         response = self.client.get("/accounts/2fa/totp/check/")
@@ -512,7 +512,7 @@ class OTPFtlViewsTOTPTests(TestCase):
             otp_totp_check_view.get_success_url(), reverse_lazy("account_index")
         )
 
-        # Given there is a unsafe url in next querystring
+        # Given there is an unsafe url in next querystring
         request = request_factory.get("/accounts/2fa/totp/check/")
         request.user = self.user
         request.session = SessionBase()
@@ -521,7 +521,7 @@ class OTPFtlViewsTOTPTests(TestCase):
         otp_totp_check_view = TOTPDeviceCheck()
         otp_totp_check_view.request = request
 
-        # Success url is set NOT set to next url, it default to Home
+        # Success url is set NOT set to next url, it defaults to Home
         self.assertEqual(otp_totp_check_view.get_success_url(), reverse_lazy("home"))
 
     def test_otp_totp_update_returns_correct_html(self):
@@ -539,7 +539,7 @@ class OTPFtlViewsTOTPTests(TestCase):
             f"/accounts/2fa/totp/", data={"name": tv.STATIC_DEVICE_NAME}
         )
 
-        # get_success_url redirect to the detail of the static device just created
+        # get_success_url redirect to the detail of the totp device just created
         self.assertRedirects(
             response,
             reverse_lazy(
@@ -560,7 +560,7 @@ class OTPFtlViewsTOTPTests(TestCase):
         form.is_valid()
         otp_totp_add_view.form_valid(form)
 
-        # instance attribute is populate the model of the static device just created
+        # instance attribute is populate the model of the totp device just created
         self.assertEqual(otp_totp_add_view.instance, TOTPDevice.objects.last())
 
     def test_otp_totp_delete_returns_correct_html(self):
@@ -626,7 +626,7 @@ class OTPFtlViewsTOTPTests(TestCase):
         otp_totp_confirm_view = TOTPDeviceConfirm()
         otp_totp_confirm_view.request = request
 
-        # Success url is set to otp_static_add
+        # Success url is set to otp_list
         self.assertEqual(
             otp_totp_confirm_view.get_success_url(), reverse_lazy("otp_list")
         )
@@ -695,7 +695,7 @@ class OTPFtlViewsTOTPTests(TestCase):
 
 class OTPFtlViewsFido2Tests(TestCase):
     def setUp(self):
-        # Setup org, user, a static device and the user is logged
+        # Setup org, user, a fido2 device and the user is logged
         self.org = setup_org()
         self.user = setup_user(self.org)
         self.fido2_device = setup_2fa_fido2_device(self.user)
@@ -722,7 +722,7 @@ class OTPFtlViewsFido2Tests(TestCase):
         self.assertEqual(response.context["have_totp"], False)
         self.assertEqual(response.context["have_static"], False)
 
-        # given user setup static + fido2 devices
+        # given user setup totp + fido2 devices
         setup_2fa_totp_device(self.user)
 
         response = self.client.get("/accounts/2fa/fido2/check/")
@@ -766,7 +766,7 @@ class OTPFtlViewsFido2Tests(TestCase):
             otp_fido2_check_view.get_success_url(), reverse_lazy("account_index")
         )
 
-        # Given there is a unsafe url in next querystring
+        # Given there is an unsafe url in next querystring
         request = request_factory.get("/accounts/2fa/fido2/check/")
         request.user = self.user
         request.session = SessionBase()
@@ -775,7 +775,7 @@ class OTPFtlViewsFido2Tests(TestCase):
         otp_fido2_check_view = Fido2Check()
         otp_fido2_check_view.request = request
 
-        # Success url is set NOT set to next url, it default to Home
+        # Success url is set NOT set to next url, it defaults to Home
         self.assertEqual(otp_fido2_check_view.get_success_url(), reverse_lazy("home"))
 
     def test_otp_fido2_update_returns_correct_html(self):
@@ -815,7 +815,7 @@ class OTPFtlViewsFido2Tests(TestCase):
         register_begin_return_value = ["fake_registration_data", "fake_state"]
         fido2_server_mock().register_begin.return_value = register_begin_return_value
         fido2_server_mock.reset_mock()  # previous assignment count as a call so we need to reset mock counter
-        fake_credentials_list = ["fake_credential_1", "fake_credential_2"]
+        fake_credentials_list = ["fake_credential_1", "fake_credential_2°"]
         acd_mock.side_effect = fake_credentials_list
         fake_cbor2_loaded_list = ["fake_cbor2_loaded_1", "fake_cbor2_loaded_2"]
         cbor2_mock.loads.side_effect = fake_cbor2_loaded_list
