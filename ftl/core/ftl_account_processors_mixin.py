@@ -14,14 +14,11 @@ class FTLAccountProcessorContextMixin(ContextMixin):
 
     plugins = None
 
-    def __init__(self, configured_plugins=None):
+    def __init__(self):
         # Only load plugins at first class instanciation
         cls = self.__class__
         if not cls.plugins:
-            if configured_plugins:
-                plugins_to_load = configured_plugins
-            else:
-                plugins_to_load = getattr(settings, "FTL_ACCOUNT_PROCESSORS", [])
+            plugins_to_load = getattr(settings, "FTL_ACCOUNT_PROCESSORS", [])
 
             cls.plugins = list()
             for configured_plugin in plugins_to_load:
@@ -33,7 +30,7 @@ class FTLAccountProcessorContextMixin(ContextMixin):
 
         ftl_context = {}
         for plugin in self.__class__.plugins:
-            ftl_context = {**ftl_context, **plugin(request)}
+            ftl_context.update(plugin(request))
 
         context_data["ftl_account"] = ftl_context
 
