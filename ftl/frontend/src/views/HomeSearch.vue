@@ -193,6 +193,7 @@
         @dragover="allowDrop"
         @drop="getDroppedFiles"
         @dragleave.self="hideDropZone"
+        @mouseover="hideDropZone"
       >
         <b-col v-if="docsLoading">
           <b-spinner
@@ -510,7 +511,7 @@ export default {
   ::v-deep * {
     pointer-events: none;
   }
-  .card {
+  ::v-deep .card {
     opacity: 0.3;
   }
 }

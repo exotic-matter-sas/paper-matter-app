@@ -234,6 +234,7 @@
         @dragover="allowDrop"
         @drop="getDroppedFiles"
         @dragleave.self="hideDropZone"
+        @mouseover="hideDropZone"
       >
         <b-col v-if="docsLoading">
           <b-spinner
@@ -828,10 +829,10 @@ export default {
 
 .documents-list-dragged-hover {
   background: adjust_color(map_get($theme-colors, "active"), $alpha: -0.7);
-  :v-deep * {
+  ::v-deep * {
     pointer-events: none;
   }
-  .card {
+  ::v-deep .card {
     opacity: 0.3;
   }
 }
