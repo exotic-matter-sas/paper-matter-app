@@ -76,10 +76,10 @@ class StaticDeviceCheckFormTests(TestCase):
         self.user_1_static_device_1 = setup_2fa_static_device(
             self.user_1, "user1 valid token set 1", codes_list=self.user_1_codes_1
         )
-        # invalid set with no codes left
         self.user_1_static_device_2 = setup_2fa_static_device(
             self.user_1, "user1 valid token set 2", codes_list=self.user_1_codes_2
         )
+        # invalid set with no codes left
         self.user_1_static_device_3 = setup_2fa_static_device(
             self.user_1, "user1 invalid token set 3"
         )
