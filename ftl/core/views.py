@@ -31,6 +31,7 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 
 from core.errors import ERROR_CODES_DETAILS, BadRequestError
+from core.ftl_account_processors_mixin import FTLAccountProcessorContextMixin
 from core.mimes import mimetype_to_ext, guess_mimetype
 from core.models import FTLDocument, FTLFolder, FTLDocumentSharing
 from core.serializers import (
@@ -53,9 +54,11 @@ class WebSearchQuery(SearchQuery):
 
 @method_decorator(login_required, name="dispatch")
 @method_decorator(otp_required(if_configured=True), name="dispatch")
-class HomeView(View):
+class HomeView(FTLAccountProcessorContextMixin, View):
     def get(self, request, *args, **kwargs):
-        return render(request, "core/home.html")
+        return render(
+            request, "core/home.html", self.get_ftl_context_data_with_request(request)
+        )
 
 
 # API

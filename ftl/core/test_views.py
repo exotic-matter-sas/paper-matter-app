@@ -6,6 +6,7 @@ import uuid
 from django.contrib.staticfiles import finders
 from django.test import TestCase, override_settings
 
+from core.views import HomeView
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import (
     setup_org,
