@@ -550,7 +550,7 @@ class OTPFtlViewsTOTPTests(TestCase):
     def test_otp_totp_add_form_valid_set_data(self):
         request_factory = RequestFactory()
         request = request_factory.post(
-            "/accounts/2fa/totp/check/", {"name": tv.TOTP_DEVICE_NAME}
+            "/accounts/2fa/totp/", {"name": tv.TOTP_DEVICE_NAME}
         )
         request.user = self.user
 
