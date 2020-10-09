@@ -74,6 +74,7 @@ class TOTPDeviceCheckForm(OTPTokenForm):
         super(OTPTokenForm, self).__init__(*args, **kwargs)
 
         self.user = user
+        # filter user OTP devices to keep only TOTP ones
         self.fields["otp_device"].choices = [
             d for d in self.device_choices(user) if TOTPDevice.model_label() in d[0]
         ]
@@ -82,29 +83,10 @@ class TOTPDeviceCheckForm(OTPTokenForm):
         super()._update_form(user)
 
         if "otp_device" in self.fields:
+            # filter user OTP devices to keep only TOTP ones
             self.fields["otp_device"].widget.choices = [
                 d for d in self.device_choices(user) if TOTPDevice.model_label() in d[0]
             ]
-
-
-class TOTPDeviceConfirmForm(OTPTokenForm):
-    otp_device = None
-    otp_token = forms.CharField(
-        required=True,
-        label=_("Code"),
-        strip=True,
-        help_text=_("Two factor code shown in your app authenticator (only numbers)"),
-    )
-    otp_challenge = None
-
-    def __init__(self, user, device, request=None, *args, **kwargs):
-        super(OTPTokenForm, self).__init__(*args, **kwargs)
-        self.user = user
-        self.device = device
-
-    def clean(self):
-        self.cleaned_data["otp_device"] = self.device.persistent_id
-        return super().clean()
 
 
 class Fido2DeviceCheckForm(OTPTokenForm):
@@ -118,11 +100,15 @@ class Fido2DeviceCheckForm(OTPTokenForm):
         self.request = request
 
     def clean(self):
+        # filter user OTP devices to keep only FIDO2 ones
         fido2_devices = [
             d
             for d in self.device_choices(self.user)
             if Fido2Device.model_label() in d[0]
         ]
+        # We choose a default Fido 2 device to satisfy the requirement of the form but the field itself is not used
+        # by the final submit request as the check uses its own API views_fido2.fido2_api_login_begin (which return
+        # all the user keys).
         self.cleaned_data["otp_device"] = fido2_devices[0][0]
         return super().clean()
 
@@ -169,3 +155,24 @@ class TOTPDeviceForm(Form):
         totp_device.save()
 
         return totp_device
+
+
+# Form to confirm registration of a new device
+class TOTPDeviceConfirmForm(OTPTokenForm):
+    otp_device = None
+    otp_token = forms.CharField(
+        required=True,
+        label=_("Code"),
+        strip=True,
+        help_text=_("Two factor code shown in your app authenticator (only numbers)"),
+    )
+    otp_challenge = None
+
+    def __init__(self, user, device, request=None, *args, **kwargs):
+        super(OTPTokenForm, self).__init__(*args, **kwargs)
+        self.user = user
+        self.device = device
+
+    def clean(self):
+        self.cleaned_data["otp_device"] = self.device.persistent_id
+        return super().clean()
