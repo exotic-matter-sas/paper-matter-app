@@ -50,6 +50,7 @@ class MimesTests(unittest.TestCase):
 
         # Unknown type
         self.assertIsNone(mimetype_to_ext("application/octet-stream"))
+        self.assertIsNone(mimetype_to_ext(""))
 
     @patch.object(puremagic, "from_string")
     @patch.object(mimes, "_uploaded_file_obj_to_buffer")
