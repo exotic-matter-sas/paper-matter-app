@@ -395,6 +395,19 @@ class DocumentsTests(APITestCase):
         )
 
     @patch.object(apply_ftl_processing, "delay")
+    def test_upload_document_wrong_format_fake_document(self, mock_apply_processing):
+        with open(
+            os.path.join(BASE_DIR, "ftests", "tools", "test_documents", "fake.dok"),
+            mode="rb",
+        ) as fp:
+            client_post = self.client.post(
+                "/app/api/v1/documents/upload", {"json": "{}", "file": fp}
+            )
+        self.assertEqual(
+            client_post.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE
+        )
+
+    @patch.object(apply_ftl_processing, "delay")
     def test_upload_document_docx(self, mock_apply_processing):
         with open(
             os.path.join(BASE_DIR, "ftests", "tools", "test_documents", "word.docx"),

@@ -21,6 +21,8 @@ for ext, mimes in settings.FTL_SUPPORTED_DOCUMENTS_TYPES.items():
 
 
 def mimetype_to_ext(mime: str) -> Optional[str]:
+    if not mime:
+        return None
     if mime.lower() not in MIMETYPES_EXT_DICT:
         return None  # File is not supported
     return MIMETYPES_EXT_DICT[mime]

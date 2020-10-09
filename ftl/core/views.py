@@ -249,6 +249,7 @@ class FileUploadView(views.APIView):
         extension = mimetype_to_ext(mime)
         if not extension:
             raise UnsupportedMediaType(
+                mime,
                 ERROR_CODES_DETAILS["ftl_document_type_unsupported"],
                 "ftl_document_type_unsupported",
             )
