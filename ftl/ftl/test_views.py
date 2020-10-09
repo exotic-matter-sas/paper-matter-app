@@ -668,6 +668,7 @@ class OTPFtlViewsTOTPTests(TestCase):
         request = request_factory.post(f"/accounts/2fa/totp/{self.totp_device.id}/")
         request.user = self.user
         request.session = SessionBase()
+        # mock session create method because it is required by form_valid of parent view (login call)
         request.session.create = lambda: True
 
         otp_totp_confirm_view = TOTPDeviceConfirm()
