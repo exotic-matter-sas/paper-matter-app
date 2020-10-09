@@ -38,7 +38,7 @@ class AccountView(FTLAccountProcessorContextMixin, View):
         return render(
             request,
             "account/account_index.html",
-            self.get_context_data_with_request(request),
+            self.get_ftl_context_data_with_request(request),
         )
 
 
@@ -59,7 +59,7 @@ class AccountActivityView(FTLAccountProcessorContextMixin, View):
             access_log.parsed = user_agent_parser.Parse(access_log.user_agent)
             access_logs_parsed.append(access_log)
 
-        context = self.get_context_data_with_request(request)
+        context = self.get_ftl_context_data_with_request(request)
         context["access_log"] = access_logs_parsed
 
         return render(request, "account/account_activity.html", context)

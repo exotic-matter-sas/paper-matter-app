@@ -57,7 +57,7 @@ class WebSearchQuery(SearchQuery):
 class HomeView(FTLAccountProcessorContextMixin, View):
     def get(self, request, *args, **kwargs):
         return render(
-            request, "core/home.html", self.get_context_data_with_request(request)
+            request, "core/home.html", self.get_ftl_context_data_with_request(request)
         )
 
 

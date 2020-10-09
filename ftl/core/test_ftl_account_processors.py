@@ -24,7 +24,7 @@ class FTLAccountProcessorContextMixinTests(SimpleTestCase):
     def test_get_context_data_with_request(self):
         rf = RequestFactory()
         get_request = rf.get("/hello/")
-        context_data = self.processor.get_context_data_with_request(get_request)
+        context_data = self.processor.get_ftl_context_data_with_request(get_request)
 
         self.assertIn("ftl_account", context_data)
         self.assertEqual(context_data["ftl_account"], {"test": True})

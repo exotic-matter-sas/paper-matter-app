@@ -32,7 +32,7 @@ class ListOTPDevices(FTLAccountProcessorContextMixin, View):
         # FIDO2
         fido2_devices = Fido2Device.objects.filter(user=user)
 
-        context_data = self.get_context_data_with_request(request)
+        context_data = self.get_ftl_context_data_with_request(request)
         context_data.update(
             {
                 "static_devices": static_devices,

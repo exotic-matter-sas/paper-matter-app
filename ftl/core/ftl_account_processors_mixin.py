@@ -25,7 +25,7 @@ class FTLAccountProcessorContextMixin(ContextMixin):
                 my_class = import_string(configured_plugin)
                 cls.plugins.append(my_class)
 
-    def get_context_data_with_request(self, request, **kwargs):
+    def get_ftl_context_data_with_request(self, request, **kwargs):
         context_data = super().get_context_data(**kwargs)
 
         ftl_context = {}
