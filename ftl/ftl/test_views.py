@@ -415,7 +415,7 @@ class OTPFtlViewsStaticTests(TestCase):
     def test_otp_static_add_form_valid_set_data(self):
         request_factory = RequestFactory()
         request = request_factory.post(
-            "/accounts/2fa/static/check/", {"name": tv.STATIC_DEVICE_NAME}
+            "/accounts/2fa/static/", {"name": tv.STATIC_DEVICE_NAME}
         )
         request.user = self.user
 
