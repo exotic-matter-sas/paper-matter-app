@@ -127,7 +127,7 @@
         </b-dropdown>
       </b-container>
     </template>
-    <b-container id="document-viewer-body" class="h-100 px-0" fluid>
+    <b-container id="document-viewer-body" class="px-0" fluid>
       <b-row class="h-100" no-gutters>
         <b-col v-if="currentOpenDoc.type === 'application/pdf' && !isIOS">
           <b-row class="h-100" no-gutters id="pdfviewer">
@@ -537,6 +537,7 @@ $document-viewer-padding: 2em;
     }
 
     .modal-body {
+      display: flex;
       padding: 0;
 
       #viewer-disabled {
