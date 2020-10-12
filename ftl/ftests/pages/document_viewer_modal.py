@@ -24,8 +24,10 @@ class DocumentViewerModal(BasePage):
     note_text = "#note"
     save_note_button = "#save-note"
 
-    pdf_viewer_iframe = "#document-viewer iframe"
+    pdf_viewer_iframe = "#pdf-embed-container iframe"
     document_viewer_panel = "#document-viewer"
+    compatibility_viewer_button = "label[for='toggle-compat-viewer']"
+    pdf_native_viewer = "#pdf-embed-container embed"
 
     share_document_button = "#share-document"
     validate_modal_button = "#"

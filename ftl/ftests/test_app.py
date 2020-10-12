@@ -82,16 +82,37 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         # Document appears as the first document of the list
         self.assertEqual(3, len(self.get_elems(self.documents_thumbnails)))
 
-    def test_display_document(self):
+    def test_display_document_native(self):
         # User has already added a document
         setup_document(self.org, self.user)
         self.refresh_documents_list()
 
         # User click on the first listed document
         self.open_first_document()
+
         # User can see the pdf inside the pdf viewer
-        pdf_viewer_iframe = self.get_elem(self.pdf_viewer_iframe)
-        self.browser.switch_to_frame(pdf_viewer_iframe)
+        self.wait_for_elem_to_show(self.pdf_native_viewer)
+        pdf_viewer_embed = self.get_elem(self.pdf_native_viewer)
+
+        self.assertIsNotNone(pdf_viewer_embed)
+
+    def test_display_document_pdf_js(self):
+        # User has already added a document
+        setup_document(self.org, self.user)
+        self.refresh_documents_list()
+
+        # User click on the first listed document
+        self.open_first_document()
+
+        # We switch to PDF.js viewer
+        self.wait_for_elem_to_show(self.compatibility_viewer_button)
+        compat_button = self.get_elem(self.compatibility_viewer_button)
+        compat_button.click()
+
+        # User can see the pdf inside the pdf viewer
+        self.wait_for_elem_to_show(self.pdf_viewer_iframe)
+        pdf_viewer_embed = self.get_elem(self.pdf_viewer_iframe)
+        self.browser.switch_to_frame(pdf_viewer_embed)
         pdf_viewer_iframe_title = self.get_elem("title", False).get_attribute(
             "innerHTML"
         )

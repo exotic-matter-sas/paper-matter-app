@@ -139,7 +139,7 @@
       <b-row class="h-100" no-gutters>
         <b-col v-if="currentOpenDoc.type === 'application/pdf' && !isIOS">
           <b-row class="h-100" no-gutters id="viewer-pdf">
-            <div id="pdfjs-embed-container" class="col border-0"></div>
+            <div id="pdf-embed-container" class="col border-0"></div>
           </b-row>
         </b-col>
         <b-col v-else id="viewer-disabled" class="d-flex align-items-center">
@@ -243,6 +243,7 @@
           <b-row class="px-3 d-d">
             <b-col class="px-3">
               <b-form-checkbox
+                id="toggle-compat-viewer"
                 v-model="forcePDFJS"
                 name="check-forcePDFJS"
                 switch
@@ -457,7 +458,7 @@ export default {
         };
         PDFObject.embed(
           this.currentOpenDoc.download_url + "/open",
-          "#pdfjs-embed-container",
+          "#pdf-embed-container",
           options
         );
       }
