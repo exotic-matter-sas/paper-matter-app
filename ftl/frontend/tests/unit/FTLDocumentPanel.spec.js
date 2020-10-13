@@ -361,7 +361,7 @@ describe("FTLDocumentPanel methods", () => {
 
     expect(PDFObject.embed).toBeCalledWith(
       tv.DOCUMENT_PROPS.download_url + "/open",
-      "#pdfjs-embed-container",
+      "#pdf-embed-container",
       options
     );
 
