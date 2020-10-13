@@ -59,6 +59,7 @@
                 v-model="text"
                 :placeholder="$t('Enter your note')"
                 max-rows="10"
+                autofocus
               >
               </b-form-textarea>
             </b-tab>
@@ -164,8 +165,11 @@ export default {
   },
 
   mounted() {
-    // Auto switch to edit mode if no note is define
-    if (this.doc.note === "") {
+    // Auto switch to edit mode if in mobile mode and note unset
+    if (
+      window.matchMedia("(max-width: 1199px)").matches &&
+      this.doc.note === ""
+    ) {
       this.editing = true;
     }
   },
@@ -200,6 +204,13 @@ export default {
     cancelUpdate: function () {
       this.editing = false;
       this.text = this.doc.note;
+      // Auto close note if mobile mode and note not unset
+      if (
+        window.matchMedia("(max-width: 1199px)").matches &&
+        this.doc.note === ""
+      ) {
+        this.$emit("event-close-note");
+      }
     },
   },
 };

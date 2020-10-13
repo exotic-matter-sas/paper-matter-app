@@ -44,6 +44,12 @@ jest.mock("dompurify", () => ({
   sanitize: jest.fn(),
 }));
 
+let matchesMock = jest.fn();
+global.window.matchMedia = jest.fn().mockReturnValue({ matches: matchesMock });
+global.document.querySelector = jest
+  .fn()
+  .mockReturnValue({ scrollIntoView: jest.fn() });
+
 const mockedGetNoteMarkdownSanitized = jest.fn();
 
 const mockedPatchDocument = {
@@ -67,6 +73,45 @@ describe("FTLNote template", () => {
 
   it("renders properly FTLNote data", () => {
     expect(wrapper.html()).toContain(docProp.note);
+  });
+});
+
+describe("FTLNote mounted set editing to default value", () => {
+  let wrapper;
+  let docPropCopy = Object.assign({}, docProp);
+
+  it("editing is set to proper value", () => {
+    // given not in mobile mode and note set
+    wrapper = shallowMount(FTLNote, {
+      localVue,
+      propsData: { doc: docPropCopy },
+    });
+    jest.clearAllMocks(); // Reset mock call count done by mounted
+
+    // editing default to false
+    expect(wrapper.vm.editing).toEqual(false);
+
+    // given in mobile mode and note set
+    matchesMock.mockReturnValue(true);
+    wrapper = shallowMount(FTLNote, {
+      localVue,
+      propsData: { doc: docPropCopy },
+    });
+    jest.clearAllMocks(); // Reset mock call count done by mounted
+
+    // editing default to false
+    expect(wrapper.vm.editing).toEqual(false);
+
+    // given in mobile mode and note unset
+    docPropCopy.note = "";
+    wrapper = shallowMount(FTLNote, {
+      localVue,
+      propsData: { doc: docPropCopy },
+    });
+    jest.clearAllMocks(); // Reset mock call count done by mounted
+
+    // editing default to false
+    expect(wrapper.vm.editing).toEqual(true);
   });
 });
 
@@ -161,5 +206,29 @@ describe("FTLNote methods", () => {
     // then
     expect(wrapper.vm.editing).toBe(false);
     expect(wrapper.vm.text).toEqual(docProp.note);
+  });
+
+  it("cancelUpdate emit event-close-note if no note is set and in mobile mode", () => {
+    let docPropCopy = Object.assign({}, docProp);
+    docPropCopy.note = "";
+    const testedEvent = "event-close-note";
+    // given doc note is set and not in mobile mode
+
+    // when
+    wrapper.vm.cancelUpdate();
+
+    // then no event is emitted
+    expect(wrapper.emitted(testedEvent)).toBeFalsy();
+
+    // given doc note is unset and in mobile mode
+    matchesMock.mockReturnValue(true);
+    wrapper.setData({ doc: docPropCopy });
+
+    // when
+    wrapper.vm.cancelUpdate();
+
+    // then
+    expect(wrapper.emitted(testedEvent)).toBeTruthy();
+    expect(wrapper.emitted(testedEvent).length).toBe(1);
   });
 });
