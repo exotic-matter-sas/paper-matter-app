@@ -237,12 +237,12 @@
                 @event-document-note-edited="documentNoteUpdated"
                 @event-close-note="noteToggled = false"
               />
-              <hr />
             </b-col>
           </b-row>
 
-          <b-row class="px-3 d-d">
-            <b-col class="px-3">
+          <b-row class="">
+            <b-col class="">
+              <hr />
               <b-form-checkbox
                 id="toggle-compat-viewer"
                 v-model="forcePDFJS"
