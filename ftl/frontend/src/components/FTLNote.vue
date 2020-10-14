@@ -236,6 +236,10 @@ export default {
 #note {
   overflow: auto;
   max-height: 200px;
+
+  span > :last-child {
+    margin-bottom: 0;
+  }
 }
 
 #note-tip {

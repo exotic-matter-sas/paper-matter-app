@@ -11,7 +11,6 @@
     hide-footer
     centered
     @hidden="closeDocument"
-    @hide="viewerPdfJsUrl = null"
   >
     <template slot="modal-header">
       <b-container>
@@ -124,19 +123,24 @@
             <font-awesome-icon icon="trash" />
             <span>{{ $t("Delete") }}</span>
           </b-dropdown-item>
+          <b-dropdown-divider></b-dropdown-divider>
+          <b-dropdown-form form-class="px-3">
+            <b-form-checkbox
+              v-model="forcePDFJS"
+              name="check-forcePDFJS"
+              switch
+            >
+              {{ $t("Alt. viewer") }}
+            </b-form-checkbox>
+          </b-dropdown-form>
         </b-dropdown>
       </b-container>
     </template>
     <b-container id="document-viewer-body" class="px-0" fluid>
       <b-row class="h-100" no-gutters>
         <b-col v-if="currentOpenDoc.type === 'application/pdf' && !isIOS">
-          <b-row class="h-100" no-gutters id="pdfviewer">
-            <iframe
-              class="col border-0"
-              v-if="viewerPdfJsUrl"
-              :src="viewerPdfJsUrl"
-            >
-            </iframe>
+          <b-row class="h-100" no-gutters id="viewer-pdf">
+            <div id="pdf-embed-container" class="col border-0"></div>
           </b-row>
         </b-col>
         <b-col v-else id="viewer-disabled" class="d-flex align-items-center">
@@ -159,10 +163,10 @@
         </b-col>
         <b-col
           xl="3"
-          class="d-none d-xl-block"
+          class="d-none d-xl-block px-3"
           :class="{ 'mobile-note-toggled': noteToggled }"
         >
-          <b-row id="documents-actions-big" class="px-3 d-none d-xl-block">
+          <b-row id="documents-actions-big" class="d-none d-xl-block">
             <b-col class="pt-3 px-3">
               <b-dropdown
                 id="download-document"
@@ -224,7 +228,8 @@
               <hr />
             </b-col>
           </b-row>
-          <b-row class="px-3">
+
+          <b-row>
             <b-col class="px-3 py-2 py-xl-0">
               <FTLNote
                 v-if="currentOpenDoc.pid"
@@ -232,6 +237,20 @@
                 @event-document-note-edited="documentNoteUpdated"
                 @event-close-note="noteToggled = false"
               />
+            </b-col>
+          </b-row>
+
+          <b-row class="d-none d-xl-block">
+            <b-col class="px-3">
+              <hr />
+              <b-form-checkbox
+                id="toggle-compat-viewer"
+                v-model="forcePDFJS"
+                name="check-forcePDFJS"
+                switch
+              >
+                {{ $t("Use alternative PDF viewer") }}
+              </b-form-checkbox>
             </b-col>
           </b-row>
         </b-col>
@@ -286,10 +305,13 @@
     Show note: Voir la note
     Add note: Annoter
     Open location: Dossier parent
+    Alt. viewer: Visionneuse alternative
+    Use alternative PDF viewer: Utiliser une visionneuse PDF alternative
 </i18n>
 
 <script>
 import axios from "axios";
+import PDFObject from "pdfobject";
 import FTLMoveDocuments from "@/components/FTLMoveDocuments";
 import FTLRenameDocument from "@/components/FTLRenameDocument";
 import FTLDeleteDocuments from "@/components/FTLDeleteDocuments";
@@ -325,7 +347,6 @@ export default {
     return {
       currentOpenDoc: { path: [] },
       publicPath: process.env.BASE_URL,
-      viewerPdfJsUrl: "",
       icons: {
         "application/pdf": "file-pdf",
         "text/plain": "file-alt",
@@ -341,10 +362,15 @@ export default {
           "file-powerpoint",
       },
       noteToggled: false,
+      forcePDFJS: false,
     };
   },
 
   mounted() {
+    if (localStorage.forcepdfjs) {
+      // Convert string "true" as stored in localstorage to boolean
+      this.forcePDFJS = localStorage.forcepdfjs === "true";
+    }
     this.openDocument();
   },
 
@@ -383,6 +409,17 @@ export default {
     },
   },
 
+  watch: {
+    forcePDFJS: function (newVal, oldVal) {
+      // Forcing boolean to be stored as string to avoid possible future bug
+      // https://stackoverflow.com/questions/3263161/cannot-set-boolean-values-in-localstorage/
+      localStorage.forcepdfjs = String(newVal);
+      if (this.currentOpenDoc.pid) {
+        this.embedPDF();
+      }
+    },
+  },
+
   methods: {
     openDocument: function () {
       this.$bvModal.show("document-viewer");
@@ -391,7 +428,7 @@ export default {
         .get("/app/api/v1/documents/" + this.pid)
         .then((response) => {
           this.currentOpenDoc = response.data;
-          this.viewerPdfJsUrl = this.getViewerUrl();
+          this.$nextTick().then(() => this.embedPDF());
 
           if (
             !response.data.thumbnail_available &&
@@ -411,15 +448,24 @@ export default {
         });
     },
 
-    getViewerUrl: function () {
-      return (
-        `/assets/pdfjs/web/viewer.html?r=` +
-        new Date().getTime() +
-        `&file=` +
-        this.currentOpenDoc.download_url +
-        `#pagemode=none&search=` +
-        this.search
-      );
+    embedPDF: function () {
+      if (this.currentOpenDoc.download_url) {
+        let options = {
+          PDFJS_URL: "/assets/pdfjs/web/viewer.html",
+          supportRedirect: true,
+          forcePDFJS: this.forcePDFJS,
+          omitInlineStyles: true,
+          pdfOpenParams: {
+            pagemode: "none",
+            search: this.search,
+          },
+        };
+        PDFObject.embed(
+          this.currentOpenDoc.download_url + "/open",
+          "#pdf-embed-container",
+          options
+        );
+      }
     },
 
     documentRenamed: function (event) {
@@ -463,6 +509,16 @@ export default {
 @import "~bootstrap/scss/_mixins.scss";
 
 $document-viewer-padding: 2em;
+
+::v-deep .pdfobject {
+  overflow: auto;
+  width: 100%;
+  height: 100%;
+}
+
+::v-deep .pdfobject-container > div {
+  height: 100%;
+}
 
 ::v-deep #document-viewer .modal-dialog {
   width: 100vw;
@@ -544,6 +600,10 @@ $document-viewer-padding: 2em;
         background-color: rgba(0, 0, 0, 0.06);
         text-align: center;
         user-select: none;
+      }
+
+      #pdf-embed-container iframe {
+        border: none;
       }
 
       #documents-actions-big hr:last-child {
