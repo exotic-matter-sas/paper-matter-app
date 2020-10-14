@@ -229,7 +229,7 @@
             </b-col>
           </b-row>
 
-          <b-row class="px-3">
+          <b-row>
             <b-col class="px-3 py-2 py-xl-0">
               <FTLNote
                 v-if="currentOpenDoc.pid"
@@ -240,8 +240,8 @@
             </b-col>
           </b-row>
 
-          <b-row class="">
-            <b-col class="">
+          <b-row class="d-none d-xl-block">
+            <b-col class="px-3">
               <hr />
               <b-form-checkbox
                 id="toggle-compat-viewer"
