@@ -226,7 +226,7 @@ export default {
   overflow: auto;
   max-height: 200px;
 
-  span > :last-child{
+  span > :last-child {
     margin-bottom: 0;
   }
 }
