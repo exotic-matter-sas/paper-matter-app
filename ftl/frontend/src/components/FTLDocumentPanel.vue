@@ -163,10 +163,10 @@
         </b-col>
         <b-col
           xl="3"
-          class="d-none d-xl-block"
+          class="d-none d-xl-block px-3"
           :class="{ 'mobile-note-toggled': noteToggled }"
         >
-          <b-row id="documents-actions-big" class="px-3 d-none d-xl-block">
+          <b-row id="documents-actions-big" class="d-none d-xl-block">
             <b-col class="pt-3 px-3">
               <b-dropdown
                 id="download-document"
@@ -369,7 +369,7 @@ export default {
   mounted() {
     if (localStorage.forcepdfjs) {
       // Convert string "true" as stored in localstorage to boolean
-      this.forcePDFJS = (localStorage.forcepdfjs === 'true');
+      this.forcePDFJS = localStorage.forcepdfjs === "true";
     }
     this.openDocument();
   },
@@ -452,6 +452,7 @@ export default {
           PDFJS_URL: "/assets/pdfjs/web/viewer.html",
           supportRedirect: true,
           forcePDFJS: this.forcePDFJS,
+          omitInlineStyles: true,
           pdfOpenParams: {
             pagemode: "none",
             search: this.search,
@@ -506,6 +507,16 @@ export default {
 @import "~bootstrap/scss/_mixins.scss";
 
 $document-viewer-padding: 2em;
+
+::v-deep .pdfobject {
+  overflow: auto;
+  width: 100%;
+  height: 100%;
+}
+
+::v-deep .pdfobject-container > div {
+  height: 100%;
+}
 
 ::v-deep #document-viewer .modal-dialog {
   width: 100vw;
