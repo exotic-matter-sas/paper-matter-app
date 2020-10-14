@@ -601,6 +601,10 @@ $document-viewer-padding: 2em;
         user-select: none;
       }
 
+      #pdf-embed-container iframe {
+        border: none;
+      }
+
       #documents-actions-big hr:last-child {
         margin: 0.75rem 0 0.75rem 0;
       }
