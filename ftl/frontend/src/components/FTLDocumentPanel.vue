@@ -123,6 +123,7 @@
             <font-awesome-icon icon="trash" />
             <span>{{ $t("Delete") }}</span>
           </b-dropdown-item>
+          <b-dropdown-divider></b-dropdown-divider>
           <b-dropdown-form form-class="px-3">
             <b-form-checkbox
               v-model="forcePDFJS"
