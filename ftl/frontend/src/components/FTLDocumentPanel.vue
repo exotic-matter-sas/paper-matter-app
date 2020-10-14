@@ -369,7 +369,7 @@ export default {
   mounted() {
     if (localStorage.forcepdfjs) {
       // Convert string "true" as stored in localstorage to boolean
-      this.forcePDFJS = JSON.parse(localStorage.forcepdfjs);
+      this.forcePDFJS = (localStorage.forcepdfjs === 'true');
     }
     this.openDocument();
   },
