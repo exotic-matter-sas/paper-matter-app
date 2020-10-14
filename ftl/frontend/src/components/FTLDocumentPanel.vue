@@ -411,7 +411,9 @@ export default {
 
   watch: {
     forcePDFJS: function (newVal, oldVal) {
-      localStorage.forcepdfjs = newVal;
+      // Forcing boolean to be stored as string to avoid possible future bug
+      // https://stackoverflow.com/questions/3263161/cannot-set-boolean-values-in-localstorage/
+      localStorage.forcepdfjs = String(newVal);
       if (this.currentOpenDoc.pid) {
         this.embedPDF();
       }
