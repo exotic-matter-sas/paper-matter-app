@@ -353,6 +353,7 @@ describe("FTLDocumentPanel methods", () => {
       PDFJS_URL: "/assets/pdfjs/web/viewer.html",
       supportRedirect: true,
       forcePDFJS: false,
+      omitInlineStyles: true,
       pdfOpenParams: {
         pagemode: "none",
         search: search_text,
