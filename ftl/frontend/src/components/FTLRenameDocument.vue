@@ -8,6 +8,7 @@
     :id="modalId"
     :ok-disabled="!newDocumentName || newDocumentName === doc.title"
     @ok="renameDocument"
+    :cancel-title="$t('Cancel')"
   >
     <template slot="modal-title">
       <span>{{ $t("Rename document") }}</span>
