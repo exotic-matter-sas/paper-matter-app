@@ -90,37 +90,37 @@
       </svg>
     </b-navbar-brand>
 
-    <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+    <b-nav-form id="search-form">
+      <b-input-group id="search-zone">
+        <b-form-input
+          id="search-input"
+          variant="outilne"
+          :placeholder="$t('Keywords...')"
+          v-model="search"
+          @keydown.enter.prevent="doSearch"
+          required
+          autofocus
+        ></b-form-input>
+
+        <b-input-group-append>
+          <b-button
+            id="search-button"
+            variant="outline-secondary"
+            type="submit"
+            @click.prevent="doSearch"
+            :disabled="search === ''"
+          >
+            <span class="d-none d-lg-inline">{{ $t("Search") }}</span>
+            <font-awesome-icon class="d-lg-none" icon="search" size="sm"/>
+          </b-button>
+        </b-input-group-append>
+      </b-input-group>
+    </b-nav-form>
+
+    <b-navbar-toggle class="ml-2" target="nav-collapse"></b-navbar-toggle>
 
     <b-collapse id="nav-collapse" is-nav>
-      <b-nav-form class="mt-3 mt-sm-0">
-        <b-input-group id="search-zone">
-          <b-form-input
-            id="search-input"
-            variant="outilne"
-            :placeholder="$t('Keywords...')"
-            v-model="search"
-            @keydown.enter.prevent="doSearch"
-            required
-            autofocus
-          ></b-form-input>
-
-          <b-input-group-append>
-            <b-button
-              id="search-button"
-              variant="outline-secondary"
-              type="submit"
-              @click.prevent="doSearch"
-              :disabled="search === ''"
-            >
-              <span class="d-none d-lg-inline">{{ $t("Search") }}</span>
-              <font-awesome-icon class="d-lg-none" icon="search" size="sm" />
-            </b-button>
-          </b-input-group-append>
-        </b-input-group>
-      </b-nav-form>
-
-      <b-nav-form class="mt-3 ml-0 mt-sm-0 ml-sm-3">
+      <b-nav-form class="mt-3 ml-0 mt-sm-0 ml-sm-2">
         <b-dropdown
           id="add-documents"
           right
@@ -144,7 +144,7 @@
       </b-nav-form>
 
       <b-navbar-nav class="ml-auto">
-        <b-nav-item-dropdown right>
+        <b-nav-item-dropdown right class="px-0">
           <template slot="button-content">
             <font-awesome-icon
               v-if="account.isSuperUser"
@@ -260,11 +260,18 @@ export default {
 @import "~bootstrap/scss/_mixins.scss";
 
 #search-input {
-  width: 1%; // default value set by bootstrap
+  width: 120px;
   margin: 0;
 
   &:invalid {
     box-shadow: none;
+  }
+}
+
+/* Custom breakpoint used to fine tune search bar responsive */
+@media (min-width: 400px) {
+  #search-input {
+    width: 1%; // default width set by bootstrap
   }
 }
 
