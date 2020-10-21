@@ -111,7 +111,7 @@
             :disabled="search === ''"
           >
             <span class="d-none d-lg-inline">{{ $t("Search") }}</span>
-            <font-awesome-icon class="d-lg-none" icon="search" size="sm"/>
+            <font-awesome-icon class="d-lg-none" icon="search" size="sm" />
           </b-button>
         </b-input-group-append>
       </b-input-group>
