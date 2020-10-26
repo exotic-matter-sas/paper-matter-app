@@ -15,9 +15,9 @@
         </div>
     {% endif %}
 
-    <div class="row">
-        <div class="col">
-            <a href="{% url 'account_email' %}" class="card h-100 p-2">
+    <div class="row" id="account-index">
+        <div class="col mb-3">
+            <a href="{% url 'account_email' %}" class="card h-100 p-2 text-decoration-none">
                 <img src="{% static 'profile.svg' %}" style="height: 13rem;" class="card-img-top" alt="...">
                 <div class="card-body">
                     <p class="card-text text-center">
@@ -28,8 +28,8 @@
                 </div>
             </a>
         </div>
-        <div class="col">
-            <a href="{% url 'account_password' %}" class="card h-100 p-2">
+        <div class="col mb-3">
+            <a href="{% url 'account_password' %}" class="card h-100 p-2 text-decoration-none">
                 <img src="{% static 'security.svg' %}" style="height: 13rem;" class="card-img-top" alt="...">
                 <div class="card-body">
                     <p class="card-text text-center">
