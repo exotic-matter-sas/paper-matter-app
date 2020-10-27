@@ -21,7 +21,7 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path, include, re_path, reverse_lazy
-from django.views.generic import RedirectView, TemplateView
+from django.views.generic import RedirectView
 from django_registration.backends.activation.views import ActivationView
 
 from ftl import views
@@ -82,6 +82,8 @@ urlpatterns = [
     path("accounts/2fa/", include("ftl.otp_plugins.otp_ftl.urls")),
     # OAuth2 Provider
     path("oauth2/", include("ftl.urls_oauth2")),
+    # Captcha
+    path("captcha/", include("captcha.urls")),
 ]
 
 if settings.DEBUG and settings.DEV_MODE:

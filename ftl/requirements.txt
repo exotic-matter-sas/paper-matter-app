@@ -19,6 +19,7 @@ celery[redis]==4.4.2
 django-ipware==2.1.0
 django-axes==5.3.4
 ua-parser==0.10.0
+django-simple-captcha==0.5.13
 
 # django-storages==1.9.1
 # boto3==1.9.183

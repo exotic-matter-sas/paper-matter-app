@@ -1,16 +1,18 @@
 #  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
+import re
 from datetime import datetime, timezone, timedelta
 from unittest.mock import patch, Mock
 
 import qrcode.image.svg
+from captcha.models import CaptchaStore
 from django.conf.global_settings import SESSION_COOKIE_AGE
 from django.contrib import messages
 from django.contrib.auth.signals import user_logged_out
 from django.contrib.sessions.backends.base import SessionBase
-from django.test import RequestFactory
+from django.test import RequestFactory, override_settings
 from django.test import TestCase
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.utils import timezone as django_timezone
 from django_otp.middleware import OTPMiddleware
 from django_otp.oath import TOTP
@@ -92,6 +94,56 @@ class FtlPagesTests(TestCase):
         response = self.client.get(f"/signup/success/")
         self.assertContains(response, "verify your email")
         self.assertTemplateUsed(response, "ftl/registration/signup_success.html")
+
+    @override_settings(FTL_ENABLE_SIGNUP_CAPTCHA=True)
+    def test_signup_with_captcha(self):
+        # Generate at least one captcha
+        response = self.client.get(reverse("signup_org_user"))
+        # Retrieve hash and expected captcha value from DB
+        hash_ = re.findall(r'value="([0-9a-f]+)"', str(response.content))[0]
+        self.assertIsNotNone(hash_)
+        captcha_response = CaptchaStore.objects.get(hashkey=hash_).response
+        self.assertIsNotNone(captcha_response)
+
+        response_submit = self.client.post(
+            reverse("signup_org_user"),
+            {
+                "org_name": tv.ORG_NAME_1,
+                "email": tv.USER1_EMAIL,
+                "password1": tv.USER1_PASS,
+                "password2": tv.USER1_PASS,
+                "captcha_0": hash_,
+                "captcha_1": captcha_response,
+            },
+        )
+
+        self.assertRedirects(
+            response_submit,
+            reverse_lazy("signup_success"),
+            fetch_redirect_response=False,
+        )
+
+    @override_settings(FTL_ENABLE_SIGNUP_CAPTCHA=True)
+    def test_signup_with_wrong_captcha(self):
+        # Generate at least one captcha
+        response = self.client.get(reverse("signup_org_user"))
+        # Retrieve hash
+        hash_ = re.findall(r'value="([0-9a-f]+)"', str(response.content))[0]
+
+        response_submit = self.client.post(
+            reverse("signup_org_user"),
+            {
+                "org_name": tv.ORG_NAME_1,
+                "email": tv.USER1_EMAIL,
+                "password1": tv.USER1_PASS,
+                "password2": tv.USER1_PASS,
+                "captcha_0": hash_,
+                "captcha_1": "wrong captcha",
+            },
+        )
+
+        self.assertFalse(response_submit.context_data["form"].is_valid())
+        self.assertIn("captcha", response_submit.context_data["form"].errors)
 
     @patch.object(celery.app, "send_task")
     def test_user_permissions_signup(self, mocked_send_email_async):

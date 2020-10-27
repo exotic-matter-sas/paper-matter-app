@@ -2,9 +2,10 @@
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
 from unittest.mock import patch
 
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django_otp.plugins.otp_static.models import StaticToken
 
+from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import (
     setup_org,
     setup_user,
@@ -12,14 +13,13 @@ from ftests.tools.setup_helpers import (
     setup_2fa_fido2_device,
     setup_2fa_totp_device,
 )
-from ftests.tools import test_values as tv
-from .forms import FTLUserCreationForm
 from ftl.otp_plugins.otp_ftl.forms import (
     StaticDeviceCheckForm,
     TOTPDeviceCheckForm,
     StaticDeviceForm,
     TOTPDeviceForm,
 )
+from .forms import FTLUserCreationForm, FTLCreateOrgAndFTLUser
 
 
 class FtlUserCreationFormTests(TestCase):
@@ -52,6 +52,16 @@ class FtlUserCreationFormTests(TestCase):
         )
         self.assertFalse(form.is_valid())
         self.assertIn("email", form.errors)
+
+
+@override_settings(FTL_ENABLE_SIGNUP_CAPTCHA=True)
+class FTLCreateOrgAndFTLUserTests(TestCase):
+    def test_captcha_render(self):
+        form = FTLCreateOrgAndFTLUser()
+        self.assertIn(
+            '<label class="required" for="id_captcha_1">Are you human?*:</label>',
+            form.as_p(),
+        )
 
 
 ########################
