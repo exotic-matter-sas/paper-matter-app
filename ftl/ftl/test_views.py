@@ -96,7 +96,8 @@ class FtlPagesTests(TestCase):
         self.assertTemplateUsed(response, "ftl/registration/signup_success.html")
 
     @override_settings(FTL_ENABLE_SIGNUP_CAPTCHA=True)
-    def test_signup_with_captcha(self):
+    @patch.object(celery.app, "send_task")
+    def test_signup_with_captcha(self, mocked_send_email_async):
         # Generate at least one captcha
         response = self.client.get(reverse("signup_org_user"))
         # Retrieve hash and expected captcha value from DB
@@ -124,7 +125,8 @@ class FtlPagesTests(TestCase):
         )
 
     @override_settings(FTL_ENABLE_SIGNUP_CAPTCHA=True)
-    def test_signup_with_wrong_captcha(self):
+    @patch.object(celery.app, "send_task")
+    def test_signup_with_wrong_captcha(self, mocked_send_email_async):
         # Generate at least one captcha
         response = self.client.get(reverse("signup_org_user"))
         # Retrieve hash
