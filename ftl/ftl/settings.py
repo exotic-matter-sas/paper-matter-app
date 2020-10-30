@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "webpack_loader",
     "axes",
+    "captcha",
     "ftl",
     "setup.apps.SetupConfig",
     "core.apps.CoreConfig",
@@ -355,6 +356,16 @@ Set to False to disable it and anonymize the account.
 FTL_DELETE_DISABLED_ACCOUNTS = True
 FTL_SUFFIX_DELETED_ACCOUNT = "@disabled.pm.app"  # No need to change this
 FTL_SUFFIX_DELETED_ORG = "-disabled"  # No need to change this
+
+"""
+Captcha on signup form
+=======================
+Add a simple captcha to the signup form.
+Please refer to https://django-simple-captcha.readthedocs.io/en/latest/advanced.html#configuration-toggles
+for more configuration settings.
+"""
+FTL_ENABLE_SIGNUP_CAPTCHA = False
+CAPTCHA_FONT_SIZE = 42
 
 """
 Redis URL for Celery broker

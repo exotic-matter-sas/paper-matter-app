@@ -1,7 +1,8 @@
 #  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
-
+from captcha.fields import CaptchaField
 from django import forms
+from django.conf import settings
 from django.contrib.auth.forms import AuthenticationForm
 from django.forms import EmailField
 from django.utils.text import slugify
@@ -49,6 +50,12 @@ class FTLCreateOrgAndFTLUser(RegistrationForm):
         self.fields["email"].label += "*"
         self.fields["password1"].label += "*"
         self.fields["password2"].label += "*"
+
+        if getattr(settings, "FTL_ENABLE_SIGNUP_CAPTCHA", False):
+            self.fields["captcha"] = CaptchaField(
+                label=_("Are you human?*"),
+                help_text=_("Write the symbols that you see in the image."),
+            )
 
     class Meta(RegistrationForm.Meta):
         model = FTLUser
