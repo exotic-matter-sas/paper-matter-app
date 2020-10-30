@@ -30,7 +30,7 @@ msgstr ""
 "d'entreprise)."
 
 msgid "Are you human?*"
-msgstr "Êtes-vous un être humain?*"
+msgstr "Êtes-vous un être humain ?*"
 
 msgid "Write the symbols that you see in the image."
 msgstr "Écrivez les symboles que vous voyez dans l’image."
