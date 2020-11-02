@@ -84,6 +84,11 @@ class AdminPreserveUserPrivacy(LoginPage, AdminPages):
             "Ftl orgs",
             "Users",
             "Applications",
+            "Clocked",
+            "Crontabs",
+            "Intervals",
+            "Periodic tasks",
+            "Solar events",
         ]
         document_non_personal_data = [
             "pid",
