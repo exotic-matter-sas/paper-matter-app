@@ -18,6 +18,8 @@ FROM python:3.7-slim
 ENV PORT 8000
 # Set to "true" to use this image as a web frontend
 ENV ENABLE_WEB false
+# Set to "true" to use this image as a task scheduler (cron)
+ENV ENABLE_CRON false
 # Set to "true" to use this image as a worker
 ENV ENABLE_WORKER false
 # Set number of workers for async processing such as OCR
@@ -48,7 +50,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq-dev \
     libffi-dev \
     libssl-dev \
-    cron \
     supervisor \
     curl \
     git \
@@ -66,18 +67,8 @@ RUN chmod 0700 /app/ftl-web.sh
 ADD --chown=ftl:ftl docker/ftl-worker.sh /app/ftl-worker.sh
 RUN chmod 0700 /app/ftl-worker.sh
 
-ADD docker/cron-env-init.sh /tmp/cron-env-init.sh
-RUN chmod 0700 /tmp/cron-env-init.sh
-RUN chown root:root /tmp/cron-env-init.sh
-
-ADD docker/crontab /etc/cron.d/ftl
-RUN chmod 0700 /etc/cron.d/ftl
-
-ADD --chown=root:root docker/batch-delete-documents.sh /etc/cron.hourly/batch-delete-documents
-RUN chmod 0700 /etc/cron.hourly/batch-delete-documents
-
-ADD --chown=root:root docker/batch-delete-orgs.sh /etc/cron.daily/batch-delete-orgs
-RUN chmod 0700 /etc/cron.daily/batch-delete-orgs
+ADD --chown=ftl:ftl docker/ftl-celery-beat.sh /app/ftl-celery-beat.sh
+RUN chmod 0700 /app/ftl-celery-beat.sh
 
 RUN python3 -m pip install -r /app/requirements.txt --no-cache-dir && \
  python3 -m pip install -r /app/requirements_deploy.txt --no-cache-dir

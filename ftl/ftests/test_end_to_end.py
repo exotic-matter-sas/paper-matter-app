@@ -14,7 +14,7 @@ from django_otp.oath import TOTP
 from selenium.common.exceptions import NoSuchElementException
 
 from core.processing.ftl_processing import FTLDocumentProcessing
-from core.tasks import apply_ftl_processing
+from core.tasks import apply_ftl_processing, batch_delete_doc, batch_delete_org
 from ftests.pages.account_pages import AccountPages
 from ftests.pages.django_admin_pages import AdminPages
 from ftests.pages.document_viewer_modal import DocumentViewerModal
@@ -544,16 +544,10 @@ class AccountDeletion(LoginPage, AccountPages, AdminPages):
         # User submit account deletion form
         self.delete_account(tv.USER1_PASS)
 
-        # Faking the hourly /etc/cron.hourly/batch-delete-documents CRON call
-        self.client.get(
-            f"/crons_core/{settings.CRON_SECRET_KEY}/batch_delete_documents",
-            HTTP_X_APPENGINE_CRON="true",
-        )
-        # Faking the daily CRON /etc/cron.daily/batch-delete-orgs
-        self.client.get(
-            f"/crons_account/{settings.CRON_SECRET_KEY}/batch_delete_orgs",
-            HTTP_X_APPENGINE_CRON="true",
-        )
+        # Faking the hourly batch-delete-documents CRON call
+        batch_delete_doc()
+        # Faking the daily CRON batch-delete-orgs
+        batch_delete_org()
 
         # All resources from user1 are deleted
         for resource in self.user1_resources.values():
@@ -598,16 +592,10 @@ class AccountDeletion(LoginPage, AccountPages, AdminPages):
         self.visit(AccountPages.delete_account_url)
         self.delete_account(tv.ADMIN1_PASS)
 
-        # Faking the hourly /etc/cron.hourly/batch-delete-documents CRON call
-        self.client.get(
-            f"/crons_core/{settings.CRON_SECRET_KEY}/batch_delete_documents",
-            HTTP_X_APPENGINE_CRON="true",
-        )
-        # Faking the daily CRON /etc/cron.daily/batch-delete-orgs
-        self.client.get(
-            f"/crons_account/{settings.CRON_SECRET_KEY}/batch_delete_orgs",
-            HTTP_X_APPENGINE_CRON="true",
-        )
+        # Faking the hourly batch-delete-documents CRON call
+        batch_delete_doc()
+        # Faking the daily CRON batch-delete-orgs
+        batch_delete_org()
 
         # All resources from Admin are deleted
         for resource in self.admin_resources.values():

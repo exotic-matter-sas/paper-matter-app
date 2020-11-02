@@ -3,10 +3,8 @@
 
 import re
 import threading
-from unittest import skipIf
 from unittest.mock import patch, Mock
 
-from django.conf import settings
 from django.core import mail
 from django.http import HttpResponse
 from django.test import override_settings
@@ -14,6 +12,7 @@ from django_otp.middleware import OTPMiddleware
 from django_otp.oath import TOTP
 from selenium.common.exceptions import NoSuchElementException
 
+from core.tasks import batch_delete_doc, batch_delete_org
 from ftests.pages.account_pages import AccountPages
 from ftests.pages.home_page import HomePage
 from ftests.pages.login_page import LoginPage
@@ -29,7 +28,6 @@ from ftests.tools.setup_helpers import (
 )
 from ftl.celery import app
 from ftl.otp_plugins.otp_ftl import views_fido2
-from ftl.settings import CRON_SECRET_KEY
 
 
 def mocked_verify_user(self, request, user):
@@ -257,16 +255,10 @@ class DeleteAccountPageTests(LoginPage, AccountPages, SignupPages):
         # User submit password to confirm account deletion
         self.delete_account(tv.USER1_PASS)
 
-        # Faking the hourly /etc/cron.hourly/batch-delete-documents CRON call
-        self.client.get(
-            f"/crons_core/{CRON_SECRET_KEY}/batch_delete_documents",
-            HTTP_X_APPENGINE_CRON="true",
-        )
-        # Faking the daily CRON /etc/cron.daily/batch-delete-orgs
-        self.client.get(
-            f"/crons_account/{CRON_SECRET_KEY}/batch_delete_orgs",
-            HTTP_X_APPENGINE_CRON="true",
-        )
+        # Faking the hourly batch-delete-documents CRON call
+        batch_delete_doc()
+        # Faking the daily CRON batch-delete-orgs
+        batch_delete_org()
 
         # User try to recreate its account using the same email and org name
         self.visit(SignupPages.url)
@@ -292,16 +284,10 @@ class DeleteAccountPageTests(LoginPage, AccountPages, SignupPages):
         # User submit password to confirm account deletion
         self.delete_account(tv.USER1_PASS)
 
-        # Faking the hourly /etc/cron.hourly/batch-delete-documents CRON call
-        self.client.get(
-            f"/crons_core/{CRON_SECRET_KEY}/batch_delete_documents",
-            HTTP_X_APPENGINE_CRON="true",
-        )
-        # Faking the daily CRON /etc/cron.daily/batch-delete-orgs
-        self.client.get(
-            f"/crons_account/{CRON_SECRET_KEY}/batch_delete_orgs",
-            HTTP_X_APPENGINE_CRON="true",
-        )
+        # Faking the hourly batch-delete-documents CRON call
+        batch_delete_doc()
+        # Faking the daily CRON batch-delete-orgs
+        batch_delete_org()
 
         # Admin user login
         self.log_user(email=tv.ADMIN1_EMAIL, password=tv.ADMIN1_PASS)
@@ -329,16 +315,10 @@ class DeleteAccountPageTests(LoginPage, AccountPages, SignupPages):
         # User submit password to confirm account deletion
         self.delete_account(tv.USER1_PASS)
 
-        # Faking the hourly /etc/cron.hourly/batch-delete-documents CRON call
-        self.client.get(
-            f"/crons_core/{CRON_SECRET_KEY}/batch_delete_documents",
-            HTTP_X_APPENGINE_CRON="true",
-        )
-        # Faking the daily CRON /etc/cron.daily/batch-delete-orgs
-        self.client.get(
-            f"/crons_account/{CRON_SECRET_KEY}/batch_delete_orgs",
-            HTTP_X_APPENGINE_CRON="true",
-        )
+        # Faking the hourly batch-delete-documents CRON call
+        batch_delete_doc()
+        # Faking the daily CRON batch-delete-orgs
+        batch_delete_org()
 
         # User try to recreate its account using the same email and org name
         self.visit(SignupPages.url)

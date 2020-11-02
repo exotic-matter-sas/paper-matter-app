@@ -2,17 +2,16 @@
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
 
 
-from rest_framework import status
 from rest_framework.test import APITestCase
 
 from core.models import FTLUser, FTLOrg
+from core.tasks import batch_delete_org
 from ftests.tools.setup_helpers import (
     setup_org,
     setup_admin,
     setup_folder,
     setup_document,
 )
-from ftl.settings import CRON_SECRET_KEY
 
 
 class CronAccountTests(APITestCase):
@@ -24,11 +23,7 @@ class CronAccountTests(APITestCase):
         self.org.deleted = True
         self.org.save()
 
-        client_get = self.client.get(
-            f"/crons_account/{CRON_SECRET_KEY}/batch_delete_orgs",
-            HTTP_X_APPENGINE_CRON="true",
-        )
-        self.assertEqual(client_get.status_code, status.HTTP_204_NO_CONTENT)
+        batch_delete_org()
 
         self.assertFalse(FTLUser.objects.filter(pk=self.user.pk).exists())
         self.assertFalse(FTLOrg.objects.filter(pk=self.org.pk).exists())
@@ -43,10 +38,6 @@ class CronAccountTests(APITestCase):
         self.org.deleted = True
         self.org.save()
 
-        client_get = self.client.get(
-            f"/crons_account/{CRON_SECRET_KEY}/batch_delete_orgs",
-            HTTP_X_APPENGINE_CRON="true",
-        )
-        self.assertEqual(client_get.status_code, status.HTTP_204_NO_CONTENT)
+        batch_delete_org()
 
         self.assertTrue(FTLOrg.objects.get(pk=self.org.pk).deleted)

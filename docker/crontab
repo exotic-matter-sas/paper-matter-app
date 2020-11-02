@@ -1,2 +1,0 @@
-#* * * * * root sh /etc/cron.hourly/batch-delete-documents
-#* * * * * root touch /tmp/batch-test-per-minute

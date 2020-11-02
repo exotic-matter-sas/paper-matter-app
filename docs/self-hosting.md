@@ -36,7 +36,6 @@ __Complete the steps described in **Basic deployment** section first.__
 | Name | Default value | Format | Description |
 | --- | --- | --- | --- |
 | DJANGO_SECRET_KEY | `CHANGE-ME` | Randomly generated string (at least 50 characters long) | It is use by Django for cryptographic signing, [more infos](https://docs.djangoproject.com/en/3.0/ref/settings/#std:setting-SECRET_KEY) |
-| CRON_SECRET_KEY | `change-me` | Randomly generated string with ONLY url friendly characters (eg: unaccented characters [a-z], number [0-9], and hyphen [-_]. At least 50 characters long) | It is used by PM to restrict access to URL allowing to run periodic tasks |
 
 3. Update database settings in `docker-compose.yml`:
 

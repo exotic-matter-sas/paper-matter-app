@@ -27,7 +27,7 @@ services:
     environment:
       ENABLE_WORKER: "true"
       NB_WORKERS: '1'
-      CRON_DISABLE: "true"
+      ENABLE_CRON: "true"
       # WARNING: NOT SECURE FOR PRODUCTION
       # ===================================
       # For production use, additional ENV variables have to be defined to update default security settings.

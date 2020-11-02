@@ -19,6 +19,7 @@ import os
 import pathlib
 from datetime import timedelta
 
+from celery.schedules import crontab
 from django.contrib.messages import constants as message_constants
 
 from ftl.enums import FTLStorages, FTLPlugins
@@ -30,10 +31,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "NOT-SECURE"
-
-# SECURITY WARNING: keep the secret key used in production secret!
-# Simple url string or URL encoded
-CRON_SECRET_KEY = "not-secure"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -67,6 +64,7 @@ INSTALLED_APPS = [
     "webpack_loader",
     "axes",
     "captcha",
+    "django_celery_beat",
     "ftl",
     "setup.apps.SetupConfig",
     "core.apps.CoreConfig",
@@ -368,13 +366,27 @@ FTL_ENABLE_SIGNUP_CAPTCHA = False
 CAPTCHA_FONT_SIZE = 42
 
 """
-Redis URL for Celery broker
+Celery settings
 """
 CELERY_BROKER_URL = "redis://localhost:6379"
 CELERY_TASK_ROUTES = {
     "core.tasks.apply_ftl_processing": {"queue": "ftl_processing"},
     "core.tasks.delete_document": {"queue": "med"},
     "core.tasks.send_email_async": {"queue": "med"},
+}
+CELERY_BEAT_SCHEDULE = {
+    "clean-org-everyday": {
+        "task": "core.tasks.batch_delete_org",
+        "schedule": crontab(minute=5, hour=1),
+    },
+    "clean-doc-everyhour": {
+        "task": "core.tasks.batch_delete_doc",
+        "schedule": crontab(minute=0, hour="*"),
+    },
+    "clean-oauth-tokens-everyday": {
+        "task": "core.tasks.batch_delete_doc",
+        "schedule": crontab(minute=15, hour=1),
+    },
 }
 
 
