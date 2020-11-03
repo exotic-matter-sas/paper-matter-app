@@ -24,9 +24,13 @@ class RecurringTasksTests(APITestCase):
         self.user = setup_user(self.org_with_docs)
 
         self.doc = setup_document(self.org_with_docs, self.user)
-        self.doc_bis = setup_document(self.org_with_docs, self.user, title=tv.DOCUMENT2_TITLE)
+        self.doc_bis = setup_document(
+            self.org_with_docs, self.user, title=tv.DOCUMENT2_TITLE
+        )
 
-        self.first_level_folder = setup_folder(self.org_with_docs, name="First level folder")
+        self.first_level_folder = setup_folder(
+            self.org_with_docs, name="First level folder"
+        )
 
         self.doc_in_folder = setup_document(
             self.org_with_docs,
