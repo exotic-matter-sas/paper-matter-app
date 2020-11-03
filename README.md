@@ -54,14 +54,19 @@ Second terminal
 
 _To run local as https (required to test 2fa fido2 devices) use `python manage.py runsslserver` instead. You **must have** `DEBUG` and `DEV_MODE` set to `True` in `settings.py` (set them in your `settings_local.py` wont work unfortunately) and you may have to use `localhost` domain (in place of the usual ip) in order your browser accept to load the app._
 
-Third terminal
+Third terminal (Required to process new docs or to run CRONs)
   
     redis-server
 
-Fourth terminal
+Fourth terminal (Required to process new docs)
 
     cd ftl
-    python -m celery -A ftl worker -l info
+    python -m celery -A ftl worker -l info -Q med,celery,ftl_processing
+    
+Fifth terminal (Required to run CRONs)
+
+    cd ftl
+    python -m celery -A ftl beat -l DEBUG --scheduler django_celery_beat.schedulers:DatabaseScheduler
 
 ### Code formatting
 
