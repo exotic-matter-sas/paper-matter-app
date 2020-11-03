@@ -34,8 +34,11 @@ def delete_document(ftl_doc_pid, org_id, user_id):
 def send_email_async(*args, **kwargs):
     send_mail(*args, **kwargs)
 
+####################
+# TASKS USED IN CRON
+####################
 
-# TASKS FOR CRON
+
 @shared_task
 def batch_delete_org():
     orgs_to_delete = FTLOrg.objects.filter(deleted=True)
