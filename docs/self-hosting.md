@@ -137,7 +137,9 @@ You can't enable OCR feature using ENV variables for now, but you can do it as d
 | Name | Default value | Format | Description |
 | --- | --- | --- | --- |
 | DJANGO_DEBUG | `False` | `True` or `False` | Enable Django DEBUG mode, DO NOT enable this mode on if your instance is used in production, [more infos](https://docs.djangoproject.com/en/3.0/ref/settings/#debug) |
-| CRON_DISABLE | Not defined | `True` or any string | Disable internal cron engine in Docker image |
+| ENABLE_WEB | `False` | `True` or `False` | Use this image as a web process instance |
+| ENABLE_CRON | `False` | `True` or `False` | Enable internal CRON for maintenance tasks (should be only enabled on one separated instance) |
+| ENABLE_WORKER | `False` | `True` or `False` | Use this image as a worker for async tasks such as document processing |
 | NB_WORKERS | `1`  | A number >= 1 | Number of workers which will run documents processing in parallel, increasing this number can impact significantly server load (to use on an image with `ENABLE_WORKER` set to `true`) |
 | WORKER_QUEUES | `ftl_processing,med,celery` | Value separated by comma | Queues name to be processed by the worker |
 
