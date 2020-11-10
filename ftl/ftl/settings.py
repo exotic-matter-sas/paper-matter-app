@@ -384,7 +384,7 @@ CELERY_BEAT_SCHEDULE = {
         "schedule": crontab(minute=0, hour="*"),
     },
     "clean-oauth-tokens-everyday": {
-        "task": "core.tasks.batch_delete_doc",
+        "task": "core.tasks.batch_delete_oauth_tokens",
         "schedule": crontab(minute=15, hour=1),
     },
 }
