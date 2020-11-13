@@ -23,8 +23,8 @@ DEV_MODE = False
 
 EMAIL_SUBJECT_PREFIX = "[TESTS] "
 
-#  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
-#  Licensed under the BSL License. See LICENSE in the project root for license information.
+#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
+#  Licensed under the Business Source License. See LICENSE at project root for more information.
 
 # Monkey patch REST_FRAMEWORK settings to disable rate limit during tests
 from .settings import REST_FRAMEWORK
