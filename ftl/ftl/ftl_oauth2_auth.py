@@ -1,3 +1,6 @@
+#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
+#  Licensed under the Business Source License. See LICENSE at project root for more information.
+
 from oauth2_provider.contrib.rest_framework import OAuth2Authentication
 from oauth2_provider.models import Application
 

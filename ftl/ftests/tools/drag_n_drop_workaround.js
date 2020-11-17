@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
+ * Licensed under the Business Source License. See LICENSE at project root for more information.
+ */
+
 // This script is needed to get around a Selenium/Webdriver bug with drag n drop
 // ref: https://github.com/SeleniumHQ/selenium/issues/8003
 
@@ -10,7 +15,7 @@ function simulateDragDrop(sourceNode, destinationNode) {
 
   function createCustomEvent(type) {
     var event = new CustomEvent("CustomEvent");
-    event.initCustomEvent(type, true, true, null)
+    event.initCustomEvent(type, true, true, null);
     event.dataTransfer = {
       data: {
       },
