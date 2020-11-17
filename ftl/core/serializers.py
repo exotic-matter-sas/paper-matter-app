@@ -8,6 +8,7 @@ from django.conf import settings
 from django.core.files.base import ContentFile
 from django.core.signing import TimestampSigner
 from django.urls import reverse
+from django.utils.translation import get_language_from_request
 from jose import jwt
 from rest_framework import serializers
 
@@ -126,6 +127,12 @@ class FTLDocumentDetailsOnlyOfficeSerializer(FTLDocumentSerializer):
         return relative_url
 
     def get_download_temp_sign(self, obj):
+        request = self.context.get("request", None)
+        if request:
+            current_lang = get_language_from_request(request)
+        else:
+            current_lang = "en"
+
         only_office_config = {
             "document": {
                 "fileType": mimetype_to_ext(obj.type)[1:],
@@ -145,7 +152,7 @@ class FTLDocumentDetailsOnlyOfficeSerializer(FTLDocumentSerializer):
                 },
             },
             "editorConfig": {
-                "lang": "fr",
+                "lang": current_lang,
                 "customization": {
                     "autosave": False,
                     "chat": False,
