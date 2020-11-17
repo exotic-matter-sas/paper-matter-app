@@ -4,12 +4,14 @@ import hashlib
 import json
 import urllib
 from base64 import b64decode
+from datetime import timedelta
 from pathlib import Path
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.core.files.base import ContentFile
+from django.core.signing import TimestampSigner, BadSignature
 from django.db import IntegrityError, transaction
 from django.db.models import F
 from django.http import (
@@ -38,6 +40,7 @@ from core.serializers import (
     FTLDocumentSerializer,
     FTLFolderSerializer,
     FTLDocumentSharingSerializer,
+    FTLDocumentDetailsOnlyOfficeSerializer,
 )
 from core.tasks import apply_ftl_processing
 from ftl.enums import FTLStorages, FTLPlugins
@@ -72,7 +75,7 @@ class DownloadView(views.APIView):
         return FTLDocument.objects.filter(org=self.request.user.org, deleted=False)
 
     def _get_doc(self, request, *args, **kwargs):
-        doc = get_object_or_404(self.get_queryset(), pid=kwargs["uuid"])
+        doc = get_object_or_404(self.get_queryset(), pid=kwargs["pid"])
 
         doc_ext = Path(doc.binary.name).suffix.lower()
 
@@ -125,6 +128,24 @@ class ViewDocument(DownloadView):
             return response
 
 
+class TempDownloadView(DownloadView):
+    authentication_classes = []
+    permission_classes = []
+
+    def get_queryset(self):
+        return FTLDocument.objects.filter(deleted=False)
+
+    def _get_doc(self, request, *args, **kwargs):
+        value_to_unsign = kwargs["spid"]
+        signer = TimestampSigner()
+        try:
+            pid = signer.unsign(value_to_unsign, max_age=timedelta(minutes=5))
+            kwargs["pid"] = pid
+            return super()._get_doc(request, *args, **kwargs)
+        except BadSignature:
+            raise Http404()
+
+
 class FTLDocumentList(generics.ListAPIView):
     serializer_class = FTLDocumentSerializer
     filter_backends = [filters.OrderingFilter]
@@ -170,7 +191,11 @@ class FTLDocumentList(generics.ListAPIView):
 
 
 class FTLDocumentDetail(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = FTLDocumentSerializer
+    serializer_class = (
+        FTLDocumentDetailsOnlyOfficeSerializer
+        if getattr(settings, "FTL_ENABLE_ONLY_OFFICE", False)
+        else FTLDocumentSerializer
+    )
     lookup_field = "pid"
 
     def get_queryset(self):

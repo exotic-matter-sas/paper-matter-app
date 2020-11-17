@@ -1,5 +1,6 @@
 #  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
+from django.conf import settings
 from django_otp import devices_for_user
 from django_otp.plugins.otp_static.models import StaticDevice
 
@@ -20,6 +21,7 @@ def ftl_account_data(request):
                 ]
             ),
             "supported_exts": mimes.MIMETYPES_EXT_DICT,
+            "only_office_viewer": getattr(settings, "FTL_ENABLE_ONLY_OFFICE", False),
         }
 
     return {}

@@ -414,6 +414,12 @@ Enable Developer API
 """
 FTL_ENABLE_DEV_API = False
 
+"""
+OnlyOffice integration
+"""
+FTL_ENABLE_ONLY_OFFICE = False
+FTL_ONLY_OFFICE_SERVER_URL = "http://localhost:8080/web-apps/apps/api/documents/api.js"
+FTL_ONLY_OFFICE_SECRET_KEY = "NOT-SECURE"
 
 # ==================================================
 # No settings under this line
