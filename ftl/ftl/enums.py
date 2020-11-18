@@ -43,6 +43,10 @@ class FTLPlugins:
         "core.processing.proc_google_vision_async.FTLOCRGoogleVisionAsync"
     )
 
+    THUMBNAIL_ONLY_OFFICE = (
+        "core.processing.proc_thumb_only_office.FTLThumbnailGenerationOnlyOffice"
+    )
+
     LANG_DETECTOR_LANGID = "core.processing.proc_lang.FTLLangDetectorLangId"
     SEARCH_ENGINE_PGSQL_TSVECTOR = (
         "core.processing.proc_pgsql_tsvector.FTLSearchEnginePgSQLTSVector"

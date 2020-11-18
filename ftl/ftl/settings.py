@@ -415,10 +415,17 @@ Enable Developer API
 FTL_ENABLE_DEV_API = False
 
 """
+URI of the instance
+This is the host address which will be used to generate an absolute URI if there is none given by the current http
+request. It must include the scheme and port.
+"""
+FTL_EXTERNAL_HOST = "http://localhost:8000"
+
+"""
 OnlyOffice integration
 """
 FTL_ENABLE_ONLY_OFFICE = False
-FTL_ONLY_OFFICE_SERVER_URL = "http://localhost:8080/web-apps/apps/api/documents/api.js"
+FTL_ONLY_OFFICE_SERVER_URL = "http://localhost:8080"
 FTL_ONLY_OFFICE_SECRET_KEY = "NOT-SECURE"
 
 # ==================================================

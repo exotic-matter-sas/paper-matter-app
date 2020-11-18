@@ -124,7 +124,7 @@ class FTLDocumentDetailsOnlyOfficeSerializer(FTLDocumentSerializer):
         if request:
             return request.build_absolute_uri(relative_url)
 
-        return relative_url
+        return f"{getattr(settings, 'FTL_EXTERNAL_HOST')}{relative_url}"
 
     def get_download_temp_sign(self, obj):
         request = self.context.get("request", None)
@@ -223,7 +223,7 @@ class FTLDocumentSharingSerializer(serializers.ModelSerializer):
         if request:
             return request.build_absolute_uri(relative_url)
 
-        return relative_url
+        return f"{getattr(settings, 'FTL_EXTERNAL_HOST')}{relative_url}"
 
     class Meta:
         model = FTLDocumentSharing
