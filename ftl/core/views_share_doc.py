@@ -3,6 +3,7 @@
 from datetime import datetime
 from pathlib import Path
 
+from django.conf import settings
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
@@ -12,6 +13,7 @@ from django.views.generic.base import ContextMixin
 
 from core.mimes import mimetype_to_ext
 from core.models import FTLDocumentSharing
+from core.serializers import FTLDocumentDetailsOnlyOfficeSerializer
 from core.views import DownloadView
 
 
@@ -33,6 +35,31 @@ class ViewSharedDocument(ContextMixin, View):
             return render(request, "core/share_doc_404.html", status=404)
 
         context = self.get_context_data()
+
+        if getattr(settings, "FTL_ENABLE_ONLY_OFFICE", False):
+            ftl_doc_serializer = FTLDocumentDetailsOnlyOfficeSerializer(
+                ftl_document_sharing.ftl_doc
+            )
+            context["only_office_supported_ext"] = {
+                "text/plain",
+                "application/rtf",
+                "text/rtf",
+                "application/msword",
+                "application/vnd.ms-excel",
+                "application/excel",
+                "application/vnd.ms-powerpoint",
+                "application/mspowerpoint",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+                "application/vnd.oasis.opendocument.text",
+                "application/vnd.oasis.opendocument.presentation",
+                "application/vnd.oasis.opendocument.spreadsheet",
+            }
+            context["only_office_config"] = ftl_doc_serializer.get_only_office_config(
+                ftl_document_sharing.ftl_doc
+            )
+
         context["force_refresh_id"] = int(datetime.utcnow().timestamp())
         context["share_doc"] = ftl_document_sharing
         # remove the dot from extension

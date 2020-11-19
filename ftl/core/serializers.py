@@ -111,8 +111,7 @@ class FTLDocumentSerializer(serializers.ModelSerializer):
 
 
 class FTLDocumentDetailsOnlyOfficeSerializer(FTLDocumentSerializer):
-    download_url_temp = serializers.SerializerMethodField()
-    download_temp_sign = serializers.SerializerMethodField()
+    only_office_config = serializers.SerializerMethodField()
 
     def get_download_url_temp(self, obj):
         signer = TimestampSigner()
@@ -126,7 +125,7 @@ class FTLDocumentDetailsOnlyOfficeSerializer(FTLDocumentSerializer):
 
         return f"{getattr(settings, 'FTL_EXTERNAL_HOST')}{relative_url}"
 
-    def get_download_temp_sign(self, obj):
+    def get_only_office_config(self, obj):
         request = self.context.get("request", None)
         if request:
             current_lang = get_language_from_request(request)
@@ -141,7 +140,7 @@ class FTLDocumentDetailsOnlyOfficeSerializer(FTLDocumentSerializer):
                 "url": self.get_download_url_temp(obj),
                 "permissions": {
                     "comment": False,
-                    "copy": False,
+                    "copy": True,
                     "download": True,
                     "edit": False,
                     "fillForms": False,
@@ -153,6 +152,7 @@ class FTLDocumentDetailsOnlyOfficeSerializer(FTLDocumentSerializer):
             },
             "editorConfig": {
                 "lang": current_lang,
+                "mode": "view",
                 "customization": {
                     "autosave": False,
                     "chat": False,
@@ -175,23 +175,20 @@ class FTLDocumentDetailsOnlyOfficeSerializer(FTLDocumentSerializer):
             },
         }
 
-        return {
-            "config": only_office_config,
-            "sign": jwt.encode(
-                only_office_config,
-                getattr(settings, "FTL_ONLY_OFFICE_SECRET_KEY"),
-                algorithm="HS256",
-            ),
-        }
+        only_office_config["token"] = jwt.encode(
+            only_office_config,
+            getattr(settings, "FTL_ONLY_OFFICE_SECRET_KEY"),
+            algorithm="HS256",
+        )
+
+        return only_office_config
 
     class Meta(FTLDocumentSerializer.Meta):
         fields = FTLDocumentSerializer.Meta.fields + [
-            "download_url_temp",
-            "download_temp_sign",
+            "only_office_config",
         ]
         read_only_fields = FTLDocumentSerializer.Meta.read_only_fields + [
-            "download_url_temp",
-            "download_temp_sign",
+            "only_office_config",
         ]
 
 

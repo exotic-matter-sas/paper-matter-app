@@ -144,7 +144,7 @@
           </b-row>
         </b-col>
         <b-col v-else-if="useOnlyOfficeViewer && !isIOS">
-          <b-row class="h-100" no-gutters id="viewer-docx">
+          <b-row class="h-100" no-gutters id="viewer-only-office">
             <div id="onlyoffice-embed-container" class="col border-0"></div>
           </b-row>
         </b-col>
@@ -500,11 +500,9 @@ export default {
             options
           );
         } else if (this.useOnlyOfficeViewer) {
-          var config = this.currentOpenDoc.download_temp_sign["config"];
-          config["token"] = this.currentOpenDoc.download_temp_sign["sign"];
-          var docEditor = new DocsAPI.DocEditor(
+          new DocsAPI.DocEditor(
             "onlyoffice-embed-container",
-            config
+            this.currentOpenDoc.only_office_config
           );
         }
       }
