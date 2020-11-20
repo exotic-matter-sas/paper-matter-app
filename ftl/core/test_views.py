@@ -39,9 +39,8 @@ class CorePagesTests(TestCase):
 
     def test_home_get_proper_context(self):
         response = self.client.get("/app/")
-        # self.assertEqual(response.context['org_name'], self.org.name)
-        self.assertEqual(
-            response.context["ftl_account"],
+        # Use comparaison operator to do a subset test
+        self.assertLessEqual(
             {
                 "name": self.user.email,
                 "isSuperUser": False,
@@ -63,7 +62,9 @@ class CorePagesTests(TestCase):
                     "application/vnd.oasis.opendocument.presentation": ".odp",
                     "application/vnd.oasis.opendocument.spreadsheet": ".ods",
                 },
-            },
+                "only_office_viewer": False,
+            }.items(),
+            response.context["ftl_account"].items(),
         )
 
 
