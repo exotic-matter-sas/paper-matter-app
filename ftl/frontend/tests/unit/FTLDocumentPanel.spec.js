@@ -338,16 +338,16 @@ describe("FTLDocumentPanel methods", () => {
     );
   });
 
-  it("embedPDF call PDFObject embedding method", async () => {
+  it("embedDoc call PDFObject embedding method", async () => {
     // given
     const search_text = "my search";
     const document_pid = docProps.pid;
     wrapper.setData({ currentOpenDoc: docProps });
     wrapper.setProps({ pid: document_pid, search: search_text });
-    wrapper.setMethods({ embedPDF: FTLDocumentPanel.methods.embedPDF });
+    wrapper.setMethods({ embedDoc: FTLDocumentPanel.methods.embedDoc });
     PDFObject.embed.mockReturnValue(true);
 
-    wrapper.vm.embedPDF();
+    wrapper.vm.embedDoc();
 
     const options = {
       PDFJS_URL: "/assets/pdfjs/web/viewer.html",
