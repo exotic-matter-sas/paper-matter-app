@@ -1,5 +1,6 @@
 #  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
 #  Licensed under the BSL License. See LICENSE in the project root for license information.
+from django.conf import settings
 from django.urls import path
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
@@ -38,11 +39,6 @@ urlpatterns = [
         name="api_download_url",
     ),
     path(
-        "api/v1/documents/<str:spid>/temp",
-        views.TempDownloadView.as_view(),
-        name="api_temp_download_url",
-    ),
-    path(
         "api/v1/documents/<str:pid>/download/<str:name>",
         views.ViewDocument.as_view(),
         name="api_document_view",
@@ -50,3 +46,12 @@ urlpatterns = [
     path("api/token", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/token/refresh", TokenRefreshView.as_view(), name="token_refresh"),
 ]
+
+if getattr(settings, "FTL_ENABLE_ONLY_OFFICE", False):
+    urlpatterns += [
+        path(
+            "api/v1/documents/<str:spid>/temp",
+            views.TempDownloadView.as_view(),
+            name="api_temp_download_url",
+        ),
+    ]

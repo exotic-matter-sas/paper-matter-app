@@ -68,7 +68,7 @@ class HomeView(FTLAccountProcessorContextMixin, View):
 
 
 class DownloadView(views.APIView):
-    serializer_class = FTLDocumentSerializer
+    serializer_class = None
     lookup_field = "pid"
 
     def get_queryset(self):
@@ -191,12 +191,14 @@ class FTLDocumentList(generics.ListAPIView):
 
 
 class FTLDocumentDetail(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = (
-        FTLDocumentDetailsOnlyOfficeSerializer
-        if getattr(settings, "FTL_ENABLE_ONLY_OFFICE", False)
-        else FTLDocumentSerializer
-    )
     lookup_field = "pid"
+
+    def get_serializer_class(self):
+        return (
+            FTLDocumentDetailsOnlyOfficeSerializer
+            if getattr(settings, "FTL_ENABLE_ONLY_OFFICE", False)
+            else FTLDocumentSerializer
+        )
 
     def get_queryset(self):
         return FTLDocument.objects.filter(org=self.request.user.org, deleted=False)

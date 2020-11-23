@@ -9,7 +9,8 @@ from django.core.files import File
 from jose import jwt
 
 from core.mimes import mimetype_to_ext
-from core.processing.ftl_processing import FTLDocProcessingBase, atomic_ftl_doc_update
+from core.processing import ftl_processing
+from core.processing.ftl_processing import FTLDocProcessingBase
 from core.serializers import FTLDocumentDetailsOnlyOfficeSerializer
 
 logger = logging.getLogger(__name__)
@@ -76,7 +77,7 @@ class FTLThumbnailGenerationOnlyOffice(FTLDocProcessingBase):
                         for chunk in r.iter_content(chunk_size=1024):
                             f.write(chunk)
 
-                        atomic_ftl_doc_update(
+                        ftl_processing.atomic_ftl_doc_update(
                             ftl_doc.pid, {"thumbnail_binary": File(f, "thumb.png")}
                         )
         else:
