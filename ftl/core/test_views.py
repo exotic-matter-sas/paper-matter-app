@@ -118,8 +118,14 @@ class DownloadDocumentTests(TestCase):
         doc = setup_document(self.org, self.user)
         setup_authenticated_session(self.client, self.org, self.user)
 
+        response = self.client.get(f"/app/api/v1/documents/{doc.pid}")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("only_office_config", response.data)
+        self.assertIn("document", response.data["only_office_config"])
+        self.assertIn("url", response.data["only_office_config"]["document"])
+
         response = self.client.get(
-            reverse_lazy("api_temp_download_url", kwargs={"spid": doc.pid}), follow=True
+            response.data["only_office_config"]["document"]["url"]
         )
 
         with open(doc.binary.path, "rb") as uploaded_doc:
