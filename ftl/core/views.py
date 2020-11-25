@@ -129,6 +129,11 @@ class ViewDocument(DownloadView):
 
 
 class TempDownloadView(DownloadView):
+    """
+    Generate a temporarily signed download url for a document (5 mins expiration) for use with OnlyOffice document
+    server. Authentication is not enabled because the document server downloads the document independently.
+    """
+
     authentication_classes = []
     permission_classes = []
 

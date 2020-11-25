@@ -288,7 +288,8 @@ DOCUMENT PROCESSING PLUGINS (order is important)
 - Only one plugin of each type should be enable at a time
 """
 FTL_DOC_PROCESSING_PLUGINS = [
-    # OCR plugins should be define here
+    # FTLPlugins.THUMBNAIL_ONLY_OFFICE,  # Thumbnail generation plugin
+    # OCR plugins should be defined here
     # Extract text of non scanned documents (required)
     FTLPlugins.TEXT_EXTRACTION_TIKA,
     # Detect lang (required for search feature)
