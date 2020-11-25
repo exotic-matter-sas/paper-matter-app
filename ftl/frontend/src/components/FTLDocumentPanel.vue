@@ -143,7 +143,7 @@
             <div id="pdf-embed-container" class="col border-0"></div>
           </b-row>
         </b-col>
-        <b-col v-else-if="useOnlyOfficeViewer && !isIOS">
+        <b-col v-else-if="useOnlyOfficeViewer">
           <b-row class="h-100" no-gutters id="viewer-only-office">
             <div id="onlyoffice-embed-container" class="col border-0"></div>
           </b-row>
@@ -456,6 +456,7 @@ export default {
       axios
         .get("/app/api/v1/documents/" + this.pid)
         .then((response) => {
+          // Using Object.assign to enable reactivity on currentOpenDoc attributs
           this.currentOpenDoc = Object.assign(
             {},
             this.currentOpenDoc,
