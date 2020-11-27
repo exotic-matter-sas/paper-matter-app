@@ -14,7 +14,7 @@ urlpatterns = [
         name="authorization_code",
     ),
     url(
-        r"^authorizatioón_ok/$",
+        r"^authorization_ok/$",
         views_oauth2.FTLAuthorizationOKView.as_view(),
         name="authorization_code_ok",
     ),
