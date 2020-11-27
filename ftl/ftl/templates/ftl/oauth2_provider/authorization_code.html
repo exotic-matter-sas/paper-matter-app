@@ -1,0 +1,32 @@
+{% extends "ftl/main_with_aside.html" %}
+{% load i18n %}
+{% load static %}
+{% load webpack_loader %}
+
+{% block title %}{% trans "Authorization code" %}{% endblock %}
+
+{% block head %}{% render_bundle 'common_logged_out' 'css' %}{% endblock %}
+
+{% block main_content %}
+    <h1 class="text-primary text-center">
+        {% blocktrans %}
+            Authorization code
+        {% endblocktrans %}
+    </h1>
+
+    <div>
+        <p class="text-center">
+            {% blocktrans %}
+                Please copy the following code into your application
+            {% endblocktrans %}
+        </p>
+
+        <p class="p-2 border text-center">
+            <code>{{ request.GET.code }}</code>
+        </p>
+    </div>
+{% endblock %}
+
+{% block aside_illustration %}
+    <img src="{% static "oauth2.svg" %}" alt="Signup steps illustration">
+{% endblock %}

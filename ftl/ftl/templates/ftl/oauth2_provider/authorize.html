@@ -40,8 +40,9 @@
             {{ form.non_field_errors }}
 
             <div class="d-flex justify-content-end">
-                <input type="submit" class="mx-1 btn btn-secondary" value="Cancel"/>
-                <input type="submit" class="mx-1 btn btn-large btn-primary" name="allow" value="Authorize"/>
+                <input type="submit" class="mx-1 btn btn-secondary" value="{% trans 'Cancel' %}"/>
+                <input type="submit" class="mx-1 btn btn-large btn-primary" name="allow"
+                       value="{% trans 'Authorize' %}"/>
             </div>
         </form>
 
