@@ -3,27 +3,34 @@
 {% load static %}
 {% load webpack_loader %}
 
-{% block title %}{% trans "Authorization successful" %}{% endblock %}
+{% block title %}{% trans "Authorization failed" %}{% endblock %}
 
 {% block head %}{% render_bundle 'common_logged_out' 'css' %}{% endblock %}
 
 {% block main_content %}
-    <h1 class="text-primary">
+    <h1 class="text-danger">
         {% blocktrans %}
-            Authorization successful
+            Authorization failed
         {% endblocktrans %}
     </h1>
     <p>
         {% if request.GET.app_name %}
             {% blocktrans with app_name=request.GET.app_name %}
-                <span class="highlight">{{ app_name }}</span> application has been authorized.
+                <span class="highlight">{{ app_name }}</span> application couldn't be authorized.
             {% endblocktrans %}
         {% else %}
-            {% trans "Application has been authorized." %}
+            {% trans "Application couldn't be authorized." %}
         {% endif %}
     </p>
+    {% if request.GET.error %}
+        <div class="alert alert-danger">
+            {% blocktrans with error=request.GET.error %}
+                Error code: <b>{{ error }}</b>
+            {% endblocktrans %}
+        </div>
+    {% endif %}
     <p>
-        {% trans "You can now close this window and go back to application." %}
+        {% trans "You can go back to the application and try to login again." %}
     </p>
 {% endblock %}
 

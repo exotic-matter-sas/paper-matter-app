@@ -18,6 +18,11 @@ urlpatterns = [
         views_oauth2.FTLAuthorizationOKView.as_view(),
         name="authorization_code_ok",
     ),
+    url(
+        r"^authorization_ko/$",
+        views_oauth2.FTLAuthorizationKOView.as_view(),
+        name="authorization_code_ko",
+    ),
     url(r"^token/$", views.TokenView.as_view(), name="token"),
     url(r"^revoke_token/$", views.RevokeTokenView.as_view(), name="revoke-token"),
     # url(r"^introspect/$", views.IntrospectTokenView.as_view(), name="introspect"),

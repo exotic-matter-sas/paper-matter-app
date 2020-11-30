@@ -26,3 +26,10 @@ class FTLAuthorizationCodeView(View):
 class FTLAuthorizationOKView(View):
     def get(self, request, *args, **kwargs):
         return render(request, "ftl/oauth2_provider/authorization_ok.html")
+
+
+@method_decorator(login_required, name="dispatch")
+@method_decorator(otp_required(if_configured=True), name="dispatch")
+class FTLAuthorizationKOView(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, "ftl/oauth2_provider/authorization_ko.html")

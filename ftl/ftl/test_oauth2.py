@@ -38,9 +38,17 @@ class OAuth2FTLTests(TestCase):
         setup_authenticated_session(self.client, self.org, self.admin)
         response = self.client.get(reverse("authorization_code_ok"))
         self.assertContains(
-            response, "Your application has been authenticated", status_code=200
+            response, "Application has been authorized", status_code=200
         )
         self.assertTemplateUsed(response, "ftl/oauth2_provider/authorization_ok.html")
+
+    def test_authorization_ko_view(self):
+        setup_authenticated_session(self.client, self.org, self.admin)
+        response = self.client.get(reverse("authorization_code_ko"))
+        self.assertContains(
+            response, "Application couldn't be authorized.", status_code=200
+        )
+        self.assertTemplateUsed(response, "ftl/oauth2_provider/authorization_ko.html")
 
     def test_oauth2_authorization_code_flow(self):
         setup_authenticated_session(self.client, self.org, self.admin)
