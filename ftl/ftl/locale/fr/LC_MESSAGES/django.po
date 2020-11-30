@@ -167,11 +167,11 @@ msgstr ""
 
 msgid ""
 "\n"
-"                Please copy the following code into your application\n"
+"                Please copy the following code into your application:\n"
 "            "
 msgstr ""
 "\n"
-"Veuillez copier le code suivant dans votre application"
+"Veuillez copier le code suivant dans votre application :"
 
 msgid "Authorization successful"
 msgstr "Autorisation réussie"
