@@ -110,9 +110,12 @@ class OAuth2FTLTests(TestCase):
         self.assertEqual(response_documents.status_code, 200)
         self.assertGreaterEqual(response_documents.data["count"], 0)
 
-    def test_oauth2_authorization_code_flow_with_export_cli(self):
-        self.application = None
-        self.application_2 = Application.objects.create(
+
+class OAuth2FTLExportCLITests(TestCase):
+    def setUp(self):
+        self.org = setup_org()
+        self.admin = setup_admin(org=self.org)
+        self.application = Application.objects.create(
             name="Test Application EXPORT CLI",
             redirect_uris=f"https://pm-instance.example.org{reverse('authorization_code')}",
             user=self.admin,
@@ -121,16 +124,17 @@ class OAuth2FTLTests(TestCase):
             skip_authorization=False,
         )
 
+    def test_oauth2_authorization_code_flow_with_export_cli(self):
         setup_authenticated_session(self.client, self.org, self.admin)
 
         # User opens browser to the following URL (user is already logged)
         response = self.client.get(
             reverse("authorize"),
             {
-                "client_id": self.application_2.client_id,
+                "client_id": self.application.client_id,
                 "response_type": "code",
                 "scope": "read write",
-                "redirect_uri": self.application_2.redirect_uris,
+                "redirect_uri": self.application.redirect_uris,
             },
         )
         self.assertEqual(response.status_code, 200)
@@ -138,9 +142,9 @@ class OAuth2FTLTests(TestCase):
         # User authorize app by clicking on the submit button
         # This is the data in the submitted form
         form_data = {
-            "client_id": self.application_2.client_id,
+            "client_id": self.application.client_id,
             "scope": "read write",
-            "redirect_uri": self.application_2.redirect_uris,
+            "redirect_uri": self.application.redirect_uris,
             "response_type": "code",
             "allow": True,
         }
@@ -160,10 +164,10 @@ class OAuth2FTLTests(TestCase):
 
         # Use authorization code to get a token
         post = {
-            "client_id": self.application_2.client_id,
+            "client_id": self.application.client_id,
             "grant_type": "authorization_code",
             "code": query_parsed["code"][0],
-            "redirect_uri": self.application_2.redirect_uris,
+            "redirect_uri": self.application.redirect_uris,
         }
         response_token = self.client.post(reverse("token"), data=post)
         self.assertEqual(response_token.status_code, 200)
@@ -182,7 +186,7 @@ class OAuth2FTLTests(TestCase):
 
         # Renew token
         post = {
-            "client_id": self.application_2.client_id,
+            "client_id": self.application.client_id,
             "grant_type": "refresh_token",
             "refresh_token": content["refresh_token"],
         }
