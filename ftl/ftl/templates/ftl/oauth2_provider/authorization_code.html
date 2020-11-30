@@ -13,18 +13,14 @@
             Authorization code
         {% endblocktrans %}
     </h1>
-
-    <div>
-        <p class="text-center">
-            {% blocktrans %}
-                Please copy the following code into your application:
-            {% endblocktrans %}
-        </p>
-
-        <p class="p-2 border text-center">
-            <code>{{ request.GET.code }}</code>
-        </p>
-    </div>
+    <p class="text-center">
+        {% blocktrans %}
+            Please copy the following code into your application:
+        {% endblocktrans %}
+    </p>
+    <p class="p-2 border text-center">
+        <code>{{ request.GET.code }}</code>
+    </p>
 {% endblock %}
 
 {% block aside_illustration %}
