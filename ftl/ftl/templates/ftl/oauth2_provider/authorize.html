@@ -3,15 +3,13 @@
 {% load static %}
 {% load webpack_loader %}
 
-{% block title %}{% trans "Authorize" %}{% endblock %}
+{% block title %}{% trans "Authorization" %}{% endblock %}
 
 {% block head %}{% render_bundle 'common_logged_out' 'css' %}{% endblock %}
 
 {% block main_content %}
     <h1 class="text-primary">
-        {% blocktrans with application.name as name %}
-            Authorize "{{ name }}"?
-        {% endblocktrans %}
+        {% trans "An app want to access your data" %}
     </h1>
 
     {% if not error %}
@@ -27,12 +25,12 @@
 
             <p>
                 {% blocktrans with application.name as name %}
-                    "{{ name }}" requires access to your Paper Matter account and the following permissions
+                    <span class="highlight">{{ name }}</span> requires access to your Paper Matter organization with the following permissions:
                 {% endblocktrans %}
             </p>
             <ul>
                 {% for scope in scopes_descriptions %}
-                    <li>{{ scope }}</li>
+                    <li>{% trans scope %}</li>
                 {% endfor %}
             </ul>
 
