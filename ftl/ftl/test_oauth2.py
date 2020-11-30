@@ -32,6 +32,7 @@ class OAuth2FTLTests(TestCase):
             f"{reverse('authorization_code')}?code=6j29e99yxsB0YsgwVJt2zLI8XgWbf3"
         )
         self.assertContains(response, "6j29e99yxsB0YsgwVJt2zLI8XgWbf3", status_code=200)
+        self.assertTemplateUsed(response, "ftl/oauth2_provider/authorization_code.html")
 
     def test_authorization_ok_view(self):
         setup_authenticated_session(self.client, self.org, self.admin)
@@ -39,6 +40,7 @@ class OAuth2FTLTests(TestCase):
         self.assertContains(
             response, "Your application has been authenticated", status_code=200
         )
+        self.assertTemplateUsed(response, "ftl/oauth2_provider/authorization_ok.html")
 
     def test_oauth2_authorization_code_flow(self):
         setup_authenticated_session(self.client, self.org, self.admin)
@@ -51,7 +53,7 @@ class OAuth2FTLTests(TestCase):
                 "response_type": "code",
                 "state": "random_state_string",
                 "scope": "read write",
-                "redirect_uri": "http://localhost:1123",
+                "redirect_uri": self.application.redirect_uris,
             },
         )
         self.assertEqual(response.status_code, 200)
@@ -61,7 +63,7 @@ class OAuth2FTLTests(TestCase):
             "client_id": self.application.client_id,
             "state": "random_state_string",
             "scope": "read write",
-            "redirect_uri": "http://localhost:1123",
+            "redirect_uri": self.application.redirect_uris,
             "response_type": "code",
             "allow": True,
         }
@@ -73,7 +75,7 @@ class OAuth2FTLTests(TestCase):
         url_parsed = urlparse(response_authorize["Location"])
         query_parsed = parse_qs(url_parsed.query)
 
-        self.assertIn("http://localhost:1123", response_authorize["Location"])
+        self.assertIn(self.application.redirect_uris, response_authorize["Location"])
         self.assertEqual("random_state_string", query_parsed["state"][0])
         self.assertIsNotNone(query_parsed["code"][0])
 
@@ -83,7 +85,7 @@ class OAuth2FTLTests(TestCase):
             "client_secret": self.application.client_secret,
             "grant_type": "authorization_code",
             "code": query_parsed["code"][0],
-            "redirect_uri": "http://localhost:1123",
+            "redirect_uri": self.application.redirect_uris,
         }
         response_token = self.client.post(reverse("token"), data=post)
         self.assertEqual(response_token.status_code, 200)
@@ -120,7 +122,7 @@ class OAuth2FTLTests(TestCase):
                 "client_id": self.application_2.client_id,
                 "response_type": "code",
                 "scope": "read write",
-                "redirect_uri": f"https://pm-instance.example.org{reverse('authorization_code')}",
+                "redirect_uri": self.application_2.redirect_uris,
             },
         )
         self.assertEqual(response.status_code, 200)
@@ -130,7 +132,7 @@ class OAuth2FTLTests(TestCase):
         form_data = {
             "client_id": self.application_2.client_id,
             "scope": "read write",
-            "redirect_uri": f"https://pm-instance.example.org{reverse('authorization_code')}",
+            "redirect_uri": self.application_2.redirect_uris,
             "response_type": "code",
             "allow": True,
         }
@@ -153,7 +155,7 @@ class OAuth2FTLTests(TestCase):
             "client_id": self.application_2.client_id,
             "grant_type": "authorization_code",
             "code": query_parsed["code"][0],
-            "redirect_uri": f"https://pm-instance.example.org{reverse('authorization_code')}",
+            "redirect_uri": self.application_2.redirect_uris,
         }
         response_token = self.client.post(reverse("token"), data=post)
         self.assertEqual(response_token.status_code, 200)
@@ -179,3 +181,13 @@ class OAuth2FTLTests(TestCase):
         response_renew = self.client.post(reverse("token"), data=post)
         self.assertEqual(response_renew.status_code, 200)
         self.assertIsNotNone(response_renew.json()["access_token"])
+
+        # Use renewed token with API
+        content = response_renew.json()
+        response_documents = self.client.get(
+            "/app/api/v1/documents",
+            format="json",
+            Authorization=f"Bearer {content['access_token']}",
+        )
+        self.assertEqual(response_documents.status_code, 200)
+        self.assertGreaterEqual(response_documents.data["count"], 0)
