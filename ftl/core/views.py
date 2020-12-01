@@ -28,6 +28,7 @@ from mptt.exceptions import InvalidMove
 from rest_framework import generics, views, filters
 from rest_framework.exceptions import UnsupportedMediaType
 from rest_framework.parsers import MultiPartParser
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from core.errors import ERROR_CODES_DETAILS, BadRequestError
@@ -62,6 +63,22 @@ class HomeView(FTLAccountProcessorContextMixin, View):
 
 
 # API
+
+
+class FTLAccountView(views.APIView):
+    # Don't use the usual FTLModelPermissions for this API view as FTLModelPermissions is not covering FTLUser model
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        user = self.request.user
+        return Response(
+            {
+                "org": user.org.name,
+                "org_slug": user.org.slug,
+                "email": user.email,
+                "last_login": user.last_login,
+            }
+        )
 
 
 class DownloadView(views.APIView):
