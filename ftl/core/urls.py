@@ -1,7 +1,6 @@
 #  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
 #  Licensed under the Business Source License. See LICENSE at project root for more information.
 from django.urls import path
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from . import views, views_share_doc
 
@@ -43,6 +42,4 @@ urlpatterns = [
         views.ViewDocument.as_view(),
         name="api_document_view",
     ),
-    path("api/token", TokenObtainPairView.as_view(), name="token_obtain_pair"),
-    path("api/token/refresh", TokenRefreshView.as_view(), name="token_refresh"),
 ]

@@ -208,7 +208,6 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "ftl.otp_plugins.otp_ftl.middleware.FTLSessionAuthentication",
         "ftl.ftl_oauth2_auth.FTLOAuth2Authentication",
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "DEFAULT_PERMISSION_CLASSES": ("core.models.FTLModelPermissions",),
