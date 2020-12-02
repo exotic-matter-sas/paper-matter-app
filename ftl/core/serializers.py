@@ -1,5 +1,5 @@
 #  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
-#  Licensed under the BSL License. See LICENSE in the project root for license information.
+#  Licensed under the Business Source License. See LICENSE at project root for more information.
 
 import binascii
 from base64 import b64decode
@@ -173,7 +173,7 @@ class FTLDocumentDetailsOnlyOfficeSerializer(FTLDocumentSerializer):
                         "spellcheck": False,
                         "toolbarNoTabs": False,
                         "unit": "cm",
-                        "zoom": 100,
+                        "zoom": -2,
                     },
                 },
             }
