@@ -852,67 +852,6 @@ class FoldersTests(APITestCase):
         self.assertTrue(doc_folder_a_b2_c.deleted)
 
 
-class JWTAuthenticationTests(APITestCase):
-    def setUp(self):
-        self.org = setup_org()
-        setup_admin(self.org)
-        self.user = setup_user(self.org)
-
-        self.doc = setup_document(self.org, self.user)
-        self.doc_bis = setup_document(self.org, self.user, title=tv.DOCUMENT2_TITLE)
-
-        self.first_level_folder = setup_folder(self.org, name="First level folder")
-
-        self.doc_in_folder = setup_document(
-            self.org,
-            self.user,
-            title="Document in folder",
-            ftl_folder=self.first_level_folder,
-        )
-
-    def test_get_token(self):
-        response = self.client.post(
-            "/app/api/token",
-            {"email": tv.USER1_EMAIL, "password": tv.USER1_PASS},
-            format="json",
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIsNotNone(response.data["access"])
-        self.assertIsNotNone(response.data["refresh"])
-
-    def test_refresh_token(self):
-        response_token = self.client.post(
-            "/app/api/token",
-            {"email": tv.USER1_EMAIL, "password": tv.USER1_PASS},
-            format="json",
-        )
-
-        response = self.client.post(
-            "/app/api/token/refresh",
-            {"refresh": response_token.data["refresh"]},
-            format="json",
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIsNotNone(response.data["access"])
-
-    def test_use_token(self):
-        response_token = self.client.post(
-            "/app/api/token",
-            {"email": tv.USER1_EMAIL, "password": tv.USER1_PASS},
-            format="json",
-        )
-
-        self.client.credentials(
-            HTTP_AUTHORIZATION=f'Bearer {response_token.data["access"]}'
-        )
-        response = self.client.get("/app/api/v1/documents")
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIsNotNone(response.data["count"])
-
-
 @contextmanager
 def execute_on_commit(immediately=False, using=None):
     """
