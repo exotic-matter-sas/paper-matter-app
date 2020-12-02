@@ -31,7 +31,7 @@
                         <div class="my-2">
                             <ul class="list-group list-group-horizontal-sm">
                                 {% for scope_name, scope_description in authorized_token.scopes.items %}
-                                    <li class="list-group-item">{{ scope_description }}</li>
+                                    <li class="list-group-item">{% trans scope_description %}</li>
                                 {% endfor %}
                             </ul>
                         </div>
