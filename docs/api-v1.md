@@ -4,75 +4,69 @@ _Before you can query [Folders](#folders) and [Documents](#documents) resources,
 
 ## Authentication
 
-### Get access and refresh tokens
-**POST /api/token**
+The Paper Matter API uses the OAuth 2.0 protocol for authentication and authorization.
 
-Generate an access and refresh token that follow the [JSON Web Token standard](https://en.wikipedia.org/wiki/JSON_Web_Token). You should store them for later use.
+The following protocol endpoints are available:
+ - Authorization endpoint: /oauth2/authorization_code/
+ - Token endpoint: /oauth2/token/
+ 
+The following scopes available:
+ - read
+ - write
+ 
+Paper Matter supports the following OAuth 2.0 flows:
+ - Authorization Code (public or confidential), recommended for most usage such as web app or native client
+ - Client Credentials, only for trusted server side access
 
-**Request body**
+To access the API, you will need a set of `client_id` and `client_secret`. On our hosted solution, please contact us
+and apply for API access. If you self host, you will need to generate those credentials inside the admin panel.
 
-- **email** (used to login to your Paper Matter organization)
-- **password** (used to login to your Paper Matter organization)
+When you obtained an Access Token, send the token in the HTTP Authorization request header `Authorization` as
+`Bearer [ACCESS_TOKEN]`
 
-```json
-{
-    "email":"jon",
-    "password": "KingInTheNorth!"
-}
+Access Token have limited lifetime and will expire. When expired, you should use the Refresh Token to obtain a new
+Access Token along with a new Refresh Token. Be aware the Refresh Token is a single use token.
+
+### Example Authorization Code flow
+
+### Redirect to Paper Matter for authorization
+
+```
+GET https://papermatter.app/oauth2/authorization_code/?
+response_type=code
+&client_id=CLIENT_ID
+&redirect_uri=https://my-site.example.org/callback 
+&scope=read
 ```
 
-**Response** `200`
+Client is redirected to Paper Matter for authentication. If successful, the Client is redirected to the
+given `redirect_uri`.
 
-```json
-{
-  "refresh": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTU2NjAzNzQ0MywianRpIjoiYjRlZjZmMjQzN2ZlNGI0MTlmYTEyNDI5YjhjNmFiNTEiLCJ1c2VyX2lkIjoxfQ.K89rsw1Nuo6jLffd73IJY0aHAXBOQK6kH4T6leV9uXM",
-  "access": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNTY1OTUxOTQzLCJqdGkiOiI0NmMxZGNjODE2ZDY0NDAxOWM3MDY0OTc3MzIzNzU2NSIsInVzZXJfaWQiOjF9.WnehBvEklvXRV8sZyHbAdRgt8JUrsd9g2bt5npY4cyw"
-}
+`https://my-site.example.org/callback?code=AUTHORIZATION_CODE`
+
+### Exchange authorization code for an Access Token
+
+```
+POST https://papermatter.app/oauth2/token/
+
+client_id=CLIENT_ID
+&client_secret=CLIENT_SECRET
+&grant_type=authorization_code
+&code=AUTHORIZATION_CODE
+&redirect_uri=https://my-site.example.org/callback
 ```
 
- - `access` token should be passed inside the `Authorization` header for each authenticated request (eg. `Authorization: Bearer eyJ0eX...`)
- - `refresh` token should be used to get a fresh new access token after it expired after a short period (see [Refresh access token request](#refresh-access-token)).
+### Use Refresh Token to obtain a new Access Token
 
-**HTTP error status**
+```
+POST https://papermatter.app/oauth2/token/
 
-| Status | details |
-| ----- | ----- |
-| 401 | No active account found with the given credentials |
-
-### Refresh access token
-**POST /api/token**
-
-To use when the `access` token is expired or going to (eg. <1min), it return a fresh new access token to store in place of the previous one.
-
-You can know when the access token is about to expire by parsing the `exp` field inside the decoded access token (split the 3 parts on `.` and base64 url decode the 2nd part OR use a JWT lib to do it).
-
-If the token is already expired all authenticated request will returns an `401` error (`{"code": "token_not_valid"}`).
-
-Eventually the refresh token will also expire (after a longer period), if you're trying to refresh an expired refresh token a specific error will be returned. When it occurs, you should recall [Get access token](#get-access-token) request and store new token values.
-
-**Request body**
-
-- **refresh** (`refresh` token given by [Get access token request](#get-access-token))
-
-```json
-{
-    "refresh":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTU2NjAzNzczNywianRpIjoiNjYyYmI1NGQyYWJhNDAwY2E0ZDBhYTc0ZWFmYzc4OTciLCJ1c2VyX2lkIjoxfQ.nVC38rej3YwTn_4N8gKWcwzSx7HdSK6-r9BSOYixoTM"
-}
+client_id=CLIENT_ID
+&client_secret=CLIENT_SECRET
+&grant_type=refresh_token
+&refresh_token=REFRESH_TOKEN
 ```
 
-**Response** `200`
-
-```json
-{
-  "access": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNTY1OTYwODY4LCJqdGkiOiJmNjZjNWIzZDI0MmU0ZWVjOTc4OTgwNzZlZmVlNTAzMyIsInVzZXJfaWQiOjF9.FyhEl7ofgG2v91Id0QuBgKmISJ72k4K_09a8rSfT5Eo"
-}
-```
-
-**HTTP error status**
-
-| Status | details | code |
-| ----- | ----- | ----- |
-| 401 | Token is invalid or expired | token_not_valid |
 
 ## Folders
 
