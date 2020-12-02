@@ -185,11 +185,11 @@ msgid ""
 msgstr ""
 "\n"
 "L'application <span class=\"highlight\">%(app_name)s</span> n'a pu être "
-"autorisé.\n"
+"autorisée.\n"
 "            "
 
 msgid "Application couldn't be authorized."
-msgstr "L'application n'a pu 6etre autorisée."
+msgstr "L'application n'a pu être autorisée."
 
 #, python-format
 msgid ""
@@ -230,7 +230,7 @@ msgstr ""
 msgid "Application has been authorized."
 msgstr "L'application a été autorisée"
 
-msgid "You can now close this window and go back to application."
+msgid "You can now close this window and go back to the application."
 msgstr ""
 "Vous pouvez maintenant fermer cette fenêtre et revenir à l'application."
 
