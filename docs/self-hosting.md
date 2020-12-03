@@ -132,6 +132,29 @@ __By default the OCR feature is disabled, it allows searching for keywords insid
 
 You can't enable OCR feature using ENV variables for now, but you can do it as described in `Customize Paper Matter other settings` bellow.
 
+## Authorize Import and Export app (and other Oauth2 apps)
+
+__By default no Oauth2 app is authorized to access the API, each app have to be registered manually by admin.__
+
+1. Log to the admin panel with admin user (/admin).
+2. In the __DJANGO OAUTH TOOLKIT__ section, __Add__ a new application
+3. Complete and submit the form as described below:
+    - __Client id__: *leave default value (this value have to be set in the app too)*
+    - __User__: `admin user`
+    - __Redirect uris__:
+        - For __Paper Matter Import & Export__: `http://localhost:1612/oauth2/redirect` 
+        - For __ftl-export-cli__: [TODO]
+        - For other Oauth2 apps: *Ask the app Dev*
+    - __Client type__:
+        - For __Paper Matter Import & Export__ and __ftl-export-cli__: `Public`
+        - For other Oauth2 apps: *Ask the app Dev, but should be `Confidential` for a web app and `Public` for a local app*
+    - __Authorization grant type__:
+        - For __Paper Matter Import & Export__ and __ftl-export-cli__: `Authorization code`
+        - For other Oauth2 apps: *Ask the app Dev*
+    - __Client secret__: *leave default value*
+    - __Name__: *The app name, it will be display to users in /accounts/oauth2/authorized_tokens/ (e.g. `Paper Matter Import & Export`)*
+    - __Skip authorization__: *leave unchecked (if checked, which is not recommended, users won't see the page mentioning data accessed by the app and asking for authorization, the app will be authorized on first use without user confirmation)*
+        
 ## Various other settings that you can update with ENV
 
 | Name | Default value | Format | Description |
