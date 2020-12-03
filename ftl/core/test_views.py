@@ -1,5 +1,5 @@
-#  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
-#  Licensed under the BSL License. See LICENSE in the project root for license information.
+#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
+#  Licensed under the Business Source License. See LICENSE at project root for more information.
 import datetime
 import time
 import uuid
@@ -288,7 +288,7 @@ class DocumentSharingTests(TestCase):
                 "spellcheck": False,
                 "toolbarNoTabs": False,
                 "unit": "cm",
-                "zoom": 100,
+                "zoom": -2,
             },
             response.context["only_office_config"]["editorConfig"]["customization"],
         )
