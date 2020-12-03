@@ -132,6 +132,13 @@ __By default the OCR feature is disabled, it allows searching for keywords insid
 
 You can't enable OCR feature using ENV variables for now, but you can do it as described in `Customize Paper Matter other settings` bellow.
 
+## Enable Office doc Preview feature (Only Office)
+
+__By default only PDF documents get a thumbnail and a preview in UI, if you want to be able to preview Office documents you have to install an Only Office server.__
+
+1. Refer to Only Office doc to install the server: [TODO add url here]
+2. Configure settings related to Only Office as described in `Customize Paper Matter other settings` bellow.
+
 ## Various other settings that you can update with ENV
 
 | Name | Default value | Format | Description |

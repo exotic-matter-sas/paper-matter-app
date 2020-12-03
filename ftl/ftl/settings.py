@@ -10,8 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
-#  Copyright (c) 2019 Exotic Matter SAS. All rights reserved.
-#  Licensed under the BSL License. See LICENSE in the project root for license information.
+#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
+#  Licensed under the Business Source License. See LICENSE at project root for more information.
 
 import os
 
@@ -427,7 +427,8 @@ OnlyOffice integration
 """
 FTL_ENABLE_ONLY_OFFICE = False
 FTL_ONLY_OFFICE_SERVER_URL = "http://localhost:8080"
-FTL_ONLY_OFFICE_SECRET_KEY = "NOT-SECURE"
+FTL_ONLY_OFFICE_SECRET_KEY = "NOT-SECURE"  # this is the JWT_SECRET in your OnlyOffice conf
+# This setting shouldn't be updated
 FTL_ONLY_OFFICE_SUPPORTED_DOCUMENTS_TYPES = {
     "text/plain",
     "application/rtf",
