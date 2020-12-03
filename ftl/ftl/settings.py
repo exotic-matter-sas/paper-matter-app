@@ -427,7 +427,8 @@ OnlyOffice integration
 """
 FTL_ENABLE_ONLY_OFFICE = False
 FTL_ONLY_OFFICE_SERVER_URL = "http://localhost:8080"
-FTL_ONLY_OFFICE_SECRET_KEY = "NOT-SECURE"  # this is the JWT_SECRET in your OnlyOffice conf
+# This is the JWT_SECRET in your OnlyOffice conf
+FTL_ONLY_OFFICE_SECRET_KEY = "NOT-SECURE"
 # This setting shouldn't be updated
 FTL_ONLY_OFFICE_SUPPORTED_DOCUMENTS_TYPES = {
     "text/plain",
