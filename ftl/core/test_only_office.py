@@ -27,8 +27,24 @@ class DocumentDetailsOnlyOfficeTests(APITestCase):
         setup_admin(self.org)
         self.user = setup_user(self.org)
 
-        self.doc = setup_document(self.org, self.user)
-        self.doc_bis = setup_document(self.org, self.user, title=tv.DOCUMENT2_TITLE)
+        self.doc = setup_document(
+            self.org,
+            self.user,
+            title=tv.DOCUMENT_DOCX_TITLE,
+            note=tv.DOCUMENT_DOCX_NOTE,
+            text_content=tv.DOCUMENT_DOCX_CONTENT,
+            binary=tv.DOCUMENT_DOCX_BINARY_PATH,
+            type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        )
+        self.doc_bis = setup_document(
+            self.org,
+            self.user,
+            title=tv.DOCUMENT_DOCX_TITLE,
+            note=tv.DOCUMENT_DOCX_NOTE,
+            text_content=tv.DOCUMENT_DOCX_CONTENT,
+            binary=tv.DOCUMENT_DOCX_BINARY_PATH,
+            type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        )
 
         self.first_level_folder = setup_folder(self.org, name="First level folder")
 

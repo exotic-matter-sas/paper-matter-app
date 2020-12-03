@@ -337,6 +337,7 @@ class ProcOnlyOfficeTests(TestCase):
         doc = Mock()
         doc.pid = "test-pid"
         doc.type = "application/msword"
+        doc.thumbnail_binary = None
         mock_ftl_doc_update.select_for_update().get.return_value = doc
 
         mock_get_download_url_temp.return_value = "http://example.org/title.doc"

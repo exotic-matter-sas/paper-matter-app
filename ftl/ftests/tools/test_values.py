@@ -37,6 +37,11 @@ DOCUMENT2_TITLE = "Document 2"
 DOCUMENT2_NOTE = "Document 2 note"
 DOCUMENT2_CONTENT = "Document 2 content"
 
+DOCUMENT_DOCX_TITLE = "Document DOCX"
+DOCUMENT_DOCX_NOTE = "Document DOCX note"
+DOCUMENT_DOCX_CONTENT = "Document DOCX content"
+DOCUMENT_DOCX_BINARY_PATH = "ftests/tools/test_documents/word.docx"
+
 FOLDER1_NAME = "Folder 1"
 FOLDER2_NAME = "Folder 2"
 FOLDER3_NAME = "Folder 3"

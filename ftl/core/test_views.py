@@ -115,7 +115,15 @@ class DownloadDocumentTests(TestCase):
     @override_settings(FTL_EXTERNAL_HOST="http://example.org")
     @override_settings(FTL_ONLY_OFFICE_SECRET_KEY="test_secret")
     def test_temp_document_download(self):
-        doc = setup_document(self.org, self.user)
+        doc = setup_document(
+            self.org,
+            self.user,
+            title=tv.DOCUMENT_DOCX_TITLE,
+            note=tv.DOCUMENT_DOCX_NOTE,
+            text_content=tv.DOCUMENT_DOCX_CONTENT,
+            binary=tv.DOCUMENT_DOCX_BINARY_PATH,
+            type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        )
         setup_authenticated_session(self.client, self.org, self.user)
 
         response = self.client.get(f"/app/api/v1/documents/{doc.pid}")
@@ -215,7 +223,15 @@ class DocumentSharingTests(TestCase):
     @override_settings(FTL_EXTERNAL_HOST="http://example.org")
     @override_settings(FTL_ONLY_OFFICE_SECRET_KEY="test_secret")
     def test_only_office_viewer(self):
-        doc = setup_document(self.org, self.user)
+        doc = setup_document(
+            self.org,
+            self.user,
+            title=tv.DOCUMENT_DOCX_TITLE,
+            note=tv.DOCUMENT_DOCX_NOTE,
+            text_content=tv.DOCUMENT_DOCX_CONTENT,
+            binary=tv.DOCUMENT_DOCX_BINARY_PATH,
+            type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        )
         doc_share = setup_document_share(doc)
 
         response = self.client.get(f"/app/share/{doc_share.pid}")

@@ -68,7 +68,8 @@ class FTLThumbnailGenerationOnlyOffice(FTLDocProcessingBase):
                                     f.write(chunk)
 
                                 ftl_processing.atomic_ftl_doc_update(
-                                    ftl_doc.pid, {"mo": File(f, "thumb.png")}
+                                    ftl_doc.pid,
+                                    {"thumbnail_binary": File(f, "thumb.png")},
                                 )
                     else:
                         logger.error(
