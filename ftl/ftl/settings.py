@@ -428,6 +428,22 @@ OnlyOffice integration
 FTL_ENABLE_ONLY_OFFICE = False
 FTL_ONLY_OFFICE_SERVER_URL = "http://localhost:8080"
 FTL_ONLY_OFFICE_SECRET_KEY = "NOT-SECURE"
+FTL_ONLY_OFFICE_SUPPORTED_DOCUMENTS_TYPES = {
+    "text/plain",
+    "application/rtf",
+    "text/rtf",
+    "application/msword",
+    "application/vnd.ms-excel",
+    "application/excel",
+    "application/vnd.ms-powerpoint",
+    "application/mspowerpoint",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    "application/vnd.oasis.opendocument.text",
+    "application/vnd.oasis.opendocument.presentation",
+    "application/vnd.oasis.opendocument.spreadsheet",
+}
 
 # ==================================================
 # No settings under this line

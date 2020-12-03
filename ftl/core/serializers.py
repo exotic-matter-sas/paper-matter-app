@@ -126,62 +126,67 @@ class FTLDocumentDetailsOnlyOfficeSerializer(FTLDocumentSerializer):
         return f"{getattr(settings, 'FTL_EXTERNAL_HOST')}{relative_url}"
 
     def get_only_office_config(self, obj):
-        request = self.context.get("request", None)
-        if request:
-            current_lang = get_language_from_request(request)
+        if obj.type in getattr(
+            settings, "FTL_ONLY_OFFICE_SUPPORTED_DOCUMENTS_TYPES", []
+        ):
+            request = self.context.get("request", None)
+            if request:
+                current_lang = get_language_from_request(request)
+            else:
+                current_lang = "en"
+
+            only_office_config = {
+                "document": {
+                    "fileType": mimetype_to_ext(obj.type)[1:],
+                    "key": str(obj.pid),
+                    "title": obj.title,
+                    "url": self.get_download_url_temp(obj),
+                    "permissions": {
+                        "comment": False,
+                        "copy": True,
+                        "download": True,
+                        "edit": False,
+                        "fillForms": False,
+                        "modifyContentControl": False,
+                        "modifyFilter": False,
+                        "print": True,
+                        "review": False,
+                    },
+                },
+                "editorConfig": {
+                    "lang": current_lang,
+                    "mode": "view",
+                    "customization": {
+                        "autosave": False,
+                        "chat": False,
+                        "commentAuthorOnly": False,
+                        "comments": False,
+                        "compactHeader": False,
+                        "compactToolbar": False,
+                        "compatibleFeatures": False,
+                        "help": True,
+                        "hideRightMenu": False,
+                        "mentionShare": False,
+                        "plugins": False,
+                        "reviewDisplay": "original",
+                        "showReviewChanges": False,
+                        "spellcheck": False,
+                        "toolbarNoTabs": False,
+                        "unit": "cm",
+                        "zoom": 100,
+                    },
+                },
+            }
+
+            only_office_config["token"] = jwt.encode(
+                only_office_config,
+                getattr(settings, "FTL_ONLY_OFFICE_SECRET_KEY"),
+                algorithm="HS256",
+            )
+
+            return only_office_config
         else:
-            current_lang = "en"
-
-        only_office_config = {
-            "document": {
-                "fileType": mimetype_to_ext(obj.type)[1:],
-                "key": str(obj.pid),
-                "title": obj.title,
-                "url": self.get_download_url_temp(obj),
-                "permissions": {
-                    "comment": False,
-                    "copy": True,
-                    "download": True,
-                    "edit": False,
-                    "fillForms": False,
-                    "modifyContentControl": False,
-                    "modifyFilter": False,
-                    "print": True,
-                    "review": False,
-                },
-            },
-            "editorConfig": {
-                "lang": current_lang,
-                "mode": "view",
-                "customization": {
-                    "autosave": False,
-                    "chat": False,
-                    "commentAuthorOnly": False,
-                    "comments": False,
-                    "compactHeader": False,
-                    "compactToolbar": False,
-                    "compatibleFeatures": False,
-                    "help": True,
-                    "hideRightMenu": False,
-                    "mentionShare": False,
-                    "plugins": False,
-                    "reviewDisplay": "original",
-                    "showReviewChanges": False,
-                    "spellcheck": False,
-                    "toolbarNoTabs": False,
-                    "unit": "cm",
-                    "zoom": 100,
-                },
-            },
-        }
-
-        only_office_config["token"] = jwt.encode(
-            only_office_config,
-            getattr(settings, "FTL_ONLY_OFFICE_SECRET_KEY"),
-            algorithm="HS256",
-        )
-
-        return only_office_config
+            return None
 
     class Meta(FTLDocumentSerializer.Meta):
         fields = FTLDocumentSerializer.Meta.fields + [

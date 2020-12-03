@@ -17,22 +17,9 @@ logger = logging.getLogger(__name__)
 
 
 class FTLThumbnailGenerationOnlyOffice(FTLDocProcessingBase):
-    supported_documents_types = [
-        "text/plain",
-        "application/rtf",
-        "text/rtf",
-        "application/msword",
-        "application/vnd.ms-excel",
-        "application/excel",
-        "application/vnd.ms-powerpoint",
-        "application/mspowerpoint",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-        "application/vnd.oasis.opendocument.text",
-        "application/vnd.oasis.opendocument.presentation",
-        "application/vnd.oasis.opendocument.spreadsheet",
-    ]
+    supported_documents_types = getattr(
+        settings, "FTL_ONLY_OFFICE_SUPPORTED_DOCUMENTS_TYPES", []
+    )
 
     def __init__(self):
         self.log_prefix = f"[{self.__class__.__name__}]"
@@ -40,45 +27,52 @@ class FTLThumbnailGenerationOnlyOffice(FTLDocProcessingBase):
 
     def process(self, ftl_doc, force):
         if self.enabled:
-            doc_serial = FTLDocumentDetailsOnlyOfficeSerializer(ftl_doc)
+            if force or not ftl_doc.thumbnail_binary:
+                doc_serial = FTLDocumentDetailsOnlyOfficeSerializer(ftl_doc)
 
-            only_office_config = {
-                "async": False,
-                "filetype": mimetype_to_ext(ftl_doc.type)[1:],
-                "key": str(ftl_doc.pid),
-                "outputtype": "png",
-                "title": "thumbnail",
-                "thumbnail": {"first": True, "aspect": 2},
-                "url": doc_serial.get_download_url_temp(ftl_doc),
-            }
+                only_office_config = {
+                    "async": False,
+                    "filetype": mimetype_to_ext(ftl_doc.type)[1:],
+                    "key": str(ftl_doc.pid),
+                    "outputtype": "png",
+                    "title": "thumbnail",
+                    "thumbnail": {"first": True, "aspect": 2},
+                    "url": doc_serial.get_download_url_temp(ftl_doc),
+                }
 
-            sign = jwt.encode(
-                only_office_config,
-                getattr(settings, "FTL_ONLY_OFFICE_SECRET_KEY"),
-                algorithm="HS256",
-            )
+                sign = jwt.encode(
+                    only_office_config,
+                    getattr(settings, "FTL_ONLY_OFFICE_SECRET_KEY"),
+                    algorithm="HS256",
+                )
 
-            r = requests.post(
-                f"{getattr(settings, 'FTL_ONLY_OFFICE_SERVER_URL')}/ConvertService.ashx",
-                json=only_office_config,
-                headers={
-                    "Authorization": f"Bearer {sign}",
-                    "Accept": "application/json",
-                },
-            )
+                r = requests.post(
+                    f"{getattr(settings, 'FTL_ONLY_OFFICE_SERVER_URL')}/ConvertService.ashx",
+                    json=only_office_config,
+                    headers={
+                        "Authorization": f"Bearer {sign}",
+                        "Accept": "application/json",
+                    },
+                )
 
-            if r.status_code == 200 and "fileUrl" in r.json():
-                thumb_url = r.json()["fileUrl"]
+                if r.status_code == 200:
+                    response_json = r.json()
+                    if "fileUrl" in response_json:
+                        thumb_url = response_json["fileUrl"]
 
-                with requests.get(thumb_url, stream=True) as r:
-                    r.raise_for_status()
+                        with requests.get(thumb_url, stream=True) as r:
+                            r.raise_for_status()
 
-                    with TemporaryFile() as f:
-                        for chunk in r.iter_content(chunk_size=1024):
-                            f.write(chunk)
+                            with TemporaryFile() as f:
+                                for chunk in r.iter_content(chunk_size=1024):
+                                    f.write(chunk)
 
-                        ftl_processing.atomic_ftl_doc_update(
-                            ftl_doc.pid, {"thumbnail_binary": File(f, "thumb.png")}
+                                ftl_processing.atomic_ftl_doc_update(
+                                    ftl_doc.pid, {"mo": File(f, "thumb.png")}
+                                )
+                    else:
+                        logger.error(
+                            f"{self.log_prefix} An error occurred with OnlyOffice conversion server {response_json}"
                         )
         else:
             logger.warning(
