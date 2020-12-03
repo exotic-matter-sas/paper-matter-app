@@ -1,5 +1,5 @@
 #  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
-#  Licensed under the BSL License. See LICENSE in the project root for license information.
+#  Licensed under the Business Source License. See LICENSE at project root for more information.
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django_otp.decorators import otp_required

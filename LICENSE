@@ -4,10 +4,12 @@ Parameters
 
 Licensor:             Exotic Matter SAS
 Licensed Work:        Paper Matter
-Additional Use Grant: You may make use of the Licensed Work, provided you do not use it in any of the following ways:
+Additional Use Grant: You may make use of the Licensed Work, provided you do NOT use it in any of the following ways:
 
-                      Sell hosted Paper Matter services as a commercial "SaaS" (Software as a Service) product.
-                      You cannot operate or sell access to the functionality of the Licensed Work.
+                      Operate the Licensed Work as a commercial "SaaS" (Software as a Service) product.
+                      Sell access to the Licensed Work or its functionalities.
+                      Give free access to the Licensed Work to third parties other than your family or company.
+
 Change Date:          2023-01-01
 Change License:       MIT License
 
