@@ -1,9 +1,13 @@
 #  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
 #  Licensed under the Business Source License. See LICENSE at project root for more information.
 import uuid
-from unittest.mock import Mock, patch, call
+from unittest import mock
+from unittest.mock import Mock, patch, call, MagicMock
 
-from django.test import TestCase
+import requests
+from django.core.files import File
+from django.test import TestCase, override_settings
+from jose import jwt
 from langid.langid import LanguageIdentifier
 from tika import parser
 
@@ -21,7 +25,9 @@ from core.processing.proc_pgsql_tsvector import (
     FTLSearchEnginePgSQLTSVector,
     SEARCH_VECTOR,
 )
+from core.processing.proc_thumb_only_office import FTLThumbnailGenerationOnlyOffice
 from core.processing.proc_tika import FTLTextExtractionTika
+from core.serializers import FTLDocumentDetailsOnlyOfficeSerializer
 from core.signals import pre_ftl_processing
 from ftl.settings import DEFAULT_FILE_STORAGE
 
@@ -304,6 +310,96 @@ class ProcPGsqlTests(TestCase):
 
         self.assertEqual(doc.tsvector, SEARCH_VECTOR)
         doc.save.assert_called_once()
+
+
+@override_settings(FTL_ENABLE_ONLY_OFFICE=True)
+@override_settings(FTL_ONLY_OFFICE_SERVER_URL="http://example.org")
+@override_settings(FTL_EXTERNAL_HOST="http://example.org")
+@override_settings(FTL_ONLY_OFFICE_SECRET_KEY="test_secret")
+class ProcOnlyOfficeTests(TestCase):
+    @patch.object(ftl_processing, "atomic_ftl_doc_update")
+    @patch.object(requests, "get")
+    @patch.object(requests, "post")
+    @patch.object(jwt, "encode")
+    @patch.object(FTLDocumentDetailsOnlyOfficeSerializer, "get_download_url_temp")
+    @patch.object(FTLDocument, "objects")
+    def test_process(
+        self,
+        mock_ftl_doc_update,
+        mock_get_download_url_temp,
+        mock_jwt_encode,
+        mock_requests_post,
+        mock_requests_get,
+        mock_atomic_ftl_doc_update,
+    ):
+        only_office = FTLThumbnailGenerationOnlyOffice()
+
+        doc = Mock()
+        doc.pid = "test-pid"
+        doc.type = "application/msword"
+        doc.thumbnail_binary = None
+        mock_ftl_doc_update.select_for_update().get.return_value = doc
+
+        mock_get_download_url_temp.return_value = "http://example.org/title.doc"
+
+        mock_jwt_encode.return_value = "jwt.token.encoded"
+
+        # Mocked OnlyOffice conversion server response
+        requests_post_response = Mock()
+        requests_post_response.status_code = 200
+        requests_post_response.json.return_value = {
+            "fileUrl": "http://example.org/thumb.png"
+        }
+        mock_requests_post.return_value = requests_post_response
+
+        # Mocked thumb data
+        requests_get_response = MagicMock()
+        requests_get_response.iter_content.__iter__.return_value = ["1", "2"]
+        mock_requests_get.return_value.__enter__ = requests_get_response
+
+        only_office.process(doc, False)
+
+        # Tests
+        expected_only_office_config = {
+            "async": False,
+            "filetype": "doc",
+            "key": "test-pid",
+            "outputtype": "png",
+            "title": "thumbnail",
+            "thumbnail": {"first": True, "aspect": 2},
+            "url": "http://example.org/title.doc",
+        }
+
+        # JWT signing called
+        mock_jwt_encode.assert_called_once_with(
+            expected_only_office_config, "test_secret", algorithm="HS256"
+        )
+
+        # API call to OnlyOffice conversion server
+        mock_requests_post.assert_called_once_with(
+            "http://example.org/ConvertService.ashx",
+            json=expected_only_office_config,
+            headers={
+                "Authorization": f"Bearer jwt.token.encoded",
+                "Accept": "application/json",
+            },
+        )
+
+        # Download thumbnail
+        requests_post_response.json.assert_called()
+        mock_requests_get.assert_called_once_with(
+            "http://example.org/thumb.png", stream=True
+        )
+
+        # Custom partial matcher
+        class AnyFile(File):
+            def __eq__(self, other):
+                return isinstance(other, File) and other.name == "thumb.png"
+
+        # Doc updated with new thumbnail
+        mock_atomic_ftl_doc_update.assert_called_once_with(
+            "test-pid", {"thumbnail_binary": AnyFile(mock.ANY, "thumb.png")}
+        )
 
 
 class FTLOCRBaseTests(TestCase):

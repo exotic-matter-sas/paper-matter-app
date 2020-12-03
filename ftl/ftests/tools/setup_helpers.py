@@ -54,6 +54,7 @@ def setup_document(
     binary=tv.DOCUMENT1_BINARY_PATH,
     text_content=tv.DOCUMENT1_CONTENT,
     language=tv.DOCUMENT1_LANGUAGE,
+    type="application/pdf",
 ):
     document = FTLDocument.objects.create(
         org=org,
@@ -64,6 +65,7 @@ def setup_document(
         binary=binary,
         content_text=text_content,
         language=language,
+        type=type,
     )
     # Update document to allow PGSQL to process search vector
     vector_plugin = FTLSearchEnginePgSQLTSVector()

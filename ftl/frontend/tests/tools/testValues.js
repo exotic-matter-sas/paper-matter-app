@@ -52,6 +52,7 @@ export const DOCUMENT_PROPS = {
   path: [],
   download_url: "app/uploads/1000",
   is_shared: false,
+  type: "application/pdf",
 };
 
 export const DOCUMENT_PROPS_VARIANT = {

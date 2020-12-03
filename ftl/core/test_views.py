@@ -1,12 +1,14 @@
 #  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
 #  Licensed under the Business Source License. See LICENSE at project root for more information.
 import datetime
+import time
 import uuid
+from unittest.mock import patch
 
 from django.contrib.staticfiles import finders
 from django.test import TestCase, override_settings
+from django.urls import reverse_lazy
 
-from core.views import HomeView
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import (
     setup_org,
@@ -39,9 +41,8 @@ class CorePagesTests(TestCase):
 
     def test_home_get_proper_context(self):
         response = self.client.get("/app/")
-        # self.assertEqual(response.context['org_name'], self.org.name)
-        self.assertEqual(
-            response.context["ftl_account"],
+        # Use comparaison operator to do a subset test
+        self.assertLessEqual(
             {
                 "name": self.user.email,
                 "isSuperUser": False,
@@ -63,7 +64,9 @@ class CorePagesTests(TestCase):
                     "application/vnd.oasis.opendocument.presentation": ".odp",
                     "application/vnd.oasis.opendocument.spreadsheet": ".ods",
                 },
-            },
+                "only_office_viewer": False,
+            }.items(),
+            response.context["ftl_account"].items(),
         )
 
 
@@ -105,6 +108,54 @@ class DownloadDocumentTests(TestCase):
 
         # Trying to download the document of first org with a user of second org returns a 404
         response = self.client.get(f"/app/api/v1/documents/{doc.pid}/download")
+        self.assertEqual(response.status_code, 404)
+
+    @override_settings(FTL_ENABLE_ONLY_OFFICE=True)
+    @override_settings(FTL_ONLY_OFFICE_SERVER_URL="http://example.org")
+    @override_settings(FTL_EXTERNAL_HOST="http://example.org")
+    @override_settings(FTL_ONLY_OFFICE_SECRET_KEY="test_secret")
+    def test_temp_document_download(self):
+        doc = setup_document(
+            self.org,
+            self.user,
+            title=tv.DOCUMENT_DOCX_TITLE,
+            note=tv.DOCUMENT_DOCX_NOTE,
+            text_content=tv.DOCUMENT_DOCX_CONTENT,
+            binary=tv.DOCUMENT_DOCX_BINARY_PATH,
+            type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        )
+        setup_authenticated_session(self.client, self.org, self.user)
+
+        response = self.client.get(f"/app/api/v1/documents/{doc.pid}")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("only_office_config", response.data)
+        self.assertIn("document", response.data["only_office_config"])
+        self.assertIn("url", response.data["only_office_config"]["document"])
+
+        response = self.client.get(
+            response.data["only_office_config"]["document"]["url"]
+        )
+
+        with open(doc.binary.path, "rb") as uploaded_doc:
+            self.assertEqual(uploaded_doc.read(), response.content)
+
+    @override_settings(FTL_ENABLE_ONLY_OFFICE=True)
+    @override_settings(FTL_ONLY_OFFICE_SERVER_URL="http://example.org")
+    @override_settings(FTL_EXTERNAL_HOST="http://example.org")
+    @override_settings(FTL_ONLY_OFFICE_SECRET_KEY="test_secret")
+    @patch.object(time, "time")
+    def test_temp_document_download_expired(self, mocked_time):
+        mocked_time.return_value = time.mktime(
+            datetime.datetime(2019, 1, 1).timetuple()
+        )
+
+        doc = setup_document(self.org, self.user)
+        setup_authenticated_session(self.client, self.org, self.user)
+
+        response = self.client.get(
+            reverse_lazy("api_temp_download_url", kwargs={"spid": doc.pid}), follow=True
+        )
+
         self.assertEqual(response.status_code, 404)
 
 
@@ -166,3 +217,78 @@ class DocumentSharingTests(TestCase):
 
         response = self.client.get(f"/app/share/{doc_share.pid}")
         self.assertEqual(response.status_code, 404)
+
+    @override_settings(FTL_ENABLE_ONLY_OFFICE=True)
+    @override_settings(FTL_ONLY_OFFICE_SERVER_URL="http://example.org")
+    @override_settings(FTL_EXTERNAL_HOST="http://example.org")
+    @override_settings(FTL_ONLY_OFFICE_SECRET_KEY="test_secret")
+    def test_only_office_viewer(self):
+        doc = setup_document(
+            self.org,
+            self.user,
+            title=tv.DOCUMENT_DOCX_TITLE,
+            note=tv.DOCUMENT_DOCX_NOTE,
+            text_content=tv.DOCUMENT_DOCX_CONTENT,
+            binary=tv.DOCUMENT_DOCX_BINARY_PATH,
+            type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        )
+        doc_share = setup_document_share(doc)
+
+        response = self.client.get(f"/app/share/{doc_share.pid}")
+
+        self.assertContains(response, "onlyoffice-embed-container", status_code=200)
+
+        self.assertIn("only_office_supported_ext", response.context)
+        self.assertIn("only_office_config", response.context)
+
+        self.assertIn("document", response.context["only_office_config"])
+        self.assertIn("editorConfig", response.context["only_office_config"])
+        self.assertIn("token", response.context["only_office_config"])
+
+        self.assertIn("url", response.context["only_office_config"]["document"])
+        self.assertIn("fileType", response.context["only_office_config"]["document"])
+        self.assertIn("key", response.context["only_office_config"]["document"])
+        self.assertIn("title", response.context["only_office_config"]["document"])
+        self.assertIn("permissions", response.context["only_office_config"]["document"])
+        self.assertDictEqual(
+            {
+                "comment": False,
+                "copy": True,
+                "download": True,
+                "edit": False,
+                "fillForms": False,
+                "modifyContentControl": False,
+                "modifyFilter": False,
+                "print": True,
+                "review": False,
+            },
+            response.context["only_office_config"]["document"]["permissions"],
+        )
+
+        self.assertIn("lang", response.context["only_office_config"]["editorConfig"])
+        self.assertIn("mode", response.context["only_office_config"]["editorConfig"])
+        self.assertIn(
+            "customization", response.context["only_office_config"]["editorConfig"]
+        )
+        self.assertDictEqual(
+            {
+                "autosave": False,
+                "chat": False,
+                "commentAuthorOnly": False,
+                "comments": False,
+                "compactHeader": False,
+                "compactToolbar": False,
+                "compatibleFeatures": False,
+                "help": True,
+                "hideRightMenu": False,
+                "mentionShare": False,
+                "plugins": False,
+                "reviewDisplay": "original",
+                "showReviewChanges": False,
+                "spellcheck": False,
+                "toolbarNoTabs": False,
+                "unit": "cm",
+                "zoom": -2,
+            },
+            response.context["only_office_config"]["editorConfig"]["customization"],
+        )

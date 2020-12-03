@@ -31,6 +31,8 @@ class FTLPlugins:
     OCR_GOOGLE_VISION_ASYNC
     - Require to store documents on Google cloud storage (see DEFAULT_FILE_STORAGE in settings)
     - Extra python module required: google-cloud-vision (see requirements.txt)
+    THUMBNAIL_ONLY_OFFICE
+    - Require an instance of Only Office document server (community edition). To be installed and configured separately
     """
 
     TEXT_EXTRACTION_TIKA = "core.processing.proc_tika.FTLTextExtractionTika"
@@ -41,6 +43,10 @@ class FTLPlugins:
     )
     OCR_GOOGLE_VISION_ASYNC = (
         "core.processing.proc_google_vision_async.FTLOCRGoogleVisionAsync"
+    )
+
+    THUMBNAIL_ONLY_OFFICE = (
+        "core.processing.proc_thumb_only_office.FTLThumbnailGenerationOnlyOffice"
     )
 
     LANG_DETECTOR_LANGID = "core.processing.proc_lang.FTLLangDetectorLangId"

@@ -33,14 +33,19 @@ urlpatterns = [
     ),
     path("api/v1/documents/upload", views.FileUploadView.as_view()),
     path(
-        "api/v1/documents/<str:uuid>/download",
+        "api/v1/documents/<str:pid>/download",
         views.DownloadView.as_view(),
         name="api_download_url",
     ),
     path(
-        "api/v1/documents/<str:uuid>/download/<str:name>",
+        "api/v1/documents/<str:pid>/download/<str:name>",
         views.ViewDocument.as_view(),
         name="api_document_view",
+    ),
+    path(
+        "api/v1/documents/<str:spid>/temp",
+        views.TempDownloadView.as_view(),
+        name="api_temp_download_url",
     ),
     path("api/token", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/token/refresh", TokenRefreshView.as_view(), name="token_refresh"),

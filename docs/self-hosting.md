@@ -33,47 +33,47 @@ __Complete the steps described in **Basic deployment** section first.__
 
 2. Update security keys settings in `docker-compose.yml`:
 
-| Name | Default value | Format | Description |
-| --- | --- | --- | --- |
-| DJANGO_SECRET_KEY | `CHANGE-ME` | Randomly generated string (at least 50 characters long) | It is use by Django for cryptographic signing, [more infos](https://docs.djangoproject.com/en/3.0/ref/settings/#std:setting-SECRET_KEY) |
+    | Name | Default value | Format | Description |
+    | --- | --- | --- | --- |
+    | DJANGO_SECRET_KEY | `CHANGE-ME` | Randomly generated string (at least 50 characters long) | It is use by Django for cryptographic signing, [more infos](https://docs.djangoproject.com/en/3.0/ref/settings/#std:setting-SECRET_KEY) |
 
 3. Update database settings in `docker-compose.yml`:
 
-The default configured values work with the official Docker image of PostgreSQL. To change these values, you will
-also need to change them in the PostgreSQL container. The official image allows you to change these values by setting
-custom environment variables.
+    The default configured values work with the official Docker image of PostgreSQL. To change these values, you will
+    also need to change them in the PostgreSQL container. The official image allows you to change these values by setting
+    custom environment variables.
+    
+    - POSTGRES_PASSWORD 
+    - POSTGRES_USER
+    - POSTGRES_DB
+    
+    [More infos](https://hub.docker.com/_/postgres)
 
-- POSTGRES_PASSWORD 
-- POSTGRES_USER
-- POSTGRES_DB
-
-[More infos](https://hub.docker.com/_/postgres)
-
-| Name | Default value | Description |
-| --- | --- | --- |
-| DB_NAME | `postgres` | Name of the PostgreSQL database used Django, should correspond to POSTGRES_DB|
-| DB_USER | `postgres` | User used by Django to access the PostgreSQL database, should correspond to POSTGRES_USER) |
-| DB_PASSWORD | `postgres` | Password used by Django to access the PostgreSQL database, should correspond to POSTGRES_PASSWORD) |
-| DB_HOST | `postgres` | Host name / ip of the PostgreSQL server used by Django, you can safely let the default value for this setting|
-| DB_PORT | `5432` | Port of the PostgreSQL server used by Django, you can safely let the default value for this setting|
+    | Name | Default value | Description |
+    | --- | --- | --- |
+    | DB_NAME | `postgres` | Name of the PostgreSQL database used Django, should correspond to POSTGRES_DB|
+    | DB_USER | `postgres` | User used by Django to access the PostgreSQL database, should correspond to POSTGRES_USER) |
+    | DB_PASSWORD | `postgres` | Password used by Django to access the PostgreSQL database, should correspond to POSTGRES_PASSWORD) |
+    | DB_HOST | `postgres` | Host name / ip of the PostgreSQL server used by Django, you can safely let the default value for this setting|
+    | DB_PORT | `5432` | Port of the PostgreSQL server used by Django, you can safely let the default value for this setting|
 
 4. Update outbound email server settings in `docker-compose.yml`:
 
-__Email server is not included in the Docker but it is required to send activation email to user signing up to your Paper Matter instance (and for other features like forgot password).__
-
-| Name | Default value | Description 
-| --- | --- | --- |
-| EMAIL_HOST | `CHANGE-ME` | Host name / ip of the email server used by Django, we recommend you to subscribe to an transactional email provider |
-| EMAIL_HOST_USER | `CHANGE-ME` | User used by Django to access the email server |
-| EMAIL_HOST_PASSWORD | `CHANGE-ME` | Password used by Django to access the email server |
-| EMAIL_PORT | `25` | Port used by Django to access the email server |
-| DEFAULT_FROM_EMAIL | `noreply@localhost` | This is sender which will appears in the email received by your PM instance users |
+    __Email server is not included in the Docker but it is required to send activation email to user signing up to your Paper Matter instance (and for other features like forgot password).__
+    
+    | Name | Default value | Description 
+    | --- | --- | --- |
+    | EMAIL_HOST | `CHANGE-ME` | Host name / ip of the email server used by Django, we recommend you to subscribe to an transactional email provider |
+    | EMAIL_HOST_USER | `CHANGE-ME` | User used by Django to access the email server |
+    | EMAIL_HOST_PASSWORD | `CHANGE-ME` | Password used by Django to access the email server |
+    | EMAIL_PORT | `25` | Port used by Django to access the email server |
+    | DEFAULT_FROM_EMAIL | `noreply@localhost` | This is sender which will appears in the email received by your PM instance users |
 
 5. (optional) Additional settings
 
-| Name | Default value | Format | Description |
-| --- | --- | --- | --- |
-| ALLOWED_HOSTS | `*` | A comma separated list of hosts url (eg. `mypminstance.com, my-pm-instance.com`) |It improve security by defining the host allowed to serve your PM instance, [more infos](https://docs.djangoproject.com/en/3.0/ref/settings/#allowed-hosts) |
+    | Name | Default value | Format | Description |
+    | --- | --- | --- | --- |
+    | ALLOWED_HOSTS | `*` | A comma separated list of hosts url (eg. `mypminstance.com, my-pm-instance.com`) |It improve security by defining the host allowed to serve your PM instance, [more infos](https://docs.djangoproject.com/en/3.0/ref/settings/#allowed-hosts) |
 
 6. Start the application:
 
@@ -131,6 +131,14 @@ Set `DEFAULT_FILE_STORAGE` to `storages.backends.gcloud.GoogleCloudStorage` and 
 __By default the OCR feature is disabled, it allows searching for keywords inside scanned documents.__
 
 You can't enable OCR feature using ENV variables for now, but you can do it as described in `Customize Paper Matter other settings` bellow.
+
+## Enable Office doc Preview feature (Only Office)
+
+__By default only PDF documents get a thumbnail and a preview in the UI, if you want to be able to preview Office
+documents you have to install an Only Office server (only the Community Edition has been tested).__
+
+1. Refer to Only Office doc to install the server: https://github.com/ONLYOFFICE/Docker-DocumentServer
+2. Configure settings (starting at "FTL_ENABLE_ONLY_OFFICE") related to Only Office as described in `Customize Paper Matter other settings` below.
 
 ## Various other settings that you can update with ENV
 
