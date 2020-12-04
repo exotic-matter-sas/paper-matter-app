@@ -169,12 +169,11 @@ To use specific Django settings without modifying main `ftl/ftl/settings.py` fil
 # Credits
 
 - Programming languages:
-
   - [Python](https://www.python.org/)
   - [Vue.js](https://vuejs.org/)
 
-- Main technologies used:
 
+- Main technologies used:
   - Web framework: [Django](https://www.djangoproject.com/)
   - Database: [PostgreSQL](https://www.postgresql.org/)
   - Document storage, [django-storages](https://github.com/jschneier/django-storages) allow to choose between:
@@ -186,8 +185,11 @@ To use specific Django settings without modifying main `ftl/ftl/settings.py` fil
     - [Google Cloud Vision API (sync or async)](https://cloud.google.com/vision/docs/)
     - [Amazon Textract API](https://aws.amazon.com/textract/)
   - Document text extraction: [Apache Tika](https://tika.apache.org/)
-  - PDF documents preview: [PDF.js](https://mozilla.github.io/pdf.js/)
+  - Documents preview: 
+    - PDF: [PDF.js](https://mozilla.github.io/pdf.js/)
+    - Office documents: [Only Office](https://github.com/ONLYOFFICE/Docker-DocumentServer)
   - Search engine: [PostgreSQL tsvector](https://www.postgresql.org/docs/10/datatype-textsearch.html)
+
 
 - UI:
   - CSS framework :
