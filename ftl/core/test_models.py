@@ -2,10 +2,17 @@
 #  Licensed under the Business Source License. See LICENSE at project root for more information.
 
 import os
+from datetime import timedelta
 from unittest.mock import patch
 
 from django.core.exceptions import ValidationError
 from django.test import TestCase
+from django.utils import timezone
+from oauth2_provider.models import (
+    get_refresh_token_model,
+    get_access_token_model,
+    get_application_model,
+)
 
 import core
 from ftests.tools import test_values as tv
@@ -136,3 +143,44 @@ class FTLUserModelTest(TestCase):
 
         doc_marked_as_deleted_3 = FTLDocument.objects.get(pid=document_3.pid)
         self.assertTrue(doc_marked_as_deleted_3.deleted)
+
+    def test_set_password_revoke_oauth2_tokens(self):
+        org = setup_org()
+        setup_admin(org)
+        user = setup_user(org)
+
+        application_model = get_application_model()
+        application = application_model.objects.create(
+            name="Test app",
+            redirect_uris="http://example.org/redirect",
+            client_type=application_model.CLIENT_PUBLIC,
+            authorization_grant_type=application_model.GRANT_AUTHORIZATION_CODE,
+            skip_authorization=False,
+        )
+
+        access_token_model = get_access_token_model()
+        access_token = access_token_model.objects.create(
+            user=user,
+            scope="read",
+            expires=timezone.now() + timedelta(seconds=3600),
+            token="ACCESS-TOKEN",
+            application=application,
+        )
+
+        refresh_token_model = get_refresh_token_model()
+        refresh_token = refresh_token_model.objects.create(
+            user=user,
+            token="REFRESH_TOKEN",
+            application=application,
+            access_token=access_token,
+        )
+
+        self.assertIsNone(refresh_token.revoked)
+
+        user.set_password("Changed password")
+
+        with self.assertRaises(access_token_model.DoesNotExist):
+            access_token.refresh_from_db()
+
+        refresh_token.refresh_from_db()
+        self.assertIsNotNone(refresh_token.revoked)
