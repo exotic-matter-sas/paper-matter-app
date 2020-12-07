@@ -225,13 +225,6 @@ FTL_ACCOUNT_PROCESSORS = [
     "core.ftl_account_processor.ftl_account_data",
 ]
 
-# JWT API Token
-# Docs: https://github.com/davesque/django-rest-framework-simplejwt#settings
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-}
-
 # OAuth2 Provider
 OAUTH2_PROVIDER = {
     # TODO to be completed with more
