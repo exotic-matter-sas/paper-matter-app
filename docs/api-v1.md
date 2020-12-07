@@ -1,54 +1,63 @@
 # API V1 reference
 
-_Before you can query [Folders](#folders) and [Documents](#documents) resources, you have to obtain, store and manage an `access` and `refresh` token through [Authentication requests](#authentication)._
+_Before you can query the different resources, you have to obtain, store and manage an `access_token` and `refresh_token` as desbribed in [Authentication](#authentication)._
 
 ## Authentication
 
-The Paper Matter API uses the OAuth 2.0 protocol for authentication and authorization.
+_The Paper Matter API uses the OAuth 2.0 protocol for authentication and authorization._
 
 The following protocol endpoints are available:
- - Authorization endpoint: /oauth2/authorization_code/
- - Token endpoint: /oauth2/token/
+
+ - Authorization endpoint: `/oauth2/authorize/`
+ - Token endpoint: `/oauth2/token/`
  
-The following scopes available:
- - read
- - write
+The following scopes are available: `read`, `write`.
  
 Paper Matter supports the following OAuth 2.0 flows:
- - Authorization Code (public or confidential), recommended for most usage such as web app or native client
- - Client Credentials, only for trusted server side access
 
-To access the API, you will need a set of `client_id` and `client_secret`. On our hosted solution, please contact us
-and apply for API access. If you self host, you will need to generate those credentials inside the admin panel.
+ - `Authorization Code` (`public` or `confidential`), recommended for most usage such as web app or native client
+ - `Client Credentials`, only for trusted server side access
 
-When you obtained an Access Token, send the token in the HTTP Authorization request header `Authorization` as
-`Bearer [ACCESS_TOKEN]`
+To access the API, you will need a set of `client_id` and `client_secret`:
 
-Access Token have limited lifetime and will expire. When expired, you should use the Refresh Token to obtain a new
-Access Token along with a new Refresh Token. Be aware the Refresh Token is a single use token.
+ - For the instance we host (papermatter.app), please [contact us](https://welcome.papermatter.app/contact-us/) to
+  apply for API access. 
+ - For other instances, you have to ask instance admin to [generate those credentials inside the admin panel](`self-hosting.md#authorize-import-and-export-app-and-other-oauth2-apps`).
 
-### Example Authorization Code flow
+### Using Authorization Code flow
 
-### Redirect to Paper Matter for authorization
+#### 1. Get authorization code
 
-```
-GET https://papermatter.app/oauth2/authorization_code/?
-response_type=code
+Open Paper Matter authorization page in user browser:
+
+```text
+https://[YOUR_PM_INSTANCE]/oauth2/authorize/
+?response_type=code
 &client_id=CLIENT_ID
-&redirect_uri=https://my-site.example.org/callback 
+&redirect_uri=https://my-site.example.org/callback
 &scope=read
 ```
+_User will be asked to login to Paper Matter and to authorize your app access to its account._ 
 
-Client is redirected to Paper Matter for authentication. If successful, the Client is redirected to the
-given `redirect_uri`.
+If authorization is successful, the given `redirect_uri` will be called by Paper Matter server with authorization code
+inside a `code` querystring:
 
-`https://my-site.example.org/callback?code=AUTHORIZATION_CODE`
-
-### Exchange authorization code for an Access Token
-
+```text
+https://my-site.example.org/callback?code=AUTHORIZATION_CODE
 ```
-POST https://papermatter.app/oauth2/token/
 
+#### 2. Get tokens
+**POST /oauth2/token**
+
+**Request body** _([form url encoded](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST))_
+
+- **client_id**: Oauth app `client_id`
+- _**client_secret** (optional): Oauth app `client_secret`, can be omitted if app is `public`_
+- **grant_type**: `authorization_code` or `client_credentials`
+- **code**: Authorization `code` retrieved at previous step
+- **redirect_uri**: `redirect_uri` used at previous step
+
+```text
 client_id=CLIENT_ID
 &client_secret=CLIENT_SECRET
 &grant_type=authorization_code
@@ -56,24 +65,64 @@ client_id=CLIENT_ID
 &redirect_uri=https://my-site.example.org/callback
 ```
 
-### Use Refresh Token to obtain a new Access Token
+**Response** `200`
 
+```json
+{
+  "access_token": "HhyHshfzszOIqApX3UEAdgqlcqgkbT",
+  "expires_in": 36000,
+  "token_type": "Bearer",
+  "scope": "read",
+  "refresh_token": "YoXmCNt19p6Ihlm1EIhCKzuB4UcuBF"
+}
 ```
-POST https://papermatter.app/oauth2/token/
 
+_`access_token` and `refresh_token` should be stored, they are required to call other requests, non-related to authentication._
+
+- `access_token` have to be included inside `Authorization` HTTP header with the value `Bearer [access_token]`, this
+ token will eventually expire as described below.
+- `expires_in` is the `access_token` validity period in seconds, once expired authenticated request will return a code `403`. When this code is returned, you should use the [Refresh tokens request](#3-refresh-tokens) to get and store a new pair of tokens.
+- `refresh_token` have to be used with [Refresh tokens request](#3-refresh-tokens), this token isn't limited to a validity period but is for single use.
+
+#### 3. Refresh tokens
+
+**POST /oauth2/token**
+
+**Request body** _([form url encoded](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST))_
+
+- **client_id**: Oauth app `client_id`
+- _**client_secret** (optional): Oauth app `client_secret`, can be omitted if app is `public`_
+- **grant_type**: `refresh_token`
+- **refresh_token**: `refresh_token` retrieved at previous step
+
+```text
 client_id=CLIENT_ID
 &client_secret=CLIENT_SECRET
 &grant_type=refresh_token
 &refresh_token=REFRESH_TOKEN
 ```
 
+**Response** `200`
+
+```json
+{
+  "access_token": "gGeae7urfUvC24YXrYtBGNbJuAC2yq",
+  "expires_in": 36000,
+  "token_type": "Bearer",
+  "scope": "read",
+  "refresh_token": "hdQtNwXo3PL6rD4Sp9kts5mDBDx622"
+}
+```
+
+_News `access_token` and `refresh_token` should be stored in place of the old ones (reminder: the `refresh_token` expire
+on use)._
 
 ## Folders
 
 ### Create a folder
-**POST /api/v1/folders**
+**POST /app/api/v1/folders**
 
-**Request body**
+**Request body** _(JSON)_
 
 - **name**: Folder name
 - _**parent** (optional): parent folder id (if omitted or `null`, folder is created inside root folder_)
@@ -110,7 +159,7 @@ client_id=CLIENT_ID
 | 400 | A folder with this name already exist | folder_name_unique_for_org_level |
 
 ### List folders
-**GET /api/v1/folders**
+**GET /app/api/v1/folders**
 
 **Query strings params**
 
@@ -150,11 +199,11 @@ client_id=CLIENT_ID
 ```
 
 ### Update a folders
-**PATCH /api/v1/folders/`folder_id`**
+**PATCH /app/api/v1/folders/`folder_id`**
 
 Rename or move an existing folder.
 
-**Request body** _(attributes omitted stay unchanged)_
+**Request body** _(JSON, attributes omitted stay unchanged)_
 
 - _**name** (optional): Folder name_
 - _**parent** (optional): parent folder id (set to null to move to root folder)_
@@ -184,16 +233,16 @@ Rename or move an existing folder.
 | 400 | A folder can't be move inside one of its children | folder_parent_invalid |
 
 ### Delete a folder
-**DELETE /api/v1/folders/`folder_id`**
+**DELETE /app/api/v1/folders/`folder_id`**
 
 **Response** `204`
 
 ## Documents
 
 ### Upload a document
-**POST /api/v1/documents/upload**
+**POST /app/api/v1/documents/upload**
 
-**Request body** (`multipart/form-data`)
+**Request body** ([`multipart/form-data`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST))
 
 - **file**: PDF file binary
 - _**json** (optional): additional data to set for document uploaded_
@@ -269,7 +318,7 @@ Content-Disposition: form-data; name="json"
 | 400 | The thumbnail could not be decoded | ftl_thumbnail_generation_error | 
 
 ### List documents
-**GET /api/v1/documents**
+**GET /app/api/v1/documents**
 
 **Query strings params**
 
@@ -312,7 +361,7 @@ OR / AND (can be combined with `flat`)
       "edited":"2019-08-19T15:03:06.844287Z",
       "ftl_folder":12,
       "thumbnail_available":true,
-      "thumbnail_url": "/app/api/v1/documents/4c092ae2-2c91-4759-9123-5f4af7538f85/thumbnail.png",
+      "thumbnail_url": "/app/app/api/v1/documents/4c092ae2-2c91-4759-9123-5f4af7538f85/thumbnail.png",
       "is_processed":true,
       "path":[
         {
@@ -364,7 +413,7 @@ OR / AND (can be combined with `flat`)
 If there is too many results, results will be paginated. To get the next page results you have to call the url specified in `next` field (or set an additional `page` query string with desired page number, page start at `1`).
 
 ### Get a document
-**GET /api/v1/documents/`document_pid`**
+**GET /app/api/v1/documents/`document_pid`**
 
 **Response** `200`
 
@@ -378,7 +427,7 @@ If there is too many results, results will be paginated. To get the next page re
   "ftl_folder":12,
   "thumbnail_available":false,
   "is_processed":true,
-  "thumbnail_url": "/app/api/v1/documents/4c092ae2-2c91-4759-9123-5f4af7538f85/thumbnail.png",
+  "thumbnail_url": "/app/app/api/v1/documents/4c092ae2-2c91-4759-9123-5f4af7538f85/thumbnail.png",
   "path":[
     {
       "id":34,
@@ -400,7 +449,7 @@ If there is too many results, results will be paginated. To get the next page re
 Return the same data than **List documents** request but for a single document.
 
 ### Download a document
-**GET /api/v1/documents/`document_pid`/download**
+**GET /app/api/v1/documents/`document_pid`/download**
 
 **Response** `200`
 
@@ -412,11 +461,11 @@ Return the same data than **List documents** request but for a single document.
 ```
 
 ### Update a document
-**PATCH /api/v1/documents/`document_pid`**
+**PATCH /app/api/v1/documents/`document_pid`**
 
 Rename, annotate, move a document (or set its thumbnail).
 
-**Request body** _(attributes omitted stay unchanged)_
+**Request body** _(JSON, attributes omitted stay unchanged)_
 
 - _**title** (optional): document name string_
 - _**note** (optional): document note string_
@@ -455,16 +504,16 @@ Rename, annotate, move a document (or set its thumbnail).
 ```
 
 ### Delete a document
-**DELETE /api/v1/documents/`document_pid`**
+**DELETE /app/api/v1/documents/`document_pid`**
 
 **Response** `204`
 
 ## Documents share links
 
 ### Add a document share link
-**POST /api/v1/documents/`document_pid`/share**
+**POST /app/api/v1/documents/`document_pid`/share**
 
-**Request body**
+**Request body** _(JSON)_
 
 - _**expire_at** (optional): an expiration date, following ISO 8601 format, eg. `2019-11-18T00:42:42.242424Z`_
 - _**note** (optional): document share link note, string_
@@ -483,7 +532,7 @@ Rename, annotate, move a document (or set its thumbnail).
 ```
 
 ### List document share links
-**GET /api/v1/documents/`document_pid`/share**
+**GET /app/api/v1/documents/`document_pid`/share**
 
 **Response** `200`
 
@@ -515,7 +564,7 @@ Rename, annotate, move a document (or set its thumbnail).
 If there is too many results, results will be paginated. To get the next page results you have to call the url specified in `next` field (or set an additional `page` query string with desired page number, page start at `1`).
 
 ### Get a document share link
-**GET /api/v1/documents/`document_pid`/share/`document_shared_link_pid`**
+**GET /app/api/v1/documents/`document_pid`/share/`document_shared_link_pid`**
 
 **Response** `200`
 
@@ -532,11 +581,11 @@ If there is too many results, results will be paginated. To get the next page re
 Return the same data than **List documents share links** request but for a single share link.
 
 ### Update a document share link
-**PATCH /api/v1/documents/`document_pid`/share/`document_shared_link_pid`**
+**PATCH /app/api/v1/documents/`document_pid`/share/`document_shared_link_pid`**
 
 Update a document share link note or expiration date.
 
-**Request body** _(attributes omitted stay unchanged)_
+**Request body** _(JSON, attributes omitted stay unchanged)_
 
 - _**expire_at** (optional): an expiration date, following ISO 8601 format, eg. `2019-11-18T00:42:42.242424Z`_
 - _**note** (optional): document share link note string_
@@ -555,11 +604,11 @@ Update a document share link note or expiration date.
 ```
 
 ### Delete a document share link
-**DELETE /api/v1/documents/`document_pid`/share/`document_shared_link_pid`**
+**DELETE /app/api/v1/documents/`document_pid`/share/`document_shared_link_pid`**
 
 **Response** `204`
 
-## Tool to easily test API
+## Tool to test API quickly
 
 1. Download and install [Insomnia](https://insomnia.rest/)
 
@@ -567,4 +616,4 @@ Update a document share link note or expiration date.
 
 3. Open **Manage Environments** window using main dropdown menu (or **ctrl + E**)
 
-4. Set `base_url`, `email` and `password` values in **Base Environment** (or create a private **Sub Environment** to override the default values, and **activate it** through the top left secondary dropdown menu)
+4. Set `base_url` (Paper Matter instance host name), `client_id`, `redirect_uri`, `grant_type`, `client_secret` and `authorization_code` values in **Base Environment** (or create a private **Sub Environment** to override the default values, and **activate it** through the top left secondary dropdown menu)
