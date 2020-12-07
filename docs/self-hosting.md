@@ -140,7 +140,7 @@ __By default no Oauth2 app is authorized to access the API, each app have to be 
 2. In the __DJANGO OAUTH TOOLKIT__ section, __Add__ a new application
 3. Complete and submit the form as described below:
     - __Client id__: *leave default value (this value have to be set in the app too)*
-    - __User__: No user unless you want to bind the app to a specific user (only this user will be able to use it) 
+    - __User__: No user unless you want the app to be owned by a user (it will appear in her/his account if developer API is enabled)
     - __Redirect uris__:
         - For __Paper Matter Import & Export__: `http://localhost:1612/oauth2/redirect` 
         - For __ftl-export-cli__: `https://[YOUR_PM_INSTANCE]/oauth2/authorization_code/`
