@@ -150,6 +150,22 @@ _So for now, until things get sorted out in [django-oauth-toolkit](https://githu
 recommend to revoke both tokens (`access_token` and then `refresh_token`), if you want to revoke user authorization for
 your app._
 
+## Users
+
+### Get user data
+**GET /app/api/v1/users/me**
+
+**Response** `200`
+
+```json
+{
+  "org": "User org",
+  "org_slug": "user-org",
+  "email": "user@example.com",
+  "last_login": "2020-12-07T19:56:09.434612Z"
+}
+```
+
 
 ## Folders
 
