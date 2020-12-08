@@ -8,9 +8,10 @@ _The Paper Matter API uses the OAuth 2.0 protocol for authentication and authori
 
 The following protocol endpoints are available:
 
- - Authorization endpoint: `/oauth2/authorize/`
- - Token endpoint: `/oauth2/token/`
- 
+ - Authorization page: `/oauth2/authorize/`
+ - Get tokens endpoint: `/oauth2/token`
+ - Revoke tokens endpoint: `/oauth2/revoke_token`
+
 The following scopes are available: `read`, `write`.
  
 Paper Matter supports the following OAuth 2.0 flows:
@@ -53,7 +54,7 @@ https://my-site.example.org/callback?code=AUTHORIZATION_CODE
 
 - **client_id**: Oauth app `client_id`
 - _**client_secret** (optional): Oauth app `client_secret`, can be omitted if app is `public`_
-- **grant_type**: `authorization_code` or `client_credentials`
+- **grant_type**: "authorization_code" or "client_credentials"
 - **code**: Authorization `code` retrieved at previous step
 - **redirect_uri**: `redirect_uri` used at previous step
 
@@ -92,7 +93,7 @@ _`access_token` and `refresh_token` should be stored, they are required to call 
 
 - **client_id**: Oauth app `client_id`
 - _**client_secret** (optional): Oauth app `client_secret`, can be omitted if app is `public`_
-- **grant_type**: `refresh_token`
+- **grant_type**: "refresh_token"
 - **refresh_token**: `refresh_token` retrieved at previous step
 
 ```text
@@ -116,6 +117,39 @@ client_id=CLIENT_ID
 
 _News `access_token` and `refresh_token` should be stored in place of the old ones (reminder: the `refresh_token` expire
 on use)._
+
+#### 4. Revoke tokens
+
+**POST /oauth2/revoke_token**
+
+Revoke user authorization for your app.
+
+**Request body** _([form url encoded](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST))_
+
+- **client_id**: Oauth app `client_id`
+- _**client_secret** (optional): Oauth app `client_secret`, can be omitted if app is `public`_
+- **token**: `access_token` or `refresh_token`
+- _**token_type_hint** (optional): "access_token" or "refresh_token", default to "access_token" if omitted_
+
+```text
+client_id=CLIENT_ID
+&client_secret=CLIENT_SECRET
+&token=ACCESS_TOKEN
+```
+
+**Response** `200`
+
+_**Known bugs:**_
+
+ - _If you revoke the `access_token` without revoking `refresh_token` and try to [Refresh tokens](#3-refresh-tokens)
+an [error 500 will be raised](https://github.com/jazzband/django-oauth-toolkit/issues/839)_
+ - _Revoking `refresh_token` only will also revoke user authorization for your app (so `access_token` wont be usable
+ anymore)_
+
+_So for now, until things get sorted out in [django-oauth-toolkit](https://github.com/jazzband/django-oauth-toolkit), we
+recommend to revoke both tokens (`access_token` and then `refresh_token`), if you want to revoke user authorization for
+your app._
+
 
 ## Folders
 
