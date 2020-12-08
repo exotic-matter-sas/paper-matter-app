@@ -16,7 +16,7 @@ urlpatterns = [
         views_share_doc.DownloadSharedDocument.as_view(),
         name="view_sharing_doc_download",
     ),
-    path("api/v1/accounts/me", views.FTLAccountView.as_view()),
+    path("api/v1/users/me", views.FTLUserView.as_view()),
     path("api/v1/folders", views.FTLFolderList.as_view()),
     path("api/v1/folders/<int:id>", views.FTLFolderDetail.as_view()),
     path("api/v1/documents", views.FTLDocumentList.as_view()),

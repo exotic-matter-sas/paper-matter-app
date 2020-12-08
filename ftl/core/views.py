@@ -65,7 +65,7 @@ class HomeView(FTLAccountProcessorContextMixin, View):
 # API
 
 
-class FTLAccountView(views.APIView):
+class FTLUserView(views.APIView):
     # Don't use the usual FTLModelPermissions for this API view as FTLModelPermissions is not covering FTLUser model
     permission_classes = [IsAuthenticated]
 

@@ -33,7 +33,7 @@ from ftl.enums import FTLStorages, FTLPlugins
 from ftl.settings import BASE_DIR
 
 
-class AccountsTests(APITestCase):
+class UsersTests(APITestCase):
     def setUp(self):
         self.org = setup_org()
         self.admin = setup_admin(self.org)
@@ -42,8 +42,8 @@ class AccountsTests(APITestCase):
             request=HttpRequest(), email=tv.ADMIN1_EMAIL, password=tv.ADMIN1_PASS
         )
 
-    def test_account_info_current_user(self):
-        client_get = self.client.get("/app/api/v1/accounts/me", format="json")
+    def test_current_user_info(self):
+        client_get = self.client.get("/app/api/v1/users/me", format="json")
 
         self.assertEqual(client_get.status_code, status.HTTP_200_OK)
         self.assertEqual(client_get["Content-Type"], "application/json")
