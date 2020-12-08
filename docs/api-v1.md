@@ -139,12 +139,11 @@ client_id=CLIENT_ID
 
 **Response** `200`
 
-_**Known bugs:**_
+_**Known bugs/strange behaviors:**_
 
  - _If you revoke the `access_token` without revoking `refresh_token` and try to [Refresh tokens](#3-refresh-tokens)
 an [error 500 will be raised](https://github.com/jazzband/django-oauth-toolkit/issues/839)_
- - _Revoking `refresh_token` only will also revoke user authorization for your app (so `access_token` wont be usable
- anymore)_
+ - _Revoking `refresh_token` will also revoke `access_token`_
 
 _So for now, until things get sorted out in [django-oauth-toolkit](https://github.com/jazzband/django-oauth-toolkit), we
 recommend to revoke both tokens (`access_token` and then `refresh_token`), if you want to revoke user authorization for
