@@ -60,6 +60,10 @@
                                 {% if ftl_account.otp_warning %}
                                     <span class="badge badge-danger badge-pill otp-warning">!</span>{% endif %}
                             </a>
+                            <a href="{% url 'account_user_settings' %}"
+                               class="{% if 'account_user_settings' in view_name %}active {% endif %}list-group-item list-group-item-action">
+                                {% trans 'User account settings' %}
+                            </a>
                             <a href="{% url 'oauth2_provider:authorized-token-list' %}"
                                class="{% if 'oauth2_provider' in view_name %}active {% endif %}list-group-item list-group-item-action">
                                 {% trans 'Third party applications' %}</a>
@@ -83,7 +87,7 @@
     <footer class="footer mt-auto text-muted text-center d-print-none">
         {% blocktrans %}<a id="pm-link" target="_blank" href="https://welcome.papermatter.app">Paper Matter</a>,
             carefully crafted by <a id="em-link" target="_blank" href="https://www.exotic-matter.fr">Exotic <span
-                    class="highlight">Matter</span></a>
+                class="highlight">Matter</span></a>
         {% endblocktrans %}
     </footer>
     </body>

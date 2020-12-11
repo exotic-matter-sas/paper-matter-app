@@ -57,7 +57,7 @@ class FtlUserCreationFormTests(TestCase):
 @override_settings(FTL_ENABLE_SIGNUP_CAPTCHA=True)
 class FTLCreateOrgAndFTLUserTests(TestCase):
     def test_captcha_render(self):
-        form = FTLCreateOrgAndFTLUser()
+        form = FTLCreateOrgAndFTLUser(lang="fr")
         self.assertIn(
             '<label class="required" for="id_captcha_1">Are you human?*:</label>',
             form.as_p(),

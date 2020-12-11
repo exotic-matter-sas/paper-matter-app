@@ -21,11 +21,10 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views import View
 from django.views.generic import FormView
-from django.views.generic.base import ContextMixin
 from django_otp.decorators import otp_required
 from ua_parser import user_agent_parser
 
-from account.forms import EmailSendForm, DeleteAccountForm
+from account.forms import EmailSendForm, DeleteAccountForm, SettingsAccountForm
 from core.ftl_account_processors_mixin import FTLAccountProcessorContextMixin
 from core.models import FTLUser
 from core.tasks import send_email_async
@@ -240,5 +239,31 @@ class AccountDeleteView(SuccessMessageMixin, FormView):
         self.request.user.email_user(
             subject_warn, message_warn, settings.DEFAULT_FROM_EMAIL
         )
+
+        return super().form_valid(form)
+
+
+@method_decorator(login_required, name="dispatch")
+@method_decorator(otp_required(if_configured=True), name="dispatch")
+class AccountSettingsView(SuccessMessageMixin, FormView):
+    template_name = "account/account_settings.html"
+    form_class = SettingsAccountForm
+    success_url = reverse_lazy("account_index")
+    success_message = _("Your settings were saved.")
+
+    def get_initial(self):
+        initial = super().get_initial()
+        initial["tz"] = self.request.user.tz
+        initial["lang"] = self.request.user.lang
+        return initial
+
+    def form_valid(self, form):
+        tz_ = form.cleaned_data["tz"]
+        lang_ = form.cleaned_data["lang"]
+
+        user = self.request.user
+        user.tz = tz_
+        user.lang = lang_
+        user.save(update_fields=["tz", "lang"])
 
         return super().form_valid(form)

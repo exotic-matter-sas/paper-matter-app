@@ -42,8 +42,11 @@ class FTLCreateOrgAndFTLUser(RegistrationForm):
         ),
     )
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, lang, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.lang = lang or getattr(settings, "LANGUAGE_CODE")
+
         # remove default autofocus on email field
         del self.fields["email"].widget.attrs["autofocus"]
         # add the mandatory asterisk to existing label
@@ -87,6 +90,8 @@ class FTLCreateOrgAndFTLUser(RegistrationForm):
         ftl_org.save()
 
         user.org = ftl_org
+        user.tz = getattr(settings, "TIME_ZONE")
+        user.lang = self.lang
         user.is_superuser = False
         user.is_staff = False
         user.save()

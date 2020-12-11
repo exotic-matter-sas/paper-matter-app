@@ -21,6 +21,7 @@ from datetime import timedelta
 
 from celery.schedules import crontab
 from django.contrib.messages import constants as message_constants
+from django.utils.translation import gettext_lazy as _
 
 from ftl.enums import FTLStorages, FTLPlugins
 
@@ -94,6 +95,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "ftl.ftl_setup_middleware.FTLSetupMiddleware",
+    "ftl.ftl_locale_middleware.FTLLocaleMiddleware",
     "axes.middleware.AxesMiddleware",
 ]
 if DEBUG and DEV_MODE:
@@ -153,6 +155,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
 LANGUAGE_CODE = "en-us"
+
+LANGUAGES = [
+    ("fr", _("Français")),
+    ("en", _("English")),
+]
 
 TIME_ZONE = "UTC"
 

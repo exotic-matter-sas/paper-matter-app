@@ -138,6 +138,9 @@ class FTLUser(AbstractUser):
         error_messages={"unique": _("A user with that email already exists."),},
     )
 
+    tz = models.CharField(max_length=128, blank=True)
+    lang = models.CharField(max_length=8, blank=True)
+
     USERNAME_FIELD = "email"
     EMAIL_FIELD = "email"
     REQUIRED_FIELDS = ["org"]

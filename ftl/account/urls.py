@@ -16,6 +16,9 @@ urlpatterns = [
     path("activity/", views.AccountActivityView.as_view(), name="account_activity"),
     path("password/", views.AccountPasswordView.as_view(), name="account_password"),
     path(
+        "settings/", views.AccountSettingsView.as_view(), name="account_user_settings"
+    ),
+    path(
         "import_export/",
         views.AccountImportExportView.as_view(),
         name="account_import_export",
