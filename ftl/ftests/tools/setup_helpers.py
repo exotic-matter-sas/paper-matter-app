@@ -27,11 +27,15 @@ def setup_org(name=tv.ORG_NAME_1, slug=tv.ORG_SLUG_1):
 
 
 def setup_admin(org, email=tv.ADMIN1_EMAIL, password=tv.ADMIN1_PASS):
-    return FTLUser.objects.create_superuser(org=org, email=email, password=password,)
+    return FTLUser.objects.create_superuser(
+        org=org, email=email, password=password, lang="en", tz="Europe/Paris"
+    )
 
 
 def setup_user(org, email=tv.USER1_EMAIL, password=tv.USER1_PASS):
-    user = FTLUser.objects.create_user(org=org, email=email, password=password)
+    user = FTLUser.objects.create_user(
+        org=org, email=email, password=password, lang="en", tz="Europe/Paris"
+    )
     user.user_permissions.set(permissions_names_to_objects(FTL_PERMISSIONS_USER))
     return user
 

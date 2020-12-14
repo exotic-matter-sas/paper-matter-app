@@ -20,7 +20,8 @@ class TestFTLLanguageMiddleware(TestCase):
         self.admin = setup_admin(self.org)
 
     def test_no_language_configured_use_browser_accept_language(self):
-        self.assertFalse(self.admin.lang)
+        self.admin.lang = ""
+        self.admin.save()
 
         setup_authenticated_session(self.client, self.org, self.admin)
 
