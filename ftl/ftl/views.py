@@ -74,7 +74,9 @@ class CreateOrgAndFTLUser(RegistrationView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs["lang"] = self.request.LANGUAGE_CODE
+        kwargs[
+            "lang"
+        ] = self.request.LANGUAGE_CODE  # Use Django detected language for the account
         return kwargs
 
 

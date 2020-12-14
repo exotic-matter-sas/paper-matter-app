@@ -55,3 +55,9 @@ class SettingsAccountForm(forms.Form):
         if not check_for_language(lang):
             raise ValidationError("Unsupported language")
         return lang
+
+    def clean_tz(self):
+        tz = self.cleaned_data["tz"]
+        if tz not in pytz.common_timezones:
+            raise ValidationError("Unsupported timezone")
+        return tz

@@ -21,7 +21,6 @@ from datetime import timedelta
 
 from celery.schedules import crontab
 from django.contrib.messages import constants as message_constants
-from django.utils.translation import gettext_lazy as _
 
 from ftl.enums import FTLStorages, FTLPlugins
 
@@ -157,8 +156,8 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = "en-us"
 
 LANGUAGES = [
-    ("fr", _("Français")),
-    ("en", _("English")),
+    ("fr", "Français"),
+    ("en", "English"),
 ]
 
 TIME_ZONE = "UTC"

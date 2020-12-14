@@ -44,11 +44,12 @@ class FTLCreateOrgAndFTLUser(RegistrationForm):
 
     def __init__(self, lang, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        self.lang = lang or getattr(settings, "LANGUAGE_CODE")
+        # language for the new account
+        self.lang = lang
 
         # remove default autofocus on email field
         del self.fields["email"].widget.attrs["autofocus"]
+
         # add the mandatory asterisk to existing label
         self.fields["email"].label += "*"
         self.fields["password1"].label += "*"
