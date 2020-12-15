@@ -26,15 +26,19 @@ def setup_org(name=tv.ORG_NAME_1, slug=tv.ORG_SLUG_1):
     return FTLOrg.objects.create(name=name, slug=slug,)
 
 
-def setup_admin(org, email=tv.ADMIN1_EMAIL, password=tv.ADMIN1_PASS):
+def setup_admin(
+    org, email=tv.ADMIN1_EMAIL, password=tv.ADMIN1_PASS, lang="en", tz="Europe/Paris"
+):
     return FTLUser.objects.create_superuser(
-        org=org, email=email, password=password, lang="en", tz="Europe/Paris"
+        org=org, email=email, password=password, lang=lang, tz=tz
     )
 
 
-def setup_user(org, email=tv.USER1_EMAIL, password=tv.USER1_PASS):
+def setup_user(
+    org, email=tv.USER1_EMAIL, password=tv.USER1_PASS, lang="en", tz="Europe/Paris"
+):
     user = FTLUser.objects.create_user(
-        org=org, email=email, password=password, lang="en", tz="Europe/Paris"
+        org=org, email=email, password=password, lang=lang, tz=tz
     )
     user.user_permissions.set(permissions_names_to_objects(FTL_PERMISSIONS_USER))
     return user
