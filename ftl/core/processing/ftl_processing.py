@@ -11,7 +11,6 @@ from django.utils.module_loading import import_string
 from core.errors import PluginUnsupportedStorage
 from core.models import FTLDocument
 from core.signals import pre_ftl_processing
-from ftl.settings import DEFAULT_FILE_STORAGE
 
 logger = logging.getLogger(__name__)
 
@@ -96,7 +95,7 @@ class FTLOCRBase(FTLDocProcessingBase):
         self.supported_storages = []
 
     def process(self, ftl_doc, force):
-        if DEFAULT_FILE_STORAGE in self.supported_storages:
+        if settings.DEFAULT_FILE_STORAGE in self.supported_storages:
             # If full text not already extracted
             if force or not ftl_doc.content_text.strip():
                 extracted_text = self._extract_text(ftl_doc.binary)
@@ -110,7 +109,7 @@ class FTLOCRBase(FTLDocProcessingBase):
                 )
         else:
             raise PluginUnsupportedStorage(
-                f"{self.log_prefix} does not support storage {DEFAULT_FILE_STORAGE} (supported storage are: "
+                f"{self.log_prefix} does not support storage {settings.DEFAULT_FILE_STORAGE} (supported storage are: "
                 f"{self.supported_storages})."
             )
 

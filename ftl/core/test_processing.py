@@ -5,6 +5,7 @@ from unittest import mock
 from unittest.mock import Mock, patch, call, MagicMock
 
 import requests
+from django.conf import settings
 from django.core.files import File
 from django.test import TestCase, override_settings
 from jose import jwt
@@ -29,7 +30,6 @@ from core.processing.proc_thumb_only_office import FTLThumbnailGenerationOnlyOff
 from core.processing.proc_tika import FTLTextExtractionTika
 from core.serializers import FTLDocumentDetailsOnlyOfficeSerializer
 from core.signals import pre_ftl_processing
-from ftl.settings import DEFAULT_FILE_STORAGE
 
 
 class ProcTest(FTLDocProcessingBase):
@@ -409,7 +409,7 @@ class FTLOCRBaseTests(TestCase):
         expected_extracted_text = "bingo!"
         mocked_extract_text.return_value = expected_extracted_text
         base_ocr = FTLOCRBase()
-        base_ocr.supported_storages.append(DEFAULT_FILE_STORAGE)
+        base_ocr.supported_storages.append(settings.DEFAULT_FILE_STORAGE)
 
         # When doc do not have a content text
         mocked_doc = Mock()

@@ -6,6 +6,7 @@ from unittest.mock import patch, Mock
 
 import qrcode.image.svg
 from captcha.models import CaptchaStore
+from django.conf import settings
 from django.conf.global_settings import SESSION_COOKIE_AGE
 from django.contrib import messages
 from django.contrib.auth.signals import user_logged_out
@@ -49,7 +50,6 @@ from ftl.otp_plugins.otp_ftl.views_totp import (
     TOTPDeviceAdd,
     TOTPDeviceConfirm,
 )
-from ftl.settings import FIDO2_RP_NAME
 
 
 class FtlPagesTests(TestCase):
@@ -878,7 +878,7 @@ class OTPFtlViewsFido2Tests(TestCase):
 
         response = self.client.get("/accounts/2fa/fido2/api/register_begin")
 
-        pkcre_mock.assert_called_once_with("testserver", FIDO2_RP_NAME)
+        pkcre_mock.assert_called_once_with("testserver", settings.FIDO2_RP_NAME)
         fido2_server_mock.assert_called_once_with(pkcre_mock())
 
         self.assertEqual(cbor2_mock.loads.call_count, 2)
@@ -948,7 +948,7 @@ class OTPFtlViewsFido2Tests(TestCase):
             fake_cbor2_loads_value["attestationObject"]
         )
 
-        pkcre_mock.assert_called_once_with("testserver", FIDO2_RP_NAME)
+        pkcre_mock.assert_called_once_with("testserver", settings.FIDO2_RP_NAME)
         fido2_server_mock().register_complete.assert_called_once_with(
             "fake_registration_data",
             client_data_mock.return_value,
@@ -989,7 +989,7 @@ class OTPFtlViewsFido2Tests(TestCase):
         acd_mock.assert_any_call(fake_cbor2_loaded_list[0])
         acd_mock.assert_any_call(fake_cbor2_loaded_list[1])
 
-        pkcre_mock.assert_called_once_with("testserver", FIDO2_RP_NAME)
+        pkcre_mock.assert_called_once_with("testserver", settings.FIDO2_RP_NAME)
         fido2_server_mock.assert_called_once_with(pkcre_mock())
 
         fido2_server_mock().authenticate_begin.assert_called_once_with(

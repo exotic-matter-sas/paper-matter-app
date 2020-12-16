@@ -13,9 +13,9 @@ from selenium.common.exceptions import NoSuchElementException
 from core.tasks import apply_ftl_processing
 from ftests.pages.document_viewer_modal import DocumentViewerModal
 from ftests.pages.home_page import HomePage
+from ftests.pages.login_page import LoginPage
 from ftests.pages.manage_folders_modal import ManageFoldersModal
 from ftests.pages.move_documents_modal import MoveDocumentsModal
-from ftests.pages.login_page import LoginPage
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import (
     setup_org,
@@ -27,7 +27,6 @@ from ftests.tools.setup_helpers import (
     setup_document_share,
 )
 from ftl import celery
-from ftl.settings import BASE_DIR
 
 
 class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
@@ -73,9 +72,15 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
     def test_upload_documents_to_root(self, mock_apply_processing):
         # User upload several documents
         documents_to_upload = [
-            os.path.join(BASE_DIR, "ftests", "tools", "test_documents", "test.pdf"),
-            os.path.join(BASE_DIR, "ftests", "tools", "test_documents", "test.pdf"),
-            os.path.join(BASE_DIR, "ftests", "tools", "test_documents", "test.pdf"),
+            os.path.join(
+                settings.BASE_DIR, "ftests", "tools", "test_documents", "test.pdf"
+            ),
+            os.path.join(
+                settings.BASE_DIR, "ftests", "tools", "test_documents", "test.pdf"
+            ),
+            os.path.join(
+                settings.BASE_DIR, "ftests", "tools", "test_documents", "test.pdf"
+            ),
         ]
         self.upload_documents(documents_to_upload)
 
