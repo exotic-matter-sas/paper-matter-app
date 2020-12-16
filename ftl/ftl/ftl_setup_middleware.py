@@ -29,7 +29,7 @@ class FTLSetupMiddleware:
 
     @property
     def admin_state(self):
-        return FTLUser.objects.filter(is_staff=True).count() > 0
+        return FTLUser.objects.filter(is_staff=True).exists()
 
     def __call__(self, request):
         # Code to be executed for each request before
