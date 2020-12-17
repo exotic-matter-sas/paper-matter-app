@@ -18,3 +18,12 @@
 {% block aside_illustration %}
     <img src="{% static "user_setup.svg" %}" alt="Woman checking setup steps illustration">
 {% endblock %}
+
+{% block footer %}
+    <script type="application/javascript">
+        "use strict";
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const tz_input = document.getElementById("id_tz");
+        tz_input.value = tz;
+    </script>
+{% endblock %}
