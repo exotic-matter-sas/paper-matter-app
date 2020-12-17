@@ -18,7 +18,13 @@
             </p>
             <ul>
                 {% for access in access_log %}
-                    <li><strong>{{ access.attempt_time }}</strong> {{ access.ip_address }} {{ access.parsed.os.family }}
+                    <li>
+                        <strong>
+                            {{ access.attempt_time }}
+                            {% if not request.user.tz or request.user.tz == "UTC" %}
+                                <sup><abbr title="Coordinated Universal Time">UTC</abbr></sup>
+                            {% endif %}
+                        </strong> {{ access.ip_address }} {{ access.parsed.os.family }}
                         ({{ access.parsed.user_agent.family }})
                     </li>
                 {% endfor %}
