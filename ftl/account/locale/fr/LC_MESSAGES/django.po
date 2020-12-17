@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-14 14:48+0100\n"
+"POT-Creation-Date: 2020-12-17 10:50+0000\n"
 "PO-Revision-Date: 2020-12-14 14:46+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -66,14 +66,23 @@ msgstr "Revenir à l'application"
 msgid "Settings"
 msgstr "Paramètres"
 
+msgid "User settings"
+msgstr "Paramètres utilisateur"
+
+msgid "Region"
+msgstr "Région"
+
+msgid "Security"
+msgstr "Sécurité"
+
 msgid "Two factor authentication"
 msgstr "Authentification à deux facteurs"
 
-msgid "User account settings"
-msgstr "Paramètres du compte utilisateur"
-
 msgid "Third party applications"
 msgstr "Applications tierces"
+
+msgid "Management"
+msgstr "Gestion"
 
 msgid "Data import / export"
 msgstr "Import / export des données"
@@ -333,9 +342,12 @@ msgstr ""
 msgid "Account security: notice of password change"
 msgstr "Sécurité du compte : avis de changement de mot de passe"
 
-msgid "You can find various settings for your user account."
+msgid "Region settings"
+msgstr "Paramètres de la région"
+
+msgid "You can find various settings for your region."
 msgstr ""
-"Vous pouvez trouver différents paramètres pour votre compte utilisateur."
+"Vous pouvez trouver différents paramètres pour votre région."
 
 msgid "Your language choice also affects the emails we might send."
 msgstr ""
