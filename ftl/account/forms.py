@@ -42,13 +42,10 @@ class DeleteAccountForm(forms.Form):
 
 
 class SettingsAccountForm(forms.Form):
-    tz = forms.ChoiceField(
-        label=_("Timezone"), choices=[(t, t) for t in pytz.common_timezones]
-    )
-    lang = forms.ChoiceField(
-        label=_("Language"),
-        choices=[(k, v) for k, v in getattr(settings, "LANGUAGES", [])],
-    )
+    TZ_LIST = [(None, "--")] + [(t, t) for t in pytz.common_timezones]
+    LANG_LIST = [(None, "--")] + [(k, v) for k, v in getattr(settings, "LANGUAGES", [])]
+    tz = forms.ChoiceField(label=_("Timezone"), choices=TZ_LIST,)
+    lang = forms.ChoiceField(label=_("Language"), choices=LANG_LIST,)
 
     def clean_lang(self):
         lang = self.cleaned_data["lang"]
