@@ -1,7 +1,5 @@
 #  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
 #  Licensed under the Business Source License. See LICENSE at project root for more information.
-from selenium.webdriver.support.select import Select
-
 from core.models import FTLOrg
 from ftests.pages.base_page import BasePage
 from ftests.tools import test_values as tv

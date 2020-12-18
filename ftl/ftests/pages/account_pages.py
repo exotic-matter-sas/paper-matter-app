@@ -8,6 +8,7 @@ class AccountPages(BasePage):
     index_url = "/accounts/"
     update_email_url = "/accounts/email/"
     update_password_url = "/accounts/password/"
+    update_region_settings_url = "/accounts/settings/"
     two_factors_authentication_url = "/accounts/2fa/"
     delete_account_url = "/accounts/delete/"
 
@@ -18,15 +19,28 @@ class AccountPages(BasePage):
 
     logout_button = 'a[href="/logout/"]'
 
-    # Change email page
+    #################
+    # User settings #
+    #################
+
+    # email page
     new_email_input = "#email-update-form #id_email"
     submit_new_email_input = '#email-update-form [type="submit"]'
 
-    # Change password page
+    # password page
     old_password_input = "#password-update-form #id_old_password"
     new_password_input = "#password-update-form #id_new_password1"
     new_password_confirmation_input = "#password-update-form #id_new_password2"
     submit_new_password_input = '#password-update-form [type="submit"]'
+
+    # region page
+    language_select = "#account-settings-form #id_lang"
+    timezone_select = "#account-settings-form #id_tz"
+    submit_new_region_settings = '#account-settings-form [type="submit"]'
+
+    ############
+    # Security #
+    ############
 
     # 2fa pages
     # static device
@@ -65,6 +79,10 @@ class AccountPages(BasePage):
     # id_otp_device option
     check_pages_alternatives_list = "#alternatives-list li a"
 
+    ##############
+    # Management #
+    ##############
+
     # Delete account page
     confirm_password_input = "#account-delete-form #password"
     submit_account_deletion = '#account-delete-form [type="submit"]'
@@ -78,6 +96,15 @@ class AccountPages(BasePage):
         self.get_elem(self.new_password_input).send_keys(new_password)
         self.get_elem(self.new_password_confirmation_input).send_keys(new_password)
         self.get_elem(self.submit_new_password_input).click()
+
+    def update_region_settings(self, language=None, timezone=None):
+        if not (language or timezone):
+            raise ValueError("You should set at least language and/or timezone param.")
+        if language:
+            self.select_dropdown_option(self.language_select, language)
+        if timezone:
+            self.select_dropdown_option(self.timezone_select, timezone)
+        self.get_elem(self.submit_new_region_settings).click()
 
     def add_emergency_codes_set(self, codes_set_name):
         self.get_elem(self.add_emergency_codes_button).click()

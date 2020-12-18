@@ -19,7 +19,7 @@
                     <div class="form-group {% if form.lang.errors %}invalid{% endif %}">
                         <label for="{{ form.lang.id_for_label }}">{{ form.lang.label }}</label>
                         {{ form.lang|add_attr:'{"class":"form-control"}' }}
-                        <small id="emailHelp" class="form-text text-muted">
+                        <small class="form-text text-muted">
                             {% trans 'Your language choice also affects the emails we might send.' %}
                         </small>
                         {% for error in form.lang.errors %}
@@ -30,10 +30,12 @@
                     <div class="form-group {% if form.tz.errors %}invalid{% endif %}">
                         <label for="{{ form.tz.id_for_label }}">{{ form.tz.label }}</label>
                         {{ form.tz|add_attr:'{"class":"form-control"}' }}
-                        <small id="emailHelp" class="form-text text-muted">
+                        <small class="form-text text-muted">
                             {% now "SHORT_DATETIME_FORMAT" as now_time %}
+                            {% now "e" as time_zone %}
                             {% blocktrans %}
-                                The current time is {{ now_time }}.
+                                The current time is <span id="current-time" title="{{ time_zone }}">
+                                {{ now_time }}</span>.
                             {% endblocktrans %}
                         </small>
                         {% for error in form.tz.errors %}
