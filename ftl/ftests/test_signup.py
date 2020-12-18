@@ -117,7 +117,9 @@ class SignupPageSetRegionSettingsTests(SignupPages, LoginPage, AccountPages):
     def test_browser_region_settings_detected_during_signup(self):
         # User create an account in the first org
         self.visit(SignupPages.url)
-        browser_timezone = self.browser.execute_script("return Intl.DateTimeFormat().resolvedOptions().timeZone")
+        browser_timezone = self.browser.execute_script(
+            "return Intl.DateTimeFormat().resolvedOptions().timeZone"
+        )
 
         self.create_user(activate_user=True)
         self.log_user()
@@ -126,6 +128,4 @@ class SignupPageSetRegionSettingsTests(SignupPages, LoginPage, AccountPages):
         # Language is detected by django.middleware.locale.LocaleMiddleware
         self.assertEqual(self.get_elem_text(self.language_select), "Français")
         # Timezone is set by browser inside hidden input during signup
-        self.assertEqual(
-            self.get_elem_text(self.timezone_select), browser_timezone
-        )
+        self.assertEqual(self.get_elem_text(self.timezone_select), browser_timezone)
