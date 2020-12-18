@@ -34,9 +34,9 @@ localVue.prototype.$moment = {
   parseZone: () => {
     return {
       format: jest.fn(),
-      fromNow: jest.fn()
-    }
-  }
+      fromNow: jest.fn(),
+    };
+  },
 }; // moment mock
 const mockedMixinAlert = jest.fn();
 localVue.mixin({ methods: { mixinAlert: mockedMixinAlert } }); // mixinAlert mock
