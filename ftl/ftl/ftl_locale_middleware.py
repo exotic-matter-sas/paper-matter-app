@@ -27,5 +27,6 @@ class FTLLocaleMiddleware:
             if lang:
                 translation.activate(lang)
                 request.session[translation.LANGUAGE_SESSION_KEY] = lang
+                request.LANGUAGE_CODE = lang
 
         return self.get_response(request)
