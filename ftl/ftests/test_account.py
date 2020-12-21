@@ -26,6 +26,8 @@ from ftests.tools.setup_helpers import (
     setup_2fa_static_device,
     setup_2fa_fido2_device,
 )
+from ftests.tools.test_values import TOTP_DEVICE_SECRET_TIME, TOTP_DEVICE_SECRET_KEY, TOTP_DEVICE_VALID_TOKEN, \
+    TOTP_DEVICE_INVALID_TOKEN
 from ftl.celery import app
 from ftl.otp_plugins.otp_ftl import views_fido2
 
@@ -37,7 +39,7 @@ def mocked_verify_user(self, request, user):
 
 
 def mocked_totp_time_setter(self, value):
-    self._time = TotpDevice2FATests.secret_time
+    self._time = TOTP_DEVICE_SECRET_TIME
 
 
 # These mocks need to be defined before Django (or test?) start
@@ -532,13 +534,6 @@ class StaticDevice2FATests(LoginPage, AccountPages):
 
 
 class TotpDevice2FATests(LoginPage, AccountPages):
-    secret_time = 1582109713.4242425
-    secret_key = "f679758a45fa55cd14b583c8505bf4d12eb76f27"
-    valid_token = (
-        "954370"  # value get from TOTP.token() in debug mode with the 2 settings above
-    )
-    invalid_token = "123456"
-
     def setUp(self, **kwargs):
         # first org, admin, user are already created, user is already logged to 2FA account page
         super().setUp()
@@ -593,7 +588,7 @@ class TotpDevice2FATests(LoginPage, AccountPages):
         # User has already add an unconfirmed auth app
         device_name = "My precious yPhone xD"
         setup_2fa_totp_device(
-            self.user, device_name, secret_key=self.secret_key, confirmed=False
+            self.user, device_name, secret_key=TOTP_DEVICE_SECRET_KEY, confirmed=False
         )
         self.visit(AccountPages.two_factors_authentication_url)  # refresh page
 
@@ -604,7 +599,7 @@ class TotpDevice2FATests(LoginPage, AccountPages):
         self.get_elem(self.qr_code_image)
 
         # User scan the QR code and input generated code
-        self.enter_2fa_code(self.valid_token)
+        self.enter_2fa_code(TOTP_DEVICE_VALID_TOKEN)
 
         # User is invited to add a emergency code as backup
         self.assertIn(
@@ -640,7 +635,7 @@ class TotpDevice2FATests(LoginPage, AccountPages):
             self.get_elem(self.check_pages_alternatives_list)
 
         # User can complete login using a valid 2FA code
-        self.enter_2fa_code(self.valid_token)
+        self.enter_2fa_code(TOTP_DEVICE_VALID_TOKEN)
         self.assertIn("home", self.head_title)
 
     @patch.object(TOTP, "time", totp_time_property)
@@ -652,13 +647,13 @@ class TotpDevice2FATests(LoginPage, AccountPages):
         # User has already add an unconfirmed auth app and resume its totp device setup
         device_name = "My precious yPhone xD"
         setup_2fa_totp_device(
-            self.user, device_name, secret_key=self.secret_key, confirmed=False
+            self.user, device_name, secret_key=TOTP_DEVICE_SECRET_KEY, confirmed=False
         )
         self.visit(AccountPages.two_factors_authentication_url)  # refresh page
         self.get_elem(self.unconfirmed_badges).click()
 
         # User enter invalid code
-        self.enter_2fa_code(self.invalid_token)
+        self.enter_2fa_code(TOTP_DEVICE_INVALID_TOKEN)
 
         # An error message appears
         self.get_elem(self.error_message)
@@ -672,13 +667,13 @@ class TotpDevice2FATests(LoginPage, AccountPages):
         # User has already add an unconfirmed auth app and resume its totp device setup
         device_name = "My precious yPhone xD"
         setup_2fa_totp_device(
-            self.user, device_name, secret_key=self.secret_key, confirmed=False
+            self.user, device_name, secret_key=TOTP_DEVICE_SECRET_KEY, confirmed=False
         )
         self.visit(AccountPages.two_factors_authentication_url)  # refresh page
         self.get_elem(self.unconfirmed_badges).click()
 
         # User scan the QR code and input generated code
-        self.enter_2fa_code(self.valid_token)
+        self.enter_2fa_code(TOTP_DEVICE_VALID_TOKEN)
 
         # User has already a "emergency codes set" set, so he get redirected to 2FA devices list
         self.wait_for_elem_to_show(self.auth_app_divs)

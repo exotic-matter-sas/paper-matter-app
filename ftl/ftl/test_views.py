@@ -24,7 +24,6 @@ from rest_framework import status
 
 from core.models import FTLUser, FTL_PERMISSIONS_USER
 from ftests.test_account import (
-    TotpDevice2FATests,
     totp_time_setter,
     totp_time_property,
     mocked_totp_time_setter,
@@ -40,6 +39,7 @@ from ftests.tools.setup_helpers import (
     setup_2fa_static_device,
     setup_2fa_fido2_device,
 )
+from ftests.tools.test_values import TOTP_DEVICE_SECRET_KEY, TOTP_DEVICE_VALID_TOKEN
 from ftl import celery
 from ftl.otp_plugins.otp_ftl.forms import TOTPDeviceConfirmForm
 from ftl.otp_plugins.otp_ftl.models import Fido2Device
@@ -219,7 +219,7 @@ class OTPCheckViewTests(TestCase):
     @patch.object(TOTP, "time", totp_time_property)
     def test_session_timeout_reduced_during_2fa_check(self):
         totp_device = setup_2fa_totp_device(
-            self.user, secret_key=TotpDevice2FATests.secret_key
+            self.user, secret_key=TOTP_DEVICE_SECRET_KEY
         )
         totp_time_setter.side_effect = mocked_totp_time_setter
 
@@ -241,7 +241,7 @@ class OTPCheckViewTests(TestCase):
             "/accounts/2fa/totp/check/",
             {
                 "otp_device": totp_device.persistent_id,
-                "otp_token": TotpDevice2FATests.valid_token,
+                "otp_token": TOTP_DEVICE_VALID_TOKEN,
             },
             follow=True,
         )
