@@ -23,6 +23,7 @@ from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.support import expected_conditions as Ec
+from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 
 import ftests.tools.detect_server as server
@@ -218,6 +219,11 @@ class BasePage(LIVE_SERVER):
         else:
             raise NoSuchElementException(msg=f"{css_selector} not found")
 
+    def get_elem_attribute(self, css_selector, attribute_name, is_visible=True):
+        elem = self.get_elem(css_selector, is_visible)
+
+        return elem.get_attribute(attribute_name)
+
     @staticmethod
     def _wait_for_method_to_return(
         method,
@@ -383,6 +389,11 @@ class BasePage(LIVE_SERVER):
         ) as js_file:
             js_to_execute = js_file.read()
             self.browser.execute_script(js_to_execute, elem_to_drag, elem_drop_zone)
+
+    def select_dropdown_option(self, select_css_selector, option_to_select_text):
+        Select(self.get_elem(select_css_selector)).select_by_visible_text(
+            option_to_select_text
+        )
 
 
 @shared_task

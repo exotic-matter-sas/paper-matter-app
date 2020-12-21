@@ -40,6 +40,9 @@
                 <div id="account-side-menu" class="col-12 px-0 py-3 col-md-3 px-md-3 py-md-0 d-print-none">
                     <div class="list-group">
                         {% with request.resolver_match.view_name as view_name %}
+                            <div class="list-group-item list-group-item-secondary font-weight-bold">
+                                {% trans 'User settings' %}
+                            </div>
                             <a href="{% url 'account_email' %}"
                                class="{% if view_name == 'account_email' %}active {% endif %}list-group-item list-group-item-action">
                                 Email
@@ -48,6 +51,13 @@
                                class="{% if view_name == 'account_password' %}active {% endif %}list-group-item list-group-item-action">
                                 {% trans 'Password' %}
                             </a>
+                            <a href="{% url 'account_user_settings' %}"
+                               class="{% if 'account_user_settings' in view_name %}active {% endif %}list-group-item list-group-item-action">
+                                {% trans 'Region' %}
+                            </a>
+                            <div class="list-group-item list-group-item-secondary font-weight-bold">
+                                {% trans 'Security' %}
+                            </div>
                             {% if axes_enabled %}
                                 <a href="{% url 'account_activity' %}"
                                    class="{% if view_name == 'account_activity' %}active {% endif %}list-group-item list-group-item-action">
@@ -63,6 +73,9 @@
                             <a href="{% url 'oauth2_provider:authorized-token-list' %}"
                                class="{% if 'oauth2_provider' in view_name %}active {% endif %}list-group-item list-group-item-action">
                                 {% trans 'Third party applications' %}</a>
+                            <div class="list-group-item list-group-item-secondary font-weight-bold">
+                                {% trans 'Management' %}
+                            </div>
                             <a href="{% url 'account_import_export' %}"
                                class="{% if view_name == 'account_import_export' %}active {% endif %}list-group-item list-group-item-action">
                                 {% trans 'Data import / export' %}</a>
@@ -83,7 +96,7 @@
     <footer class="footer mt-auto text-muted text-center d-print-none">
         {% blocktrans %}<a id="pm-link" target="_blank" href="https://welcome.papermatter.app">Paper Matter</a>,
             carefully crafted by <a id="em-link" target="_blank" href="https://www.exotic-matter.fr">Exotic <span
-                    class="highlight">Matter</span></a>
+                class="highlight">Matter</span> in France.</a>
         {% endblocktrans %}
     </footer>
     </body>

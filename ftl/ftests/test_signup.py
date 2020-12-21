@@ -6,6 +6,8 @@ import threading
 from django.core import mail
 from django.test import override_settings
 
+from ftests.pages.account_pages import AccountPages
+from ftests.pages.login_page import LoginPage
 from ftests.pages.signup_pages import SignupPages
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import setup_org, setup_admin
@@ -87,3 +89,43 @@ class SignupPageTests(SignupPages):
         self.assertIn(
             "could not activate the account", self.get_elem_text(self.main_panel)
         )
+
+
+@override_settings(CELERY_BROKER_URL="memory://localhost")
+@override_settings(CELERY_TASK_ROUTES={})
+class SignupPageSetRegionSettingsTests(SignupPages, LoginPage, AccountPages):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        app.control.purge()
+        cls._worker = app.Worker(app=app, pool="solo", concurrency=1)
+        cls._thread = threading.Thread(target=cls._worker.start)
+        cls._thread.daemon = True
+        cls._thread.start()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls._worker.stop()
+        super().tearDownClass()
+
+    def setUp(self, **kwargs):
+        # first org and admin already created
+        super().setUp(browser_locale="fr-FR, fr")
+        self.admin_org = setup_org("admin org", "admin-org")
+        setup_admin(org=self.admin_org)
+
+    def test_browser_region_settings_detected_during_signup(self):
+        # User create an account in the first org
+        self.visit(SignupPages.url)
+        browser_timezone = self.browser.execute_script(
+            "return Intl.DateTimeFormat().resolvedOptions().timeZone"
+        )
+
+        self.create_user(activate_user=True)
+        self.log_user()
+        self.visit(AccountPages.update_region_settings_url)
+
+        # Language is detected by django.middleware.locale.LocaleMiddleware
+        self.assertEqual(self.get_elem_text(self.language_select), "Français")
+        # Timezone is set by browser inside hidden input during signup
+        self.assertEqual(self.get_elem_text(self.timezone_select), browser_timezone)

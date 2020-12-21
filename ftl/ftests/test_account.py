@@ -25,6 +25,7 @@ from ftests.tools.setup_helpers import (
     setup_2fa_totp_device,
     setup_2fa_static_device,
     setup_2fa_fido2_device,
+    setup_document,
 )
 from ftl.celery import app
 from ftl.otp_plugins.otp_ftl import views_fido2
@@ -168,6 +169,120 @@ class BasicAccountPagesTests(LoginPage, AccountPages):
         self.assertIn(
             "home", self.head_title, "User login should success using its new password"
         )
+
+
+class RegionAccountPageTests(LoginPage, HomePage, AccountPages, SignupPages):
+    def setUp(self, **kwargs):
+        # first org, admin, user are already created, user is already logged on home page
+        super().setUp(browser_locale="fr-FR, fr")  # browser local is french
+        self.admin_org = setup_org(name="admin org 1", slug="admin-org-1")
+        setup_admin(self.admin_org)
+        self.user_org = setup_org()
+
+    def test_user_is_missing_region_settings(self):
+        # Given user is missing lang and tz
+        setup_user(self.user_org, lang="", tz="")
+        self.visit(LoginPage.url)
+        self.log_user()
+
+        # When he go to update region page
+        self.visit(AccountPages.update_region_settings_url)
+
+        # Selects have no value set (--)
+        self.assertEqual(self.get_elem_text(self.language_select), "--")
+        self.assertEqual(self.get_elem_text(self.timezone_select), "--")
+
+        # Default locale come from browser (french for this test)
+        self.assertIn("compte", self.head_title)
+        # Default timezone come from TIME_ZONE settings (UTC currently)
+        self.assertEqual("UTC", self.get_elem_attribute("#current-time", "title"))
+
+    def test_user_have_region_settings(self):
+        # Given user get custom region settings
+        user_timezone_setting = "Europe/Amsterdam"
+        setup_user(self.user_org, lang="en", tz=user_timezone_setting)
+        self.visit(LoginPage.url)
+        self.log_user()
+
+        # When he go to update region page
+        self.visit(AccountPages.update_region_settings_url)
+
+        # Selects have proper values sets
+        self.assertEqual(self.get_elem_text(self.language_select), "English")
+        self.assertEqual(
+            self.get_elem_text(self.timezone_select), user_timezone_setting
+        )
+
+        # Locale come from user setting
+        self.assertIn("account", self.head_title)
+        # Timezone come from user setting
+        self.assertEqual("CET", self.get_elem_attribute("#current-time", "title"))
+
+    def test_user_update_region_language(self):
+        setup_user(self.user_org)
+        self.visit(LoginPage.url)
+        # language on non logged page is Fr (due to browser setting)
+        self.assertIn("connecter", self.head_title)
+
+        self.log_user()
+
+        # language on logged page is En (due to user setting)
+        self.assertIn("home", self.head_title)  # Django string
+        self.assertIn(
+            "Search",
+            self.get_elem_text(self.search_button),
+            "Vue string should be translated according to user settings",
+        )  # Vue string
+
+        # User go to update region page
+        self.visit(AccountPages.update_region_settings_url)
+
+        # He update its language to Fr
+        self.update_region_settings(language="Français")
+
+        # Language on logged page is now Fr (due to user setting)
+        self.visit(HomePage.url)
+        self.assertIn("accueil", self.head_title)  # Django string
+        self.assertIn(
+            "Rechercher", self.get_elem_text(self.search_button)
+        )  # Vue string
+
+    def test_user_update_region_timezone(self):
+        # user has already added a document and log in
+        user = setup_user(self.user_org, tz="America/New_York")
+        setup_document(self.user_org, user)
+        self.visit(LoginPage.url)
+        self.log_user()
+
+        # We store the current document add time
+        self.wait_documents_list_loaded()
+        initial_document_add_time = re.search(
+            r"(\d{1,2}):(\d{1,2})",
+            self.get_elem_attribute(self.first_document_date, "title"),
+        )
+        initial_document_add_hours = int(initial_document_add_time.group(1))
+        initial_document_add_minutes = int(initial_document_add_time.group(2))
+
+        # User go to update region page
+        self.visit(AccountPages.update_region_settings_url)
+
+        # He update its timezone to Chicago
+        self.update_region_settings(timezone="America/Chicago")
+
+        # User go back to home page
+        self.visit(HomePage.url)
+        self.wait_documents_list_loaded()
+
+        # Document date have been updated
+        updated_document_add_time = re.search(
+            r"(\d{1,2}):(\d{1,2})",
+            self.get_elem_attribute(self.first_document_date, "title"),
+        )
+        updated_document_add_hours = int(updated_document_add_time.group(1))
+        updated_document_add_minutes = int(updated_document_add_time.group(2))
+
+        self.assertEqual(updated_document_add_hours, initial_document_add_hours - 1)
+        self.assertEqual(updated_document_add_minutes, initial_document_add_minutes)
 
 
 class DeleteAccountPageTests(LoginPage, AccountPages, SignupPages):

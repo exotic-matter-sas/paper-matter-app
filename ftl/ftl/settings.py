@@ -94,6 +94,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "ftl.ftl_setup_middleware.FTLSetupMiddleware",
+    "ftl.ftl_locale_middleware.FTLLocaleMiddleware",
     "axes.middleware.AxesMiddleware",
 ]
 if DEBUG and DEV_MODE:
@@ -153,6 +154,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
 LANGUAGE_CODE = "en-us"
+
+LANGUAGES = [
+    ("fr", "Français"),
+    ("en", "English"),
+]
 
 TIME_ZONE = "UTC"
 
