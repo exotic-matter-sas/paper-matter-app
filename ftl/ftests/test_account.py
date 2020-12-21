@@ -26,8 +26,12 @@ from ftests.tools.setup_helpers import (
     setup_2fa_static_device,
     setup_2fa_fido2_device,
 )
-from ftests.tools.test_values import TOTP_DEVICE_SECRET_TIME, TOTP_DEVICE_SECRET_KEY, TOTP_DEVICE_VALID_TOKEN, \
-    TOTP_DEVICE_INVALID_TOKEN
+from ftests.tools.test_values import (
+    TOTP_DEVICE_SECRET_TIME,
+    TOTP_DEVICE_SECRET_KEY,
+    TOTP_DEVICE_VALID_TOKEN,
+    TOTP_DEVICE_INVALID_TOKEN,
+)
 from ftl.celery import app
 from ftl.otp_plugins.otp_ftl import views_fido2
 
