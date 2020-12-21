@@ -77,8 +77,8 @@ class Command(BaseCommand):
         self.stdout.write(
             self.style.MIGRATE_HEADING(
                 ngettext(
-                    "Starting to reindex one document",
-                    "Starting to reindex %(count)s documents",
+                    "One document to be reindexed",
+                    "%(count)s documents to be reindexed",
                     documents_count,
                 )
                 % {"count": documents_count}
@@ -86,7 +86,9 @@ class Command(BaseCommand):
         )
 
         for doc in docs:
-            self.stdout.write(_("Reindexing %(title)s") % {"title": doc.title})
+            self.stdout.write(
+                _("Submitted for reindexing %(title)s") % {"title": doc.title}
+            )
             apply_ftl_processing.delay(
                 doc.pid, doc.org.pk, doc.ftl_user.pk, force=plugins_forced
             )
@@ -97,8 +99,8 @@ class Command(BaseCommand):
         self.stdout.write(
             self.style.SUCCESS(
                 ngettext(
-                    "One document successfully reindexed in %(time)s seconds",
-                    "%(count)s documents successfully reindexed in %(time)s seconds",
+                    "One document successfully submitted for reindexing in %(time)s seconds",
+                    "%(count)s documents successfully submitted for reindexing in %(time)s seconds",
                     documents_count,
                 )
                 % {"count": documents_count, "time": round(end_time - start_time, 2)}

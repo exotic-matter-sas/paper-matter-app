@@ -1,5 +1,6 @@
 #  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
 #  Licensed under the Business Source License. See LICENSE at project root for more information.
+import pytz
 from captcha.fields import CaptchaField
 from django import forms
 from django.conf import settings
@@ -42,10 +43,16 @@ class FTLCreateOrgAndFTLUser(RegistrationForm):
         ),
     )
 
-    def __init__(self, *args, **kwargs):
+    tz = forms.CharField(widget=forms.HiddenInput(), required=False)
+
+    def __init__(self, lang, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # language for the new account
+        self.lang = lang
+
         # remove default autofocus on email field
         del self.fields["email"].widget.attrs["autofocus"]
+
         # add the mandatory asterisk to existing label
         self.fields["email"].label += "*"
         self.fields["password1"].label += "*"
@@ -77,6 +84,14 @@ class FTLCreateOrgAndFTLUser(RegistrationForm):
 
         return name_
 
+    def clean_tz(self):
+        tz_ = self.cleaned_data["tz"].strip()
+
+        if tz_ not in pytz.common_timezones:
+            return settings.TIME_ZONE
+
+        return tz_
+
     def save(self, commit=True):
         user = super().save(commit=False)
 
@@ -87,6 +102,8 @@ class FTLCreateOrgAndFTLUser(RegistrationForm):
         ftl_org.save()
 
         user.org = ftl_org
+        user.tz = self.cleaned_data["tz"]
+        user.lang = self.lang
         user.is_superuser = False
         user.is_staff = False
         user.save()

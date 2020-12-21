@@ -6,7 +6,10 @@ from base64 import b64decode
 
 from django.conf import settings
 from django.core.files.base import ContentFile
+from django.core.signing import TimestampSigner
 from django.urls import reverse
+from django.utils.translation import get_language_from_request
+from jose import jwt
 from rest_framework import serializers
 
 from core.mimes import mimetype_to_ext
@@ -63,14 +66,14 @@ class FTLDocumentSerializer(serializers.ModelSerializer):
         return mimetype_to_ext(obj.type)
 
     def get_download_url(self, obj):
-        return reverse("api_download_url", kwargs={"uuid": obj.pid})
+        return reverse("api_download_url", kwargs={"pid": obj.pid})
 
     def get_is_shared(self, obj):
         return obj.share_pids.count() > 0
 
     class Meta:
         model = FTLDocument
-        fields = (
+        fields = [
             "pid",
             "title",
             "note",
@@ -89,8 +92,8 @@ class FTLDocumentSerializer(serializers.ModelSerializer):
             "ext",
             "download_url",
             "is_shared",
-        )
-        read_only_fields = (
+        ]
+        read_only_fields = [
             "pid",
             "created",
             "edited",
@@ -104,7 +107,94 @@ class FTLDocumentSerializer(serializers.ModelSerializer):
             "ext",
             "download_url",
             "is_shared",
-        )
+        ]
+
+
+class FTLDocumentDetailsOnlyOfficeSerializer(FTLDocumentSerializer):
+    only_office_config = serializers.SerializerMethodField()
+
+    def get_download_url_temp(self, obj):
+        signer = TimestampSigner()
+        value = signer.sign(obj.pid)
+
+        request = self.context.get("request", None)
+        relative_url = reverse("api_temp_download_url", kwargs={"spid": value})
+
+        if request:
+            return request.build_absolute_uri(relative_url)
+
+        return f"{getattr(settings, 'FTL_EXTERNAL_HOST')}{relative_url}"
+
+    def get_only_office_config(self, obj):
+        if obj.type in getattr(
+            settings, "FTL_ONLY_OFFICE_SUPPORTED_DOCUMENTS_TYPES", []
+        ):
+            request = self.context.get("request", None)
+            if request:
+                current_lang = get_language_from_request(request)
+            else:
+                current_lang = "en"
+
+            only_office_config = {
+                "document": {
+                    "fileType": mimetype_to_ext(obj.type)[1:],
+                    "key": str(obj.pid),
+                    "title": obj.title,
+                    "url": self.get_download_url_temp(obj),
+                    "permissions": {
+                        "comment": False,
+                        "copy": True,
+                        "download": True,
+                        "edit": False,
+                        "fillForms": False,
+                        "modifyContentControl": False,
+                        "modifyFilter": False,
+                        "print": True,
+                        "review": False,
+                    },
+                },
+                "editorConfig": {
+                    "lang": current_lang,
+                    "mode": "view",
+                    "customization": {
+                        "autosave": False,
+                        "chat": False,
+                        "commentAuthorOnly": False,
+                        "comments": False,
+                        "compactHeader": False,
+                        "compactToolbar": False,
+                        "compatibleFeatures": False,
+                        "help": True,
+                        "hideRightMenu": False,
+                        "mentionShare": False,
+                        "plugins": False,
+                        "reviewDisplay": "original",
+                        "showReviewChanges": False,
+                        "spellcheck": False,
+                        "toolbarNoTabs": False,
+                        "unit": "cm",
+                        "zoom": -2,
+                    },
+                },
+            }
+
+            only_office_config["token"] = jwt.encode(
+                only_office_config,
+                getattr(settings, "FTL_ONLY_OFFICE_SECRET_KEY"),
+                algorithm="HS256",
+            )
+
+            return only_office_config
+        else:
+            return None
+
+    class Meta(FTLDocumentSerializer.Meta):
+        fields = FTLDocumentSerializer.Meta.fields + [
+            "only_office_config",
+        ]
+        read_only_fields = FTLDocumentSerializer.Meta.read_only_fields + [
+            "only_office_config",
+        ]
 
 
 class FTLFolderSerializer(serializers.ModelSerializer):
@@ -135,7 +225,7 @@ class FTLDocumentSharingSerializer(serializers.ModelSerializer):
         if request:
             return request.build_absolute_uri(relative_url)
 
-        return relative_url
+        return f"{getattr(settings, 'FTL_EXTERNAL_HOST')}{relative_url}"
 
     class Meta:
         model = FTLDocumentSharing

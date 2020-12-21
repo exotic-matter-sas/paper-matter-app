@@ -85,8 +85,8 @@
         <div class="d-flex align-items-center justify-content-between p-2">
           <small
             class="ml-1 text-muted text-wrap"
-            :title="$moment(doc.created).format('LLLL')"
-            >{{ $moment(doc.created).fromNow() }}</small
+            :title="$moment.parseZone(doc.created).format('LLLL')"
+            >{{ $moment.parseZone(doc.created).fromNow() }}</small
           >
           <div
             v-if="!doc.is_processed && !timeout_spinner"

@@ -33,8 +33,12 @@ localVue.prototype.$t = (text, args = "") => {
 localVue.prototype.$tc = (text, args = "") => {
   return text + args;
 }; // i18n mock
-localVue.prototype.$moment = () => {
-  return { fromNow: jest.fn() };
+localVue.prototype.$moment = {
+  parseZone: () => {
+    return {
+      fromNow: jest.fn(),
+    };
+  },
 }; // moment mock
 const mockedRouterPush = jest.fn();
 localVue.prototype.$router = { push: mockedRouterPush }; // router mock

@@ -30,8 +30,13 @@ localVue.prototype.$t = (text) => {
 localVue.prototype.$tc = (text, args = "") => {
   return text + args;
 }; // i18n mock
-localVue.prototype.$moment = () => {
-  return { fromNow: jest.fn(), format: jest.fn() };
+localVue.prototype.$moment = {
+  parseZone: () => {
+    return {
+      format: jest.fn(),
+      fromNow: jest.fn(),
+    };
+  },
 }; // moment mock
 const mockedMixinAlert = jest.fn();
 localVue.mixin({ methods: { mixinAlert: mockedMixinAlert } }); // mixinAlert mock
@@ -65,6 +70,7 @@ describe("FTLDocument template", () => {
     delete document_props_to_test.created;
     delete document_props_to_test.ftl_folder;
     delete document_props_to_test.is_shared;
+    delete document_props_to_test.type;
     Object.values(document_props_to_test).forEach(function (documentData) {
       expect(wrapper.html()).toContain(documentData);
     });

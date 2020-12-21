@@ -671,7 +671,9 @@ class DocumentSharingTests(APITestCase):
         client_doc_shares = client_patch.data
         self.assertEqual(client_doc_shares["pid"], str(share_doc.pid))
         self.assertEqual(client_doc_shares["note"], "fakeNote")
-        self.assertEqual(client_doc_shares["expire_at"], "2019-11-18T00:42:42.242424Z")
+        self.assertEqual(
+            client_doc_shares["expire_at"], "2019-11-18T01:42:42.242424+01:00"
+        )
 
     def test_unshare_document(self):
         share_doc = setup_document_share(self.doc)

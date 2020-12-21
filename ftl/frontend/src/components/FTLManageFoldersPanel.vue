@@ -94,7 +94,9 @@
                   <span
                     id="selected-folder-date"
                     :title="folderDetail.created"
-                    >{{ $moment(folderDetail.created).fromNow() }}</span
+                    >{{
+                      $moment.parseZone(folderDetail.created).fromNow()
+                    }}</span
                   >
                 </b-col>
               </b-row>

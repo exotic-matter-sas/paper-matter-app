@@ -1,8 +1,10 @@
 #  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
 #  Licensed under the Business Source License. See LICENSE at project root for more information.
-
+import pytz
 from django import forms
-from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.utils.translation import ugettext_lazy as _, check_for_language
 
 from core.models import FTLUser, email_hash_validator
 
@@ -37,3 +39,22 @@ class DeleteAccountForm(forms.Form):
         if not self.user.check_password(ck_password):
             raise forms.ValidationError(_("Incorrect password"))
         return ck_password
+
+
+class SettingsAccountForm(forms.Form):
+    TZ_LIST = [(None, "--")] + [(t, t) for t in pytz.common_timezones]
+    LANG_LIST = [(None, "--")] + [(k, v) for k, v in getattr(settings, "LANGUAGES", [])]
+    tz = forms.ChoiceField(label=_("Timezone"), choices=TZ_LIST,)
+    lang = forms.ChoiceField(label=_("Language"), choices=LANG_LIST,)
+
+    def clean_lang(self):
+        lang = self.cleaned_data["lang"]
+        if not check_for_language(lang):
+            raise ValidationError("Unsupported language")
+        return lang
+
+    def clean_tz(self):
+        tz = self.cleaned_data["tz"]
+        if tz not in pytz.common_timezones:
+            raise ValidationError("Unsupported timezone")
+        return tz

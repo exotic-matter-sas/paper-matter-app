@@ -124,7 +124,7 @@
             <span>{{ $t("Delete") }}</span>
           </b-dropdown-item>
           <b-dropdown-divider></b-dropdown-divider>
-          <b-dropdown-form form-class="px-3">
+          <b-dropdown-form v-if="!useOnlyOfficeViewer" form-class="px-3">
             <b-form-checkbox
               v-model="forcePDFJS"
               name="check-forcePDFJS"
@@ -141,6 +141,11 @@
         <b-col v-if="currentOpenDoc.type === 'application/pdf' && !isIOS">
           <b-row class="h-100" no-gutters id="viewer-pdf">
             <div id="pdf-embed-container" class="col border-0"></div>
+          </b-row>
+        </b-col>
+        <b-col v-else-if="useOnlyOfficeViewer">
+          <b-row class="h-100" no-gutters id="viewer-only-office">
+            <div id="onlyoffice-embed-container" class="col border-0"></div>
           </b-row>
         </b-col>
         <b-col v-else id="viewer-disabled" class="d-flex align-items-center">
@@ -240,7 +245,7 @@
             </b-col>
           </b-row>
 
-          <b-row class="d-none d-xl-block">
+          <b-row v-if="!useOnlyOfficeViewer" class="d-none d-xl-block">
             <b-col class="px-3">
               <hr />
               <b-form-checkbox
@@ -318,6 +323,7 @@ import FTLDeleteDocuments from "@/components/FTLDeleteDocuments";
 import FTLThumbnailGenMixin from "@/components/FTLThumbnailGenMixin";
 import FTLNote from "@/components/FTLNote";
 import FTLDocumentSharing from "@/components/FTLDocumentSharing";
+import { mapState } from "vuex";
 
 export default {
   name: "FTLDocumentPanel",
@@ -407,6 +413,29 @@ export default {
         ? this.$t("Sharing")
         : this.$t("Share");
     },
+    useOnlyOfficeViewer: function () {
+      if (this.ftlAccount["only_office_viewer"] === true) {
+        return [
+          "text/plain",
+          "application/rtf",
+          "text/rtf",
+          "application/msword",
+          "application/vnd.ms-excel",
+          "application/excel",
+          "application/vnd.ms-powerpoint",
+          "application/mspowerpoint",
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+          "application/vnd.oasis.opendocument.text",
+          "application/vnd.oasis.opendocument.presentation",
+          "application/vnd.oasis.opendocument.spreadsheet",
+        ].includes(this.currentOpenDoc.type);
+      } else {
+        return false;
+      }
+    },
+    ...mapState(["ftlAccount"]), // generate vuex computed getter
   },
 
   watch: {
@@ -415,7 +444,7 @@ export default {
       // https://stackoverflow.com/questions/3263161/cannot-set-boolean-values-in-localstorage/
       localStorage.forcepdfjs = String(newVal);
       if (this.currentOpenDoc.pid) {
-        this.embedPDF();
+        this.embedDoc();
       }
     },
   },
@@ -427,8 +456,13 @@ export default {
       axios
         .get("/app/api/v1/documents/" + this.pid)
         .then((response) => {
-          this.currentOpenDoc = response.data;
-          this.$nextTick().then(() => this.embedPDF());
+          // Using Object.assign to enable reactivity on currentOpenDoc attributs
+          this.currentOpenDoc = Object.assign(
+            {},
+            this.currentOpenDoc,
+            response.data
+          );
+          this.$nextTick().then(() => this.embedDoc());
 
           if (
             !response.data.thumbnail_available &&
@@ -448,23 +482,30 @@ export default {
         });
     },
 
-    embedPDF: function () {
+    embedDoc: function () {
       if (this.currentOpenDoc.download_url) {
-        let options = {
-          PDFJS_URL: "/assets/pdfjs/web/viewer.html",
-          supportRedirect: true,
-          forcePDFJS: this.forcePDFJS,
-          omitInlineStyles: true,
-          pdfOpenParams: {
-            pagemode: "none",
-            search: this.search,
-          },
-        };
-        PDFObject.embed(
-          this.currentOpenDoc.download_url + "/open",
-          "#pdf-embed-container",
-          options
-        );
+        if (this.currentOpenDoc.type === "application/pdf") {
+          let options = {
+            PDFJS_URL: "/assets/pdfjs/web/viewer.html",
+            supportRedirect: true,
+            forcePDFJS: this.forcePDFJS,
+            omitInlineStyles: true,
+            pdfOpenParams: {
+              pagemode: "none",
+              search: this.search,
+            },
+          };
+          PDFObject.embed(
+            this.currentOpenDoc.download_url + "/open",
+            "#pdf-embed-container",
+            options
+          );
+        } else if (this.useOnlyOfficeViewer) {
+          new DocsAPI.DocEditor(
+            "onlyoffice-embed-container",
+            this.currentOpenDoc.only_office_config
+          );
+        }
       }
     },
 
@@ -633,6 +674,7 @@ $document-viewer-padding: 2em;
         &.text-primary {
           background: map_get($theme-colors, "primary");
         }
+
         &.text-danger {
           background: map_get($theme-colors, "danger");
         }

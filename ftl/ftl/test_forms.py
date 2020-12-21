@@ -54,14 +54,56 @@ class FtlUserCreationFormTests(TestCase):
         self.assertIn("email", form.errors)
 
 
-@override_settings(FTL_ENABLE_SIGNUP_CAPTCHA=True)
 class FTLCreateOrgAndFTLUserTests(TestCase):
+    @override_settings(FTL_ENABLE_SIGNUP_CAPTCHA=True)
     def test_captcha_render(self):
-        form = FTLCreateOrgAndFTLUser()
+        form = FTLCreateOrgAndFTLUser(lang="fr")
         self.assertIn(
             '<label class="required" for="id_captcha_1">Are you human?*:</label>',
             form.as_p(),
         )
+
+    def test_timezone(self):
+        form = FTLCreateOrgAndFTLUser(
+            lang="fr",
+            data={
+                "org_name": tv.ORG_NAME_1,
+                "email": tv.USER1_EMAIL,
+                "password1": tv.USER2_PASS,
+                "password2": tv.USER2_PASS,
+                "tz": "Europe/Paris",
+            },
+        )
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.cleaned_data["tz"], "Europe/Paris")
+
+    def test_invalid_timezone(self):
+        form = FTLCreateOrgAndFTLUser(
+            lang="fr",
+            data={
+                "org_name": tv.ORG_NAME_1,
+                "email": tv.USER1_EMAIL,
+                "password1": tv.USER2_PASS,
+                "password2": tv.USER2_PASS,
+                "tz": "Invalid/TZ",
+            },
+        )
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.cleaned_data["tz"], "UTC")
+
+    def test_no_timezone(self):
+        form = FTLCreateOrgAndFTLUser(
+            lang="fr",
+            data={
+                "org_name": tv.ORG_NAME_1,
+                "email": tv.USER1_EMAIL,
+                "password1": tv.USER2_PASS,
+                "password2": tv.USER2_PASS,
+                "tz": "",
+            },
+        )
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.cleaned_data["tz"], "UTC")
 
 
 ########################

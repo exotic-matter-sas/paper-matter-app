@@ -94,6 +94,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "ftl.ftl_setup_middleware.FTLSetupMiddleware",
+    "ftl.ftl_locale_middleware.FTLLocaleMiddleware",
     "axes.middleware.AxesMiddleware",
 ]
 if DEBUG and DEV_MODE:
@@ -153,6 +154,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
 LANGUAGE_CODE = "en-us"
+
+LANGUAGES = [
+    ("fr", "Français"),
+    ("en", "English"),
+]
 
 TIME_ZONE = "UTC"
 
@@ -280,7 +286,8 @@ DOCUMENT PROCESSING PLUGINS (order is important)
 - Only one plugin of each type should be enable at a time
 """
 FTL_DOC_PROCESSING_PLUGINS = [
-    # OCR plugins should be define here
+    # FTLPlugins.THUMBNAIL_ONLY_OFFICE,  # Thumbnail generation plugin
+    # OCR plugins should be defined here
     # Extract text of non scanned documents (required)
     FTLPlugins.TEXT_EXTRACTION_TIKA,
     # Detect lang (required for search feature)
@@ -406,6 +413,37 @@ Enable Developer API
 """
 FTL_ENABLE_DEV_API = False
 
+"""
+URI of the instance
+This is the host address which will be used to generate an absolute URI if there is none given by the current http
+request. It must include the scheme and port.
+"""
+FTL_EXTERNAL_HOST = "http://localhost:8000"
+
+"""
+OnlyOffice integration
+"""
+FTL_ENABLE_ONLY_OFFICE = False
+FTL_ONLY_OFFICE_SERVER_URL = "http://localhost:8080"
+# This is the JWT_SECRET in your OnlyOffice conf
+FTL_ONLY_OFFICE_SECRET_KEY = "NOT-SECURE"
+# This setting shouldn't be updated
+FTL_ONLY_OFFICE_SUPPORTED_DOCUMENTS_TYPES = {
+    "text/plain",
+    "application/rtf",
+    "text/rtf",
+    "application/msword",
+    "application/vnd.ms-excel",
+    "application/excel",
+    "application/vnd.ms-powerpoint",
+    "application/mspowerpoint",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    "application/vnd.oasis.opendocument.text",
+    "application/vnd.oasis.opendocument.presentation",
+    "application/vnd.oasis.opendocument.spreadsheet",
+}
 
 # ==================================================
 # No settings under this line

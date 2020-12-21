@@ -1,4 +1,5 @@
 {% extends "ftl/base.html" %}
+{% load get_setting %}
 {% load render_bundle from webpack_loader %}
 {% load i18n %}
 
@@ -19,4 +20,9 @@
     <div id="app"></div>
     </body>
     {% render_bundle 'app' 'js' %}
+    {% get_setting "FTL_ENABLE_ONLY_OFFICE" as enable_only_office %}
+    {% if enable_only_office %}
+        <script type="text/javascript"
+                src="{% get_setting "FTL_ONLY_OFFICE_SERVER_URL" %}/web-apps/apps/api/documents/api.js"></script>
+    {% endif %}
 {% endblock %}

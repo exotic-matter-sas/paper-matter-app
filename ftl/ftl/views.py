@@ -72,6 +72,13 @@ class CreateOrgAndFTLUser(RegistrationView):
     form_class = FTLCreateOrgAndFTLUser
     success_url = reverse_lazy("signup_success")
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs[
+            "lang"
+        ] = self.request.LANGUAGE_CODE  # Use Django detected language for the account
+        return kwargs
+
 
 class AccountActivationSuccess(SetMessageAndRedirectView):
     url = reverse_lazy("login")

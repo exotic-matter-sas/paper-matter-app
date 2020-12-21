@@ -6,7 +6,11 @@ from django.conf import settings
 
 register = template.Library()
 
-ALLOW_SETTINGS = ("FTL_ENABLE_DEV_API",)
+ALLOW_SETTINGS = (
+    "FTL_ENABLE_DEV_API",
+    "FTL_ENABLE_ONLY_OFFICE",
+    "FTL_ONLY_OFFICE_SERVER_URL",
+)
 
 
 @register.simple_tag

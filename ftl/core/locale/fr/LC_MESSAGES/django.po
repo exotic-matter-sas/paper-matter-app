@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-23 12:35+0200\n"
+"POT-Creation-Date: 2020-12-21 09:41+0000\n"
 "PO-Revision-Date: 2020-09-23 12:36+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -74,23 +74,23 @@ msgid "Forcing plugin %(value)s"
 msgstr "Plugin %(value)s forcé"
 
 #, python-format
-msgid "Starting to reindex one document"
-msgid_plural "Starting to reindex %(count)s documents"
-msgstr[0] "Réindexation d'un document lancée"
-msgstr[1] "Réindexation de %(count)s documents lancée"
+msgid "One document to be reindexed"
+msgid_plural "%(count)s documents to be reindexed"
+msgstr[0] "Un document à réindexer"
+msgstr[1] "%(count)s documents à réindexer"
 
-#, python-format
-msgid "Reindexing %(title)s"
-msgstr "Réindexation de %(title)s"
+msgid "Submitted for reindexing %(title)s"
+msgstr "%(title)s ajouté pour réindexation"
 
 msgid "OK"
 msgstr "OK"
 
 #, python-format
-msgid "One document successfully reindexed in %(time)s seconds"
-msgid_plural "%(count)s documents successfully reindexed in %(time)s seconds"
-msgstr[0] "Réindexation d'un document réussie en %(time)s secondes"
-msgstr[1] "Réindexation de %(count)s documents réussie en %(time)s secondes"
+msgid "One document successfully submitted for reindexing in %(time)s seconds"
+msgid_plural ""
+"%(count)s documents successfully submitted for reindexing in %(time)s seconds"
+msgstr[0] "Ajout d'un document pour réindexation réussie en %(time)s secondes"
+msgstr[1] "Ajout de %(count)s documents pour réindexation réussie en %(time)s secondes"
 
 msgid "This email can't be used."
 msgstr "Cet email ne peut pas être utilisé."

@@ -104,21 +104,6 @@ msgstr "Bonjour,"
 msgid "The Paper Matter team"
 msgstr "L'équipe Paper Matter"
 
-msgid "Account activated"
-msgstr "Compte activé"
-
-msgid "Account activated!"
-msgstr "Compte activé !"
-
-msgid "Your account has been activated, thank you! You may log in."
-msgstr "Votre compte a été activé, vous pouvez maintenant vous y connecter."
-
-msgid "Login to your account here:"
-msgstr "Connectez-vous à votre compte :"
-
-msgid "login page"
-msgstr "page de connexion"
-
 msgid ""
 "An account on Paper Matter has been created with this email. Follow the link "
 "below to\n"
@@ -219,6 +204,9 @@ msgstr ""
 "\n"
 "Autorisation réussie\n"
 "        "
+
+msgid "Authorize"
+msgstr "Autorisation"
 
 #, python-format
 msgid ""

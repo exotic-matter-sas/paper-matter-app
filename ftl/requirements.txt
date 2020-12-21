@@ -7,7 +7,7 @@ tika==1.19
 langid==1.1.6
 whitenoise==5.0.1
 filetype==1.0.5
-django-registration==3.1
+django-registration==3.1.1
 django-otp==0.8.1
 fido2==0.8.1
 cbor2==4.1.2
@@ -20,6 +20,8 @@ django-axes==5.3.4
 ua-parser==0.10.0
 django-simple-captcha==0.5.13
 django_celery_beat==2.1.0
+python-jose==3.2.0
+requests==2.22.0
 
 # django-storages==1.9.1
 # boto3==1.9.183

@@ -26,12 +26,20 @@ def setup_org(name=tv.ORG_NAME_1, slug=tv.ORG_SLUG_1):
     return FTLOrg.objects.create(name=name, slug=slug,)
 
 
-def setup_admin(org, email=tv.ADMIN1_EMAIL, password=tv.ADMIN1_PASS):
-    return FTLUser.objects.create_superuser(org=org, email=email, password=password,)
+def setup_admin(
+    org, email=tv.ADMIN1_EMAIL, password=tv.ADMIN1_PASS, lang="en", tz="Europe/Paris"
+):
+    return FTLUser.objects.create_superuser(
+        org=org, email=email, password=password, lang=lang, tz=tz
+    )
 
 
-def setup_user(org, email=tv.USER1_EMAIL, password=tv.USER1_PASS):
-    user = FTLUser.objects.create_user(org=org, email=email, password=password)
+def setup_user(
+    org, email=tv.USER1_EMAIL, password=tv.USER1_PASS, lang="en", tz="Europe/Paris"
+):
+    user = FTLUser.objects.create_user(
+        org=org, email=email, password=password, lang=lang, tz=tz
+    )
     user.user_permissions.set(permissions_names_to_objects(FTL_PERMISSIONS_USER))
     return user
 
@@ -54,6 +62,7 @@ def setup_document(
     binary=tv.DOCUMENT1_BINARY_PATH,
     text_content=tv.DOCUMENT1_CONTENT,
     language=tv.DOCUMENT1_LANGUAGE,
+    type="application/pdf",
 ):
     document = FTLDocument.objects.create(
         org=org,
@@ -64,6 +73,7 @@ def setup_document(
         binary=binary,
         content_text=text_content,
         language=language,
+        type=type,
     )
     # Update document to allow PGSQL to process search vector
     vector_plugin = FTLSearchEnginePgSQLTSVector()

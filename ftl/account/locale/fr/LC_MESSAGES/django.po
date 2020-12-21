@@ -27,11 +27,21 @@ msgstr "Mot de passe"
 msgid "Incorrect password"
 msgstr "Mot de passe incorrect"
 
+msgid "Timezone"
+msgstr "Fuseau horaire"
+
+msgid "Language"
+msgstr "Langue"
+
 msgid "Account activity"
 msgstr "Activité du compte"
 
-msgid "See the last ten successful connections to your account."
-msgstr "Consultez les dix dernières connexions réussies à votre compte."
+msgid ""
+"See the last ten successful logins to your account. All times indicated are "
+"local."
+msgstr ""
+"Consultez les dix dernières connexions réussies à votre compte. Toutes les "
+"heures indiquées sont locales."
 
 #, python-format
 msgid ""
@@ -56,11 +66,23 @@ msgstr "Revenir à l'application"
 msgid "Settings"
 msgstr "Paramètres"
 
+msgid "User settings"
+msgstr "Paramètres utilisateur"
+
+msgid "Region"
+msgstr "Région"
+
+msgid "Security"
+msgstr "Sécurité"
+
 msgid "Two factor authentication"
 msgstr "Authentification à deux facteurs"
 
 msgid "Third party applications"
 msgstr "Applications tierces"
+
+msgid "Management"
+msgstr "Gestion"
 
 msgid "Data import / export"
 msgstr "Import / export des données"
@@ -73,7 +95,7 @@ msgid ""
 "\">Paper Matter</a>,\n"
 "            carefully crafted by <a id=\"em-link\" target=\"_blank\" href="
 "\"https://www.exotic-matter.fr\">Exotic <span\n"
-"                    class=\"highlight\">Matter</span></a>\n"
+"                class=\"highlight\">Matter</span> in France.</a>\n"
 "        "
 msgstr ""
 "<a id=\"pm-link\" target=\"_blank\" href=\"https://welcome.papermatter.app"
@@ -332,6 +354,30 @@ msgstr ""
 msgid "Account security: notice of password change"
 msgstr "Sécurité du compte : avis de changement de mot de passe"
 
+msgid "Region settings"
+msgstr "Paramètres de la région"
+
+msgid "You can find various settings for your region."
+msgstr ""
+"Vous pouvez trouver différents paramètres pour votre région."
+
+msgid "Your language choice also affects the emails we might send."
+msgstr ""
+"Votre choix linguistique affecte également les emails que nous pourrions "
+"envoyer."
+
+#, python-format
+msgid ""
+"\n"
+"                                The current time is %(now_time)s.\n"
+"                            "
+msgstr ""
+"\n"
+"L’heure actuelle est %(now_time)s."
+
+msgid "Update"
+msgstr "Mettre à jour"
+
 #, python-format
 msgid ""
 "\n"
@@ -430,8 +476,11 @@ msgstr "Révoquer"
 msgid "Your applications"
 msgstr "Vos applications"
 
-msgid "Manage applications accessing your account."
-msgstr "Gérez les applications accédant à votre compte."
+msgid ""
+"Manage applications accessing your account. All times indicated are local."
+msgstr ""
+"Gérez les applications accédant à votre compte. Toutes les heures indiquées "
+"sont locales."
 
 msgid ""
 "\n"
@@ -475,3 +524,6 @@ msgstr "Mot de passe mis à jour !"
 
 msgid "Your account was deleted."
 msgstr "Votre compte a été supprimé."
+
+msgid "Your settings were saved."
+msgstr "Vos paramètres ont été enregistrés."

@@ -54,6 +54,7 @@ class HomePage(BasePage):
     documents_titles = ".document-thumbnail .card-title span"
     first_document_thumb = ".document-thumbnail:first-child"
     first_document_title = ".document-thumbnail:first-child .card-title span"
+    first_document_date = ".document-thumbnail:first-child .card-footer small"
     last_document_title = ".document-thumbnail:last-child .card-title span"
 
     more_documents_button = "#more-documents"
