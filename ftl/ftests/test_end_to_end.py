@@ -28,7 +28,6 @@ from ftests.test_account import (
     totp_time_setter,
     mocked_totp_time_setter,
     totp_time_property,
-    TotpDevice2FATests,
 )
 from ftests.tools import test_values as tv
 from ftests.tools.decorators import delay_method_decorator
@@ -43,6 +42,7 @@ from ftests.tools.setup_helpers import (
     setup_2fa_static_device,
     setup_temporary_file,
 )
+from ftests.tools.test_values import TOTP_DEVICE_SECRET_KEY, TOTP_DEVICE_VALID_TOKEN
 from ftl import celery
 from ftl.celery import app
 
@@ -383,7 +383,7 @@ class UserSetupAll2FA(LoginPage, AccountPages):
         totp_time_setter.side_effect = mocked_totp_time_setter
 
         # User add an auth app (can't be really added in this test)
-        setup_2fa_totp_device(self.user, secret_key=TotpDevice2FATests.secret_key)
+        setup_2fa_totp_device(self.user, secret_key=TOTP_DEVICE_SECRET_KEY)
         self.visit(AccountPages.two_factors_authentication_url)  # refresh page
 
         # User add emergency code too
@@ -412,7 +412,7 @@ class UserSetupAll2FA(LoginPage, AccountPages):
         ):
             if "authentication app" in item_text:
                 self.get_elems(self.check_pages_alternatives_list)[i].click()
-        self.enter_2fa_code(TotpDevice2FATests.valid_token)
+        self.enter_2fa_code(TOTP_DEVICE_VALID_TOKEN)
         self.assertIn("home", self.head_title)
 
         # user delete its security key 2FA
@@ -472,7 +472,7 @@ class AccountDeletion(LoginPage, AccountPages, AdminPages):
             binary=setup_temporary_file().name,
         )
         self.admin_resources["totp_device"] = setup_2fa_totp_device(
-            self.admin, secret_key=TotpDevice2FATests.secret_key
+            self.admin, secret_key=TOTP_DEVICE_SECRET_KEY
         )
         self.admin_resources["fido2_device"] = setup_2fa_fido2_device(self.admin)
         self.admin_resources["static_device"] = setup_2fa_static_device(
@@ -500,7 +500,7 @@ class AccountDeletion(LoginPage, AccountPages, AdminPages):
             binary=setup_temporary_file().name,
         )
         self.user1_resources["totp_device"] = setup_2fa_totp_device(
-            self.user1, secret_key=TotpDevice2FATests.secret_key
+            self.user1, secret_key=TOTP_DEVICE_SECRET_KEY
         )
         self.user1_resources["fido2_device"] = setup_2fa_fido2_device(self.user1)
         self.user1_resources["static_device"] = setup_2fa_static_device(
@@ -526,7 +526,7 @@ class AccountDeletion(LoginPage, AccountPages, AdminPages):
             ftl_folder=self.user2_resources["sub_folder1"],
         )
         self.user2_resources["totp_device"] = setup_2fa_totp_device(
-            self.user2, secret_key=TotpDevice2FATests.secret_key
+            self.user2, secret_key=TOTP_DEVICE_SECRET_KEY
         )
         self.user2_resources["fido2_device"] = setup_2fa_fido2_device(self.user2)
         self.user2_resources["static_device"] = setup_2fa_static_device(
