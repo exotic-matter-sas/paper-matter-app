@@ -7,7 +7,6 @@ from unittest.mock import patch, Mock
 import qrcode.image.svg
 from captcha.models import CaptchaStore
 from django.conf import settings
-from django.conf.global_settings import SESSION_COOKIE_AGE
 from django.contrib import messages
 from django.contrib.auth.signals import user_logged_out
 from django.contrib.sessions.backends.base import SessionBase
@@ -257,7 +256,7 @@ class OTPCheckViewTests(TestCase):
         delta = cookie_expiration_time - now
 
         self.assertAlmostEqual(
-            round(delta.total_seconds()), SESSION_COOKIE_AGE, delta=5
+            round(delta.total_seconds()), settings.SESSION_COOKIE_AGE, delta=5
         )
 
     def test_otp_check_redirect_to_proper_view(self):
