@@ -184,7 +184,7 @@ To use specific Django settings without modifying main `ftl/ftl/settings.py` fil
   - Optical Character Recognition, to choose between:
     - _disable_
     - [Google Cloud Vision API (sync or async)](https://cloud.google.com/vision/docs/)
-    - [Amazon Textract API](https://aws.amazon.com/textract/)
+    - [Amazon Textract API (En only)](https://aws.amazon.com/textract/)
   - Document text extraction: [Apache Tika](https://tika.apache.org/)
   - PDF documents preview: [PDF.js](https://mozilla.github.io/pdf.js/)
   - Search engine: [PostgreSQL tsvector](https://www.postgresql.org/docs/10/datatype-textsearch.html)
