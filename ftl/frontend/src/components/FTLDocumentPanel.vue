@@ -216,6 +216,16 @@
                   <font-awesome-icon icon="arrow-right" />
                   {{ $t("Move") }}
                 </b-button>
+
+                <b-button
+                  id="alert-document"
+                  class="mr-1 mb-2"
+                  variant="primary"
+                  v-b-modal="'modal-alert-document-dp'"
+                >
+                  <font-awesome-icon icon="bell" />
+                  {{ $t("Reminders") }}
+                </b-button>
               </span>
 
               <hr class="border-0 m-0" />
@@ -266,6 +276,12 @@
       modal-id="modal-move-document-dp"
       :docs="[currentOpenDoc]"
       @event-document-moved="documentMoved"
+    />
+
+    <FTLAlertDocument
+      modal-id="modal-alert-document-dp"
+      :doc="currentOpenDoc"
+      @event-document-moved="documentRenamed"
     />
 
     <FTLRenameDocument
@@ -323,6 +339,7 @@ import FTLDeleteDocuments from "@/components/FTLDeleteDocuments";
 import FTLThumbnailGenMixin from "@/components/FTLThumbnailGenMixin";
 import FTLNote from "@/components/FTLNote";
 import FTLDocumentSharing from "@/components/FTLDocumentSharing";
+import FTLAlertDocument from "@/components/FTLAlertDocument";
 import { mapState } from "vuex";
 
 export default {
@@ -330,6 +347,7 @@ export default {
   mixins: [FTLThumbnailGenMixin],
 
   components: {
+    FTLAlertDocument,
     FTLMoveDocuments,
     FTLRenameDocument,
     FTLDeleteDocuments,

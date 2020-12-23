@@ -39,6 +39,10 @@ FTL_PERMISSIONS_USER = [
     "core.change_ftldocumentsharing",
     "core.delete_ftldocumentsharing",
     "core.view_ftldocumentsharing",
+    "core.add_ftldocumentalert",
+    "core.change_ftldocumentalert",
+    "core.delete_ftldocumentalert",
+    "core.view_ftldocumentalert",
 ]
 
 
@@ -324,6 +328,26 @@ class FTLDocumentSharing(models.Model):
 
     class Meta:
         ordering = ["-created"]
+
+
+class FTLDocumentAlert(models.Model):
+    ftl_doc = ForeignKey(
+        "FTLDocument", on_delete=models.CASCADE, db_index=True, related_name="alerts",
+    )
+    ftl_user = models.ForeignKey("FTLUser", on_delete=models.CASCADE)
+    alert_on = models.DateTimeField()
+    note = models.TextField(blank=True)
+
+    def __str__(self):
+        return f"{self.ftl_doc} - {self.alert_on}"
+
+    class Meta:
+        ordering = ["alert_on"]
+        constraints = [
+            UniqueConstraint(
+                fields=["ftl_doc", "ftl_user", "alert_on"], name="one_alert_per_day",
+            ),
+        ]
 
 
 class FTLModelPermissions(DjangoModelPermissions):

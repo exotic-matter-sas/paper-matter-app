@@ -35,12 +35,13 @@ from rest_framework.response import Response
 from core.errors import ERROR_CODES_DETAILS, BadRequestError
 from core.ftl_account_processors_mixin import FTLAccountProcessorContextMixin
 from core.mimes import mimetype_to_ext, guess_mimetype
-from core.models import FTLDocument, FTLFolder, FTLDocumentSharing
+from core.models import FTLDocument, FTLFolder, FTLDocumentSharing, FTLDocumentAlert
 from core.serializers import (
     FTLDocumentSerializer,
     FTLFolderSerializer,
     FTLDocumentSharingSerializer,
     FTLDocumentDetailsOnlyOfficeSerializer,
+    FTLDocumentAlertSerializer,
 )
 from core.tasks import apply_ftl_processing
 from ftl.enums import FTLStorages, FTLPlugins
@@ -487,4 +488,53 @@ class FTLDocumentSharingDetail(generics.RetrieveUpdateDestroyAPIView):
             ftl_doc__org=self.request.user.org,
             ftl_doc__deleted=False,
             ftl_doc__pid=self.kwargs["pid"],
+        )
+
+
+class FTLDocumentAlertList(generics.ListCreateAPIView):
+    serializer_class = FTLDocumentAlertSerializer
+    lookup_url_kwarg = "apid"
+
+    def get_queryset(self):
+        doc = get_object_or_404(
+            FTLDocument,
+            org=self.request.user.org,
+            deleted=False,
+            pid=self.kwargs["dpid"],
+        )
+
+        return FTLDocumentAlert.objects.filter(
+            ftl_doc_id=doc.id, ftl_user_id=self.request.user.id,
+        )
+
+    def perform_create(self, serializer):
+        ftl_doc = get_object_or_404(
+            FTLDocument,
+            org=self.request.user.org,
+            deleted=False,
+            pid=self.kwargs["dpid"],
+        )
+
+        if self.get_queryset().count() >= 5:
+            raise BadRequestError(
+                ERROR_CODES_DETAILS["ftl_too_many_alert"], "ftl_too_many_alert",
+            )
+
+        serializer.save(ftl_doc=ftl_doc, ftl_user=self.request.user)
+
+
+class FTLDocumentAlertDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = FTLDocumentAlertSerializer
+    lookup_url_kwarg = "apid"
+
+    def get_queryset(self):
+        doc = get_object_or_404(
+            FTLDocument,
+            org=self.request.user.org,
+            deleted=False,
+            pid=self.kwargs["dpid"],
+        )
+
+        return FTLDocumentAlert.objects.filter(
+            ftl_doc_id=doc.id, ftl_user_id=self.request.user.id,
         )

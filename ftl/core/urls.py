@@ -21,6 +21,11 @@ urlpatterns = [
     path("api/v1/folders/<int:id>", views.FTLFolderDetail.as_view()),
     path("api/v1/documents", views.FTLDocumentList.as_view()),
     path("api/v1/documents/<uuid:pid>", views.FTLDocumentDetail.as_view()),
+    path("api/v1/documents/<uuid:dpid>/alerts", views.FTLDocumentAlertList.as_view()),
+    path(
+        "api/v1/documents/<uuid:dpid>/alerts/<int:apid>",
+        views.FTLDocumentAlertDetail.as_view(),
+    ),
     path("api/v1/documents/<uuid:pid>/share", views.FTLDocumentSharingList.as_view()),
     path(
         "api/v1/documents/<uuid:pid>/share/<uuid:spid>",

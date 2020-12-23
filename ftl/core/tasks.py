@@ -1,12 +1,16 @@
 #  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
 #  Licensed under the Business Source License. See LICENSE at project root for more information.
 import logging
+from datetime import timedelta
 
 from celery import shared_task
+from django.conf import settings
 from django.core import management
 from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils import timezone
 
-from core.models import FTLOrg, FTLDocument, FTLFolder
+from core.models import FTLOrg, FTLDocument, FTLFolder, FTLDocumentAlert
 from core.processing.ftl_processing import FTLDocumentProcessing
 
 logger = logging.getLogger(__name__)
@@ -67,3 +71,33 @@ def batch_delete_doc():
 @shared_task
 def batch_delete_oauth_tokens():
     management.call_command("cleartokens")
+
+
+@shared_task
+def batch_alert_documents():
+    now_in_utc = timezone.now()
+    alerts = FTLDocumentAlert.objects.filter(alert_on__lte=now_in_utc).order_by(
+        "ftl_user_id"
+    )
+
+    for alert in alerts:
+        if now_in_utc - alert.alert_on < timedelta(hours=12):
+            # Only sends alert in a 12 hours window (avoid sending alerts for expired alerts)
+            logger.info(
+                f"Sending alert email for {alert.ftl_doc.pid} ({alert.alert_on})"
+            )
+            # Email sent to the current address for notification
+            ctx = {"title": alert.ftl_doc.title, "note": alert.note}
+            subject_alert = render_to_string(
+                template_name="core/email/core_email_alert_subject.txt", context=ctx
+            )
+            subject_alert = "".join(subject_alert.splitlines())
+            message_alert = render_to_string(
+                template_name="core/email/core_email_alert_body.txt", context=ctx
+            )
+
+            alert.ftl_user.email_user(
+                subject_alert, message_alert, settings.DEFAULT_FROM_EMAIL
+            )
+
+        alert.delete()

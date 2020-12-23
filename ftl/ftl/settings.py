@@ -394,6 +394,10 @@ CELERY_BEAT_SCHEDULE = {
         "task": "core.tasks.batch_delete_oauth_tokens",
         "schedule": crontab(minute=15, hour=1),
     },
+    "alert-documents-everyhour": {
+        "task": "core.tasks.batch_alert_documents",
+        "schedule": crontab(minute=0, hour="*"),
+    },
 }
 
 

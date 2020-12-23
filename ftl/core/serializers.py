@@ -13,7 +13,7 @@ from jose import jwt
 from rest_framework import serializers
 
 from core.mimes import mimetype_to_ext
-from core.models import FTLDocument, FTLFolder, FTLDocumentSharing
+from core.models import FTLDocument, FTLFolder, FTLDocumentSharing, FTLDocumentAlert
 from ftl.enums import FTLStorages
 
 
@@ -92,6 +92,7 @@ class FTLDocumentSerializer(serializers.ModelSerializer):
             "ext",
             "download_url",
             "is_shared",
+            "alerts",
         ]
         read_only_fields = [
             "pid",
@@ -231,3 +232,10 @@ class FTLDocumentSharingSerializer(serializers.ModelSerializer):
         model = FTLDocumentSharing
         fields = ("pid", "created", "edited", "expire_at", "note", "public_url")
         read_only_fields = ("pid", "created", "edited", "public_url")
+
+
+class FTLDocumentAlertSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FTLDocumentAlert
+        fields = ("id", "alert_on", "note")
+        read_only_fields = ("id",)

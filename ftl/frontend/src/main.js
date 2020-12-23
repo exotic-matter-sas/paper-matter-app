@@ -8,6 +8,7 @@ import {
   BadgePlugin,
   BreadcrumbPlugin,
   ButtonPlugin,
+  CalendarPlugin,
   CardPlugin,
   CollapsePlugin,
   FormCheckboxPlugin,
@@ -18,6 +19,7 @@ import {
   InputGroupPlugin,
   LayoutPlugin,
   LinkPlugin,
+  ListGroupPlugin,
   ModalPlugin,
   NavbarPlugin,
   ProgressPlugin,
@@ -47,15 +49,16 @@ import {
   faFolderPlus,
   faHome,
   faLevelUpAlt,
+  faLink,
+  faPen,
   faSearch,
+  faShare,
   faSort,
   faSync,
+  faTimesCircle,
   faTrash,
   faWindowClose,
-  faTimesCircle,
-  faShare,
-  faPen,
-  faLink,
+  faBell,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   faMinusSquare,
@@ -104,7 +107,8 @@ library.add(
   faTimesCircle,
   faShare,
   faPen,
-  faLink
+  faLink,
+  faBell
 );
 Vue.component("font-awesome-icon", FontAwesomeIcon);
 
@@ -130,6 +134,8 @@ Vue.use(ProgressPlugin);
 Vue.use(ToastPlugin);
 Vue.use(BreadcrumbPlugin);
 Vue.use(VBHoverPlugin);
+Vue.use(CalendarPlugin);
+Vue.use(ListGroupPlugin);
 
 // Moment JS for nice date
 Vue.prototype.$moment = moment;

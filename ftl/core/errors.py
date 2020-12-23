@@ -19,6 +19,7 @@ ERROR_CODES_DETAILS = {
     ),
     "ftl_file_empty": _("The file is empty"),
     "ftl_thumbnail_generation_error": _("The thumbnail could not be decoded"),
+    "ftl_too_many_alert": _("Too many alerts have been created for this document"),
 }
 
 

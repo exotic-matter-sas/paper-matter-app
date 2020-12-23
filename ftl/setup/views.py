@@ -1,11 +1,11 @@
 #  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
 #  Licensed under the Business Source License. See LICENSE at project root for more information.
-
+from django.contrib.auth.models import Group
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import FormView
 
-from core.models import FTLOrg, FTL_PERMISSIONS_USER, permissions_names_to_objects
+from core.models import FTLOrg
 from setup.forms import FirstOrgAndAdminCreationForm
 
 
@@ -22,9 +22,8 @@ class CreateFirstOrgAndAdmin(FormView):
 
     def form_valid(self, form):
         instance = form.save(commit=True)
-        instance.user_permissions.set(
-            permissions_names_to_objects(FTL_PERMISSIONS_USER)
-        )
+        ftl_group = Group.objects.get(name="ftl_users_group")
+        instance.groups.add(ftl_group)
         instance.save()
 
         return super().form_valid(form)

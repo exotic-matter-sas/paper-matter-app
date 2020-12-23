@@ -4,6 +4,7 @@
 import os
 import tempfile
 
+from django.contrib.auth.models import Group
 from django_otp.plugins.otp_static.models import StaticDevice, StaticToken
 from django_otp.plugins.otp_totp.models import TOTPDevice
 
@@ -12,8 +13,6 @@ from core.models import (
     FTLUser,
     FTLDocument,
     FTLFolder,
-    permissions_names_to_objects,
-    FTL_PERMISSIONS_USER,
     FTLDocumentSharing,
 )
 from core.processing.proc_pgsql_tsvector import FTLSearchEnginePgSQLTSVector
@@ -40,7 +39,7 @@ def setup_user(
     user = FTLUser.objects.create_user(
         org=org, email=email, password=password, lang=lang, tz=tz
     )
-    user.user_permissions.set(permissions_names_to_objects(FTL_PERMISSIONS_USER))
+    user.groups.add(Group.objects.get(name="ftl_users_group"))
     return user
 
 

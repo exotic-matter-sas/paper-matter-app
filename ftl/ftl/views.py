@@ -1,13 +1,14 @@
 #  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
 #  Licensed under the Business Source License. See LICENSE at project root for more information.
 from django.contrib import messages
+from django.contrib.auth.models import Group
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import RedirectView
 from django_registration.backends.activation.views import RegistrationView
 
-from core.models import FTLOrg, permissions_names_to_objects, FTL_PERMISSIONS_USER
+from core.models import FTLOrg
 from ftl.forms import FTLUserCreationForm, FTLCreateOrgAndFTLUser
 
 
@@ -28,9 +29,8 @@ class CreateFTLUserFormView(RegistrationView):
         instance.org = org
         instance.save()
 
-        instance.user_permissions.set(
-            permissions_names_to_objects(FTL_PERMISSIONS_USER)
-        )
+        ftl_group = Group.objects.get(name="ftl_users_group")
+        instance.groups.add(ftl_group)
 
         instance.save()
 
