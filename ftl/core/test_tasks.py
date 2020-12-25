@@ -146,7 +146,6 @@ class RecurringTasksTests(APITestCase):
 
             # Forward until next month
             while moving_datetime < now_plus_1_month_utc:
-                print(moving_datetime)
                 moving_datetime = moving_datetime + datetime.timedelta(hours=1)
                 mocked_timezone_now.return_value = moving_datetime
                 batch_alert_documents()
