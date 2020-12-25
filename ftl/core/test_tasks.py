@@ -1,11 +1,14 @@
 #  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
 #  Licensed under the Business Source License. See LICENSE at project root for more information.
+import datetime
+from unittest.mock import patch, call, ANY
 
-
+import pytz
+from django.utils import timezone
 from rest_framework.test import APITestCase
 
-from core.models import FTLDocument, FTLOrg
-from core.tasks import batch_delete_doc, batch_delete_org
+from core.models import FTLDocument, FTLOrg, FTLDocumentAlert
+from core.tasks import batch_delete_doc, batch_delete_org, batch_alert_documents
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import (
     setup_org,
@@ -15,6 +18,7 @@ from ftests.tools.setup_helpers import (
     setup_folder,
     setup_temporary_file,
 )
+from ftl import celery
 
 
 class RecurringTasksTests(APITestCase):
@@ -91,3 +95,124 @@ class RecurringTasksTests(APITestCase):
         self.assertTrue(FTLOrg.objects.filter(pk=self.org_with_folders.pk).exists())
         self.assertTrue(FTLOrg.objects.filter(pk=self.org_without_docs_1.pk).exists())
         self.assertFalse(FTLOrg.objects.filter(pk=self.org_without_docs_2.pk).exists())
+
+    @patch("core.tasks.render_to_string")
+    @patch.object(celery.app, "send_task")
+    def test_batch_alert_documents(self, mocked_email_send, mocked_render_to_string):
+        now_minus_1_day_utc = timezone.now() + datetime.timedelta(days=-1)
+        now_plus_1_day_utc = timezone.now() + datetime.timedelta(days=1)
+        now_plus_1_week_utc = timezone.now() + datetime.timedelta(weeks=1)
+        now_plus_1_month_utc = timezone.now() + datetime.timedelta(weeks=4)
+
+        alert_db_minus_1_day = FTLDocumentAlert()
+        alert_db_minus_1_day.ftl_doc = self.doc
+        alert_db_minus_1_day.ftl_user = self.user
+        alert_db_minus_1_day.alert_on = now_minus_1_day_utc
+        alert_db_minus_1_day.save()
+
+        alert_db_plus_1_day = FTLDocumentAlert()
+        alert_db_plus_1_day.ftl_doc = self.doc
+        alert_db_plus_1_day.ftl_user = self.user
+        alert_db_plus_1_day.alert_on = now_plus_1_day_utc
+        alert_db_plus_1_day.save()
+
+        alert_db_plus_1_week = FTLDocumentAlert()
+        alert_db_plus_1_week.ftl_doc = self.doc
+        alert_db_plus_1_week.ftl_user = self.user
+        alert_db_plus_1_week.alert_on = now_plus_1_week_utc
+        alert_db_plus_1_week.save()
+
+        alert_db_plus_1_month = FTLDocumentAlert()
+        alert_db_plus_1_month.ftl_doc = self.doc
+        alert_db_plus_1_month.ftl_user = self.user
+        alert_db_plus_1_month.alert_on = now_plus_1_month_utc
+        alert_db_plus_1_month.save()
+
+        # Time is now
+        with patch.object(timezone, "now") as mocked_timezone_now:
+            mocked_timezone_now.return_value = datetime.datetime.utcnow().replace(
+                tzinfo=pytz.utc
+            )
+            batch_alert_documents()
+
+        # Expired alert is removed
+        with self.assertRaises(FTLDocumentAlert.DoesNotExist):
+            alert_db_minus_1_day.refresh_from_db()
+
+        # Time is moved forward, hours per hours
+        with patch.object(timezone, "now") as mocked_timezone_now:
+            moving_datetime = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+            mocked_timezone_now.return_value = moving_datetime
+
+            # Forward until next month
+            while moving_datetime < now_plus_1_month_utc:
+                print(moving_datetime)
+                moving_datetime = moving_datetime + datetime.timedelta(hours=1)
+                mocked_timezone_now.return_value = moving_datetime
+                batch_alert_documents()
+
+        # Three emails should have been sent
+        self.assertEqual(mocked_email_send.call_count, 3)
+
+        # render_to_string should have been called 2*3 times
+        self.assertListEqual(
+            mocked_render_to_string.call_args_list,
+            [
+                call(
+                    template_name=ANY,
+                    context={
+                        "title": self.doc.title,
+                        "note": "",
+                        "alert_on": alert_db_plus_1_day.alert_on,
+                    },
+                ),
+                call(
+                    template_name=ANY,
+                    context={
+                        "title": self.doc.title,
+                        "note": "",
+                        "alert_on": alert_db_plus_1_day.alert_on,
+                    },
+                ),
+                call(
+                    template_name=ANY,
+                    context={
+                        "title": self.doc.title,
+                        "note": "",
+                        "alert_on": alert_db_plus_1_week.alert_on,
+                    },
+                ),
+                call(
+                    template_name=ANY,
+                    context={
+                        "title": self.doc.title,
+                        "note": "",
+                        "alert_on": alert_db_plus_1_week.alert_on,
+                    },
+                ),
+                call(
+                    template_name=ANY,
+                    context={
+                        "title": self.doc.title,
+                        "note": "",
+                        "alert_on": alert_db_plus_1_month.alert_on,
+                    },
+                ),
+                call(
+                    template_name=ANY,
+                    context={
+                        "title": self.doc.title,
+                        "note": "",
+                        "alert_on": alert_db_plus_1_month.alert_on,
+                    },
+                ),
+            ],
+        )
+
+        # All alerts have been sent and so removed from DB
+        with self.assertRaises(FTLDocumentAlert.DoesNotExist):
+            alert_db_plus_1_day.refresh_from_db()
+        with self.assertRaises(FTLDocumentAlert.DoesNotExist):
+            alert_db_plus_1_week.refresh_from_db()
+        with self.assertRaises(FTLDocumentAlert.DoesNotExist):
+            alert_db_plus_1_month.refresh_from_db()

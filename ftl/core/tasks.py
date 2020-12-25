@@ -87,7 +87,11 @@ def batch_alert_documents():
                 f"Sending alert email for {alert.ftl_doc.pid} ({alert.alert_on})"
             )
             # Email sent to the current address for notification
-            ctx = {"title": alert.ftl_doc.title, "note": alert.note}
+            ctx = {
+                "title": alert.ftl_doc.title,
+                "note": alert.note,
+                "alert_on": alert.alert_on,
+            }
             subject_alert = render_to_string(
                 template_name="core/email/core_email_alert_subject.txt", context=ctx
             )

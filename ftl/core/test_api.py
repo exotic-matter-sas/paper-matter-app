@@ -4,19 +4,22 @@
 import json
 import os
 from contextlib import contextmanager
+from datetime import timedelta
 from unittest import mock
 from unittest.mock import patch
 from uuid import UUID
 
+from dateutil.tz import gettz
 from django.contrib import messages
 from django.db import DEFAULT_DB_ALIAS
 from django.http import HttpRequest
 from django.test import override_settings
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 import core
-from core.models import FTLDocument, FTLFolder, FTLDocumentSharing
+from core.models import FTLDocument, FTLFolder, FTLDocumentSharing, FTLDocumentAlert
 from core.tasks import apply_ftl_processing
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import (
@@ -589,7 +592,7 @@ class DocumentsSearchTests(APITestCase):
         self.assertEqual(search_result.data["results"][0]["title"], "bingo!")
 
 
-class DocumentSharingTests(APITestCase):
+class DocumentsSharingTests(APITestCase):
     def setUp(self):
         self.org = setup_org()
         setup_admin(self.org)
@@ -683,6 +686,150 @@ class DocumentSharingTests(APITestCase):
         )
 
         self.assertEqual(client_get.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class DocumentsAlertTests(APITestCase):
+    def setUp(self):
+        self.org = setup_org()
+        setup_admin(self.org)
+        self.user = setup_user(self.org)
+
+        self.doc = setup_document(self.org, self.user)
+        self.doc_bis = setup_document(self.org, self.user, title=tv.DOCUMENT2_TITLE)
+
+        self.client.login(
+            request=HttpRequest(), email=tv.USER1_EMAIL, password=tv.USER1_PASS
+        )
+
+    def test_add_alert(self):
+        now_utc = timezone.now() + timedelta(days=1)
+        client_post = self.client.post(
+            f"/app/api/v1/documents/{self.doc.pid}/alerts",
+            {"alert_on": now_utc, "note": "my note"},
+            format="json",
+        )
+
+        self.assertEqual(client_post.status_code, status.HTTP_201_CREATED)
+        get_alert_db = FTLDocumentAlert.objects.get(id=client_post.data["id"])
+        self.assertIsNotNone(get_alert_db)
+        self.assertEqual(get_alert_db.alert_on, now_utc)
+        self.assertEqual(get_alert_db.note, "my note")
+        self.assertEqual(
+            client_post.data["alert_on"],
+            now_utc.astimezone(gettz("Europe/Paris")).isoformat(),
+        )
+        self.assertEqual(client_post.data["note"], "my note")
+
+    def test_list_alerts(self):
+        now_utc = timezone.now() + timedelta(days=1)
+        alert_db = FTLDocumentAlert()
+        alert_db.ftl_doc = self.doc
+        alert_db.ftl_user = self.user
+        alert_db.alert_on = now_utc
+        alert_db.note = "my note"
+        alert_db.save()
+
+        client_get = self.client.get(f"/app/api/v1/documents/{self.doc.pid}/alerts")
+        self.assertEqual(client_get.status_code, status.HTTP_200_OK)
+        self.assertIsNotNone(client_get)
+        self.assertEqual(client_get.data["count"], 1)
+        self.assertIsNotNone(client_get.data["results"])
+        self.assertEqual(
+            client_get.data["results"][0]["alert_on"],
+            now_utc.astimezone(gettz("Europe/Paris")).isoformat(),
+        )
+        self.assertEqual(client_get.data["results"][0]["note"], "my note")
+
+    def test_get_alert(self):
+        now_utc = timezone.now() + timedelta(days=1)
+        alert_db = FTLDocumentAlert()
+        alert_db.ftl_doc = self.doc
+        alert_db.ftl_user = self.user
+        alert_db.alert_on = now_utc
+        alert_db.note = "my note"
+        alert_db.save()
+
+        client_get = self.client.get(
+            f"/app/api/v1/documents/{self.doc.pid}/alerts/{alert_db.id}"
+        )
+        self.assertEqual(client_get.status_code, status.HTTP_200_OK)
+        self.assertIsNotNone(client_get)
+        self.assertEqual(
+            client_get.data["alert_on"],
+            now_utc.astimezone(gettz("Europe/Paris")).isoformat(),
+        )
+        self.assertEqual(client_get.data["note"], "my note")
+
+    def test_delete_alert(self):
+        now_utc = timezone.now() + timedelta(days=1)
+        alert_db = FTLDocumentAlert()
+        alert_db.ftl_doc = self.doc
+        alert_db.ftl_user = self.user
+        alert_db.alert_on = now_utc
+        alert_db.note = "my note"
+        alert_db.save()
+
+        client_delete = self.client.delete(
+            f"/app/api/v1/documents/{self.doc.pid}/alerts/{alert_db.id}"
+        )
+        self.assertEqual(client_delete.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_max_5_alerts(self):
+        for i in range(5):
+            now_utc = timezone.now() + timedelta(days=i + 1)
+            alert_db = FTLDocumentAlert()
+            alert_db.ftl_doc = self.doc
+            alert_db.ftl_user = self.user
+            alert_db.alert_on = now_utc
+            alert_db.note = f"my note {i}"
+            alert_db.save()
+
+        now_utc = timezone.now() + timedelta(days=12)
+        client_post = self.client.post(
+            f"/app/api/v1/documents/{self.doc.pid}/alerts",
+            {"alert_on": now_utc, "note": "my note"},
+            format="json",
+        )
+
+        self.assertEqual(client_post.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(client_post.data["code"], "ftl_too_many_alert")
+
+    def test_show_alerts_per_user_only(self):
+        user_2 = setup_user(self.org, email=tv.USER2_EMAIL, password=tv.USER2_PASS)
+
+        # Alert for user 1
+        now_utc = timezone.now() + timedelta(days=1)
+        alert_db_user_1 = FTLDocumentAlert()
+        alert_db_user_1.ftl_doc = self.doc
+        alert_db_user_1.ftl_user = self.user
+        alert_db_user_1.alert_on = now_utc
+        alert_db_user_1.note = "my note"
+        alert_db_user_1.save()
+
+        # Alert for user 2
+        alert_db_user_2 = FTLDocumentAlert()
+        alert_db_user_2.ftl_doc = self.doc
+        alert_db_user_2.ftl_user = user_2
+        alert_db_user_2.alert_on = now_utc
+        alert_db_user_2.note = "my note"
+        alert_db_user_2.save()
+
+        client_get = self.client.get(f"/app/api/v1/documents/{self.doc.pid}/alerts")
+        self.assertEqual(client_get.status_code, status.HTTP_200_OK)
+        self.assertEqual(client_get.data["count"], 1)
+        self.assertEqual(client_get.data["results"][0]["id"], alert_db_user_1.id)
+
+        client_get_alert_user_1 = self.client.get(
+            f"/app/api/v1/documents/{self.doc.pid}/alerts/{alert_db_user_1.id}"
+        )
+
+        self.assertEqual(client_get_alert_user_1.status_code, status.HTTP_200_OK)
+
+        client_get_alert_user_2 = self.client.get(
+            f"/app/api/v1/documents/{self.doc.pid}/alerts/{alert_db_user_2.id}"
+        )
+
+        self.assertEqual(client_get_alert_user_2.status_code, status.HTTP_404_NOT_FOUND)
 
 
 class FoldersTests(APITestCase):
