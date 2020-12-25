@@ -117,6 +117,11 @@ fr:
   Next month: Le mois prochain
   Note for reminder: Note pour le rappel
   Delete: Supprimer
+  Could not retrieve the list of reminders: Impossible de récupérer la liste des rappels
+  Reminder was added: Un rappel a été ajouté
+  Could not add reminder: Impossible d'ajouter le rappel
+  Reminder deleted: Le rappel a été supprimé
+  Could not delete reminder: Impossible de supprimer le rappel
 </i18n>
 
 <script>
@@ -165,7 +170,7 @@ export default {
         })
         .catch((error) => {
           this.mixinAlert(
-            this.$t("Could not retrieve the list of alerts"),
+            this.$t("Could not retrieve the list of reminders"),
             true
           );
         });
@@ -195,10 +200,10 @@ export default {
 
           this.value = null;
           this.note = "";
-          this.mixinAlert(this.$t("Document alert set"));
+          this.mixinAlert(this.$t("Reminder was added"));
         })
         .catch((error) => {
-          this.mixinAlert(this.$t("Could not set alert for document"), true);
+          this.mixinAlert(this.$t("Could not add reminder"), true);
         });
     },
 
@@ -210,10 +215,10 @@ export default {
         )
         .then((response) => {
           this.alerts = this.alerts.filter((item) => item.id !== alert_id);
-          this.mixinAlert(this.$t("Document alert deleted"));
+          this.mixinAlert(this.$t("Reminder deleted"));
         })
         .catch((error) => {
-          this.mixinAlert(this.$t("Could not delete alert for document"), true);
+          this.mixinAlert(this.$t("Could not delete reminder"), true);
         });
     },
   },
