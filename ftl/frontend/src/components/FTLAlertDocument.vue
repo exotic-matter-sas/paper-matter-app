@@ -21,30 +21,30 @@
           start-weekday="1"
           value-as-date
         >
-          <div class="d-flex" dir="ltr">
+          <div class="d-flex flex-wrap justify-content-center">
             <b-button
               size="sm"
               variant="outline-primary"
-              class="ml-auto"
+              class="m-1 text-truncate"
               @click="setTomorrow"
             >
-              Tomorrow
+              {{ $t("Tomorrow") }}
             </b-button>
             <b-button
               size="sm"
               variant="outline-primary"
-              class="ml-auto"
+              class="m-1 text-truncate"
               @click="setNextWeek"
             >
-              Next Week
+              {{ $t("Next week") }}
             </b-button>
             <b-button
               size="sm"
               variant="outline-primary"
-              class="ml-auto"
+              class="m-1 text-truncate"
               @click="setNextMonth"
             >
-              Next Month
+              {{ $t("Next month") }}
             </b-button>
           </div>
         </b-calendar>
@@ -69,7 +69,7 @@
                 size="sm"
                 variant="danger"
                 @click="deleteAlert(alert.id)"
-                >Delete</b-button
+                >{{ $t("Delete") }}</b-button
               >
             </div>
 
@@ -112,6 +112,11 @@ fr:
   We will send you an email at the chosen day. There is a limit of 5 alerts per documents.: Nous vous enverrons un courriel au jour choisi. Il y a une limite de 5 alertes par document.
   Close: Fermer
   Add reminder: Ajouter un rappel
+  Tomorrow: Demain
+  Next week: La semaine prochaine
+  Next month: Le mois prochain
+  Note for reminder: Note pour le rappel
+  Delete: Supprimer
 </i18n>
 
 <script>
@@ -180,6 +185,9 @@ export default {
         )
         .then((response) => {
           this.alerts.push(response.data);
+          this.alerts = this.alerts.sort((a, b) =>
+            a.alert_on.localeCompare(b.alert_on)
+          );
 
           this.$emit("event-document-alert", {
             alert: response.data,

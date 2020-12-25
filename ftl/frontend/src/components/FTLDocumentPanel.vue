@@ -328,6 +328,7 @@
     Open location: Dossier parent
     Alt. viewer: Visionneuse alternative
     Use alternative PDF viewer: Utiliser une visionneuse PDF alternative
+    Reminders: Rappels
 </i18n>
 
 <script>
