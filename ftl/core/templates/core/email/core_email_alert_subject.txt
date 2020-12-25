@@ -2,5 +2,5 @@
 {% load i18n %}
 
 {% block content %}
-{% blocktrans %}Reminder for document "{{ title }}""{% endblocktrans %}
+{% blocktrans %}Reminder for document "{{ title }}"{% endblocktrans %}
 {% endblock %}

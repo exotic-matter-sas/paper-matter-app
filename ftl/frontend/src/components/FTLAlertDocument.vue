@@ -108,8 +108,10 @@
 
 <i18n>
 fr:
-  dd:dd
-
+  Set a reminder for the document: Fixer un rappel pour le document
+  We will send you an email at the chosen day. There is a limit of 5 alerts per documents.: Nous vous enverrons un courriel au jour choisi. Il y a une limite de 5 alertes par document.
+  Close: Fermer
+  Add reminder: Ajouter un rappel
 </i18n>
 
 <script>
