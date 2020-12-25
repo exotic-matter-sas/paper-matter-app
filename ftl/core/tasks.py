@@ -8,7 +8,7 @@ from django.conf import settings
 from django.core import management
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
-from django.utils import timezone
+from django.utils import timezone, translation
 
 from core.models import FTLOrg, FTLDocument, FTLFolder, FTLDocumentAlert
 from core.processing.ftl_processing import FTLDocumentProcessing
@@ -86,20 +86,24 @@ def batch_alert_documents():
             logger.info(
                 f"Sending alert email for {alert.ftl_doc.pid} ({alert.alert_on})"
             )
-            # Email sent to the current address for notification
+
             ctx = {
                 "title": alert.ftl_doc.title,
                 "note": alert.note,
                 "alert_on": alert.alert_on,
             }
-            subject_alert = render_to_string(
-                template_name="core/email/core_email_alert_subject.txt", context=ctx
-            )
-            subject_alert = "".join(subject_alert.splitlines())
-            message_alert = render_to_string(
-                template_name="core/email/core_email_alert_body.txt", context=ctx
-            )
 
+            # Force user lang setting for email
+            with translation.override(alert.ftl_user.lang):
+                subject_alert = render_to_string(
+                    template_name="core/email/core_email_alert_subject.txt", context=ctx
+                )
+                subject_alert = "".join(subject_alert.splitlines())
+                message_alert = render_to_string(
+                    template_name="core/email/core_email_alert_body.txt", context=ctx
+                )
+
+            # Email sent to the current user email for notification
             alert.ftl_user.email_user(
                 subject_alert, message_alert, settings.DEFAULT_FROM_EMAIL
             )
