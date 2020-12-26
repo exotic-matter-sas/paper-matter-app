@@ -20,6 +20,7 @@
           :min="new Date()"
           start-weekday="1"
           value-as-date
+          :date-disabled-fn="dateDisabled"
         >
           <div class="d-flex flex-wrap justify-content-center">
             <b-button
@@ -220,6 +221,17 @@ export default {
         .catch((error) => {
           this.mixinAlert(this.$t("Could not delete reminder"), true);
         });
+    },
+
+    dateDisabled: function (ymd, theDate) {
+      const currentDate = this.$moment(theDate);
+      for (const alert of this.alerts) {
+        if (currentDate.isSame(alert.alert_on)) {
+          return true;
+        }
+      }
+
+      return false;
     },
   },
 };
