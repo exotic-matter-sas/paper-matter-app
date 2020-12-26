@@ -3,19 +3,21 @@
 
 import os
 import time
+from datetime import datetime, timedelta
 from string import ascii_lowercase
 from unittest import skipIf
 from unittest.mock import patch
 
 from django.conf import settings
+from django.utils import timezone
 from selenium.common.exceptions import NoSuchElementException
 
 from core.tasks import apply_ftl_processing
 from ftests.pages.document_viewer_modal import DocumentViewerModal
 from ftests.pages.home_page import HomePage
+from ftests.pages.login_page import LoginPage
 from ftests.pages.manage_folders_modal import ManageFoldersModal
 from ftests.pages.move_documents_modal import MoveDocumentsModal
-from ftests.pages.login_page import LoginPage
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import (
     setup_org,
@@ -1070,6 +1072,37 @@ class DocumentViewerModalTests(
 
         self.visit(f"/app/share/{doc_share.pid}")
         self.assertIn("not found", self.get_elem_text("body"))
+
+    def test_add_reminder(self):
+        setup_document(self.org, self.user, binary=setup_temporary_file().name)
+        self.refresh_documents_list()
+        self.open_first_document()
+
+        # Add a reminder
+        self.add_reminder_tomorrow_document("my note")
+        self.close_document()
+
+        # Close and reopen the document to be sure the reminder was added to backend
+        self.open_first_document()
+        self.wait_for_elem_to_show(self.reminder_document_button)
+        self.get_elem(self.reminder_document_button).click()
+        self.wait_for_elem_to_show(self.reminder_add_reminder_button)
+
+        # Get the first reminder
+        elems_date_text = self.get_elems(self.reminder_list_elements_date)
+        self.assertEqual(len(elems_date_text), 1)
+        now_utc = timezone.now() + timedelta(days=1)
+
+        # Test that the date was set to tomorrow (we are not comparing the time)
+        self.assertEqual(
+            datetime.fromisoformat(elems_date_text[0].get_attribute("title")).date(),
+            now_utc.date(),
+        )
+
+        # Test the note was saved
+        elems_note_text = self.get_elems_text(self.reminder_list_elements_note)
+        self.assertEqual(len(elems_note_text), 1)
+        self.assertEqual(elems_note_text[0], "my note")
 
 
 class ManageFoldersModalTests(LoginPage, HomePage, ManageFoldersModal):

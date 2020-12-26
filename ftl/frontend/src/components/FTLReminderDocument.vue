@@ -11,7 +11,7 @@
     :title="$t('Set a reminder for the document')"
     @show="getReminders"
   >
-    <div class="d-flex flex-column flex-sm-row justify-content-center">
+    <div class="d-flex flex-column flex-lg-row justify-content-center">
       <div class="align-self-center">
         <b-calendar
           class="mx-2 my-2"
@@ -61,6 +61,7 @@
           </div>
         </b-calendar>
         <b-form-input
+          id="reminder-note"
           v-model="note"
           :placeholder="$t('Note for reminder')"
         ></b-form-input>
@@ -75,7 +76,9 @@
           >
             <div class="d-flex w-100 justify-content-between">
               <h5 class="mb-1">
-                {{ $moment.parseZone(reminder.alert_on).format("LL") }}
+                <span :title="reminder.alert_on">{{
+                  $moment.parseZone(reminder.alert_on).format("LL")
+                }}</span>
               </h5>
               <b-button
                 size="sm"

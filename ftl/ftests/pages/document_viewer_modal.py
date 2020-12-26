@@ -18,6 +18,7 @@ class DocumentViewerModal(BasePage):
     open_pdf_button = "#open-document"
     move_document_button = "#move-document"
     delete_document_button = "#delete-document"
+    reminder_document_button = "#reminder-document"
 
     edit_note_button = "#edit-note"
     note_textarea = "#note-textarea"
@@ -32,6 +33,14 @@ class DocumentViewerModal(BasePage):
     share_document_button = "#share-document"
     validate_modal_button = "#"
     unshare_modal_button = "[id^='modal-document-sharing'] .modal-footer .btn-danger"
+
+    reminder_for_tomorrow_button = ".b-calendar footer button.btn-sm"
+    reminder_add_reminder_button = ".modal-content footer button.btn-primary"
+    reminder_list_elements = ".list-group .list-group-item"
+    reminder_list_elements_date = ".list-group .list-group-item h5 span"
+    reminder_list_elements_note = ".list-group .list-group-item div:nth-child(2)"
+    reminder_note_input = "#reminder-note"
+    reminder_close_button = ".modal-content footer button.btn-secondary"
 
     def rename_document(self, document_name):
         self.wait_for_elem_to_show(self.rename_document_button)
@@ -73,3 +82,16 @@ class DocumentViewerModal(BasePage):
         self.wait_for_elem_to_show(self.modal_input)
         self.wait_for_elem_text_not_to_be(self.modal_input, "")
         self.get_elem(self.unshare_modal_button).click()
+
+    def add_reminder_tomorrow_document(self, note=""):
+        self.wait_for_elem_to_show(self.reminder_document_button)
+        self.get_elem(self.reminder_document_button).click()
+        self.wait_for_elem_to_show(self.reminder_add_reminder_button)
+        self.get_elem(self.reminder_for_tomorrow_button).click()
+        self.get_elem(self.reminder_note_input).send_keys(note)
+        self.get_elem(self.reminder_add_reminder_button).click()
+        self.wait_for_elem_to_show(self.reminder_list_elements)
+        self.get_elem(self.reminder_close_button).click()
+
+    def delete_reminder_document(self):
+        pass
