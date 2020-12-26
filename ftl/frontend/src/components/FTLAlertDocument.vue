@@ -21,6 +21,16 @@
           start-weekday="1"
           value-as-date
           :date-disabled-fn="dateDisabled"
+          :label-current-month="$t('Current month')"
+          :label-help="$t('Use cursor keys to navigate calendar dates')"
+          :label-nav="$t('Calendar navigation')"
+          :label-next-month="$t('Next month')"
+          :label-next-year="$t('Next year')"
+          :label-no-date-selected="$t('No date selected')"
+          :label-prev-month="$t('Previous month')"
+          :label-prev-year="$t('Previous year')"
+          :label-selected="$t('Selected date')"
+          :label-today="$t('Today')"
         >
           <div class="d-flex flex-wrap justify-content-center">
             <b-button
@@ -29,7 +39,7 @@
               class="m-1 text-truncate"
               @click="setTomorrow"
             >
-              {{ $t("Tomorrow") }}
+              {{ $t("For tomorrow") }}
             </b-button>
             <b-button
               size="sm"
@@ -37,7 +47,7 @@
               class="m-1 text-truncate"
               @click="setNextWeek"
             >
-              {{ $t("Next week") }}
+              {{ $t("For next week") }}
             </b-button>
             <b-button
               size="sm"
@@ -45,7 +55,7 @@
               class="m-1 text-truncate"
               @click="setNextMonth"
             >
-              {{ $t("Next month") }}
+              {{ $t("For next month") }}
             </b-button>
           </div>
         </b-calendar>
@@ -110,12 +120,12 @@
 <i18n>
 fr:
   Set a reminder for the document: Fixer un rappel pour le document
-  We will send you an email at the chosen day. There is a limit of 5 alerts per documents.: Nous vous enverrons un courriel au jour choisi. Il y a une limite de 5 alertes par document.
+  We will send you an email at the chosen day. There is a limit of 5 alerts per documents.: Nous vous enverrons un email le jour choisi. Il y a une limite de 5 alertes par document.
   Close: Fermer
   Add reminder: Ajouter un rappel
-  Tomorrow: Demain
-  Next week: La semaine prochaine
-  Next month: Le mois prochain
+  For tomorrow: Pour demain
+  For next week: La semaine prochaine
+  For next month: Le mois prochain
   Note for reminder: Note pour le rappel
   Delete: Supprimer
   Could not retrieve the list of reminders: Impossible de récupérer la liste des rappels
@@ -123,6 +133,16 @@ fr:
   Could not add reminder: Impossible d'ajouter le rappel
   Reminder deleted: Le rappel a été supprimé
   Could not delete reminder: Impossible de supprimer le rappel
+  Current month: Mois courant
+  Use cursor keys to navigate calendar dates: Utilisez les touches fléchées du clavier pour naviguer dans le calendrier
+  Calendar navigation: Navigation dans le calendrier
+  Next month: Mois suivant
+  Next year: Année suivante
+  No date selected: Aucune date sélectionnée
+  Previous month: Mois précédent
+  Previous year: Année précédente
+  Selected date: Date sélectionnée
+  Today: Aujourd'hui
 </i18n>
 
 <script>
