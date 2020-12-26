@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name="FTLDocumentAlert",
+            name="FTLDocumentReminder",
             fields=[
                 (
                     "id",
@@ -30,7 +30,7 @@ class Migration(migrations.Migration):
                     "ftl_doc",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name="alerts",
+                        related_name="reminders",
                         to="core.FTLDocument",
                     ),
                 ),
@@ -45,7 +45,7 @@ class Migration(migrations.Migration):
             options={"ordering": ["alert_on"],},
         ),
         migrations.AddConstraint(
-            model_name="ftldocumentalert",
+            model_name="ftldocumentreminder",
             constraint=models.UniqueConstraint(
                 fields=("ftl_doc", "ftl_user", "alert_on"), name="one_alert_per_day"
             ),

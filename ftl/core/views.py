@@ -35,13 +35,13 @@ from rest_framework.response import Response
 from core.errors import ERROR_CODES_DETAILS, BadRequestError
 from core.ftl_account_processors_mixin import FTLAccountProcessorContextMixin
 from core.mimes import mimetype_to_ext, guess_mimetype
-from core.models import FTLDocument, FTLFolder, FTLDocumentSharing, FTLDocumentAlert
+from core.models import FTLDocument, FTLFolder, FTLDocumentSharing, FTLDocumentReminder
 from core.serializers import (
     FTLDocumentSerializer,
     FTLFolderSerializer,
     FTLDocumentSharingSerializer,
     FTLDocumentDetailsOnlyOfficeSerializer,
-    FTLDocumentAlertSerializer,
+    FTLDocumentReminderSerializer,
 )
 from core.tasks import apply_ftl_processing
 from ftl.enums import FTLStorages, FTLPlugins
@@ -491,8 +491,8 @@ class FTLDocumentSharingDetail(generics.RetrieveUpdateDestroyAPIView):
         )
 
 
-class FTLDocumentAlertList(generics.ListCreateAPIView):
-    serializer_class = FTLDocumentAlertSerializer
+class FTLDocumentReminderList(generics.ListCreateAPIView):
+    serializer_class = FTLDocumentReminderSerializer
     lookup_url_kwarg = "apid"
 
     def get_queryset(self):
@@ -503,7 +503,7 @@ class FTLDocumentAlertList(generics.ListCreateAPIView):
             pid=self.kwargs["dpid"],
         )
 
-        return FTLDocumentAlert.objects.filter(
+        return FTLDocumentReminder.objects.filter(
             ftl_doc_id=doc.id, ftl_user_id=self.request.user.id,
         )
 
@@ -517,14 +517,14 @@ class FTLDocumentAlertList(generics.ListCreateAPIView):
 
         if self.get_queryset().count() >= 5:
             raise BadRequestError(
-                ERROR_CODES_DETAILS["ftl_too_many_alert"], "ftl_too_many_alert",
+                ERROR_CODES_DETAILS["ftl_too_many_reminders"], "ftl_too_many_reminders",
             )
 
         serializer.save(ftl_doc=ftl_doc, ftl_user=self.request.user)
 
 
-class FTLDocumentAlertDetail(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = FTLDocumentAlertSerializer
+class FTLDocumentReminderDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = FTLDocumentReminderSerializer
     lookup_url_kwarg = "apid"
 
     def get_queryset(self):
@@ -535,6 +535,6 @@ class FTLDocumentAlertDetail(generics.RetrieveUpdateDestroyAPIView):
             pid=self.kwargs["dpid"],
         )
 
-        return FTLDocumentAlert.objects.filter(
+        return FTLDocumentReminder.objects.filter(
             ftl_doc_id=doc.id, ftl_user_id=self.request.user.id,
         )

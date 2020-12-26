@@ -7,8 +7,8 @@ import pytz
 from django.utils import timezone
 from rest_framework.test import APITestCase
 
-from core.models import FTLDocument, FTLOrg, FTLDocumentAlert
-from core.tasks import batch_delete_doc, batch_delete_org, batch_alert_documents
+from core.models import FTLDocument, FTLOrg, FTLDocumentReminder
+from core.tasks import batch_delete_doc, batch_delete_org, batch_reminder_documents
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import (
     setup_org,
@@ -104,25 +104,25 @@ class RecurringTasksTests(APITestCase):
         now_plus_1_week_utc = timezone.now() + datetime.timedelta(weeks=1)
         now_plus_1_month_utc = timezone.now() + datetime.timedelta(weeks=4)
 
-        alert_db_minus_1_day = FTLDocumentAlert()
+        alert_db_minus_1_day = FTLDocumentReminder()
         alert_db_minus_1_day.ftl_doc = self.doc
         alert_db_minus_1_day.ftl_user = self.user
         alert_db_minus_1_day.alert_on = now_minus_1_day_utc
         alert_db_minus_1_day.save()
 
-        alert_db_plus_1_day = FTLDocumentAlert()
+        alert_db_plus_1_day = FTLDocumentReminder()
         alert_db_plus_1_day.ftl_doc = self.doc
         alert_db_plus_1_day.ftl_user = self.user
         alert_db_plus_1_day.alert_on = now_plus_1_day_utc
         alert_db_plus_1_day.save()
 
-        alert_db_plus_1_week = FTLDocumentAlert()
+        alert_db_plus_1_week = FTLDocumentReminder()
         alert_db_plus_1_week.ftl_doc = self.doc
         alert_db_plus_1_week.ftl_user = self.user
         alert_db_plus_1_week.alert_on = now_plus_1_week_utc
         alert_db_plus_1_week.save()
 
-        alert_db_plus_1_month = FTLDocumentAlert()
+        alert_db_plus_1_month = FTLDocumentReminder()
         alert_db_plus_1_month.ftl_doc = self.doc
         alert_db_plus_1_month.ftl_user = self.user
         alert_db_plus_1_month.alert_on = now_plus_1_month_utc
@@ -133,10 +133,10 @@ class RecurringTasksTests(APITestCase):
             mocked_timezone_now.return_value = datetime.datetime.utcnow().replace(
                 tzinfo=pytz.utc
             )
-            batch_alert_documents()
+            batch_reminder_documents()
 
         # Expired alert is removed
-        with self.assertRaises(FTLDocumentAlert.DoesNotExist):
+        with self.assertRaises(FTLDocumentReminder.DoesNotExist):
             alert_db_minus_1_day.refresh_from_db()
 
         # Time is moved forward, hours per hours
@@ -148,7 +148,7 @@ class RecurringTasksTests(APITestCase):
             while moving_datetime < now_plus_1_month_utc:
                 moving_datetime = moving_datetime + datetime.timedelta(hours=1)
                 mocked_timezone_now.return_value = moving_datetime
-                batch_alert_documents()
+                batch_reminder_documents()
 
         # Three emails should have been sent
         self.assertEqual(mocked_email_send.call_count, 3)
@@ -208,10 +208,10 @@ class RecurringTasksTests(APITestCase):
             ],
         )
 
-        # All alerts have been sent and so removed from DB
-        with self.assertRaises(FTLDocumentAlert.DoesNotExist):
+        # All reminders have been sent and so removed from DB
+        with self.assertRaises(FTLDocumentReminder.DoesNotExist):
             alert_db_plus_1_day.refresh_from_db()
-        with self.assertRaises(FTLDocumentAlert.DoesNotExist):
+        with self.assertRaises(FTLDocumentReminder.DoesNotExist):
             alert_db_plus_1_week.refresh_from_db()
-        with self.assertRaises(FTLDocumentAlert.DoesNotExist):
+        with self.assertRaises(FTLDocumentReminder.DoesNotExist):
             alert_db_plus_1_month.refresh_from_db()

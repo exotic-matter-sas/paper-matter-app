@@ -39,10 +39,10 @@ FTL_PERMISSIONS_USER = [
     "core.change_ftldocumentsharing",
     "core.delete_ftldocumentsharing",
     "core.view_ftldocumentsharing",
-    "core.add_ftldocumentalert",
-    "core.change_ftldocumentalert",
-    "core.delete_ftldocumentalert",
-    "core.view_ftldocumentalert",
+    "core.add_ftldocumentreminder",
+    "core.change_ftldocumentreminder",
+    "core.delete_ftldocumentreminder",
+    "core.view_ftldocumentreminder",
 ]
 
 
@@ -330,9 +330,12 @@ class FTLDocumentSharing(models.Model):
         ordering = ["-created"]
 
 
-class FTLDocumentAlert(models.Model):
+class FTLDocumentReminder(models.Model):
     ftl_doc = ForeignKey(
-        "FTLDocument", on_delete=models.CASCADE, db_index=True, related_name="alerts",
+        "FTLDocument",
+        on_delete=models.CASCADE,
+        db_index=True,
+        related_name="reminders",
     )
     ftl_user = models.ForeignKey("FTLUser", on_delete=models.CASCADE)
     alert_on = models.DateTimeField()

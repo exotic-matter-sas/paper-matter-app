@@ -48,7 +48,7 @@ msgstr "Le fichier est vide"
 msgid "The thumbnail could not be decoded"
 msgstr "La miniature n'a pas pu être décodée"
 
-msgid "Too many alerts have been created for this document"
+msgid "Too many reminders have been created for this document"
 msgstr "Trop d’alertes ont été créées pour ce document"
 
 msgid "Bad request"

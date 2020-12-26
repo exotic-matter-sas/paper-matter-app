@@ -385,18 +385,22 @@ CELERY_BEAT_SCHEDULE = {
     "clean-org-everyday": {
         "task": "core.tasks.batch_delete_org",
         "schedule": crontab(minute=5, hour=1),
+        "options": {"expires": timedelta(days=1).total_seconds()},
     },
     "clean-doc-everyhour": {
         "task": "core.tasks.batch_delete_doc",
         "schedule": crontab(minute=0, hour="*"),
+        "options": {"expires": timedelta(hours=1).total_seconds()},
     },
     "clean-oauth-tokens-everyday": {
         "task": "core.tasks.batch_delete_oauth_tokens",
         "schedule": crontab(minute=15, hour=1),
+        "options": {"expires": timedelta(days=1).total_seconds()},
     },
-    "alert-documents-everyhour": {
-        "task": "core.tasks.batch_alert_documents",
+    "reminder-documents-everyhour": {
+        "task": "core.tasks.batch_reminder_documents",
         "schedule": crontab(minute=0, hour="*"),
+        "options": {"expires": timedelta(hours=1).total_seconds()},
     },
 }
 
