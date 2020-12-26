@@ -20,6 +20,7 @@
           :min="new Date()"
           start-weekday="1"
           value-as-date
+          :disabled="reminders.length >= 5"
           :date-disabled-fn="dateDisabled"
           :label-current-month="$t('Current month')"
           :label-help="$t('Use cursor keys to navigate calendar dates')"
@@ -120,7 +121,7 @@
 <i18n>
 fr:
   Set a reminder for the document: Fixer un rappel pour le document
-  We will send you an email at the chosen day. There is a limit of 5 reminders per documents.: Nous vous enverrons un email le jour choisi. Il y a une limite de 5 alertes par document.
+  We will send you an email at the chosen day. There is a limit of 5 reminders per documents.: Nous vous enverrons un email le jour choisi. Il y a une limite de 5 rappels par document.
   Close: Fermer
   No reminder has been set: Aucun rappel défini
   Add reminder: Ajouter un rappel
