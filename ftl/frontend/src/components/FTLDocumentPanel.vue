@@ -115,7 +115,17 @@
             <font-awesome-icon icon="folder-open" />
             <span>{{ $t("Open location") }}</span>
           </b-dropdown-item>
+          <b-dropdown-item
+            class="d-block d-md-none"
+            link-class="text-primary"
+            v-b-modal="'modal-alert-document-dp'"
+          >
+            <font-awesome-icon icon="bell" />
+            <span>{{ $t("Reminders") }}</span>
+          </b-dropdown-item>
+
           <b-dropdown-divider></b-dropdown-divider>
+
           <b-dropdown-item
             link-class="text-danger"
             v-b-modal="'modal-delete-document-dp'"
