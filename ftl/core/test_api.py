@@ -701,7 +701,7 @@ class DocumentsRemindersTests(APITestCase):
             request=HttpRequest(), email=tv.USER1_EMAIL, password=tv.USER1_PASS
         )
 
-    def test_add_alert(self):
+    def test_add_reminder(self):
         now_utc = timezone.now() + timedelta(days=1)
         client_post = self.client.post(
             f"/app/api/v1/documents/{self.doc.pid}/reminders",
@@ -720,7 +720,7 @@ class DocumentsRemindersTests(APITestCase):
         )
         self.assertEqual(client_post.data["note"], "my note")
 
-    def test_list_alerts(self):
+    def test_list_reminders(self):
         now_utc = timezone.now() + timedelta(days=1)
         reminder_db = FTLDocumentReminder()
         reminder_db.ftl_doc = self.doc
@@ -740,7 +740,7 @@ class DocumentsRemindersTests(APITestCase):
         )
         self.assertEqual(client_get.data["results"][0]["note"], "my note")
 
-    def test_get_alert(self):
+    def test_get_reminder(self):
         now_utc = timezone.now() + timedelta(days=1)
         reminder_db = FTLDocumentReminder()
         reminder_db.ftl_doc = self.doc
@@ -760,7 +760,7 @@ class DocumentsRemindersTests(APITestCase):
         )
         self.assertEqual(client_get.data["note"], "my note")
 
-    def test_delete_alert(self):
+    def test_delete_reminder(self):
         now_utc = timezone.now() + timedelta(days=1)
         reminder_db = FTLDocumentReminder()
         reminder_db.ftl_doc = self.doc
@@ -774,7 +774,7 @@ class DocumentsRemindersTests(APITestCase):
         )
         self.assertEqual(client_delete.status_code, status.HTTP_204_NO_CONTENT)
 
-    def test_max_5_alerts(self):
+    def test_max_5_reminders(self):
         for i in range(5):
             now_utc = timezone.now() + timedelta(days=i + 1)
             reminder_db = FTLDocumentReminder()
@@ -794,7 +794,7 @@ class DocumentsRemindersTests(APITestCase):
         self.assertEqual(client_post.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(client_post.data["code"], "ftl_too_many_reminders")
 
-    def test_show_alerts_per_user_only(self):
+    def test_show_reminders_per_user_only(self):
         user_2 = setup_user(self.org, email=tv.USER2_EMAIL, password=tv.USER2_PASS)
 
         # Alert for user 1
