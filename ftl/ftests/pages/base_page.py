@@ -27,7 +27,6 @@ from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 
 import ftests.tools.detect_server as server
-from ftl.settings import BASE_DIR
 
 if "CI" in os.environ:
     LIVE_SERVER = LiveServerTestCase
@@ -384,7 +383,9 @@ class BasePage(LIVE_SERVER):
         # https://github.com/SeleniumHQ/selenium/issues/8003
 
         with open(
-            os.path.join(BASE_DIR, "ftests", "tools", "drag_n_drop_workaround.js"),
+            os.path.join(
+                settings.BASE_DIR, "ftests", "tools", "drag_n_drop_workaround.js"
+            ),
             mode="r",
         ) as js_file:
             js_to_execute = js_file.read()

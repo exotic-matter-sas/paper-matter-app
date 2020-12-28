@@ -3,9 +3,10 @@
 
 import os
 
+from django.conf import settings
+
 from ftests.pages.base_page import BasePage
 from ftests.tools import test_values as tv
-from ftl.settings import BASE_DIR
 
 
 class HomePage(BasePage):
@@ -78,7 +79,7 @@ class HomePage(BasePage):
     def upload_documents(self, absolute_paths=None):
         if not absolute_paths:
             absolute_paths = os.path.join(
-                BASE_DIR, "ftests", "tools", "test_documents", "test.pdf"
+                settings.BASE_DIR, "ftests", "tools", "test_documents", "test.pdf"
             )
         else:
             if type(absolute_paths) is not list:

@@ -6,7 +6,7 @@ from unittest.mock import patch, Mock
 
 import qrcode.image.svg
 from captcha.models import CaptchaStore
-from django.conf.global_settings import SESSION_COOKIE_AGE
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.signals import user_logged_out
 from django.contrib.sessions.backends.base import SessionBase
@@ -23,7 +23,6 @@ from rest_framework import status
 
 from core.models import FTLUser, FTL_PERMISSIONS_USER
 from ftests.test_account import (
-    TotpDevice2FATests,
     totp_time_setter,
     totp_time_property,
     mocked_totp_time_setter,
@@ -39,6 +38,7 @@ from ftests.tools.setup_helpers import (
     setup_2fa_static_device,
     setup_2fa_fido2_device,
 )
+from ftests.tools.test_values import TOTP_DEVICE_SECRET_KEY, TOTP_DEVICE_VALID_TOKEN
 from ftl import celery
 from ftl.otp_plugins.otp_ftl.forms import TOTPDeviceConfirmForm
 from ftl.otp_plugins.otp_ftl.models import Fido2Device
@@ -49,7 +49,6 @@ from ftl.otp_plugins.otp_ftl.views_totp import (
     TOTPDeviceAdd,
     TOTPDeviceConfirm,
 )
-from ftl.settings import FIDO2_RP_NAME
 
 
 class FtlPagesTests(TestCase):
@@ -219,7 +218,7 @@ class OTPCheckViewTests(TestCase):
     @patch.object(TOTP, "time", totp_time_property)
     def test_session_timeout_reduced_during_2fa_check(self):
         totp_device = setup_2fa_totp_device(
-            self.user, secret_key=TotpDevice2FATests.secret_key
+            self.user, secret_key=TOTP_DEVICE_SECRET_KEY
         )
         totp_time_setter.side_effect = mocked_totp_time_setter
 
@@ -241,7 +240,7 @@ class OTPCheckViewTests(TestCase):
             "/accounts/2fa/totp/check/",
             {
                 "otp_device": totp_device.persistent_id,
-                "otp_token": TotpDevice2FATests.valid_token,
+                "otp_token": TOTP_DEVICE_VALID_TOKEN,
             },
             follow=True,
         )
@@ -257,7 +256,7 @@ class OTPCheckViewTests(TestCase):
         delta = cookie_expiration_time - now
 
         self.assertAlmostEqual(
-            round(delta.total_seconds()), SESSION_COOKIE_AGE, delta=5
+            round(delta.total_seconds()), settings.SESSION_COOKIE_AGE, delta=5
         )
 
     def test_otp_check_redirect_to_proper_view(self):
@@ -878,7 +877,7 @@ class OTPFtlViewsFido2Tests(TestCase):
 
         response = self.client.get("/accounts/2fa/fido2/api/register_begin")
 
-        pkcre_mock.assert_called_once_with("testserver", FIDO2_RP_NAME)
+        pkcre_mock.assert_called_once_with("testserver", settings.FIDO2_RP_NAME)
         fido2_server_mock.assert_called_once_with(pkcre_mock())
 
         self.assertEqual(cbor2_mock.loads.call_count, 2)
@@ -948,7 +947,7 @@ class OTPFtlViewsFido2Tests(TestCase):
             fake_cbor2_loads_value["attestationObject"]
         )
 
-        pkcre_mock.assert_called_once_with("testserver", FIDO2_RP_NAME)
+        pkcre_mock.assert_called_once_with("testserver", settings.FIDO2_RP_NAME)
         fido2_server_mock().register_complete.assert_called_once_with(
             "fake_registration_data",
             client_data_mock.return_value,
@@ -989,7 +988,7 @@ class OTPFtlViewsFido2Tests(TestCase):
         acd_mock.assert_any_call(fake_cbor2_loaded_list[0])
         acd_mock.assert_any_call(fake_cbor2_loaded_list[1])
 
-        pkcre_mock.assert_called_once_with("testserver", FIDO2_RP_NAME)
+        pkcre_mock.assert_called_once_with("testserver", settings.FIDO2_RP_NAME)
         fido2_server_mock.assert_called_once_with(pkcre_mock())
 
         fido2_server_mock().authenticate_begin.assert_called_once_with(

@@ -211,7 +211,7 @@ class FTLDocument(models.Model):
         if async_delete:
             celery.app.send_task(
                 "core.tasks.delete_document",
-                args=[self.pid, self.org.pk, self.ftl_user.pk],
+                args=[self.pid, self.org_id, self.ftl_user_id],
             )
 
     def delete(self, *args, **kwargs):

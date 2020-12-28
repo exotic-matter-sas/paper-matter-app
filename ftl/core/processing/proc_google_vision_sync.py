@@ -9,7 +9,6 @@ from google.cloud.vision_v1 import enums
 
 from core.processing.ftl_processing import FTLOCRBase
 from ftl.enums import FTLStorages
-from ftl.settings import DEFAULT_FILE_STORAGE
 
 logger = logging.getLogger(__name__)
 
@@ -27,13 +26,13 @@ class FTLOCRGoogleVisionSync(FTLOCRBase):
 
     def __init__(self, credentials=settings.GS_CREDENTIALS):
         super().__init__()
-        if DEFAULT_FILE_STORAGE == FTLStorages.GCS:
+        if settings.DEFAULT_FILE_STORAGE == FTLStorages.GCS:
             self.gcs_bucket_name = settings.GS_BUCKET_NAME
         self.client = vision_v1.ImageAnnotatorClient(credentials=credentials)
         self.supported_storages = [FTLStorages.FILE_SYSTEM, FTLStorages.GCS]
 
     def _extract_text(self, ftl_doc):
-        if DEFAULT_FILE_STORAGE == FTLStorages.GCS:
+        if settings.DEFAULT_FILE_STORAGE == FTLStorages.GCS:
             storage_uri = f"gs://{self.gcs_bucket_name}/{ftl_doc.name}"
             gcs_source = {"uri": storage_uri}
             input_config = {"gcs_source": gcs_source}
