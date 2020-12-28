@@ -1152,11 +1152,16 @@ class DocumentReminderTests(
         self.add_reminder_tomorrow_document("my note")
 
         # Move time forward to test reminder
+        stop_time = timezone.now() + timedelta(days=1, hours=1)
         with patch.object(timezone, "now") as mocked_time:
-            mocked_time.return_value = datetime.utcnow().replace(
-                tzinfo=pytz.utc
-            ) + timedelta(days=1)
-            batch_reminder_documents()
+            moving_datetime = datetime.utcnow().replace(tzinfo=pytz.utc)
+            mocked_time.return_value = moving_datetime
+
+            # Forward until next month
+            while moving_datetime < stop_time:
+                moving_datetime = moving_datetime + timedelta(hours=1)
+                mocked_time.return_value = moving_datetime
+                batch_reminder_documents()
 
         # Wait for async sending of emails
         self.wait_celery_queue_to_be_empty(self._worker)
