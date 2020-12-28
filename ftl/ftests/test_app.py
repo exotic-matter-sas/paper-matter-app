@@ -2,17 +2,21 @@
 #  Licensed under the Business Source License. See LICENSE at project root for more information.
 
 import os
+import threading
 import time
 from datetime import datetime, timedelta
 from string import ascii_lowercase
 from unittest import skipIf
 from unittest.mock import patch
 
+import pytz
 from django.conf import settings
+from django.core import mail
+from django.test import override_settings
 from django.utils import timezone
 from selenium.common.exceptions import NoSuchElementException
 
-from core.tasks import apply_ftl_processing
+from core.tasks import apply_ftl_processing, batch_reminder_documents
 from ftests.pages.document_viewer_modal import DocumentViewerModal
 from ftests.pages.home_page import HomePage
 from ftests.pages.login_page import LoginPage
@@ -29,6 +33,7 @@ from ftests.tools.setup_helpers import (
     setup_document_share,
 )
 from ftl import celery
+from ftl.celery import app
 from ftl.settings import BASE_DIR
 
 
@@ -1073,6 +1078,35 @@ class DocumentViewerModalTests(
         self.visit(f"/app/share/{doc_share.pid}")
         self.assertIn("not found", self.get_elem_text("body"))
 
+
+@override_settings(CELERY_BROKER_URL="memory://localhost")
+@override_settings(CELERY_TASK_ROUTES={})
+class DocumentReminderTests(
+    LoginPage, HomePage, DocumentViewerModal,
+):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        app.control.purge()
+        cls._worker = app.Worker(app=app, pool="solo", concurrency=1)
+        cls._thread = threading.Thread(target=cls._worker.start)
+        cls._thread.daemon = True
+        cls._thread.start()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls._worker.stop()
+        super().tearDownClass()
+
+    def setUp(self, **kwargs):
+        # first org, admin, user are already created, user is already logged on home page
+        super().setUp()
+        self.org = setup_org()
+        setup_admin(self.org)
+        self.user = setup_user(self.org)
+        self.visit(LoginPage.url)
+        self.log_user()
+
     def test_add_reminder(self):
         setup_document(self.org, self.user, binary=setup_temporary_file().name)
         self.refresh_documents_list()
@@ -1103,6 +1137,30 @@ class DocumentViewerModalTests(
         elems_note_text = self.get_elems_text(self.reminder_list_elements_note)
         self.assertEqual(len(elems_note_text), 1)
         self.assertEqual(elems_note_text[0], "my note")
+
+    def test_reminder_receive_email(self):
+        setup_document(self.org, self.user, binary=setup_temporary_file().name)
+        self.refresh_documents_list()
+        self.open_first_document()
+
+        # Add a reminder
+        self.add_reminder_tomorrow_document("my note")
+
+        # Move time forward to test reminder
+        with patch.object(timezone, "now") as mocked_time:
+            mocked_time.return_value = datetime.utcnow().replace(
+                tzinfo=pytz.utc
+            ) + timedelta(days=1)
+            batch_reminder_documents()
+
+        # Wait for async sending of emails
+        self.wait_celery_queue_to_be_empty(self._worker)
+
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn(tv.USER1_EMAIL, mail.outbox[0].to)
+        self.assertIn("reminder for document", mail.outbox[0].subject.lower())
+        self.assertIn(tv.DOCUMENT1_TITLE, mail.outbox[0].body)
+        self.assertIn("my note", mail.outbox[0].body)
 
 
 class ManageFoldersModalTests(LoginPage, HomePage, ManageFoldersModal):
