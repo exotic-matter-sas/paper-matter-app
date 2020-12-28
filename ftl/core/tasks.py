@@ -81,8 +81,8 @@ def batch_reminder_documents():
     )
 
     for reminder in reminders:
-        if now_in_utc - reminder.alert_on < timedelta(hours=12):
-            # Only sends reminder in a 12 hours window (avoid sending reminders for expired reminders)
+        if now_in_utc - reminder.alert_on < timedelta(hours=24):
+            # Only sends reminder in a 24 hours window (avoid sending reminders for expired reminders)
             logger.info(
                 f"Sending reminder email for {reminder.ftl_doc.pid} ({reminder.alert_on})"
             )
