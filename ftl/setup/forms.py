@@ -35,7 +35,7 @@ class FirstOrgAndAdminCreationForm(UserCreationForm):
     def clean_org_name(self):
         name_ = self.cleaned_data["org_name"]
         slug = slugify(name_)
-        org_exists = FTLOrg.objects.filter(slug=slug)
+        org_exists = FTLOrg.objects.filter(slug=slug).exists()
         if org_exists:
             raise forms.ValidationError(_("Organization already exists"))
         return name_

@@ -9,7 +9,7 @@ from unittest import mock
 from unittest.mock import patch
 from uuid import UUID
 
-from dateutil.tz import gettz
+from django.conf import settings
 from django.contrib import messages
 from django.db import DEFAULT_DB_ALIAS
 from django.http import HttpRequest
@@ -33,7 +33,6 @@ from ftests.tools.setup_helpers import (
 )
 from ftl import celery
 from ftl.enums import FTLStorages, FTLPlugins
-from ftl.settings import BASE_DIR
 
 
 class DocumentsTests(APITestCase):
@@ -265,7 +264,9 @@ class DocumentsTests(APITestCase):
     @patch.object(apply_ftl_processing, "delay")
     def test_upload_document(self, mock_apply_processing):
         with open(
-            os.path.join(BASE_DIR, "ftests", "tools", "test_documents", "test.pdf"),
+            os.path.join(
+                settings.BASE_DIR, "ftests", "tools", "test_documents", "test.pdf"
+            ),
             mode="rb",
         ) as fp:
             client_post = self.client.post(
@@ -284,7 +285,9 @@ class DocumentsTests(APITestCase):
     @patch.object(apply_ftl_processing, "delay")
     def test_upload_document_correct_size(self, mock_apply_processing):
         with open(
-            os.path.join(BASE_DIR, "ftests", "tools", "test_documents", "test.pdf"),
+            os.path.join(
+                settings.BASE_DIR, "ftests", "tools", "test_documents", "test.pdf"
+            ),
             mode="rb",
         ) as fp:
             client_post = self.client.post(
@@ -300,7 +303,9 @@ class DocumentsTests(APITestCase):
     @patch.object(apply_ftl_processing, "delay")
     def test_upload_document_correct_md5(self, mock_apply_processing):
         with open(
-            os.path.join(BASE_DIR, "ftests", "tools", "test_documents", "test.pdf"),
+            os.path.join(
+                settings.BASE_DIR, "ftests", "tools", "test_documents", "test.pdf"
+            ),
             mode="rb",
         ) as fp:
             client_post = self.client.post(
@@ -318,7 +323,9 @@ class DocumentsTests(APITestCase):
         initial_docs_count = FTLDocument.objects.count()
 
         with open(
-            os.path.join(BASE_DIR, "ftests", "tools", "test_documents", "test.pdf"),
+            os.path.join(
+                settings.BASE_DIR, "ftests", "tools", "test_documents", "test.pdf"
+            ),
             mode="rb",
         ) as fp:
             client_post = self.client.post(
@@ -341,7 +348,9 @@ class DocumentsTests(APITestCase):
     def test_upload_doc_with_creation_date(self, mock_apply_processing):
         creation_date = "2019-11-15T08:54:33.361913+00:00"
         with open(
-            os.path.join(BASE_DIR, "ftests", "tools", "test_documents", "test.pdf"),
+            os.path.join(
+                settings.BASE_DIR, "ftests", "tools", "test_documents", "test.pdf"
+            ),
             "rb",
         ) as f:
             data = {"created": creation_date}
@@ -356,7 +365,9 @@ class DocumentsTests(APITestCase):
     def test_upload_doc_with_title(self, mock_apply_processing):
         title = "My document 123"
         with open(
-            os.path.join(BASE_DIR, "ftests", "tools", "test_documents", "test.pdf"),
+            os.path.join(
+                settings.BASE_DIR, "ftests", "tools", "test_documents", "test.pdf"
+            ),
             "rb",
         ) as f:
             data = {"title": title}
@@ -371,7 +382,9 @@ class DocumentsTests(APITestCase):
     def test_upload_doc_with_note(self, mock_apply_processing):
         note = "My document note 123"
         with open(
-            os.path.join(BASE_DIR, "ftests", "tools", "test_documents", "test.pdf"),
+            os.path.join(
+                settings.BASE_DIR, "ftests", "tools", "test_documents", "test.pdf"
+            ),
             "rb",
         ) as f:
             data = {"note": note}
@@ -386,7 +399,11 @@ class DocumentsTests(APITestCase):
     def test_upload_document_wrong_format(self, mock_apply_processing):
         with open(
             os.path.join(
-                BASE_DIR, "ftests", "tools", "test_documents", "wrong-format.exe"
+                settings.BASE_DIR,
+                "ftests",
+                "tools",
+                "test_documents",
+                "wrong-format.exe",
             ),
             mode="rb",
         ) as fp:
@@ -400,7 +417,9 @@ class DocumentsTests(APITestCase):
     @patch.object(apply_ftl_processing, "delay")
     def test_upload_document_wrong_format_fake_document(self, mock_apply_processing):
         with open(
-            os.path.join(BASE_DIR, "ftests", "tools", "test_documents", "fake.dok"),
+            os.path.join(
+                settings.BASE_DIR, "ftests", "tools", "test_documents", "fake.dok"
+            ),
             mode="rb",
         ) as fp:
             client_post = self.client.post(
@@ -413,7 +432,9 @@ class DocumentsTests(APITestCase):
     @patch.object(apply_ftl_processing, "delay")
     def test_upload_document_docx(self, mock_apply_processing):
         with open(
-            os.path.join(BASE_DIR, "ftests", "tools", "test_documents", "word.docx"),
+            os.path.join(
+                settings.BASE_DIR, "ftests", "tools", "test_documents", "word.docx"
+            ),
             mode="rb",
         ) as fp:
             client_post = self.client.post(
@@ -424,7 +445,9 @@ class DocumentsTests(APITestCase):
     @patch.object(apply_ftl_processing, "delay")
     def test_upload_document_xlsx(self, mock_apply_processing):
         with open(
-            os.path.join(BASE_DIR, "ftests", "tools", "test_documents", "excel.xlsx"),
+            os.path.join(
+                settings.BASE_DIR, "ftests", "tools", "test_documents", "excel.xlsx"
+            ),
             mode="rb",
         ) as fp:
             client_post = self.client.post(
@@ -435,7 +458,9 @@ class DocumentsTests(APITestCase):
     @patch.object(apply_ftl_processing, "delay")
     def test_upload_document_txt(self, mock_apply_processing):
         with open(
-            os.path.join(BASE_DIR, "ftests", "tools", "test_documents", "hello.txt"),
+            os.path.join(
+                settings.BASE_DIR, "ftests", "tools", "test_documents", "hello.txt"
+            ),
             mode="rb",
         ) as fp:
             client_post = self.client.post(
@@ -446,7 +471,9 @@ class DocumentsTests(APITestCase):
     @patch.object(apply_ftl_processing, "delay")
     def test_upload_doc_trigger_document_processing(self, mock_apply_processing):
         with open(
-            os.path.join(BASE_DIR, "ftests", "tools", "test_documents", "test.pdf"),
+            os.path.join(
+                settings.BASE_DIR, "ftests", "tools", "test_documents", "test.pdf"
+            ),
             "rb",
         ) as f:
             with execute_on_commit():
@@ -480,7 +507,9 @@ class DocumentsTests(APITestCase):
         post_body = {"ftl_folder": self.first_level_folder.id}
 
         with open(
-            os.path.join(BASE_DIR, "ftests", "tools", "test_documents", "test.pdf"),
+            os.path.join(
+                settings.BASE_DIR, "ftests", "tools", "test_documents", "test.pdf"
+            ),
             mode="rb",
         ) as fp:
             client_post = self.client.post(

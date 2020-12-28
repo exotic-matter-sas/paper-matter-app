@@ -183,6 +183,10 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "core", "static"),
 )
 
+# This header indicates to the browser that the MIME types advertised in the Content-Type headers should
+# not be changed (by "sniffing" the content).
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
 # IPs allowed to see the debug toolbar app
 INTERNAL_IPS = ["127.0.0.1"]
 
