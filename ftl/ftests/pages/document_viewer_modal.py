@@ -1,5 +1,6 @@
 #  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
 #  Licensed under the Business Source License. See LICENSE at project root for more information.
+from django.utils import timezone
 from selenium.common.exceptions import NoSuchElementException
 
 from ftests.pages.base_page import BasePage
@@ -39,6 +40,8 @@ class DocumentViewerModal(BasePage):
     reminder_list_elements = ".list-group .list-group-item"
     reminder_list_elements_date = ".list-group .list-group-item h5 span"
     reminder_list_elements_note = ".list-group .list-group-item div:nth-child(2)"
+    reminder_list_elements_delete = ".list-group .list-group-item button"
+    reminder_list_empty = "div[id*=reminder] div.flex-grow-1 span"
     reminder_note_input = "#reminder-note"
     reminder_close_button = ".modal-content footer button.btn-secondary"
 
@@ -93,5 +96,18 @@ class DocumentViewerModal(BasePage):
         self.wait_for_elem_to_show(self.reminder_list_elements)
         self.get_elem(self.reminder_close_button).click()
 
-    def delete_reminder_document(self):
-        pass
+    def delete_reminder_document(self, alert_date=timezone.now()):
+        self.wait_for_elem_to_show(self.reminder_document_button)
+        self.get_elem(self.reminder_document_button).click()
+        self.wait_for_elem_to_show(self.reminder_add_reminder_button)
+
+        reminders = self.get_elems(self.reminder_list_elements_date)
+        reminder_index_to_delete = 100
+        for i, reminder in enumerate(reminders):
+            if alert_date.date().isoformat() in reminder.get_attribute("title"):
+                reminder_index_to_delete = i
+                break
+
+        reminders_delete = self.get_elems(self.reminder_list_elements_delete)
+        if len(reminders_delete) > reminder_index_to_delete:
+            reminders_delete[reminder_index_to_delete].click()

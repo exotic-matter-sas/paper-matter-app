@@ -16,6 +16,7 @@ from django.test import override_settings
 from django.utils import timezone
 from selenium.common.exceptions import NoSuchElementException
 
+from core.models import FTLDocumentReminder
 from core.tasks import apply_ftl_processing, batch_reminder_documents
 from ftests.pages.document_viewer_modal import DocumentViewerModal
 from ftests.pages.home_page import HomePage
@@ -1171,6 +1172,28 @@ class DocumentReminderTests(
         self.assertIn("reminder for document", mail.outbox[0].subject.lower())
         self.assertIn(tv.DOCUMENT1_TITLE, mail.outbox[0].body)
         self.assertIn("my note", mail.outbox[0].body)
+
+    def test_delete_reminder(self):
+        doc = setup_document(self.org, self.user, binary=setup_temporary_file().name)
+        alert_date = timezone.now() + timedelta(days=1)
+
+        reminder = FTLDocumentReminder()
+        reminder.ftl_doc = doc
+        reminder.ftl_user = self.user
+        reminder.alert_on = alert_date
+        reminder.save()
+
+        self.refresh_documents_list()
+        self.open_first_document()
+
+        self.delete_reminder_document(alert_date)
+
+        with self.assertRaises(NoSuchElementException):
+            self.get_elems(self.reminder_list_elements)
+
+        self.assertEqual(
+            "No reminder has been set", self.get_elem_text(self.reminder_list_empty)
+        )
 
 
 class ManageFoldersModalTests(LoginPage, HomePage, ManageFoldersModal):
