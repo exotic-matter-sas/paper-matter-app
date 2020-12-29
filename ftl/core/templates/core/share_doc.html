@@ -62,8 +62,7 @@
     {% endif %}
 
     {% if enable_only_office %}
-        <script type="text/javascript"
-                src="{% get_setting "FTL_ONLY_OFFICE_SERVER_URL" %}/web-apps/apps/api/documents/api.js"></script>
+        <script type="text/javascript" src="{% get_setting "FTL_ONLY_OFFICE_PUBLIC_JS_URL" %}"></script>
 
         {{ only_office_config|json_script:"only_office_config" }}
 

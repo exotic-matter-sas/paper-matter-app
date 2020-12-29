@@ -47,7 +47,7 @@ class FTLThumbnailGenerationOnlyOffice(FTLDocProcessingBase):
                 )
 
                 r = requests.post(
-                    f"{getattr(settings, 'FTL_ONLY_OFFICE_SERVER_URL')}/ConvertService.ashx",
+                    f"{getattr(settings, 'FTL_ONLY_OFFICE_API_SERVER_URL')}/ConvertService.ashx",
                     json=only_office_config,
                     headers={
                         "Authorization": f"Bearer {sign}",

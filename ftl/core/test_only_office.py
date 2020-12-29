@@ -62,8 +62,11 @@ class DocumentDetailsOnlyOfficeDisableTests(APITestCase):
 
 
 @override_settings(FTL_ENABLE_ONLY_OFFICE=True)
-@override_settings(FTL_ONLY_OFFICE_SERVER_URL="http://example.org")
-@override_settings(FTL_EXTERNAL_HOST="http://example.org")
+@override_settings(FTL_ONLY_OFFICE_PUBLIC_JS_URL="http://example.org/oo.js")
+@override_settings(FTL_ONLY_OFFICE_API_SERVER_URL="http://example-api.org")
+@override_settings(
+    FTL_ONLY_OFFICE_INTERNAL_DOWNLOAD_SERVER_URL="http://example-download.org"
+)
 @override_settings(FTL_ONLY_OFFICE_SECRET_KEY="test_secret")
 class DocumentDetailsOnlyOfficeTests(APITestCase):
     def setUp(self):
