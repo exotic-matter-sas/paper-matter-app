@@ -12,20 +12,6 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "CHANGE-ME")
 DEBUG = bool(strtobool(os.getenv("DJANGO_DEBUG", "False")))
 ALLOWED_HOSTS = [os.getenv("ALLOWED_HOSTS", "*")]
 
-MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.middleware.locale.LocaleMiddleware",
-    "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django_otp.middleware.OTPMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "ftl.ftl_setup_middleware.FTLSetupMiddleware",
-]
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -37,8 +23,6 @@ DATABASES = {
         "ATOMIC_REQUESTS": True,
     }
 }
-
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 """
 DOCUMENT BINARY STORAGE

@@ -46,6 +46,7 @@ AUTH_USER_MODEL = "core.FTLUser"
 # Application definition
 
 INSTALLED_APPS = [
+    "whitenoise.runserver_nostatic",
     "ftl.apps.MyAdminConfig",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -85,6 +86,7 @@ AUTHENTICATION_BACKENDS = [
 MIDDLEWARE = [
     "ftl.ftl_admin_ip_filter_middleware.FTLAdminIPFilter",
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -97,6 +99,7 @@ MIDDLEWARE = [
     "ftl.ftl_locale_middleware.FTLLocaleMiddleware",
     "axes.middleware.AxesMiddleware",
 ]
+
 if DEBUG and DEV_MODE:
     MIDDLEWARE += [
         "debug_toolbar.middleware.DebugToolbarMiddleware",
@@ -181,6 +184,8 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "ftl", "static"),
     os.path.join(BASE_DIR, "core", "static"),
 )
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # This header indicates to the browser that the MIME types advertised in the Content-Type headers should
 # not be changed (by "sniffing" the content).
