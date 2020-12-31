@@ -1,0 +1,37 @@
+{% extends "ftl/main_with_aside.html" %}
+{% load i18n %}
+{% load static %}
+{% load webpack_loader %}
+
+{% block title %}{% trans "Authorization failed" %}{% endblock %}
+
+{% block head %}{% render_bundle 'common_logged_out' 'css' %}{% endblock %}
+
+{% block main_content %}
+    <h1 class="text-danger">
+        {% trans "Authorization failed" %}
+    </h1>
+    <p>
+        {% if request.GET.app_name %}
+            {% blocktrans with app_name=request.GET.app_name %}
+                <span class="highlight">{{ app_name }}</span> application couldn't be authorized.
+            {% endblocktrans %}
+        {% else %}
+            {% trans "Application couldn't be authorized." %}
+        {% endif %}
+    </p>
+    {% if request.GET.error %}
+        <div class="alert alert-danger">
+            {% blocktrans with error=request.GET.error %}
+                Error code: <b>{{ error }}</b>
+            {% endblocktrans %}
+        </div>
+    {% endif %}
+    <p>
+        {% trans "You can close this window and go back to the application to try to log again." %}
+    </p>
+{% endblock %}
+
+{% block aside_illustration %}
+    <img src="{% static "unlock_failed.svg" %}" alt="Access locked illustration">
+{% endblock %}

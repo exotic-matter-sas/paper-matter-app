@@ -161,6 +161,16 @@ class FTLUser(AbstractUser):
             kwargs=kwargs,
         )
 
+    def set_password(self, raw_password):
+        super().set_password(raw_password)
+
+        # Revoke all refresh and access tokens of the user
+        # `oauth2_provider_refreshtoken` is the reverse relation name for the user foreign key in django oauth2
+        # See oauth2_provider.models.AbstractRefreshToken
+        all_tokens = self.oauth2_provider_refreshtoken.all()
+        for token in all_tokens:
+            token.revoke()
+
 
 # FTL Documents
 class FTLDocument(models.Model):

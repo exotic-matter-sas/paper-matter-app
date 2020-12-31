@@ -140,6 +140,29 @@ documents you have to install an Only Office server (only the Community Edition 
 1. Refer to Only Office doc to install the server: https://github.com/ONLYOFFICE/Docker-DocumentServer
 2. Configure settings (starting at "FTL_ENABLE_ONLY_OFFICE") related to Only Office as described in `Customize Paper Matter other settings` below.
 
+## Authorize Import and Export app (and other Oauth2 apps)
+
+__By default no Oauth2 app is authorized to access the API, each app have to be registered manually by admin.__
+
+1. Log to the admin panel with admin user (/admin).
+2. In the __DJANGO OAUTH TOOLKIT__ section, __Add__ a new application
+3. Complete and submit the form as described below:
+    - __Client id__: *leave default value (this value have to be set in the app too)*
+    - __User__: No user unless you want the app to be owned by a user (it will appear in her/his account if developer API is enabled)
+    - __Redirect uris__:
+        - For __Paper Matter Import & Export__: `http://localhost:1612/oauth2/redirect` 
+        - For __ftl-export-cli__: `https://[YOUR_PM_INSTANCE]/oauth2/authorization_code/`
+        - For other Oauth2 apps: *Ask the app Dev*
+    - __Client type__:
+        - For __Paper Matter Import & Export__ and __ftl-export-cli__: `Public`
+        - For other Oauth2 apps: *Ask the app Dev, but should be `Confidential` for a web app and `Public` for a local app*
+    - __Authorization grant type__:
+        - For __Paper Matter Import & Export__ and __ftl-export-cli__: `Authorization code`
+        - For other Oauth2 apps: *Ask the app Dev*
+    - __Client secret__: *leave default value*
+    - __Name__: *The app name, it will be display to users in /accounts/oauth2/authorized_tokens/ (e.g. `Paper Matter Import & Export`)*
+    - __Skip authorization__: *leave unchecked (if checked, which is not recommended, users won't see the page mentioning data accessed by the app and asking for authorization, the app will be authorized on first use without user confirmation)*
+        
 ## Various other settings that you can update with ENV
 
 | Name | Default value | Format | Description |
