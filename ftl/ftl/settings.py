@@ -221,7 +221,7 @@ REST_FRAMEWORK = {
         "ftl.ftl_oauth2_auth.FTLOAuth2Authentication",
     ],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    "DEFAULT_PERMISSION_CLASSES": ("core.models.FTLModelPermissions",),
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "PAGE_SIZE": 10,
     "DEFAULT_THROTTLE_CLASSES": [
         "rest_framework.throttling.AnonRateThrottle",

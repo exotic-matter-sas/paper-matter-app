@@ -5,7 +5,6 @@ from captcha.fields import CaptchaField
 from django import forms
 from django.conf import settings
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.models import Group
 from django.forms import EmailField
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
@@ -105,10 +104,11 @@ class FTLCreateOrgAndFTLUser(RegistrationForm):
         user.lang = self.lang
         user.is_superuser = False
         user.is_staff = False
-        user.save()
 
-        ftl_group = Group.objects.get(name="ftl_users_group")
-        user.groups.add(ftl_group)
+        # Not used for now
+        # ftl_group = Group.objects.get(name="ftl_users_group")
+        # user.groups.add(ftl_group)
+
         user.save()
 
         return super().save(commit)

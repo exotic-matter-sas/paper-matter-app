@@ -2,11 +2,7 @@
 
 from django.db import migrations
 
-from core.ftl_migration_tool import (
-    create_group,
-    set_all_users_ftl_group,
-    clean_user_permission,
-)
+from core.ftl_migration_tool import clean_user_permission
 
 
 class Migration(migrations.Migration):
@@ -16,10 +12,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(create_group, reverse_code=migrations.RunPython.noop),
-        migrations.RunPython(
-            set_all_users_ftl_group, reverse_code=migrations.RunPython.noop
-        ),
         migrations.RunPython(
             clean_user_permission, reverse_code=migrations.RunPython.noop
         ),

@@ -1,7 +1,6 @@
 #  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
 #  Licensed under the Business Source License. See LICENSE at project root for more information.
 from django.contrib import messages
-from django.contrib.auth.models import Group
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
@@ -27,10 +26,10 @@ class CreateFTLUserFormView(RegistrationView):
         org = get_object_or_404(FTLOrg, slug=self.kwargs["org_slug"])
         instance = form.save(commit=False)
         instance.org = org
-        instance.save()
 
-        ftl_group = Group.objects.get(name="ftl_users_group")
-        instance.groups.add(ftl_group)
+        # Not used for now
+        # ftl_group = Group.objects.get(name="ftl_users_group")
+        # instance.groups.add(ftl_group)
 
         instance.save()
 

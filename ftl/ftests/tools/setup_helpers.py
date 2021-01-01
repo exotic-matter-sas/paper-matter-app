@@ -4,7 +4,6 @@
 import os
 import tempfile
 
-from django.contrib.auth.models import Group
 from django_otp.plugins.otp_static.models import StaticDevice, StaticToken
 from django_otp.plugins.otp_totp.models import TOTPDevice
 
@@ -39,7 +38,8 @@ def setup_user(
     user = FTLUser.objects.create_user(
         org=org, email=email, password=password, lang=lang, tz=tz
     )
-    user.groups.add(Group.objects.get(name="ftl_users_group"))
+    # Not used for now
+    # user.groups.add(Group.objects.get(name="ftl_users_group"))
     return user
 
 

@@ -34,7 +34,6 @@ from ftests.tools.setup_helpers import (
     setup_document_share,
 )
 from ftl import celery
-from ftl.celery import app
 
 
 class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
@@ -1093,8 +1092,8 @@ class DocumentReminderTests(
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        app.control.purge()
-        cls._worker = app.Worker(app=app, pool="solo", concurrency=1)
+        celery.app.control.purge()
+        cls._worker = celery.app.Worker(app=celery.app, pool="solo", concurrency=1)
         cls._thread = threading.Thread(target=cls._worker.start)
         cls._thread.daemon = True
         cls._thread.start()
