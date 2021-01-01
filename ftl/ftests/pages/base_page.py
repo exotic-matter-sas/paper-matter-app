@@ -131,7 +131,7 @@ class BasePage(LIVE_SERVER):
             raise ValueError("Unsupported browser, allowed: firefox, chrome")
 
         # Set a default window size
-        self.browser.set_window_size(1200, 768)
+        self.browser.set_window_size(1366, 768)
         # Set default timeout
         self.browser.implicitly_wait(1)
 
