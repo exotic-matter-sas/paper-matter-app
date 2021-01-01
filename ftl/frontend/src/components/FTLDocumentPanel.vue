@@ -116,7 +116,6 @@
             <span>{{ $t("Open location") }}</span>
           </b-dropdown-item>
           <b-dropdown-item
-            class="d-block d-md-none"
             link-class="text-primary"
             v-b-modal="'modal-reminder-document-dp'"
           >
