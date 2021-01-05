@@ -428,7 +428,14 @@ FTL_EXTERNAL_HOST = "http://localhost:8000"
 OnlyOffice integration
 """
 FTL_ENABLE_ONLY_OFFICE = False
-FTL_ONLY_OFFICE_SERVER_URL = "http://localhost:8080"
+# Public URL to the OnlyOffice javascript bundle
+FTL_ONLY_OFFICE_PUBLIC_JS_URL = (
+    "http://localhost:8080/web-apps/apps/api/documents/api.js"
+)
+# URL to the OnlyOffice API conversion server (used by processing plugin to generate thumbnail)
+FTL_ONLY_OFFICE_API_SERVER_URL = "http://localhost:8080"
+# URL given to OnlyOffice to download FTL document binary
+FTL_ONLY_OFFICE_INTERNAL_DOWNLOAD_SERVER_URL = "http://localhost:8080"
 # This is the JWT_SECRET in your OnlyOffice conf
 FTL_ONLY_OFFICE_SECRET_KEY = "NOT-SECURE"
 # This setting shouldn't be updated

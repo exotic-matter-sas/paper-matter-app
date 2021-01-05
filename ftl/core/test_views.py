@@ -111,8 +111,11 @@ class DownloadDocumentTests(TestCase):
         self.assertEqual(response.status_code, 404)
 
     @override_settings(FTL_ENABLE_ONLY_OFFICE=True)
-    @override_settings(FTL_ONLY_OFFICE_SERVER_URL="http://example.org")
-    @override_settings(FTL_EXTERNAL_HOST="http://example.org")
+    @override_settings(FTL_ONLY_OFFICE_PUBLIC_JS_URL="http://example.org/oo.js")
+    @override_settings(FTL_ONLY_OFFICE_API_SERVER_URL="http://example-api.org")
+    @override_settings(
+        FTL_ONLY_OFFICE_INTERNAL_DOWNLOAD_SERVER_URL="http://example-download.org"
+    )
     @override_settings(FTL_ONLY_OFFICE_SECRET_KEY="test_secret")
     def test_temp_document_download(self):
         doc = setup_document(
@@ -140,8 +143,11 @@ class DownloadDocumentTests(TestCase):
             self.assertEqual(uploaded_doc.read(), response.content)
 
     @override_settings(FTL_ENABLE_ONLY_OFFICE=True)
-    @override_settings(FTL_ONLY_OFFICE_SERVER_URL="http://example.org")
-    @override_settings(FTL_EXTERNAL_HOST="http://example.org")
+    @override_settings(FTL_ONLY_OFFICE_PUBLIC_JS_URL="http://example.org/oo.js")
+    @override_settings(FTL_ONLY_OFFICE_API_SERVER_URL="http://example-api.org")
+    @override_settings(
+        FTL_ONLY_OFFICE_INTERNAL_DOWNLOAD_SERVER_URL="http://example-download.org"
+    )
     @override_settings(FTL_ONLY_OFFICE_SECRET_KEY="test_secret")
     @patch.object(time, "time")
     def test_temp_document_download_expired(self, mocked_time):
@@ -219,8 +225,11 @@ class DocumentSharingTests(TestCase):
         self.assertEqual(response.status_code, 404)
 
     @override_settings(FTL_ENABLE_ONLY_OFFICE=True)
-    @override_settings(FTL_ONLY_OFFICE_SERVER_URL="http://example.org")
-    @override_settings(FTL_EXTERNAL_HOST="http://example.org")
+    @override_settings(FTL_ONLY_OFFICE_PUBLIC_JS_URL="http://example.org/oo.js")
+    @override_settings(FTL_ONLY_OFFICE_API_SERVER_URL="http://example-api.org")
+    @override_settings(
+        FTL_ONLY_OFFICE_INTERNAL_DOWNLOAD_SERVER_URL="http://example-download.org"
+    )
     @override_settings(FTL_ONLY_OFFICE_SECRET_KEY="test_secret")
     def test_only_office_viewer(self):
         doc = setup_document(

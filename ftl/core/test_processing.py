@@ -313,8 +313,11 @@ class ProcPGsqlTests(TestCase):
 
 
 @override_settings(FTL_ENABLE_ONLY_OFFICE=True)
-@override_settings(FTL_ONLY_OFFICE_SERVER_URL="http://example.org")
-@override_settings(FTL_EXTERNAL_HOST="http://example.org")
+@override_settings(FTL_ONLY_OFFICE_PUBLIC_JS_URL="http://example.org/oo.js")
+@override_settings(FTL_ONLY_OFFICE_API_SERVER_URL="http://example-api.org")
+@override_settings(
+    FTL_ONLY_OFFICE_INTERNAL_DOWNLOAD_SERVER_URL="http://example-download.org"
+)
 @override_settings(FTL_ONLY_OFFICE_SECRET_KEY="test_secret")
 class ProcOnlyOfficeTests(TestCase):
     @patch.object(ftl_processing, "atomic_ftl_doc_update")
@@ -340,7 +343,9 @@ class ProcOnlyOfficeTests(TestCase):
         doc.thumbnail_binary = None
         mock_ftl_doc_update.select_for_update().get.return_value = doc
 
-        mock_get_download_url_temp.return_value = "http://example.org/title.doc"
+        mock_get_download_url_temp.return_value = (
+            "http://example-download.org/title.doc"
+        )
 
         mock_jwt_encode.return_value = "jwt.token.encoded"
 
@@ -348,7 +353,7 @@ class ProcOnlyOfficeTests(TestCase):
         requests_post_response = Mock()
         requests_post_response.status_code = 200
         requests_post_response.json.return_value = {
-            "fileUrl": "http://example.org/thumb.png"
+            "fileUrl": "http://example-oo.org/thumb.png"
         }
         mock_requests_post.return_value = requests_post_response
 
@@ -367,7 +372,7 @@ class ProcOnlyOfficeTests(TestCase):
             "outputtype": "png",
             "title": "thumbnail",
             "thumbnail": {"first": True, "aspect": 2},
-            "url": "http://example.org/title.doc",
+            "url": "http://example-download.org/title.doc",
         }
 
         # JWT signing called
@@ -377,7 +382,7 @@ class ProcOnlyOfficeTests(TestCase):
 
         # API call to OnlyOffice conversion server
         mock_requests_post.assert_called_once_with(
-            "http://example.org/ConvertService.ashx",
+            "http://example-api.org/ConvertService.ashx",
             json=expected_only_office_config,
             headers={
                 "Authorization": f"Bearer jwt.token.encoded",
@@ -388,7 +393,7 @@ class ProcOnlyOfficeTests(TestCase):
         # Download thumbnail
         requests_post_response.json.assert_called()
         mock_requests_get.assert_called_once_with(
-            "http://example.org/thumb.png", stream=True
+            "http://example-oo.org/thumb.png", stream=True
         )
 
         # Custom partial matcher

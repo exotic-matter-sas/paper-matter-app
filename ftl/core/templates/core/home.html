@@ -22,7 +22,6 @@
     {% render_bundle 'app' 'js' %}
     {% get_setting "FTL_ENABLE_ONLY_OFFICE" as enable_only_office %}
     {% if enable_only_office %}
-        <script type="text/javascript"
-                src="{% get_setting "FTL_ONLY_OFFICE_SERVER_URL" %}/web-apps/apps/api/documents/api.js"></script>
+        <script type="text/javascript" src="{% get_setting "FTL_ONLY_OFFICE_PUBLIC_JS_URL" %}"></script>
     {% endif %}
 {% endblock %}

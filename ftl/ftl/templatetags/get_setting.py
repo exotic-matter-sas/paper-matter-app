@@ -9,7 +9,7 @@ register = template.Library()
 ALLOW_SETTINGS = (
     "FTL_ENABLE_DEV_API",
     "FTL_ENABLE_ONLY_OFFICE",
-    "FTL_ONLY_OFFICE_SERVER_URL",
+    "FTL_ONLY_OFFICE_PUBLIC_JS_URL",
 )
 
 

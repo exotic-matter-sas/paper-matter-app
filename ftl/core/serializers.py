@@ -117,13 +117,9 @@ class FTLDocumentDetailsOnlyOfficeSerializer(FTLDocumentSerializer):
         signer = TimestampSigner()
         value = signer.sign(obj.pid)
 
-        request = self.context.get("request", None)
         relative_url = reverse("api_temp_download_url", kwargs={"spid": value})
 
-        if request:
-            return request.build_absolute_uri(relative_url)
-
-        return f"{getattr(settings, 'FTL_EXTERNAL_HOST')}{relative_url}"
+        return f"{getattr(settings, 'FTL_ONLY_OFFICE_INTERNAL_DOWNLOAD_SERVER_URL', '')}{relative_url}"
 
     def get_only_office_config(self, obj):
         if obj.type in getattr(
