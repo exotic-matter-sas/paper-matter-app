@@ -146,7 +146,7 @@ msgstr ""
 #, python-format
 msgid ""
 "\n"
-"This is reminder for document \"%(title)s\".\n"
+"This is a reminder for document \"%(title)s\".\n"
 "\n"
 "%(note)s\n"
 msgstr ""

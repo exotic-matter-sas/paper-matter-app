@@ -1,4 +1,4 @@
-#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
+#  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
 #  Licensed under the Business Source License. See LICENSE at project root for more information.
 from django.utils import timezone
 from selenium.common.exceptions import NoSuchElementException
@@ -86,7 +86,7 @@ class DocumentViewerModal(BasePage):
         self.wait_for_elem_text_not_to_be(self.modal_input, "")
         self.get_elem(self.unshare_modal_button).click()
 
-    def add_reminder_tomorrow_document(self, note=""):
+    def add_document_reminder_tomorrow(self, note=""):
         self.wait_for_elem_to_show(self.reminder_document_button)
         self.get_elem(self.reminder_document_button).click()
         self.wait_for_elem_to_show(self.reminder_add_reminder_button)
@@ -96,7 +96,7 @@ class DocumentViewerModal(BasePage):
         self.wait_for_elem_to_show(self.reminder_list_elements)
         self.get_elem(self.reminder_close_button).click()
 
-    def delete_reminder_document(self, alert_date=timezone.now()):
+    def delete_document_reminder(self, alert_date=timezone.now()):
         self.wait_for_elem_to_show(self.reminder_document_button)
         self.get_elem(self.reminder_document_button).click()
         self.wait_for_elem_to_show(self.reminder_add_reminder_button)

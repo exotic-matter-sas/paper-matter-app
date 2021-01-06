@@ -3,7 +3,7 @@
 
 {% block body %}
 {% blocktrans %}
-This is reminder for document "{{ title }}".
+This is a reminder for document "{{ title }}".
 
 {{ note }}
 {% endblocktrans %}

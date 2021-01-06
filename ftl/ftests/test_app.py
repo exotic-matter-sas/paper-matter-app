@@ -1,4 +1,4 @@
-#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
+#  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
 #  Licensed under the Business Source License. See LICENSE at project root for more information.
 
 import os
@@ -1118,7 +1118,7 @@ class DocumentReminderTests(
         self.open_first_document()
 
         # Add a reminder
-        self.add_reminder_tomorrow_document("my note")
+        self.add_document_reminder_tomorrow("my note")
         self.close_document()
 
         # Close and reopen the document to be sure the reminder was added to backend
@@ -1149,7 +1149,7 @@ class DocumentReminderTests(
         self.open_first_document()
 
         # Add a reminder
-        self.add_reminder_tomorrow_document("my note")
+        self.add_document_reminder_tomorrow("my note")
 
         # Move time forward to test reminder
         stop_time = timezone.now() + timedelta(days=1, hours=1)
@@ -1185,7 +1185,7 @@ class DocumentReminderTests(
         self.refresh_documents_list()
         self.open_first_document()
 
-        self.delete_reminder_document(alert_date)
+        self.delete_document_reminder(alert_date)
 
         with self.assertRaises(NoSuchElementException):
             self.get_elems(self.reminder_list_elements)
