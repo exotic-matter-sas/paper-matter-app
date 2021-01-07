@@ -1,4 +1,4 @@
-#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
+#  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
 #  Licensed under the Business Source License. See LICENSE at project root for more information.
 import hashlib
 import json
@@ -510,7 +510,6 @@ class FTLDocumentSharingDetail(generics.RetrieveUpdateDestroyAPIView):
 
 class FTLDocumentReminderList(generics.ListCreateAPIView):
     serializer_class = FTLDocumentReminderSerializer
-    lookup_url_kwarg = "apid"
 
     def get_queryset(self):
         doc = get_object_or_404(
