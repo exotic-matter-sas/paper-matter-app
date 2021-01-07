@@ -37,6 +37,7 @@ class FTLDocumentSerializer(serializers.ModelSerializer):
     ext = serializers.SerializerMethodField()
     download_url = serializers.SerializerMethodField()
     is_shared = serializers.SerializerMethodField()
+    reminders_count = serializers.SerializerMethodField()
 
     def get_thumbnail_available(self, obj):
         return bool(obj.thumbnail_binary)
@@ -71,6 +72,9 @@ class FTLDocumentSerializer(serializers.ModelSerializer):
     def get_is_shared(self, obj):
         return obj.share_pids.count() > 0
 
+    def get_reminders_count(self, obj):
+        return obj.reminders.count()
+
     class Meta:
         model = FTLDocument
         fields = [
@@ -92,7 +96,7 @@ class FTLDocumentSerializer(serializers.ModelSerializer):
             "ext",
             "download_url",
             "is_shared",
-            "reminders",
+            "reminders_count",
         ]
         read_only_fields = [
             "pid",
@@ -108,6 +112,7 @@ class FTLDocumentSerializer(serializers.ModelSerializer):
             "ext",
             "download_url",
             "is_shared",
+            "reminders_count",
         ]
 
 

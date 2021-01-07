@@ -220,8 +220,9 @@ export default {
             a.alert_on.localeCompare(b.alert_on)
           );
 
-          this.$emit("event-document-reminder", {
+          this.$emit("event-document-reminders-updated", {
             alert: response.data,
+            reminders_count: this.reminders.length,
           });
 
           this.value = null;
@@ -243,6 +244,11 @@ export default {
           this.reminders = this.reminders.filter(
             (item) => item.id !== alert_id
           );
+
+          this.$emit("event-document-reminders-updated", {
+            reminders_count: this.reminders.length,
+          });
+
           this.mixinAlert(this.$t("Reminder deleted"));
         })
         .catch((error) => {

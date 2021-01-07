@@ -120,7 +120,17 @@
             v-b-modal="'modal-reminder-document-dp'"
           >
             <font-awesome-icon icon="bell" />
-            <span>{{ $t("Reminders") }}</span>
+            <span>
+              {{
+                $tc(
+                  "No reminder | One reminder | Reminders ({count})",
+                  currentOpenDoc.reminders_count,
+                  {
+                    count: currentOpenDoc.reminders_count,
+                  }
+                )
+              }}
+            </span>
           </b-dropdown-item>
 
           <b-dropdown-divider></b-dropdown-divider>
@@ -233,7 +243,13 @@
                   v-b-modal="'modal-reminder-document-dp'"
                 >
                   <font-awesome-icon icon="bell" />
-                  {{ $t("Reminders") }}
+                  {{ $t("Reminders") }}&nbsp;
+                  <b-badge
+                    v-if="currentOpenDoc.reminders_count > 0"
+                    variant="secondary"
+                  >
+                    {{ currentOpenDoc.reminders_count }}
+                  </b-badge>
                 </b-button>
               </span>
 
@@ -290,6 +306,7 @@
     <FTLReminderDocument
       modal-id="modal-reminder-document-dp"
       :doc="currentOpenDoc"
+      @event-document-reminders-updated="documentRemindersUpdated"
     />
 
     <FTLRenameDocument
@@ -337,6 +354,7 @@
     Alt. viewer: Visionneuse alternative
     Use alternative PDF viewer: Utiliser une visionneuse PDF alternative
     Reminders: Rappels
+    No reminder | One reminder | Reminders ({count}): Aucun rappel | Un rappel | Rappels ({count})
 </i18n>
 
 <script>
@@ -548,6 +566,10 @@ export default {
 
     documentNoteUpdated: function (event) {
       this.currentOpenDoc = event.doc;
+    },
+
+    documentRemindersUpdated: function (event) {
+      this.currentOpenDoc.reminders_count = event.reminders_count;
     },
 
     documentDeleted: function (event) {
