@@ -4,6 +4,7 @@ import datetime
 from unittest.mock import patch, call, ANY
 
 import pytz
+from django.test import override_settings
 from django.utils import timezone
 from rest_framework.test import APITestCase
 
@@ -98,6 +99,7 @@ class RecurringTasksTests(APITestCase):
 
     @patch("core.tasks.render_to_string")
     @patch.object(celery.app, "send_task")
+    @override_settings(FTL_EXTERNAL_HOST="http://example-pm.org")
     def test_batch_alert_documents(self, mocked_email_send, mocked_render_to_string):
         now_minus_1_day_utc = timezone.now() + datetime.timedelta(days=-1)
         now_plus_1_day_utc = timezone.now() + datetime.timedelta(days=1)
@@ -163,6 +165,7 @@ class RecurringTasksTests(APITestCase):
                         "title": self.doc.title,
                         "note": "",
                         "alert_on": alert_db_plus_1_day.alert_on,
+                        "doc_url": f"http://example-pm.org/app/#/home?doc={self.doc.pid}",
                     },
                 ),
                 call(
@@ -171,6 +174,7 @@ class RecurringTasksTests(APITestCase):
                         "title": self.doc.title,
                         "note": "",
                         "alert_on": alert_db_plus_1_day.alert_on,
+                        "doc_url": f"http://example-pm.org/app/#/home?doc={self.doc.pid}",
                     },
                 ),
                 call(
@@ -179,6 +183,7 @@ class RecurringTasksTests(APITestCase):
                         "title": self.doc.title,
                         "note": "",
                         "alert_on": alert_db_plus_1_week.alert_on,
+                        "doc_url": f"http://example-pm.org/app/#/home?doc={self.doc.pid}",
                     },
                 ),
                 call(
@@ -187,6 +192,7 @@ class RecurringTasksTests(APITestCase):
                         "title": self.doc.title,
                         "note": "",
                         "alert_on": alert_db_plus_1_week.alert_on,
+                        "doc_url": f"http://example-pm.org/app/#/home?doc={self.doc.pid}",
                     },
                 ),
                 call(
@@ -195,6 +201,7 @@ class RecurringTasksTests(APITestCase):
                         "title": self.doc.title,
                         "note": "",
                         "alert_on": alert_db_plus_1_month.alert_on,
+                        "doc_url": f"http://example-pm.org/app/#/home?doc={self.doc.pid}",
                     },
                 ),
                 call(
@@ -203,6 +210,7 @@ class RecurringTasksTests(APITestCase):
                         "title": self.doc.title,
                         "note": "",
                         "alert_on": alert_db_plus_1_month.alert_on,
+                        "doc_url": f"http://example-pm.org/app/#/home?doc={self.doc.pid}",
                     },
                 ),
             ],
