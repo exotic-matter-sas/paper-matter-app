@@ -213,7 +213,9 @@
                 </b-dropdown-item>
               </b-dropdown>
 
-              <span class="text-nowrap">
+              <hr class="border-0 m-0" />
+
+              <span>
                 <b-button
                   id="share-document"
                   class="mr-1 mb-2"
