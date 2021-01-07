@@ -26,7 +26,7 @@ urlpatterns = [
         views.FTLDocumentReminderList.as_view(),
     ),
     path(
-        "api/v1/documents/<uuid:dpid>/reminders/<int:apid>",
+        "api/v1/documents/<uuid:dpid>/reminders/<int:rpid>",
         views.FTLDocumentReminderDetail.as_view(),
     ),
     path("api/v1/documents/<uuid:pid>/share", views.FTLDocumentSharingList.as_view()),
