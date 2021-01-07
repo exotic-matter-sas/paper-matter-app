@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
+  - Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
   - Licensed under the Business Source License. See LICENSE at project root for more information.
   -->
 
@@ -123,7 +123,7 @@
             <span>
               {{
                 $tc(
-                  "No reminder | One reminder | Reminders ({count})",
+                  "Reminders | One reminder | Reminders ({count})",
                   currentOpenDoc.reminders_count,
                   {
                     count: currentOpenDoc.reminders_count,
@@ -248,7 +248,7 @@
                   {{ $t("Reminders") }}&nbsp;
                   <b-badge
                     v-if="currentOpenDoc.reminders_count > 0"
-                    variant="secondary"
+                    variant="dark"
                   >
                     {{ currentOpenDoc.reminders_count }}
                   </b-badge>
@@ -356,7 +356,7 @@
     Alt. viewer: Visionneuse alternative
     Use alternative PDF viewer: Utiliser une visionneuse PDF alternative
     Reminders: Rappels
-    No reminder | One reminder | Reminders ({count}): Aucun rappel | Un rappel | Rappels ({count})
+    Reminders | One reminder | Reminders ({count}): Rappels | Un rappel | Rappels ({count})
 </i18n>
 
 <script>
