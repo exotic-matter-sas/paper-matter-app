@@ -75,6 +75,7 @@ def batch_delete_oauth_tokens():
 
 @shared_task
 def batch_reminder_documents():
+    instance_host = getattr(settings, "FTL_EXTERNAL_HOST", "")
     now_in_utc = timezone.now()
     reminders = FTLDocumentReminder.objects.filter(alert_on__lte=now_in_utc).order_by(
         "ftl_user_id"
@@ -87,10 +88,14 @@ def batch_reminder_documents():
                 f"Sending reminder email for {reminder.ftl_doc.pid} ({reminder.alert_on})"
             )
 
+            # We manually build the URL because we don't have any request or named url for document
+            doc_url = f"{instance_host}/app/#/home?doc={reminder.ftl_doc.pid}"
+
             ctx = {
                 "title": reminder.ftl_doc.title,
                 "note": reminder.note,
                 "alert_on": reminder.alert_on,
+                "doc_url": doc_url,
             }
 
             # Force user lang setting for email
