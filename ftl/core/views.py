@@ -542,7 +542,7 @@ class FTLDocumentReminderList(generics.ListCreateAPIView):
 
 class FTLDocumentReminderDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = FTLDocumentReminderSerializer
-    lookup_url_kwarg = "apid"
+    lookup_url_kwarg = "rpid"
 
     def get_queryset(self):
         doc = get_object_or_404(
