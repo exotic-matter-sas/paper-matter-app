@@ -365,6 +365,7 @@ class FTLDocumentReminder(models.Model):
 
 class FTLModelPermissions(DjangoModelPermissions):
     """
+    NOT USED FOR NOW
     Slightly customized DjangoModelPermissions for FTL. The permissions are very basic and used at instance level.
     It checks for adding or listing document, not to check ownership of a single document.
     """
@@ -377,6 +378,7 @@ class FTLModelPermissions(DjangoModelPermissions):
 
 def permissions_names_to_objects(names):
     """
+    NOT USED FOR NOW
     Given an iterable of permissions names (e.g. 'app_label.add_model'),
     return an iterable of Permission objects for them.  The permission
     must already exist, because a permission name is not enough information
