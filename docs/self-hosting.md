@@ -140,7 +140,7 @@ documents you have to install an Only Office server (only the Community Edition 
 1. Refer to Only Office doc to install the server: https://github.com/ONLYOFFICE/Docker-DocumentServer
 2. Configure settings (starting at "FTL_ENABLE_ONLY_OFFICE") related to Only Office as described in `Customize Paper Matter other settings` below.
 
-## Authorize Import and Export app (and other Oauth2 apps)
+## Authorize Import and Export app (or other Oauth2 apps)
 
 __By default no Oauth2 app is authorized to access the API, each app have to be registered manually by admin.__
 

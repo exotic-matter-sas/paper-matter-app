@@ -1,6 +1,6 @@
 # API V1 reference
 
-_Before you can query the different resources, you have to obtain, store and manage an `access_token`and `refresh_token`
+_Before you can query the different resources, you have to obtain, store and manage an `access_token` and `refresh_token`
 as desbribed in [Authentication](#authentication)._
 
 ## Authentication
@@ -411,7 +411,8 @@ OR / AND (can be combined with `flat`)
 - _**ordering** (optional): specify the sort to apply to the documents list (if omitted AND **search** also omitted
   default value is `-created`, if omitted AND **search** present default value is `-rank`)._
 
-  _Supported values are:_
+    _Supported values are:_
+      
     - _`created`: sort documents on their creation date, older first_
     - _`-created`: sort documents on their creation date, recent first_
     - _`title`: sort documents on their title by alphabetical order_
@@ -484,7 +485,7 @@ OR / AND (can be combined with `flat`)
 }
 ```
 
-If there is too many results, results will be paginated. To get the next page results you have to call the url specified
+If there is too many results, they will be paginated. To get the next page you have to call the url specified
 in `next` field (or set an additional `page` query string with desired page number, page start at `1`).
 
 ### Get a document
@@ -645,7 +646,7 @@ Rename, annotate, move a document (or set its thumbnail).
 }
 ```
 
-If there is too many results, results will be paginated. To get the next page results you have to call the url specified
+If there is too many results, they will be paginated. To get the next page you have to call the url specified
 in `next` field (or set an additional `page` query string with desired page number, page start at `1`).
 
 ### Get a document share link
@@ -699,7 +700,7 @@ Update a document share link note or expiration date.
 
 ## Documents reminders
 
-### Add a reminder
+### Add a document reminder
 
 **POST /app/api/v1/documents/`document_pid`/reminders**
 
@@ -718,7 +719,7 @@ Update a document share link note or expiration date.
 }
 ```
 
-### List reminders
+### List document reminders
 
 **GET /app/api/v1/documents/`document_pid`/reminders**
 
@@ -744,12 +745,12 @@ Update a document share link note or expiration date.
 }
 ```
 
-If there is too many results, results will be paginated. To get the next page results you have to call the url specified
+If there is too many results, they will be paginated. To get the next page you have to call the url specified
 in `next` field (or set an additional `page` query string with desired page number, page start at `1`).
 
 ### Get a document reminder
 
-**GET /app/api/v1/documents/`document_pid`/reminders/`reminder_id`**
+**GET /app/api/v1/documents/`document_pid`/reminders/`document_reminder_id`**
 
 **Response** `200`
 
@@ -763,7 +764,7 @@ in `next` field (or set an additional `page` query string with desired page numb
 
 ### Update a document reminder
 
-**PATCH /app/api/v1/documents/`document_pid`/reminders/`reminder_id`**
+**PATCH /app/api/v1/documents/`document_pid`/reminders/`document_reminder_id`**
 
 Update a document reminder note or alert date.
 
@@ -784,7 +785,7 @@ Update a document reminder note or alert date.
 
 ### Delete a document reminder
 
-**DELETE /app/api/v1/documents/`document_pid`/reminders/`reminder_id`**
+**DELETE /app/api/v1/documents/`document_pid`/reminders/`document_reminder_id`**
 
 **Response** `204`
 
