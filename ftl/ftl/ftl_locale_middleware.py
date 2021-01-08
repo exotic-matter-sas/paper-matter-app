@@ -2,6 +2,7 @@
 #  Licensed under the Business Source License. See LICENSE in the project root for license information.
 
 import pytz
+from django.conf import settings
 
 from django.utils import timezone, translation
 
@@ -21,6 +22,8 @@ class FTLLocaleMiddleware:
             tzname = request.user.tz
             if tzname:
                 timezone.activate(pytz.timezone(tzname))
+            else:
+                timezone.activate(getattr(settings, "TIME_ZONE", "UTC"))
 
             # Set language from user db
             lang = request.user.lang
