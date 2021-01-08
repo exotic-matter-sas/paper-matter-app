@@ -719,6 +719,12 @@ Update a document share link note or expiration date.
 }
 ```
 
+**Specific error status**
+
+| Status | details | code |
+| ----- | ----- | ----- |
+| 400 | Only one reminder can be set per date and per user | ftl_one_reminder_per_day |
+
 ### List document reminders
 
 **GET /app/api/v1/documents/`document_pid`/reminders**
@@ -782,6 +788,12 @@ Update a document reminder note or alert date.
   "note": ""
 }
 ```
+
+**Specific error status**
+
+| Status | details | code |
+| ----- | ----- | ----- |
+| 400 | Only one reminder can be set per date and per user | ftl_one_reminder_per_day |
 
 ### Delete a document reminder
 

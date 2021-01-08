@@ -22,6 +22,7 @@ ERROR_CODES_DETAILS = {
     "ftl_too_many_reminders": _(
         "Too many reminders have been created for this document"
     ),
+    "ftl_one_reminder_per_day": _("Only one reminder can be set per date and per user"),
 }
 
 

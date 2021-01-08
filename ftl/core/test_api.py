@@ -890,6 +890,37 @@ class DocumentsRemindersTests(APITestCase):
             client_get_reminder_user_2.status_code, status.HTTP_404_NOT_FOUND
         )
 
+    def test_one_alert_per_date(self):
+        now_utc = timezone.now() + timedelta(days=1)
+        reminder_db = FTLDocumentReminder()
+        reminder_db.ftl_doc = self.doc
+        reminder_db.ftl_user = self.user
+        reminder_db.alert_on = now_utc
+        reminder_db.note = "my note"
+        reminder_db.save()
+
+        client_post = self.client.post(
+            f"/app/api/v1/documents/{self.doc.pid}/reminders",
+            {"alert_on": now_utc, "note": "my note"},
+            format="json",
+        )
+        self.assertEqual(client_post.status_code, status.HTTP_400_BAD_REQUEST)
+
+        # Test constraint with update existing reminder
+        reminder_db_2 = FTLDocumentReminder()
+        reminder_db_2.ftl_doc = self.doc
+        reminder_db_2.ftl_user = self.user
+        reminder_db_2.alert_on = now_utc + timedelta(days=1)  # Add a day
+        reminder_db_2.note = "my note 2"
+        reminder_db_2.save()
+
+        client_patch = self.client.patch(
+            f"/app/api/v1/documents/{self.doc.pid}/reminders/{reminder_db_2.id}",
+            {"alert_on": now_utc},
+            format="json",
+        )
+        self.assertEqual(client_patch.status_code, status.HTTP_400_BAD_REQUEST)
+
 
 class FoldersTests(APITestCase):
     def setUp(self):

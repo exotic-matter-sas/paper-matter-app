@@ -536,7 +536,15 @@ class FTLDocumentReminderList(generics.ListCreateAPIView):
                 ERROR_CODES_DETAILS["ftl_too_many_reminders"], "ftl_too_many_reminders",
             )
 
-        serializer.save(ftl_doc=ftl_doc, ftl_user=self.request.user)
+        try:
+            serializer.save(ftl_doc=ftl_doc, ftl_user=self.request.user)
+        except IntegrityError as e:
+            if "one_alert_per_day" in e.__str__():
+                raise BadRequestError(
+                    ERROR_CODES_DETAILS["ftl_one_reminder_per_day"],
+                    "ftl_one_reminder_per_day",
+                )
+            raise e
 
 
 class FTLDocumentReminderDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -554,3 +562,14 @@ class FTLDocumentReminderDetail(generics.RetrieveUpdateDestroyAPIView):
         return FTLDocumentReminder.objects.filter(
             ftl_doc_id=doc.id, ftl_user_id=self.request.user.id,
         )
+
+    def perform_update(self, serializer):
+        try:
+            super().perform_update(serializer)
+        except IntegrityError as e:
+            if "one_alert_per_day" in e.__str__():
+                raise BadRequestError(
+                    ERROR_CODES_DETAILS["ftl_one_reminder_per_day"],
+                    "ftl_one_reminder_per_day",
+                )
+            raise e
