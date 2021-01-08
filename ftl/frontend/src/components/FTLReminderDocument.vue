@@ -182,7 +182,7 @@ export default {
       this.value = this.$moment().add(1, "days").startOf("day").toDate();
     },
     setNextWeek: function () {
-      this.value = this.$moment().add(14, "days").startOf("day").toDate();
+      this.value = this.$moment().add(7, "days").startOf("day").toDate();
     },
     setNextMonth: function () {
       this.value = this.$moment().add(1, "months").startOf("day").toDate();
