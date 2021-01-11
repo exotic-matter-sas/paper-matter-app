@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
+ * Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
  * Licensed under the Business Source License. See LICENSE at project root for more information.
  */
 
@@ -27,6 +27,7 @@ import {
   TabsPlugin,
   ToastPlugin,
   VBHoverPlugin,
+  ButtonGroupPlugin,
 } from "bootstrap-vue";
 import App from "./App.vue";
 
@@ -63,6 +64,7 @@ import {
 import {
   faMinusSquare,
   faPlusSquare,
+  faCalendarAlt,
 } from "@fortawesome/free-regular-svg-icons";
 import { faMarkdown } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -108,7 +110,8 @@ library.add(
   faShare,
   faPen,
   faLink,
-  faBell
+  faBell,
+  faCalendarAlt
 );
 Vue.component("font-awesome-icon", FontAwesomeIcon);
 
@@ -136,6 +139,7 @@ Vue.use(BreadcrumbPlugin);
 Vue.use(VBHoverPlugin);
 Vue.use(CalendarPlugin);
 Vue.use(ListGroupPlugin);
+Vue.use(ButtonGroupPlugin);
 
 // Moment JS for nice date
 Vue.prototype.$moment = moment;
