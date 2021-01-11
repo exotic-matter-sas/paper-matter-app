@@ -17,9 +17,20 @@
           class="mx-2 my-2"
           v-model="value"
           :locale="$i18n.locale"
-          :min="new Date()"
+          :min="
+            this.$moment()
+              .utcOffset(this.ftlAccount['tz_offset'])
+              .add(1, 'days')
+              .startOf('day')
+              .format('YYYY-MM-DD')
+          "
+          :initial-date="
+            this.$moment()
+              .utcOffset(this.ftlAccount['tz_offset'])
+              .startOf('day')
+              .format('YYYY-MM-DD')
+          "
           start-weekday="1"
-          value-as-date
           :disabled="reminders.length >= 5"
           :date-disabled-fn="dateDisabled"
           :label-current-month="$t('Current month')"
@@ -153,6 +164,7 @@ fr:
 <script>
 import axios from "axios";
 import { axiosConfig } from "@/constants";
+import { mapState } from "vuex";
 
 export default {
   name: "FTLReminderDocument",
@@ -177,15 +189,33 @@ export default {
     };
   },
 
+  computed: {
+    ...mapState(["ftlAccount"]), // generate vuex computed getter
+  },
+
   methods: {
     setTomorrow: function () {
-      this.value = this.$moment().add(1, "days").startOf("day").toDate();
+      // Convert the local time to the account timezone to deal with users choosing explicitly
+      // a different timezone than the one on their computer
+      this.value = this.$moment()
+        .utcOffset(this.ftlAccount["tz_offset"])
+        .add(1, "days")
+        .startOf("day")
+        .format("YYYY-MM-DD");
     },
     setNextWeek: function () {
-      this.value = this.$moment().add(7, "days").startOf("day").toDate();
+      this.value = this.$moment()
+        .utcOffset(this.ftlAccount["tz_offset"])
+        .add(7, "days")
+        .startOf("day")
+        .format("YYYY-MM-DD");
     },
     setNextMonth: function () {
-      this.value = this.$moment().add(1, "months").startOf("day").toDate();
+      this.value = this.$moment()
+        .utcOffset(this.ftlAccount["tz_offset"])
+        .add(1, "months")
+        .startOf("day")
+        .format("YYYY-MM-DD");
     },
 
     getReminders: function () {
@@ -205,7 +235,11 @@ export default {
     setReminder: function (bvModalEvt) {
       bvModalEvt.preventDefault();
 
-      const alert_on = this.$moment(this.value).startOf("day").toDate();
+      // Convert the local time to the account timezone to deal with users choosing explicitly
+      // a different timezone than the one on their computer
+      const alert_on = this.$moment(this.value)
+        .utcOffset(this.ftlAccount["tz_offset"])
+        .startOf("day");
       let body = { alert_on: alert_on, note: this.note };
 
       axios
@@ -257,9 +291,12 @@ export default {
     },
 
     dateDisabled: function (ymd, theDate) {
-      const currentDate = this.$moment(theDate);
+      const currentDate = this.$moment(theDate).utcOffset(
+        this.ftlAccount["tz_offset"]
+      );
       for (const reminder of this.reminders) {
-        if (currentDate.isSame(reminder.alert_on)) {
+        // Only compare up to the day (don't compare time)
+        if (currentDate.isSame(reminder.alert_on, "day")) {
           return true;
         }
       }
