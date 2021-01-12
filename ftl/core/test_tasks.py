@@ -1,4 +1,4 @@
-#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
+#  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
 #  Licensed under the Business Source License. See LICENSE at project root for more information.
 import datetime
 from unittest.mock import patch, call, ANY
@@ -9,7 +9,7 @@ from django.utils import timezone
 from rest_framework.test import APITestCase
 
 from core.models import FTLDocument, FTLOrg, FTLDocumentReminder
-from core.tasks import batch_delete_doc, batch_delete_org, batch_reminder_documents
+from core.tasks import batch_delete_doc, batch_delete_org, batch_documents_reminder
 from ftests.tools import test_values as tv
 from ftests.tools.setup_helpers import (
     setup_org,
@@ -135,7 +135,7 @@ class RecurringTasksTests(APITestCase):
             mocked_timezone_now.return_value = datetime.datetime.utcnow().replace(
                 tzinfo=pytz.utc
             )
-            batch_reminder_documents()
+            batch_documents_reminder()
 
         # Expired alert is removed
         with self.assertRaises(FTLDocumentReminder.DoesNotExist):
@@ -150,7 +150,7 @@ class RecurringTasksTests(APITestCase):
             while moving_datetime < now_plus_1_month_utc:
                 moving_datetime = moving_datetime + datetime.timedelta(hours=1)
                 mocked_timezone_now.return_value = moving_datetime
-                batch_reminder_documents()
+                batch_documents_reminder()
 
         # Three emails should have been sent
         self.assertEqual(mocked_email_send.call_count, 3)

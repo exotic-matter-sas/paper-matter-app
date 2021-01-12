@@ -17,7 +17,7 @@ from django.utils import timezone
 from selenium.common.exceptions import NoSuchElementException
 
 from core.models import FTLDocumentReminder
-from core.tasks import apply_ftl_processing, batch_reminder_documents
+from core.tasks import apply_ftl_processing, batch_documents_reminder
 from ftests.pages.document_viewer_modal import DocumentViewerModal
 from ftests.pages.home_page import HomePage
 from ftests.pages.login_page import LoginPage
@@ -1123,8 +1123,8 @@ class DocumentReminderTests(
 
         # Close and reopen the document to be sure the reminder was added to backend
         self.open_first_document()
-        self.wait_for_elem_to_show(self.reminder_document_button)
-        self.get_elem(self.reminder_document_button).click()
+        self.wait_for_elem_to_show(self.document_reminder_button)
+        self.get_elem(self.document_reminder_button).click()
         self.wait_for_elem_to_show(self.reminder_add_reminder_button)
 
         # Get the first reminder
@@ -1161,7 +1161,7 @@ class DocumentReminderTests(
             while moving_datetime < stop_time:
                 moving_datetime = moving_datetime + timedelta(hours=1)
                 mocked_time.return_value = moving_datetime
-                batch_reminder_documents()
+                batch_documents_reminder()
 
         # Wait for async sending of emails
         self.wait_celery_queue_to_be_empty(self._worker)

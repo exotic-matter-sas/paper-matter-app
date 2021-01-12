@@ -229,13 +229,13 @@ import { axiosConfig } from "@/constants";
 import { mapState } from "vuex";
 
 export default {
-  name: "FTLReminderDocument",
+  name: "FTLDocumentReminder",
 
   props: {
     // customize the id to allow multiple usage of this component at the same time
     modalId: {
       type: String,
-      default: "modal-reminder-document",
+      default: "modal-document-reminder",
     },
     doc: {
       Object,

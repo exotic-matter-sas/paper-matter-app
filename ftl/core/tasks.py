@@ -1,4 +1,4 @@
-#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
+#  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
 #  Licensed under the Business Source License. See LICENSE at project root for more information.
 import logging
 from datetime import timedelta
@@ -74,7 +74,7 @@ def batch_delete_oauth_tokens():
 
 
 @shared_task
-def batch_reminder_documents():
+def batch_documents_reminder():
     instance_host = getattr(settings, "FTL_EXTERNAL_HOST", "")
     now_in_utc = timezone.now()
     reminders = FTLDocumentReminder.objects.filter(alert_on__lte=now_in_utc).order_by(

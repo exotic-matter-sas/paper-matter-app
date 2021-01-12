@@ -19,7 +19,7 @@ class DocumentViewerModal(BasePage):
     open_pdf_button = "#open-document"
     move_document_button = "#move-document"
     delete_document_button = "#delete-document"
-    reminder_document_button = "#reminder-document"
+    document_reminder_button = "#document-reminder"
 
     edit_note_button = "#edit-note"
     note_textarea = "#note-textarea"
@@ -87,8 +87,8 @@ class DocumentViewerModal(BasePage):
         self.get_elem(self.unshare_modal_button).click()
 
     def add_document_reminder_tomorrow(self, note=""):
-        self.wait_for_elem_to_show(self.reminder_document_button)
-        self.get_elem(self.reminder_document_button).click()
+        self.wait_for_elem_to_show(self.document_reminder_button)
+        self.get_elem(self.document_reminder_button).click()
         self.wait_for_elem_to_show(self.reminder_add_reminder_button)
         self.get_elem(self.reminder_for_tomorrow_button).click()
         self.get_elem(self.reminder_note_input).send_keys(note)
@@ -97,8 +97,8 @@ class DocumentViewerModal(BasePage):
         self.get_elem(self.reminder_close_button).click()
 
     def delete_document_reminder(self, alert_date=timezone.now()):
-        self.wait_for_elem_to_show(self.reminder_document_button)
-        self.get_elem(self.reminder_document_button).click()
+        self.wait_for_elem_to_show(self.document_reminder_button)
+        self.get_elem(self.document_reminder_button).click()
         self.wait_for_elem_to_show(self.reminder_add_reminder_button)
 
         reminders = self.get_elems(self.reminder_list_elements_date)

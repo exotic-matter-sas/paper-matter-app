@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
-#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
+#  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
 #  Licensed under the Business Source License. See LICENSE at project root for more information.
 
 import os
@@ -391,8 +391,8 @@ CELERY_BEAT_SCHEDULE = {
         "task": "core.tasks.batch_delete_oauth_tokens",
         "schedule": crontab(minute=15, hour=1),
     },
-    "reminder-documents-everyhour": {
-        "task": "core.tasks.batch_reminder_documents",
+    "documents-reminder-everyhour": {
+        "task": "core.tasks.batch_documents_reminder",
         "schedule": crontab(minute=0, hour="*"),
     },
 }

@@ -117,7 +117,7 @@
           </b-dropdown-item>
           <b-dropdown-item
             link-class="text-primary"
-            v-b-modal="'modal-reminder-document-dp'"
+            v-b-modal="'modal-document-reminder-dp'"
           >
             <font-awesome-icon icon="bell" />
             <span>
@@ -239,10 +239,10 @@
                 </b-button>
 
                 <b-button
-                  id="reminder-document"
+                  id="document-reminder"
                   class="mr-1 mb-2"
                   variant="primary"
-                  v-b-modal="'modal-reminder-document-dp'"
+                  v-b-modal="'modal-document-reminder-dp'"
                 >
                   <font-awesome-icon icon="bell" />
                   {{ $t("Reminders") }}&nbsp;
@@ -305,8 +305,8 @@
       @event-document-moved="documentMoved"
     />
 
-    <FTLReminderDocument
-      modal-id="modal-reminder-document-dp"
+    <FTLDocumentReminder
+      modal-id="modal-document-reminder-dp"
       :doc="currentOpenDoc"
       @event-document-reminders-updated="documentRemindersUpdated"
     />
@@ -368,7 +368,7 @@ import FTLDeleteDocuments from "@/components/FTLDeleteDocuments";
 import FTLThumbnailGenMixin from "@/components/FTLThumbnailGenMixin";
 import FTLNote from "@/components/FTLNote";
 import FTLDocumentSharing from "@/components/FTLDocumentSharing";
-import FTLReminderDocument from "@/components/FTLReminderDocument";
+import FTLDocumentReminder from "@/components/FTLDocumentReminder";
 import { mapState } from "vuex";
 
 export default {
@@ -376,7 +376,7 @@ export default {
   mixins: [FTLThumbnailGenMixin],
 
   components: {
-    FTLReminderDocument,
+    FTLDocumentReminder,
     FTLMoveDocuments,
     FTLRenameDocument,
     FTLDeleteDocuments,
