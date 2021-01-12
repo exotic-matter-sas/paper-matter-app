@@ -25,14 +25,16 @@
           v-model="value"
           :locale="$i18n.locale"
           :min="
-            this.$moment()
+            this.$moment
+              .utc()
               .utcOffset(this.ftlAccount['tz_offset'])
               .add(1, 'days')
               .startOf('day')
               .format('YYYY-MM-DD')
           "
           :initial-date="
-            this.$moment()
+            this.$moment
+              .utc()
               .utcOffset(this.ftlAccount['tz_offset'])
               .startOf('day')
               .format('YYYY-MM-DD')
@@ -284,21 +286,24 @@ export default {
     setTomorrow: function () {
       // Convert the local time to the account timezone to deal with users choosing explicitly
       // a different timezone than the one on their computer
-      this.value = this.$moment()
+      this.value = this.$moment
+        .utc()
         .utcOffset(this.ftlAccount["tz_offset"])
         .add(1, "days")
         .startOf("day")
         .format("YYYY-MM-DD");
     },
     setNextWeek: function () {
-      this.value = this.$moment()
+      this.value = this.$moment
+        .utc()
         .utcOffset(this.ftlAccount["tz_offset"])
         .add(7, "days")
         .startOf("day")
         .format("YYYY-MM-DD");
     },
     setNextMonth: function () {
-      this.value = this.$moment()
+      this.value = this.$moment
+        .utc()
         .utcOffset(this.ftlAccount["tz_offset"])
         .add(1, "months")
         .startOf("day")
@@ -324,8 +329,9 @@ export default {
 
       // Convert the local time to the account timezone to deal with users choosing explicitly
       // a different timezone than the one on their computer
-      const alert_on = this.$moment(this.value)
-        .utcOffset(this.ftlAccount["tz_offset"])
+      const alert_on = this.$moment
+        .utc(this.value)
+        .utcOffset(this.ftlAccount["tz_offset"], true)
         .startOf("day");
       let body = { alert_on: alert_on, note: this.note };
 
@@ -384,9 +390,9 @@ export default {
     },
 
     dateDisabled: function (ymd, theDate) {
-      const currentDate = this.$moment(theDate).utcOffset(
-        this.ftlAccount["tz_offset"]
-      );
+      const currentDate = this.$moment
+        .utc(ymd)
+        .utcOffset(this.ftlAccount["tz_offset"], true);
       for (const reminder of this.reminders) {
         // Only compare up to the day (don't compare time)
         if (currentDate.isSame(reminder.alert_on, "day")) {
