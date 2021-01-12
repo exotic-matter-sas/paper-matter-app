@@ -35,7 +35,9 @@ class DocumentViewerModal(BasePage):
     validate_modal_button = "#"
     unshare_modal_button = "[id^='modal-document-sharing'] .modal-footer .btn-danger"
 
-    reminder_for_tomorrow_button = ".b-calendar .b-calendar-inner > footer .btn:first-child"
+    reminder_for_tomorrow_button = (
+        ".b-calendar .b-calendar-inner > footer .btn:first-child"
+    )
     reminder_add_reminder_button = ".modal-content footer button.btn-primary"
     reminder_list_elements = ".list-group .list-group-item"
     reminder_list_elements_date = ".list-group .list-group-item h5 span"
