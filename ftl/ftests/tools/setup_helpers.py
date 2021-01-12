@@ -13,7 +13,8 @@ from core.models import (
     FTLDocument,
     FTLFolder,
     FTLDocumentSharing,
-    FTLDocumentReminder)
+    FTLDocumentReminder,
+)
 from core.processing.proc_pgsql_tsvector import FTLSearchEnginePgSQLTSVector
 from ftests.tools import test_values as tv
 from ftl.otp_plugins.otp_ftl.models import Fido2Device

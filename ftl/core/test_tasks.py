@@ -18,7 +18,8 @@ from ftests.tools.setup_helpers import (
     setup_document,
     setup_folder,
     setup_temporary_file,
-    setup_document_reminder)
+    setup_document_reminder,
+)
 from ftl import celery
 
 
@@ -106,13 +107,21 @@ class RecurringTasksTests(APITestCase):
         now_plus_1_week_utc = timezone.now() + datetime.timedelta(weeks=1)
         now_plus_1_month_utc = timezone.now() + datetime.timedelta(weeks=4)
 
-        alert_db_minus_1_day = setup_document_reminder(self.doc, self.user, now_minus_1_day_utc, note="")
+        alert_db_minus_1_day = setup_document_reminder(
+            self.doc, self.user, now_minus_1_day_utc, note=""
+        )
 
-        alert_db_plus_1_day = setup_document_reminder(self.doc, self.user, now_plus_1_day_utc, note="")
+        alert_db_plus_1_day = setup_document_reminder(
+            self.doc, self.user, now_plus_1_day_utc, note=""
+        )
 
-        alert_db_plus_1_week = setup_document_reminder(self.doc, self.user, now_plus_1_week_utc, note="")
+        alert_db_plus_1_week = setup_document_reminder(
+            self.doc, self.user, now_plus_1_week_utc, note=""
+        )
 
-        alert_db_plus_1_month = setup_document_reminder(self.doc, self.user, now_plus_1_month_utc, note="")
+        alert_db_plus_1_month = setup_document_reminder(
+            self.doc, self.user, now_plus_1_month_utc, note=""
+        )
 
         # Time is now
         with patch.object(timezone, "now") as mocked_timezone_now:

@@ -32,7 +32,8 @@ from ftests.tools.setup_helpers import (
     setup_folder,
     setup_temporary_file,
     setup_document_share,
-    setup_document_reminder)
+    setup_document_reminder,
+)
 from ftl import celery
 
 
@@ -1173,7 +1174,9 @@ class DocumentReminderTests(
 
     def test_delete_reminder(self):
         doc = setup_document(self.org, self.user, binary=setup_temporary_file().name)
-        setup_document_reminder(doc, self.user, alert_on=tv.DOCUMENT_REMINDER_TOMORROW_DATE)
+        setup_document_reminder(
+            doc, self.user, alert_on=tv.DOCUMENT_REMINDER_TOMORROW_DATE
+        )
 
         self.refresh_documents_list()
         self.open_first_document()

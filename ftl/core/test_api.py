@@ -31,7 +31,8 @@ from ftests.tools.setup_helpers import (
     setup_folder,
     setup_temporary_file,
     setup_document_share,
-    setup_document_reminder)
+    setup_document_reminder,
+)
 from ftl import celery
 from ftl.enums import FTLStorages, FTLPlugins
 
@@ -755,9 +756,15 @@ class DocumentsRemindersTests(APITestCase):
         self.doc = setup_document(self.org, self.user1)
         self.doc_bis = setup_document(self.org, self.user1, title=tv.DOCUMENT2_TITLE)
 
-        self.doc_user1_reminder = setup_document_reminder(self.doc, self.user1, tv.DOCUMENT_REMINDER_TOMORROW_DATE)
-        self.doc_user1_reminder2 = setup_document_reminder(self.doc, self.user1, tv.DOCUMENT_REMINDER_NEXT_WEEK_DATE)
-        self.doc_user2_reminder = setup_document_reminder(self.doc, self.user2, tv.DOCUMENT_REMINDER_TOMORROW_DATE)
+        self.doc_user1_reminder = setup_document_reminder(
+            self.doc, self.user1, tv.DOCUMENT_REMINDER_TOMORROW_DATE
+        )
+        self.doc_user1_reminder2 = setup_document_reminder(
+            self.doc, self.user1, tv.DOCUMENT_REMINDER_NEXT_WEEK_DATE
+        )
+        self.doc_user2_reminder = setup_document_reminder(
+            self.doc, self.user2, tv.DOCUMENT_REMINDER_TOMORROW_DATE
+        )
 
         self.client.login(
             request=HttpRequest(), email=tv.USER1_EMAIL, password=tv.USER1_PASS
@@ -791,9 +798,13 @@ class DocumentsRemindersTests(APITestCase):
         self.assertIsNotNone(client_get.data["results"])
         self.assertEqual(
             client_get.data["results"][0]["alert_on"],
-            tv.DOCUMENT_REMINDER_TOMORROW_DATE.astimezone(gettz(self.user1.tz)).isoformat(),
+            tv.DOCUMENT_REMINDER_TOMORROW_DATE.astimezone(
+                gettz(self.user1.tz)
+            ).isoformat(),
         )
-        self.assertEqual(client_get.data["results"][0]["note"], tv.DOCUMENT_REMINDER_1_NOTE)
+        self.assertEqual(
+            client_get.data["results"][0]["note"], tv.DOCUMENT_REMINDER_1_NOTE
+        )
 
     def test_get_reminder(self):
         client_get = self.client.get(
@@ -804,7 +815,9 @@ class DocumentsRemindersTests(APITestCase):
         self.assertIsNotNone(client_get)
         self.assertEqual(
             client_get.data["alert_on"],
-            tv.DOCUMENT_REMINDER_TOMORROW_DATE.astimezone(gettz(self.user1.tz)).isoformat(),
+            tv.DOCUMENT_REMINDER_TOMORROW_DATE.astimezone(
+                gettz(self.user1.tz)
+            ).isoformat(),
         )
         self.assertEqual(client_get.data["note"], tv.DOCUMENT_REMINDER_1_NOTE)
 
@@ -820,7 +833,11 @@ class DocumentsRemindersTests(APITestCase):
     def test_max_5_reminders(self):
         for i in range(1, 5):  # begin at 1 due to the reminder created in setUp
             setup_document_reminder(
-                self.doc, self.user1, alert_on=timezone.now() + timedelta(days=i + 1), note=f"my note {i}")
+                self.doc,
+                self.user1,
+                alert_on=timezone.now() + timedelta(days=i + 1),
+                note=f"my note {i}",
+            )
 
         alert_date = timezone.now() + timedelta(days=12)
         client_post = self.client.post(
@@ -836,7 +853,9 @@ class DocumentsRemindersTests(APITestCase):
         client_get = self.client.get(f"/app/api/v1/documents/{self.doc.pid}/reminders")
         self.assertEqual(client_get.status_code, status.HTTP_200_OK)
         self.assertEqual(client_get.data["count"], 2)
-        self.assertEqual(client_get.data["results"][0]["id"], self.doc_user1_reminder.id)
+        self.assertEqual(
+            client_get.data["results"][0]["id"], self.doc_user1_reminder.id
+        )
 
         client_get_reminder_user_1 = self.client.get(
             f"/app/api/v1/documents/{self.doc.pid}/reminders/{self.doc_user1_reminder.id}"
@@ -855,10 +874,13 @@ class DocumentsRemindersTests(APITestCase):
     def test_one_alert_per_date(self):
         with transaction.atomic():
             client_post = self.client.post(
-                    f"/app/api/v1/documents/{self.doc.pid}/reminders",
-                    {"alert_on": tv.DOCUMENT_REMINDER_TOMORROW_DATE, "note": tv.DOCUMENT_REMINDER_1_NOTE},
-                    format="json",
-                )
+                f"/app/api/v1/documents/{self.doc.pid}/reminders",
+                {
+                    "alert_on": tv.DOCUMENT_REMINDER_TOMORROW_DATE,
+                    "note": tv.DOCUMENT_REMINDER_1_NOTE,
+                },
+                format="json",
+            )
         self.assertEqual(client_post.status_code, status.HTTP_400_BAD_REQUEST)
 
         # Test constraint with update existing reminder
