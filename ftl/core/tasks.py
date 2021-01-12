@@ -1,7 +1,6 @@
 #  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
 #  Licensed under the Business Source License. See LICENSE at project root for more information.
 import logging
-from datetime import timedelta
 
 from celery import shared_task
 from django.conf import settings
@@ -82,36 +81,33 @@ def batch_documents_reminder():
     )
 
     for reminder in reminders:
-        if now_in_utc - reminder.alert_on < timedelta(hours=24):
-            # Only sends reminder in a 24 hours window (avoid sending reminders for expired reminders)
-            logger.info(
-                f"Sending reminder email for {reminder.ftl_doc.pid} ({reminder.alert_on})"
+        logger.info(
+            f"Sending reminder email for {reminder.ftl_doc.pid} ({reminder.alert_on})"
+        )
+
+        # We manually build the URL because we don't have any request or named url for document
+        doc_url = f"{instance_host}/app/#/home?doc={reminder.ftl_doc.pid}"
+
+        ctx = {
+            "title": reminder.ftl_doc.title,
+            "note": reminder.note,
+            "alert_on": reminder.alert_on,
+            "doc_url": doc_url,
+        }
+
+        # Force user lang setting for email
+        with translation.override(reminder.ftl_user.lang or "en"):
+            subject_reminder = render_to_string(
+                template_name="core/email/core_email_reminder_subject.txt", context=ctx,
+            )
+            subject_reminder = "".join(subject_reminder.splitlines())
+            message_reminder = render_to_string(
+                template_name="core/email/core_email_reminder_body.txt", context=ctx
             )
 
-            # We manually build the URL because we don't have any request or named url for document
-            doc_url = f"{instance_host}/app/#/home?doc={reminder.ftl_doc.pid}"
-
-            ctx = {
-                "title": reminder.ftl_doc.title,
-                "note": reminder.note,
-                "alert_on": reminder.alert_on,
-                "doc_url": doc_url,
-            }
-
-            # Force user lang setting for email
-            with translation.override(reminder.ftl_user.lang):
-                subject_reminder = render_to_string(
-                    template_name="core/email/core_email_reminder_subject.txt",
-                    context=ctx,
-                )
-                subject_reminder = "".join(subject_reminder.splitlines())
-                message_reminder = render_to_string(
-                    template_name="core/email/core_email_reminder_body.txt", context=ctx
-                )
-
-            # Email sent to the current user email for notification
-            reminder.ftl_user.email_user(
-                subject_reminder, message_reminder, settings.DEFAULT_FROM_EMAIL
-            )
+        # Email sent to the current user email for notification
+        reminder.ftl_user.email_user(
+            subject_reminder, message_reminder, settings.DEFAULT_FROM_EMAIL
+        )
 
         reminder.delete()
