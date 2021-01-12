@@ -32,7 +32,7 @@ from ftests.tools.setup_helpers import (
     setup_folder,
     setup_temporary_file,
     setup_document_share,
-)
+    setup_document_reminder)
 from ftl import celery
 
 
@@ -1130,12 +1130,11 @@ class DocumentReminderTests(
         # Get the first reminder
         elems_date_text = self.get_elems(self.reminder_list_elements_date)
         self.assertEqual(len(elems_date_text), 1)
-        now_utc = timezone.now() + timedelta(days=1)
 
         # Test that the date was set to tomorrow (we are not comparing the time)
         self.assertEqual(
             datetime.fromisoformat(elems_date_text[0].get_attribute("title")).date(),
-            now_utc.date(),
+            tv.DOCUMENT_REMINDER_TOMORROW_DATE.date(),
         )
 
         # Test the note was saved
@@ -1143,7 +1142,7 @@ class DocumentReminderTests(
         self.assertEqual(len(elems_note_text), 1)
         self.assertEqual(elems_note_text[0], "my note")
 
-    def test_reminder_receive_email(self):
+    def test_reminder_email_received(self):
         setup_document(self.org, self.user, binary=setup_temporary_file().name)
         self.refresh_documents_list()
         self.open_first_document()
@@ -1174,18 +1173,12 @@ class DocumentReminderTests(
 
     def test_delete_reminder(self):
         doc = setup_document(self.org, self.user, binary=setup_temporary_file().name)
-        alert_date = timezone.now() + timedelta(days=1)
-
-        reminder = FTLDocumentReminder()
-        reminder.ftl_doc = doc
-        reminder.ftl_user = self.user
-        reminder.alert_on = alert_date
-        reminder.save()
+        setup_document_reminder(doc, self.user, alert_on=tv.DOCUMENT_REMINDER_TOMORROW_DATE)
 
         self.refresh_documents_list()
         self.open_first_document()
 
-        self.delete_document_reminder(alert_date)
+        self.delete_document_reminder(tv.DOCUMENT_REMINDER_TOMORROW_DATE)
 
         with self.assertRaises(NoSuchElementException):
             self.get_elems(self.reminder_list_elements)
