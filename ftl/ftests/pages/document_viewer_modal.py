@@ -35,15 +35,15 @@ class DocumentViewerModal(BasePage):
     validate_modal_button = "#"
     unshare_modal_button = "[id^='modal-document-sharing'] .modal-footer .btn-danger"
 
-    reminder_for_tomorrow_button = ".b-calendar footer button.btn-sm"
+    reminder_for_tomorrow_button = ".b-calendar .b-calendar-inner > footer .btn:first-child"
     reminder_add_reminder_button = ".modal-content footer button.btn-primary"
     reminder_list_elements = ".list-group .list-group-item"
     reminder_list_elements_date = ".list-group .list-group-item h5 span"
     reminder_list_elements_note = ".list-group .list-group-item div:nth-child(2)"
     reminder_list_elements_delete = ".list-group .list-group-item button"
-    reminder_list_empty = "div[id*=reminder] div.flex-grow-1 span"
+    reminder_list_empty = "[id^=modal-document-reminder] .align-items-center span"
     reminder_note_input = "#reminder-note"
-    reminder_close_button = ".modal-content footer button.btn-secondary"
+    reminder_close_button = "[id^=modal-document-reminder] .close"
 
     def rename_document(self, document_name):
         self.wait_for_elem_to_show(self.rename_document_button)
