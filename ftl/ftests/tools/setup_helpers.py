@@ -1,4 +1,4 @@
-#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
+#  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
 #  Licensed under the Business Source License. See LICENSE at project root for more information.
 
 import os
@@ -13,7 +13,7 @@ from core.models import (
     FTLDocument,
     FTLFolder,
     FTLDocumentSharing,
-)
+    FTLDocumentReminder)
 from core.processing.proc_pgsql_tsvector import FTLSearchEnginePgSQLTSVector
 from ftests.tools import test_values as tv
 from ftl.otp_plugins.otp_ftl.models import Fido2Device
@@ -129,4 +129,12 @@ def setup_document_share(
 ):
     return FTLDocumentSharing.objects.create(
         ftl_doc=ftl_doc, expire_at=expire_at, password=password, note=note
+    )
+
+
+def setup_document_reminder(
+    ftl_doc, ftl_user, alert_on, note=tv.DOCUMENT_REMINDER_1_NOTE
+):
+    return FTLDocumentReminder.objects.create(
+        ftl_doc=ftl_doc, ftl_user=ftl_user, alert_on=alert_on, note=note
     )

@@ -1,4 +1,4 @@
-#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
+#  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
 #  Licensed under the Business Source License. See LICENSE at project root for more information.
 
 import json
@@ -12,7 +12,7 @@ from uuid import UUID
 from dateutil.tz import gettz
 from django.conf import settings
 from django.contrib import messages
-from django.db import DEFAULT_DB_ALIAS
+from django.db import DEFAULT_DB_ALIAS, transaction
 from django.http import HttpRequest
 from django.test import override_settings
 from django.utils import timezone
@@ -31,7 +31,7 @@ from ftests.tools.setup_helpers import (
     setup_folder,
     setup_temporary_file,
     setup_document_share,
-)
+    setup_document_reminder)
 from ftl import celery
 from ftl.enums import FTLStorages, FTLPlugins
 
@@ -749,102 +749,83 @@ class DocumentsRemindersTests(APITestCase):
     def setUp(self):
         self.org = setup_org()
         setup_admin(self.org)
-        self.user = setup_user(self.org)
+        self.user1 = setup_user(self.org)
+        self.user2 = setup_user(self.org, email=tv.USER2_EMAIL)
 
-        self.doc = setup_document(self.org, self.user)
-        self.doc_bis = setup_document(self.org, self.user, title=tv.DOCUMENT2_TITLE)
+        self.doc = setup_document(self.org, self.user1)
+        self.doc_bis = setup_document(self.org, self.user1, title=tv.DOCUMENT2_TITLE)
+
+        self.doc_user1_reminder = setup_document_reminder(self.doc, self.user1, tv.DOCUMENT_REMINDER_TOMORROW_DATE)
+        self.doc_user1_reminder2 = setup_document_reminder(self.doc, self.user1, tv.DOCUMENT_REMINDER_NEXT_WEEK_DATE)
+        self.doc_user2_reminder = setup_document_reminder(self.doc, self.user2, tv.DOCUMENT_REMINDER_TOMORROW_DATE)
 
         self.client.login(
             request=HttpRequest(), email=tv.USER1_EMAIL, password=tv.USER1_PASS
         )
 
     def test_add_reminder(self):
-        now_utc = timezone.now() + timedelta(days=1)
+        alert_date = timezone.now() + timedelta(days=1)
         client_post = self.client.post(
             f"/app/api/v1/documents/{self.doc.pid}/reminders",
-            {"alert_on": now_utc, "note": "my note"},
+            {"alert_on": alert_date, "note": "my note"},
             format="json",
         )
 
         self.assertEqual(client_post.status_code, status.HTTP_201_CREATED)
         get_reminder_db = FTLDocumentReminder.objects.get(id=client_post.data["id"])
         self.assertIsNotNone(get_reminder_db)
-        self.assertEqual(get_reminder_db.alert_on, now_utc)
+        self.assertEqual(get_reminder_db.alert_on, alert_date)
         self.assertEqual(get_reminder_db.note, "my note")
         self.assertEqual(
             client_post.data["alert_on"],
-            now_utc.astimezone(gettz("Europe/Paris")).isoformat(),
+            alert_date.astimezone(gettz(self.user1.tz)).isoformat(),
         )
         self.assertEqual(client_post.data["note"], "my note")
 
     def test_list_reminders(self):
-        now_utc = timezone.now() + timedelta(days=1)
-        reminder_db = FTLDocumentReminder()
-        reminder_db.ftl_doc = self.doc
-        reminder_db.ftl_user = self.user
-        reminder_db.alert_on = now_utc
-        reminder_db.note = "my note"
-        reminder_db.save()
-
         client_get = self.client.get(f"/app/api/v1/documents/{self.doc.pid}/reminders")
+
         self.assertEqual(client_get.status_code, status.HTTP_200_OK)
         self.assertIsNotNone(client_get)
-        self.assertEqual(client_get.data["count"], 1)
+        self.assertEqual(client_get.data["count"], 2)
         self.assertIsNotNone(client_get.data["results"])
         self.assertEqual(
             client_get.data["results"][0]["alert_on"],
-            now_utc.astimezone(gettz("Europe/Paris")).isoformat(),
+            tv.DOCUMENT_REMINDER_TOMORROW_DATE.astimezone(gettz(self.user1.tz)).isoformat(),
         )
-        self.assertEqual(client_get.data["results"][0]["note"], "my note")
+        self.assertEqual(client_get.data["results"][0]["note"], tv.DOCUMENT_REMINDER_1_NOTE)
 
     def test_get_reminder(self):
-        now_utc = timezone.now() + timedelta(days=1)
-        reminder_db = FTLDocumentReminder()
-        reminder_db.ftl_doc = self.doc
-        reminder_db.ftl_user = self.user
-        reminder_db.alert_on = now_utc
-        reminder_db.note = "my note"
-        reminder_db.save()
-
         client_get = self.client.get(
-            f"/app/api/v1/documents/{self.doc.pid}/reminders/{reminder_db.id}"
+            f"/app/api/v1/documents/{self.doc.pid}/reminders/{self.doc_user1_reminder.id}"
         )
+
         self.assertEqual(client_get.status_code, status.HTTP_200_OK)
         self.assertIsNotNone(client_get)
         self.assertEqual(
             client_get.data["alert_on"],
-            now_utc.astimezone(gettz("Europe/Paris")).isoformat(),
+            tv.DOCUMENT_REMINDER_TOMORROW_DATE.astimezone(gettz(self.user1.tz)).isoformat(),
         )
-        self.assertEqual(client_get.data["note"], "my note")
+        self.assertEqual(client_get.data["note"], tv.DOCUMENT_REMINDER_1_NOTE)
 
     def test_delete_reminder(self):
-        now_utc = timezone.now() + timedelta(days=1)
-        reminder_db = FTLDocumentReminder()
-        reminder_db.ftl_doc = self.doc
-        reminder_db.ftl_user = self.user
-        reminder_db.alert_on = now_utc
-        reminder_db.note = "my note"
-        reminder_db.save()
-
         client_delete = self.client.delete(
-            f"/app/api/v1/documents/{self.doc.pid}/reminders/{reminder_db.id}"
+            f"/app/api/v1/documents/{self.doc.pid}/reminders/{self.doc_user1_reminder.id}"
         )
+
         self.assertEqual(client_delete.status_code, status.HTTP_204_NO_CONTENT)
+        with self.assertRaises(core.models.FTLDocumentReminder.DoesNotExist):
+            FTLDocumentReminder.objects.get(id=self.doc_user1_reminder.id)
 
     def test_max_5_reminders(self):
-        for i in range(5):
-            now_utc = timezone.now() + timedelta(days=i + 1)
-            reminder_db = FTLDocumentReminder()
-            reminder_db.ftl_doc = self.doc
-            reminder_db.ftl_user = self.user
-            reminder_db.alert_on = now_utc
-            reminder_db.note = f"my note {i}"
-            reminder_db.save()
+        for i in range(1, 5):  # begin at 1 due to the reminder created in setUp
+            setup_document_reminder(
+                self.doc, self.user1, alert_on=timezone.now() + timedelta(days=i + 1), note=f"my note {i}")
 
-        now_utc = timezone.now() + timedelta(days=12)
+        alert_date = timezone.now() + timedelta(days=12)
         client_post = self.client.post(
             f"/app/api/v1/documents/{self.doc.pid}/reminders",
-            {"alert_on": now_utc, "note": "my note"},
+            {"alert_on": alert_date, "note": tv.DOCUMENT_REMINDER_1_NOTE},
             format="json",
         )
 
@@ -852,38 +833,19 @@ class DocumentsRemindersTests(APITestCase):
         self.assertEqual(client_post.data["code"], "ftl_too_many_reminders")
 
     def test_show_reminders_per_user_only(self):
-        user_2 = setup_user(self.org, email=tv.USER2_EMAIL, password=tv.USER2_PASS)
-
-        # Alert for user 1
-        now_utc = timezone.now() + timedelta(days=1)
-        reminder_db_user_1 = FTLDocumentReminder()
-        reminder_db_user_1.ftl_doc = self.doc
-        reminder_db_user_1.ftl_user = self.user
-        reminder_db_user_1.alert_on = now_utc
-        reminder_db_user_1.note = "my note"
-        reminder_db_user_1.save()
-
-        # Alert for user 2
-        reminder_db_user_2 = FTLDocumentReminder()
-        reminder_db_user_2.ftl_doc = self.doc
-        reminder_db_user_2.ftl_user = user_2
-        reminder_db_user_2.alert_on = now_utc
-        reminder_db_user_2.note = "my note"
-        reminder_db_user_2.save()
-
         client_get = self.client.get(f"/app/api/v1/documents/{self.doc.pid}/reminders")
         self.assertEqual(client_get.status_code, status.HTTP_200_OK)
-        self.assertEqual(client_get.data["count"], 1)
-        self.assertEqual(client_get.data["results"][0]["id"], reminder_db_user_1.id)
+        self.assertEqual(client_get.data["count"], 2)
+        self.assertEqual(client_get.data["results"][0]["id"], self.doc_user1_reminder.id)
 
         client_get_reminder_user_1 = self.client.get(
-            f"/app/api/v1/documents/{self.doc.pid}/reminders/{reminder_db_user_1.id}"
+            f"/app/api/v1/documents/{self.doc.pid}/reminders/{self.doc_user1_reminder.id}"
         )
 
         self.assertEqual(client_get_reminder_user_1.status_code, status.HTTP_200_OK)
 
         client_get_reminder_user_2 = self.client.get(
-            f"/app/api/v1/documents/{self.doc.pid}/reminders/{reminder_db_user_2.id}"
+            f"/app/api/v1/documents/{self.doc.pid}/reminders/{self.doc_user2_reminder.id}"
         )
 
         self.assertEqual(
@@ -891,34 +853,22 @@ class DocumentsRemindersTests(APITestCase):
         )
 
     def test_one_alert_per_date(self):
-        now_utc = timezone.now() + timedelta(days=1)
-        reminder_db = FTLDocumentReminder()
-        reminder_db.ftl_doc = self.doc
-        reminder_db.ftl_user = self.user
-        reminder_db.alert_on = now_utc
-        reminder_db.note = "my note"
-        reminder_db.save()
-
-        client_post = self.client.post(
-            f"/app/api/v1/documents/{self.doc.pid}/reminders",
-            {"alert_on": now_utc, "note": "my note"},
-            format="json",
-        )
+        with transaction.atomic():
+            client_post = self.client.post(
+                    f"/app/api/v1/documents/{self.doc.pid}/reminders",
+                    {"alert_on": tv.DOCUMENT_REMINDER_TOMORROW_DATE, "note": tv.DOCUMENT_REMINDER_1_NOTE},
+                    format="json",
+                )
         self.assertEqual(client_post.status_code, status.HTTP_400_BAD_REQUEST)
 
         # Test constraint with update existing reminder
-        reminder_db_2 = FTLDocumentReminder()
-        reminder_db_2.ftl_doc = self.doc
-        reminder_db_2.ftl_user = self.user
-        reminder_db_2.alert_on = now_utc + timedelta(days=1)  # Add a day
-        reminder_db_2.note = "my note 2"
-        reminder_db_2.save()
+        with transaction.atomic():
+            client_patch = self.client.patch(
+                f"/app/api/v1/documents/{self.doc.pid}/reminders/{self.doc_user1_reminder2.id}",
+                {"alert_on": tv.DOCUMENT_REMINDER_TOMORROW_DATE},
+                format="json",
+            )
 
-        client_patch = self.client.patch(
-            f"/app/api/v1/documents/{self.doc.pid}/reminders/{reminder_db_2.id}",
-            {"alert_on": now_utc},
-            format="json",
-        )
         self.assertEqual(client_patch.status_code, status.HTTP_400_BAD_REQUEST)
 
 
