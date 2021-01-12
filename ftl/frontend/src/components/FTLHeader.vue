@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
+  - Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
   - Licensed under the Business Source License. See LICENSE at project root for more information.
   -->
 
@@ -161,6 +161,9 @@
               >!</b-badge
             >
           </template>
+          <b-dropdown-item v-if="account.isSuperUser" href="/admin">
+            {{ $t("Admin") }}
+          </b-dropdown-item>
           <b-dropdown-item href="/accounts">
             {{ $t("Settings") }}
             <b-badge
@@ -191,6 +194,7 @@
     "https://welcome.papermatter.app/downloads": "https://welcome.papermatter.app/fr/downloads"
     Settings: Paramètres
     Sign Out: Se déconnecter
+    Admin: Administration
 </i18n>
 
 <script>
