@@ -137,7 +137,7 @@ class RecurringTasksTests(APITestCase):
             )
             batch_documents_reminder()
 
-        # Expired alert is removed
+        # Expired alert is removed but still sent
         with self.assertRaises(FTLDocumentReminder.DoesNotExist):
             alert_db_minus_1_day.refresh_from_db()
 
@@ -152,13 +152,31 @@ class RecurringTasksTests(APITestCase):
                 mocked_timezone_now.return_value = moving_datetime
                 batch_documents_reminder()
 
-        # Three emails should have been sent
-        self.assertEqual(mocked_email_send.call_count, 3)
+        # Four emails should have been sent
+        self.assertEqual(mocked_email_send.call_count, 4)
 
         # render_to_string should have been called 2*3 times
         self.assertListEqual(
             mocked_render_to_string.call_args_list,
             [
+                call(
+                    template_name=ANY,
+                    context={
+                        "title": self.doc.title,
+                        "note": "",
+                        "alert_on": alert_db_minus_1_day.alert_on,
+                        "doc_url": f"http://example-pm.org/app/#/home?doc={self.doc.pid}",
+                    },
+                ),
+                call(
+                    template_name=ANY,
+                    context={
+                        "title": self.doc.title,
+                        "note": "",
+                        "alert_on": alert_db_minus_1_day.alert_on,
+                        "doc_url": f"http://example-pm.org/app/#/home?doc={self.doc.pid}",
+                    },
+                ),
                 call(
                     template_name=ANY,
                     context={
