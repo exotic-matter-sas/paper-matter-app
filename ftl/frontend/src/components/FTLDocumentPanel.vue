@@ -41,7 +41,7 @@
                     </span>
                     <small id="document-title-extension">{{
                       currentOpenDoc.ext
-                      }}</small>
+                    }}</small>
                   </span>
                 </div>
               </b-col>
