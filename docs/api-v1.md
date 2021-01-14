@@ -1,6 +1,7 @@
 # API V1 reference
 
-_Before you can query the different resources, you have to obtain, store and manage an `access_token` and `refresh_token` as desbribed in [Authentication](#authentication)._
+_Before you can query the different resources, you have to obtain, store and manage an `access_token` and `refresh_token`
+as desbribed in [Authentication](#authentication)._
 
 ## Authentication
 
@@ -8,22 +9,24 @@ _The Paper Matter API uses the OAuth 2.0 protocol for authentication and authori
 
 The following protocol endpoints are available:
 
- - Authorization page: `/oauth2/authorize/`
- - Get tokens endpoint: `/oauth2/token`
- - Revoke tokens endpoint: `/oauth2/revoke_token`
+- Authorization page: `/oauth2/authorize/`
+- Get tokens endpoint: `/oauth2/token`
+- Revoke tokens endpoint: `/oauth2/revoke_token`
 
 The following scopes are available: `read`, `write`.
- 
+
 Paper Matter supports the following OAuth 2.0 flows:
 
- - `Authorization Code` (`public` or `confidential`), recommended for most usage such as web app or native client
- - `Client Credentials`, only for trusted server side access
+- `Authorization Code` (`public` or `confidential`), recommended for most usage such as web app or native client
+- `Client Credentials`, only for trusted server side access
 
 To access the API, you will need a set of `client_id` and `client_secret`:
 
- - For the instance we host (papermatter.app), please [contact us](https://welcome.papermatter.app/contact-us/) to
-  apply for API access. 
- - For other instances, you have to ask instance admin to [generate those credentials inside the admin panel](`self-hosting.md#authorize-import-and-export-app-and-other-oauth2-apps`).
+- For the instance we host (papermatter.app), please [contact us](https://welcome.papermatter.app/contact-us/) to apply
+  for API access.
+- For other instances, you have to ask instance admin
+  to [generate those credentials inside the admin panel](`self-hosting.md#authorize-import-and-export-app-and-other-oauth2-apps`)
+  .
 
 ### Using Authorization Code flow
 
@@ -38,7 +41,8 @@ https://[YOUR_PM_INSTANCE]/oauth2/authorize/
 &redirect_uri=https://my-site.example.org/callback
 &scope=read
 ```
-_User will be asked to login to Paper Matter and to authorize your app access to its account._ 
+
+_User will be asked to login to Paper Matter and to authorize your app access to its account._
 
 If authorization is successful, the given `redirect_uri` will be called by Paper Matter server with authorization code
 inside a `code` querystring:
@@ -48,6 +52,7 @@ https://my-site.example.org/callback?code=AUTHORIZATION_CODE
 ```
 
 #### 2. Get tokens
+
 **POST /oauth2/token**
 
 **Request body** _([form url encoded](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST))_
@@ -78,12 +83,16 @@ client_id=CLIENT_ID
 }
 ```
 
-_`access_token` and `refresh_token` should be stored, they are required to call other requests, non-related to authentication._
+_`access_token` and `refresh_token` should be stored, they are required to call other requests, non-related to
+authentication._
 
 - `access_token` have to be included inside `Authorization` HTTP header with the value `Bearer [access_token]`, this
- token will eventually expire as described below.
-- `expires_in` is the `access_token` validity period in seconds, once expired authenticated request will return a code `403`. When this code is returned, you should use the [Refresh tokens request](#3-refresh-tokens) to get and store a new pair of tokens.
-- `refresh_token` have to be used with [Refresh tokens request](#3-refresh-tokens), this token isn't limited to a validity period but is for single use.
+  token will eventually expire as described below.
+- `expires_in` is the `access_token` validity period in seconds, once expired authenticated request will return a
+  code `403`. When this code is returned, you should use the [Refresh tokens request](#3-refresh-tokens) to get and
+  store a new pair of tokens.
+- `refresh_token` have to be used with [Refresh tokens request](#3-refresh-tokens), this token isn't limited to a
+  validity period but is for single use.
 
 #### 3. Refresh tokens
 
@@ -141,9 +150,9 @@ client_id=CLIENT_ID
 
 _**Known bugs/strange behaviors:**_
 
- - _If you revoke the `access_token` without revoking `refresh_token` and try to [Refresh tokens](#3-refresh-tokens)
-an [error 500 will be raised](https://github.com/jazzband/django-oauth-toolkit/issues/839)_
- - _Revoking `refresh_token` will also revoke `access_token`_
+- _If you revoke the `access_token` without revoking `refresh_token` and try to [Refresh tokens](#3-refresh-tokens)
+  an [error 500 will be raised](https://github.com/jazzband/django-oauth-toolkit/issues/839)_
+- _Revoking `refresh_token` will also revoke `access_token`_
 
 _So for now, until things get sorted out in [django-oauth-toolkit](https://github.com/jazzband/django-oauth-toolkit), we
 recommend to revoke both tokens (`access_token` and then `refresh_token`), if you want to revoke user authorization for
@@ -152,6 +161,7 @@ your app._
 ## Users
 
 ### Get user data
+
 **GET /app/api/v1/users/me**
 
 **Response** `200`
@@ -165,10 +175,10 @@ your app._
 }
 ```
 
-
 ## Folders
 
 ### Create a folder
+
 **POST /app/api/v1/folders**
 
 **Request body** _(JSON)_
@@ -178,8 +188,8 @@ your app._
 
 ```json
 {
-    "name":"My folder name",
-    "parent": 1
+  "name": "My folder name",
+  "parent": 1
 }
 ```
 
@@ -208,6 +218,7 @@ your app._
 | 400 | A folder with this name already exist | folder_name_unique_for_org_level |
 
 ### List folders
+
 **GET /app/api/v1/folders**
 
 **Query strings params**
@@ -248,6 +259,7 @@ your app._
 ```
 
 ### Update a folders
+
 **PATCH /app/api/v1/folders/`folder_id`**
 
 Rename or move an existing folder.
@@ -282,6 +294,7 @@ Rename or move an existing folder.
 | 400 | A folder can't be move inside one of its children | folder_parent_invalid |
 
 ### Delete a folder
+
 **DELETE /app/api/v1/folders/`folder_id`**
 
 **Response** `204`
@@ -289,19 +302,28 @@ Rename or move an existing folder.
 ## Documents
 
 ### Upload a document
+
 **POST /app/api/v1/documents/upload**
 
 **Request body** ([`multipart/form-data`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST))
 
 - **file**: PDF file binary
 - _**json** (optional): additional data to set for document uploaded_
-    - **created**: creation date following ISO 8601 format, eg. `2019-11-18T00:42:42.242424Z` (if omitted or `null` current date will be set)
+    - **created**: creation date following ISO 8601 format, eg. `2019-11-18T00:42:42.242424Z` (if omitted or `null`
+      current date will be set)
     - **ftl_folder**: parent folder id (if omitted or `null`, folder is created inside root folder)
-    - **ignore_thumbnail_generation_error**: if set to `false` and sent **thumbnail** is corrupt or not properly formatted upload request will fail (if omitted or `true`, error will be ignored and document will be uploaded without thumbnail, it's the default behavior as some browsers may not support thumbnail generation using canvas)
+    - **ignore_thumbnail_generation_error**: if set to `false` and sent **thumbnail** is corrupt or not properly
+      formatted upload request will fail (if omitted or `true`, error will be ignored and document will be uploaded
+      without thumbnail, it's the default behavior as some browsers may not support thumbnail generation using canvas)
     - **title**: document title, string (if omitted or `null`, file name will be used as document title)
     - **note**: document note, string (if omitted or `null`, no note will be set)
-    - **md5**: document md5, it is recommended to provide this field for server to perform an integrity check to assert no corruption occurred during the upload process, a specific error is return on integrity check fail, string (if omitted or `null`, no integrity check is made)
-- _**thumbnail** (optional): thumbnail to display in the documents list, thumbnail should be a PNG image encoded as data uri `data:image/png;base64,...` (if omitted thumbnail will be generated on next document display from web interface, recommended format is half the size of the original document)_
+    - **md5**: document md5, it is recommended to provide this field for server to perform an integrity check to assert
+      no corruption occurred during the upload process, a specific error is return on integrity check fail, string (if
+      omitted or `null`, no integrity check is made)
+- _**thumbnail** (optional): thumbnail to display in the documents list, thumbnail should be a PNG image encoded as data
+  uri `data:image/png;base64,...` (if omitted thumbnail will be generated on next document display from web interface,
+  recommended format is half the size of the original document)_
+
 ```
 -----------------------------197247801933990060269089656
 Content-Disposition: form-data; name="thumbnail"
@@ -328,26 +350,26 @@ Content-Disposition: form-data; name="json"
 
 ```json
 {
-  "pid":"f04be12a-b08d-4857-ade0-20c778a257b3",
-  "title":"file",
-  "note":"",
-  "created":"2019-08-19T13:14:15.397396Z",
-  "edited":"2019-08-19T13:14:15.408445Z",
-  "ftl_folder":12,
-  "thumbnail_available":false,
-  "is_processed":true,
-  "path":[
+  "pid": "f04be12a-b08d-4857-ade0-20c778a257b3",
+  "title": "file",
+  "note": "",
+  "created": "2019-08-19T13:14:15.397396Z",
+  "edited": "2019-08-19T13:14:15.408445Z",
+  "ftl_folder": 12,
+  "thumbnail_available": false,
+  "is_processed": true,
+  "path": [
     {
-      "id":34,
-      "name":"a"
+      "id": 34,
+      "name": "a"
     },
     {
-      "id":35,
-      "name":"b"
+      "id": 35,
+      "name": "b"
     }
   ],
-  "md5":"d85fce92a5789f66f58096402da6b98f",
-  "size":123,
+  "md5": "d85fce92a5789f66f58096402da6b98f",
+  "size": 123,
   "ocrized": true,
   "type": "application/pdf",
   "ext": ".pdf",
@@ -367,6 +389,7 @@ Content-Disposition: form-data; name="json"
 | 400 | The thumbnail could not be decoded | ftl_thumbnail_generation_error | 
 
 ### List documents
+
 **GET /app/api/v1/documents**
 
 **Query strings params**
@@ -381,76 +404,78 @@ OR
 
 OR / AND (can be combined with `flat`)
 
-- _**level** (optional): the id of the folder to list from (if omitted root folder is listed)_ 
+- _**level** (optional): the id of the folder to list from (if omitted root folder is listed)_
 
 ------------------------------------------------------------------------------------------------------------
 
-- _**ordering** (optional): specify the sort to apply to the documents list (if omitted AND **search** also omitted default value is `-created`, if omitted AND **search** present default value is `-rank`)._
+- _**ordering** (optional): specify the sort to apply to the documents list (if omitted AND **search** also omitted
+  default value is `-created`, if omitted AND **search** present default value is `-rank`)._
 
     _Supported values are:_
-  - _`created`: sort documents on their creation date, older first_
-  - _`-created`: sort documents on their creation date, recent first_
-  - _`title`: sort documents on their title by alphabetical order_
-  - _`-title`: sort documents on their title by reverse alphabetical order_
-  - _`-rank`: sort documents on their title, note and full text content by relevance against current **search** query_
+      
+    - _`created`: sort documents on their creation date, older first_
+    - _`-created`: sort documents on their creation date, recent first_
+    - _`title`: sort documents on their title by alphabetical order_
+    - _`-title`: sort documents on their title by reverse alphabetical order_
+    - _`-rank`: sort documents on their title, note and full text content by relevance against current **search** query_
 
 **Response** `200`
 
 ```json
 {
-  "count":2,
-  "next":null,
-  "previous":null,
-  "results":[
+  "count": 2,
+  "next": null,
+  "previous": null,
+  "results": [
     {
-      "pid":"4c092ae2-2c91-4759-9123-5f4af7538f85",
-      "title":"file",
-      "note":"",
-      "created":"2019-08-19T15:03:03.504330Z",
-      "edited":"2019-08-19T15:03:06.844287Z",
-      "ftl_folder":12,
-      "thumbnail_available":true,
+      "pid": "4c092ae2-2c91-4759-9123-5f4af7538f85",
+      "title": "file",
+      "note": "",
+      "created": "2019-08-19T15:03:03.504330Z",
+      "edited": "2019-08-19T15:03:06.844287Z",
+      "ftl_folder": 12,
+      "thumbnail_available": true,
       "thumbnail_url": "/app/app/api/v1/documents/4c092ae2-2c91-4759-9123-5f4af7538f85/thumbnail.png",
-      "is_processed":true,
-      "path":[
+      "is_processed": true,
+      "path": [
         {
-          "id":34,
-          "name":"a"
+          "id": 34,
+          "name": "a"
         },
         {
-          "id":35,
-          "name":"b"
+          "id": 35,
+          "name": "b"
         }
       ],
-      "md5":"d85fce92a5789f66f58096402da6b98f",
-      "size":123,
+      "md5": "d85fce92a5789f66f58096402da6b98f",
+      "size": 123,
       "ocrized": true,
       "type": "application/pdf",
       "ext": ".pdf",
       "download_url": "app/uploads/f04be12a-b08d-4857-ade0-20c778a257b3"
     },
     {
-      "pid":"6d3a6286-7c1c-45f6-86c9-6452fa2928fa",
-      "title":"file2.pdf",
-      "note":"",
-      "created":"2019-08-19T14:24:27.125753Z",
-      "edited":"2019-08-19T14:24:30.431466Z",
-      "ftl_folder":12,
-      "thumbnail_available":false,
+      "pid": "6d3a6286-7c1c-45f6-86c9-6452fa2928fa",
+      "title": "file2.pdf",
+      "note": "",
+      "created": "2019-08-19T14:24:27.125753Z",
+      "edited": "2019-08-19T14:24:30.431466Z",
+      "ftl_folder": 12,
+      "thumbnail_available": false,
       "thumbnail_url": null,
-      "is_processed":true,
-      "path":[
+      "is_processed": true,
+      "path": [
         {
-          "id":34,
-          "name":"a"
+          "id": 34,
+          "name": "a"
         },
         {
-          "id":35,
-          "name":"b"
+          "id": 35,
+          "name": "b"
         }
       ],
-      "md5":"d85fce92a5789f66f58096402da6b98f",
-      "size":123,
+      "md5": "d85fce92a5789f66f58096402da6b98f",
+      "size": 123,
       "ocrized": true,
       "type": "application/pdf",
       "ext": ".pdf",
@@ -459,45 +484,50 @@ OR / AND (can be combined with `flat`)
   ]
 }
 ```
-If there is too many results, results will be paginated. To get the next page results you have to call the url specified in `next` field (or set an additional `page` query string with desired page number, page start at `1`).
+
+If there is too many results, they will be paginated. To get the next page you have to call the url specified
+in `next` field (or set an additional `page` query string with desired page number, page start at `1`).
 
 ### Get a document
+
 **GET /app/api/v1/documents/`document_pid`**
 
 **Response** `200`
 
 ```json
 {
-  "pid":"4c092ae2-2c91-4759-9123-5f4af7538f85",
-  "title":"file",
-  "note":"",
-  "created":"2019-08-19T15:03:03.504330Z",
-  "edited":"2019-08-19T15:03:06.844287Z",
-  "ftl_folder":12,
-  "thumbnail_available":false,
-  "is_processed":true,
+  "pid": "4c092ae2-2c91-4759-9123-5f4af7538f85",
+  "title": "file",
+  "note": "",
+  "created": "2019-08-19T15:03:03.504330Z",
+  "edited": "2019-08-19T15:03:06.844287Z",
+  "ftl_folder": 12,
+  "thumbnail_available": false,
+  "is_processed": true,
   "thumbnail_url": "/app/app/api/v1/documents/4c092ae2-2c91-4759-9123-5f4af7538f85/thumbnail.png",
-  "path":[
+  "path": [
     {
-      "id":34,
-      "name":"a"
+      "id": 34,
+      "name": "a"
     },
     {
-      "id":35,
-      "name":"b"
+      "id": 35,
+      "name": "b"
     }
   ],
-  "md5":"d85fce92a5789f66f58096402da6b98f",
-  "size":123,
+  "md5": "d85fce92a5789f66f58096402da6b98f",
+  "size": 123,
   "ocrized": true,
   "type": "application/pdf",
   "ext": ".pdf",
   "download_url": "app/uploads/f04be12a-b08d-4857-ade0-20c778a257b3"
 }
 ```
+
 Return the same data than **List documents** request but for a single document.
 
 ### Download a document
+
 **GET /app/api/v1/documents/`document_pid`/download**
 
 **Response** `200`
@@ -510,6 +540,7 @@ Return the same data than **List documents** request but for a single document.
 ```
 
 ### Update a document
+
 **PATCH /app/api/v1/documents/`document_pid`**
 
 Rename, annotate, move a document (or set its thumbnail).
@@ -519,32 +550,33 @@ Rename, annotate, move a document (or set its thumbnail).
 - _**title** (optional): document name string_
 - _**note** (optional): document note string_
 - _**ftl_folder** (optional): parent folder id (set to `null` to move to root folder)_
-- _**thumbnail_binary** (optional): thumbnail to display in the documents list, thumbnail should be a PNG image encoded as data uri (`data:image/png;base64,...`)_
+- _**thumbnail_binary** (optional): thumbnail to display in the documents list, thumbnail should be a PNG image encoded
+  as data uri (`data:image/png;base64,...`)_
 
 **Response** `200`
 
 ```json
 {
-  "pid":"4c092ae2-2c91-4759-9123-5f4af7538f85",
-  "title":"renamed",
-  "note":"",
-  "created":"2019-08-19T15:03:03.504330Z",
-  "edited":"2019-08-19T16:10:00.771661Z",
-  "ftl_folder":12,
-  "thumbnail_available":false,
-  "is_processed":true,
-  "path":[
+  "pid": "4c092ae2-2c91-4759-9123-5f4af7538f85",
+  "title": "renamed",
+  "note": "",
+  "created": "2019-08-19T15:03:03.504330Z",
+  "edited": "2019-08-19T16:10:00.771661Z",
+  "ftl_folder": 12,
+  "thumbnail_available": false,
+  "is_processed": true,
+  "path": [
     {
-      "id":34,
-      "name":"a"
+      "id": 34,
+      "name": "a"
     },
     {
-      "id":35,
-      "name":"b"
+      "id": 35,
+      "name": "b"
     }
   ],
-  "md5":"d85fce92a5789f66f58096402da6b98f",
-  "size":123,
+  "md5": "d85fce92a5789f66f58096402da6b98f",
+  "size": 123,
   "ocrized": true,
   "type": "application/pdf",
   "ext": ".pdf",
@@ -553,6 +585,7 @@ Rename, annotate, move a document (or set its thumbnail).
 ```
 
 ### Delete a document
+
 **DELETE /app/api/v1/documents/`document_pid`**
 
 **Response** `204`
@@ -560,6 +593,7 @@ Rename, annotate, move a document (or set its thumbnail).
 ## Documents share links
 
 ### Add a document share link
+
 **POST /app/api/v1/documents/`document_pid`/share**
 
 **Request body** _(JSON)_
@@ -581,6 +615,7 @@ Rename, annotate, move a document (or set its thumbnail).
 ```
 
 ### List document share links
+
 **GET /app/api/v1/documents/`document_pid`/share**
 
 **Response** `200`
@@ -610,9 +645,12 @@ Rename, annotate, move a document (or set its thumbnail).
   ]
 }
 ```
-If there is too many results, results will be paginated. To get the next page results you have to call the url specified in `next` field (or set an additional `page` query string with desired page number, page start at `1`).
+
+If there is too many results, they will be paginated. To get the next page you have to call the url specified
+in `next` field (or set an additional `page` query string with desired page number, page start at `1`).
 
 ### Get a document share link
+
 **GET /app/api/v1/documents/`document_pid`/share/`document_shared_link_pid`**
 
 **Response** `200`
@@ -627,9 +665,11 @@ If there is too many results, results will be paginated. To get the next page re
   "public_url": ".../app/share/28005874-a495-4d08-b2ae-4ebc5ec8f212"
 }
 ```
+
 Return the same data than **List documents share links** request but for a single share link.
 
 ### Update a document share link
+
 **PATCH /app/api/v1/documents/`document_pid`/share/`document_shared_link_pid`**
 
 Update a document share link note or expiration date.
@@ -653,7 +693,111 @@ Update a document share link note or expiration date.
 ```
 
 ### Delete a document share link
+
 **DELETE /app/api/v1/documents/`document_pid`/share/`document_shared_link_pid`**
+
+**Response** `204`
+
+## Documents reminders
+
+### Add a document reminder
+
+**POST /app/api/v1/documents/`document_pid`/reminders**
+
+**Request body** _(JSON)_
+
+- _**alert_on**: an alert date, following ISO 8601 format, eg. `2019-11-18T00:42:42.242424Z`_
+- _**note** (optional): document reminder note, string_
+
+**Response** `201`
+
+```json
+{
+  "id": 13,
+  "alert_on": "2021-01-07T00:00:00+01:00",
+  "note": ""
+}
+```
+
+**Specific error status**
+
+| Status | details | code |
+| ----- | ----- | ----- |
+| 400 | Only one reminder can be set per date and per user | ftl_one_reminder_per_day |
+
+### List document reminders
+
+**GET /app/api/v1/documents/`document_pid`/reminders**
+
+**Response** `200`
+
+```json
+{
+  "count": 2,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 13,
+      "alert_on": "2021-01-07T00:00:00+01:00",
+      "note": ""
+    },
+    {
+      "id": 14,
+      "alert_on": "2021-01-21T00:00:00+01:00",
+      "note": ""
+    }
+  ]
+}
+```
+
+If there is too many results, they will be paginated. To get the next page you have to call the url specified
+in `next` field (or set an additional `page` query string with desired page number, page start at `1`).
+
+### Get a document reminder
+
+**GET /app/api/v1/documents/`document_pid`/reminders/`document_reminder_id`**
+
+**Response** `200`
+
+```json
+{
+  "id": 13,
+  "alert_on": "2021-01-07T00:00:00+01:00",
+  "note": ""
+}
+```
+
+### Update a document reminder
+
+**PATCH /app/api/v1/documents/`document_pid`/reminders/`document_reminder_id`**
+
+Update a document reminder note or alert date.
+
+**Request body** _(JSON, attributes omitted stay unchanged)_
+
+- _**alert_at** (optional): an alert date, following ISO 8601 format, eg. `2019-11-18T00:42:42.242424Z`_
+- _**note** (optional): document reminder note string_
+
+**Response** `200`
+
+```json
+{
+  "id": 13,
+  "alert_on": "2021-01-07T00:00:00+01:00",
+  "note": ""
+}
+```
+
+**Specific error status**
+
+| Status | details | code |
+| ----- | ----- | ----- |
+| 400 | Only one reminder can be set per date and per user | ftl_one_reminder_per_day |
+
+### Delete a document reminder
+
+**DELETE /app/api/v1/documents/`document_pid`/reminders/`document_reminder_id`**
 
 **Response** `204`
 
@@ -661,8 +805,11 @@ Update a document share link note or expiration date.
 
 1. Download and install [Insomnia](https://insomnia.rest/)
 
-2. Download [API requests data](`insomnia.json`) (right click > save as...) and import them by clicking on the **Insomnia** main dropdown menu > **Import/export**
+2. Download [API requests data](`insomnia.json`) (right click > save as...) and import them by clicking on the **
+   Insomnia** main dropdown menu > **Import/export**
 
 3. Open **Manage Environments** window using main dropdown menu (or **ctrl + E**)
 
-4. Set `base_url` (Paper Matter instance host name), `client_id`, `redirect_uri`, `grant_type`, `client_secret` and `authorization_code` values in **Base Environment** (or create a private **Sub Environment** to override the default values, and **activate it** through the top left secondary dropdown menu)
+4. Set `base_url` (Paper Matter instance host name), `client_id`, `redirect_uri`, `grant_type`, `client_secret`
+   and `authorization_code` values in **Base Environment** (or create a private **Sub Environment** to override the
+   default values, and **activate it** through the top left secondary dropdown menu)

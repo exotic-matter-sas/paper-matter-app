@@ -1,4 +1,4 @@
-#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
+#  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
 #  Licensed under the Business Source License. See LICENSE at project root for more information.
 
 import os
@@ -12,9 +12,8 @@ from core.models import (
     FTLUser,
     FTLDocument,
     FTLFolder,
-    permissions_names_to_objects,
-    FTL_PERMISSIONS_USER,
     FTLDocumentSharing,
+    FTLDocumentReminder,
 )
 from core.processing.proc_pgsql_tsvector import FTLSearchEnginePgSQLTSVector
 from ftests.tools import test_values as tv
@@ -40,7 +39,8 @@ def setup_user(
     user = FTLUser.objects.create_user(
         org=org, email=email, password=password, lang=lang, tz=tz
     )
-    user.user_permissions.set(permissions_names_to_objects(FTL_PERMISSIONS_USER))
+    # Not used for now
+    # user.groups.add(Group.objects.get(name="ftl_users_group"))
     return user
 
 
@@ -130,4 +130,12 @@ def setup_document_share(
 ):
     return FTLDocumentSharing.objects.create(
         ftl_doc=ftl_doc, expire_at=expire_at, password=password, note=note
+    )
+
+
+def setup_document_reminder(
+    ftl_doc, ftl_user, alert_on, note=tv.DOCUMENT_REMINDER_1_NOTE
+):
+    return FTLDocumentReminder.objects.create(
+        ftl_doc=ftl_doc, ftl_user=ftl_user, alert_on=alert_on, note=note
     )

@@ -26,7 +26,7 @@ class CorePagesTests(TestCase):
         # Setup org, admin, user and log the user
         self.org = setup_org()
         setup_admin(self.org)
-        self.user = setup_user(self.org)
+        self.user = setup_user(self.org, tz="UTC")
         setup_authenticated_session(self.client, self.org, self.user)
 
     def test_home_returns_correct_html(self):
@@ -65,6 +65,7 @@ class CorePagesTests(TestCase):
                     "application/vnd.oasis.opendocument.spreadsheet": ".ods",
                 },
                 "only_office_viewer": False,
+                "tz_offset": 0.0,
             }.items(),
             response.context["ftl_account"].items(),
         )

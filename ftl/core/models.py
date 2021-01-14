@@ -39,6 +39,10 @@ FTL_PERMISSIONS_USER = [
     "core.change_ftldocumentsharing",
     "core.delete_ftldocumentsharing",
     "core.view_ftldocumentsharing",
+    "core.add_ftldocumentreminder",
+    "core.change_ftldocumentreminder",
+    "core.delete_ftldocumentreminder",
+    "core.view_ftldocumentreminder",
 ]
 
 
@@ -336,8 +340,32 @@ class FTLDocumentSharing(models.Model):
         ordering = ["-created"]
 
 
+class FTLDocumentReminder(models.Model):
+    ftl_doc = ForeignKey(
+        "FTLDocument",
+        on_delete=models.CASCADE,
+        db_index=True,
+        related_name="reminders",
+    )
+    ftl_user = models.ForeignKey("FTLUser", on_delete=models.CASCADE)
+    alert_on = models.DateTimeField()
+    note = models.TextField(blank=True)
+
+    def __str__(self):
+        return f"{self.ftl_doc} - {self.alert_on}"
+
+    class Meta:
+        ordering = ["alert_on"]
+        constraints = [
+            UniqueConstraint(
+                fields=["ftl_doc", "ftl_user", "alert_on"], name="one_alert_per_day",
+            ),
+        ]
+
+
 class FTLModelPermissions(DjangoModelPermissions):
     """
+    NOT USED FOR NOW
     Slightly customized DjangoModelPermissions for FTL. The permissions are very basic and used at instance level.
     It checks for adding or listing document, not to check ownership of a single document.
     """
@@ -350,6 +378,7 @@ class FTLModelPermissions(DjangoModelPermissions):
 
 def permissions_names_to_objects(names):
     """
+    NOT USED FOR NOW
     Given an iterable of permissions names (e.g. 'app_label.add_model'),
     return an iterable of Permission objects for them.  The permission
     must already exist, because a permission name is not enough information

@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
-#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
+#  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
 #  Licensed under the Business Source License. See LICENSE at project root for more information.
 
 import os
@@ -21,6 +21,7 @@ from datetime import timedelta
 
 from celery.schedules import crontab
 from django.contrib.messages import constants as message_constants
+from django.utils import timezone
 
 from ftl.enums import FTLStorages, FTLPlugins
 
@@ -225,7 +226,7 @@ REST_FRAMEWORK = {
         "ftl.ftl_oauth2_auth.FTLOAuth2Authentication",
     ],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    "DEFAULT_PERMISSION_CLASSES": ("core.models.FTLModelPermissions",),
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "PAGE_SIZE": 10,
     "DEFAULT_THROTTLE_CLASSES": [
         "rest_framework.throttling.AnonRateThrottle",
@@ -394,6 +395,10 @@ CELERY_BEAT_SCHEDULE = {
     "clean-oauth-tokens-everyday": {
         "task": "core.tasks.batch_delete_oauth_tokens",
         "schedule": crontab(minute=15, hour=1),
+    },
+    "documents-reminder-everyhour": {
+        "task": "core.tasks.batch_documents_reminder",
+        "schedule": crontab(minute=0, hour="*"),
     },
 }
 

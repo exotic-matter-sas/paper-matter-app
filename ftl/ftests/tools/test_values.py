@@ -1,5 +1,8 @@
-#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
+#  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
 #  Licensed under the Business Source License. See LICENSE at project root for more information.
+from datetime import timedelta
+
+from django.utils import timezone
 
 APP_NAME = "Paper Matter"
 
@@ -46,9 +49,12 @@ FOLDER1_NAME = "Folder 1"
 FOLDER2_NAME = "Folder 2"
 FOLDER3_NAME = "Folder 3"
 
-
 DOCUMENT_SHARING_LINK_1_NOTE = "Document sharing link 1 note"
 DOCUMENT_SHARING_LINK_1_PASS = "dsl123"
+
+DOCUMENT_REMINDER_1_NOTE = "Document sharing link 1 note"
+DOCUMENT_REMINDER_TOMORROW_DATE = timezone.now() + timedelta(days=1)
+DOCUMENT_REMINDER_NEXT_WEEK_DATE = timezone.now() + timedelta(days=7)
 
 STATIC_DEVICE_NAME = "My emergency codes"
 STATIC_DEVICE_CODES_LIST = [

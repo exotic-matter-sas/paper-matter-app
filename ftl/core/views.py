@@ -1,4 +1,4 @@
-#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
+#  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
 #  Licensed under the Business Source License. See LICENSE at project root for more information.
 import hashlib
 import json
@@ -36,12 +36,13 @@ from rest_framework.response import Response
 from core.errors import ERROR_CODES_DETAILS, BadRequestError
 from core.ftl_account_processors_mixin import FTLAccountProcessorContextMixin
 from core.mimes import mimetype_to_ext, guess_mimetype
-from core.models import FTLDocument, FTLFolder, FTLDocumentSharing
+from core.models import FTLDocument, FTLFolder, FTLDocumentSharing, FTLDocumentReminder
 from core.serializers import (
     FTLDocumentSerializer,
     FTLFolderSerializer,
     FTLDocumentSharingSerializer,
     FTLDocumentDetailsOnlyOfficeSerializer,
+    FTLDocumentReminderSerializer,
 )
 from core.tasks import apply_ftl_processing
 from ftl.enums import FTLStorages, FTLPlugins
@@ -505,3 +506,70 @@ class FTLDocumentSharingDetail(generics.RetrieveUpdateDestroyAPIView):
             ftl_doc__deleted=False,
             ftl_doc__pid=self.kwargs["pid"],
         )
+
+
+class FTLDocumentReminderList(generics.ListCreateAPIView):
+    serializer_class = FTLDocumentReminderSerializer
+
+    def get_queryset(self):
+        doc = get_object_or_404(
+            FTLDocument,
+            org=self.request.user.org,
+            deleted=False,
+            pid=self.kwargs["dpid"],
+        )
+
+        return FTLDocumentReminder.objects.filter(
+            ftl_doc_id=doc.id, ftl_user_id=self.request.user.id,
+        )
+
+    def perform_create(self, serializer):
+        ftl_doc = get_object_or_404(
+            FTLDocument,
+            org=self.request.user.org,
+            deleted=False,
+            pid=self.kwargs["dpid"],
+        )
+
+        if self.get_queryset().count() >= 5:
+            raise BadRequestError(
+                ERROR_CODES_DETAILS["ftl_too_many_reminders"], "ftl_too_many_reminders",
+            )
+
+        try:
+            serializer.save(ftl_doc=ftl_doc, ftl_user=self.request.user)
+        except IntegrityError as e:
+            if "one_alert_per_day" in e.__str__():
+                raise BadRequestError(
+                    ERROR_CODES_DETAILS["ftl_one_reminder_per_day"],
+                    "ftl_one_reminder_per_day",
+                )
+            raise e
+
+
+class FTLDocumentReminderDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = FTLDocumentReminderSerializer
+    lookup_url_kwarg = "rpid"
+
+    def get_queryset(self):
+        doc = get_object_or_404(
+            FTLDocument,
+            org=self.request.user.org,
+            deleted=False,
+            pid=self.kwargs["dpid"],
+        )
+
+        return FTLDocumentReminder.objects.filter(
+            ftl_doc_id=doc.id, ftl_user_id=self.request.user.id,
+        )
+
+    def perform_update(self, serializer):
+        try:
+            super().perform_update(serializer)
+        except IntegrityError as e:
+            if "one_alert_per_day" in e.__str__():
+                raise BadRequestError(
+                    ERROR_CODES_DETAILS["ftl_one_reminder_per_day"],
+                    "ftl_one_reminder_per_day",
+                )
+            raise e

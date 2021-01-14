@@ -13,8 +13,6 @@ from django_registration.forms import RegistrationForm
 from core.models import (
     FTLUser,
     FTLOrg,
-    permissions_names_to_objects,
-    FTL_PERMISSIONS_USER,
     org_hash_validator,
 )
 
@@ -106,9 +104,11 @@ class FTLCreateOrgAndFTLUser(RegistrationForm):
         user.lang = self.lang
         user.is_superuser = False
         user.is_staff = False
-        user.save()
 
-        user.user_permissions.set(permissions_names_to_objects(FTL_PERMISSIONS_USER))
+        # Not used for now
+        # ftl_group = Group.objects.get(name="ftl_users_group")
+        # user.groups.add(ftl_group)
+
         user.save()
 
         return super().save(commit)

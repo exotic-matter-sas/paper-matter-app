@@ -7,7 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views.generic import RedirectView
 from django_registration.backends.activation.views import RegistrationView
 
-from core.models import FTLOrg, permissions_names_to_objects, FTL_PERMISSIONS_USER
+from core.models import FTLOrg
 from ftl.forms import FTLUserCreationForm, FTLCreateOrgAndFTLUser
 
 
@@ -26,11 +26,10 @@ class CreateFTLUserFormView(RegistrationView):
         org = get_object_or_404(FTLOrg, slug=self.kwargs["org_slug"])
         instance = form.save(commit=False)
         instance.org = org
-        instance.save()
 
-        instance.user_permissions.set(
-            permissions_names_to_objects(FTL_PERMISSIONS_USER)
-        )
+        # Not used for now
+        # ftl_group = Group.objects.get(name="ftl_users_group")
+        # instance.groups.add(ftl_group)
 
         instance.save()
 

@@ -1,0 +1,12 @@
+{% extends "ftl/base_email_body.txt" %}
+{% load i18n %}
+
+{% block body %}
+{% blocktrans %}
+This is a reminder for document "{{ title }}".
+
+{{ doc_url }}
+
+{{ note }}
+{% endblocktrans %}
+{% endblock %}

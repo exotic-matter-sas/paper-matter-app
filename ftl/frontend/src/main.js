@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
+ * Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
  * Licensed under the Business Source License. See LICENSE at project root for more information.
  */
 
@@ -8,6 +8,7 @@ import {
   BadgePlugin,
   BreadcrumbPlugin,
   ButtonPlugin,
+  CalendarPlugin,
   CardPlugin,
   CollapsePlugin,
   FormCheckboxPlugin,
@@ -18,6 +19,7 @@ import {
   InputGroupPlugin,
   LayoutPlugin,
   LinkPlugin,
+  ListGroupPlugin,
   ModalPlugin,
   NavbarPlugin,
   ProgressPlugin,
@@ -25,6 +27,7 @@ import {
   TabsPlugin,
   ToastPlugin,
   VBHoverPlugin,
+  ButtonGroupPlugin,
 } from "bootstrap-vue";
 import App from "./App.vue";
 
@@ -47,19 +50,21 @@ import {
   faFolderPlus,
   faHome,
   faLevelUpAlt,
+  faLink,
+  faPen,
   faSearch,
+  faShare,
   faSort,
   faSync,
+  faTimesCircle,
   faTrash,
   faWindowClose,
-  faTimesCircle,
-  faShare,
-  faPen,
-  faLink,
+  faBell,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   faMinusSquare,
   faPlusSquare,
+  faCalendarAlt,
 } from "@fortawesome/free-regular-svg-icons";
 import { faMarkdown } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -104,7 +109,9 @@ library.add(
   faTimesCircle,
   faShare,
   faPen,
-  faLink
+  faLink,
+  faBell,
+  faCalendarAlt
 );
 Vue.component("font-awesome-icon", FontAwesomeIcon);
 
@@ -130,6 +137,9 @@ Vue.use(ProgressPlugin);
 Vue.use(ToastPlugin);
 Vue.use(BreadcrumbPlugin);
 Vue.use(VBHoverPlugin);
+Vue.use(CalendarPlugin);
+Vue.use(ListGroupPlugin);
+Vue.use(ButtonGroupPlugin);
 
 // Moment JS for nice date
 Vue.prototype.$moment = moment;

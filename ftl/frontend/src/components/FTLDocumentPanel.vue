@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
+  - Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
   - Licensed under the Business Source License. See LICENSE at project root for more information.
   -->
 
@@ -115,7 +115,26 @@
             <font-awesome-icon icon="folder-open" />
             <span>{{ $t("Open location") }}</span>
           </b-dropdown-item>
+          <b-dropdown-item
+            link-class="text-primary"
+            v-b-modal="'modal-document-reminder-dp'"
+          >
+            <font-awesome-icon icon="bell" />
+            <span>
+              {{
+                $tc(
+                  "Reminders | One reminder | Reminders ({count})",
+                  currentOpenDoc.reminders_count,
+                  {
+                    count: currentOpenDoc.reminders_count,
+                  }
+                )
+              }}
+            </span>
+          </b-dropdown-item>
+
           <b-dropdown-divider></b-dropdown-divider>
+
           <b-dropdown-item
             link-class="text-danger"
             v-b-modal="'modal-delete-document-dp'"
@@ -194,7 +213,9 @@
                 </b-dropdown-item>
               </b-dropdown>
 
-              <span class="text-nowrap">
+              <hr class="border-0 m-0" />
+
+              <span>
                 <b-button
                   id="share-document"
                   class="mr-1 mb-2"
@@ -215,6 +236,22 @@
                 >
                   <font-awesome-icon icon="arrow-right" />
                   {{ $t("Move") }}
+                </b-button>
+
+                <b-button
+                  id="document-reminder"
+                  class="mr-1 mb-2"
+                  variant="primary"
+                  v-b-modal="'modal-document-reminder-dp'"
+                >
+                  <font-awesome-icon icon="bell" />
+                  {{ $t("Reminders") }}&nbsp;
+                  <b-badge
+                    v-if="currentOpenDoc.reminders_count > 0"
+                    variant="dark"
+                  >
+                    {{ currentOpenDoc.reminders_count }}
+                  </b-badge>
                 </b-button>
               </span>
 
@@ -268,6 +305,12 @@
       @event-document-moved="documentMoved"
     />
 
+    <FTLDocumentReminder
+      modal-id="modal-document-reminder-dp"
+      :doc="currentOpenDoc"
+      @event-document-reminders-updated="documentRemindersUpdated"
+    />
+
     <FTLRenameDocument
       modal-id="modal-rename-document-dp"
       :doc="currentOpenDoc"
@@ -312,6 +355,8 @@
     Open location: Dossier parent
     Alt. viewer: Visionneuse alternative
     Use alternative PDF viewer: Utiliser une visionneuse PDF alternative
+    Reminders: Rappels
+    Reminders | One reminder | Reminders ({count}): Rappels | Un rappel | Rappels ({count})
 </i18n>
 
 <script>
@@ -323,6 +368,7 @@ import FTLDeleteDocuments from "@/components/FTLDeleteDocuments";
 import FTLThumbnailGenMixin from "@/components/FTLThumbnailGenMixin";
 import FTLNote from "@/components/FTLNote";
 import FTLDocumentSharing from "@/components/FTLDocumentSharing";
+import FTLDocumentReminder from "@/components/FTLDocumentReminder";
 import { mapState } from "vuex";
 
 export default {
@@ -330,6 +376,7 @@ export default {
   mixins: [FTLThumbnailGenMixin],
 
   components: {
+    FTLDocumentReminder,
     FTLMoveDocuments,
     FTLRenameDocument,
     FTLDeleteDocuments,
@@ -521,6 +568,10 @@ export default {
 
     documentNoteUpdated: function (event) {
       this.currentOpenDoc = event.doc;
+    },
+
+    documentRemindersUpdated: function (event) {
+      this.currentOpenDoc.reminders_count = event.reminders_count;
     },
 
     documentDeleted: function (event) {

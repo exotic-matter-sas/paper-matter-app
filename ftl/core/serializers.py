@@ -13,7 +13,7 @@ from jose import jwt
 from rest_framework import serializers
 
 from core.mimes import mimetype_to_ext
-from core.models import FTLDocument, FTLFolder, FTLDocumentSharing
+from core.models import FTLDocument, FTLFolder, FTLDocumentSharing, FTLDocumentReminder
 from ftl.enums import FTLStorages
 
 
@@ -37,6 +37,7 @@ class FTLDocumentSerializer(serializers.ModelSerializer):
     ext = serializers.SerializerMethodField()
     download_url = serializers.SerializerMethodField()
     is_shared = serializers.SerializerMethodField()
+    reminders_count = serializers.SerializerMethodField()
 
     def get_thumbnail_available(self, obj):
         return bool(obj.thumbnail_binary)
@@ -71,6 +72,9 @@ class FTLDocumentSerializer(serializers.ModelSerializer):
     def get_is_shared(self, obj):
         return obj.share_pids.count() > 0
 
+    def get_reminders_count(self, obj):
+        return obj.reminders.count()
+
     class Meta:
         model = FTLDocument
         fields = [
@@ -92,6 +96,7 @@ class FTLDocumentSerializer(serializers.ModelSerializer):
             "ext",
             "download_url",
             "is_shared",
+            "reminders_count",
         ]
         read_only_fields = [
             "pid",
@@ -107,6 +112,7 @@ class FTLDocumentSerializer(serializers.ModelSerializer):
             "ext",
             "download_url",
             "is_shared",
+            "reminders_count",
         ]
 
 
@@ -227,3 +233,10 @@ class FTLDocumentSharingSerializer(serializers.ModelSerializer):
         model = FTLDocumentSharing
         fields = ("pid", "created", "edited", "expire_at", "note", "public_url")
         read_only_fields = ("pid", "created", "edited", "public_url")
+
+
+class FTLDocumentReminderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FTLDocumentReminder
+        fields = ("id", "alert_on", "note")
+        read_only_fields = ("id",)
