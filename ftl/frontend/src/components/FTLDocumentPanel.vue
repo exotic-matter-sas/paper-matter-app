@@ -18,7 +18,7 @@
           <b-col class="modal-title flex-grow-1">
             <b-row tag="h2" no-gutters class="m-0 flex-nowrap">
               <b-col class="flex-grow-0">
-                <div id="document-title">
+                <div class="text-truncate">
                   <b-link
                     id="document-parent-folder"
                     class="d-none d-md-inline text-nowrap"
@@ -36,10 +36,12 @@
                     /
                   </span>
                   <span :title="currentOpenDoc.title + currentOpenDoc.ext">
-                    {{ currentOpenDoc.title }}
+                    <span id="document-title">
+                      {{ currentOpenDoc.title }}
+                    </span>
                     <small id="document-title-extension">{{
                       currentOpenDoc.ext
-                    }}</small>
+                      }}</small>
                   </span>
                 </div>
               </b-col>
@@ -59,7 +61,7 @@
               </b-col>
             </b-row>
             <b-row no-gutters>
-              <b-col id="document-date" class="text-muted font-italic">
+              <b-col class="text-muted font-italic text-truncate pr-2">
                 <small class="d-none d-sm-inline">
                   {{
                     $t("Added on {date}", {
@@ -697,12 +699,6 @@ $rename-button-right-margin: 1em;
             }
           }
 
-          #document-title {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-          }
-
           #document-title-extension {
             margin-left: -0.2em;
           }
@@ -716,12 +712,6 @@ $rename-button-right-margin: 1em;
             font-size: 1.25rem;
             position: absolute; // hack to not increase parent height
           }
-        }
-
-        #document-date {
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
         }
       }
     }

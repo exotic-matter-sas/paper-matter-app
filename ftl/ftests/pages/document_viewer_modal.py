@@ -10,7 +10,7 @@ class DocumentViewerModal(BasePage):
     url = "/app/#/home?doc={}"
 
     page_body = "#document-viewer"
-    document_title = "#document-title span"
+    document_title = "#document-title"
 
     rename_document_button = "#rename-document"
     close_document_button = "#document-viewer .close"
