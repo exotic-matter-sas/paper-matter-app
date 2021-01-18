@@ -13,148 +13,186 @@
     @hidden="closeDocument"
   >
     <template slot="modal-header">
-      <b-container>
-        <h5 class="modal-title">
-          <b-link
-            id="document-parent-folder"
-            class="float-left d-none d-md-block"
-            :to="parentFolder.to"
-            :title="path.map((v) => v.text).join('/')"
-          >
-            <font-awesome-icon icon="folder" />
-            <font-awesome-icon icon="folder-open" class="d-none" />
-            {{ parentFolder.text }}
-          </b-link>
-          <div
-            id="document-title-separator"
-            class="float-left d-none d-md-block"
-          >
-            /
-          </div>
-          <div
-            id="document-title"
-            class="float-left pl-0"
-            :title="currentOpenDoc.title + currentOpenDoc.ext"
-          >
-            <span>{{ currentOpenDoc.title }}</span>
-            <small>{{ currentOpenDoc.ext }}</small>
-          </div>
-          <b-button
-            id="rename-document"
-            class="float-left"
-            v-b-modal="'modal-rename-document-dp'"
-            variant="link"
-          >
-            <font-awesome-icon
-              size="sm"
-              icon="pen"
-              :title="$t('Rename document')"
-            />
-          </b-button>
-        </h5>
-
-        <button
-          @click.prevent="$bvModal.hide('document-viewer')"
-          type="button"
-          aria-label="Close"
-          class="close"
-        >
-          ×
-        </button>
-
-        <b-dropdown
-          id="documents-actions-small"
-          class="float-right d-xl-none"
-          variant="primary"
-          :text="$t('Actions')"
-          right
-        >
-          <b-dropdown-item :href="currentOpenDoc.download_url" target="_blank">
-            <font-awesome-icon :icon="getDownloadIcon" />
-            <span>{{ $t("Download") }}</span>
-          </b-dropdown-item>
-          <b-dropdown-item
-            :href="currentOpenDoc.download_url + `/doc`"
-            target="_blank"
-          >
-            <font-awesome-icon icon="external-link-alt" />
-            <span>{{ $t("Open") }}</span>
-          </b-dropdown-item>
-          <b-dropdown-divider></b-dropdown-divider>
-          <b-dropdown-item
-            link-class="text-primary"
-            v-b-modal="'modal-document-sharing-dp'"
-          >
-            <font-awesome-icon
-              :icon="currentOpenDoc.is_shared ? 'link' : 'share'"
-            />
-            <span>
-              {{ shareButtonText }}
-            </span>
-          </b-dropdown-item>
-          <b-dropdown-item
-            link-class="text-primary"
-            @click.prevent="noteToggled = true"
-          >
-            <font-awesome-icon icon="edit" />
-            <span v-if="currentOpenDoc.note === ''">{{ $t("Add note") }}</span>
-            <span v-else>{{ $t("Show note") }}</span>
-          </b-dropdown-item>
-          <b-dropdown-item
-            link-class="text-primary"
-            v-b-modal="'modal-move-document-dp'"
-          >
-            <font-awesome-icon icon="arrow-right" />
-            <span>{{ $t("Move") }}</span>
-          </b-dropdown-item>
-          <b-dropdown-item
-            class="d-block d-md-none"
-            link-class="text-primary"
-            :to="parentFolder.to"
-          >
-            <font-awesome-icon icon="folder-open" />
-            <span>{{ $t("Open location") }}</span>
-          </b-dropdown-item>
-          <b-dropdown-item
-            link-class="text-primary"
-            v-b-modal="'modal-document-reminder-dp'"
-          >
-            <font-awesome-icon icon="bell" />
-            <span>
-              {{
-                $tc(
-                  "Reminders | One reminder | Reminders ({count})",
-                  currentOpenDoc.reminders_count,
-                  {
-                    count: currentOpenDoc.reminders_count,
-                  }
-                )
-              }}
-            </span>
-          </b-dropdown-item>
-
-          <b-dropdown-divider></b-dropdown-divider>
-
-          <b-dropdown-item
-            link-class="text-danger"
-            v-b-modal="'modal-delete-document-dp'"
-          >
-            <font-awesome-icon icon="trash" />
-            <span>{{ $t("Delete") }}</span>
-          </b-dropdown-item>
-          <b-dropdown-divider></b-dropdown-divider>
-          <b-dropdown-form v-if="!useOnlyOfficeViewer" form-class="px-3">
-            <b-form-checkbox
-              v-model="forcePDFJS"
-              name="check-forcePDFJS"
-              switch
+      <b-container fluid class="p-0">
+        <b-row no-gutters class="flex-nowrap">
+          <b-col class="modal-title flex-grow-1">
+            <b-row tag="h2" no-gutters class="m-0 flex-nowrap">
+              <b-col class="flex-grow-0">
+                <div class="text-truncate">
+                  <b-link
+                    id="document-parent-folder"
+                    class="d-none d-md-inline text-nowrap"
+                    :to="parentFolder.to"
+                    :title="path.map((v) => v.text).join('/')"
+                  >
+                    <font-awesome-icon icon="folder" />
+                    <font-awesome-icon icon="folder-open" class="d-none" />
+                    {{ parentFolder.text }}
+                  </b-link>
+                  <span
+                    id="document-title-separator"
+                    class="d-none d-md-inline"
+                  >
+                    /
+                  </span>
+                  <span :title="currentOpenDoc.title + currentOpenDoc.ext">
+                    <span id="document-title">
+                      {{ currentOpenDoc.title }}
+                    </span>
+                    <small id="document-title-extension">{{
+                      currentOpenDoc.ext
+                    }}</small>
+                  </span>
+                </div>
+              </b-col>
+              <b-col class="flex-grow-1">
+                <b-button
+                  id="rename-document"
+                  class="p-0"
+                  v-b-modal="'modal-rename-document-dp'"
+                  variant="link"
+                >
+                  <font-awesome-icon
+                    size="sm"
+                    icon="pen"
+                    :title="$t('Rename document')"
+                  />
+                </b-button>
+              </b-col>
+            </b-row>
+            <b-row no-gutters>
+              <b-col class="text-muted font-italic text-truncate pr-2">
+                <small class="d-none d-sm-inline">
+                  {{
+                    $t("Added on {date}", {
+                      date: $moment
+                        .parseZone(currentOpenDoc.created)
+                        .format("LLLL"),
+                    })
+                  }}
+                </small>
+                <small class="d-inline d-sm-none">
+                  {{
+                    $t("Added on {date}", {
+                      date: $moment
+                        .parseZone(currentOpenDoc.created)
+                        .format("L"),
+                    })
+                  }}
+                </small>
+              </b-col>
+            </b-row>
+          </b-col>
+          <b-col class="flex-grow-0 d-flex align-items-center">
+            <b-dropdown
+              id="documents-actions-small"
+              class="d-xl-none"
+              variant="primary"
+              :text="$t('Actions')"
+              right
             >
-              {{ $t("Alt. viewer") }}
-            </b-form-checkbox>
-          </b-dropdown-form>
-        </b-dropdown>
+              <b-dropdown-item
+                :href="currentOpenDoc.download_url"
+                target="_blank"
+              >
+                <font-awesome-icon :icon="getDownloadIcon" />
+                <span>{{ $t("Download") }}</span>
+              </b-dropdown-item>
+              <b-dropdown-item
+                :href="currentOpenDoc.download_url + `/doc`"
+                target="_blank"
+              >
+                <font-awesome-icon icon="external-link-alt" />
+                <span>{{ $t("Open") }}</span>
+              </b-dropdown-item>
+              <b-dropdown-divider></b-dropdown-divider>
+              <b-dropdown-item
+                link-class="text-primary"
+                v-b-modal="'modal-document-sharing-dp'"
+              >
+                <font-awesome-icon
+                  :icon="currentOpenDoc.is_shared ? 'link' : 'share'"
+                />
+                <span>
+                  {{ shareButtonText }}
+                </span>
+              </b-dropdown-item>
+              <b-dropdown-item
+                link-class="text-primary"
+                @click.prevent="noteToggled = true"
+              >
+                <font-awesome-icon icon="edit" />
+                <span v-if="currentOpenDoc.note === ''">{{
+                  $t("Add note")
+                }}</span>
+                <span v-else>{{ $t("Show note") }}</span>
+              </b-dropdown-item>
+              <b-dropdown-item
+                link-class="text-primary"
+                v-b-modal="'modal-move-document-dp'"
+              >
+                <font-awesome-icon icon="arrow-right" />
+                <span>{{ $t("Move") }}</span>
+              </b-dropdown-item>
+              <b-dropdown-item
+                class="d-block d-md-none"
+                link-class="text-primary"
+                :to="parentFolder.to"
+              >
+                <font-awesome-icon icon="folder-open" />
+                <span>{{ $t("Open location") }}</span>
+              </b-dropdown-item>
+              <b-dropdown-item
+                link-class="text-primary"
+                v-b-modal="'modal-document-reminder-dp'"
+              >
+                <font-awesome-icon icon="bell" />
+                <span>
+                  {{
+                    $tc(
+                      "Reminders | One reminder | Reminders ({count})",
+                      currentOpenDoc.reminders_count,
+                      {
+                        count: currentOpenDoc.reminders_count,
+                      }
+                    )
+                  }}
+                </span>
+              </b-dropdown-item>
+              <b-dropdown-divider></b-dropdown-divider>
+              <b-dropdown-item
+                link-class="text-danger"
+                v-b-modal="'modal-delete-document-dp'"
+              >
+                <font-awesome-icon icon="trash" />
+                <span>{{ $t("Delete") }}</span>
+              </b-dropdown-item>
+              <b-dropdown-divider></b-dropdown-divider>
+              <b-dropdown-form v-if="!useOnlyOfficeViewer" form-class="px-3">
+                <b-form-checkbox
+                  v-model="forcePDFJS"
+                  name="check-forcePDFJS"
+                  switch
+                >
+                  {{ $t("Alt. viewer") }}
+                </b-form-checkbox>
+              </b-dropdown-form>
+            </b-dropdown>
+          </b-col>
+          <b-col class="flex-grow-0 d-flex">
+            <button
+              @click.prevent="$bvModal.hide('document-viewer')"
+              type="button"
+              aria-label="Close"
+              class="close"
+            >
+              ×
+            </button>
+          </b-col>
+        </b-row>
       </b-container>
     </template>
+
     <b-container id="document-viewer-body" class="px-0" fluid>
       <b-row class="h-100" no-gutters>
         <b-col v-if="currentOpenDoc.type === 'application/pdf' && !isIOS">
@@ -357,6 +395,7 @@
     Use alternative PDF viewer: Utiliser une visionneuse PDF alternative
     Reminders: Rappels
     Reminders | One reminder | Reminders ({count}): Rappels | Un rappel | Rappels ({count})
+    Added on {date}: Ajouté le {date}
 </i18n>
 
 <script>
@@ -601,6 +640,9 @@ export default {
 @import "~bootstrap/scss/_mixins.scss";
 
 $document-viewer-padding: 2em;
+$rename-button-width: 20px;
+$rename-button-left-margin: 0.2em;
+$rename-button-right-margin: 1em;
 
 ::v-deep .pdfobject {
   overflow: auto;
@@ -617,6 +659,7 @@ $document-viewer-padding: 2em;
   height: 100vh;
   max-width: none;
   margin: 0;
+  overflow: hidden;
 
   .modal-content {
     height: 100vh;
@@ -626,61 +669,50 @@ $document-viewer-padding: 2em;
     }
 
     .modal-header {
-      padding-left: 0;
-      padding-right: 0;
+      padding: 0.5rem 1rem;
 
-      .fa-folder {
-        width: 1.125em;
-      }
+      .modal-title {
+        min-width: 0;
 
-      #document-parent-folder,
-      #document-title-separator,
-      #document-title,
-      #rename-document,
-      .close {
-        display: block;
-        padding: 1.25rem;
-        margin: -1rem -1rem -1rem auto;
-      }
+        h2 {
+          font-size: 1.25rem;
 
-      #document-parent-folder {
-        max-width: 25%;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        padding-left: 0;
-
-        &:hover {
-          .fa-folder {
-            display: none !important;
+          .col:first-child {
+            padding-right: calc(
+              #{$rename-button-width} + #{$rename-button-left-margin} + #{$rename-button-right-margin}
+            );
           }
 
-          .fa-folder-open {
-            display: inline-block !important;
+          #document-parent-folder {
+            .fa-folder {
+              width: 1.125em;
+            }
+
+            &:hover {
+              .fa-folder {
+                display: none !important;
+              }
+
+              .fa-folder-open {
+                display: inline-block !important;
+              }
+            }
+          }
+
+          #document-title-extension {
+            margin-left: -0.2em;
+          }
+
+          #rename-document {
+            width: $rename-button-width;
+            margin-top: -0.1em;
+            margin-left: calc(
+              (-#{$rename-button-width} - (#{$rename-button-right-margin}))
+            );
+            font-size: 1.25rem;
+            position: absolute; // hack to not increase parent height
           }
         }
-      }
-
-      #document-title-separator {
-        padding: 1.25rem 1.75rem 1.25rem 0.5rem;
-      }
-
-      #document-title {
-        max-width: 65%;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      #rename-document {
-        font-size: 1.25rem;
-        line-height: 1.5;
-        border: 0;
-        padding-left: 0.5rem;
-      }
-
-      .close {
-        line-height: 1.25;
       }
     }
 

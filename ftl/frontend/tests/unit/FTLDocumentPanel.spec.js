@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
+ * Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
  * Licensed under the Business Source License. See LICENSE at project root for more information.
  */
 
@@ -38,8 +38,13 @@ localVue.prototype.$tc = (text, args = "") => {
   return text + args;
 }; // i18n mock
 localVue.prototype.$store = { commit: jest.fn() }; // vuex mock
-localVue.prototype.$moment = () => {
-  return { fromNow: jest.fn(), format: jest.fn() };
+localVue.prototype.$moment = {
+  parseZone: () => {
+    return {
+      format: jest.fn(),
+      fromNow: jest.fn(),
+    };
+  },
 }; // moment mock
 localVue.prototype.$router = { push: jest.fn() }; // router mock
 const mockedRoutePath = jest.fn();
