@@ -188,7 +188,8 @@ export default {
         try {
           localStorage.setItem(this.localStorageKey, newVal);
         } catch (e) {
-          console.error("Fail to save note draft to localStorage", e);
+          // Ignore storage full exception (always thrown by Mobile Safari in private mode)
+          // https://developer.mozilla.org/en-US/docs/Web/API/Storage/setItem#exceptions
         }
       }
     },
