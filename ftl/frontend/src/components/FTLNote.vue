@@ -201,7 +201,7 @@ export default {
       return dompurify.sanitize(markdownHtml);
     },
     localStorageKey: function () {
-      return `docNote-${this.doc.pid}`;
+      return `doc_note_${this.doc.pid}`;
     },
   },
 
