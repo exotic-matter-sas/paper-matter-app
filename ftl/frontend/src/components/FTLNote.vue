@@ -161,6 +161,7 @@ export default {
     return {
       editing: false,
       text: this.doc.note,
+      debounceTimeout: null
     };
   },
 
@@ -182,15 +183,20 @@ export default {
   },
 
   watch: {
-    // save note draft to localstorage
+    // Save note draft to localstorage
     text: function (newVal, oldVal) {
       if (newVal !== oldVal && newVal !== this.doc.note) {
-        try {
-          localStorage.setItem(this.localStorageKey, newVal);
-        } catch (e) {
-          // Ignore storage full exception (always thrown by Mobile Safari in private mode)
-          // https://developer.mozilla.org/en-US/docs/Web/API/Storage/setItem#exceptions
-        }
+        // Add a 1 sec debounce to wait user stop typing to save draft
+        if (this.debounceTimeout) clearTimeout(this.debounceTimeout);
+        this.debounceTimeout = setTimeout(() => {
+          try {
+            // Only save draft if user has not already finish editing note
+            if (this.editing) localStorage.setItem(this.localStorageKey, newVal);
+          } catch (e) {
+            // Ignore "storage full" exception (always thrown by Mobile Safari in private mode)
+            // https://developer.mozilla.org/en-US/docs/Web/API/Storage/setItem#exceptions
+          }
+        }, 1000)
       }
     },
   },
