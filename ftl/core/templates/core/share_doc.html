@@ -3,6 +3,7 @@
 {% load render_bundle from webpack_loader %}
 {% load i18n %}
 {% load static %}
+{% load csp %}
 
 {% block title %}{{ share_doc.ftl_doc.title }}{% endblock %}
 {% block head %}
@@ -66,7 +67,7 @@
 
         {{ only_office_config|json_script:"only_office_config" }}
 
-        <script type="text/javascript">
+        <script nonce="{{ request.csp_nonce }}" type="text/javascript">
             const config = JSON.parse(document.getElementById("only_office_config").textContent);
             new DocsAPI.DocEditor(
                     "onlyoffice-embed-container",

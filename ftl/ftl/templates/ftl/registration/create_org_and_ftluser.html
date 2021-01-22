@@ -2,6 +2,7 @@
 {% load i18n %}
 {% load static %}
 {% load webpack_loader %}
+{% load csp %}
 
 {% block title %}{% trans "Signup" %}{% endblock %}
 {% block head %}{% render_bundle 'common_logged_out' 'css' %}{% endblock %}
@@ -20,7 +21,7 @@
 {% endblock %}
 
 {% block footer %}
-    <script type="application/javascript">
+    <script nonce="{{ request.csp_nonce }}" type="application/javascript">
         "use strict";
         const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
         const tz_input = document.getElementById("id_tz");

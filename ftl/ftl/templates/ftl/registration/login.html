@@ -2,6 +2,7 @@
 {% load i18n %}
 {% load static %}
 {% load webpack_loader %}
+{% load csp %}
 
 {% block title %}{% trans 'Login' %}{% endblock %}
 {% block head %}
@@ -9,10 +10,10 @@
 {% endblock %}
 {% block footer %}
     {% render_bundle 'supported_browsers' 'js' %}
-    <script type="text/javascript">
-        function setIgnoreBrowserWarningCookie () {
+    <script nonce="{{ request.csp_nonce }}" type="text/javascript">
+        function setIgnoreBrowserWarningCookie() {
             // ignore cookie is set for 1 year
-            document.cookie='ignore_browser_warning=true;;max-age=31536000;samesite=strict';
+            document.cookie = "ignore_browser_warning=true;;max-age=31536000;samesite=strict";
             this.document.querySelector("#unsupported-browser-version-warning").classList.add("d-none");
             this.document.querySelector("#unsupported-browser-warning").classList.add("d-none");
         }
@@ -28,7 +29,7 @@
             {% blocktrans %}
                 Your browser version is not supported, some functionalities may not work properly.<br>
                 You should update your browser or use a another one.
-            {% endblocktrans  %}
+            {% endblocktrans %}
         </p>
     </div>
     <div id="unsupported-browser-warning" class="alert alert-warning text-justify p-0 d-none">
