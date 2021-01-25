@@ -28,7 +28,7 @@
       >
         <b-form-input
           id="document-sharing-link"
-          onfocus="this.select()"
+          @focus.native="$event.target.select()"
           readonly
           :value="sharingLink"
         ></b-form-input>
