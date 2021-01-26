@@ -31,7 +31,7 @@ import {
 } from "bootstrap-vue";
 import App from "./App.vue";
 
-import { library } from "@fortawesome/fontawesome-svg-core";
+import { library, config } from "@fortawesome/fontawesome-svg-core";
 import {
   faArrowRight,
   faCrown,
@@ -80,6 +80,7 @@ import i18n from "./i18n";
 Vue.config.productionTip = false;
 
 // Font Awesome icons definition
+config.autoAddCss = false;
 library.add(
   faHome,
   faFolder,
