@@ -208,15 +208,10 @@ CSP_IMG_SRC = (
     "'self'",
     "data:",
 )
-CSP_SCRIPT_SRC = (
-    "'self'",
-    "'unsafe-eval'",
-)
-CSP_STYLE_SRC = (
-    "'self'",
-    "'unsafe-inline'",
-)
+CSP_SCRIPT_SRC = ("'self'",)
+CSP_STYLE_SRC = ("'self'",)
 CSP_FRAME_SRC = ("'self'",)
+CSP_CONNECT_SRC = ("'self'", "blob:")
 CSP_INCLUDE_NONCE_IN = ("script-src",)
 
 # IPs allowed to see the debug toolbar app
