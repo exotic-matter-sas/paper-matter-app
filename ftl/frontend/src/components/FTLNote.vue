@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
+  - Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
   - Licensed under the Business Source License. See LICENSE at project root for more information.
   -->
 
@@ -161,23 +161,54 @@ export default {
     return {
       editing: false,
       text: this.doc.note,
+      debounceTimeout: null,
     };
   },
 
   mounted() {
-    // Auto switch to edit mode if in mobile mode and note unset
+    // Restore unsaved draft if needed
+    const noteDraft = localStorage.getItem(this.localStorageKey);
+    if (noteDraft !== null) {
+      this.text = noteDraft;
+    }
+
+    // Auto switch to edit mode if (mobile mode and note unset) or a draft exist
     if (
-      window.matchMedia("(max-width: 1199px)").matches &&
-      this.doc.note === ""
+      (window.matchMedia("(max-width: 1199px)").matches &&
+        this.doc.note === "") ||
+      noteDraft !== null
     ) {
       this.editing = true;
     }
+  },
+
+  watch: {
+    // Save note draft to localstorage
+    text: function (newVal, oldVal) {
+      if (newVal !== oldVal && newVal !== this.doc.note) {
+        // Add a 1 sec debounce to wait user stop typing to save draft
+        if (this.debounceTimeout) clearTimeout(this.debounceTimeout);
+        this.debounceTimeout = setTimeout(() => {
+          try {
+            // Only save draft if user has not already finish editing note
+            if (this.editing)
+              localStorage.setItem(this.localStorageKey, newVal);
+          } catch (e) {
+            // Ignore "storage full" exception (always thrown by Mobile Safari in private mode)
+            // https://developer.mozilla.org/en-US/docs/Web/API/Storage/setItem#exceptions
+          }
+        }, 1000);
+      }
+    },
   },
 
   computed: {
     getNoteMarkdownSanitized: function () {
       const markdownHtml = marked(this.text, markedConfig);
       return dompurify.sanitize(markdownHtml);
+    },
+    localStorageKey: function () {
+      return `doc_note_${this.doc.pid}`;
     },
   },
 
@@ -195,6 +226,8 @@ export default {
           this.$emit("event-document-note-edited", {
             doc: response.data,
           });
+          // Delete note draft
+          localStorage.removeItem(this.localStorageKey);
         })
         .catch((error) => {
           this.mixinAlert(this.$t("Could not save note"), true);
@@ -204,6 +237,8 @@ export default {
     cancelUpdate: function () {
       this.editing = false;
       this.text = this.doc.note;
+      // Delete note draft
+      localStorage.removeItem(this.localStorageKey);
       // Auto close note if mobile mode and note not unset
       if (
         window.matchMedia("(max-width: 1199px)").matches &&
