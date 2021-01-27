@@ -227,12 +227,15 @@
 
     <b-container id="document-viewer-body" class="px-0" fluid>
       <b-row class="h-100" no-gutters>
-        <b-col v-if="currentOpenDoc.type === 'application/pdf' && !isIOS">
+        <b-col
+          v-if="currentOpenDoc.type === 'application/pdf' && !isIOS"
+          :key="pid"
+        >
           <b-row class="h-100" no-gutters id="viewer-pdf">
             <div id="pdf-embed-container" class="col border-0"></div>
           </b-row>
         </b-col>
-        <b-col v-else-if="useOnlyOfficeViewer">
+        <b-col v-else-if="useOnlyOfficeViewer" :key="pid">
           <b-row class="h-100" no-gutters id="viewer-only-office">
             <div id="onlyoffice-embed-container" class="col border-0"></div>
           </b-row>
@@ -626,6 +629,11 @@ export default {
             this.currentOpenDoc,
             response.data
           );
+
+          // This is a trick to re-render the document container (pdf or onlyoffice)
+          // so that the embed method works. Vue.js should have been able to rewrite the dom
+          // but because the embed is injected by an external script, Vue.js could not track the
+          // update. We force re-rendering the whole embed container with the :key trick.
           this.$nextTick().then(() => this.embedDoc());
 
           if (
