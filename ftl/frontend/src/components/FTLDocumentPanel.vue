@@ -186,7 +186,7 @@
               class="d-none d-xl-flex"
             >
               <b-button
-                variant="outline-secondary"
+                variant="outline-primary"
                 :title="
                   previousDoc
                     ? $t('Display previous document')
@@ -198,7 +198,7 @@
                 <font-awesome-icon icon="arrow-left" />
               </b-button>
               <b-button
-                variant="outline-secondary"
+                variant="outline-primary"
                 :title="
                   nextDoc
                     ? $t('Display next document')
