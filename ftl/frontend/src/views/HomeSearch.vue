@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
+  - Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
   - Licensed under the Business Source License. See LICENSE at project root for more information.
   -->
 
@@ -266,10 +266,13 @@
       <FTLDocumentPanel
         v-if="docPid"
         :pid="docPid"
-        :search="currentSearch"
+        :has-previous-doc="previousDocIndex !== null"
+        :has-next-doc="nextDocIndex !== null"
         @event-document-panel-closed="documentClosed"
         @event-document-moved="documentDeleted"
         @event-document-deleted="documentDeleted"
+        @event-previous-document="openPreviousDocument"
+        @event-next-document="openNextDocument"
       />
 
       <!-- For batch action move document -->

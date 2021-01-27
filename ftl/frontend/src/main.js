@@ -34,6 +34,7 @@ import App from "./App.vue";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import {
   faArrowRight,
+  faArrowLeft,
   faCrown,
   faEdit,
   faExclamationCircle,
@@ -106,6 +107,7 @@ library.add(
   faFilePowerpoint,
   faFileAlt,
   faArrowRight,
+  faArrowLeft,
   faTimesCircle,
   faShare,
   faPen,

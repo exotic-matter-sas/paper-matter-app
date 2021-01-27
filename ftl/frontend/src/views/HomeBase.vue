@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
+  - Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
   - Licensed under the Business Source License. See LICENSE at project root for more information.
   -->
 
@@ -58,6 +58,27 @@ export default {
   },
 
   computed: {
+    docIndex: function () {
+      if (this.docPid !== null) {
+        const index = this.docs.findIndex((doc) => doc.pid === this.docPid);
+        return index >= 0 ? index : null;
+      }
+      return null;
+    },
+    previousDocIndex: function () {
+      // if doc isn't the first in the list
+      if (this.docIndex !== null && this.docIndex > 0) {
+        return this.docIndex - 1;
+      }
+      return null;
+    },
+    nextDocIndex: function () {
+      // if doc isn't the last in the list
+      if (this.docIndex !== null && this.docs.length > this.docIndex + 1) {
+        return this.docIndex + 1;
+      }
+      return null;
+    },
     ...mapState(["selectedDocumentsHome"]), // generate vuex computed getter
   },
 
@@ -68,6 +89,18 @@ export default {
 
     openDocument: function (pid) {
       this.docPid = pid;
+    },
+
+    openPreviousDocument: function () {
+      if (this.previousDocIndex !== null) {
+        this.openDocument(this.docs[this.previousDocIndex].pid);
+      }
+    },
+
+    openNextDocument: function () {
+      if (this.nextDocIndex !== null) {
+        this.openDocument(this.docs[this.nextDocIndex].pid);
+      }
     },
 
     documentClosed: function (event) {

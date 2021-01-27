@@ -85,7 +85,7 @@
           </b-col>
           <b-col class="flex-grow-0 d-flex align-items-center">
             <b-dropdown
-              id="documents-actions-small"
+              id="document-actions-small"
               class="d-xl-none"
               variant="primary"
               :text="$t('Actions')"
@@ -179,6 +179,38 @@
               </b-dropdown-form>
             </b-dropdown>
           </b-col>
+          <b-col class="flex-grow-0 d-flex align-items-center">
+            <b-button-group
+              v-if="hasPreviousDoc || hasNextDoc"
+              id="previous-next-big"
+              class="d-none d-xl-flex"
+            >
+              <b-button
+                variant="outline-secondary"
+                :title="
+                  hasPreviousDoc
+                    ? $t('Display previous document')
+                    : $t('This is the first document in the list')
+                "
+                :disabled="!hasPreviousDoc"
+                @click.prevent="$emit('event-previous-document')"
+              >
+                <font-awesome-icon icon="arrow-left" />
+              </b-button>
+              <b-button
+                variant="outline-secondary"
+                :title="
+                  hasNextDoc
+                    ? $t('Display next document')
+                    : $t('This is the last document in the list')
+                "
+                :disabled="!hasNextDoc"
+                @click.prevent="$emit('event-next-document')"
+              >
+                <font-awesome-icon icon="arrow-right" />
+              </b-button>
+            </b-button-group>
+          </b-col>
           <b-col class="flex-grow-0 d-flex">
             <button
               @click.prevent="$bvModal.hide('document-viewer')"
@@ -228,7 +260,7 @@
           class="d-none d-xl-block px-3"
           :class="{ 'mobile-note-toggled': noteToggled }"
         >
-          <b-row id="documents-actions-big" class="d-none d-xl-block">
+          <b-row id="document-actions-big" class="d-none d-xl-block">
             <b-col class="pt-3 px-3">
               <b-dropdown
                 id="download-document"
@@ -337,6 +369,35 @@
       </b-row>
     </b-container>
 
+    <span v-if="hasPreviousDoc || hasNextDoc" id="previous-next-small">
+      <b-button
+        class="d-xl-none"
+        variant="secondary"
+        :title="
+          hasPreviousDoc
+            ? $t('Display previous document')
+            : $t('This is the first document in the list')
+        "
+        :disabled="!hasPreviousDoc"
+        @click.prevent="$emit('event-previous-document')"
+      >
+        <font-awesome-icon icon="arrow-left" />
+      </b-button>
+      <b-button
+        class="d-xl-none"
+        variant="secondary"
+        :title="
+          hasNextDoc
+            ? $t('Display next document')
+            : $t('This is the last document in the list')
+        "
+        :disabled="!hasNextDoc"
+        @click.prevent="$emit('event-next-document')"
+      >
+        <font-awesome-icon icon="arrow-right" />
+      </b-button>
+    </span>
+
     <FTLMoveDocuments
       modal-id="modal-move-document-dp"
       :docs="[currentOpenDoc]"
@@ -396,6 +457,10 @@
     Reminders: Rappels
     Reminders | One reminder | Reminders ({count}): Rappels | Un rappel | Rappels ({count})
     Added on {date}: Ajouté le {date}
+    Display previous document: Afficher le document précédent
+    Display next document: Afficher le document suivant
+    This is the first document in the list: Il s'agit du premier document de la liste
+    This is the last document in the list: Il s'agit du dernier document de la liste
 </i18n>
 
 <script>
@@ -427,6 +492,16 @@ export default {
     pid: {
       type: String,
       required: true,
+    },
+    hasPreviousDoc: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    hasNextDoc: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
     search: {
       type: String,
@@ -533,6 +608,9 @@ export default {
         this.embedDoc();
       }
     },
+    pid: function (newVal, oldVal) {
+      this.openDocument();
+    },
   },
 
   methods: {
@@ -623,6 +701,7 @@ export default {
     },
 
     closeDocument: function () {
+      this.$store.commit("setLastOpenedDocument", this.pid);
       this.$bvModal.hide("document-viewer");
       this.$emit("event-document-panel-closed", {
         doc: this.currentOpenDoc,
@@ -730,7 +809,7 @@ $rename-button-right-margin: 1em;
         border: none;
       }
 
-      #documents-actions-big hr:last-child {
+      #document-actions-big hr:last-child {
         margin: 0.75rem 0 0.75rem 0;
       }
 
@@ -741,14 +820,28 @@ $rename-button-right-margin: 1em;
         overflow-x: hidden;
         animation: slide-up 0.1s linear;
       }
+
+      #previous-next-small button {
+        position: absolute;
+        bottom: 3rem;
+
+        &:first-child {
+          left: 0;
+          border-radius: 0 50% 50% 0;
+        }
+        &:last-child {
+          right: 0;
+          border-radius: 50% 0 0 50%;
+        }
+      }
     }
 
     #document-viewer-body .row {
       flex-direction: column;
     }
 
-    #documents-actions-small a,
-    #documents-actions-big a {
+    #document-actions-small a,
+    #document-actions-big a {
       padding-left: 1rem;
 
       &:active {
