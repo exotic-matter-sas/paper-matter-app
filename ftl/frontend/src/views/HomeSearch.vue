@@ -266,13 +266,11 @@
       <FTLDocumentPanel
         v-if="docPid"
         :pid="docPid"
-        :has-previous-doc="previousDocIndex !== null"
-        :has-next-doc="nextDocIndex !== null"
+        :docs="docs"
         @event-document-panel-closed="documentClosed"
         @event-document-moved="documentDeleted"
         @event-document-deleted="documentDeleted"
-        @event-previous-document="openPreviousDocument"
-        @event-next-document="openNextDocument"
+        @event-change-document="navigateToDocument"
       />
 
       <!-- For batch action move document -->

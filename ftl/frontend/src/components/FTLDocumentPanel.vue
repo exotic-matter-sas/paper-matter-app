@@ -181,31 +181,31 @@
           </b-col>
           <b-col class="flex-grow-0 d-flex align-items-center">
             <b-button-group
-              v-if="hasPreviousDoc || hasNextDoc"
+              v-if="previousDoc || nextDoc"
               id="previous-next-big"
               class="d-none d-xl-flex"
             >
               <b-button
                 variant="outline-secondary"
                 :title="
-                  hasPreviousDoc
+                  previousDoc
                     ? $t('Display previous document')
                     : $t('This is the first document in the list')
                 "
-                :disabled="!hasPreviousDoc"
-                @click.prevent="$emit('event-previous-document')"
+                :disabled="previousDoc == null"
+                @click.prevent="$emit('event-change-document', previousDoc)"
               >
                 <font-awesome-icon icon="arrow-left" />
               </b-button>
               <b-button
                 variant="outline-secondary"
                 :title="
-                  hasNextDoc
+                  nextDoc
                     ? $t('Display next document')
                     : $t('This is the last document in the list')
                 "
-                :disabled="!hasNextDoc"
-                @click.prevent="$emit('event-next-document')"
+                :disabled="nextDoc == null"
+                @click.prevent="$emit('event-change-document', nextDoc)"
               >
                 <font-awesome-icon icon="arrow-right" />
               </b-button>
@@ -372,17 +372,17 @@
       </b-row>
     </b-container>
 
-    <span v-if="hasPreviousDoc || hasNextDoc" id="previous-next-small">
+    <span v-if="previousDoc || nextDoc" id="previous-next-small">
       <b-button
         class="d-xl-none"
         variant="secondary"
         :title="
-          hasPreviousDoc
+          previousDoc
             ? $t('Display previous document')
             : $t('This is the first document in the list')
         "
-        :disabled="!hasPreviousDoc"
-        @click.prevent="$emit('event-previous-document')"
+        :disabled="previousDoc == null"
+        @click.prevent="$emit('event-change-document', previousDoc)"
       >
         <font-awesome-icon icon="arrow-left" />
       </b-button>
@@ -390,12 +390,12 @@
         class="d-xl-none"
         variant="secondary"
         :title="
-          hasNextDoc
+          nextDoc
             ? $t('Display next document')
             : $t('This is the last document in the list')
         "
-        :disabled="!hasNextDoc"
-        @click.prevent="$emit('event-next-document')"
+        :disabled="nextDoc == null"
+        @click.prevent="$emit('event-change-document', nextDoc)"
       >
         <font-awesome-icon icon="arrow-right" />
       </b-button>
@@ -435,35 +435,36 @@
 </template>
 
 <i18n>
-  fr:
-    Rename document: Renommer le document
-    Viewer not available on this device, open the document instead.: Visualisateur indisponible pour cet appareil,
-      ouvrez le document à la place.
-    Viewer not available for this document type, open the document instead.: Visualisateur indisponible pour ce type de
-      document, ouvrez le document à la place.
-    Open: Ouvrir
-    Print: Imprimer
-    Open document in a new tab: Ouvrir le document dans un nouvel onglet
-    Thumbnail updated: Miniature mis à jour
-    Unable to create thumbnail: Erreur lors de la génération de la miniature
-    Unable to show document: Erreur lors de l'affichage du document
-    Sharing: Partage
-    Download: Télécharger
-    Share: Partager
-    Move: Déplacer
-    Delete: Supprimer
-    Show note: Voir la note
-    Add note: Annoter
-    Open location: Dossier parent
-    Alt. viewer: Visionneuse alternative
-    Use alternative PDF viewer: Utiliser une visionneuse PDF alternative
-    Reminders: Rappels
-    Reminders | One reminder | Reminders ({count}): Rappels | Un rappel | Rappels ({count})
-    Added on {date}: Ajouté le {date}
-    Display previous document: Afficher le document précédent
-    Display next document: Afficher le document suivant
-    This is the first document in the list: Il s'agit du premier document de la liste
-    This is the last document in the list: Il s'agit du dernier document de la liste
+fr:
+  Rename document: Renommer le document
+  Viewer not available on this device, open the document instead.: Visualisateur indisponible pour cet appareil,
+    ouvrez le document à la place.
+  Viewer not available for this document type, open the document instead.: Visualisateur indisponible pour ce type de
+    document, ouvrez le document à la place.
+  Open: Ouvrir
+  Print: Imprimer
+  Open document in a new tab: Ouvrir le document dans un nouvel onglet
+  Thumbnail updated: Miniature mis à jour
+  Unable to create thumbnail: Erreur lors de la génération de la miniature
+  Unable to show document: Erreur lors de l'affichage du document
+  Sharing: Partage
+  Download: Télécharger
+  Share: Partager
+  Move: Déplacer
+  Delete: Supprimer
+  Show note: Voir la note
+  Add note: Annoter
+  Open location: Dossier parent
+  Alt. viewer: Visionneuse alternative
+  Use alternative PDF viewer: Utiliser une visionneuse PDF alternative
+  Reminders: Rappels
+  Reminders | One reminder | Reminders ({count}): Rappels | Un rappel | Rappels ({count})
+  Added on {date}: Ajouté le {date}
+  Display previous document: Afficher le document précédent
+  Display next document: Afficher le document suivant
+  This is the first document in the list: Il s'agit du premier document de la liste
+  This is the last document in the list: Il s'agit du dernier document de la liste
+
 </i18n>
 
 <script>
@@ -496,15 +497,12 @@ export default {
       type: String,
       required: true,
     },
-    hasPreviousDoc: {
-      type: Boolean,
+    docs: {
+      type: Array,
       required: false,
-      default: false,
-    },
-    hasNextDoc: {
-      type: Boolean,
-      required: false,
-      default: false,
+      default: function () {
+        return [];
+      },
     },
     search: {
       type: String,
@@ -599,6 +597,23 @@ export default {
         return false;
       }
     },
+
+    previousDoc: function () {
+      const index = this.docs.findIndex((x) => x.pid === this.pid) - 1;
+      if (index > -1) {
+        return this.docs[index].pid;
+      }
+      return null;
+    },
+
+    nextDoc: function () {
+      const index = this.docs.findIndex((x) => x.pid === this.pid) + 1;
+      if (index < this.docs.length && index > -1) {
+        return this.docs[index].pid;
+      }
+      return null;
+    },
+
     ...mapState(["ftlAccount"]), // generate vuex computed getter
   },
 
@@ -837,6 +852,7 @@ $rename-button-right-margin: 1em;
           left: 0;
           border-radius: 0 50% 50% 0;
         }
+
         &:last-child {
           right: 0;
           border-radius: 50% 0 0 50%;
