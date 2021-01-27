@@ -1144,6 +1144,31 @@ class DocumentViewerModalTests(
         # The last selected doc is the second one
         self.assertEqual("doc2", self.get_elem_text(self.last_selected_document_title))
 
+    def test_buttons_next_and_previous_documents_hidden(self):
+        # User already added 1 doc and has opened it
+        setup_document(self.org, self.user, binary=setup_temporary_file().name)
+        self.refresh_documents_list()
+        self.open_first_document()
+
+        # Next and previous buttons are hidden when there is no other document in the list
+        with self.assertRaises(NoSuchElementException):
+            self.get_elem(self.previous_document_button)
+
+        with self.assertRaises(NoSuchElementException):
+            self.get_elem(self.next_document_button)
+
+        # user close document
+        self.close_document()
+
+        # User add a second document and reopen the first doc of the list
+        setup_document(self.org, self.user, binary=setup_temporary_file().name)
+        self.refresh_documents_list()
+        self.open_first_document()
+
+        # Buttons are now shown
+        self.get_elem(self.previous_document_button)
+        self.get_elem(self.next_document_button)
+
 
 @override_settings(CELERY_BROKER_URL="memory://localhost")
 @override_settings(CELERY_TASK_ROUTES={})
