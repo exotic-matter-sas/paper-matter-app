@@ -18,7 +18,7 @@
     <div class="row" id="account-index">
         <div class="col mb-3">
             <a href="{% url 'account_email' %}" class="card h-100 p-2 text-decoration-none">
-                <img src="{% static 'profile.svg' %}" style="height: 13rem;" class="card-img-top" alt="...">
+                <img src="{% static 'profile.svg' %}" class="card-img-top account-card-img-action" alt="...">
                 <div class="card-body">
                     <p class="card-text text-center">
                         {% blocktrans %}
@@ -30,7 +30,7 @@
         </div>
         <div class="col mb-3">
             <a href="{% url 'account_password' %}" class="card h-100 p-2 text-decoration-none">
-                <img src="{% static 'security.svg' %}" style="height: 13rem;" class="card-img-top" alt="...">
+                <img src="{% static 'security.svg' %}" class="card-img-top account-card-img-action" alt="...">
                 <div class="card-body">
                     <p class="card-text text-center">
                         {% if user.is_verified %}

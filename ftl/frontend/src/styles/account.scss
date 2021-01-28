@@ -39,3 +39,7 @@
 #account-index .card:hover {
   border-color: map_get($theme-colors, "primary");
 }
+
+#account-index img.account-card-img-action {
+  height: 13rem;
+}
