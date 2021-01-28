@@ -1,5 +1,5 @@
 #  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
-#  Licensed under the Business Source License. See LICENSE at project root for more information.
+#  Licensed under the Business Source License. See LICENSE in the project root for license information.
 
 import os
 import threading
@@ -191,7 +191,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         setup_document(self.org, self.user, title=second_document_title)
 
         # User search last uploaded document
-        self.visit(f"/app/#/home/search/{second_document_title}")
+        self.visit(f"/app/#/search/{second_document_title}")
         self.wait_documents_list_loaded()
 
         self.assertEqual(
@@ -219,7 +219,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         document = setup_document(self.org, self.user, folder_c, title="bingo!")
 
         # User open folder c through url
-        self.visit(f"/app/#/home/folderFakePath/{folder_c.id}")
+        self.visit(f"/app/#/folder/folderFakePath/{folder_c.id}")
         self.wait_documents_list_loaded()
 
         self.assertEqual(
@@ -281,6 +281,26 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
             document_c.title,
             self.get_elem_text(self.first_document_title),
             "Setup document title should appears in folder c",
+        )
+
+    def test_folder_navigation_with_folder_named_search(self):
+        # Related bug: https://gitlab.com/exotic-matter/ftl-app/-/issues/200
+        # User already created a 1 folder have added a document in root and folder
+        setup_document(self.org, self.user, title="document_root")
+        folder_a = setup_folder(self.org, name="search")
+        document_a = setup_document(self.org, self.user, folder_a, title="document_a")
+        self.visit(HomePage.url)
+
+        # User open folder_a
+        self.wait_documents_list_loaded()
+        self.get_elem(self.folders_list_buttons).click()
+
+        # content of folder_a is properly shown
+        self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
+        self.assertEqual(
+            document_a.title,
+            self.get_elem_text(self.first_document_title),
+            "Document_a title should appears in folder_a",
         )
 
     def test_documents_list_pagination(self):
@@ -787,6 +807,32 @@ class SearchTests(LoginPage, HomePage, DocumentViewerModal):
         self.assertEqual(len(self.get_elems(self.documents_titles)), 1)
         self.assertIn(purple_doc_2.title, self.get_elems_text(self.documents_titles))
 
+    def test_search_document_with_number(self):
+        # Related bug: https://gitlab.com/exotic-matter/ftl-app/-/issues/200
+        # User have already added 2 documents
+        setup_document(self.org, self.user)
+        second_document_title = "123"
+        setup_document(self.org, self.user, title=second_document_title)
+
+        # User search last uploaded document
+        self.search_documents(second_document_title)
+
+        # Only the second document appears in search results
+        self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
+        self.assertEqual(
+            second_document_title, self.get_elem_text(self.first_document_title)
+        )
+
+        # User open and close document
+        self.open_first_document()
+        self.close_document()
+
+        # The search result is still properly displayed
+        self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
+        self.assertEqual(
+            second_document_title, self.get_elem_text(self.first_document_title)
+        )
+
 
 class DocumentsBatchActionsTests(LoginPage, HomePage, MoveDocumentsModal):
     def setUp(self, **kwargs):
@@ -910,7 +956,7 @@ class DocumentViewerModalTests(
 
         # User open folder and document through url
         self.visit(
-            f"{HomePage.url}#/home/folderFakePath/{folder_c.id}?doc={document.pid}"
+            f"{HomePage.url}#/folder/folderFakePath/{folder_c.id}?doc={document.pid}"
         )
         self.wait_for_elem_to_show(self.document_title)
 

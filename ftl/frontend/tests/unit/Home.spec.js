@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
- * Licensed under the Business Source License. See LICENSE at project root for more information.
+ * Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
+ * Licensed under the Business Source License. See LICENSE in the project root for license information.
  */
 
 import { createLocalVue, shallowMount } from "@vue/test-utils";
@@ -180,12 +180,12 @@ describe("Home computed", () => {
       {
         id: fakeLevels[0].id,
         text: fakeLevels[0].name,
-        to: { path: "/home/" + fakePath },
+        to: { path: "/folder/" + fakePath },
       },
       {
         id: fakeLevels[1].id,
         text: fakeLevels[1].name + ` (${fakeCount})`,
-        to: { path: "/home/" + fakePath },
+        to: { path: "/folder/" + fakePath },
       },
     ];
     expect(breadcrumbData).toEqual(expectedFormat);
@@ -412,7 +412,7 @@ describe("Home methods call proper methods", () => {
     // then
     expect(mockedRemoveCurrentLevelCommit).toHaveBeenCalledTimes(1);
     expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
-      path: "/home/" + fakePath,
+      path: "/folder/" + fakePath,
     });
     expect(wrapper.vm.$router.push).toHaveBeenCalledTimes(1);
     // TODO try to test the case level === null, seems impossible to do with one beforeEach block since computed cache deactivation is deprecated / doesn't work
@@ -451,7 +451,7 @@ describe("Home methods call proper methods", () => {
       folderToNavigate
     );
     expect(wrapper.vm.$router.push).toHaveBeenNthCalledWith(1, {
-      path: "/home/" + fakePath,
+      path: "/folder/" + fakePath,
     });
   });
 });

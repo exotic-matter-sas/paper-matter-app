@@ -1,6 +1,6 @@
 <!--
   - Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
-  - Licensed under the Business Source License. See LICENSE at project root for more information.
+  - Licensed under the Business Source License. See LICENSE in the project root for license information.
   -->
 
 <template>
@@ -567,7 +567,7 @@ export default {
             id: e.id,
             text: e.name,
             to: {
-              path: "/home/" + vi.computeFolderUrlPath(e.id),
+              path: "/folder/" + vi.computeFolderUrlPath(e.id),
             },
           };
         })
@@ -622,7 +622,7 @@ export default {
     navigateToFolder: function (folder) {
       if (folder) this.$store.commit("appendNewLevel", folder);
       this.$router.push({
-        path: "/home/" + this.computeFolderUrlPath(folder.id),
+        path: "/folder/" + this.computeFolderUrlPath(folder.id),
       });
     },
 
@@ -634,7 +634,7 @@ export default {
         this.$router.push({ name: "home" });
       } else {
         this.$router.push({
-          path: "/home/" + this.computeFolderUrlPath(level.parent),
+          path: "/folder/" + this.computeFolderUrlPath(level.parent),
         });
       }
     },
@@ -649,7 +649,7 @@ export default {
           if (this.docPid) {
             this.$router.push(
               {
-                path: "/home/" + this.computeFolderUrlPath(folderId),
+                path: "/folder/" + this.computeFolderUrlPath(folderId),
                 query: {
                   doc: this.docPid,
                 },
@@ -659,7 +659,7 @@ export default {
           } else {
             this.$router.push(
               {
-                path: "/home/" + this.computeFolderUrlPath(folderId),
+                path: "/folder/" + this.computeFolderUrlPath(folderId),
               },
               () => {}
             );
