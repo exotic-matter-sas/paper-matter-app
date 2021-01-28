@@ -1,5 +1,5 @@
 #  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
-#  Licensed under the Business Source License. See LICENSE at project root for more information.
+#  Licensed under the Business Source License. See LICENSE in the project root for license information.
 
 import os
 import threading
@@ -191,7 +191,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         setup_document(self.org, self.user, title=second_document_title)
 
         # User search last uploaded document
-        self.visit(f"/app/#/home/search/{second_document_title}")
+        self.visit(f"/app/#/search/{second_document_title}")
         self.wait_documents_list_loaded()
 
         self.assertEqual(
@@ -219,7 +219,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         document = setup_document(self.org, self.user, folder_c, title="bingo!")
 
         # User open folder c through url
-        self.visit(f"/app/#/home/folderFakePath/{folder_c.id}")
+        self.visit(f"/app/#/folder/folderFakePath/{folder_c.id}")
         self.wait_documents_list_loaded()
 
         self.assertEqual(
@@ -956,7 +956,7 @@ class DocumentViewerModalTests(
 
         # User open folder and document through url
         self.visit(
-            f"{HomePage.url}#/home/folderFakePath/{folder_c.id}?doc={document.pid}"
+            f"{HomePage.url}#/folder/folderFakePath/{folder_c.id}?doc={document.pid}"
         )
         self.wait_for_elem_to_show(self.document_title)
 

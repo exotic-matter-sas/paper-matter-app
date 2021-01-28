@@ -1,6 +1,6 @@
 <!--
   - Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
-  - Licensed under the Business Source License. See LICENSE at project root for more information.
+  - Licensed under the Business Source License. See LICENSE in the project root for license information.
   -->
 
 <template>
@@ -481,7 +481,7 @@ export default {
       let _path = this.currentOpenDoc.path.map((v) => {
         return {
           text: v.name,
-          to: { path: "/home/" + v.name + "/" + v.id },
+          to: { path: "/folder/" + v.name + "/" + v.id },
         };
       });
 
