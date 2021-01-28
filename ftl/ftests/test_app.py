@@ -283,6 +283,26 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
             "Setup document title should appears in folder c",
         )
 
+    def test_folder_navigation_with_folder_named_search(self):
+        # Related bug: https://gitlab.com/exotic-matter/ftl-app/-/issues/200
+        # User already created a 1 folder have added a document in root and folder
+        setup_document(self.org, self.user, title="document_root")
+        folder_a = setup_folder(self.org, name="search")
+        document_a = setup_document(self.org, self.user, folder_a, title="document_a")
+        self.visit(HomePage.url)
+
+        # User open folder a
+        self.wait_documents_list_loaded()
+        self.get_elem(self.folders_list_buttons).click()
+
+        # content of folder a properly shown
+        self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
+        self.assertEqual(
+            document_a.title,
+            self.get_elem_text(self.first_document_title),
+            "Setup document title should appears in folder b",
+        )
+
     def test_documents_list_pagination(self):
         # User has already added 21 documents
         for i in range(21):
@@ -786,6 +806,32 @@ class SearchTests(LoginPage, HomePage, DocumentViewerModal):
         # 1 documents is found: purple2
         self.assertEqual(len(self.get_elems(self.documents_titles)), 1)
         self.assertIn(purple_doc_2.title, self.get_elems_text(self.documents_titles))
+
+    def test_search_document_with_number(self):
+        # Related bug: https://gitlab.com/exotic-matter/ftl-app/-/issues/200
+        # User have already added 2 documents
+        setup_document(self.org, self.user)
+        second_document_title = "123"
+        setup_document(self.org, self.user, title=second_document_title)
+
+        # User search last uploaded document
+        self.search_documents(second_document_title)
+
+        # Only the second document appears in search results
+        self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
+        self.assertEqual(
+            second_document_title, self.get_elem_text(self.first_document_title)
+        )
+
+        # User open and close document
+        self.open_first_document()
+        self.close_document()
+
+        # The search result is still properly displayed
+        self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
+        self.assertEqual(
+            second_document_title, self.get_elem_text(self.first_document_title)
+        )
 
 
 class DocumentsBatchActionsTests(LoginPage, HomePage, MoveDocumentsModal):
