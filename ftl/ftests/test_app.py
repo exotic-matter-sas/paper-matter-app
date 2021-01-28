@@ -291,16 +291,16 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         document_a = setup_document(self.org, self.user, folder_a, title="document_a")
         self.visit(HomePage.url)
 
-        # User open folder a
+        # User open folder_a
         self.wait_documents_list_loaded()
         self.get_elem(self.folders_list_buttons).click()
 
-        # content of folder a properly shown
+        # content of folder_a is properly shown
         self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
         self.assertEqual(
             document_a.title,
             self.get_elem_text(self.first_document_title),
-            "Setup document title should appears in folder b",
+            "Document_a title should appears in folder_a",
         )
 
     def test_documents_list_pagination(self):
