@@ -85,7 +85,7 @@
           </b-col>
           <b-col class="flex-grow-0 d-flex align-items-center">
             <b-dropdown
-              id="documents-actions-small"
+              id="document-actions-small"
               class="d-xl-none"
               variant="primary"
               :text="$t('Actions')"
@@ -179,6 +179,38 @@
               </b-dropdown-form>
             </b-dropdown>
           </b-col>
+          <b-col class="flex-grow-0 d-flex align-items-center">
+            <b-button-group
+              v-if="previousDoc || nextDoc"
+              id="previous-next-big"
+              class="d-none d-xl-flex"
+            >
+              <b-button
+                variant="outline-primary"
+                :title="
+                  previousDoc
+                    ? $t('Display previous document')
+                    : $t('This is the first document in the list')
+                "
+                :disabled="previousDoc == null"
+                @click.prevent="$emit('event-change-document', previousDoc)"
+              >
+                <font-awesome-icon icon="arrow-left" />
+              </b-button>
+              <b-button
+                variant="outline-primary"
+                :title="
+                  nextDoc
+                    ? $t('Display next document')
+                    : $t('This is the last document in the list')
+                "
+                :disabled="nextDoc == null"
+                @click.prevent="$emit('event-change-document', nextDoc)"
+              >
+                <font-awesome-icon icon="arrow-right" />
+              </b-button>
+            </b-button-group>
+          </b-col>
           <b-col class="flex-grow-0 d-flex">
             <button
               @click.prevent="$bvModal.hide('document-viewer')"
@@ -195,12 +227,15 @@
 
     <b-container id="document-viewer-body" class="px-0" fluid>
       <b-row class="h-100" no-gutters>
-        <b-col v-if="currentOpenDoc.type === 'application/pdf' && !isIOS">
+        <b-col
+          v-if="currentOpenDoc.type === 'application/pdf' && !isIOS"
+          :key="pid"
+        >
           <b-row class="h-100" no-gutters id="viewer-pdf">
             <div id="pdf-embed-container" class="col border-0"></div>
           </b-row>
         </b-col>
-        <b-col v-else-if="useOnlyOfficeViewer">
+        <b-col v-else-if="useOnlyOfficeViewer" :key="pid">
           <b-row class="h-100" no-gutters id="viewer-only-office">
             <div id="onlyoffice-embed-container" class="col border-0"></div>
           </b-row>
@@ -228,7 +263,7 @@
           class="d-none d-xl-block px-3"
           :class="{ 'mobile-note-toggled': noteToggled }"
         >
-          <b-row id="documents-actions-big" class="d-none d-xl-block">
+          <b-row id="document-actions-big" class="d-none d-xl-block">
             <b-col class="pt-3 px-3">
               <b-dropdown
                 id="download-document"
@@ -337,6 +372,35 @@
       </b-row>
     </b-container>
 
+    <span v-if="previousDoc || nextDoc" id="previous-next-small">
+      <b-button
+        class="d-xl-none"
+        variant="secondary"
+        :title="
+          previousDoc
+            ? $t('Display previous document')
+            : $t('This is the first document in the list')
+        "
+        :disabled="previousDoc == null"
+        @click.prevent="$emit('event-change-document', previousDoc)"
+      >
+        <font-awesome-icon icon="arrow-left" />
+      </b-button>
+      <b-button
+        class="d-xl-none"
+        variant="secondary"
+        :title="
+          nextDoc
+            ? $t('Display next document')
+            : $t('This is the last document in the list')
+        "
+        :disabled="nextDoc == null"
+        @click.prevent="$emit('event-change-document', nextDoc)"
+      >
+        <font-awesome-icon icon="arrow-right" />
+      </b-button>
+    </span>
+
     <FTLMoveDocuments
       modal-id="modal-move-document-dp"
       :docs="[currentOpenDoc]"
@@ -371,31 +435,36 @@
 </template>
 
 <i18n>
-  fr:
-    Rename document: Renommer le document
-    Viewer not available on this device, open the document instead.: Visualisateur indisponible pour cet appareil,
-      ouvrez le document à la place.
-    Viewer not available for this document type, open the document instead.: Visualisateur indisponible pour ce type de
-      document, ouvrez le document à la place.
-    Open: Ouvrir
-    Print: Imprimer
-    Open document in a new tab: Ouvrir le document dans un nouvel onglet
-    Thumbnail updated: Miniature mis à jour
-    Unable to create thumbnail: Erreur lors de la génération de la miniature
-    Unable to show document: Erreur lors de l'affichage du document
-    Sharing: Partage
-    Download: Télécharger
-    Share: Partager
-    Move: Déplacer
-    Delete: Supprimer
-    Show note: Voir la note
-    Add note: Annoter
-    Open location: Dossier parent
-    Alt. viewer: Visionneuse alternative
-    Use alternative PDF viewer: Utiliser une visionneuse PDF alternative
-    Reminders: Rappels
-    Reminders | One reminder | Reminders ({count}): Rappels | Un rappel | Rappels ({count})
-    Added on {date}: Ajouté le {date}
+fr:
+  Rename document: Renommer le document
+  Viewer not available on this device, open the document instead.: Visualisateur indisponible pour cet appareil,
+    ouvrez le document à la place.
+  Viewer not available for this document type, open the document instead.: Visualisateur indisponible pour ce type de
+    document, ouvrez le document à la place.
+  Open: Ouvrir
+  Print: Imprimer
+  Open document in a new tab: Ouvrir le document dans un nouvel onglet
+  Thumbnail updated: Miniature mis à jour
+  Unable to create thumbnail: Erreur lors de la génération de la miniature
+  Unable to show document: Erreur lors de l'affichage du document
+  Sharing: Partage
+  Download: Télécharger
+  Share: Partager
+  Move: Déplacer
+  Delete: Supprimer
+  Show note: Voir la note
+  Add note: Annoter
+  Open location: Dossier parent
+  Alt. viewer: Visionneuse alternative
+  Use alternative PDF viewer: Utiliser une visionneuse PDF alternative
+  Reminders: Rappels
+  Reminders | One reminder | Reminders ({count}): Rappels | Un rappel | Rappels ({count})
+  Added on {date}: Ajouté le {date}
+  Display previous document: Afficher le document précédent
+  Display next document: Afficher le document suivant
+  This is the first document in the list: Il s'agit du premier document de la liste
+  This is the last document in the list: Il s'agit du dernier document de la liste
+
 </i18n>
 
 <script>
@@ -427,6 +496,13 @@ export default {
     pid: {
       type: String,
       required: true,
+    },
+    docs: {
+      type: Array,
+      required: false,
+      default: function () {
+        return [];
+      },
     },
     search: {
       type: String,
@@ -521,6 +597,23 @@ export default {
         return false;
       }
     },
+
+    previousDoc: function () {
+      const index = this.docs.findIndex((x) => x.pid === this.pid) - 1;
+      if (index > -1) {
+        return this.docs[index].pid;
+      }
+      return null;
+    },
+
+    nextDoc: function () {
+      const index = this.docs.findIndex((x) => x.pid === this.pid) + 1;
+      if (index < this.docs.length && index > -1) {
+        return this.docs[index].pid;
+      }
+      return null;
+    },
+
     ...mapState(["ftlAccount"]), // generate vuex computed getter
   },
 
@@ -532,6 +625,9 @@ export default {
       if (this.currentOpenDoc.pid) {
         this.embedDoc();
       }
+    },
+    pid: function (newVal, oldVal) {
+      this.openDocument();
     },
   },
 
@@ -548,6 +644,11 @@ export default {
             this.currentOpenDoc,
             response.data
           );
+
+          // This is a trick to re-render the document container (pdf or onlyoffice)
+          // so that the embed method works. Vue.js should have been able to rewrite the dom
+          // but because the embed is injected by an external script, Vue.js could not track the
+          // update. We force re-rendering the whole embed container with the :key trick.
           this.$nextTick().then(() => this.embedDoc());
 
           if (
@@ -623,6 +724,7 @@ export default {
     },
 
     closeDocument: function () {
+      this.$store.commit("setLastOpenedDocument", this.pid);
       this.$bvModal.hide("document-viewer");
       this.$emit("event-document-panel-closed", {
         doc: this.currentOpenDoc,
@@ -730,7 +832,7 @@ $rename-button-right-margin: 1em;
         border: none;
       }
 
-      #documents-actions-big hr:last-child {
+      #document-actions-big hr:last-child {
         margin: 0.75rem 0 0.75rem 0;
       }
 
@@ -741,14 +843,29 @@ $rename-button-right-margin: 1em;
         overflow-x: hidden;
         animation: slide-up 0.1s linear;
       }
+
+      #previous-next-small button {
+        position: absolute;
+        bottom: 3rem;
+
+        &:first-child {
+          left: 0;
+          border-radius: 0 50% 50% 0;
+        }
+
+        &:last-child {
+          right: 0;
+          border-radius: 50% 0 0 50%;
+        }
+      }
     }
 
     #document-viewer-body .row {
       flex-direction: column;
     }
 
-    #documents-actions-small a,
-    #documents-actions-big a {
+    #document-actions-small a,
+    #document-actions-big a {
       padding-left: 1rem;
 
       &:active {

@@ -1,4 +1,4 @@
-#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
+#  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
 #  Licensed under the Business Source License. See LICENSE at project root for more information.
 
 import os
@@ -57,6 +57,7 @@ class HomePage(BasePage):
     first_document_title = ".document-thumbnail:first-child .card-title span"
     first_document_date = ".document-thumbnail:first-child .card-footer small"
     last_document_title = ".document-thumbnail:last-child .card-title span"
+    last_selected_document_title = ".document-thumbnail .last-selected .card-title span"
 
     more_documents_button = "#more-documents"
     more_documents_loader = "#more-documents .loader"

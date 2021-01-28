@@ -1084,6 +1084,91 @@ class DocumentViewerModalTests(
         self.visit(f"/app/share/{doc_share.pid}")
         self.assertIn("not found", self.get_elem_text("body"))
 
+    def test_display_next_and_previous_documents(self):
+        # User already added 3 docs and has opened the first one
+        setup_document(
+            self.org, self.user, binary=setup_temporary_file().name, title="doc3"
+        )
+        setup_document(
+            self.org, self.user, binary=setup_temporary_file().name, title="doc2"
+        )
+        setup_document(
+            self.org, self.user, binary=setup_temporary_file().name, title="doc1"
+        )
+        self.refresh_documents_list()
+        self.open_first_document()
+
+        self.assertEqual("doc1", self.get_elem_text(self.document_title))
+
+        # User can't display previous doc as he open the first one of the list
+        self.assertEqual(
+            "true", self.get_elem_attribute(self.previous_document_button, "disabled")
+        )
+
+        # User try to click on the button anyway
+        self.get_elem(self.previous_document_button).click()
+        # The first doc stay displayed
+        self.assertEqual("doc1", self.get_elem_text(self.document_title))
+
+        # User display next doc
+        self.get_elem(self.next_document_button).click()
+        # The second doc is now displayed
+        self.assertEqual("doc2", self.get_elem_text(self.document_title))
+
+        # User can now display previous doc
+        self.assertEqual(
+            None, self.get_elem_attribute(self.previous_document_button, "disabled")
+        )
+
+        # User display the next doc
+        self.get_elem(self.next_document_button).click()
+        # The third doc is now displayed
+        self.assertEqual("doc3", self.get_elem_text(self.document_title))
+
+        # This the last doc, user can't display next one
+        self.assertEqual(
+            "true", self.get_elem_attribute(self.next_document_button, "disabled")
+        )
+        # User try to click on the button anyway
+        self.get_elem(self.next_document_button).click()
+        # The last doc stay displayed
+        self.assertEqual("doc3", self.get_elem_text(self.document_title))
+
+        # User display previous doc
+        self.get_elem(self.previous_document_button).click()
+        # The second doc is now displayed
+        self.assertEqual("doc2", self.get_elem_text(self.document_title))
+
+        # User close the doc
+        self.close_document()
+        # The last selected doc is the second one
+        self.assertEqual("doc2", self.get_elem_text(self.last_selected_document_title))
+
+    def test_buttons_next_and_previous_documents_hidden(self):
+        # User already added 1 doc and has opened it
+        setup_document(self.org, self.user, binary=setup_temporary_file().name)
+        self.refresh_documents_list()
+        self.open_first_document()
+
+        # Next and previous buttons are hidden when there is no other document in the list
+        with self.assertRaises(NoSuchElementException):
+            self.get_elem(self.previous_document_button)
+
+        with self.assertRaises(NoSuchElementException):
+            self.get_elem(self.next_document_button)
+
+        # user close document
+        self.close_document()
+
+        # User add a second document and reopen the first doc of the list
+        setup_document(self.org, self.user, binary=setup_temporary_file().name)
+        self.refresh_documents_list()
+        self.open_first_document()
+
+        # Buttons are now shown
+        self.get_elem(self.previous_document_button)
+        self.get_elem(self.next_document_button)
+
 
 @override_settings(CELERY_BROKER_URL="memory://localhost")
 @override_settings(CELERY_TASK_ROUTES={})
