@@ -13,6 +13,8 @@ class DocumentViewerModal(BasePage):
     document_title = "#document-title"
 
     rename_document_button = "#rename-document"
+    previous_document_button = "#previous-next-big button:first-child"
+    next_document_button = "#previous-next-big button:last-child"
     close_document_button = "#document-viewer .close"
     download_button = "#download-document"
     download_button_dropdown = "#download-document .dropdown-toggle"

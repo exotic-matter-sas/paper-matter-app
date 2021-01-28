@@ -301,9 +301,11 @@
       <FTLDocumentPanel
         v-if="docPid"
         :pid="docPid"
+        :docs="docs"
         @event-document-panel-closed="documentClosed"
         @event-document-moved="documentDeleted"
         @event-document-deleted="documentDeleted"
+        @event-change-document="navigateToDocument"
       />
 
       <FTLNewFolder
