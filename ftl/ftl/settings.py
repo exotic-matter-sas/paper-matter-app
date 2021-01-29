@@ -67,7 +67,6 @@ INSTALLED_APPS = [
     "axes",
     "captcha",
     "django_celery_beat",
-    "csp",
     "ftl",
     "setup.apps.SetupConfig",
     "core.apps.CoreConfig",
