@@ -20,7 +20,7 @@
 {% endblock %}
 
 {% block footer %}
-    <script type="application/javascript">
+    <script nonce="{{ request.csp_nonce }}" type="application/javascript">
         "use strict";
         const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
         const tz_input = document.getElementById("id_tz");

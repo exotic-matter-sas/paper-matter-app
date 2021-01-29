@@ -96,6 +96,7 @@ MIDDLEWARE = [
     "django_otp.middleware.OTPMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "csp.middleware.CSPMiddleware",
     "ftl.ftl_setup_middleware.FTLSetupMiddleware",
     "ftl.ftl_locale_middleware.FTLLocaleMiddleware",
     "axes.middleware.AxesMiddleware",
@@ -191,6 +192,26 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 # This header indicates to the browser that the MIME types advertised in the Content-Type headers should
 # not be changed (by "sniffing" the content).
 SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# Content Security Policy header (CSP)
+# More info can be found on https://django-csp-test.readthedocs.io/en/latest/configuration.html
+
+# By default, we only report CSP errors in the browser console.
+# To enable CSP enforcing in the browser, set to False.
+# Warning! this will break FTL (JS not loading, missing CSS style, PDF or OO viewer) if the headers are not correctly
+# configured.
+CSP_REPORT_ONLY = True
+
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_IMG_SRC = (
+    "'self'",
+    "data:",
+)
+CSP_SCRIPT_SRC = ("'self'",)
+CSP_STYLE_SRC = ("'self'",)
+CSP_FRAME_SRC = ("'self'",)
+CSP_CONNECT_SRC = ("'self'", "blob:")
+CSP_INCLUDE_NONCE_IN = ("script-src",)
 
 # IPs allowed to see the debug toolbar app
 INTERNAL_IPS = ["127.0.0.1"]
@@ -401,7 +422,6 @@ CELERY_BEAT_SCHEDULE = {
         "schedule": crontab(minute=0, hour="*"),
     },
 }
-
 
 """
 Enable Django Axes to have login rate limit and account activity logging (IP addresses and user agent).

@@ -1,6 +1,6 @@
 <!--
-  - Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
-  - Licensed under the Business Source License. See LICENSE at project root for more information.
+  - Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
+  - Licensed under the Business Source License. See LICENSE in the project root for more information.
   -->
 
 <template>
@@ -23,7 +23,7 @@
         <b-form-input
           id="rename-folder-text"
           autofocus
-          onfocus="this.select()"
+          @focus.native="$event.target.select()"
           v-model="newFolderName"
           trim
           @keyup.enter="

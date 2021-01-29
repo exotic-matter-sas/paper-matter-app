@@ -10,11 +10,6 @@
     {{ request.LANGUAGE_CODE|json_script:"locale" }}
     {% render_bundle 'common_logged_in' 'css' %}
     {% render_bundle 'share_doc' 'css' %}
-    <style>
-        iframe {
-            border: 0;
-        }
-    </style>
 {% endblock %}
 
 {% block body %}
@@ -23,7 +18,7 @@
         <nav class="navbar navbar-dark bg-dark navbar-expand-sm">
             <a class="navbar-brand" href="{% url "home" %}"
                title="{% trans "Paper Matter, document management system" %}">
-                {% include "ftl/logo.html" %}
+                <img src="{% static "grays_logo.svg" %}" alt="PM Logo" class="pm-logo">
             </a>
             <h3 class="text-secondary m-0"><span id="document-share-title"
                                                  class="font-weight-bolder text-capitalize">{{ share_doc.ftl_doc.title }}</span>
@@ -66,7 +61,7 @@
 
         {{ only_office_config|json_script:"only_office_config" }}
 
-        <script type="text/javascript">
+        <script nonce="{{ request.csp_nonce }}" type="text/javascript">
             const config = JSON.parse(document.getElementById("only_office_config").textContent);
             new DocsAPI.DocEditor(
                     "onlyoffice-embed-container",

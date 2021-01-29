@@ -10,6 +10,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <title>Paper Matter - {% block title %}{% endblock %}</title>
     <link rel="shortcut icon" href="{% static "favicon-32.png" %}">
+    {% render_bundle 'fontawesome' 'css' %}
     {% render_bundle 'common' 'css' %}
     {% render_bundle 'animations' 'css' %}
     {% block head %}{% endblock %}

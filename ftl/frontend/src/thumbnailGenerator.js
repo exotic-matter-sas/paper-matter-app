@@ -3,7 +3,17 @@
  * Licensed under the Business Source License. See LICENSE at project root for more information.
  */
 
-import pdfjsLib from "pdfjs-dist/webpack";
+// This is a workaround for PDF.js 2.7.x and Webpack 4.x compatibility
+// 2.7.x series switched to modern JS ES2018 and we are still using Vue Cli 4 with
+// only support for Webpack 4. This workaround should be removed when Vue Cli is upgraded to 5
+
+// import pdfjsLib from "pdfjs-dist/webpack";
+var pdfjsLib = require("pdfjs-dist/build/pdf.js");
+var PdfjsWorker = require("worker-loader?esModule=false!pdfjs-dist/build/pdf.worker.js");
+
+if (typeof window !== "undefined" && "Worker" in window) {
+  pdfjsLib.GlobalWorkerOptions.workerPort = new PdfjsWorker();
+}
 
 // pdfjsLib.disableWorker = true;
 window.URL = window.URL || window.webkitURL;

@@ -1,5 +1,5 @@
-#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
-#  Licensed under the Business Source License. See LICENSE at project root for more information.
+#  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
+#  Licensed under the Business Source License. See LICENSE in the project root for more information.
 
 from ftests.pages.base_page import BasePage
 
@@ -49,7 +49,7 @@ class AccountPages(BasePage):
     rename_emergency_codes_buttons = ".rename-emergency-codes"
     delete_emergency_codes_buttons = ".delete-emergency-codes"
     emergency_codes_lists = "#emergency-code-to-print li, .static-device-item code"
-    print_button = 'a[onclick="print()"]'
+    print_button = "#print_link"
     no_code_left_badges = ".otp-warning"
     # totp device
     auth_app_divs = ".totp-device-item"

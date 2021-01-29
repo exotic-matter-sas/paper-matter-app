@@ -30,6 +30,9 @@ module.exports = {
       .plugin("skip-moment-locale")
       .use(webpack.ContextReplacementPlugin, [/moment[/\\]locale$/, /en|fr/]);
 
+    config
+      .entry("fontawesome")
+      .add("@fortawesome/fontawesome-svg-core/styles.css");
     config.entry("common").add("@/styles/common.scss");
     config.entry("common_logged_in").add("@/styles/common_logged_in.scss");
     config.entry("common_logged_out").add("@/styles/common_logged_out.scss");

@@ -8,11 +8,20 @@
         <div class="form-group">
             <label for="id_name">{% trans 'Device name' %}</label>
             <input type="text" name="name" value="{{ form.name.value }}" placeholder="{% trans 'Device name' %}"
-                   required="required" id="id_name" class="form-control" onfocus="this.select()" autofocus="autofocus">
+                   required="required" id="id_name" class="form-control">
             <small class="form-text text-muted">{% trans 'Name to recognize your two factor device' %}</small>
         </div>
 
         <a class="btn btn-secondary float-left" href="{% url 'otp_list' %}">{% trans 'Cancel' %}</a>
         <input type="submit" class="btn btn-primary float-right" value="{% trans 'Rename' %}">
     </form>
+{% endblock %}
+
+{% block js_script_head %}
+    <script nonce="{{ request.csp_nonce }}" type="application/javascript">
+        document.addEventListener("DOMContentLoaded", function() {
+            const elem = document.getElementById("id_name");
+            elem.addEventListener("focus", elem.select);
+        });
+    </script>
 {% endblock %}

@@ -9,30 +9,37 @@
 {% endblock %}
 {% block footer %}
     {% render_bundle 'supported_browsers' 'js' %}
-    <script type="text/javascript">
-        function setIgnoreBrowserWarningCookie () {
+    <script nonce="{{ request.csp_nonce }}" type="text/javascript">
+        function setIgnoreBrowserWarningCookie() {
             // ignore cookie is set for 1 year
-            document.cookie='ignore_browser_warning=true;;max-age=31536000;samesite=strict';
-            this.document.querySelector("#unsupported-browser-version-warning").classList.add("d-none");
-            this.document.querySelector("#unsupported-browser-warning").classList.add("d-none");
+            document.cookie = "ignore_browser_warning=true;;max-age=31536000;samesite=strict";
+            document.querySelector("#unsupported-browser-version-warning").classList.add("d-none");
+            document.querySelector("#unsupported-browser-warning").classList.add("d-none");
         }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const elem_1 = document.getElementById("btn_ignore_warning_1");
+            const elem_2 = document.getElementById("btn_ignore_warning_2");
+            elem_1.addEventListener("click", setIgnoreBrowserWarningCookie);
+            elem_2.addEventListener("click", setIgnoreBrowserWarningCookie);
+        });
     </script>
 {% endblock %}
 
 {% block main_content_vcenter %}
     <div id="unsupported-browser-version-warning" class="alert alert-warning text-justify p-0 d-none">
-        <button type="button" class="close mx-2 my-1" aria-label="Close" onclick="setIgnoreBrowserWarningCookie()">
+        <button type="button" class="close mx-2 my-1" aria-label="Close" id="btn_ignore_warning_1">
             <span aria-hidden="true">&times;</span>
         </button>
         <p class="mx-4 my-3">
             {% blocktrans %}
                 Your browser version is not supported, some functionalities may not work properly.<br>
                 You should update your browser or use a another one.
-            {% endblocktrans  %}
+            {% endblocktrans %}
         </p>
     </div>
     <div id="unsupported-browser-warning" class="alert alert-warning text-justify p-0 d-none">
-        <button type="button" class="close mx-2 my-1" aria-label="Close" onclick="setIgnoreBrowserWarningCookie()">
+        <button type="button" class="close mx-2 my-1" aria-label="Close" id="btn_ignore_warning_2">
             <span aria-hidden="true">&times;</span>
         </button>
         <p class="mx-4 my-3">

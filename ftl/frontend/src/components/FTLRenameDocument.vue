@@ -29,7 +29,7 @@
         <b-form-input
           id="rename-document-text"
           autofocus
-          onfocus="this.select()"
+          @focus.native="$event.target.select()"
           v-model="newDocumentName"
           trim
           @keyup.enter="

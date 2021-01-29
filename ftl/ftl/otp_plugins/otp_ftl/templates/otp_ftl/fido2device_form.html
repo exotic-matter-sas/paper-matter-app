@@ -64,100 +64,100 @@
 {% endblock %}
 
 {% block before_footer %}
-    <script type="application/javascript">
-        'use strict';
+    <script nonce="{{ request.csp_nonce }}" type="application/javascript">
+        "use strict";
 
         const submit = document.getElementById("fido-form");
 
-        submit.addEventListener("submit", function (event) {
+        submit.addEventListener("submit", function(event) {
             event.preventDefault();
 
             {# CBOR lib come from cbor.js static file, included by script tag at the top of this file #}
 
             fetch('{% url 'otp_fido2_api_register_begin' %}', {
-                method: 'POST',
+                method: "POST"
             })
-                    .then(function (response) {
+                    .then(function(response) {
                         if (response.ok) {
                             return response.arrayBuffer();
                         } else {
-                            throw new Error('RegistrationBeginApiError');
+                            throw new Error("RegistrationBeginApiError");
                         }
                     })
-                    .then(function (value) {
+                    .then(function(value) {
                         try {
                             return CBOR.decode(value);
                         } catch (e) {
-                            throw new Error('CBORDecodeError');
+                            throw new Error("CBORDecodeError");
                         }
                     })
-                    .then(function (options) {
+                    .then(function(options) {
                                 return navigator.credentials.create(options);
                             }
                     )
-                    .then(function (attestation) {
+                    .then(function(attestation) {
                         const deviceName = document.getElementById("id_name").value;
                         try {
                             return CBOR.encode({
                                 "attestationObject": new Uint8Array(attestation.response.attestationObject),
                                 "clientDataJSON": new Uint8Array(attestation.response.clientDataJSON),
-                                "name": deviceName,
-                            })
+                                "name": deviceName
+                            });
                         } catch (e) {
-                            throw new Error('CBOREncodeError')
+                            throw new Error("CBOREncodeError");
                         }
                     })
-                    .then(function (body) {
+                    .then(function(body) {
                         return fetch('{% url 'otp_fido2_api_register_finish' %}', {
-                            method: 'POST',
-                            headers: {'Content-Type': 'application/cbor'},
+                            method: "POST",
+                            headers: { "Content-Type": "application/cbor" },
                             body: body
                         });
                     })
-                    .then(function (response) {
+                    .then(function(response) {
                         if (response.ok) {
                             window.location = '{% url 'otp_fido2_success'  %}';
                         } else {
                             // could occur when page isn't loaded in https
-                            throw new Error('RegistrationFinishApiError');
+                            throw new Error("RegistrationFinishApiError");
                         }
                     })
-                    .catch(function (error) {
+                    .catch(function(error) {
                         let errorCode;
 
-                        if ('name' in error) {
-                            if (error.name === 'AbortError') {
-                                errorCode = 'abort'
-                            } else if (error.name === 'InvalidStateError' && 'message' in error &&
+                        if ("name" in error) {
+                            if (error.name === "AbortError") {
+                                errorCode = "abort";
+                            } else if (error.name === "InvalidStateError" && "message" in error &&
                                     // Chrome 80 error
-                                    (error.message.includes('already registered') ||
+                                    (error.message.includes("already registered") ||
                                             // Firefox 73 error
-                                            error.message.includes('use an object that is not, or is no longer, usable'))) {
-                                errorCode = 'duplicate-key'
-                            } else if (error.name === 'NotAllowedError') {
-                                errorCode = 'not-allowed'
-                            } else if (error.name === 'TypeError' && 'message' in error &&
-                                    error.message.includes('NetworkError')) {
-                                errorCode = 'network'
-                            } else if (error.name === 'Error') {
-                                if ('message' in error) {
-                                    if (error.message === 'RegistrationBeginApiError') {
-                                        errorCode = 'registration-begin-api'
-                                    } else if (error.message === 'RegistrationFinishApiError') {
-                                        errorCode = 'registration-finish-api'
-                                    } else if (error.message === 'CBORDecodeError') {
-                                        errorCode = 'cbor-decode'
-                                    } else if (error.message === 'CBOREncodeError') {
-                                        errorCode = 'cbor-encode'
+                                            error.message.includes("use an object that is not, or is no longer, usable"))) {
+                                errorCode = "duplicate-key";
+                            } else if (error.name === "NotAllowedError") {
+                                errorCode = "not-allowed";
+                            } else if (error.name === "TypeError" && "message" in error &&
+                                    error.message.includes("NetworkError")) {
+                                errorCode = "network";
+                            } else if (error.name === "Error") {
+                                if ("message" in error) {
+                                    if (error.message === "RegistrationBeginApiError") {
+                                        errorCode = "registration-begin-api";
+                                    } else if (error.message === "RegistrationFinishApiError") {
+                                        errorCode = "registration-finish-api";
+                                    } else if (error.message === "CBORDecodeError") {
+                                        errorCode = "cbor-decode";
+                                    } else if (error.message === "CBOREncodeError") {
+                                        errorCode = "cbor-encode";
                                     }
                                 } else {
-                                    errorCode = 'unknown-generic'
+                                    errorCode = "unknown-generic";
                                 }
                             } else {
-                                errorCode = 'unexpected'
+                                errorCode = "unexpected";
                             }
                         } else {
-                            errorCode = 'unknown-nameless'
+                            errorCode = "unknown-nameless";
                         }
                         window.location = `{% url 'otp_fido2_add' %}?error=${errorCode}`;
                     });

@@ -16,7 +16,7 @@
         <nav class="navbar navbar-dark bg-dark navbar-expand-sm">
             <a class="navbar-brand" href="{% url "home" %}"
                title="{% trans "Paper Matter, document management system" %}">
-                {% include "ftl/logo.html" %}
+                <img src="{% static "grays_logo.svg" %}" alt="PM Logo" class="pm-logo">
             </a>
             <h3 class="text-secondary m-0">
                 <span>{% trans "Forbidden" %}</span>
