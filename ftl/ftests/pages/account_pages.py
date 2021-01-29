@@ -49,7 +49,7 @@ class AccountPages(BasePage):
     rename_emergency_codes_buttons = ".rename-emergency-codes"
     delete_emergency_codes_buttons = ".delete-emergency-codes"
     emergency_codes_lists = "#emergency-code-to-print li, .static-device-item code"
-    print_button = '#print_link'
+    print_button = "#print_link"
     no_code_left_badges = ".otp-warning"
     # totp device
     auth_app_divs = ".totp-device-item"
