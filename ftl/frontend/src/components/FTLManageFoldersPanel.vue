@@ -1,6 +1,6 @@
 <!--
-  - Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
-  - Licensed under the Business Source License. See LICENSE at project root for more information.
+  - Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
+  - Licensed under the Business Source License. See LICENSE in the project root for more information.
   -->
 
 <template>
@@ -14,9 +14,7 @@
             <font-awesome-icon icon="folder-open" class="d-none" />
             {{ parentFolder === null ? $t("Root") : parentFolder.name }}
           </span>
-          <div id="title-separator" class="float-left">
-            >
-          </div>
+          <div id="title-separator" class="float-left">></div>
           <div id="title" class="float-left">
             <span>{{ $t("Folders management") }}</span>
           </div>
