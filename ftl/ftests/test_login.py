@@ -1,5 +1,5 @@
-#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
-#  Licensed under the Business Source License. See LICENSE at project root for more information.
+#  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
+#  Licensed under the Business Source License. See LICENSE in the project root for more information.
 
 import re
 
@@ -20,6 +20,11 @@ class LoginPageTests(LoginPage, HomePage):
         self.admin = setup_admin(org=org)
         # User have already created its account
         self.user = setup_user(org=org)
+
+    def test_fdgdfgd(self):
+        # User login and is redirected to the home page
+        self.visit(LoginPage.url)
+        self.visit(LoginPage.url)
 
     def test_first_user_can_login(self):
         # User login and is redirected to the home page

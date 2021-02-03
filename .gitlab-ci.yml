@@ -121,6 +121,7 @@ test-slow-python-chrome:
     paths:
       - ftl/.coverage.*
       - ftl/ftests/tests_screenshots
+      - ftl/ftests/browser_logs
     expire_in: 7 days
   script:
     - export TEST_BROWSER=chrome
@@ -129,6 +130,18 @@ test-slow-python-chrome:
     - python3 -m coverage run manage.py test -v 2 --tag=slow
   allow_failure: false
   when: manual
+
+check-browser-logs:
+  stage: generate-reports-and-doc
+  image: registry.gitlab.com/exotic-matter/ftl-base-image-ci:latest
+  services:
+    - postgres:11-alpine
+  dependencies:
+    - test-slow-python-chrome
+  script:
+    - source venv/bin/activate && cd ftl/ftests/tools
+    - python3 check_browser_logs.py
+  allow_failure: false
 
 python-coverage:
   stage: generate-reports-and-doc
