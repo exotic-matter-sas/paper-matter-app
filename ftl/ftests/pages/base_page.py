@@ -1,5 +1,5 @@
-#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
-#  Licensed under the Business Source License. See LICENSE at project root for more information.
+#  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
+#  Licensed under the Business Source License. See LICENSE in the project root for more information.
 
 import os
 import platform
@@ -137,8 +137,21 @@ class BasePage(LIVE_SERVER):
 
     def tearDown(self):
         self._download_dir.cleanup()
+        self._check_for_error_in_browser_logs()
 
         self.browser.quit()
+
+    def _check_for_error_in_browser_logs(self):
+        # TODO limit to CI?
+        # get_log only work on Chrome
+        if self.browser.name in ["chrome", "chromium"]:
+            browser_logs = self.browser.get_log("browser")
+            if len(browser_logs) > 0:
+                for log in browser_logs:
+                    print(
+                        f"[{log['source']}][{log['level']}]: {log['message']} ({log['timestamp']})\n"
+                    )
+                raise Exception("Browser return error")
 
     @property
     def head_title(self):
