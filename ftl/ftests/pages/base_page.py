@@ -149,7 +149,9 @@ class BasePage(LIVE_SERVER):
         if self.browser.name in ["chrome", "chromium"]:
             browser_logs = self.browser.get_log("browser")
             if len(browser_logs) > 0:
-                file_path = os.path.join(self._browser_logs_path, f"{self.id()}-{int(time.time())}.json")
+                file_path = os.path.join(
+                    self._browser_logs_path, f"{self.id()}-{int(time.time())}.json"
+                )
                 with open(file_path, "w") as f:
                     f.write(json.dumps(browser_logs))
 
