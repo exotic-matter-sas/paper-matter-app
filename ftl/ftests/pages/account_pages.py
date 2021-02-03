@@ -146,6 +146,7 @@ class AccountPages(BasePage):
     def rename_security_key(self, new_name, set_index=0):
         self.get_elems(self.rename_security_key_buttons)[set_index].click()
         self.wait_for_elem_to_disappear(self.rename_security_key_buttons)
+        self.get_elem(self.device_name_input).click()
         self.get_elem(self.device_name_input).send_keys(new_name)
         self.get_elem(self.confirm_button).click()
         self.wait_for_elem_to_disappear(self.device_name_input)
