@@ -1,5 +1,5 @@
-#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
-#  Licensed under the Business Source License. See LICENSE at project root for more information.
+#  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
+#  Licensed under the Business Source License. See LICENSE in the project root for more information.
 
 from ftests.pages.home_page import HomePage
 from ftests.pages.login_page import LoginPage
@@ -8,7 +8,7 @@ from ftests.tools.setup_helpers import setup_org, setup_admin, setup_user
 
 
 class I18nTests(SetupPages, LoginPage, HomePage):
-    def setUp(self, browser=None, browser_locale="fr-FR, fr"):
+    def setUp(self, browser=None, browser_locale="fr"):
         super().setUp(browser_locale=browser_locale)
 
     def test_i18n_are_working(self):

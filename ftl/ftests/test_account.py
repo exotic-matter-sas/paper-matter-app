@@ -1,5 +1,5 @@
-#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
-#  Licensed under the Business Source License. See LICENSE at project root for more information.
+#  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
+#  Licensed under the Business Source License. See LICENSE in the project root for more information.
 
 import re
 import threading
@@ -180,7 +180,7 @@ class BasicAccountPagesTests(LoginPage, AccountPages):
 class RegionAccountPageTests(LoginPage, HomePage, AccountPages, SignupPages):
     def setUp(self, **kwargs):
         # first org, admin, user are already created, user is already logged on home page
-        super().setUp(browser_locale="fr-FR, fr")  # browser local is french
+        super().setUp(browser_locale="fr")  # browser local is french
         self.admin_org = setup_org(name="admin org 1", slug="admin-org-1")
         setup_admin(self.admin_org)
         self.user_org = setup_org()

@@ -104,8 +104,12 @@ class BasePage(LIVE_SERVER):
             )
         elif browser == "chrome":
             options = ChromeOptions()
-            # Set browser language for web pages
-            options.add_argument(f"--lang={browser_locale}")
+            # --lang argument is no more supported on Linux
+            # see: https://bugs.chromium.org/p/chromium/issues/detail?id=755338#c14
+            if platform.system() == "Linux":
+                os.environ["LANGUAGE"] = browser_locale
+            else:
+                options.add_argument(f"--lang={browser_locale}")
 
             # Set default browser download dir and remove download prompt
             chrome_profile = {
