@@ -1,5 +1,7 @@
 #  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
-#  Licensed under the Business Source License. See LICENSE at project root for more information.
+#  Licensed under the Business Source License. See LICENSE in the project root for more information.
+import time
+
 from django.utils import timezone
 from selenium.common.exceptions import NoSuchElementException
 
@@ -115,3 +117,4 @@ class DocumentViewerModal(BasePage):
         reminders_delete = self.get_elems(self.reminder_list_elements_delete)
         if len(reminders_delete) > reminder_index_to_delete:
             reminders_delete[reminder_index_to_delete].click()
+        time.sleep(0.5)
