@@ -91,6 +91,7 @@ class DocumentViewerModal(BasePage):
         self.get_elem(self.share_document_button).click()
         self.wait_for_elem_to_show(self.modal_input)
         self.wait_for_elem_text_not_to_be(self.modal_input, "")
+        self.wait_for_elem_to_show(self.unshare_modal_button)
         self.get_elem(self.unshare_modal_button).click()
         self.wait_for_elem_to_disappear(self.unshare_modal_button)
 
