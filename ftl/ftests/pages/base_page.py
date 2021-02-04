@@ -377,8 +377,8 @@ class BasePage(LIVE_SERVER):
         return mail.outbox[-1]
 
     def download_file(self, download_trigger_css_selector, timeout=10):
-        self.get_elem(download_trigger_css_selector).click()
         initial_content = os.listdir(self._download_dir.name)
+        self.get_elem(download_trigger_css_selector).click()
         current_content = initial_content
 
         # Wait for new file to show up in download dir
