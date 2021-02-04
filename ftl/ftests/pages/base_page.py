@@ -369,6 +369,7 @@ class BasePage(LIVE_SERVER):
 
     def accept_modal(self):
         self.wait_for_elem_to_show(self.modal_accept_button)
+        time.sleep(0.5)
         self.get_elem(self.modal_accept_button).click()
         self.wait_for_elem_to_disappear(self.modal_accept_button)
 
