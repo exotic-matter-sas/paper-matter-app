@@ -269,7 +269,9 @@ class RegionAccountPageTests(LoginPage, HomePage, AccountPages, SignupPages):
         initial_document_add_hours = int(initial_document_add_time.group(1))
         # We need to set hour to 0 if its noon, due to the subtraction in assertEqual at the end
         # (hours are displayed a.m. and p.m. in title attribute)
-        initial_document_add_hours = 0 if initial_document_add_hours == 12 else initial_document_add_hours
+        initial_document_add_hours = (
+            0 if initial_document_add_hours == 12 else initial_document_add_hours
+        )
 
         initial_document_add_minutes = int(initial_document_add_time.group(2))
 
