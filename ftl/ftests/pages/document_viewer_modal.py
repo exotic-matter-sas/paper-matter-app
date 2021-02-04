@@ -55,6 +55,7 @@ class DocumentViewerModal(BasePage):
         self.wait_for_elem_to_show(self.rename_document_button)
         self.get_elem(self.rename_document_button).click()
         self.wait_for_elem_to_show(self.modal_input)
+        self.get_elem(self.modal_input).clear()
         self.get_elem(self.modal_input).send_keys(document_name)
         self.accept_modal()
 

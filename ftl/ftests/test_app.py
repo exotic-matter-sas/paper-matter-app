@@ -987,9 +987,9 @@ class DocumentViewerModalTests(
         self.rename_document(new_doc_title)
 
         # Document title is properly updated in pdf viewer and list
-        self.assertEqual(self.get_elem_text(self.document_title), new_doc_title)
+        self.assertEqual(new_doc_title, self.get_elem_text(self.document_title))
         self.close_document()
-        self.assertEqual(self.get_elem_text(self.first_document_title), new_doc_title)
+        self.assertEqual(new_doc_title, self.get_elem_text(self.first_document_title))
 
     @patch.object(apply_ftl_processing, "delay")
     def test_annotate_document(self, mock_apply_processing):
