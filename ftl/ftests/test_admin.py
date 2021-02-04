@@ -1,5 +1,5 @@
-#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
-#  Licensed under the Business Source License. See LICENSE at project root for more information.
+#  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
+#  Licensed under the Business Source License. See LICENSE in the project root for more information.
 
 from selenium.common.exceptions import NoSuchElementException
 
@@ -116,7 +116,7 @@ class AdminPreserveUserPrivacy(LoginPage, AdminPages):
             "created",
             "edited",
             "expire_at",
-            "password",  # not yet implemented, but may be required in case of abuse report to check legality of document
+            "password",  # not yet implemented, but may be required in case of abuse report to check document legality
         ]
 
         # Admin user log into admin portal
