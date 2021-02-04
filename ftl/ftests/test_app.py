@@ -1,5 +1,5 @@
 #  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
-#  Licensed under the Business Source License. See LICENSE in the project root for license information.
+#  Licensed under the Business Source License. See LICENSE in the project root for more information.
 
 import os
 import threading
@@ -296,6 +296,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         self.get_elem(self.folders_list_buttons).click()
 
         # content of folder_a is properly shown
+        self.wait_documents_list_loaded()
         self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
         self.assertEqual(
             document_a.title,
