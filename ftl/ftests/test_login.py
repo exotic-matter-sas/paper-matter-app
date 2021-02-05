@@ -2,6 +2,7 @@
 #  Licensed under the Business Source License. See LICENSE in the project root for more information.
 
 import re
+import time
 
 from django.core import mail
 from django.test import override_settings
@@ -63,16 +64,35 @@ class LoginPageTests(LoginPage, HomePage):
         self.visit(LoginPage.url)
 
         self.log_user(password="wrongpassword")
+        time.sleep(0.5)
         self.log_user(password="wrongpassword")
+        time.sleep(0.5)
         self.log_user(password="wrongpassword")
+        time.sleep(0.5)
         self.log_user(password="wrongpassword")
+        time.sleep(0.5)
         self.log_user(password="wrongpassword")
+        time.sleep(0.5)
 
         self.assertIn("account locked", self.head_title)
+        self.expected_browser_logs.append(
+            {
+                "level": "SEVERE",
+                "message": "403",
+                "source": "network",
+            }
+        )
 
         self.visit(LoginPage.url)
         self.log_user()
         self.assertIn("account locked", self.head_title)
+        self.expected_browser_logs.append(
+            {
+                "level": "SEVERE",
+                "message": "403",
+                "source": "network",
+            }
+        )
 
 
 class ForgotPasswordTests(LoginPage, ResetPasswordPages):
