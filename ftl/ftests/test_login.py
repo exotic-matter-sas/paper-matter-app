@@ -76,22 +76,14 @@ class LoginPageTests(LoginPage, HomePage):
 
         self.assertIn("account locked", self.head_title)
         self.expected_browser_logs.append(
-            {
-                "level": "SEVERE",
-                "message": "403",
-                "source": "network",
-            }
+            {"level": "SEVERE", "message": "403", "source": "network",}
         )
 
         self.visit(LoginPage.url)
         self.log_user()
         self.assertIn("account locked", self.head_title)
         self.expected_browser_logs.append(
-            {
-                "level": "SEVERE",
-                "message": "403",
-                "source": "network",
-            }
+            {"level": "SEVERE", "message": "403", "source": "network",}
         )
 
 

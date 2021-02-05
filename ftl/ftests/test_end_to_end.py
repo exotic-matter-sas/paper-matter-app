@@ -409,7 +409,7 @@ class UserSetupAll2FA(LoginPage, AccountPages):
             {
                 "level": "SEVERE",
                 "message": "/accounts/2fa/fido2/api/login_begin - Failed to load resource: the server responded with a"
-                           " status of 500 (Internal Server Error)",
+                " status of 500 (Internal Server Error)",
                 "source": "network",
             }
         )

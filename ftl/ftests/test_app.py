@@ -161,11 +161,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
             " of duplicate name",
         )
         self.expected_browser_logs.append(
-            {
-                "level": "SEVERE",
-                "message": "400",
-                "source": "network",
-            }
+            {"level": "SEVERE", "message": "400", "source": "network",}
         )
 
     def test_create_folder_tree(self):
