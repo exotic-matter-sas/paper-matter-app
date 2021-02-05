@@ -52,6 +52,7 @@ class BasePage(LIVE_SERVER):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.root_url = ""
+        self.expected_browser_logs = []
 
         self._download_dir = None
         self._tests_screenshots_path = os.path.join(
@@ -151,13 +152,17 @@ class BasePage(LIVE_SERVER):
     def _save_browser_logs(self):
         # get_log only work with Chrome (see note in https://gitlab.com/exotic-matter/ftl-app/-/issues/203)
         if self.browser.name in ["chrome", "chromium"]:
-            browser_logs = self.browser.get_log("browser")
-            if len(browser_logs) > 0:
+            browser_logs = {
+                "expected": self.expected_browser_logs,
+                "actual": self.browser.get_log("browser")
+            }
+            if len(browser_logs["actual"]) or len(browser_logs["expected"]):
                 file_path = os.path.join(
                     self._browser_logs_path, f"{self.id()}-{int(time.time())}.json"
                 )
                 with open(file_path, "w") as f:
                     f.write(json.dumps(browser_logs))
+        self.expected_browser_logs.clear()
 
     @property
     def head_title(self):

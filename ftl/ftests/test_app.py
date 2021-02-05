@@ -1129,6 +1129,13 @@ class DocumentViewerModalTests(
         self.unshare_document()
 
         self.visit(f"/app/share/{doc_share.pid}")
+        self.expected_browser_logs.append(
+            {
+                "level": "SEVERE",
+                "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+                "source": "network",
+            }
+        )
         self.assertIn("not found", self.get_elem_text("body"))
 
     def test_display_next_and_previous_documents(self):
