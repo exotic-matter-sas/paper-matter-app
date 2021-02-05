@@ -16,7 +16,6 @@ from django.test import override_settings
 from django.utils import timezone
 from selenium.common.exceptions import NoSuchElementException
 
-from core.models import FTLDocumentReminder
 from core.tasks import apply_ftl_processing, batch_documents_reminder
 from ftests.pages.document_viewer_modal import DocumentViewerModal
 from ftests.pages.home_page import HomePage
@@ -160,6 +159,13 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
             self.get_elem_text(self.error_notification),
             "An error message should have been displayed to user to tell him folder creation failed because"
             " of duplicate name",
+        )
+        self.expected_browser_logs.append(
+            {
+                "level": "SEVERE",
+                "message": "400",
+                "source": "network",
+            }
         )
 
     def test_create_folder_tree(self):
