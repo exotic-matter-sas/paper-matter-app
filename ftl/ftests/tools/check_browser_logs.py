@@ -48,7 +48,8 @@ def check():
                         log_messages.append(f"Expected: {expected_log['message']}")
                         log_messages.append(f"Actual: {actual_log['message']}")
 
-                tests_with_different_logs[test_path] = log_messages
+                if len(log_messages):
+                    tests_with_different_logs[test_path] = log_messages
 
     # Full report
     print(json.dumps(browser_logs_report_full, indent=4))
@@ -80,7 +81,7 @@ def check():
             exit_message += f"--------------------------------------\n"
             exit_message += json.dumps(tests_with_more_logs, indent=4)
         if tests_with_different_logs_count:
-            exit_message += f"{tests_with_different_logs_count} test(s) get different logs than the ones expected:\n"
+            exit_message += f"\n{tests_with_different_logs_count} test(s) get different logs than the ones expected:\n"
             exit_message += f"----------------------------------------------------\n"
             exit_message += json.dumps(tests_with_different_logs, indent=4)
 
