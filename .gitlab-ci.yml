@@ -139,7 +139,7 @@ check-browser-logs:
   dependencies:
     - test-slow-python-chrome
   script:
-    - source venv/bin/activate && cd ftl/ftests/tools
+    - cd ftl/ftests/tools
     - python3 check_browser_logs.py
   allow_failure: false
 
