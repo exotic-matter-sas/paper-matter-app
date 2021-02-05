@@ -20,7 +20,7 @@ def check():
             test_path = item.name.split("-")[0]
             browser_logs_report_full[test_path] = {
                 "expected": file_content["expected"],
-                "actual": file_content["actual"]
+                "actual": file_content["actual"],
             }
 
             if len(file_content["actual"]) > len(file_content["expected"]):
@@ -32,13 +32,19 @@ def check():
                 for i, actual_log in enumerate(file_content["actual"]):
                     expected_log = file_content["actual"][i]
                     if actual_log["level"] != expected_log["level"]:
-                        log_messages.append(f"Log {i+1}: actual log level ({actual_log['level']}) differ from expected"
-                                            f" one ({expected_log['level']})")
+                        log_messages.append(
+                            f"Log {i+1}: actual log level ({actual_log['level']}) differ from expected"
+                            f" one ({expected_log['level']})"
+                        )
                     if actual_log["source"] != expected_log["source"]:
-                        log_messages.append(f"Log {i+1}: actual log source ({actual_log['source']}) differ from"
-                                            f" expected one ({expected_log['source']})")
+                        log_messages.append(
+                            f"Log {i+1}: actual log source ({actual_log['source']}) differ from"
+                            f" expected one ({expected_log['source']})"
+                        )
                     if expected_log["message"] not in actual_log["message"]:
-                        log_messages.append(f"Log {i+1}: expected log message not found in actual one")
+                        log_messages.append(
+                            f"Log {i+1}: expected log message not found in actual one"
+                        )
                         log_messages.append(f"Expected: {expected_log['message']}")
                         log_messages.append(f"Actual: {actual_log['message']}")
 
@@ -52,7 +58,9 @@ def check():
     info_message = None
     if tests_with_less_logs_count:
         info_message = f"\nINFO:\n"
-        info_message += f"{tests_with_less_logs_count} test(s) get less logs than expected:\n"
+        info_message += (
+            f"{tests_with_less_logs_count} test(s) get less logs than expected:\n"
+        )
         info_message += f"-------------------------------------------\n"
         info_message += json.dumps(tests_with_less_logs, indent=4)
 
@@ -66,7 +74,9 @@ def check():
         exit_message = f"\nCHECK FAILED for {total_count} test(s):\n"
         exit_message += "===========================\n"
         if tests_with_more_logs_count:
-            exit_message += f"{tests_with_more_logs_count} test(s) get more logs than expected:\n"
+            exit_message += (
+                f"{tests_with_more_logs_count} test(s) get more logs than expected:\n"
+            )
             exit_message += f"--------------------------------------\n"
             exit_message += json.dumps(tests_with_more_logs, indent=4)
         if tests_with_different_logs_count:

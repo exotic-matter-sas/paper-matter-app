@@ -154,7 +154,7 @@ class BasePage(LIVE_SERVER):
         if self.browser.name in ["chrome", "chromium"]:
             browser_logs = {
                 "expected": self.expected_browser_logs,
-                "actual": self.browser.get_log("browser")
+                "actual": self.browser.get_log("browser"),
             }
             if len(browser_logs["actual"]) or len(browser_logs["expected"]):
                 file_path = os.path.join(
