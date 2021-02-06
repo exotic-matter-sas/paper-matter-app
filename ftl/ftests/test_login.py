@@ -22,11 +22,6 @@ class LoginPageTests(LoginPage, HomePage):
         # User have already created its account
         self.user = setup_user(org=org)
 
-    def test_fdgdfgd(self):
-        # User login and is redirected to the home page
-        self.visit(LoginPage.url)
-        self.visit(LoginPage.url)
-
     def test_first_user_can_login(self):
         # User login and is redirected to the home page
         self.visit(LoginPage.url)
