@@ -62,7 +62,7 @@
             </b-row>
             <b-row no-gutters>
               <b-col class="text-muted font-italic text-truncate pr-2">
-                <small class="d-none d-sm-inline">
+                <small id="document-date-big" class="d-none d-sm-inline">
                   {{
                     $t("Added on {date}", {
                       date: $moment
@@ -71,7 +71,7 @@
                     })
                   }}
                 </small>
-                <small class="d-inline d-sm-none">
+                <small id="document-date-small" class="d-inline d-sm-none">
                   {{
                     $t("Added on {date}", {
                       date: $moment

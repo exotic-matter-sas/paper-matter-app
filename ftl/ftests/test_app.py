@@ -1215,6 +1215,41 @@ class DocumentViewerModalTests(
         self.get_elem(self.previous_document_button)
         self.get_elem(self.next_document_button)
 
+    def test_document_data_properly_updated_by_next_and_previous(self):
+        # User already added 2 docs and has opened the first one
+        document2_date = datetime(2021, 1, 1, 1, 1, 1, 1, tzinfo=pytz.utc)
+        setup_document(
+            self.org, self.user, title=tv.DOCUMENT2_TITLE, note=tv.DOCUMENT2_NOTE, creation_date=document2_date
+        )
+        document1_date = datetime(2021, 2, 2, 2, 2, 2, 2, tzinfo=pytz.utc)
+        setup_document(
+            self.org, self.user, title=tv.DOCUMENT1_TITLE, note=tv.DOCUMENT1_NOTE, creation_date=document1_date
+        )
+        self.refresh_documents_list()
+        self.open_first_document()
+
+        # First doc data are properly displayed
+        self.assertEqual(tv.DOCUMENT1_TITLE, self.get_elem_text(self.document_title))
+        # hour +1 due to user tz
+        self.assertIn("Tuesday, February 2, 2021 3:02 AM", self.get_elem_text(self.document_date))
+        self.assertEqual(tv.DOCUMENT1_NOTE, self.get_elem_text(self.document_note_text))
+
+        # User display next doc
+        self.get_elem(self.next_document_button).click()
+
+        # Second doc data are properly displayed
+        self.assertEqual(tv.DOCUMENT2_TITLE, self.get_elem_text(self.document_title))
+        self.assertIn("Friday, January 1, 2021 2:01 AM", self.get_elem_text(self.document_date))
+        self.assertEqual(tv.DOCUMENT2_NOTE, self.get_elem_text(self.document_note_text))
+
+        # User back to first doc
+        self.get_elem(self.previous_document_button).click()
+
+        # First doc data are properly displayed
+        self.assertEqual(tv.DOCUMENT1_TITLE, self.get_elem_text(self.document_title))
+        self.assertIn("Tuesday, February 2, 2021 3:02 AM", self.get_elem_text(self.document_date))
+        self.assertEqual(tv.DOCUMENT1_NOTE, self.get_elem_text(self.document_note_text))
+
 
 @override_settings(CELERY_BROKER_URL="memory://localhost")
 @override_settings(CELERY_TASK_ROUTES={})
