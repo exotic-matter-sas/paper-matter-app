@@ -1,6 +1,6 @@
 <!--
   - Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
-  - Licensed under the Business Source License. See LICENSE in the project root for license information.
+  - Licensed under the Business Source License. See LICENSE in the project root for more information.
   -->
 
 <template>
@@ -225,7 +225,11 @@
       </b-container>
     </template>
 
-    <b-container id="document-viewer-body" class="px-0" fluid>
+    <b-container
+      id="document-viewer-body"
+      class="px-0 rounded-bottom overflow-hidden"
+      fluid
+    >
       <b-row class="h-100" no-gutters>
         <b-col
           v-if="currentOpenDoc.type === 'application/pdf' && !isIOS"
@@ -259,11 +263,12 @@
           </b-row>
         </b-col>
         <b-col
+          id="document-actions-big"
           xl="3"
-          class="d-none d-xl-block px-3"
+          class="d-none d-xl-block px-3 bg-white"
           :class="{ 'mobile-note-toggled': noteToggled }"
         >
-          <b-row id="document-actions-big" class="d-none d-xl-block">
+          <b-row class="d-none d-xl-block">
             <b-col class="pt-3 px-3">
               <b-dropdown
                 id="download-document"
@@ -832,8 +837,12 @@ $rename-button-right-margin: 1em;
         border: none;
       }
 
-      #document-actions-big hr:last-child {
-        margin: 0.75rem 0 0.75rem 0;
+      #document-actions-big {
+        z-index: $zindex-dropdown;
+
+        hr:last-child {
+          margin: 0.75rem 0 0.75rem 0;
+        }
       }
 
       .mobile-note-toggled {
