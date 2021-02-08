@@ -64,7 +64,7 @@ def setup_document(
     text_content=tv.DOCUMENT1_CONTENT,
     language=tv.DOCUMENT1_LANGUAGE,
     file_type="application/pdf",
-    creation_date=None
+    creation_date=None,
 ):
     document = FTLDocument.objects.create(
         org=org,
@@ -76,7 +76,7 @@ def setup_document(
         content_text=text_content,
         language=language,
         type=file_type,
-        created=creation_date if creation_date else timezone.now()
+        created=creation_date if creation_date else timezone.now(),
     )
     # Update document to allow PGSQL to process search vector
     vector_plugin = FTLSearchEnginePgSQLTSVector()

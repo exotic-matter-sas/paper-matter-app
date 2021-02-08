@@ -53,9 +53,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         self.upload_documents()
 
         # Document appears as the first document of the list
-        self.assertEqual(
-            "test", self.get_elem_text(self.first_document_title)
-        )
+        self.assertEqual("test", self.get_elem_text(self.first_document_title))
 
     @patch.object(apply_ftl_processing, "delay")
     def test_upload_document_to_subfolder(self, mock_apply_processing):
@@ -68,9 +66,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         self.upload_documents()
 
         # Document appears as the first document of the list
-        self.assertEqual(
-            "test", self.get_elem_text(self.first_document_title)
-        )
+        self.assertEqual("test", self.get_elem_text(self.first_document_title))
         # Document doesn't appears in root folder
         self.visit(HomePage.url)
         with self.assertRaises(NoSuchElementException):
@@ -1132,15 +1128,9 @@ class DocumentViewerModalTests(
 
     def test_display_next_and_previous_documents(self):
         # User already added 3 docs and has opened the first one
-        setup_document(
-            self.org, self.user, title="doc3"
-        )
-        setup_document(
-            self.org, self.user, title="doc2"
-        )
-        setup_document(
-            self.org, self.user, title="doc1"
-        )
+        setup_document(self.org, self.user, title="doc3")
+        setup_document(self.org, self.user, title="doc2")
+        setup_document(self.org, self.user, title="doc1")
         self.refresh_documents_list()
         self.open_first_document()
 
@@ -1219,13 +1209,23 @@ class DocumentViewerModalTests(
         # User already added 2 docs and has opened the first one
         document2_date = datetime(2021, 1, 1, 1, 1, 1, 1, tzinfo=pytz.utc)
         document2 = setup_document(
-            self.org, self.user, title=tv.DOCUMENT2_TITLE, note=tv.DOCUMENT2_NOTE, creation_date=document2_date
+            self.org,
+            self.user,
+            title=tv.DOCUMENT2_TITLE,
+            note=tv.DOCUMENT2_NOTE,
+            creation_date=document2_date,
         )
         setup_document_share(document2)
-        setup_document_reminder(document2, self.user, tv.DOCUMENT_REMINDER_TOMORROW_DATE)
+        setup_document_reminder(
+            document2, self.user, tv.DOCUMENT_REMINDER_TOMORROW_DATE
+        )
         document1_date = datetime(2021, 2, 2, 2, 2, 2, 2, tzinfo=pytz.utc)
         setup_document(
-            self.org, self.user, title=tv.DOCUMENT1_TITLE, note=tv.DOCUMENT1_NOTE, creation_date=document1_date
+            self.org,
+            self.user,
+            title=tv.DOCUMENT1_TITLE,
+            note=tv.DOCUMENT1_NOTE,
+            creation_date=document1_date,
         )
         self.refresh_documents_list()
         self.open_first_document()
@@ -1233,7 +1233,9 @@ class DocumentViewerModalTests(
         # First doc data are properly displayed
         self.assertEqual(tv.DOCUMENT1_TITLE, self.get_elem_text(self.document_title))
         # hour +1 due to user tz
-        self.assertIn("Tuesday, February 2, 2021 3:02 AM", self.get_elem_text(self.document_date))
+        self.assertIn(
+            "Tuesday, February 2, 2021 3:02 AM", self.get_elem_text(self.document_date)
+        )
         self.assertEqual(tv.DOCUMENT1_NOTE, self.get_elem_text(self.document_note_text))
         self.assertEqual("Share", self.get_elem_text(self.share_document_button))
         self.assertEqual("Reminders", self.get_elem_text(self.document_reminder_button))
@@ -1243,17 +1245,23 @@ class DocumentViewerModalTests(
 
         # Second doc data are properly displayed
         self.assertEqual(tv.DOCUMENT2_TITLE, self.get_elem_text(self.document_title))
-        self.assertIn("Friday, January 1, 2021 2:01 AM", self.get_elem_text(self.document_date))
+        self.assertIn(
+            "Friday, January 1, 2021 2:01 AM", self.get_elem_text(self.document_date)
+        )
         self.assertEqual(tv.DOCUMENT2_NOTE, self.get_elem_text(self.document_note_text))
         self.assertEqual("Sharing", self.get_elem_text(self.share_document_button))
-        self.assertEqual("Reminders 1", self.get_elem_text(self.document_reminder_button))
+        self.assertEqual(
+            "Reminders 1", self.get_elem_text(self.document_reminder_button)
+        )
 
         # User back to first doc
         self.get_elem(self.previous_document_button).click()
 
         # First doc data are properly displayed
         self.assertEqual(tv.DOCUMENT1_TITLE, self.get_elem_text(self.document_title))
-        self.assertIn("Tuesday, February 2, 2021 3:02 AM", self.get_elem_text(self.document_date))
+        self.assertIn(
+            "Tuesday, February 2, 2021 3:02 AM", self.get_elem_text(self.document_date)
+        )
         self.assertEqual(tv.DOCUMENT1_NOTE, self.get_elem_text(self.document_note_text))
         self.assertEqual("Share", self.get_elem_text(self.share_document_button))
         self.assertEqual("Reminders", self.get_elem_text(self.document_reminder_button))
