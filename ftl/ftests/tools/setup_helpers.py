@@ -1,9 +1,10 @@
 #  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
-#  Licensed under the Business Source License. See LICENSE at project root for more information.
+#  Licensed under the Business Source License. See LICENSE in the project root for more information.
 
 import os
 import tempfile
 
+from django.utils import timezone
 from django_otp.plugins.otp_static.models import StaticDevice, StaticToken
 from django_otp.plugins.otp_totp.models import TOTPDevice
 
@@ -62,7 +63,8 @@ def setup_document(
     binary=tv.DOCUMENT1_BINARY_PATH,
     text_content=tv.DOCUMENT1_CONTENT,
     language=tv.DOCUMENT1_LANGUAGE,
-    type="application/pdf",
+    file_type="application/pdf",
+    creation_date=None
 ):
     document = FTLDocument.objects.create(
         org=org,
@@ -73,7 +75,8 @@ def setup_document(
         binary=binary,
         content_text=text_content,
         language=language,
-        type=type,
+        type=file_type,
+        created=creation_date if creation_date else timezone.now()
     )
     # Update document to allow PGSQL to process search vector
     vector_plugin = FTLSearchEnginePgSQLTSVector()

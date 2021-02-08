@@ -1,10 +1,10 @@
 #  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
-#  Licensed under the Business Source License. See LICENSE in the project root for license information.
+#  Licensed under the Business Source License. See LICENSE in the project root for more information.
 
 import os
 import threading
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, tzinfo
 from string import ascii_lowercase
 from unittest import skipIf
 from unittest.mock import patch
@@ -54,7 +54,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
 
         # Document appears as the first document of the list
         self.assertEqual(
-            tv.DOCUMENT1_TITLE, self.get_elem_text(self.first_document_title)
+            "test", self.get_elem_text(self.first_document_title)
         )
 
     @patch.object(apply_ftl_processing, "delay")
@@ -69,7 +69,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
 
         # Document appears as the first document of the list
         self.assertEqual(
-            tv.DOCUMENT1_TITLE, self.get_elem_text(self.first_document_title)
+            "test", self.get_elem_text(self.first_document_title)
         )
         # Document doesn't appears in root folder
         self.visit(HomePage.url)
@@ -1002,7 +1002,7 @@ class DocumentViewerModalTests(
         self.annotate_document(new_doc_note)
 
         # Document note is properly updated in pdf viewer
-        self.assertEqual(self.get_elem_text(self.note_text), new_doc_note)
+        self.assertEqual(self.get_elem_text(self.document_note_text), new_doc_note)
 
     @patch.object(celery.app, "send_task")
     def test_delete_document(self, mock_send_task_delete_document):
@@ -1133,13 +1133,13 @@ class DocumentViewerModalTests(
     def test_display_next_and_previous_documents(self):
         # User already added 3 docs and has opened the first one
         setup_document(
-            self.org, self.user, binary=setup_temporary_file().name, title="doc3"
+            self.org, self.user, title="doc3"
         )
         setup_document(
-            self.org, self.user, binary=setup_temporary_file().name, title="doc2"
+            self.org, self.user, title="doc2"
         )
         setup_document(
-            self.org, self.user, binary=setup_temporary_file().name, title="doc1"
+            self.org, self.user, title="doc1"
         )
         self.refresh_documents_list()
         self.open_first_document()
@@ -1192,7 +1192,7 @@ class DocumentViewerModalTests(
 
     def test_buttons_next_and_previous_documents_hidden(self):
         # User already added 1 doc and has opened it
-        setup_document(self.org, self.user, binary=setup_temporary_file().name)
+        setup_document(self.org, self.user)
         self.refresh_documents_list()
         self.open_first_document()
 
@@ -1207,7 +1207,7 @@ class DocumentViewerModalTests(
         self.close_document()
 
         # User add a second document and reopen the first doc of the list
-        setup_document(self.org, self.user, binary=setup_temporary_file().name)
+        setup_document(self.org, self.user)
         self.refresh_documents_list()
         self.open_first_document()
 

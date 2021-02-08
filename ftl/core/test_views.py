@@ -1,5 +1,5 @@
-#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
-#  Licensed under the Business Source License. See LICENSE at project root for more information.
+#  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
+#  Licensed under the Business Source License. See LICENSE in the project root for more information.
 import datetime
 import time
 import uuid
@@ -126,7 +126,7 @@ class DownloadDocumentTests(TestCase):
             note=tv.DOCUMENT_DOCX_NOTE,
             text_content=tv.DOCUMENT_DOCX_CONTENT,
             binary=tv.DOCUMENT_DOCX_BINARY_PATH,
-            type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            file_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         )
         setup_authenticated_session(self.client, self.org, self.user)
 
@@ -240,7 +240,7 @@ class DocumentSharingTests(TestCase):
             note=tv.DOCUMENT_DOCX_NOTE,
             text_content=tv.DOCUMENT_DOCX_CONTENT,
             binary=tv.DOCUMENT_DOCX_BINARY_PATH,
-            type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            file_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         )
         doc_share = setup_document_share(doc)
 
