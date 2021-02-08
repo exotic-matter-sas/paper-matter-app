@@ -353,6 +353,7 @@
             <b-col class="px-3 py-2 py-xl-0">
               <FTLNote
                 v-if="currentOpenDoc.pid"
+                :key="currentOpenDoc.pid"
                 :doc="currentOpenDoc"
                 @event-document-note-edited="documentNoteUpdated"
                 @event-close-note="noteToggled = false"
