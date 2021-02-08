@@ -1218,9 +1218,11 @@ class DocumentViewerModalTests(
     def test_document_data_properly_updated_by_next_and_previous(self):
         # User already added 2 docs and has opened the first one
         document2_date = datetime(2021, 1, 1, 1, 1, 1, 1, tzinfo=pytz.utc)
-        setup_document(
+        document2 = setup_document(
             self.org, self.user, title=tv.DOCUMENT2_TITLE, note=tv.DOCUMENT2_NOTE, creation_date=document2_date
         )
+        setup_document_share(document2)
+        setup_document_reminder(document2, self.user, tv.DOCUMENT_REMINDER_TOMORROW_DATE)
         document1_date = datetime(2021, 2, 2, 2, 2, 2, 2, tzinfo=pytz.utc)
         setup_document(
             self.org, self.user, title=tv.DOCUMENT1_TITLE, note=tv.DOCUMENT1_NOTE, creation_date=document1_date
@@ -1233,6 +1235,8 @@ class DocumentViewerModalTests(
         # hour +1 due to user tz
         self.assertIn("Tuesday, February 2, 2021 3:02 AM", self.get_elem_text(self.document_date))
         self.assertEqual(tv.DOCUMENT1_NOTE, self.get_elem_text(self.document_note_text))
+        self.assertEqual("Share", self.get_elem_text(self.share_document_button))
+        self.assertEqual("Reminders", self.get_elem_text(self.document_reminder_button))
 
         # User display next doc
         self.get_elem(self.next_document_button).click()
@@ -1241,6 +1245,8 @@ class DocumentViewerModalTests(
         self.assertEqual(tv.DOCUMENT2_TITLE, self.get_elem_text(self.document_title))
         self.assertIn("Friday, January 1, 2021 2:01 AM", self.get_elem_text(self.document_date))
         self.assertEqual(tv.DOCUMENT2_NOTE, self.get_elem_text(self.document_note_text))
+        self.assertEqual("Sharing", self.get_elem_text(self.share_document_button))
+        self.assertEqual("Reminders 1", self.get_elem_text(self.document_reminder_button))
 
         # User back to first doc
         self.get_elem(self.previous_document_button).click()
@@ -1249,6 +1255,8 @@ class DocumentViewerModalTests(
         self.assertEqual(tv.DOCUMENT1_TITLE, self.get_elem_text(self.document_title))
         self.assertIn("Tuesday, February 2, 2021 3:02 AM", self.get_elem_text(self.document_date))
         self.assertEqual(tv.DOCUMENT1_NOTE, self.get_elem_text(self.document_note_text))
+        self.assertEqual("Share", self.get_elem_text(self.share_document_button))
+        self.assertEqual("Reminders", self.get_elem_text(self.document_reminder_button))
 
 
 @override_settings(CELERY_BROKER_URL="memory://localhost")
