@@ -1,9 +1,10 @@
-#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
-#  Licensed under the Business Source License. See LICENSE at project root for more information.
+#  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
+#  Licensed under the Business Source License. See LICENSE in the project root for more information.
 from django.conf import settings
 from django.conf.urls import url
 from django_otp.decorators import otp_required
-from oauth2_provider import views
+
+from account import views_oauth2_mgnt
 
 app_name = "oauth2_provider"
 
@@ -12,7 +13,7 @@ urlpatterns = [
     url(
         r"^authorized_tokens/$",
         otp_required(
-            views.AuthorizedTokensListView.as_view(
+            views_oauth2_mgnt.FTLAccountAuthorizedTokensListView.as_view(
                 template_name="account/oauth2_authorized-tokens.html"
             ),
             if_configured=True,
@@ -22,7 +23,7 @@ urlpatterns = [
     url(
         r"^authorized_tokens/(?P<pk>[\w-]+)/delete/$",
         otp_required(
-            views.AuthorizedTokenDeleteView.as_view(
+            views_oauth2_mgnt.FTLAccountAuthorizedTokenDeleteView.as_view(
                 template_name="account/oauth2_authorized-token-delete.html"
             ),
             if_configured=True,
@@ -36,35 +37,35 @@ if getattr(settings, "FTL_ENABLE_DEV_API", False):
     urlpatterns += [
         url(
             r"^applications/$",
-            views.ApplicationList.as_view(
+            views_oauth2_mgnt.FTLAccountApplicationList.as_view(
                 template_name="account/oauth2_application_list.html"
             ),
             name="list",
         ),
         url(
             r"^applications/register/$",
-            views.ApplicationRegistration.as_view(
+            views_oauth2_mgnt.FTLAccountApplicationRegistration.as_view(
                 template_name="account/oauth2_application_registration_form.html"
             ),
             name="register",
         ),
         url(
             r"^applications/(?P<pk>[\w-]+)/$",
-            views.ApplicationDetail.as_view(
+            views_oauth2_mgnt.FTLAccountApplicationDetail.as_view(
                 template_name="account/oauth2_application_detail.html"
             ),
             name="detail",
         ),
         url(
             r"^applications/(?P<pk>[\w-]+)/delete/$",
-            views.ApplicationDelete.as_view(
+            views_oauth2_mgnt.FTLAccountApplicationDelete.as_view(
                 template_name="account/oauth2_application_confirm_delete.html"
             ),
             name="delete",
         ),
         url(
             r"^applications/(?P<pk>[\w-]+)/update/$",
-            views.ApplicationUpdate.as_view(
+            views_oauth2_mgnt.FTLAccountApplicationUpdate.as_view(
                 template_name="account/oauth2_application_form.html"
             ),
             name="update",

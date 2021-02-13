@@ -1,5 +1,5 @@
-#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
-#  Licensed under the Business Source License. See LICENSE at project root for more information.
+#  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
+#  Licensed under the Business Source License. See LICENSE in the project root for more information.
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
@@ -7,7 +7,6 @@ from django.utils.decorators import method_decorator
 from django.utils.http import is_safe_url
 from django.views import View
 from django.views.generic import DeleteView
-from django.views.generic.base import ContextMixin
 from django_otp import devices_for_user
 from django_otp.decorators import otp_required
 from django_otp.plugins.otp_static.models import StaticDevice, StaticToken
@@ -32,7 +31,7 @@ class ListOTPDevices(FTLAccountProcessorContextMixin, View):
         # FIDO2
         fido2_devices = Fido2Device.objects.filter(user=user)
 
-        context_data = self.get_ftl_context_data_with_request(request)
+        context_data = self.get_context_data()
         context_data.update(
             {
                 "static_devices": static_devices,
