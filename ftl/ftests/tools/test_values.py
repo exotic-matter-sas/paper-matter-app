@@ -1,5 +1,5 @@
 #  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
-#  Licensed under the Business Source License. See LICENSE at project root for more information.
+#  Licensed under the Business Source License. See LICENSE in the project root for more information.
 from datetime import timedelta
 
 from django.utils import timezone
@@ -30,17 +30,17 @@ USER2_PASS = "a123456!2"
 USER3_EMAIL = "user3@localhost.com"
 USER3_PASS = "a123456!3"
 
-DOCUMENT1_TITLE = "test"
+DOCUMENT1_TITLE = "Document 1 title"
 DOCUMENT1_NOTE = "Document 1 note"
 DOCUMENT1_BINARY_PATH = "ftests/tools/test_documents/test.pdf"
 DOCUMENT1_CONTENT = "Document 1 content"
 DOCUMENT1_LANGUAGE = "english"
 
-DOCUMENT2_TITLE = "Document 2"
+DOCUMENT2_TITLE = "Document 2 title"
 DOCUMENT2_NOTE = "Document 2 note"
 DOCUMENT2_CONTENT = "Document 2 content"
 
-DOCUMENT_DOCX_TITLE = "Document DOCX"
+DOCUMENT_DOCX_TITLE = "Document DOCX title"
 DOCUMENT_DOCX_NOTE = "Document DOCX note"
 DOCUMENT_DOCX_CONTENT = "Document DOCX content"
 DOCUMENT_DOCX_BINARY_PATH = "ftests/tools/test_documents/word.docx"

@@ -1,10 +1,10 @@
 #  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
-#  Licensed under the Business Source License. See LICENSE in the project root for license information.
+#  Licensed under the Business Source License. See LICENSE in the project root for more information.
 
 import os
 import threading
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, tzinfo
 from string import ascii_lowercase
 from unittest import skipIf
 from unittest.mock import patch
@@ -53,9 +53,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         self.upload_documents()
 
         # Document appears as the first document of the list
-        self.assertEqual(
-            tv.DOCUMENT1_TITLE, self.get_elem_text(self.first_document_title)
-        )
+        self.assertEqual("test", self.get_elem_text(self.first_document_title))
 
     @patch.object(apply_ftl_processing, "delay")
     def test_upload_document_to_subfolder(self, mock_apply_processing):
@@ -68,9 +66,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         self.upload_documents()
 
         # Document appears as the first document of the list
-        self.assertEqual(
-            tv.DOCUMENT1_TITLE, self.get_elem_text(self.first_document_title)
-        )
+        self.assertEqual("test", self.get_elem_text(self.first_document_title))
         # Document doesn't appears in root folder
         self.visit(HomePage.url)
         with self.assertRaises(NoSuchElementException):
@@ -1002,7 +998,7 @@ class DocumentViewerModalTests(
         self.annotate_document(new_doc_note)
 
         # Document note is properly updated in pdf viewer
-        self.assertEqual(self.get_elem_text(self.note_text), new_doc_note)
+        self.assertEqual(self.get_elem_text(self.document_note_text), new_doc_note)
 
     @patch.object(celery.app, "send_task")
     def test_delete_document(self, mock_send_task_delete_document):
@@ -1132,15 +1128,9 @@ class DocumentViewerModalTests(
 
     def test_display_next_and_previous_documents(self):
         # User already added 3 docs and has opened the first one
-        setup_document(
-            self.org, self.user, binary=setup_temporary_file().name, title="doc3"
-        )
-        setup_document(
-            self.org, self.user, binary=setup_temporary_file().name, title="doc2"
-        )
-        setup_document(
-            self.org, self.user, binary=setup_temporary_file().name, title="doc1"
-        )
+        setup_document(self.org, self.user, title="doc3")
+        setup_document(self.org, self.user, title="doc2")
+        setup_document(self.org, self.user, title="doc1")
         self.refresh_documents_list()
         self.open_first_document()
 
@@ -1192,7 +1182,7 @@ class DocumentViewerModalTests(
 
     def test_buttons_next_and_previous_documents_hidden(self):
         # User already added 1 doc and has opened it
-        setup_document(self.org, self.user, binary=setup_temporary_file().name)
+        setup_document(self.org, self.user)
         self.refresh_documents_list()
         self.open_first_document()
 
@@ -1207,13 +1197,74 @@ class DocumentViewerModalTests(
         self.close_document()
 
         # User add a second document and reopen the first doc of the list
-        setup_document(self.org, self.user, binary=setup_temporary_file().name)
+        setup_document(self.org, self.user)
         self.refresh_documents_list()
         self.open_first_document()
 
         # Buttons are now shown
         self.get_elem(self.previous_document_button)
         self.get_elem(self.next_document_button)
+
+    def test_document_data_properly_updated_by_next_and_previous(self):
+        # User already added 2 docs and has opened the first one
+        document2_date = datetime(2021, 1, 1, 1, 1, 1, 1, tzinfo=pytz.utc)
+        document2 = setup_document(
+            self.org,
+            self.user,
+            title=tv.DOCUMENT2_TITLE,
+            note=tv.DOCUMENT2_NOTE,
+            creation_date=document2_date,
+        )
+        setup_document_share(document2)
+        setup_document_reminder(
+            document2, self.user, tv.DOCUMENT_REMINDER_TOMORROW_DATE
+        )
+        document1_date = datetime(2021, 2, 2, 2, 2, 2, 2, tzinfo=pytz.utc)
+        setup_document(
+            self.org,
+            self.user,
+            title=tv.DOCUMENT1_TITLE,
+            note=tv.DOCUMENT1_NOTE,
+            creation_date=document1_date,
+        )
+        self.refresh_documents_list()
+        self.open_first_document()
+
+        # First doc data are properly displayed
+        self.assertEqual(tv.DOCUMENT1_TITLE, self.get_elem_text(self.document_title))
+        # hour +1 due to user tz
+        self.assertIn(
+            "Tuesday, February 2, 2021 3:02 AM", self.get_elem_text(self.document_date)
+        )
+        self.assertEqual(tv.DOCUMENT1_NOTE, self.get_elem_text(self.document_note_text))
+        self.assertEqual("Share", self.get_elem_text(self.share_document_button))
+        self.assertEqual("Reminders", self.get_elem_text(self.document_reminder_button))
+
+        # User display next doc
+        self.get_elem(self.next_document_button).click()
+
+        # Second doc data are properly displayed
+        self.assertEqual(tv.DOCUMENT2_TITLE, self.get_elem_text(self.document_title))
+        self.assertIn(
+            "Friday, January 1, 2021 2:01 AM", self.get_elem_text(self.document_date)
+        )
+        self.assertEqual(tv.DOCUMENT2_NOTE, self.get_elem_text(self.document_note_text))
+        self.assertEqual("Sharing", self.get_elem_text(self.share_document_button))
+        self.assertEqual(
+            "Reminders 1", self.get_elem_text(self.document_reminder_button)
+        )
+
+        # User back to first doc
+        self.get_elem(self.previous_document_button).click()
+
+        # First doc data are properly displayed
+        self.assertEqual(tv.DOCUMENT1_TITLE, self.get_elem_text(self.document_title))
+        self.assertIn(
+            "Tuesday, February 2, 2021 3:02 AM", self.get_elem_text(self.document_date)
+        )
+        self.assertEqual(tv.DOCUMENT1_NOTE, self.get_elem_text(self.document_note_text))
+        self.assertEqual("Share", self.get_elem_text(self.share_document_button))
+        self.assertEqual("Reminders", self.get_elem_text(self.document_reminder_button))
 
 
 @override_settings(CELERY_BROKER_URL="memory://localhost")

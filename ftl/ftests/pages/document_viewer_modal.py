@@ -1,5 +1,5 @@
 #  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
-#  Licensed under the Business Source License. See LICENSE at project root for more information.
+#  Licensed under the Business Source License. See LICENSE in the project root for more information.
 from django.utils import timezone
 from selenium.common.exceptions import NoSuchElementException
 
@@ -10,33 +10,44 @@ class DocumentViewerModal(BasePage):
     url = "/app/#/home?doc={}"
 
     page_body = "#document-viewer"
+
+    # Document modal header
+    # =====================
     document_title = "#document-title"
+    document_date = "#document-date-big"
 
     rename_document_button = "#rename-document"
     previous_document_button = "#previous-next-big button:first-child"
     next_document_button = "#previous-next-big button:last-child"
     close_document_button = "#document-viewer .close"
-    download_button = "#download-document"
-    download_button_dropdown = "#download-document .dropdown-toggle"
-    open_pdf_button = "#open-document"
-    move_document_button = "#move-document"
-    delete_document_button = "#delete-document"
-    document_reminder_button = "#document-reminder"
 
-    edit_note_button = "#edit-note"
-    note_textarea = "#note-textarea"
-    note_text = "#note"
-    save_note_button = "#save-note"
-
+    # Document viewer
+    # ===============
     pdf_viewer_iframe = "#pdf-embed-container iframe"
     document_viewer_panel = "#document-viewer"
     compatibility_viewer_button = "label[for='toggle-compat-viewer']"
     pdf_native_viewer = "#pdf-embed-container embed"
 
+    # Document actions
+    # ================
+    download_button = "#download-document"
+    download_button_dropdown = "#download-document .dropdown-toggle"
+    open_pdf_button = "#open-document"
+
     share_document_button = "#share-document"
-    validate_modal_button = "#"
     unshare_modal_button = "[id^='modal-document-sharing'] .modal-footer .btn-danger"
 
+    move_document_button = "#move-document"
+    document_reminder_button = "#document-reminder"
+    delete_document_button = "#delete-document"
+
+    edit_document_note_button = "#edit-note"
+    document_note_textarea = "#note-textarea"
+    document_note_text = "#note"
+    save_document_note_button = "#save-note"
+
+    # Document reminder popup
+    # =======================
     reminder_for_tomorrow_button = (
         ".b-calendar .b-calendar-inner > footer .btn:first-child"
     )
@@ -62,13 +73,13 @@ class DocumentViewerModal(BasePage):
 
     def annotate_document(self, note):
         try:
-            self.get_elem(self.edit_note_button).click()
+            self.get_elem(self.edit_document_note_button).click()
         except NoSuchElementException:
             pass
-        self.wait_for_elem_to_show(self.note_textarea)
-        self.get_elem(self.note_textarea).clear()
-        self.get_elem(self.note_textarea).send_keys(note)
-        self.get_elem(self.save_note_button).click()
+        self.wait_for_elem_to_show(self.document_note_textarea)
+        self.get_elem(self.document_note_textarea).clear()
+        self.get_elem(self.document_note_textarea).send_keys(note)
+        self.get_elem(self.save_document_note_button).click()
 
     def delete_document(self):
         self.get_elem(self.delete_document_button).click()
