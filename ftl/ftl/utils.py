@@ -5,7 +5,7 @@
 def initialize_static(cls):
     """
     Use as a decorator to simulate a static initializer (execute class method one time for the
-    whole lifecycle of the class.
+    whole lifecycle of the class).
     :param cls:
     :return:
     """

@@ -19,7 +19,7 @@ class FTLAccountProcessorContextMixin(ContextMixin):
 
     @classmethod
     def init_static(cls):
-        # Only load plugins at first class instanciation
+        # Only load plugins at first class instantiation
         if not cls.plugins:
             plugins_to_load = getattr(settings, "FTL_ACCOUNT_PROCESSORS", [])
 

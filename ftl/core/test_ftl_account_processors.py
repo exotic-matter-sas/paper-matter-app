@@ -27,7 +27,7 @@ class FTLAccountProcessorContextMixinTests(SimpleTestCase):
         self.assertTrue(instance == mock_processor)
         self.assertTrue(instance_bis == mock_processor_bis)
 
-    def test_get_context_data_with_request(self):
+    def test_get_context_data(self):
         rf = RequestFactory()
         self.processor.request = rf.get("/hello/")
         context_data = self.processor.get_context_data()
