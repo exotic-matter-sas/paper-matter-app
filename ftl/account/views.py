@@ -1,5 +1,5 @@
-#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
-#  Licensed under the Business Source License. See LICENSE at project root for more information.
+#  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
+#  Licensed under the Business Source License. See LICENSE in the project root for more information.
 
 from datetime import timedelta
 
@@ -34,11 +34,7 @@ from core.tasks import send_email_async
 @method_decorator(otp_required(if_configured=True), name="dispatch")
 class AccountView(FTLAccountProcessorContextMixin, View):
     def get(self, request, *args, **kwargs):
-        return render(
-            request,
-            "account/account_index.html",
-            self.get_ftl_context_data_with_request(request),
-        )
+        return render(request, "account/account_index.html", self.get_context_data())
 
 
 @method_decorator(login_required, name="dispatch")
@@ -58,7 +54,7 @@ class AccountActivityView(FTLAccountProcessorContextMixin, View):
             access_log.parsed = user_agent_parser.Parse(access_log.user_agent)
             access_logs_parsed.append(access_log)
 
-        context = self.get_ftl_context_data_with_request(request)
+        context = self.get_context_data()
         context["access_log"] = access_logs_parsed
 
         return render(request, "account/account_activity.html", context)
@@ -66,7 +62,9 @@ class AccountActivityView(FTLAccountProcessorContextMixin, View):
 
 @method_decorator(login_required, name="dispatch")
 @method_decorator(otp_required(if_configured=True), name="dispatch")
-class AccountEmailChangeView(SuccessMessageMixin, FormView):
+class AccountEmailChangeView(
+    FTLAccountProcessorContextMixin, SuccessMessageMixin, FormView
+):
     template_name = "account/account_email.html"
     email_change_subject = "account/account_email_change_subject.txt"
     email_warn_subject = "account/account_email_warn_subject.txt"
@@ -168,7 +166,9 @@ class AccountEmailChangeValidateView(View):
 
 @method_decorator(login_required, name="dispatch")
 @method_decorator(otp_required(if_configured=True), name="dispatch")
-class AccountPasswordView(SuccessMessageMixin, PasswordChangeView):
+class AccountPasswordView(
+    FTLAccountProcessorContextMixin, SuccessMessageMixin, PasswordChangeView
+):
     template_name = "account/account_password.html"
     form_class = PasswordChangeForm
     success_url = reverse_lazy("account_index")
@@ -195,14 +195,18 @@ class AccountPasswordView(SuccessMessageMixin, PasswordChangeView):
 
 @method_decorator(login_required, name="dispatch")
 @method_decorator(otp_required(if_configured=True), name="dispatch")
-class AccountImportExportView(View):
+class AccountImportExportView(FTLAccountProcessorContextMixin, View):
     def get(self, request, *args, **kwargs):
-        return render(request, "account/account_import_export.html")
+        return render(
+            request,
+            "account/account_import_export.html",
+            context=self.get_context_data(),
+        )
 
 
 @method_decorator(login_required, name="dispatch")
 @method_decorator(otp_required(if_configured=True), name="dispatch")
-class AccountDeleteView(SuccessMessageMixin, FormView):
+class AccountDeleteView(FTLAccountProcessorContextMixin, SuccessMessageMixin, FormView):
     template_name = "account/account_delete.html"
     form_class = DeleteAccountForm
     success_url = reverse_lazy("login")
@@ -245,7 +249,9 @@ class AccountDeleteView(SuccessMessageMixin, FormView):
 
 @method_decorator(login_required, name="dispatch")
 @method_decorator(otp_required(if_configured=True), name="dispatch")
-class AccountSettingsView(SuccessMessageMixin, FormView):
+class AccountSettingsView(
+    FTLAccountProcessorContextMixin, SuccessMessageMixin, FormView
+):
     template_name = "account/account_settings.html"
     form_class = SettingsAccountForm
     success_url = reverse_lazy("account_index")

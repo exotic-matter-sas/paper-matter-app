@@ -1,5 +1,5 @@
 #  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
-#  Licensed under the Business Source License. See LICENSE at project root for more information.
+#  Licensed under the Business Source License. See LICENSE in the project root for more information.
 import hashlib
 import json
 import urllib
@@ -61,9 +61,7 @@ class WebSearchQuery(SearchQuery):
 @method_decorator(otp_required(if_configured=True), name="dispatch")
 class HomeView(FTLAccountProcessorContextMixin, View):
     def get(self, request, *args, **kwargs):
-        return render(
-            request, "core/home.html", self.get_ftl_context_data_with_request(request)
-        )
+        return render(request, "core/home.html", self.get_context_data())
 
 
 # API
