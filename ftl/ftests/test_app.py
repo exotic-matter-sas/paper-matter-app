@@ -1162,12 +1162,13 @@ class DocumentViewerModalTests(
         )
 
         # User try to click on the button anyway
-        self.get_elem(self.previous_document_button).click()
+        self.display_previous_document()
+
         # The first doc stay displayed
         self.assertEqual("doc1", self.get_elem_text(self.document_title))
 
         # User display next doc
-        self.get_elem(self.next_document_button).click()
+        self.display_next_document()
         # The second doc is now displayed
         self.assertEqual("doc2", self.get_elem_text(self.document_title))
 
@@ -1177,7 +1178,7 @@ class DocumentViewerModalTests(
         )
 
         # User display the next doc
-        self.get_elem(self.next_document_button).click()
+        self.display_next_document()
         # The third doc is now displayed
         self.assertEqual("doc3", self.get_elem_text(self.document_title))
 
@@ -1186,12 +1187,12 @@ class DocumentViewerModalTests(
             "true", self.get_elem_attribute(self.next_document_button, "disabled")
         )
         # User try to click on the button anyway
-        self.get_elem(self.next_document_button).click()
+        self.display_next_document()
         # The last doc stay displayed
         self.assertEqual("doc3", self.get_elem_text(self.document_title))
 
         # User display previous doc
-        self.get_elem(self.previous_document_button).click()
+        self.display_previous_document()
         # The second doc is now displayed
         self.assertEqual("doc2", self.get_elem_text(self.document_title))
 

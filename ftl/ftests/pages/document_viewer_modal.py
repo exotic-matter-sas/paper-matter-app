@@ -121,3 +121,11 @@ class DocumentViewerModal(BasePage):
         if len(reminders_delete) > reminder_index_to_delete:
             reminders_delete[reminder_index_to_delete].click()
         time.sleep(0.5)
+
+    def display_previous_document(self):
+        self.get_elem(self.previous_document_button).click()
+        time.sleep(0.5)
+
+    def display_next_document(self):
+        self.get_elem(self.next_document_button).click()
+        time.sleep(0.5)
