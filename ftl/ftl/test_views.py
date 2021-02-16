@@ -1,8 +1,8 @@
-#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
-#  Licensed under the Business Source License. See LICENSE at project root for more information.
+#  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
+#  Licensed under the Business Source License. See LICENSE in the project root for more information.
 import re
 from datetime import datetime, timezone, timedelta
-from unittest.mock import patch, Mock
+from unittest.mock import patch, Mock, call
 
 import qrcode.image.svg
 from captcha.models import CaptchaStore
@@ -882,11 +882,10 @@ class OTPFtlViewsFido2Tests(TestCase):
         fido2_server_mock.assert_called_once_with(pkcre_mock())
 
         self.assertEqual(cbor2_mock.loads.call_count, 2)
-        cbor2_mock.loads.assert_any_call(self.fido2_device.authenticator_data)
-        cbor2_mock.loads.assert_any_call(fido2_device_2.authenticator_data)
-        self.assertEqual(acd_mock.call_count, 2)
-        acd_mock.assert_any_call(fake_cbor2_loaded_list[0])
-        acd_mock.assert_any_call(fake_cbor2_loaded_list[1])
+        _, loads_mock_first_call_args, _ = cbor2_mock.loads.mock_calls[0]
+        _, loads_mock_second_call_args, _ = cbor2_mock.loads.mock_calls[1]
+        self.assertEqual(loads_mock_first_call_args[0].tobytes(), self.fido2_device.authenticator_data)
+        self.assertEqual(loads_mock_second_call_args[0].tobytes(), fido2_device_2.authenticator_data)
 
         fido2_server_mock().register_begin.assert_called_once_with(
             {
