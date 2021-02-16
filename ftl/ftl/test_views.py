@@ -884,8 +884,13 @@ class OTPFtlViewsFido2Tests(TestCase):
         self.assertEqual(cbor2_mock.loads.call_count, 2)
         _, loads_mock_first_call_args, _ = cbor2_mock.loads.mock_calls[0]
         _, loads_mock_second_call_args, _ = cbor2_mock.loads.mock_calls[1]
-        self.assertEqual(loads_mock_first_call_args[0].tobytes(), self.fido2_device.authenticator_data)
-        self.assertEqual(loads_mock_second_call_args[0].tobytes(), fido2_device_2.authenticator_data)
+        self.assertEqual(
+            loads_mock_first_call_args[0].tobytes(),
+            self.fido2_device.authenticator_data,
+        )
+        self.assertEqual(
+            loads_mock_second_call_args[0].tobytes(), fido2_device_2.authenticator_data
+        )
 
         fido2_server_mock().register_begin.assert_called_once_with(
             {
