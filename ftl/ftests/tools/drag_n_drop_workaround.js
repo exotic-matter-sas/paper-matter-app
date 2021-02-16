@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
- * Licensed under the Business Source License. See LICENSE at project root for more information.
+ * Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
+ * Licensed under the Business Source License. See LICENSE in the project root for more information.
  */
 
 // This script is needed to get around a Selenium/Webdriver bug with drag n drop
@@ -24,7 +24,8 @@ function simulateDragDrop(sourceNode, destinationNode) {
       },
       getData: function(type) {
         return this.data[type]
-      }
+      },
+      setDragImage: function(){}
     };
     return event
   }

@@ -1,5 +1,5 @@
-#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
-#  Licensed under the Business Source License. See LICENSE at project root for more information.
+#  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
+#  Licensed under the Business Source License. See LICENSE in the project root for more information.
 
 import threading
 
@@ -110,7 +110,7 @@ class SignupPageSetRegionSettingsTests(SignupPages, LoginPage, AccountPages):
 
     def setUp(self, **kwargs):
         # first org and admin already created
-        super().setUp(browser_locale="fr-FR, fr")
+        super().setUp(browser_locale="fr")
         self.admin_org = setup_org("admin org", "admin-org")
         setup_admin(org=self.admin_org)
 

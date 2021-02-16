@@ -1,6 +1,6 @@
-#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
-#  Licensed under the Business Source License. See LICENSE at project root for more information.
-
+#  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
+#  Licensed under the Business Source License. See LICENSE in the project root for more information.
+import json
 import os
 import platform
 import secrets
@@ -52,10 +52,14 @@ class BasePage(LIVE_SERVER):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.root_url = ""
+        self.expected_browser_logs = []
 
         self._download_dir = None
         self._tests_screenshots_path = os.path.join(
             settings.BASE_DIR, "ftests", "tests_screenshots"
+        )
+        self._browser_logs_path = os.path.join(
+            settings.BASE_DIR, "ftests", "browser_logs"
         )
 
     @classmethod
@@ -101,8 +105,12 @@ class BasePage(LIVE_SERVER):
             )
         elif browser == "chrome":
             options = ChromeOptions()
-            # Set browser language for web pages
-            options.add_argument(f"--lang={browser_locale}")
+            # --lang argument is no more supported on Linux
+            # see: https://bugs.chromium.org/p/chromium/issues/detail?id=755338#c14
+            if platform.system() == "Linux":
+                os.environ["LANGUAGE"] = browser_locale
+            else:
+                options.add_argument(f"--lang={browser_locale}")
 
             # Set default browser download dir and remove download prompt
             chrome_profile = {
@@ -137,8 +145,24 @@ class BasePage(LIVE_SERVER):
 
     def tearDown(self):
         self._download_dir.cleanup()
+        self._save_browser_logs()
 
         self.browser.quit()
+
+    def _save_browser_logs(self):
+        # get_log only work with Chrome (see note in https://gitlab.com/exotic-matter/ftl-app/-/issues/203)
+        if self.browser.name in ["chrome", "chromium"]:
+            browser_logs = {
+                "expected": self.expected_browser_logs,
+                "actual": self.browser.get_log("browser"),
+            }
+            if len(browser_logs["actual"]) or len(browser_logs["expected"]):
+                file_path = os.path.join(
+                    self._browser_logs_path, f"{self.id()}-{int(time.time())}.json"
+                )
+                with open(file_path, "w") as f:
+                    f.write(json.dumps(browser_logs))
+        self.expected_browser_logs.clear()
 
     @property
     def head_title(self):
@@ -350,6 +374,7 @@ class BasePage(LIVE_SERVER):
 
     def accept_modal(self):
         self.wait_for_elem_to_show(self.modal_accept_button)
+        time.sleep(0.5)
         self.get_elem(self.modal_accept_button).click()
         self.wait_for_elem_to_disappear(self.modal_accept_button)
 
@@ -358,8 +383,8 @@ class BasePage(LIVE_SERVER):
         return mail.outbox[-1]
 
     def download_file(self, download_trigger_css_selector, timeout=10):
-        self.get_elem(download_trigger_css_selector).click()
         initial_content = os.listdir(self._download_dir.name)
+        self.get_elem(download_trigger_css_selector).click()
         current_content = initial_content
 
         # Wait for new file to show up in download dir

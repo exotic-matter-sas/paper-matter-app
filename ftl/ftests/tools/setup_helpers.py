@@ -3,10 +3,13 @@
 
 import os
 import tempfile
+from binascii import a2b_hex
 
 from django.utils import timezone
+import cbor2
 from django_otp.plugins.otp_static.models import StaticDevice, StaticToken
 from django_otp.plugins.otp_totp.models import TOTPDevice
+from fido2.ctap2 import AttestedCredentialData
 
 from core.models import (
     FTLOrg,
@@ -125,7 +128,19 @@ def setup_2fa_totp_device(
 
 
 def setup_2fa_fido2_device(ftl_user, name=tv.FIDO2_DEVICE_NAME, confirmed=True):
-    return Fido2Device.objects.create(user=ftl_user, name=name, confirmed=confirmed)
+    # This is a test credential from `fido2` unit test.
+    # https://github.com/Yubico/python-fido2/blob/master/test/test_ctap2.py
+    fido2_fake_authenticator_data = AttestedCredentialData(
+        a2b_hex(
+            "f8a011f38c0a4d15800617111f9edc7d0040fe3aac036d14c1e1c65518b698dd1da8f596bc33e11072813466c6bf3845691509b80fb76d59309b8d39e0a93452688f6ca3a39a76f3fc52744fb73948b15783a5010203262001215820643566c206dd00227005fa5de69320616ca268043a38f08bde2e9dc45a5cafaf225820171353b2932434703726aae579fa6542432861fe591e481ea22d63997e1a5290"
+        )
+    )
+    return Fido2Device.objects.create(
+        user=ftl_user,
+        name=name,
+        confirmed=confirmed,
+        authenticator_data=cbor2.dumps(fido2_fake_authenticator_data),
+    )
 
 
 def setup_document_share(

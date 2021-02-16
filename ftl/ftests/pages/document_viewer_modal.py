@@ -1,5 +1,7 @@
 #  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
 #  Licensed under the Business Source License. See LICENSE in the project root for more information.
+import time
+
 from django.utils import timezone
 from selenium.common.exceptions import NoSuchElementException
 
@@ -64,6 +66,7 @@ class DocumentViewerModal(BasePage):
         self.wait_for_elem_to_show(self.rename_document_button)
         self.get_elem(self.rename_document_button).click()
         self.wait_for_elem_to_show(self.modal_input)
+        self.get_elem(self.modal_input).clear()
         self.get_elem(self.modal_input).send_keys(document_name)
         self.accept_modal()
 
@@ -99,7 +102,9 @@ class DocumentViewerModal(BasePage):
         self.get_elem(self.share_document_button).click()
         self.wait_for_elem_to_show(self.modal_input)
         self.wait_for_elem_text_not_to_be(self.modal_input, "")
+        time.sleep(0.5)
         self.get_elem(self.unshare_modal_button).click()
+        self.wait_for_elem_to_disappear(self.unshare_modal_button)
 
     def add_document_reminder_tomorrow(self, note=""):
         self.wait_for_elem_to_show(self.document_reminder_button)
@@ -126,3 +131,12 @@ class DocumentViewerModal(BasePage):
         reminders_delete = self.get_elems(self.reminder_list_elements_delete)
         if len(reminders_delete) > reminder_index_to_delete:
             reminders_delete[reminder_index_to_delete].click()
+        time.sleep(0.5)
+
+    def display_previous_document(self):
+        self.get_elem(self.previous_document_button).click()
+        time.sleep(0.5)
+
+    def display_next_document(self):
+        self.get_elem(self.next_document_button).click()
+        time.sleep(0.5)

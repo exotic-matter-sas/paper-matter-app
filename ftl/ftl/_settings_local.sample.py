@@ -1,11 +1,12 @@
-#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
-#  Licensed under the Business Source License. See LICENSE at project root for more information.
+#  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
+#  Licensed under the Business Source License. See LICENSE in the project root for more information.
 """
 Template for setting_local.py file, useful for new contributors
 
 1. Copy file and rename it without the starting underscore => `settings_local.py`
 2. Read the to-do comments bellow to set proper value for local settings
 """
+import sys
 
 from ftl.enums import FTLStorages, FTLPlugins
 
@@ -44,7 +45,7 @@ EMAIL_HOST_PASSWORD = ""
 EMAIL_PORT = 25
 EMAIL_USE_SSL = False
 
-# TODO set preferences for functionnal tests
+# TODO set preferences for functional tests
 DEFAULT_TEST_BROWSER = "chrome"
 TEST_BROWSER_HEADLESS = True
 
@@ -112,3 +113,45 @@ from .settings import REST_FRAMEWORK
 
 del REST_FRAMEWORK["DEFAULT_THROTTLE_CLASSES"]
 del REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]
+
+"""
+URI of the instance
+This is the host address which will be used to generate an absolute URI if there is none given by the current http
+request. It must include the scheme and port.
+"""
+FTL_EXTERNAL_HOST = "http://127.0.0.1:8000"
+
+# TODO to tests Only Office integration follow instructions below
+"""
+OnlyOffice integration
+To test:
+1. Fill Only Office instance settings
+2. Set FTL_ENABLE_ONLY_OFFICE to True
+3. Build frontend
+4. Run PM without `run serve`
+5. Open PM through FTL_EXTERNAL_HOST url
+"""
+FTL_ENABLE_ONLY_OFFICE = False
+FTL_ONLY_OFFICE_PUBLIC_JS_URL = ""
+FTL_ONLY_OFFICE_API_SERVER_URL = ""
+FTL_ONLY_OFFICE_INTERNAL_DOWNLOAD_SERVER_URL = ""
+FTL_ONLY_OFFICE_SECRET_KEY = ""
+
+ALLOWED_HOSTS = ["*"]
+
+# TODO to test code related to API access token expiration easily, uncomment the lines below
+# from .settings import OAUTH2_PROVIDER
+# OAUTH2_PROVIDER["ACCESS_TOKEN_EXPIRE_SECONDS"] = 10
+
+# Switch CSP to report only to not block contents when using `run dev` (front unbuilt)
+CSP_REPORT_ONLY = True
+# TODO if you have enabled FTL_ENABLE_ONLY_OFFICE
+#  You should uncomment lines below and add FTL_ONLY_OFFICE_API_SERVER_URL to CSP_SCRIPT_SRC and CSP_FRAME_SRC tuples
+# from .settings import CSP_SCRIPT_SRC, CSP_FRAME_SRC
+# CSP_SCRIPT_SRC += ("",)
+# CSP_FRAME_SRC += ("",)
+
+# Required for static files to be properly loaded when running ftests with `run dev` in local
+TESTING = sys.argv[1:2] == ["test"]
+if TESTING:
+    STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"

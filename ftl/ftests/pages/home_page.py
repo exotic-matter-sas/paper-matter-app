@@ -1,7 +1,8 @@
 #  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
-#  Licensed under the Business Source License. See LICENSE at project root for more information.
+#  Licensed under the Business Source License. See LICENSE in the project root for more information.
 
 import os
+import time
 
 from django.conf import settings
 
@@ -104,6 +105,7 @@ class HomePage(BasePage):
         self.get_elem(self.create_folder_button).click()
         self.wait_for_elem_to_show(self.modal_input)
         self.get_elem(self.modal_input).send_keys(folder_name)
+        time.sleep(0.5)
         self.accept_modal()
         if close_notification:
             self.close_all_notifications()

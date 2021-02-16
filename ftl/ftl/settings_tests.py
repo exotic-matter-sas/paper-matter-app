@@ -17,14 +17,14 @@ DATABASES = {
     }
 }
 
-DEFAULT_TEST_BROWSER = "firefox"
+DEFAULT_TEST_BROWSER = os.environ.get("TEST_BROWSER")
 
 DEV_MODE = False
 
 EMAIL_SUBJECT_PREFIX = "[TESTS] "
 
-#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
-#  Licensed under the Business Source License. See LICENSE at project root for more information.
+#  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
+#  Licensed under the Business Source License. See LICENSE in the project root for more information.
 
 # Monkey patch REST_FRAMEWORK settings to disable rate limit during tests
 from .settings import REST_FRAMEWORK

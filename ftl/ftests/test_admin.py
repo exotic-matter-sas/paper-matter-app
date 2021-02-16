@@ -1,5 +1,5 @@
-#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
-#  Licensed under the Business Source License. See LICENSE at project root for more information.
+#  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
+#  Licensed under the Business Source License. See LICENSE in the project root for more information.
 
 from selenium.common.exceptions import NoSuchElementException
 
@@ -75,6 +75,7 @@ class AdminPreserveUserPrivacy(LoginPage, AdminPages):
         ]
 
     def test_admin_portal_show_limited_data(self):
+        # related issue: https://gitlab.com/exotic-matter/ftl-app/-/issues/204
         allowed_models = [
             "Groups",
             "Access attempts",
@@ -116,7 +117,7 @@ class AdminPreserveUserPrivacy(LoginPage, AdminPages):
             "created",
             "edited",
             "expire_at",
-            "password",  # not yet implemented, but may be required in case of abuse report to check legality of document
+            "password",  # not yet implemented, but may be required in case of abuse report to check document legality
         ]
 
         # Admin user log into admin portal
@@ -136,22 +137,62 @@ class AdminPreserveUserPrivacy(LoginPage, AdminPages):
         self.search_admin_list(str(self.user1_resources["doc1"].pid)[:1])
         with self.assertRaises(NoSuchElementException):
             self.get_elem(self.admin_results_list)
+        # A error 500 is returned as search expect a uuid format
+        self.expected_browser_logs.append(
+            {
+                "level": "SEVERE",
+                "message": "500 (Internal Server Error)",
+                "source": "network",
+            }
+        )
         self.previous_page()
         self.search_admin_list(self.user1_resources["doc1"].title[:1])
         with self.assertRaises(NoSuchElementException):
             self.get_elem(self.admin_results_list)
+        # A error 500 is returned as search expect a uuid format
+        self.expected_browser_logs.append(
+            {
+                "level": "SEVERE",
+                "message": "500 (Internal Server Error)",
+                "source": "network",
+            }
+        )
         self.previous_page()
         self.search_admin_list(self.user1_resources["doc1"].title)
         with self.assertRaises(NoSuchElementException):
             self.get_elem(self.admin_results_list)
+        # A error 500 is returned as search expect a uuid format
+        self.expected_browser_logs.append(
+            {
+                "level": "SEVERE",
+                "message": "500 (Internal Server Error)",
+                "source": "network",
+            }
+        )
         self.previous_page()
         self.search_admin_list(self.user1_resources["doc1"].content_text.split(" ")[0])
         with self.assertRaises(NoSuchElementException):
             self.get_elem(self.admin_results_list)
+        # A error 500 is returned as search expect a uuid format
+        self.expected_browser_logs.append(
+            {
+                "level": "SEVERE",
+                "message": "500 (Internal Server Error)",
+                "source": "network",
+            }
+        )
         self.previous_page()
         self.search_admin_list(self.user1_resources["doc1"].content_text)
         with self.assertRaises(NoSuchElementException):
             self.get_elem(self.admin_results_list)
+        # A error 500 is returned as search expect a uuid format
+        self.expected_browser_logs.append(
+            {
+                "level": "SEVERE",
+                "message": "500 (Internal Server Error)",
+                "source": "network",
+            }
+        )
         self.previous_page()
 
         # Admin user CAN SEARCH existing documents using full pid
@@ -207,10 +248,26 @@ class AdminPreserveUserPrivacy(LoginPage, AdminPages):
         self.search_admin_list(str(self.user2_resources["share_links"][0].pid)[:1])
         with self.assertRaises(NoSuchElementException):
             self.get_elem(self.admin_results_list)
+        # A error 500 is returned as search expect a uuid format
+        self.expected_browser_logs.append(
+            {
+                "level": "SEVERE",
+                "message": "500 (Internal Server Error)",
+                "source": "network",
+            }
+        )
         self.previous_page()
         self.search_admin_list(str(self.user2_resources["share_links"][0].note))
         with self.assertRaises(NoSuchElementException):
             self.get_elem(self.admin_results_list)
+        # A error 500 is returned as search expect a uuid format
+        self.expected_browser_logs.append(
+            {
+                "level": "SEVERE",
+                "message": "500 (Internal Server Error)",
+                "source": "network",
+            }
+        )
         self.previous_page()
 
         # Admin user CAN SEARCH document sharing using full pid

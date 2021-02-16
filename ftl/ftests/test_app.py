@@ -16,7 +16,6 @@ from django.test import override_settings
 from django.utils import timezone
 from selenium.common.exceptions import NoSuchElementException
 
-from core.models import FTLDocumentReminder
 from core.tasks import apply_ftl_processing, batch_documents_reminder
 from ftests.pages.document_viewer_modal import DocumentViewerModal
 from ftests.pages.home_page import HomePage
@@ -157,6 +156,9 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
             "An error message should have been displayed to user to tell him folder creation failed because"
             " of duplicate name",
         )
+        self.expected_browser_logs.append(
+            {"level": "SEVERE", "message": "400", "source": "network",}
+        )
 
     def test_create_folder_tree(self):
         # User create a folder at root level
@@ -292,6 +294,7 @@ class HomePageTests(LoginPage, HomePage, DocumentViewerModal):
         self.get_elem(self.folders_list_buttons).click()
 
         # content of folder_a is properly shown
+        self.wait_documents_list_loaded()
         self.assertEqual(len(self.get_elems(self.documents_thumbnails)), 1)
         self.assertEqual(
             document_a.title,
@@ -982,9 +985,9 @@ class DocumentViewerModalTests(
         self.rename_document(new_doc_title)
 
         # Document title is properly updated in pdf viewer and list
-        self.assertEqual(self.get_elem_text(self.document_title), new_doc_title)
+        self.assertEqual(new_doc_title, self.get_elem_text(self.document_title))
         self.close_document()
-        self.assertEqual(self.get_elem_text(self.first_document_title), new_doc_title)
+        self.assertEqual(new_doc_title, self.get_elem_text(self.first_document_title))
 
     @patch.object(apply_ftl_processing, "delay")
     def test_annotate_document(self, mock_apply_processing):
@@ -1124,6 +1127,13 @@ class DocumentViewerModalTests(
         self.unshare_document()
 
         self.visit(f"/app/share/{doc_share.pid}")
+        self.expected_browser_logs.append(
+            {
+                "level": "SEVERE",
+                "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+                "source": "network",
+            }
+        )
         self.assertIn("not found", self.get_elem_text("body"))
 
     def test_display_next_and_previous_documents(self):
@@ -1142,12 +1152,13 @@ class DocumentViewerModalTests(
         )
 
         # User try to click on the button anyway
-        self.get_elem(self.previous_document_button).click()
+        self.display_previous_document()
+
         # The first doc stay displayed
         self.assertEqual("doc1", self.get_elem_text(self.document_title))
 
         # User display next doc
-        self.get_elem(self.next_document_button).click()
+        self.display_next_document()
         # The second doc is now displayed
         self.assertEqual("doc2", self.get_elem_text(self.document_title))
 
@@ -1157,7 +1168,7 @@ class DocumentViewerModalTests(
         )
 
         # User display the next doc
-        self.get_elem(self.next_document_button).click()
+        self.display_next_document()
         # The third doc is now displayed
         self.assertEqual("doc3", self.get_elem_text(self.document_title))
 
@@ -1166,12 +1177,12 @@ class DocumentViewerModalTests(
             "true", self.get_elem_attribute(self.next_document_button, "disabled")
         )
         # User try to click on the button anyway
-        self.get_elem(self.next_document_button).click()
+        self.display_next_document()
         # The last doc stay displayed
         self.assertEqual("doc3", self.get_elem_text(self.document_title))
 
         # User display previous doc
-        self.get_elem(self.previous_document_button).click()
+        self.display_previous_document()
         # The second doc is now displayed
         self.assertEqual("doc2", self.get_elem_text(self.document_title))
 
