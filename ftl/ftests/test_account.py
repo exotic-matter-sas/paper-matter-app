@@ -941,14 +941,6 @@ class Fido2Device2FATests(LoginPage, AccountPages):
         # User login again, the 2fa check page appears.
         self.log_user()
 
-        self.expected_browser_logs.append(
-            {
-                "level": "SEVERE",
-                "message": "No credential available to authenticate!",
-                "source": "javascript",
-            }
-        )
-
         # Check page appears ask for fido2
         self.assertIn("security key", self.get_elem_text(self.confirm_button).lower())
 

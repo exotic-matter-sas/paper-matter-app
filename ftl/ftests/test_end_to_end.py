@@ -403,23 +403,6 @@ class UserSetupAll2FA(LoginPage, AccountPages):
         self.visit(LoginPage.logout_url)
         self.middleware_patcher.stop()  # Remove middleware mock, to restore check pages
         self.log_user()
-        # FIXME not sure why this error occur, I tried to set a mock value for authenticator_data but cant find one
-        #  which work (e.g. using bytearray([16] + [2] * 1000) doesn't)
-        self.expected_browser_logs.append(
-            {
-                "level": "SEVERE",
-                "message": "/accounts/2fa/fido2/api/login_begin - Failed to load resource: the server responded with a"
-                " status of 500 (Internal Server Error)",
-                "source": "network",
-            }
-        )
-        self.expected_browser_logs.append(
-            {
-                "level": "SEVERE",
-                "message": "No credential available to authenticate!",
-                "source": "javascript",
-            }
-        )
 
         # The 2FA check page appears with all device available
         self.assertEqual(2, len(self.get_elems(self.check_pages_alternatives_list)))
