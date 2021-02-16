@@ -1,5 +1,5 @@
-#  Copyright (c) 2020 Exotic Matter SAS. All rights reserved.
-#  Licensed under the Business Source License. See LICENSE at project root for more information.
+#  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
+#  Licensed under the Business Source License. See LICENSE in the project root for more information.
 
 from django.http import HttpRequest
 from django.test import override_settings
@@ -31,7 +31,7 @@ class DocumentDetailsOnlyOfficeDisableTests(APITestCase):
             note=tv.DOCUMENT_DOCX_NOTE,
             text_content=tv.DOCUMENT_DOCX_CONTENT,
             binary=tv.DOCUMENT_DOCX_BINARY_PATH,
-            type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            file_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         )
 
         self.first_level_folder = setup_folder(self.org, name="First level folder")
@@ -81,7 +81,7 @@ class DocumentDetailsOnlyOfficeTests(APITestCase):
             note=tv.DOCUMENT_DOCX_NOTE,
             text_content=tv.DOCUMENT_DOCX_CONTENT,
             binary=tv.DOCUMENT_DOCX_BINARY_PATH,
-            type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            file_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         )
 
         self.first_level_folder = setup_folder(self.org, name="First level folder")
