@@ -288,7 +288,7 @@ class RegionAccountPageTests(LoginPage, HomePage, AccountPages, SignupPages):
         updated_document_add_hours = int(updated_document_add_time.group(1))
         updated_document_add_minutes = int(updated_document_add_time.group(2))
 
-        # Chicago hour = New York hour - 1 (hours are display in a.m./p.m. format)
+        # Chicago hour = New York hour - 1 (hours are displayed in a.m./p.m. format)
         self.assertEqual(
             updated_document_add_hours,
             12 if initial_document_add_hours == 1 else initial_document_add_hours - 1,
