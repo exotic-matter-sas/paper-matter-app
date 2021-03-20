@@ -13,7 +13,7 @@ from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.core.files.base import ContentFile
 from django.core.signing import TimestampSigner, BadSignature
 from django.db import IntegrityError, transaction
-from django.db.models import F
+from django.db.models import F, Count
 from django.http import (
     HttpResponse,
     HttpResponseNotFound,
@@ -179,9 +179,12 @@ class FTLDocumentList(generics.ListAPIView):
         )
         text_search = self.request.query_params.get("search", None)
 
-        queryset = FTLDocument.objects.filter(
-            org=self.request.user.org, deleted=False
-        ).order_by("-created")
+        queryset = (
+            FTLDocument.objects.annotate(reminders_count=Count("reminders"))
+            .annotate(shares_count=Count("share_pids"))
+            .filter(org=self.request.user.org, deleted=False)
+            .order_by("-created")
+        )
 
         if not flat_mode:
             if text_search:
@@ -222,7 +225,11 @@ class FTLDocumentDetail(generics.RetrieveUpdateDestroyAPIView):
         )
 
     def get_queryset(self):
-        return FTLDocument.objects.filter(org=self.request.user.org, deleted=False)
+        return (
+            FTLDocument.objects.annotate(reminders_count=Count("reminders"))
+            .annotate(shares_count=Count("share_pids"))
+            .filter(org=self.request.user.org, deleted=False)
+        )
 
     def perform_update(self, serializer):
         need_processing = False

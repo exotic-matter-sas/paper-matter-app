@@ -70,10 +70,14 @@ class FTLDocumentSerializer(serializers.ModelSerializer):
         return reverse("api_download_url", kwargs={"pid": obj.pid})
 
     def get_is_shared(self, obj):
-        return obj.share_pids.count() > 0
+        # For optimization purpose, we use annotation in the queryset to calculate this value to avoid (N+1 problem).
+        # But when creating a new FTLDocument, there is no annotation and so this field does not appear
+        # in the result so we need a check
+        return getattr(obj, "shares_count", 0) > 0
 
     def get_reminders_count(self, obj):
-        return obj.reminders.count()
+        # See comment for `get_is_shared`
+        return getattr(obj, "reminders_count", 0)
 
     class Meta:
         model = FTLDocument
