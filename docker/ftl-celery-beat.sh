@@ -2,5 +2,5 @@
 
 if [ $CELERY_BEAT_MODE = 'true' ]; then
   cd /app || exit
-  celery -A ftl beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
+  celery -A ftl beat -l INFO --pidfile= --scheduler django_celery_beat.schedulers:DatabaseScheduler
 fi
