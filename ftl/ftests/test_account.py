@@ -3,8 +3,10 @@
 
 import re
 import threading
+from datetime import datetime
 from unittest.mock import patch, Mock
 
+import pytz
 from django.core import mail
 from django.http import HttpResponse
 from django.test import override_settings
@@ -222,7 +224,9 @@ class RegionAccountPageTests(LoginPage, HomePage, AccountPages, SignupPages):
         # Locale come from user setting
         self.assertIn("account", self.head_title)
         # Timezone come from user setting
-        self.assertEqual("CET", self.get_elem_attribute("#current-time", "title"))
+        tz = pytz.timezone(user_timezone_setting)
+        tz_str = tz.localize(datetime.utcnow()).strftime("%Z")
+        self.assertEqual(tz_str, self.get_elem_attribute("#current-time", "title"))
 
     def test_user_update_region_language(self):
         setup_user(self.user_org)
