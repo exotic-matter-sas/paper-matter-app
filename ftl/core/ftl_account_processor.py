@@ -15,8 +15,12 @@ def ftl_account_data(request):
         # Calculate the current timezone offset while taking into account any DST offset
         tz = request.user.tz or getattr(settings, "TIME_ZONE", "UTC")
         tz_offset = (
-            pytz.timezone(tz).utcoffset(datetime.datetime.utcnow()).total_seconds()
-            / 60.0
+            datetime.datetime.utcnow()
+            .replace(tzinfo=pytz.utc)
+            .astimezone(pytz.timezone(tz))
+            .utcoffset()
+            .total_seconds()
+            / 60
         )
 
         return {
