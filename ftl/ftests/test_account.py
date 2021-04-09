@@ -3,8 +3,10 @@
 
 import re
 import threading
+from datetime import datetime
 from unittest.mock import patch, Mock
 
+import pytz
 from django.core import mail
 from django.http import HttpResponse
 from django.test import override_settings
@@ -222,7 +224,9 @@ class RegionAccountPageTests(LoginPage, HomePage, AccountPages, SignupPages):
         # Locale come from user setting
         self.assertIn("account", self.head_title)
         # Timezone come from user setting
-        self.assertEqual("CET", self.get_elem_attribute("#current-time", "title"))
+        tz = pytz.timezone(user_timezone_setting)
+        tz_str = tz.localize(datetime.utcnow()).strftime("%Z")
+        self.assertEqual(tz_str, self.get_elem_attribute("#current-time", "title"))
 
     def test_user_update_region_language(self):
         setup_user(self.user_org)
@@ -267,11 +271,6 @@ class RegionAccountPageTests(LoginPage, HomePage, AccountPages, SignupPages):
             self.get_elem_attribute(self.first_document_date, "title"),
         )
         initial_document_add_hours = int(initial_document_add_time.group(1))
-        # We need to set hour to 0 if its noon, due to the subtraction in assertEqual at the end
-        # (hours are displayed a.m. and p.m. in title attribute)
-        initial_document_add_hours = (
-            0 if initial_document_add_hours == 12 else initial_document_add_hours
-        )
 
         initial_document_add_minutes = int(initial_document_add_time.group(2))
 
@@ -293,8 +292,11 @@ class RegionAccountPageTests(LoginPage, HomePage, AccountPages, SignupPages):
         updated_document_add_hours = int(updated_document_add_time.group(1))
         updated_document_add_minutes = int(updated_document_add_time.group(2))
 
-        # Chicago hour = New York hour - 1
-        self.assertEqual(updated_document_add_hours, initial_document_add_hours - 1)
+        # Chicago hour = New York hour - 1 (hours are displayed in a.m./p.m. format)
+        self.assertEqual(
+            updated_document_add_hours,
+            12 if initial_document_add_hours == 1 else initial_document_add_hours - 1,
+        )
         self.assertEqual(updated_document_add_minutes, initial_document_add_minutes)
 
 
