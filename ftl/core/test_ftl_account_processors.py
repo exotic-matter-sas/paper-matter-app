@@ -1,9 +1,15 @@
 #  Copyright (c) 2021 Exotic Matter SAS. All rights reserved.
 #  Licensed under the Business Source License. See LICENSE in the project root for more information.
+import datetime
+from unittest.mock import patch
 
-from django.test import RequestFactory, SimpleTestCase
+from django.contrib.sessions.backends.base import SessionBase
+from django.test import RequestFactory, SimpleTestCase, TestCase
 
+from core import ftl_account_processor
+from core.ftl_account_processor import ftl_account_data
 from core.ftl_account_processors_mixin import FTLAccountProcessorContextMixin
+from ftests.tools.setup_helpers import setup_org, setup_user
 
 
 def mock_processor(request):
@@ -36,3 +42,19 @@ class FTLAccountProcessorContextMixinTests(SimpleTestCase):
         self.assertDictEqual(
             context_data["ftl_account"], {"test": True, "test_2": 1234}
         )
+
+
+class FTLAccountDataTests(TestCase):
+    def setUp(self):
+        self.org = setup_org()
+        self.user = setup_user(self.org)
+
+    @patch.object(ftl_account_processor, "datetime")
+    def test_non_existant_time(self, mock_dt):
+        # This is the DST transition period in France (2am->3am)
+        mock_dt.datetime.utcnow.return_value = datetime.datetime(2021, 3, 28, 2, 31, 7)
+        rf = RequestFactory()
+        rf.user = self.user
+        rf.session = SessionBase()
+
+        ftl_account_data(rf)
