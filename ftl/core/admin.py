@@ -6,7 +6,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.translation import gettext_lazy as _
 from django_otp.plugins.otp_static.models import StaticDevice
 from django_otp.plugins.otp_totp.models import TOTPDevice
-from oauth2_provider.models import AccessToken, RefreshToken, Grant
+from oauth2_provider.models import AccessToken, RefreshToken, Grant, IDToken
 
 from core.models import FTLOrg, FTLUser, FTLDocument, FTLDocumentSharing
 
@@ -156,3 +156,4 @@ admin.site.unregister(StaticDevice)
 admin.site.unregister(AccessToken)
 admin.site.unregister(Grant)
 admin.site.unregister(RefreshToken)
+admin.site.unregister(IDToken)
