@@ -22,6 +22,7 @@ from core.processing.ftl_processing import (
     atomic_ftl_doc_update,
 )
 from core.processing.proc_lang import FTLLangDetectorLangId
+from core.processing.proc_ocrmypdf import FTLOCRmyPDF
 from core.processing.proc_pgsql_tsvector import (
     FTLSearchEnginePgSQLTSVector,
     SEARCH_VECTOR,
@@ -478,4 +479,59 @@ class FTLOCRBaseTests(TestCase):
         mocked_select_ftl_doc.select_for_update().get.assert_called_once_with(pid=uuid_)
         doc.save.assert_called_once_with(
             update_fields=["field_1", "field_2", "field_3", "field_4"]
+        )
+
+
+class ProcOCRMyPDFTests(TestCase):
+    @patch.object(requests, "get")
+    @patch.object(requests, "post")
+    def test_process(
+        self, mock_requests_post, mock_requests_get,
+    ):
+        proc = FTLOCRmyPDF("http://ocrmypdf-api.example.org", "secret-api-key")
+
+        doc = Mock()
+        doc.binary = Mock()
+
+        # Mock upload to OCR API
+        requests_post_response = Mock()
+        requests_post_response.status_code = 200
+        requests_post_response.json.return_value = {
+            "pid": "test-pid",
+            "status": "received",
+        }
+        mock_requests_post.return_value = requests_post_response
+
+        # Mock get API response
+        requests_get_response = MagicMock()
+        requests_get_response.status_code = 200
+        requests_get_response.json.side_effect = [
+            {"pid": "test-pid", "status": "received"},
+            {"pid": "test-pid", "status": "processing"},
+            {"pid": "test-pid", "status": "done"},
+            {"pid": "test-pid", "status": "done"},
+        ]
+        requests_get_response.content = "OCR TEXT DATA"
+        mock_requests_get.return_value = requests_get_response
+
+        text = proc._extract_text(doc.binary)
+
+        # Tests
+        self.assertEqual(text, "OCR TEXT DATA")
+
+        mock_requests_post.assert_called_once_with(
+            "http://ocrmypdf-api.example.org/ocr",
+            params={"lang": ["eng", "fra"]},
+            files={"file": doc.binary},
+            headers={"X-API-KEY": "secret-api-key"},
+        )
+
+        mock_requests_get.assert_any_call(
+            "http://ocrmypdf-api.example.org/ocr/test-pid",
+            headers={"X-API-KEY": "secret-api-key"},
+        )
+
+        mock_requests_get.assert_any_call(
+            "http://ocrmypdf-api.example.org/ocr/test-pid/txt",
+            headers={"X-API-KEY": "secret-api-key"},
         )
