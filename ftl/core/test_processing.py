@@ -9,7 +9,6 @@ from django.conf import settings
 from django.core.files import File
 from django.test import TestCase, override_settings
 from jose import jwt
-from langid.langid import LanguageIdentifier
 from tika import parser
 
 from core.errors import PluginUnsupportedStorage
@@ -194,63 +193,57 @@ class DocumentProcessingTests(TestCase):
 
 class ProcLangTests(TestCase):
     @patch.object(FTLDocument, "objects")
-    @patch.object(LanguageIdentifier, "from_modelstring")
-    def test_process(self, mocked_from_modelstring, mocked_select_ftl_doc):
+    @patch("core.processing.proc_lang.language_identifier")
+    def test_process(self, mocked_langid, mocked_select_ftl_doc):
         lang = FTLLangDetectorLangId()
-        mocked_classify = lang.identifier.classify
-        mocked_classify.return_value = ("fr", 1.0)
+        mocked_langid.classify.return_value = ("fr", 1.0)
 
         doc = Mock()
         mocked_select_ftl_doc.select_for_update().get.return_value = doc
 
         lang.process(doc, True)
 
-        mocked_classify.assert_called_once_with(doc.content_text)
+        mocked_langid.classify.assert_called_once_with(doc.content_text)
         self.assertEqual("french", doc.language)
         doc.save.assert_called_once()
 
     @patch.object(FTLDocument, "objects")
-    @patch.object(LanguageIdentifier, "from_modelstring")
-    def test_process_unsupported_lang(
-        self, mocked_from_modelstring, mocked_select_ftl_doc
-    ):
+    @patch("core.processing.proc_lang.language_identifier")
+    def test_process_unsupported_lang(self, mocked_langid, mocked_select_ftl_doc):
         lang = FTLLangDetectorLangId()
-        mocked_classify = lang.identifier.classify
-        mocked_classify.return_value = ("zz", 1.0)
+        mocked_langid.classify.return_value = ("zz", 1.0)
 
         doc = Mock()
         mocked_select_ftl_doc.select_for_update().get.return_value = doc
         lang.process(doc, True)
 
-        mocked_classify.assert_called_once_with(doc.content_text)
+        mocked_langid.classify.assert_called_once_with(doc.content_text)
         doc.save.assert_called_once()
 
     @patch.object(FTLDocument, "objects")
-    @patch.object(LanguageIdentifier, "from_modelstring")
+    @patch("core.processing.proc_lang.language_identifier")
     def test_process_langid_confidence_too_low(
-        self, mocked_from_modelstring, mocked_select_ftl_doc
+        self, mocked_langid, mocked_select_ftl_doc
     ):
         lang = FTLLangDetectorLangId()
-        mocked_classify = lang.identifier.classify
-        mocked_classify.return_value = ("en", 0.1)
+        mocked_langid.classify.return_value = ("en", 0.1)
 
         doc = Mock()
         mocked_select_ftl_doc.select_for_update().get.return_value = doc
         lang.process(doc, True)
 
-        mocked_classify.assert_called_once_with(doc.content_text)
+        mocked_langid.classify.assert_called_once_with(doc.content_text)
         doc.save.assert_called_once()
 
-    @patch.object(LanguageIdentifier, "from_modelstring")
-    def test_process_value_exists(self, mocked_from_modelstring):
+    @patch("core.processing.proc_lang.language_identifier")
+    def test_process_value_exists(self, mocked_langid):
         lang = FTLLangDetectorLangId()
-        mocked_classify = lang.identifier.classify
 
         doc = Mock()
         doc.language = "french"
         lang.process(doc, False)
 
-        mocked_classify.assert_not_called()
+        mocked_langid.classify.assert_not_called()
         doc.save.assert_not_called()
 
 
