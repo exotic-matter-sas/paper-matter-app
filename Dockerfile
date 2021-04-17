@@ -12,34 +12,8 @@ RUN npm run build
 
 
 
-FROM python:3.7-slim
-
-# Configure the listening PORT for the web frontend server (used by uwsgi)
-ENV PORT 8000
-# Set to "true" to use this image as a web frontend
-ENV ENABLE_WEB false
-# Set to "true" to use this image as a task scheduler (cron)
-ENV ENABLE_CRON false
-# Set to "true" to use this image as a worker
-ENV ENABLE_WORKER false
-# Set number of workers for async processing such as OCR
-ENV NB_WORKERS 1
-# Celery queue configuration (indicate which queue should the worker(s) work(s) on
-ENV WORKER_QUEUES ftl_processing,med,celery
-# Set time limit in seconds for each job in async processing (child process will be force restart)
-ENV JOB_TIMELIMIT 900
-
-# WARNING: NOT SECURE FOR PRODUCTION
-# ===================================
-# For production use, additional ENV variables have to be defined to update default security settings.
-# The recommanded way to set theses variables is to set them at runtime (either via docker command or via your
-# deployment method). Refer to SELFHOSTING.MD for the list of ENV available.
-
-# Run the image as a non-root user
-RUN groupadd --gid 1000 ftl \
-    && useradd --uid 1000 --gid ftl --shell /bin/bash --create-home ftl
-
-# Workaround for https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=863199
+FROM python:3.7-slim AS compile-image
+# mkdir Workaround for https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=863199
 RUN mkdir -p /usr/share/man/man1
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -56,45 +30,72 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 ADD ftl/requirements.txt /app/requirements.txt
-ADD docker/requirements_deploy.txt /app/requirements_deploy.txt
-ADD docker/ftl_uwsgi.ini /app/ftl_uwsgi.ini
-ADD docker/settings_local.py /app/ftl/settings_local.py
-ADD --chown=root:root docker/supervisord.conf /etc/supervisor/supervisord.conf
+ADD docker/app/requirements_deploy.txt /app/requirements_deploy.txt
 
-ADD --chown=ftl:ftl docker/ftl-web.sh /app/ftl-web.sh
-RUN chmod 0700 /app/ftl-web.sh
 
-ADD --chown=ftl:ftl docker/ftl-worker.sh /app/ftl-worker.sh
-RUN chmod 0700 /app/ftl-worker.sh
-
-ADD --chown=ftl:ftl docker/ftl-celery-beat.sh /app/ftl-celery-beat.sh
-RUN chmod 0700 /app/ftl-celery-beat.sh
+RUN python -m venv /opt/venv
+# Activate venv
+ENV PATH="/opt/venv/bin:$PATH"
 
 RUN python3 -m pip install -r /app/requirements.txt --no-cache-dir && \
  python3 -m pip install -r /app/requirements_deploy.txt --no-cache-dir
 
-RUN apt-get remove --purge -y build-essential
-RUN apt-get autoremove -y
 
 
-ADD --chown=ftl:ftl ftl /app/
+FROM python:3.7-slim AS build-image
+# Configure the listening PORT for the web frontend server (used by uwsgi)
+ENV PORT 8000
+# Set to "true" to use this image as a web frontend
+ENV ENABLE_WEB false
+# Set to "true" to use this image as a task scheduler (cron)
+ENV ENABLE_CRON false
+# Set to "true" to use this image as a worker
+ENV ENABLE_WORKER false
+# Set number of workers for async processing such as OCR
+ENV NB_WORKERS 1
+# Celery queue configuration (indicate which queue should the worker(s) work(s) on
+ENV WORKER_QUEUES ftl_processing,med,celery
+# Set time limit in seconds for each job in async processing (child process will be force restart)
+ENV JOB_TIMELIMIT 900
+# Directory for documents binary
+ENV FTLDATA /app/uploads
 
-COPY --chown=ftl:ftl --from=frontbuild /app/dist /app/frontend/dist
-COPY --chown=ftl:ftl --from=frontbuild /app/pdfjs /app/frontend/pdfjs
-COPY --chown=ftl:ftl --from=frontbuild /app/webpack-stats.json /app/frontend/
-COPY --chown=ftl:ftl --from=frontbuild /app/__init__.py /app/frontend/
+# WARNING: NOT SECURE FOR PRODUCTION
+# ===================================
+# For production use, additional ENV variables have to be defined to update default security settings.
+# The recommanded way to set theses variables is to set them at runtime (either via docker command or via your
+# deployment method). Refer to SELFHOSTING.MD for the list of ENV available.
+
+# mkdir workaround for https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=863199
+RUN mkdir -p /usr/share/man/man1 \
+    && mkdir -p "$FTLDATA" \
+    && chmod 700 "$FTLDATA"
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    openjdk-11-jre-headless \
+    supervisor \
+    gettext \
+    libpq5 \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=compile-image /opt/venv /opt/venv
+COPY docker/ /
+COPY ftl /app/
+COPY --from=frontbuild /app/dist /app/frontend/dist
+COPY --from=frontbuild /app/pdfjs /app/frontend/pdfjs
+COPY --from=frontbuild /app/webpack-stats.json /app/frontend/
+COPY --from=frontbuild /app/__init__.py /app/frontend/
 
 WORKDIR /app
 
-RUN python3 -m compileall ./
-RUN python3 manage.py compilemessages
-RUN python3 manage.py collectstatic --no-input
+# Activate venv
+ENV PATH="/opt/venv/bin:$PATH"
 
-RUN chown -R ftl:ftl /app
+RUN python3 -m compileall ./ \
+    && python3 manage.py compilemessages \
+    && python3 manage.py collectstatic --no-input
 
-ENV FTLDATA /app/uploads
-RUN mkdir -p "$FTLDATA" && chown -R ftl:ftl "$FTLDATA" && chmod 777 "$FTLDATA"
-VOLUME /app/uploads
+VOLUME "$FTLDATA"
 
 # For local or standard use, must match the env var PORT value.
 EXPOSE $PORT

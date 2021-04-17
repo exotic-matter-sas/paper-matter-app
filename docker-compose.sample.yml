@@ -9,6 +9,7 @@ services:
       - redis
     ports:
       - "8000:8000"
+    user: 1000:1000
     environment:
       ENABLE_WEB: "true"
       # WARNING: NOT SECURE FOR PRODUCTION
@@ -24,6 +25,7 @@ services:
     depends_on:
       - postgres
       - redis
+    user: 1000:1000
     environment:
       ENABLE_WORKER: "true"
       NB_WORKERS: '1'
