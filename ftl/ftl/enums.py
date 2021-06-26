@@ -31,6 +31,9 @@ class FTLPlugins:
     OCR_GOOGLE_VISION_ASYNC
     - Require to store documents on Google cloud storage (see DEFAULT_FILE_STORAGE in settings)
     - Extra python module required: google-cloud-vision (see requirements.txt)
+    OCR_OCR_MY_PDF
+    - Require an instance of Exotic Matter custom API ocrmypdf server (open source) running.
+      To be installed and configured separately.
     THUMBNAIL_ONLY_OFFICE
     - Require an instance of Only Office document server (community edition). To be installed and configured separately
     """
@@ -44,6 +47,7 @@ class FTLPlugins:
     OCR_GOOGLE_VISION_ASYNC = (
         "core.processing.proc_google_vision_async.FTLOCRGoogleVisionAsync"
     )
+    OCR_OCR_MY_PDF = "core.processing.proc_ocrmypdf.FTLOCRmyPDF"
 
     THUMBNAIL_ONLY_OFFICE = (
         "core.processing.proc_thumb_only_office.FTLThumbnailGenerationOnlyOffice"

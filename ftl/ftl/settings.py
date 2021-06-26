@@ -354,6 +354,12 @@ if (
         GS_BUCKET_NAME = os.environ.get("GCS_BUCKET_NAME")
 
 """
+Settings for ocrmypdf plugin
+"""
+FTL_OCRMYPDF_API_URL = "http://localhost:8000"
+FTL_OCRMYPDF_API_KEY = "changeme"
+
+"""
 SUPPORTED DOCUMENTS TYPES
 """
 FTL_SUPPORTED_DOCUMENTS_TYPES = {
