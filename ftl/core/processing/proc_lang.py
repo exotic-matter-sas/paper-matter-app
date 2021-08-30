@@ -31,13 +31,15 @@ COUNTRY_CODE_INDEX = {
     "tr": "turkish",
 }
 
+language_identifier = LanguageIdentifier.from_modelstring(model, norm_probs=True)
+
 
 class FTLLangDetectorLangId(FTLDocProcessingBase):
     supported_documents_types = ["*"]
 
     def __init__(self):
         self.log_prefix = f"[{self.__class__.__name__}]"
-        self.identifier = LanguageIdentifier.from_modelstring(model, norm_probs=True)
+        self.identifier = language_identifier
         self.default_language = "simple"
 
     def process(self, ftl_doc, force):
